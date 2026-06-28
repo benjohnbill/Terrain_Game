@@ -42,6 +42,10 @@ over the underlying map units.
 Each province should be legible through three lenses: broad archetype region,
 terrain composition, and settlement/function.
 
+Phase 1 uses a combat + economy basic stat scope. It should include regional
+population/economy differences because those make conquest targets meaningful,
+but it should avoid full domestic governance until later phases.
+
 ### Phase 2: Diplomacy and International Order
 
 Expand diplomacy beyond alliance/war into tribute, vassalage, threats, betrayal,

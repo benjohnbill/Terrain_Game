@@ -51,6 +51,10 @@ Markers:
   terrain types themselves.
 - ✅ Province identity uses three lenses: archetype region, terrain layer, and
   settlement/function layer.
+- ✅ Phase 1 stat scope is combat + economy basics: population/economy, local
+  garrison, defense, movement/crossing constraints, and strategic tags.
+- ✅ Governance-heavy values such as loyalty, unrest, inflation, and deep event
+  chains are expansion hooks, not first Phase 1 requirements.
 
 ## World Direction
 

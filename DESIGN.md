@@ -79,6 +79,12 @@ Candidate mechanics:
 - limited strait crossing and amphibious penalties,
 - AI evaluation based on local targets rather than raw global strength.
 
+The Phase 1 stat model should include combat and economy basics: population or
+population weight, economic value, local garrison, defense/fortification,
+movement constraints, and strategic tags. Governance-heavy concepts such as
+loyalty, unrest, inflation, and event chains should be reserved as expansion
+hooks rather than first-slice requirements.
+
 Province identity should inform AI and event logic. For example, a grain basin,
 mountain pass, river junction, coastal harbor, frontier, or old capital region
 should not be evaluated only by tile count.

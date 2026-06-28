@@ -32,6 +32,9 @@ Brainstorming and design framing.
 - Province identity should include a settlement/function layer. Start with
   about nine function categories and assign each province one primary function
   plus optional secondary function.
+- Phase 1 uses combat + economy basics. Include regional population/economy,
+  local garrison, defense, movement/crossing constraints, and strategic tags.
+  Keep loyalty, unrest, inflation, and deep events as expansion hooks.
 
 ## Candidate Slice
 
@@ -47,3 +50,4 @@ local garrisons, and AI target evaluation.
 - `docs/adr/0005-hybrid-historical-fictional-place-names.md`
 - `docs/adr/0006-province-archetype-regions-use-terrain-layers.md`
 - `docs/adr/0007-settlement-function-layer.md`
+- `docs/adr/0008-phase-1-combat-economy-stat-scope.md`
