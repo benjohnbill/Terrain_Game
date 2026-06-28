@@ -38,8 +38,16 @@ For example, scholarship/technology capacity can be diverted into military
 planning, engineering, or analysis during a crisis, but it should produce less
 command value than real command capacity and should create opportunity costs.
 
-Overclocking should be available but not routine. It represents a strained
-national commitment, not normal optimization.
+Overclocking has two intensities:
+
+1. institutional redirection, such as scholars supporting military analysis,
+   siege engineering, or battlefield surveying;
+2. emergency human mobilization, such as scholars, officials, merchants, or
+   other non-military groups being forced into direct defense or combat.
+
+The second form is much more extreme. It should represent desperation, not
+routine optimization. It may provide emergency force or defense, but should
+damage normal capacity generation and create severe future risks.
 
 ## Consequences
 
@@ -49,7 +57,9 @@ Capacity management remains strategic without forcing the player to spend every
 point manually.
 
 Overclocking creates freedom and drama, but must be shown with clear efficiency
-losses and future costs so it does not become the default best move.
+losses and future costs so it does not become the default best move. Emergency
+human mobilization should be especially costly and narratively framed as a
+crisis measure.
 
 UI should make both carryover and overclock tradeoffs visible before turn
 confirmation.

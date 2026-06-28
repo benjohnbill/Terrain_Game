@@ -46,6 +46,9 @@ Markers:
   later turns as preparation or accumulated work, subject to decay and caps.
 - ✅ `Capacity overclock`: Emergency redirection of one action capacity into
   another at reduced efficiency and with opportunity costs.
+- ✅ `Emergency human mobilization`: Extreme overclock where non-military
+  populations such as scholars, officials, merchants, or workers are pulled into
+  direct defense or combat at severe future cost.
 - ✅ `Strait`: A narrow sea crossing that can allow limited naval movement,
   blockade, or amphibious attack.
 - ✅ `Active region`: A region currently simulated and presented in detail.

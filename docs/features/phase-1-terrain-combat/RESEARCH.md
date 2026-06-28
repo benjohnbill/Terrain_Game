@@ -43,6 +43,10 @@ strategies, while the player fine-tunes action-capacity allocation.
 ✅ The user approved partial carryover for unused action capacity and emergency
 cross-capacity overclocking at reduced efficiency.
 
+✅ The user's intended extreme overclock case includes direct human
+mobilization, such as scholars or other non-military groups taking up weapons
+in a desperate situation, not only institutional support like analysis.
+
 ## Working Hypothesis
 
 ❓ Phase 1 should start by adding terrain and regional data to map units before
