@@ -58,6 +58,8 @@ Markers:
 - ✅ Place naming uses a hybrid policy: large geography may be historically
   legible, while specific provinces generally use fictional East Asian-style
   names.
+- ✅ Player-facing province names should be natural place/geography names, not
+  meta design labels using terms equivalent to "-inspired" or "-like."
 - ⛔ Do not model a literal historical map so strictly that gameplay balance and
   readability become secondary.
 

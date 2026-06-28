@@ -27,6 +27,13 @@ Specific named provinces should generally use fictional East Asian-style names
 that imply geography, economy, or strategic role without requiring exact
 historical correspondence.
 
+Player-facing names should read like natural place names or geographic
+descriptions, not design labels. For example, use names in the spirit of
+"Guanzhong Gate" or "Jiangnan Grain Belt" rather than meta phrases equivalent
+to "Guanzhong-style gate" or "Jiangnan-like grain region." Words such as
+"-inspired" and "-like" belong in design documentation, not in the displayed
+province names.
+
 Province descriptions should pair names with terrain and identity:
 
 - name,
