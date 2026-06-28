@@ -29,6 +29,9 @@ Brainstorming and design framing.
   southern mountain/forest, steppe, maritime, and northern India routes.
 - Existing terrain categories still apply as the physical rules layer beneath
   those archetype regions.
+- Province identity should include a settlement/function layer. Start with
+  about nine function categories and assign each province one primary function
+  plus optional secondary function.
 
 ## Candidate Slice
 
@@ -43,3 +46,4 @@ local garrisons, and AI target evaluation.
 - `docs/adr/0004-named-provinces-over-terrain-layers.md`
 - `docs/adr/0005-hybrid-historical-fictional-place-names.md`
 - `docs/adr/0006-province-archetype-regions-use-terrain-layers.md`
+- `docs/adr/0007-settlement-function-layer.md`

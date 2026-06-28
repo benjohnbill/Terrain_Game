@@ -42,6 +42,11 @@ Central Plains, Guanzhong Passes, Jiangnan Grain Belt, Northeastern Frontier,
 Southeastern Coast and Straits, Steppe Frontier, or Northern India Route. These
 archetype regions are design frames, not direct mechanical terrain types.
 
+Province identity should also include settlement/function. This layer describes
+how people use the place: administrative center, commercial city, agricultural
+center, military base, fortress pass, port city, mining/workshop district,
+scholarly/religious center, or frontier settlement.
+
 ## Map Representation Strategy
 
 Start with hexes because the prototype already uses hex rendering and
@@ -80,6 +85,9 @@ should not be evaluated only by tile count.
 
 Gameplay calculations should inspect terrain composition, province stats, and
 strategic tags rather than relying only on broad archetype region labels.
+
+Function should influence economy, recruitment, unrest, events, diplomacy, AI
+priorities, and player-readable strategic purpose.
 
 ## Documentation Policy
 

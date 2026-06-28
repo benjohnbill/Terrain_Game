@@ -39,6 +39,9 @@ movement constraints, and limited sea crossing.
 The first active campaign should use roughly 25 to 40 named provinces layered
 over the underlying map units.
 
+Each province should be legible through three lenses: broad archetype region,
+terrain composition, and settlement/function.
+
 ### Phase 2: Diplomacy and International Order
 
 Expand diplomacy beyond alliance/war into tribute, vassalage, threats, betrayal,

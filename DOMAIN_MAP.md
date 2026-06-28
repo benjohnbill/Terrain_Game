@@ -21,6 +21,10 @@ Markers:
 - ✅ `Province archetype region`: A broad geography/history frame used to group
   named provinces, such as Central Plains, Guanzhong Passes, Jiangnan Grain
   Belt, Steppe Frontier, or Northern India Route.
+- ✅ `Settlement/function layer`: Human use of a place, such as administrative
+  center, commercial city, agricultural center, military base, fortress pass,
+  port city, mining/workshop district, scholarly/religious center, or frontier
+  settlement.
 - ✅ `Local garrison`: Military strength assigned to a specific map unit, not a
   global faction-wide force usable everywhere at once.
 - ✅ `Strait`: A narrow sea crossing that can allow limited naval movement,
@@ -45,6 +49,8 @@ Markers:
   value.
 - ✅ Province archetype regions are composed from terrain layers; they are not
   terrain types themselves.
+- ✅ Province identity uses three lenses: archetype region, terrain layer, and
+  settlement/function layer.
 
 ## World Direction
 
@@ -79,3 +85,5 @@ Markers:
 - ❓ Exact trigger for activating background regions.
 - ❓ Exact list of initial named provinces.
 - ❓ Exact Phase 1 subset of archetype regions to activate.
+- ❓ Exact primary and secondary function assignments for the initial named
+  provinces.

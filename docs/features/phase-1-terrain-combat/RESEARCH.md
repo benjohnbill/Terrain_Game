@@ -21,6 +21,9 @@ should differ by province.
 ✅ The user prefers hybrid naming: historical flavor for large geography, with
 fictional names for specific provinces so detailed naming can be expanded later.
 
+✅ The user approved a third design lens beyond archetype region and terrain:
+settlement/function, inspired by Three Kingdoms-style city roles.
+
 ## Working Hypothesis
 
 ❓ Phase 1 should start by adding terrain and regional data to map units before
@@ -31,6 +34,7 @@ garrisons, movement restrictions, AI evaluation, and later national management.
 
 - Decide the initial terrain taxonomy.
 - Decide the initial 25 to 40 named province list.
+- Decide primary and optional secondary function per province.
 - Decide the first playable map size and whether the current generated grid is
   replaced by a authored terrain layout.
 - Decide how local garrison interacts with population and faction-level military
