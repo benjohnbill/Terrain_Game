@@ -20,6 +20,10 @@ Current major modules:
 The next design step is a terrain-first regional system. Political control
 should sit on top of geography, not define geography.
 
+Use high complexity with low micromanagement. Player-facing commands should
+express strategic intent, while internal systems translate those commands into
+mobilization, movement, garrison changes, costs, and risks.
+
 Each map unit should eventually carry:
 
 - terrain type,

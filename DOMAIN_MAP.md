@@ -35,6 +35,9 @@ Markers:
   population during invasion.
 - ✅ `Latent mobilizable population`: Economic population that may become levy,
   militia, resistance, or rebellion force under pressure.
+- ✅ `High complexity, low micromanagement`: Core design principle where deep
+  simulation exists under the hood, but the player mainly issues strategic
+  intent-level commands.
 - ✅ `Strait`: A narrow sea crossing that can allow limited naval movement,
   blockade, or amphibious attack.
 - ✅ `Active region`: A region currently simulated and presented in detail.
@@ -65,6 +68,8 @@ Markers:
   chains are expansion hooks, not first Phase 1 requirements.
 - ✅ Attacks should be standing-force centered with offensive mobilization as
   risky support. Defense should combine garrison and local defense.
+- ✅ Complexity is acceptable when it creates meaningful choices or readable
+  consequences; it should not become repetitive low-level clicking.
 
 ## World Direction
 

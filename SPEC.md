@@ -17,6 +17,10 @@ The player grows and governs a state, then uses that state's geography,
 economy, population, military deployment, diplomacy, and timing to conquer the
 map.
 
+The game should follow a high complexity, low micromanagement principle. The
+simulation may be deep, but the player should mainly make strategic choices
+instead of repeatedly executing low-level administrative steps.
+
 The most important Phase 1 experience is:
 
 - reading the map,

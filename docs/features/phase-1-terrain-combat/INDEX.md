@@ -37,6 +37,8 @@ Brainstorming and design framing.
   Keep loyalty, unrest, inflation, and deep events as expansion hooks.
 - Military strength should split into standing forces, local garrisons,
   offensive mobilization, and local defense / latent mobilizable population.
+- The player should not manually execute every low-level military/economic step.
+  Phase 1 should preserve high complexity with low micromanagement.
 
 ## Candidate Slice
 
@@ -54,3 +56,4 @@ local garrisons, and AI target evaluation.
 - `docs/adr/0007-settlement-function-layer.md`
 - `docs/adr/0008-phase-1-combat-economy-stat-scope.md`
 - `docs/adr/0009-force-roles-and-mobilization-risks.md`
+- `docs/adr/0010-high-complexity-low-micromanagement.md`

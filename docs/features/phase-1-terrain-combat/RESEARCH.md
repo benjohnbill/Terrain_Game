@@ -33,6 +33,9 @@ the first Phase 1 slice.
 garrisons, offensive mobilization, and local defense / latent mobilizable
 population. Conversion and usage risks must be clear.
 
+✅ The user wants high complexity with low micromanagement. The system can be
+deep, but direct player operations per turn should remain limited and meaningful.
+
 ## Working Hypothesis
 
 ❓ Phase 1 should start by adding terrain and regional data to map units before
@@ -52,3 +55,4 @@ garrisons, movement restrictions, AI evaluation, and later national management.
   reserves.
 - Decide turn timing for mobilization, deployment, upkeep, recovery, battle, and
   risk application.
+- Decide minimum acceptable micromanagement for a turn.
