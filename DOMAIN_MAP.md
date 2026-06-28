@@ -18,6 +18,9 @@ Markers:
 - ✅ `Named province`: A medium-sized region composed of one or more map units
   with identity, population weight, economic profile, strategic role,
   background, and event hooks.
+- ✅ `Province archetype region`: A broad geography/history frame used to group
+  named provinces, such as Central Plains, Guanzhong Passes, Jiangnan Grain
+  Belt, Steppe Frontier, or Northern India Route.
 - ✅ `Local garrison`: Military strength assigned to a specific map unit, not a
   global faction-wide force usable everywhere at once.
 - ✅ `Strait`: A narrow sea crossing that can allow limited naval movement,
@@ -40,6 +43,8 @@ Markers:
   strategic pressure.
 - ✅ `Frontier basin`: Region with special resource, pass, loyalty, or trade
   value.
+- ✅ Province archetype regions are composed from terrain layers; they are not
+  terrain types themselves.
 
 ## World Direction
 
@@ -73,3 +78,4 @@ Markers:
   capacity.
 - ❓ Exact trigger for activating background regions.
 - ❓ Exact list of initial named provinces.
+- ❓ Exact Phase 1 subset of archetype regions to activate.

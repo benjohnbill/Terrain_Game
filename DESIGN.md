@@ -37,6 +37,11 @@ Above map units, the active campaign should define named provinces. A province
 groups map units and provides identity: name, population weight, economic
 profile, strategic role, background, loyalty/unrest tendency, and event hooks.
 
+Named provinces should be organized into broad archetype regions such as
+Central Plains, Guanzhong Passes, Jiangnan Grain Belt, Northeastern Frontier,
+Southeastern Coast and Straits, Steppe Frontier, or Northern India Route. These
+archetype regions are design frames, not direct mechanical terrain types.
+
 ## Map Representation Strategy
 
 Start with hexes because the prototype already uses hex rendering and
@@ -72,6 +77,9 @@ Candidate mechanics:
 Province identity should inform AI and event logic. For example, a grain basin,
 mountain pass, river junction, coastal harbor, frontier, or old capital region
 should not be evaluated only by tile count.
+
+Gameplay calculations should inspect terrain composition, province stats, and
+strategic tags rather than relying only on broad archetype region labels.
 
 ## Documentation Policy
 
