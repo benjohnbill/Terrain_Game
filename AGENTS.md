@@ -1,0 +1,39 @@
+# Terrain Game Agent Guide
+
+## Project Context
+
+Terrain Game is a browser-based turn strategy prototype evolving from a simple
+world-conquest hex game into a terrain-first national management and conquest
+game.
+
+Conversation with the user should follow the global Korean honorific style.
+Generated project artifacts should use neutral professional language.
+
+## Read Order
+
+Before substantial work, read:
+
+1. `SPEC.md` - product and gameplay goals.
+2. `DESIGN.md` - current architecture and phased design direction.
+3. `DOMAIN_MAP.md` - domain vocabulary and verified/assumed terms.
+4. `docs/adr/` - accepted design decisions.
+5. `docs/features/<feature>/INDEX.md` - active feature context, when relevant.
+
+## Current Direction
+
+- Phase 1 focuses on terrain, regional value, and combat.
+- The world model is East Asia-inspired but fictional and extensible.
+- The implementation may start with hexes, but the design must not block a
+  later move to province-style irregular maps.
+- Avoid feature work before the current design/spec is approved.
+
+## Verification
+
+This is currently a static HTML/CSS/JavaScript app. Use a local static server
+for browser verification.
+
+```bash
+python3 -m http.server 8007
+```
+
+Then open `http://localhost:8007`.
