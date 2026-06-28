@@ -19,6 +19,11 @@ Markers:
   global faction-wide force usable everywhere at once.
 - ✅ `Strait`: A narrow sea crossing that can allow limited naval movement,
   blockade, or amphibious attack.
+- ✅ `Active region`: A region currently simulated and presented in detail.
+- ✅ `Background region`: A known world-data region that may be abstracted,
+  deferred, or summarized until it becomes relevant.
+- ✅ `Relevance-filtered log`: Event log presentation based on player
+  influence, strategic importance, and recency rather than raw event volume.
 
 ## Terrain Concepts
 
@@ -40,6 +45,8 @@ Markers:
   placement.
 - ✅ The world should leave expansion slots for straits, islands, maritime
   powers, northern steppe pressure, and a northern India route.
+- ✅ Large world data such as 50x50 is acceptable if the playable and simulated
+  scope opens progressively.
 - ⛔ Do not model a literal historical map so strictly that gameplay balance and
   readability become secondary.
 
@@ -51,3 +58,4 @@ Markers:
   both.
 - ❓ Whether strait movement requires a harbor, technology, or a separate naval
   capacity.
+- ❓ Exact trigger for activating background regions.

@@ -17,6 +17,8 @@ Brainstorming and design framing.
 - Local terrain and regional economy should drive military and population
   differences.
 - Limited sea crossing should be included in the Phase 1 direction.
+- The world may be designed at 50x50 scale, but active playable scope should be
+  smaller and progressively opened.
 
 ## Candidate Slice
 
@@ -27,3 +29,4 @@ local garrisons, and AI target evaluation.
 
 - `docs/adr/0001-terrain-first-east-asia-inspired-world.md`
 - `docs/adr/0002-hex-first-province-compatible-map-units.md`
+- `docs/adr/0003-large-world-active-region-simulation.md`

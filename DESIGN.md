@@ -43,6 +43,11 @@ The system should avoid hard-coding logic that assumes every playable unit is
 forever a uniform hex. Use map-unit concepts in design language even while the
 rendering remains hex-based.
 
+The world data may be authored at a larger scale, such as 50x50. This does not
+mean every tile must be fully playable, simulated, or logged from turn one.
+Use active regions and relevance filtering so the player experiences a large
+world without being forced to manage all of it immediately.
+
 ## Phase 1 Feature Shape
 
 Phase 1 should solve the current military snowball problem by moving combat
