@@ -29,6 +29,10 @@ should serve the core land-conquest fun, while population and economy give land
 meaning. Governance-heavy systems should remain extensible but not required in
 the first Phase 1 slice.
 
+✅ The user approved a functional military model: standing forces, local
+garrisons, offensive mobilization, and local defense / latent mobilizable
+population. Conversion and usage risks must be clear.
+
 ## Working Hypothesis
 
 ❓ Phase 1 should start by adding terrain and regional data to map units before
@@ -46,3 +50,5 @@ garrisons, movement restrictions, AI evaluation, and later national management.
   replaced by a authored terrain layout.
 - Decide how local garrison interacts with population and faction-level military
   reserves.
+- Decide turn timing for mobilization, deployment, upkeep, recovery, battle, and
+  risk application.

@@ -27,6 +27,14 @@ Markers:
   settlement.
 - ✅ `Local garrison`: Military strength assigned to a specific map unit, not a
   global faction-wide force usable everywhere at once.
+- ✅ `Standing forces`: Maintained troops directly commanded for attack,
+  movement, and critical defense.
+- ✅ `Offensive mobilization`: Temporary risky force drawn from population or
+  local capacity to support attacks.
+- ✅ `Local defense`: Defensive support from garrisons and mobilizable local
+  population during invasion.
+- ✅ `Latent mobilizable population`: Economic population that may become levy,
+  militia, resistance, or rebellion force under pressure.
 - ✅ `Strait`: A narrow sea crossing that can allow limited naval movement,
   blockade, or amphibious attack.
 - ✅ `Active region`: A region currently simulated and presented in detail.
@@ -55,6 +63,8 @@ Markers:
   garrison, defense, movement/crossing constraints, and strategic tags.
 - ✅ Governance-heavy values such as loyalty, unrest, inflation, and deep event
   chains are expansion hooks, not first Phase 1 requirements.
+- ✅ Attacks should be standing-force centered with offensive mobilization as
+  risky support. Defense should combine garrison and local defense.
 
 ## World Direction
 

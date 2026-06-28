@@ -85,6 +85,11 @@ movement constraints, and strategic tags. Governance-heavy concepts such as
 loyalty, unrest, inflation, and event chains should be reserved as expansion
 hooks rather than first-slice requirements.
 
+Military strength should be split by function: standing forces, local garrisons,
+offensive mobilization, and local defense or latent mobilizable population.
+Attacks are standing-force centered, with offensive mobilization as a risky
+support option. Defense combines local garrison and local defense support.
+
 Province identity should inform AI and event logic. For example, a grain basin,
 mountain pass, river junction, coastal harbor, frontier, or old capital region
 should not be evaluated only by tile count.

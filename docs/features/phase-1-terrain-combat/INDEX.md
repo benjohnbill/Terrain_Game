@@ -35,6 +35,8 @@ Brainstorming and design framing.
 - Phase 1 uses combat + economy basics. Include regional population/economy,
   local garrison, defense, movement/crossing constraints, and strategic tags.
   Keep loyalty, unrest, inflation, and deep events as expansion hooks.
+- Military strength should split into standing forces, local garrisons,
+  offensive mobilization, and local defense / latent mobilizable population.
 
 ## Candidate Slice
 
@@ -51,3 +53,4 @@ local garrisons, and AI target evaluation.
 - `docs/adr/0006-province-archetype-regions-use-terrain-layers.md`
 - `docs/adr/0007-settlement-function-layer.md`
 - `docs/adr/0008-phase-1-combat-economy-stat-scope.md`
+- `docs/adr/0009-force-roles-and-mobilization-risks.md`
