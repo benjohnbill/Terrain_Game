@@ -47,6 +47,9 @@ Markers:
   powers, northern steppe pressure, and a northern India route.
 - ✅ Large world data such as 50x50 is acceptable if the playable and simulated
   scope opens progressively.
+- ✅ The first active Phase 1 campaign area should be around 25x25 to 30x30,
+  centered on central plains, southern grain regions, and northern frontier
+  terrain.
 - ⛔ Do not model a literal historical map so strictly that gameplay balance and
   readability become secondary.
 

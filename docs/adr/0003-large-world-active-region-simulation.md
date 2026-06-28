@@ -31,6 +31,11 @@ logged from the first turn. Use an active-region model:
 - some remote outcomes may be resolved retroactively when they become relevant,
   as long as the result is consistent and explainable.
 
+For the first Phase 1 campaign, activate roughly a 25x25 to 30x30 area centered
+on the central plains, southern grain regions, and part of the northern
+highland/steppe frontier. This should provide enough terrain variety for combat
+testing without exposing the full 50x50 world as detailed turn-by-turn gameplay.
+
 ## Consequences
 
 The map can be authored at a large scale without forcing every tile into the
@@ -44,3 +49,7 @@ strategic, and diplomatic events instead of raw world noise.
 
 This decision makes camera, zoom, region activation, scouting/influence, and
 log importance future design concerns.
+
+The first active area should be large enough to include meaningful differences
+between plains, rivers, grain basins, mountains/passes, northern frontier, and
+coastal access if the authored layout supports it.

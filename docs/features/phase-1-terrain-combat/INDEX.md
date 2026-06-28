@@ -19,6 +19,8 @@ Brainstorming and design framing.
 - Limited sea crossing should be included in the Phase 1 direction.
 - The world may be designed at 50x50 scale, but active playable scope should be
   smaller and progressively opened.
+- The first active Phase 1 area should be around 25x25 to 30x30, covering the
+  central plains, southern grain regions, and part of the northern frontier.
 
 ## Candidate Slice
 
