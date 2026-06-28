@@ -41,6 +41,8 @@ Brainstorming and design framing.
   Phase 1 should preserve high complexity with low micromanagement.
 - Strategic posture should begin as guidance for action-capacity allocation and
   situation analysis, not as a direct bonus system.
+- Action capacities should support partial carryover and emergency overclocking
+  between capacities at reduced efficiency.
 
 ## Candidate Slice
 
@@ -60,3 +62,4 @@ local garrisons, and AI target evaluation.
 - `docs/adr/0009-force-roles-and-mobilization-risks.md`
 - `docs/adr/0010-high-complexity-low-micromanagement.md`
 - `docs/adr/0011-strategic-posture-guidance.md`
+- `docs/adr/0012-action-capacity-carryover-and-overclock.md`

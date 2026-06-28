@@ -28,6 +28,13 @@ Strategic posture UI should help players interpret the situation and allocate
 four action capacities without becoming an automatic bonus mode. Postures are
 guidance, previews, warnings, and suggested priorities.
 
+Unused action capacity should partially carry over as preparation or accumulated
+work with decay and caps. Carryover behavior should be visible in the capacity
+UI.
+
+The player may overclock one capacity by redirecting another into it at reduced
+efficiency. This is an emergency freedom tool, not a normal optimal pattern.
+
 Each map unit should eventually carry:
 
 - terrain type,

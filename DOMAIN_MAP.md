@@ -42,6 +42,10 @@ Markers:
   allocating action capacities. It is not a direct hidden-bonus mode.
 - ✅ `Action capacity`: Turn-available national capability such as command,
   administration, diplomacy, or scholarship/technology.
+- ✅ `Capacity carryover`: Unused action capacity that partially persists into
+  later turns as preparation or accumulated work, subject to decay and caps.
+- ✅ `Capacity overclock`: Emergency redirection of one action capacity into
+  another at reduced efficiency and with opportunity costs.
 - ✅ `Strait`: A narrow sea crossing that can allow limited naval movement,
   blockade, or amphibious attack.
 - ✅ `Active region`: A region currently simulated and presented in detail.
@@ -76,6 +80,8 @@ Markers:
   consequences; it should not become repetitive low-level clicking.
 - ✅ Strategic posture presets may be intentionally extreme to show risky
   concentrated strategies, but the player should be able to fine-tune choices.
+- ✅ Carryover and overclock tradeoffs should be visible in capacity UI,
+  especially through hover/help details.
 
 ## World Direction
 

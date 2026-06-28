@@ -40,6 +40,9 @@ deep, but direct player operations per turn should remain limited and meaningful
 bonuses. Presets can be intentionally extreme, representing risky concentrated
 strategies, while the player fine-tunes action-capacity allocation.
 
+✅ The user approved partial carryover for unused action capacity and emergency
+cross-capacity overclocking at reduced efficiency.
+
 ## Working Hypothesis
 
 ❓ Phase 1 should start by adding terrain and regional data to map units before
@@ -61,3 +64,5 @@ garrisons, movement restrictions, AI evaluation, and later national management.
   risk application.
 - Decide minimum acceptable micromanagement for a turn.
 - Decide the initial four action capacities and the first posture guide presets.
+- Decide carryover rates, carryover caps, overclock conversion rates, and
+  overclock risks.
