@@ -36,6 +36,10 @@ population. Conversion and usage risks must be clear.
 ✅ The user wants high complexity with low micromanagement. The system can be
 deep, but direct player operations per turn should remain limited and meaningful.
 
+✅ The user wants strategic posture presets to act as guidance, not direct
+bonuses. Presets can be intentionally extreme, representing risky concentrated
+strategies, while the player fine-tunes action-capacity allocation.
+
 ## Working Hypothesis
 
 ❓ Phase 1 should start by adding terrain and regional data to map units before
@@ -56,3 +60,4 @@ garrisons, movement restrictions, AI evaluation, and later national management.
 - Decide turn timing for mobilization, deployment, upkeep, recovery, battle, and
   risk application.
 - Decide minimum acceptable micromanagement for a turn.
+- Decide the initial four action capacities and the first posture guide presets.

@@ -38,6 +38,10 @@ Markers:
 - ✅ `High complexity, low micromanagement`: Core design principle where deep
   simulation exists under the hood, but the player mainly issues strategic
   intent-level commands.
+- ✅ `Strategic posture`: A guidance preset for interpreting the turn and
+  allocating action capacities. It is not a direct hidden-bonus mode.
+- ✅ `Action capacity`: Turn-available national capability such as command,
+  administration, diplomacy, or scholarship/technology.
 - ✅ `Strait`: A narrow sea crossing that can allow limited naval movement,
   blockade, or amphibious attack.
 - ✅ `Active region`: A region currently simulated and presented in detail.
@@ -70,6 +74,8 @@ Markers:
   risky support. Defense should combine garrison and local defense.
 - ✅ Complexity is acceptable when it creates meaningful choices or readable
   consequences; it should not become repetitive low-level clicking.
+- ✅ Strategic posture presets may be intentionally extreme to show risky
+  concentrated strategies, but the player should be able to fine-tune choices.
 
 ## World Direction
 

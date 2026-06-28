@@ -21,6 +21,10 @@ The game should follow a high complexity, low micromanagement principle. The
 simulation may be deep, but the player should mainly make strategic choices
 instead of repeatedly executing low-level administrative steps.
 
+Strategic posture presets should guide player analysis rather than directly
+grant bonuses. Extreme postures can express risky national commitments, while
+the player retains control over concrete action-capacity allocation.
+
 The most important Phase 1 experience is:
 
 - reading the map,

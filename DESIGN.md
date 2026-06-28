@@ -24,6 +24,10 @@ Use high complexity with low micromanagement. Player-facing commands should
 express strategic intent, while internal systems translate those commands into
 mobilization, movement, garrison changes, costs, and risks.
 
+Strategic posture UI should help players interpret the situation and allocate
+four action capacities without becoming an automatic bonus mode. Postures are
+guidance, previews, warnings, and suggested priorities.
+
 Each map unit should eventually carry:
 
 - terrain type,
@@ -103,6 +107,9 @@ strategic tags rather than relying only on broad archetype region labels.
 
 Function should influence economy, recruitment, unrest, events, diplomacy, AI
 priorities, and player-readable strategic purpose.
+
+Province and target previews should show expected changes to command,
+administration, diplomacy, and scholarship/technology capacity where possible.
 
 ## Documentation Policy
 

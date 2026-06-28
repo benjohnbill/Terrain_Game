@@ -39,6 +39,8 @@ Brainstorming and design framing.
   offensive mobilization, and local defense / latent mobilizable population.
 - The player should not manually execute every low-level military/economic step.
   Phase 1 should preserve high complexity with low micromanagement.
+- Strategic posture should begin as guidance for action-capacity allocation and
+  situation analysis, not as a direct bonus system.
 
 ## Candidate Slice
 
@@ -57,3 +59,4 @@ local garrisons, and AI target evaluation.
 - `docs/adr/0008-phase-1-combat-economy-stat-scope.md`
 - `docs/adr/0009-force-roles-and-mobilization-risks.md`
 - `docs/adr/0010-high-complexity-low-micromanagement.md`
+- `docs/adr/0011-strategic-posture-guidance.md`
