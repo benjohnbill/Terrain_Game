@@ -23,6 +23,8 @@ Brainstorming and design framing.
   central plains, southern grain regions, and part of the northern frontier.
 - The active area should include about 25 to 40 named provinces to create
   regional identity and strategic causality.
+- Naming should combine historically legible large regions with fictional
+  East Asian-style province names.
 
 ## Candidate Slice
 
@@ -35,3 +37,4 @@ local garrisons, and AI target evaluation.
 - `docs/adr/0002-hex-first-province-compatible-map-units.md`
 - `docs/adr/0003-large-world-active-region-simulation.md`
 - `docs/adr/0004-named-provinces-over-terrain-layers.md`
+- `docs/adr/0005-hybrid-historical-fictional-place-names.md`

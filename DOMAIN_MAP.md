@@ -55,6 +55,9 @@ Markers:
   terrain.
 - ✅ The first active Phase 1 area should include roughly 25 to 40 named
   provinces layered over terrain/map units.
+- ✅ Place naming uses a hybrid policy: large geography may be historically
+  legible, while specific provinces generally use fictional East Asian-style
+  names.
 - ⛔ Do not model a literal historical map so strictly that gameplay balance and
   readability become secondary.
 

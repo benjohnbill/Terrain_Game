@@ -18,6 +18,9 @@ straits, islands, and a northern India expansion route.
 terrain categories. Population, terrain, history/background, and strategic role
 should differ by province.
 
+✅ The user prefers hybrid naming: historical flavor for large geography, with
+fictional names for specific provinces so detailed naming can be expanded later.
+
 ## Working Hypothesis
 
 ❓ Phase 1 should start by adding terrain and regional data to map units before
