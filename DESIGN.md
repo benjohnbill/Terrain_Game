@@ -35,6 +35,11 @@ UI.
 The player may overclock one capacity by redirecting another into it at reduced
 efficiency. This is an emergency freedom tool, not a normal optimal pattern.
 
+Core command UX should be map-first. The briefing and map should highlight the
+current turn's important threats, opportunities, defensive points, uncertain
+areas, and route constraints before the player chooses commands. Clicking a
+map location should open a prefilled command card rather than an empty form.
+
 Each map unit should eventually carry:
 
 - terrain type,

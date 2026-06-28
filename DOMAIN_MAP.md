@@ -42,6 +42,9 @@ Markers:
   allocating action capacities. It is not a direct hidden-bonus mode.
 - ✅ `Action capacity`: Turn-available national capability such as command,
   administration, diplomacy, or scholarship/technology.
+- ✅ `Map-first situation UX`: Interaction principle where briefing and map
+  highlights guide the player to important threats/opportunities before command
+  creation.
 - ✅ `Capacity carryover`: Unused action capacity that partially persists into
   later turns as preparation or accumulated work, subject to decay and caps.
 - ✅ `Capacity overclock`: Emergency redirection of one action capacity into
@@ -85,6 +88,8 @@ Markers:
   concentrated strategies, but the player should be able to fine-tune choices.
 - ✅ Carryover and overclock tradeoffs should be visible in capacity UI,
   especially through hover/help details.
+- ✅ Strong map highlights should be limited to the current turn's most relevant
+  locations to avoid visual noise.
 
 ## World Direction
 

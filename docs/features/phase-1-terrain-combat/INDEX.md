@@ -43,6 +43,8 @@ Brainstorming and design framing.
   situation analysis, not as a direct bonus system.
 - Action capacities should support partial carryover and emergency overclocking
   between capacities at reduced efficiency.
+- Core command creation should be map-first: briefing and map highlights lead
+  the player toward relevant threats/opportunities before a command card opens.
 
 ## Candidate Slice
 
@@ -63,3 +65,4 @@ local garrisons, and AI target evaluation.
 - `docs/adr/0010-high-complexity-low-micromanagement.md`
 - `docs/adr/0011-strategic-posture-guidance.md`
 - `docs/adr/0012-action-capacity-carryover-and-overclock.md`
+- `docs/adr/0013-map-first-situation-ux.md`

@@ -47,6 +47,10 @@ cross-capacity overclocking at reduced efficiency.
 mobilization, such as scholars or other non-military groups taking up weapons
 in a desperate situation, not only institutional support like analysis.
 
+✅ The user approved a map-first situation UX direction. Briefing, glow/pulse,
+hover reasons, confidence indicators, and prefilled command cards should guide
+command creation, with exact UI details deferred until mockups/build testing.
+
 ## Working Hypothesis
 
 ❓ Phase 1 should start by adding terrain and regional data to map units before
@@ -70,3 +74,4 @@ garrisons, movement restrictions, AI evaluation, and later national management.
 - Decide the initial four action capacities and the first posture guide presets.
 - Decide carryover rates, carryover caps, overclock conversion rates, and
   overclock risks.
+- Validate map-first situation UX with mockups and a playable build.
