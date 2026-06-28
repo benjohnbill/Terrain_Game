@@ -33,6 +33,10 @@ Each map unit should eventually carry:
 - supply and movement characteristics,
 - resource or strategic tags.
 
+Above map units, the active campaign should define named provinces. A province
+groups map units and provides identity: name, population weight, economic
+profile, strategic role, background, loyalty/unrest tendency, and event hooks.
+
 ## Map Representation Strategy
 
 Start with hexes because the prototype already uses hex rendering and
@@ -64,6 +68,10 @@ Candidate mechanics:
 - mountain/pass defensive value,
 - limited strait crossing and amphibious penalties,
 - AI evaluation based on local targets rather than raw global strength.
+
+Province identity should inform AI and event logic. For example, a grain basin,
+mountain pass, river junction, coastal harbor, frontier, or old capital region
+should not be evaluated only by tile count.
 
 ## Documentation Policy
 

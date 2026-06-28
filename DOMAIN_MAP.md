@@ -15,6 +15,9 @@ Markers:
 - ✅ `Faction`: A political actor controlling map units.
 - ✅ `Region value`: The combined economic, population, military, and strategic
   value of a map unit.
+- ✅ `Named province`: A medium-sized region composed of one or more map units
+  with identity, population weight, economic profile, strategic role,
+  background, and event hooks.
 - ✅ `Local garrison`: Military strength assigned to a specific map unit, not a
   global faction-wide force usable everywhere at once.
 - ✅ `Strait`: A narrow sea crossing that can allow limited naval movement,
@@ -50,6 +53,8 @@ Markers:
 - ✅ The first active Phase 1 campaign area should be around 25x25 to 30x30,
   centered on central plains, southern grain regions, and northern frontier
   terrain.
+- ✅ The first active Phase 1 area should include roughly 25 to 40 named
+  provinces layered over terrain/map units.
 - ⛔ Do not model a literal historical map so strictly that gameplay balance and
   readability become secondary.
 
@@ -62,3 +67,4 @@ Markers:
 - ❓ Whether strait movement requires a harbor, technology, or a separate naval
   capacity.
 - ❓ Exact trigger for activating background regions.
+- ❓ Exact list of initial named provinces.

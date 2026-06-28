@@ -21,6 +21,8 @@ Brainstorming and design framing.
   smaller and progressively opened.
 - The first active Phase 1 area should be around 25x25 to 30x30, covering the
   central plains, southern grain regions, and part of the northern frontier.
+- The active area should include about 25 to 40 named provinces to create
+  regional identity and strategic causality.
 
 ## Candidate Slice
 
@@ -32,3 +34,4 @@ local garrisons, and AI target evaluation.
 - `docs/adr/0001-terrain-first-east-asia-inspired-world.md`
 - `docs/adr/0002-hex-first-province-compatible-map-units.md`
 - `docs/adr/0003-large-world-active-region-simulation.md`
+- `docs/adr/0004-named-provinces-over-terrain-layers.md`

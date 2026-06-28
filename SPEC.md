@@ -25,12 +25,19 @@ The most important Phase 1 experience is:
 - accepting realistic costs from terrain, supply, and losses,
 - expanding without turning military snowballing into the only viable strategy.
 
+Phase 1 should not feel like only a set of generic terrain tiles. The first
+active area should include medium-sized named provinces with population,
+economy, terrain composition, strategic value, and background hooks.
+
 ## Phase Roadmap
 
 ### Phase 1: Terrain, Regions, and Combat
 
 Introduce region-level terrain, economy, population, local garrisons, defense,
 movement constraints, and limited sea crossing.
+
+The first active campaign should use roughly 25 to 40 named provinces layered
+over the underlying map units.
 
 ### Phase 2: Diplomacy and International Order
 
