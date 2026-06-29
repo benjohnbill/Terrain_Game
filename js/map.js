@@ -178,19 +178,26 @@ window.HexMap = class HexMap {
   // ──────────────────────────────────────────────
   // 맵 생성
   // ──────────────────────────────────────────────
-  generate(factionCount) {
+  generate(factionCount, options = {}) {
     this.hexes.clear();
 
     // 팩션 수에 따른 그리드 크기 결정
-    if (factionCount <= 4) {
+    if (options.phase1Active) {
+      this.gridCols = 30;
+      this.gridRows = 30;
+      this.hexSize = 18;
+    } else if (factionCount <= 4) {
       this.gridCols = 8;
       this.gridRows = 8;
+      this.hexSize = 38;
     } else if (factionCount === 5) {
       this.gridCols = 9;
       this.gridRows = 9;
+      this.hexSize = 38;
     } else {
       this.gridCols = 10;
       this.gridRows = 10;
+      this.hexSize = 38;
     }
 
     // 오프셋 좌표 → 축 좌표 변환하여 헥스 생성 (pointy-top, odd-r offset)
@@ -201,6 +208,10 @@ window.HexMap = class HexMap {
         const cell = new window.HexCell(q, r);
         this.hexes.set(cell.key(), cell);
       }
+    }
+
+    if (options.phase1Active) {
+      this._assignPhase1ProvinceData();
     }
 
     // 시작 위치를 맵 가장자리/코너에 배치
@@ -218,6 +229,19 @@ window.HexMap = class HexMap {
     }
 
     this._recalcOffset();
+  }
+
+  _assignPhase1ProvinceData() {
+    const provinces = window.PROVINCES || [];
+    if (provinces.length === 0) return;
+
+    this.hexes.forEach((hex) => {
+      const row = hex.r;
+      const col = hex.q + Math.floor(row / 2);
+      const provinceIndex = Math.abs(Math.floor(row / 5) * 5 + Math.floor(col / 6)) % provinces.length;
+      hex.applyProvince(provinces[provinceIndex]);
+      hex.informationConfidence = hex.owner === 0 ? 0.85 : 0.45;
+    });
   }
 
   _getStartPositions(factionCount) {

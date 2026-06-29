@@ -72,3 +72,46 @@ test('hex cells can hold province and terrain metadata', () => {
   assert.equal(cell.primaryFunction, 'administrative');
   assert.equal(cell.population, 27);
 });
+
+test('hex map can generate a 30x30 active terrain campaign area', () => {
+  const context = loadScripts(['js/domain-data.js', 'js/province-data.js', 'js/map.js']);
+  const canvas = {
+    width: 900,
+    height: 700,
+    parentElement: { clientWidth: 900, clientHeight: 700 },
+    getContext() {
+      return {
+        clearRect() {},
+        save() {},
+        restore() {},
+        fill() {},
+        stroke() {},
+        beginPath() {},
+        arc() {},
+        fillText() {},
+        createRadialGradient() {
+          return { addColorStop() {} };
+        }
+      };
+    },
+    addEventListener() {},
+    getBoundingClientRect() {
+      return { left: 0, top: 0, width: 900, height: 700 };
+    }
+  };
+  context.window.addEventListener = function addEventListener() {};
+  context.ResizeObserver = function ResizeObserver() {
+    return { observe() {} };
+  };
+  context.Path2D = function Path2D() {
+    return { moveTo() {}, lineTo() {}, closePath() {} };
+  };
+
+  const map = new context.HexMap(canvas);
+  map.generate(4, { phase1Active: true });
+
+  assert.equal(map.gridCols, 30);
+  assert.equal(map.gridRows, 30);
+  assert.equal(map.getTotalHexCount(), 900);
+  assert.ok(Array.from(map.getAllHexes().values()).some((hex) => hex.provinceId === 'luoyuan_plain'));
+});

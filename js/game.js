@@ -57,7 +57,7 @@ window.Game = class Game {
 
     // Create map
     this.map = new window.HexMap(canvas);
-    this.map.generate(count);
+    this.map.generate(count, { phase1Active: true });
 
     // Assign starting territories to faction objects
     this.map.getAllHexes().forEach((hex) => {
