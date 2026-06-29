@@ -65,7 +65,8 @@ function makeTargetGame(ctx, { faction, defenders, ownHexes, targetHexes }) {
     diplomacy: {
       isAlly: () => false,
       isAtWar: () => true,
-      getEnemies: () => defenders.map((defender) => defender.id)
+      getEnemies: () => defenders.map((defender) => defender.id),
+      getProposalsFor: () => []
     },
     getFaction: (id) => factionById[id] || null,
     getAliveFactions: () => [faction, ...defenders].filter((item) => item.alive)
@@ -253,4 +254,40 @@ test('defensive AI chooses the locally vulnerable border hex over a naturally st
   assert.equal(result.action, 'defend');
   assert.equal(result.params.targetHex, weakPlain);
   assert.equal(ai.defendingHex, weakPlain.key());
+});
+
+test('takeTurn attacks the locally weak target through the normal AI action path', () => {
+  const ctx = loadAIScripts();
+  ctx.Math.random = () => 0.5;
+
+  const ai = newFaction(ctx, 0, 120);
+  const strongOwner = newFaction(ctx, 1, 120);
+  const weakOwner = newFaction(ctx, 2, 20);
+
+  const staging = makeHex(ctx, 8, 7, 0, 'plains', 8, 8, 10, 20);
+  ai.territories.add(staging.key());
+
+  const weakLocalTarget = makeHex(ctx, 8, 8, 1, 'plains', 4, 6, 12, 24);
+  strongOwner.territories.add(weakLocalTarget.key());
+
+  const strongLocalTarget = makeHex(ctx, 9, 8, 2, 'mountain_pass', 24, 30, 8, 18);
+  weakOwner.territories.add(strongLocalTarget.key());
+
+  const events = [];
+  const game = makeTargetGame(ctx, {
+    faction: ai,
+    defenders: [strongOwner, weakOwner],
+    ownHexes: [staging],
+    targetHexes: [weakLocalTarget, strongLocalTarget]
+  });
+  game.rng = () => 0.5;
+  game.addEvent = (message, factionId) => events.push({ message, factionId });
+
+  const result = ctx.AIPlayer.takeTurn(game, ai);
+
+  assert.equal(result.action, 'attack');
+  assert.equal(result.params.targetHex, weakLocalTarget);
+  assert.equal(weakLocalTarget.owner, ai.id);
+  assert.equal(ai.actionTaken, true);
+  assert.equal(events.length, 1);
 });
