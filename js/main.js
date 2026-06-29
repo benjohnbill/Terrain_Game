@@ -255,7 +255,10 @@
     setupGameEventHandlers();
     currentUI.updateAll();
     if (currentGame.map) {
-      requestAnimationFrame(() => currentGame.map.render(currentGame));
+      requestAnimationFrame(() => {
+        currentGame.map.resize();
+        currentUI.updateAll();
+      });
     }
 
     // Handle resize

@@ -229,6 +229,16 @@ window.HexMap = class HexMap {
       });
     }
 
+    // Recompute confidence by final owner (phase1 only).
+    // _assignPhase1ProvinceData runs before owners are set, so its
+    // informationConfidence pass sees null owners everywhere.  This
+    // corrective pass fixes the split after ownership is settled.
+    if (options.phase1Active) {
+      this.hexes.forEach((hex) => {
+        hex.informationConfidence = hex.owner === 0 ? 0.85 : 0.45;
+      });
+    }
+
     this._recalcOffset();
   }
 

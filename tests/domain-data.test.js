@@ -115,3 +115,59 @@ test('hex map can generate a 30x30 active terrain campaign area', () => {
   assert.equal(map.getTotalHexCount(), 900);
   assert.ok(Array.from(map.getAllHexes().values()).some((hex) => hex.provinceId === 'luoyuan_plain'));
 });
+
+test('phase1Active map assigns informationConfidence based on final owner, not null', () => {
+  const context = loadScripts(['js/domain-data.js', 'js/province-data.js', 'js/map.js']);
+  const canvas = {
+    width: 900,
+    height: 700,
+    parentElement: { clientWidth: 900, clientHeight: 700 },
+    getContext() {
+      return {
+        clearRect() {},
+        save() {},
+        restore() {},
+        fill() {},
+        stroke() {},
+        beginPath() {},
+        arc() {},
+        fillText() {},
+        createRadialGradient() {
+          return { addColorStop() {} };
+        }
+      };
+    },
+    addEventListener() {},
+    getBoundingClientRect() {
+      return { left: 0, top: 0, width: 900, height: 700 };
+    }
+  };
+  context.window.addEventListener = function addEventListener() {};
+  context.ResizeObserver = function ResizeObserver() {
+    return { observe() {} };
+  };
+  context.Path2D = function Path2D() {
+    return { moveTo() {}, lineTo() {}, closePath() {} };
+  };
+
+  const map = new context.HexMap(canvas);
+  map.generate(4, { phase1Active: true });
+
+  const hexes = Array.from(map.getAllHexes().values());
+
+  // Player (faction 0) hexes must have high confidence
+  const playerHexes = hexes.filter((hex) => hex.owner === 0);
+  assert.ok(playerHexes.length > 0, 'at least one hex should be owned by faction 0');
+  assert.ok(
+    playerHexes.every((hex) => hex.informationConfidence === 0.85),
+    'all faction-0 hexes must have informationConfidence 0.85'
+  );
+
+  // All other hexes (enemy owners and unowned null) must have low confidence
+  const nonPlayerHexes = hexes.filter((hex) => hex.owner !== 0);
+  assert.ok(nonPlayerHexes.length > 0, 'there should be non-player hexes');
+  assert.ok(
+    nonPlayerHexes.every((hex) => hex.informationConfidence === 0.45),
+    'all non-faction-0 hexes (including null owner) must have informationConfidence 0.45'
+  );
+});
