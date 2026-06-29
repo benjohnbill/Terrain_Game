@@ -10,14 +10,37 @@ window.HexCell = class HexCell {
   constructor(q, r) {
     this.q = q;
     this.r = r;
-    this.owner = null;       // Faction ID 또는 null (중립)
-    this.building = null;    // 건물 ID 문자열 또는 null
-    this.population = 20;    // 기본 인구
-    this.terrain = 'plains'; // 지형 (현재 모두 평지)
+    this.owner = null;
+    this.building = null;
+    this.population = 20;
+    this.terrain = 'plains';
+    this.provinceId = null;
+    this.provinceName = null;
+    this.archetype = null;
+    this.primaryFunction = null;
+    this.economyValue = 10;
+    this.localGarrison = 8;
+    this.defenseValue = 10;
+    this.informationConfidence = 0.45;
+    this.strategicTags = [];
   }
 
   key() {
     return `${this.q},${this.r}`;
+  }
+
+  applyProvince(province) {
+    if (!province) return;
+    this.provinceId = province.id;
+    this.provinceName = province.name;
+    this.archetype = province.archetype;
+    this.terrain = province.primaryTerrain;
+    this.primaryFunction = province.primaryFunction;
+    this.population = Math.round(20 * province.populationWeight);
+    this.economyValue = Math.round(10 * province.economyWeight);
+    this.localGarrison = Math.round(8 * province.garrisonWeight);
+    this.defenseValue = Math.round(10 * province.defenseWeight);
+    this.strategicTags = Array.from(province.strategicTags);
   }
 };
 
@@ -38,6 +61,7 @@ window.HexMap = class HexMap {
     // 인터랙션 상태
     this.selectedHex = null;          // 선택된 헥스 키
     this.highlightedHexes = new Map(); // Map<hexKey, color>
+    this.situationHighlights = new Map();
     this.hoveredHex = null;           // 현재 호버 중인 헥스 키
     this._clickCallback = null;
     this._hoverCallback = null;
@@ -155,19 +179,26 @@ window.HexMap = class HexMap {
   // ──────────────────────────────────────────────
   // 맵 생성
   // ──────────────────────────────────────────────
-  generate(factionCount) {
+  generate(factionCount, options = {}) {
     this.hexes.clear();
 
     // 팩션 수에 따른 그리드 크기 결정
-    if (factionCount <= 4) {
+    if (options.phase1Active) {
+      this.gridCols = 30;
+      this.gridRows = 30;
+      this.hexSize = 18;
+    } else if (factionCount <= 4) {
       this.gridCols = 8;
       this.gridRows = 8;
+      this.hexSize = 38;
     } else if (factionCount === 5) {
       this.gridCols = 9;
       this.gridRows = 9;
+      this.hexSize = 38;
     } else {
       this.gridCols = 10;
       this.gridRows = 10;
+      this.hexSize = 38;
     }
 
     // 오프셋 좌표 → 축 좌표 변환하여 헥스 생성 (pointy-top, odd-r offset)
@@ -178,6 +209,10 @@ window.HexMap = class HexMap {
         const cell = new window.HexCell(q, r);
         this.hexes.set(cell.key(), cell);
       }
+    }
+
+    if (options.phase1Active) {
+      this._assignPhase1ProvinceData();
     }
 
     // 시작 위치를 맵 가장자리/코너에 배치
@@ -194,7 +229,30 @@ window.HexMap = class HexMap {
       });
     }
 
+    // Recompute confidence by final owner (phase1 only).
+    // _assignPhase1ProvinceData runs before owners are set, so its
+    // informationConfidence pass sees null owners everywhere.  This
+    // corrective pass fixes the split after ownership is settled.
+    if (options.phase1Active) {
+      this.hexes.forEach((hex) => {
+        hex.informationConfidence = hex.owner === 0 ? 0.85 : 0.45;
+      });
+    }
+
     this._recalcOffset();
+  }
+
+  _assignPhase1ProvinceData() {
+    const provinces = window.PROVINCES || [];
+    if (provinces.length === 0) return;
+
+    this.hexes.forEach((hex) => {
+      const row = hex.r;
+      const col = hex.q + Math.floor(row / 2);
+      const provinceIndex = Math.abs(Math.floor(row / 5) * 5 + Math.floor(col / 6)) % provinces.length;
+      hex.applyProvince(provinces[provinceIndex]);
+      hex.informationConfidence = hex.owner === 0 ? 0.85 : 0.45;
+    });
   }
 
   _getStartPositions(factionCount) {
@@ -378,6 +436,13 @@ window.HexMap = class HexMap {
     this.highlightedHexes.clear();
   }
 
+  setSituationHighlights(highlights) {
+    this.situationHighlights.clear();
+    for (const item of highlights || []) {
+      this.situationHighlights.set(item.key, item);
+    }
+  }
+
   setSelectedHex(hexKey) {
     this.selectedHex = hexKey;
   }
@@ -409,6 +474,7 @@ window.HexMap = class HexMap {
     const isHighlighted = this.highlightedHexes.has(key);
     const isHovered = this.hoveredHex === key;
     const highlightColor = this.highlightedHexes.get(key);
+    const situationHighlight = this.situationHighlights.get(key);
 
     ctx.save();
 
@@ -442,6 +508,15 @@ window.HexMap = class HexMap {
     ctx.shadowBlur = 0;
 
     // ── 테두리 ──
+    if (situationHighlight && !isHighlighted && !isSelected) {
+      const pulse = 0.45 + 0.35 * Math.sin(this._pulsePhase * Math.PI * 2);
+      ctx.strokeStyle = situationHighlight.color;
+      ctx.lineWidth = 2 + pulse;
+      ctx.globalAlpha = 0.65;
+      ctx.stroke(path);
+      ctx.globalAlpha = 1;
+    }
+
     if (isHighlighted) {
       // 공격 가능 헥스: 펄스 테두리
       const pulse = 0.5 + 0.5 * Math.sin(this._pulsePhase * Math.PI * 2);

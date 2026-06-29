@@ -26,7 +26,9 @@ window.GameUI = class GameUI {
       'btn-end-turn',
       'hex-tooltip',
       'modal-overlay', 'modal-title', 'modal-body', 'modal-buttons',
-      'notification-container'
+      'notification-container',
+      'situation-briefing', 'command-card', 'capacity-bar',
+      'strategy-report',
     ];
     for (const id of ids) {
       this.elements[id] = document.getElementById(id);
@@ -48,8 +50,12 @@ window.GameUI = class GameUI {
   updateAll() {
     this.updateTurnInfo();
     this.updateFactionPanel();
+    this.updateCapacityBar();
+    this.updateSituationBriefing();
+    this.updateCommandCard();
     this.updateActionButtons();
     this.updateEventLog();
+    this.updateStrategyReport();
     this.updateFactionOverview();
     if (this.game.map) this.game.map.render(this.game);
   }
@@ -84,6 +90,67 @@ window.GameUI = class GameUI {
       panel.style.borderColor = f.color;
       panel.style.boxShadow   = `0 0 20px ${f.color}33, inset 0 0 20px ${f.color}11`;
     }
+  }
+
+  updateCapacityBar() {
+    const el = this.elements['capacity-bar'];
+    if (!el) return;
+    const state = this.game.capacityState;
+    if (!state || !state.available) {
+      el.innerHTML = '';
+      return;
+    }
+    const labels = window.ACTION_CAPACITIES || {};
+    el.innerHTML = Object.entries(state.available).map(([key, value]) => {
+      const label = labels[key] ? labels[key].shortLabel : key;
+      const focus = state.focus && state.focus[key] ? state.focus[key] : '-';
+      return `<div class="capacity-pill" title="Focus: ${focus}">
+        <span>${label}</span><strong>${value}</strong>
+      </div>`;
+    }).join('');
+  }
+
+  updateSituationBriefing() {
+    const el = this.elements['situation-briefing'];
+    if (!el) return;
+    const situation = this.game.situation;
+    if (!situation || !situation.briefing || situation.briefing.length === 0) {
+      el.innerHTML = '<div class="briefing-empty">이번 턴 주요 형세가 없습니다.</div>';
+      return;
+    }
+    el.innerHTML = `
+      <div class="briefing-title">형세 브리핑</div>
+      ${situation.briefing.map((item) => `
+        <button class="briefing-item" data-key="${item.key}">
+          <span class="briefing-item-title">${item.title}</span>
+          <span class="briefing-item-text">${item.text}</span>
+          <span class="briefing-confidence">신뢰도 ${Math.round(item.confidence * 100)}%</span>
+        </button>
+      `).join('')}
+    `;
+  }
+
+  updateCommandCard() {
+    const el = this.elements['command-card'];
+    if (!el) return;
+    const command = this.game.selectedCommand;
+    if (!command) {
+      el.classList.add('hidden');
+      el.innerHTML = '';
+      return;
+    }
+    el.classList.remove('hidden');
+    el.innerHTML = `
+      <div class="command-card-title">${command.targetName}</div>
+      <div class="command-card-row"><span>명령</span><strong>${command.intentLabel}</strong></div>
+      <div class="command-card-row"><span>강도</span><strong>${command.intensity}</strong></div>
+      <div class="command-card-row"><span>정보 신뢰도</span><strong>${Math.round(command.confidence * 100)}%</strong></div>
+      <p>${command.reason}</p>
+      <div class="command-card-actions">
+        <button class="modal-btn small primary" type="button">명령 추가</button>
+        <button class="modal-btn small" type="button">조정</button>
+      </div>
+    `;
   }
 
   /* ─────────────────── action buttons ─────────────────── */
@@ -156,6 +223,22 @@ window.GameUI = class GameUI {
         ${!f.alive ? '<div style="color:#ff4444;font-size:0.7rem;font-weight:700">멸망</div>' : ''}
       </div>`;
     }).join('');
+  }
+
+  updateStrategyReport() {
+    const el = this.elements['strategy-report'];
+    if (!el) return;
+    const report = this.game.strategyReport || [];
+    if (report.length === 0) {
+      el.innerHTML = '<div class="strategy-report-empty">턴 처리 후 주요 결과가 여기에 요약됩니다.</div>';
+      return;
+    }
+    el.innerHTML = report.map((item) => `
+      <div class="strategy-report-item ${item.type}">
+        <strong>${item.title}</strong>
+        <span>${item.text}</span>
+      </div>
+    `).join('');
   }
 
   /* ═══════════════════ MODALS ═══════════════════ */

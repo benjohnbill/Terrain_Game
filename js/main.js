@@ -254,6 +254,12 @@
 
     setupGameEventHandlers();
     currentUI.updateAll();
+    if (currentGame.map) {
+      requestAnimationFrame(() => {
+        currentGame.map.resize();
+        currentUI.updateAll();
+      });
+    }
 
     // Handle resize
     window.addEventListener('resize', () => {
