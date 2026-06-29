@@ -148,3 +148,66 @@ test('preview rejects non-adjacent attack targets with the same player-facing re
   assert.equal(preview.valid, false);
   assert.equal(preview.message, '인접한 영토만 공격할 수 있습니다.');
 });
+
+test('Game creates an attack command preview for an adjacent enemy target', () => {
+  const ctx = loadScripts([
+    'js/domain-data.js',
+    'js/province-data.js',
+    'js/capacity.js',
+    'js/situation.js',
+    'js/buildings.js',
+    'js/tech.js',
+    'js/faction.js',
+    'js/map.js',
+    'js/diplomacy.js',
+    'js/combat.js',
+    'js/actions.js',
+    'js/command-preview.js',
+    'js/game.js'
+  ]);
+
+  const game = Object.create(ctx.Game.prototype);
+  const attacker = new ctx.Faction({ id: 0, name: 'A', color: '#000', colorLight: '#111', emoji: 'A' }, false);
+  const defender = new ctx.Faction({ id: 1, name: 'D', color: '#111', colorLight: '#222', emoji: 'D' }, true);
+  attacker.gold = 1000;
+  attacker.military = 60;
+  attacker.population = 200;
+
+  const ownHex = new ctx.HexCell(2, 2);
+  ownHex.owner = 0;
+  attacker.territories.add(ownHex.key());
+
+  const targetHex = new ctx.HexCell(2, 3);
+  targetHex.owner = 1;
+  targetHex.provinceName = '관중 관문';
+  targetHex.localGarrison = 8;
+  targetHex.defenseValue = 12;
+  defender.territories.add(targetHex.key());
+
+  game.factions = [attacker, defender];
+  game.currentTurnIndex = 0;
+  game.situation = { highlights: [] };
+  game.selectedCommand = null;
+  game.map = {
+    getNeighbors: (q, r) => {
+      if (q === targetHex.q && r === targetHex.r) return [{ q: ownHex.q, r: ownHex.r }];
+      if (q === ownHex.q && r === ownHex.r) return [{ q: targetHex.q, r: targetHex.r }];
+      return [];
+    },
+    getHex: (q, r) => {
+      if (q === ownHex.q && r === ownHex.r) return ownHex;
+      if (q === targetHex.q && r === targetHex.r) return targetHex;
+      return null;
+    },
+    getHexByKey: (key) => (key === targetHex.key() ? targetHex : ownHex)
+  };
+  game.diplomacy = { isAlly: () => false, isAtWar: () => true };
+
+  const command = game.createCommandForHex(targetHex);
+
+  assert.equal(command.intent, 'attack');
+  assert.equal(command.targetKey, targetHex.key());
+  assert.equal(command.preview.kind, 'attack');
+  assert.equal(command.preview.valid, true);
+  assert.equal(command.mobilize, false);
+});

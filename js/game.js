@@ -113,6 +113,7 @@ window.Game = class Game {
 
   createCommandForHex(hex) {
     if (!hex || !this.situation || !window.SituationAnalyzer) return null;
+    const faction = this.getCurrentFaction();
     const highlight = this.situation.highlights.find((item) => item.key === hex.key()) || {
       key: hex.key(),
       provinceName: hex.provinceName || hex.key(),
@@ -120,8 +121,53 @@ window.Game = class Game {
       confidence: hex.informationConfidence || 0.4,
       reason: '이 지역의 형세를 확인합니다.'
     };
-    this.selectedCommand = window.SituationAnalyzer.createCommandDefault(highlight);
+
+    let command = window.SituationAnalyzer.createCommandDefault(highlight);
+    const canAttack = hex.owner !== faction.id &&
+      window.ActionSystem._isAdjacentToFaction(this, faction.id, hex.q, hex.r) &&
+      (hex.owner === null || !this.diplomacy.isAlly(faction.id, hex.owner));
+
+    if (canAttack && window.CommandPreview) {
+      command = Object.assign({}, command, {
+        intent: 'attack',
+        intentLabel: window.COMMAND_INTENTS.attack.label,
+        mobilize: false,
+        preview: window.CommandPreview.buildAttackPreview(this, faction, hex, { mobilize: false })
+      });
+    }
+
+    this.selectedCommand = command;
     return this.selectedCommand;
+  }
+
+  refreshSelectedCommandPreview(options) {
+    if (!this.selectedCommand || !window.CommandPreview) return null;
+    const targetHex = this.map.getHexByKey(this.selectedCommand.targetKey);
+    if (!targetHex || this.selectedCommand.intent !== 'attack') return this.selectedCommand;
+    const mobilize = !!(options && options.mobilize);
+    this.selectedCommand.mobilize = mobilize;
+    this.selectedCommand.preview = window.CommandPreview.buildAttackPreview(
+      this,
+      this.getCurrentFaction(),
+      targetHex,
+      { mobilize }
+    );
+    return this.selectedCommand;
+  }
+
+  executeSelectedCommand(options) {
+    if (!this.selectedCommand) {
+      return { success: false, message: '선택된 명령이 없습니다.' };
+    }
+    const targetHex = this.map.getHexByKey(this.selectedCommand.targetKey);
+    if (!targetHex) {
+      return { success: false, message: '대상 지역이 없습니다.' };
+    }
+    if (this.selectedCommand.intent === 'attack') {
+      const mobilize = !!(options && options.mobilize);
+      return this.executeAction('attack', { targetHex, mobilize });
+    }
+    return { success: false, message: '이 명령은 아직 실행할 수 없습니다.' };
   }
 
   /* ──────────────────── getters ──────────────────── */
@@ -193,9 +239,10 @@ window.Game = class Game {
     }
 
     // Clear selection state
-    this.selectedAction = null;
-    this.selectedHex    = null;
-    this.phase          = 'select_action';
+    this.selectedAction  = null;
+    this.selectedHex     = null;
+    this.selectedCommand = null;
+    this.phase           = 'select_action';
     if (this.map) this.map.clearHighlights();
 
     // Victory check after action
