@@ -167,17 +167,23 @@ test('AI scoring penalizes coast and strait attacks unless a port mitigates the 
     targetHexes: [coastWithPort]
   });
 
-  const noPortScore = ctx.AIPlayer.scoreTarget(noPortGame, ai, coastWithoutPort);
-  const portScore = ctx.AIPlayer.scoreTarget(portGame, ai, coastWithPort);
-
+  const originalComputeAttackForce = ctx.CombatSystem.computeAttackForce;
   const originalCrossingPenalty = ctx.CombatSystem.crossingPenalty;
+  let explicitPenaltyScore;
+  let noPenaltyScore;
   try {
+    ctx.CombatSystem.computeAttackForce = () => 90;
+    explicitPenaltyScore = ctx.AIPlayer.scoreTarget(noPortGame, ai, coastWithoutPort);
     ctx.CombatSystem.crossingPenalty = () => 1;
-    const noPenaltyScore = ctx.AIPlayer.scoreTarget(noPortGame, ai, coastWithoutPort);
-    assert.ok(noPenaltyScore > noPortScore);
+    noPenaltyScore = ctx.AIPlayer.scoreTarget(noPortGame, ai, coastWithoutPort);
   } finally {
+    ctx.CombatSystem.computeAttackForce = originalComputeAttackForce;
     ctx.CombatSystem.crossingPenalty = originalCrossingPenalty;
   }
+  assert.ok(noPenaltyScore > explicitPenaltyScore);
+
+  const noPortScore = ctx.AIPlayer.scoreTarget(noPortGame, ai, coastWithoutPort);
+  const portScore = ctx.AIPlayer.scoreTarget(portGame, ai, coastWithPort);
   assert.ok(portScore > noPortScore);
 });
 
