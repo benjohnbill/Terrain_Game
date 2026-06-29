@@ -66,3 +66,5 @@ local garrisons, and AI target evaluation.
 - `docs/adr/0011-strategic-posture-guidance.md`
 - `docs/adr/0012-action-capacity-carryover-and-overclock.md`
 - `docs/adr/0013-map-first-situation-ux.md`
+- `docs/adr/0014-local-garrison-sustainment.md`
+- `docs/adr/0015-strait-crossing-and-deferred-naval.md`

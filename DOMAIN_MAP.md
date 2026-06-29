@@ -26,7 +26,10 @@ Markers:
   port city, mining/workshop district, scholarly/religious center, or frontier
   settlement.
 - ✅ `Local garrison`: Military strength assigned to a specific map unit, not a
-  global faction-wide force usable everywhere at once.
+  global faction-wide force usable everywhere at once. Sustained by its own
+  province economy and population, not the national treasury; standing forces
+  carry national upkeep. This keeps a faction from being strong on every front
+  at once.
 - ✅ `Standing forces`: Maintained troops directly commanded for attack,
   movement, and critical defense.
 - ✅ `Offensive mobilization`: Temporary risky force drawn from population or
@@ -53,7 +56,10 @@ Markers:
   populations such as scholars, officials, merchants, or workers are pulled into
   direct defense or combat at severe future cost.
 - ✅ `Strait`: A narrow sea crossing that can allow limited naval movement,
-  blockade, or amphibious attack.
+  blockade, or amphibious attack. Phase 1 allows strait/coast crossing with a
+  movement and amphibious combat penalty; port/harbor function reduces the
+  penalty. No separate naval capacity or force role in Phase 1. A true naval
+  system (naval capacity, blockade, sea movement) is a later-phase candidate.
 - ✅ `Active region`: A region currently simulated and presented in detail.
 - ✅ `Background region`: A known world-data region that may be abstracted,
   deferred, or summarized until it becomes relevant.
@@ -100,11 +106,12 @@ Markers:
   powers, northern steppe pressure, and a northern India route.
 - ✅ Large world data such as 50x50 is acceptable if the playable and simulated
   scope opens progressively.
-- ✅ The first active Phase 1 campaign area should be around 25x25 to 30x30,
-  centered on central plains, southern grain regions, and northern frontier
-  terrain.
-- ✅ The first active Phase 1 area should include roughly 25 to 40 named
-  provinces layered over terrain/map units.
+- ✅ The first active Phase 1 campaign area is 30x30, centered on central
+  plains, southern grain regions, and northern frontier terrain, within the
+  accepted 25x25 to 30x30 range. World data scale remains 50x50.
+- ✅ The first active Phase 1 area uses 30 named provinces, drafted in
+  `js/province-data.js` and subject to balancing, layered over terrain/map
+  units. They span all twelve accepted archetype regions.
 - ✅ Place naming uses a hybrid policy: large geography may be historically
   legible, while specific provinces generally use fictional East Asian-style
   names.
@@ -113,16 +120,36 @@ Markers:
 - ⛔ Do not model a literal historical map so strictly that gameplay balance and
   readability become secondary.
 
+## Resolved Phase 1 Decisions
+
+Previously open, now decided. Pointers show where each decision lives.
+
+- ✅ Initial playable map size: 30x30 active area, 50x50 world data
+  (ADR 0003; plan `docs/superpowers/plans/2026-06-29-phase-1-map-command-slice.md`).
+- ✅ Phase 1 terrain taxonomy: fixed to seven types — plains, grain_basin,
+  mountain_pass, river, coast_strait, steppe_highland, frontier_basin
+  (`js/domain-data.js`).
+- ✅ Initial named provinces: 30 provinces drafted in `js/province-data.js`,
+  subject to balancing.
+- ✅ Active archetype regions: all twelve accepted regions are represented by
+  the initial 30 provinces.
+- ✅ Local garrison sustainment: sustained by local province economy and
+  population, not the national treasury (see `Local garrison`).
+- ✅ Strait movement: penalty-based crossing with port mitigation, no Phase 1
+  naval system (see `Strait`).
+- ✅ Province primary function: assigned for all 30 provinces
+  (`js/province-data.js`).
+
 ## Open Questions
 
-- ❓ Initial playable map size.
-- ❓ Exact terrain taxonomy for Phase 1.
-- ❓ Whether local garrison is recruited from population, paid from treasury, or
-  both.
-- ❓ Whether strait movement requires a harbor, technology, or a separate naval
-  capacity.
-- ❓ Exact trigger for activating background regions.
-- ❓ Exact list of initial named provinces.
-- ❓ Exact Phase 1 subset of archetype regions to activate.
-- ❓ Exact primary and secondary function assignments for the initial named
-  provinces.
+- ❓ Exact trigger for activating background regions. Deferred by decision:
+  Phase 1 uses a static authored active area; dynamic activation (influence,
+  scouting, diplomatic awareness, campaign scope) is a later-phase concern
+  (ADR 0003).
+- ❓ Secondary function assignments for the initial provinces. Primary functions
+  are assigned; optional secondary functions are deferred to a province
+  content/balancing pass (`secondaryFunction` is currently null).
+- ❓ Concrete numeric balancing of population, economy, garrison, defense, and
+  capacity generation across the 30 provinces.
+- ❓ Whether a true naval system (naval capacity/force role, blockade, sea
+  movement) is introduced in a later phase.
