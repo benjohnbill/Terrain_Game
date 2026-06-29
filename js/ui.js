@@ -44,6 +44,14 @@ window.GameUI = class GameUI {
     const el = this.elements[id];
     if (el) el.innerHTML = html;
   }
+  _escape(text) {
+    return String(text)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
 
   /* ─────────────────── update all ─────────────────── */
 
@@ -139,18 +147,89 @@ window.GameUI = class GameUI {
       el.innerHTML = '';
       return;
     }
+
     el.classList.remove('hidden');
+
+    if (command.preview && command.preview.kind === 'attack') {
+      const preview = command.preview;
+      const forecast = preview.forecast;
+      const warningHTML = preview.warnings.length > 0
+        ? `<div class="command-warnings">${preview.warnings.map((warning) => `
+            <div class="command-warning ${warning.level}">${this._escape(warning.text)}</div>
+          `).join('')}</div>`
+        : '';
+      const capacityText = preview.capacityCost
+        ? `지휘 ${preview.capacityCost.amount}`
+        : '없음';
+      const mobilizedText = preview.mobilization.enabled
+        ? `${preview.mobilization.estimatedTroops}명 / 인구 -${preview.mobilization.populationCost}`
+        : '사용 안 함';
+
+      el.innerHTML = `
+        <div class="command-card-title">${this._escape(command.targetName)}</div>
+        <div class="command-card-row"><span>명령</span><strong>${this._escape(command.intentLabel)}</strong></div>
+        <div class="command-card-row"><span>공격 비용</span><strong>💰${preview.attackCost}</strong></div>
+        <div class="command-card-row"><span>예상 전력</span><strong>⚔${preview.attackForce} vs 🛡${preview.defenseForce}</strong></div>
+        <div class="command-card-row"><span>전황</span><strong>${forecast ? forecast.band : '-'}</strong></div>
+        <div class="command-card-row"><span>예상 범위</span><strong>${forecast ? `${forecast.low.toFixed(2)}-${forecast.high.toFixed(2)}` : '-'}</strong></div>
+        <label class="command-toggle">
+          <input id="command-mobilize-toggle" type="checkbox" ${preview.mobilization.enabled ? 'checked' : ''}>
+          <span>공세 동원</span>
+        </label>
+        <div class="command-card-row"><span>동원</span><strong>${mobilizedText}</strong></div>
+        <div class="command-card-row"><span>미래 비용</span><strong>${capacityText}</strong></div>
+        ${warningHTML}
+        <p>${this._escape(preview.message)}</p>
+        <div class="command-card-actions">
+          <button id="command-confirm-btn" class="modal-btn small primary" type="button" ${preview.valid ? '' : 'disabled'}>공격 실행</button>
+          <button id="command-cancel-btn" class="modal-btn small" type="button">취소</button>
+        </div>
+      `;
+      this.bindCommandCardActions();
+      return;
+    }
+
     el.innerHTML = `
-      <div class="command-card-title">${command.targetName}</div>
-      <div class="command-card-row"><span>명령</span><strong>${command.intentLabel}</strong></div>
-      <div class="command-card-row"><span>강도</span><strong>${command.intensity}</strong></div>
+      <div class="command-card-title">${this._escape(command.targetName)}</div>
+      <div class="command-card-row"><span>명령</span><strong>${this._escape(command.intentLabel)}</strong></div>
+      <div class="command-card-row"><span>강도</span><strong>${this._escape(command.intensity)}</strong></div>
       <div class="command-card-row"><span>정보 신뢰도</span><strong>${Math.round(command.confidence * 100)}%</strong></div>
-      <p>${command.reason}</p>
-      <div class="command-card-actions">
-        <button class="modal-btn small primary" type="button">명령 추가</button>
-        <button class="modal-btn small" type="button">조정</button>
-      </div>
+      <p>${this._escape(command.reason)}</p>
     `;
+  }
+
+  bindCommandCardActions() {
+    const toggle = document.getElementById('command-mobilize-toggle');
+    if (toggle) {
+      toggle.addEventListener('change', () => {
+        this.game.refreshSelectedCommandPreview({ mobilize: toggle.checked });
+        this.updateCommandCard();
+      });
+    }
+
+    const confirm = document.getElementById('command-confirm-btn');
+    if (confirm) {
+      confirm.addEventListener('click', () => {
+        const mobilize = !!(document.getElementById('command-mobilize-toggle') || {}).checked;
+        const result = this.game.executeSelectedCommand({ mobilize });
+        if (result.success && result.attackRoll !== undefined) {
+          this.showBattleResult(result);
+        } else if (this.game.onNotification) {
+          this.game.onNotification(result.message, result.success ? 'success' : 'warning');
+        }
+        this.updateAll();
+      });
+    }
+
+    const cancel = document.getElementById('command-cancel-btn');
+    if (cancel) {
+      cancel.addEventListener('click', () => {
+        this.game.selectedCommand = null;
+        this.updateCommandCard();
+        if (this.game.map) this.game.map.setSelectedHex(null);
+        if (this.game.onUpdate) this.game.onUpdate();
+      });
+    }
   }
 
   /* ─────────────────── action buttons ─────────────────── */
