@@ -38,3 +38,24 @@ test('domain catalogs expose accepted terrain, function, posture, focus, and com
   assert.equal(context.FOCUS_OPTIONS.command.scouting.label, '정찰');
   assert.equal(context.COMMAND_INTENTS.scout.defaultIntensity, 'standard');
 });
+
+test('initial province data has 30 named provinces with valid domain keys', () => {
+  const context = loadScripts(['js/domain-data.js', 'js/province-data.js']);
+
+  assert.equal(context.PROVINCES.length, 30);
+  const names = new Set(context.PROVINCES.map((province) => province.name));
+  assert.equal(names.size, 30);
+
+  for (const province of context.PROVINCES) {
+    assert.ok(context.ARCHETYPE_REGIONS[province.archetype], province.id);
+    assert.ok(context.TERRAIN_TYPES[province.primaryTerrain], province.id);
+    assert.ok(context.FUNCTION_TYPES[province.primaryFunction], province.id);
+    assert.equal(typeof province.populationWeight, 'number');
+    assert.equal(typeof province.economyWeight, 'number');
+    assert.equal(typeof province.garrisonWeight, 'number');
+    assert.equal(typeof province.defenseWeight, 'number');
+  }
+
+  assert.equal(context.getProvinceById('luoyuan_plain').name, '낙원 평원');
+  assert.equal(context.getProvinceById('hanjing_waterway').primaryTerrain, 'river');
+});
