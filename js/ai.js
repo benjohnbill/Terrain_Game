@@ -201,6 +201,14 @@ window.AIPlayer = class AIPlayer {
     });
   }
 
+  static _adjustDefenseForWallIgnore(faction, hex, defenseForce) {
+    if (hex.building === 'wall' && faction.canIgnoreWalls()) {
+      const wallDef = window.BUILDINGS.wall.effects.defenseBonus || 0;
+      return Math.max(1, defenseForce - wallDef);
+    }
+    return defenseForce;
+  }
+
   static scoreTarget(game, faction, hex) {
     if (!hex) return -Infinity;
     if (hex.owner === faction.id) return -Infinity;
@@ -209,7 +217,8 @@ window.AIPlayer = class AIPlayer {
     const defender = hex.owner === null ? null : game.getFaction(hex.owner);
     const portMitigation = AIPlayer._hasPortMitigation(game, faction.id, hex);
     const attackForce = window.CombatSystem.computeAttackForce(faction, hex, { portMitigation });
-    const defenseForce = window.CombatSystem.computeDefenseForce(hex, defender && defender.alive ? defender : null);
+    const rawDefenseForce = window.CombatSystem.computeDefenseForce(hex, defender && defender.alive ? defender : null);
+    const defenseForce = AIPlayer._adjustDefenseForWallIgnore(faction, hex, rawDefenseForce);
     const forecast = window.CombatSystem.forecast(attackForce, defenseForce);
     const crossingPenalty = window.CombatSystem.crossingPenalty(hex.terrain, portMitigation);
     const ownAdj = AIPlayer._countOwnAdjacent(game, faction.id, hex);

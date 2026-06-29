@@ -99,3 +99,39 @@ test('AI prefers a weak local garrison even when it belongs to a strong faction'
   const chosen = ctx.AIPlayer.chooseBestTarget(game, ai);
   assert.equal(chosen, weakLocalTarget);
 });
+
+test('AI scoring ignores wall defense when attacker has wall-ignore technology', () => {
+  const ctx = loadAIScripts();
+  ctx.Math.random = () => 0.5;
+
+  const ai = newFaction(ctx, 0, 90);
+  ai.techs.military = 3;
+
+  const defender = newFaction(ctx, 1, 60);
+  const staging = makeHex(ctx, 1, 0, 0, 'plains', 8, 8, 10, 20);
+  ai.territories.add(staging.key());
+
+  const wallTarget = makeHex(ctx, 1, 1, 1, 'plains', 8, 10, 12, 20);
+  wallTarget.building = 'wall';
+  defender.territories.add(wallTarget.key());
+  defender.buildings.set(wallTarget.key(), 'wall');
+
+  const wallGame = makeTargetGame(ctx, {
+    faction: ai,
+    defenders: [defender],
+    ownHexes: [staging],
+    targetHexes: [wallTarget]
+  });
+
+  const noWallTarget = makeHex(ctx, 2, 1, 1, 'plains', 8, 10, 12, 20);
+  defender.territories.add(noWallTarget.key());
+
+  const noWallGame = makeTargetGame(ctx, {
+    faction: ai,
+    defenders: [defender],
+    ownHexes: [staging],
+    targetHexes: [noWallTarget]
+  });
+
+  assert.equal(ctx.AIPlayer.scoreTarget(wallGame, ai, wallTarget), ctx.AIPlayer.scoreTarget(noWallGame, ai, noWallTarget));
+});
