@@ -26,6 +26,7 @@ window.Game = class Game {
     this.situation        = null;
     this.capacityState    = null;
     this.selectedCommand  = null;
+    this.strategyReport   = [];
 
     // Callbacks – set by main.js
     this.onUpdate         = null;        // () => void
@@ -205,6 +206,26 @@ window.Game = class Game {
 
   /* ──────────────────── turn management ──────────────────── */
 
+  buildStrategyReport() {
+    const report = [];
+    if (this.situation && this.situation.highlights.length > 0) {
+      const top = this.situation.highlights[0];
+      report.push({
+        type: top.type,
+        title: top.provinceName,
+        text: `${top.reason} 다음 턴 판단 포인트로 유지됩니다.`
+      });
+    }
+    if (this.selectedCommand) {
+      report.push({
+        type: 'command',
+        title: this.selectedCommand.targetName,
+        text: `${this.selectedCommand.intentLabel} 명령이 계획되었습니다.`
+      });
+    }
+    this.strategyReport = report;
+  }
+
   /**
    * Advance to the next faction's turn.
    * Returns the new current faction.
@@ -231,6 +252,7 @@ window.Game = class Game {
     if (this.map) this.map.clearHighlights();
 
     this._maybeTriggerCrisis(faction);
+    this.buildStrategyReport();
     this.refreshStrategicState();
 
     return faction;

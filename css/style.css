@@ -1611,3 +1611,29 @@ body {
   justify-content: flex-end;
   margin-top: 10px;
 }
+
+.strategy-report {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.strategy-report-empty,
+.strategy-report-item {
+  font-size: 0.78rem;
+  line-height: 1.4;
+  color: rgba(245,247,255,0.82);
+}
+
+.strategy-report-item {
+  display: grid;
+  gap: 3px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.04);
+}
+
+.strategy-report-item strong {
+  color: #f5f7ff;
+}

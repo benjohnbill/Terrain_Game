@@ -28,6 +28,7 @@ window.GameUI = class GameUI {
       'modal-overlay', 'modal-title', 'modal-body', 'modal-buttons',
       'notification-container',
       'situation-briefing', 'command-card', 'capacity-bar',
+      'strategy-report',
     ];
     for (const id of ids) {
       this.elements[id] = document.getElementById(id);
@@ -54,6 +55,7 @@ window.GameUI = class GameUI {
     this.updateCommandCard();
     this.updateActionButtons();
     this.updateEventLog();
+    this.updateStrategyReport();
     this.updateFactionOverview();
     if (this.game.map) this.game.map.render(this.game);
   }
@@ -221,6 +223,22 @@ window.GameUI = class GameUI {
         ${!f.alive ? '<div style="color:#ff4444;font-size:0.7rem;font-weight:700">멸망</div>' : ''}
       </div>`;
     }).join('');
+  }
+
+  updateStrategyReport() {
+    const el = this.elements['strategy-report'];
+    if (!el) return;
+    const report = this.game.strategyReport || [];
+    if (report.length === 0) {
+      el.innerHTML = '<div class="strategy-report-empty">턴 처리 후 주요 결과가 여기에 요약됩니다.</div>';
+      return;
+    }
+    el.innerHTML = report.map((item) => `
+      <div class="strategy-report-item ${item.type}">
+        <strong>${item.title}</strong>
+        <span>${item.text}</span>
+      </div>
+    `).join('');
   }
 
   /* ═══════════════════ MODALS ═══════════════════ */
