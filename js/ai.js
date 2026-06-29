@@ -466,32 +466,54 @@ window.AIPlayer = class AIPlayer {
     return null;
   }
 
+  static scoreDefenseNeed(game, faction, hex) {
+    if (!hex || hex.owner !== faction.id) return -Infinity;
+
+    const localDefense = window.CombatSystem.computeDefenseForce(hex, faction);
+    const neighbors = game.map.getNeighbors(hex.q, hex.r);
+    let pressure = 0;
+    let enemyCount = 0;
+
+    for (const n of neighbors) {
+      const nh = game.map.getHex(n.q, n.r);
+      if (!nh || nh.owner === null || nh.owner === faction.id) continue;
+      if (game.diplomacy.isAlly(faction.id, nh.owner)) continue;
+
+      const enemy = game.getFaction(nh.owner);
+      if (!enemy || !enemy.alive) continue;
+
+      const portMitigation = AIPlayer._hasPortMitigation(game, enemy.id, hex);
+      const enemyAttack = window.CombatSystem.computeAttackForce(enemy, hex, { portMitigation });
+      pressure += enemyAttack;
+      enemyCount++;
+    }
+
+    if (enemyCount === 0) return -Infinity;
+
+    const value = (hex.economyValue || 0) * 1.4 + (hex.population || 0) * 0.25;
+    const vulnerability = pressure / Math.max(1, localDefense);
+    return vulnerability * 70 + enemyCount * 8 + value;
+  }
+
   static _tryDefend(game, faction) {
     const hexKeys = Array.from(faction.territories);
     if (hexKeys.length === 0) return null;
 
-    // Find most vulnerable border hex
+    // Defend the most locally vulnerable border hex (highest enemy pressure
+    // relative to its own local defense), not merely the most-bordered one.
     let bestHex = null;
-    let worstExposure = -1;
+    let bestScore = -Infinity;
 
     for (const key of hexKeys) {
       const hex = game.map.getHexByKey(key);
-      if (!hex) continue;
-      const neighbors = game.map.getNeighbors(hex.q, hex.r);
-      let enemyCount = 0;
-      for (const n of neighbors) {
-        const nh = game.map.getHex(n.q, n.r);
-        if (nh && nh.owner !== null && nh.owner !== faction.id && !game.diplomacy.isAlly(faction.id, nh.owner)) {
-          enemyCount++;
-        }
-      }
-      if (enemyCount > worstExposure) {
-        worstExposure = enemyCount;
+      const score = AIPlayer.scoreDefenseNeed(game, faction, hex);
+      if (score > bestScore) {
+        bestScore = score;
         bestHex = hex;
       }
     }
 
-    if (bestHex && worstExposure > 0) {
+    if (bestHex && isFinite(bestScore)) {
       const result = window.ActionSystem.defend(game, faction, bestHex);
       if (result.success) {
         game.addEvent(result.message, faction.id);

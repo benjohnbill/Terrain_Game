@@ -212,3 +212,45 @@ test('AI scoring can prefer a richer province when combat outlook is comparable'
   assert.ok(ctx.AIPlayer.scoreTarget(game, ai, richTarget) > ctx.AIPlayer.scoreTarget(game, ai, poorTarget));
   assert.equal(ctx.AIPlayer.chooseBestTarget(game, ai), richTarget);
 });
+
+test('defensive AI chooses the locally vulnerable border hex over a naturally strong pass', () => {
+  const ctx = loadAIScripts();
+  ctx.Math.random = () => 0.5;
+
+  const ai = newFaction(ctx, 0, 90);
+  const enemy = newFaction(ctx, 1, 100);
+
+  const weakPlain = makeHex(ctx, 5, 5, 0, 'plains', 3, 6, 8, 20);
+  const strongPass = makeHex(ctx, 6, 5, 0, 'mountain_pass', 28, 28, 8, 18);
+  const enemyNearPlain = makeHex(ctx, 5, 6, 1, 'plains', 8, 8, 10, 20);
+  const enemyNearPass = makeHex(ctx, 6, 6, 1, 'plains', 8, 8, 10, 20);
+  ai.territories.add(weakPlain.key());
+  ai.territories.add(strongPass.key());
+  enemy.territories.add(enemyNearPlain.key());
+  enemy.territories.add(enemyNearPass.key());
+
+  const game = makeTargetGame(ctx, {
+    faction: ai,
+    defenders: [enemy],
+    ownHexes: [weakPlain, strongPass],
+    targetHexes: [enemyNearPlain, enemyNearPass]
+  });
+
+  // The strong pass borders MORE enemies, so the old "most enemy neighbors"
+  // heuristic would defend it; the weak plain borders fewer but is far more
+  // vulnerable locally (tiny garrison, no terrain defense). Wire neighbors
+  // explicitly so old and new selection genuinely diverge.
+  const neighborMap = {
+    [weakPlain.key()]: [{ q: 5, r: 6 }],
+    [strongPass.key()]: [{ q: 5, r: 6 }, { q: 6, r: 6 }]
+  };
+  game.map.getNeighbors = (q, r) => neighborMap[`${q},${r}`] || [];
+  game.map.getAdjacentEnemyHexes = () => [enemyNearPlain, enemyNearPass];
+  const events = [];
+  game.addEvent = (message, factionId) => events.push({ message, factionId });
+
+  const result = ctx.AIPlayer._tryDefend(game, ai);
+  assert.equal(result.action, 'defend');
+  assert.equal(result.params.targetHex, weakPlain);
+  assert.equal(ai.defendingHex, weakPlain.key());
+});
