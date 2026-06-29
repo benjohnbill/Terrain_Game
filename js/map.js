@@ -61,6 +61,7 @@ window.HexMap = class HexMap {
     // 인터랙션 상태
     this.selectedHex = null;          // 선택된 헥스 키
     this.highlightedHexes = new Map(); // Map<hexKey, color>
+    this.situationHighlights = new Map();
     this.hoveredHex = null;           // 현재 호버 중인 헥스 키
     this._clickCallback = null;
     this._hoverCallback = null;
@@ -425,6 +426,13 @@ window.HexMap = class HexMap {
     this.highlightedHexes.clear();
   }
 
+  setSituationHighlights(highlights) {
+    this.situationHighlights.clear();
+    for (const item of highlights || []) {
+      this.situationHighlights.set(item.key, item);
+    }
+  }
+
   setSelectedHex(hexKey) {
     this.selectedHex = hexKey;
   }
@@ -456,6 +464,7 @@ window.HexMap = class HexMap {
     const isHighlighted = this.highlightedHexes.has(key);
     const isHovered = this.hoveredHex === key;
     const highlightColor = this.highlightedHexes.get(key);
+    const situationHighlight = this.situationHighlights.get(key);
 
     ctx.save();
 
@@ -489,6 +498,15 @@ window.HexMap = class HexMap {
     ctx.shadowBlur = 0;
 
     // ── 테두리 ──
+    if (situationHighlight && !isHighlighted && !isSelected) {
+      const pulse = 0.45 + 0.35 * Math.sin(this._pulsePhase * Math.PI * 2);
+      ctx.strokeStyle = situationHighlight.color;
+      ctx.lineWidth = 2 + pulse;
+      ctx.globalAlpha = 0.65;
+      ctx.stroke(path);
+      ctx.globalAlpha = 1;
+    }
+
     if (isHighlighted) {
       // 공격 가능 헥스: 펄스 테두리
       const pulse = 0.5 + 0.5 * Math.sin(this._pulsePhase * Math.PI * 2);

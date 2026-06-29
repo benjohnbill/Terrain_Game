@@ -23,6 +23,9 @@ window.Game = class Game {
     this.selectedAction   = null;        // action name string
     this.phase            = 'select_action'; // 'select_action' | 'select_target' | 'ai_turn'
     this.crisisTurnsHandled = new Set();
+    this.situation        = null;
+    this.capacityState    = null;
+    this.selectedCommand  = null;
 
     // Callbacks – set by main.js
     this.onUpdate         = null;        // () => void
@@ -72,8 +75,52 @@ window.Game = class Game {
 
     // First turn
     this._startRound();
+    this.refreshStrategicState();
 
     this.addEvent('🏁 게임 시작! 세계를 정복하라!', null);
+  }
+
+  refreshStrategicState() {
+    const faction = this.getCurrentFaction();
+    if (!faction || !this.map || !window.SituationAnalyzer) return;
+
+    const ownedProvinceIds = Array.from(faction.territories)
+      .map((key) => this.map.getHexByKey(key))
+      .filter(Boolean)
+      .map((hex) => hex.provinceId)
+      .filter(Boolean);
+
+    const uniqueProvinceIds = Array.from(new Set(ownedProvinceIds));
+    const base = window.CapacitySystem
+      ? window.CapacitySystem.calculateBaseCapacities(uniqueProvinceIds)
+      : { command: 0, administration: 0, diplomacy: 0, scholarship: 0 };
+
+    this.capacityState = window.CapacitySystem
+      ? window.CapacitySystem.applyPosture(base, 'balanced')
+      : null;
+
+    this.situation = window.SituationAnalyzer.analyze({
+      currentFactionId: faction.id,
+      hexes: Array.from(this.map.getAllHexes().values()),
+      postureId: this.capacityState ? this.capacityState.postureId : 'balanced'
+    });
+
+    if (this.map && this.situation) {
+      this.map.setSituationHighlights(this.situation.highlights);
+    }
+  }
+
+  createCommandForHex(hex) {
+    if (!hex || !this.situation || !window.SituationAnalyzer) return null;
+    const highlight = this.situation.highlights.find((item) => item.key === hex.key()) || {
+      key: hex.key(),
+      provinceName: hex.provinceName || hex.key(),
+      recommendedIntent: 'scout',
+      confidence: hex.informationConfidence || 0.4,
+      reason: '이 지역의 형세를 확인합니다.'
+    };
+    this.selectedCommand = window.SituationAnalyzer.createCommandDefault(highlight);
+    return this.selectedCommand;
   }
 
   /* ──────────────────── getters ──────────────────── */
@@ -184,6 +231,7 @@ window.Game = class Game {
     if (this.map) this.map.clearHighlights();
 
     this._maybeTriggerCrisis(faction);
+    this.refreshStrategicState();
 
     return faction;
   }
