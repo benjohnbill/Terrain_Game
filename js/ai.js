@@ -182,64 +182,86 @@ window.AIPlayer = class AIPlayer {
 
   /* ────────────────── target selection ────────────────── */
 
+  static _countOwnAdjacent(game, factionId, hex) {
+    const neighbors = game.map.getNeighbors(hex.q, hex.r);
+    let ownAdj = 0;
+    for (const n of neighbors) {
+      const nh = game.map.getHex(n.q, n.r);
+      if (nh && nh.owner === factionId) ownAdj++;
+    }
+    return ownAdj;
+  }
+
+  static _hasPortMitigation(game, factionId, hex) {
+    if (hex.primaryFunction === 'port') return true;
+    const neighbors = game.map.getNeighbors(hex.q, hex.r);
+    return neighbors.some((n) => {
+      const nh = game.map.getHex(n.q, n.r);
+      return nh && nh.owner === factionId && nh.primaryFunction === 'port';
+    });
+  }
+
+  static scoreTarget(game, faction, hex) {
+    if (!hex) return -Infinity;
+    if (hex.owner === faction.id) return -Infinity;
+    if (hex.owner !== null && game.diplomacy.isAlly(faction.id, hex.owner)) return -Infinity;
+
+    const defender = hex.owner === null ? null : game.getFaction(hex.owner);
+    const portMitigation = AIPlayer._hasPortMitigation(game, faction.id, hex);
+    const attackForce = window.CombatSystem.computeAttackForce(faction, hex, { portMitigation });
+    const defenseForce = window.CombatSystem.computeDefenseForce(hex, defender && defender.alive ? defender : null);
+    const forecast = window.CombatSystem.forecast(attackForce, defenseForce);
+    const crossingPenalty = window.CombatSystem.crossingPenalty(hex.terrain, portMitigation);
+    const ownAdj = AIPlayer._countOwnAdjacent(game, faction.id, hex);
+
+    let score = 50;
+
+    // Local combat outlook is the main term.
+    score += forecast.expected * 42;
+    score -= defenseForce * 0.65;
+
+    // Valuable provinces are worth taking even when not effortless.
+    score += (hex.economyValue || 0) * 1.8;
+    score += (hex.population || 0) * 0.35;
+
+    // Better staging positions are safer and strategically cleaner.
+    score += ownAdj * 8;
+
+    if (hex.owner === null) {
+      score += 20;
+    } else if (game.diplomacy.isAtWar(faction.id, hex.owner)) {
+      score += 38;
+    } else {
+      score += 14;
+    }
+
+    // Infrastructure is valuable, but walls are already included in defense.
+    if (hex.building && hex.building !== 'wall') score += 12;
+
+    // Crossing friction should matter even if the raw ratio is still favorable.
+    score -= (1 - crossingPenalty) * 35;
+
+    // Strategic tags are light nudges, not substitutes for local force.
+    if (hex.strategicTags && hex.strategicTags.includes('capital')) score += 14;
+    if (hex.strategicTags && hex.strategicTags.includes('port')) score += 10;
+    if (hex.strategicTags && hex.strategicTags.includes('pass')) score += 6;
+
+    return score;
+  }
+
   static chooseBestTarget(game, faction) {
     const adjEnemy = game.map.getAdjacentEnemyHexes(faction.id);
     if (adjEnemy.length === 0) return null;
 
-    let candidates = [];
-
+    const candidates = [];
     for (const item of adjEnemy) {
       const hex = typeof item === 'string' ? game.map.getHexByKey(item) : item;
       if (!hex) continue;
-
-      // Skip allies
-      if (hex.owner !== null && game.diplomacy.isAlly(faction.id, hex.owner)) continue;
-
-      let score = 100;
-
-      // Prefer neutral (easier to conquer)
-      if (hex.owner === null) {
-        score += 25;
-      } else {
-        const defender = game.getFaction(hex.owner);
-        if (defender && defender.alive) {
-          // Prefer weaker defenders
-          const defMil = defender.calculateMilitary();
-          score -= defMil * 0.5;
-
-          // Prefer targets we're at war with
-          if (game.diplomacy.isAtWar(faction.id, hex.owner)) {
-            score += 45;
-          } else {
-            score += 18;
-          }
-        }
-      }
-
-      // Prefer hexes without wall
-      if (hex.building === 'wall') score -= 20;
-
-      // Prefer hexes with buildings (steal infrastructure)
-      if (hex.building && hex.building !== 'wall') score += 15;
-
-      // Count how many own hexes are adjacent to this target (more = strategic)
-      const neighbors = game.map.getNeighbors(hex.q, hex.r);
-      let ownAdj = 0;
-      for (const n of neighbors) {
-        const nh = game.map.getHex(n.q, n.r);
-        if (nh && nh.owner === faction.id) ownAdj++;
-      }
-      score += ownAdj * 8;
-
-      // Small random factor for variety
-      score += Math.random() * 30 - 10;
-
-      candidates.push({ hex, score });
+      const score = AIPlayer.scoreTarget(game, faction, hex) + Math.random() * 12 - 4;
+      if (isFinite(score)) candidates.push({ hex, score });
     }
 
     if (candidates.length === 0) return null;
-
-    // Sort descending by score
     candidates.sort((a, b) => b.score - a.score);
     return candidates[0].hex;
   }
