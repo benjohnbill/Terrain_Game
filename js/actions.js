@@ -8,11 +8,6 @@ window.ActionSystem = class ActionSystem {
 
   /* ─────────────────────────── helpers ─────────────────────────── */
 
-  /** Random factor applied to both attack and defense rolls */
-  static _rollFactor() {
-    return 0.7 + Math.random() * 0.6;          // 0.7 – 1.3
-  }
-
   /** Check whether any hex owned by `factionId` is adjacent to (q, r) */
   static _isAdjacentToFaction(game, factionId, q, r) {
     const neighbors = game.map.getNeighbors(q, r);
@@ -28,10 +23,10 @@ window.ActionSystem = class ActionSystem {
    * @param {Game}    game
    * @param {Faction} attacker
    * @param {HexCell} targetHex
-   * @returns {{success:boolean, message:string, conquered:boolean,
-   *            attackRoll:number, defenseRoll:number}}
+   * @param {object}  [opts]  { mobilize?: boolean }
    */
-  static attack(game, attacker, targetHex) {
+  static attack(game, attacker, targetHex, opts) {
+    const o = opts || {};
     const hexKey = targetHex.key();
 
     /* ── validation ── */
@@ -50,10 +45,10 @@ window.ActionSystem = class ActionSystem {
     }
 
     if (attacker.military <= 0) {
-      return { success: false, message: '군사력이 부족합니다.', conquered: false, attackRoll: 0, defenseRoll: 0 };
+      return { success: false, message: '상비군이 부족합니다.', conquered: false, attackRoll: 0, defenseRoll: 0 };
     }
 
-    /* ── calculate attack power ── */
+    /* ── attack cost (gold) ── */
     const attackCost = Math.max(1, Math.ceil(attacker.calculateIncome() * attacker.getTaxAttackCostRate()));
     if (!attacker.canAfford(attackCost)) {
       return { success: false, message: `공격 비용이 부족합니다. (필요: 💰${attackCost}, 보유: 💰${attacker.gold})`, conquered: false, attackRoll: 0, defenseRoll: 0 };
@@ -69,47 +64,47 @@ window.ActionSystem = class ActionSystem {
       }
     }
 
-    const baseMilitary = attacker.calculateMilitary();
-    const attackBonus  = 1 + attacker.getAttackBonus();
-    const attackRoll   = Math.round(baseMilitary * attackBonus * ActionSystem._rollFactor());
-
-    /* ── calculate defense ── */
-    let defenseRoll = 0;
-    let defender    = null;
-
-    if (targetHex.owner === null) {
-      // Neutral territory — flat defense
-      defenseRoll = Math.round(20 * ActionSystem._rollFactor());
-    } else {
-      defender = game.getFaction(targetHex.owner);
-      if (!defender || !defender.alive) {
-        defenseRoll = Math.round(10 * ActionSystem._rollFactor());
-      } else {
-        let baseDefense = defender.getDefenseAt(hexKey);
-        defenseRoll = Math.round(baseDefense * ActionSystem._rollFactor());
+    /* ── offensive mobilization (ADR 0009): optional, drawn from population ── */
+    let mobilizedTroops = 0;
+    let pendingCapacityCost = null;
+    if (o.mobilize) {
+      const levy = Math.floor(attacker.population * 0.1);
+      mobilizedTroops = attacker.drawMobilization(levy);
+      if (mobilizedTroops > 0) {
+        // Future-capacity cost is recorded as a hook; capacity consumption lands in slice 5.
+        pendingCapacityCost = { capacity: 'command', amount: mobilizedTroops };
       }
     }
 
-    // Wall bonus
-    if (targetHex.building === 'wall' && !attacker.canIgnoreWalls()) {
-      const wallDef = window.BUILDINGS.wall.effects.defense || 15;
-      defenseRoll += wallDef;
+    const portMitigation = ActionSystem._hasPortMitigation(game, attacker.id, targetHex);
+    const attackForce = window.CombatSystem.computeAttackForce(
+      attacker, targetHex, { mobilizedTroops, portMitigation }
+    );
+
+    let defender = targetHex.owner === null ? null : game.getFaction(targetHex.owner);
+    if (defender && !defender.alive) defender = null;
+    let defenseForce = window.CombatSystem.computeDefenseForce(targetHex, defender);
+
+    // Walls are included in computeDefenseForce; military tech 3 can negate that bonus.
+    if (targetHex.building === 'wall' && attacker.canIgnoreWalls()) {
+      const wallDef = window.BUILDINGS.wall.effects.defenseBonus || 0;
+      defenseForce = Math.max(1, defenseForce - wallDef);
     }
 
-    /* ── resolve combat ── */
-    const conquered = attackRoll > defenseRoll;
+    const outcome = window.CombatSystem.resolve(attackForce, defenseForce, game.rng);
+    const attackRoll = outcome.attackRoll;
+    const defenseRoll = outcome.defenseRoll;
+    const conquered = outcome.attackerWins;
     let message = '';
     let tributePaid = 0;
 
     if (conquered) {
-      // Attacker wins
-      const militaryLoss = Math.max(3, Math.round(defenseRoll * 0.3));
+      const militaryLoss = Math.max(3, Math.round(defenseForce * 0.3));
       attacker.military = Math.max(0, attacker.military - militaryLoss);
 
-      // Defender losses
-      if (defender && defender.alive) {
-        const defLoss = Math.max(4, Math.round(attackRoll * 0.35));
-        defender.military = Math.max(0, defender.military - defLoss);
+      if (defender) {
+        targetHex.localGarrison = 0;
+        defender.military = Math.max(0, defender.military - Math.max(2, Math.round(attackForce * 0.1)));
         defender.removeTerritory(hexKey);
         defender.checkAlive();
 
@@ -122,24 +117,24 @@ window.ActionSystem = class ActionSystem {
         message = `${attacker.emoji} ${attacker.name}이(가) 중립 영토를 정복! (⚔${attackRoll} vs 🛡${defenseRoll})`;
       }
 
-      // Transfer ownership
       targetHex.owner = attacker.id;
       attacker.addTerritory(hexKey);
+      targetHex.localGarrison = Math.max(2, Math.round(targetHex.defenseValue * 0.2));
 
-      // If building was destroyed during conquest (walls are destroyed on capture)
       if (targetHex.building === 'wall') {
         targetHex.building = null;
         if (defender) defender.buildings.delete(hexKey);
       }
 
     } else {
-      // Attacker loses
-      const militaryLoss = Math.max(5, Math.round(attackRoll * 0.4));
+      const militaryLoss = Math.max(5, Math.round(attackForce * 0.35));
       attacker.military = Math.max(0, attacker.military - militaryLoss);
+      if (mobilizedTroops > 0) {
+        attacker.population = Math.max(0, attacker.population - Math.round(mobilizedTroops * 0.5));
+      }
 
-      if (defender && defender.alive) {
-        const defLoss = Math.max(1, Math.round(defenseRoll * 0.15));
-        defender.military = Math.max(0, defender.military - defLoss);
+      if (defender) {
+        targetHex.localGarrison = Math.max(0, targetHex.localGarrison - Math.max(1, Math.round(attackForce * 0.05)));
         const tribute = Math.max(1, Math.round(attacker.calculateIncome() * 0.4));
         const paidTribute = Math.min(attacker.gold, tribute);
         attacker.gold -= paidTribute;
@@ -155,7 +150,21 @@ window.ActionSystem = class ActionSystem {
       message += ` 침략 실패로 💰${tributePaid}을(를) 상납했습니다.`;
     }
 
-    return { success: true, message, conquered, attackRoll, defenseRoll, attackCost, tributePaid };
+    return {
+      success: true, message, conquered,
+      attackForce, defenseForce, attackRoll, defenseRoll,
+      attackCost, tributePaid, mobilizedTroops, pendingCapacityCost
+    };
+  }
+
+  /** True when a port settlement can mitigate an amphibious crossing penalty. */
+  static _hasPortMitigation(game, factionId, targetHex) {
+    if (targetHex.primaryFunction === 'port') return true;
+    const neighbors = game.map.getNeighbors(targetHex.q, targetHex.r);
+    return neighbors.some(n => {
+      const h = game.map.getHex(n.q, n.r);
+      return h && h.owner === factionId && h.primaryFunction === 'port';
+    });
   }
 
   /* ──────────────────────── 2. DEFEND ──────────────────────── */

@@ -474,7 +474,7 @@ window.GameUI = class GameUI {
     const buildingStr = buildingDef ? `${buildingDef.icon} ${buildingDef.name}` : '없음';
 
     let defenseStr = '20';
-    if (owner) defenseStr = '' + owner.getDefenseAt(hex.key());
+    if (owner) defenseStr = '' + window.CombatSystem.computeDefenseForce(hex, owner);
 
     tip.innerHTML = `
       <div style="font-weight:600;margin-bottom:4px">📍 ${hex.key()}</div>

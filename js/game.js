@@ -166,7 +166,7 @@ window.Game = class Game {
     let result;
     switch (action) {
       case 'attack':
-        result = window.ActionSystem.attack(this, faction, params.targetHex);
+        result = window.ActionSystem.attack(this, faction, params.targetHex, { mobilize: !!params.mobilize });
         break;
       case 'defend':
         result = window.ActionSystem.defend(this, faction, params.targetHex);
@@ -262,6 +262,9 @@ window.Game = class Game {
   _startRound() {
     for (const f of this.factions) {
       if (f.alive) f.startTurn();
+    }
+    if (this.map) {
+      this.map.getAllHexes().forEach((hex) => hex.regenerateGarrison());
     }
   }
 

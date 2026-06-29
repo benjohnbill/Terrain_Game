@@ -42,6 +42,15 @@ window.HexCell = class HexCell {
     this.defenseValue = Math.round(10 * province.defenseWeight);
     this.strategicTags = Array.from(province.strategicTags);
   }
+
+  /** Regrow the local garrison toward an economy/population-bounded ceiling
+   *  (ADR 0014: garrisons are sustained locally, not from the treasury). */
+  regenerateGarrison() {
+    const ceiling = Math.max(2, Math.round((this.economyValue + this.population) / 4));
+    if (this.localGarrison >= ceiling) return;
+    const step = Math.max(1, Math.round((ceiling - this.localGarrison) * 0.25));
+    this.localGarrison = Math.min(ceiling, this.localGarrison + step);
+  }
 };
 
 // ─────────────────────────────────────────────────────────────────────────────

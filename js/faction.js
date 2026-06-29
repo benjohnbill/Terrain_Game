@@ -23,7 +23,7 @@ window.Faction = class Faction {
 
     // Resources
     this.gold = 100;
-    this.military = 50;
+    this.military = 50;     // standing forces: national, mobile, treasury-funded (ADR 0009/0014)
     this.techLevel = 0;
     this.population = 100;
 
@@ -114,29 +114,6 @@ window.Faction = class Faction {
   }
 
   // ──────────────────────────────────────────────
-  // 특정 헥스 방어력 계산
-  // ──────────────────────────────────────────────
-  getDefenseAt(hexKey) {
-    let defense = this.calculateMilitary() * 0.5;
-
-    // 건물 방어 보너스
-    const buildingId = this.buildings.get(hexKey);
-    if (buildingId) {
-      const b = window.BUILDINGS[buildingId];
-      if (b && b.effects.defenseBonus) {
-        defense += b.effects.defenseBonus;
-      }
-    }
-
-    // 방어 태세 보너스
-    if (this.isDefending && this.defendingHex === hexKey) {
-      defense *= 1.5;
-    }
-
-    return Math.floor(defense);
-  }
-
-  // ──────────────────────────────────────────────
   // 기술 레벨 관련
   // ──────────────────────────────────────────────
   getTotalTechLevel() {
@@ -178,6 +155,16 @@ window.Faction = class Faction {
 
   spend(amount) {
     this.gold -= amount;
+  }
+
+  // ──────────────────────────────────────────────
+  // 공세 동원 — 인구에서 임시 병력 차출 (ADR 0009)
+  // ──────────────────────────────────────────────
+  drawMobilization(levy) {
+    const available = Math.floor(this.population * 0.2);
+    const drawn = Math.max(0, Math.min(levy, available));
+    this.population -= drawn;
+    return drawn;
   }
 
   // ──────────────────────────────────────────────
