@@ -461,6 +461,7 @@ window.Game = class Game {
       // Just select for info
       this.selectedHex = hex.key();
       if (this.map) this.map.setSelectedHex(hex.key());
+      this.createCommandForHex(hex);
       if (this.onUpdate) this.onUpdate();
     }
   }
