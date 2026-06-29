@@ -6,12 +6,13 @@
   'use strict';
 
   function classifyHex(hex, currentFactionId) {
+    const tags = hex.strategicTags || [];
     const owned = hex.owner === currentFactionId;
     const enemy = hex.owner !== null && hex.owner !== currentFactionId;
     const lowConfidence = hex.informationConfidence < 0.55;
     const highEconomy = hex.economyValue >= 12;
     const weakOwnDefense = owned && hex.localGarrison < 7;
-    const routeTag = hex.strategicTags.includes('pass') || hex.strategicTags.includes('river_crossing') || hex.strategicTags.includes('strait_crossing');
+    const routeTag = tags.includes('pass') || tags.includes('river_crossing') || tags.includes('strait_crossing');
 
     if (weakOwnDefense) return { type: 'defense', recommendedIntent: 'reinforce' };
     if (enemy && lowConfidence) return { type: 'uncertainty', recommendedIntent: 'scout' };
