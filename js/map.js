@@ -10,14 +10,37 @@ window.HexCell = class HexCell {
   constructor(q, r) {
     this.q = q;
     this.r = r;
-    this.owner = null;       // Faction ID 또는 null (중립)
-    this.building = null;    // 건물 ID 문자열 또는 null
-    this.population = 20;    // 기본 인구
-    this.terrain = 'plains'; // 지형 (현재 모두 평지)
+    this.owner = null;
+    this.building = null;
+    this.population = 20;
+    this.terrain = 'plains';
+    this.provinceId = null;
+    this.provinceName = null;
+    this.archetype = null;
+    this.primaryFunction = null;
+    this.economyValue = 10;
+    this.localGarrison = 8;
+    this.defenseValue = 10;
+    this.informationConfidence = 0.45;
+    this.strategicTags = [];
   }
 
   key() {
     return `${this.q},${this.r}`;
+  }
+
+  applyProvince(province) {
+    if (!province) return;
+    this.provinceId = province.id;
+    this.provinceName = province.name;
+    this.archetype = province.archetype;
+    this.terrain = province.primaryTerrain;
+    this.primaryFunction = province.primaryFunction;
+    this.population = Math.round(20 * province.populationWeight);
+    this.economyValue = Math.round(10 * province.economyWeight);
+    this.localGarrison = Math.round(8 * province.garrisonWeight);
+    this.defenseValue = Math.round(10 * province.defenseWeight);
+    this.strategicTags = Array.from(province.strategicTags);
   }
 };
 

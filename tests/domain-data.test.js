@@ -59,3 +59,16 @@ test('initial province data has 30 named provinces with valid domain keys', () =
   assert.equal(context.getProvinceById('luoyuan_plain').name, '낙원 평원');
   assert.equal(context.getProvinceById('hanjing_waterway').primaryTerrain, 'river');
 });
+
+test('hex cells can hold province and terrain metadata', () => {
+  const context = loadScripts(['js/domain-data.js', 'js/province-data.js', 'js/map.js']);
+  const cell = new context.HexCell(2, 3);
+
+  cell.applyProvince(context.getProvinceById('luoyuan_plain'));
+
+  assert.equal(cell.provinceId, 'luoyuan_plain');
+  assert.equal(cell.provinceName, '낙원 평원');
+  assert.equal(cell.terrain, 'plains');
+  assert.equal(cell.primaryFunction, 'administrative');
+  assert.equal(cell.population, 27);
+});
