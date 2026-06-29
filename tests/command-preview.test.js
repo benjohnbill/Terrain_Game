@@ -246,3 +246,166 @@ test('Game creates an attack command preview for an adjacent enemy target', () =
   assert.equal(command.preview.valid, true);
   assert.equal(command.mobilize, false);
 });
+
+// ──────────────────── shared helpers for Game-method tests ────────────────────
+
+function loadGameScripts() {
+  return loadScripts([
+    'js/domain-data.js',
+    'js/province-data.js',
+    'js/capacity.js',
+    'js/situation.js',
+    'js/buildings.js',
+    'js/tech.js',
+    'js/faction.js',
+    'js/map.js',
+    'js/diplomacy.js',
+    'js/combat.js',
+    'js/actions.js',
+    'js/command-preview.js',
+    'js/game.js'
+  ]);
+}
+
+// ──────────────────── executeSelectedCommand ────────────────────
+
+test('executeSelectedCommand dispatches attack and forwards mobilize:true', () => {
+  const ctx = loadGameScripts();
+  const game = Object.create(ctx.Game.prototype);
+  const targetHex = new ctx.HexCell(2, 3);
+
+  game.selectedCommand = { intent: 'attack', targetKey: '2,3' };
+  game.map = { getHexByKey: (k) => (k === '2,3' ? targetHex : null) };
+  game.executeAction = (action, params) => ({ _action: action, _params: params, success: true });
+
+  const result = game.executeSelectedCommand({ mobilize: true });
+  assert.equal(result._action, 'attack');
+  assert.equal(result._params.targetHex, targetHex);
+  assert.equal(result._params.mobilize, true);
+});
+
+test('executeSelectedCommand dispatches attack and forwards mobilize:false', () => {
+  const ctx = loadGameScripts();
+  const game = Object.create(ctx.Game.prototype);
+  const targetHex = new ctx.HexCell(2, 3);
+
+  game.selectedCommand = { intent: 'attack', targetKey: '2,3' };
+  game.map = { getHexByKey: (k) => (k === '2,3' ? targetHex : null) };
+  game.executeAction = (action, params) => ({ _action: action, _params: params, success: true });
+
+  const result = game.executeSelectedCommand({ mobilize: false });
+  assert.equal(result._action, 'attack');
+  assert.equal(result._params.targetHex, targetHex);
+  assert.equal(result._params.mobilize, false);
+});
+
+test('executeSelectedCommand returns failure when no selectedCommand', () => {
+  const ctx = loadGameScripts();
+  const game = Object.create(ctx.Game.prototype);
+  game.selectedCommand = null;
+
+  const result = game.executeSelectedCommand({ mobilize: false });
+  assert.equal(result.success, false);
+  assert.equal(result.message, '선택된 명령이 없습니다.');
+});
+
+test('executeSelectedCommand returns failure when targetHex is missing', () => {
+  const ctx = loadGameScripts();
+  const game = Object.create(ctx.Game.prototype);
+  game.selectedCommand = { intent: 'attack', targetKey: '9,9' };
+  game.map = { getHexByKey: () => null };
+
+  const result = game.executeSelectedCommand({ mobilize: false });
+  assert.equal(result.success, false);
+  assert.equal(result.message, '대상 지역이 없습니다.');
+});
+
+test('executeSelectedCommand returns not-implemented for non-attack intent without calling executeAction', () => {
+  const ctx = loadGameScripts();
+  const game = Object.create(ctx.Game.prototype);
+  const targetHex = new ctx.HexCell(2, 3);
+
+  game.selectedCommand = { intent: 'scout', targetKey: '2,3' };
+  game.map = { getHexByKey: (k) => (k === '2,3' ? targetHex : null) };
+  game.executeAction = () => { throw new Error('executeAction must not be called for non-attack intent'); };
+
+  const result = game.executeSelectedCommand({});
+  assert.equal(result.success, false);
+  assert.equal(result.message, '이 명령은 아직 실행할 수 없습니다.');
+});
+
+// ──────────────────── refreshSelectedCommandPreview ────────────────────
+
+test('refreshSelectedCommandPreview toggles mobilize flag and rebuilds preview with higher attackForce', () => {
+  const ctx = loadGameScripts();
+  const game = Object.create(ctx.Game.prototype);
+
+  const attacker = new ctx.Faction({ id: 0, name: 'A', color: '#000', colorLight: '#111', emoji: 'A' }, false);
+  const defender = new ctx.Faction({ id: 1, name: 'D', color: '#111', colorLight: '#222', emoji: 'D' }, true);
+  attacker.gold = 1000;
+  attacker.military = 60;
+  attacker.population = 200;
+
+  const ownHex = new ctx.HexCell(2, 2);
+  ownHex.owner = 0;
+  attacker.territories.add(ownHex.key());
+
+  const targetHex = new ctx.HexCell(2, 3);
+  targetHex.owner = 1;
+  targetHex.provinceName = '관중 관문';
+  targetHex.localGarrison = 8;
+  targetHex.defenseValue = 12;
+  defender.territories.add(targetHex.key());
+
+  game.factions = [attacker, defender];
+  game.currentTurnIndex = 0;
+  game.map = {
+    getNeighbors: (q, r) => {
+      if (q === targetHex.q && r === targetHex.r) return [{ q: ownHex.q, r: ownHex.r }];
+      if (q === ownHex.q && r === ownHex.r) return [{ q: targetHex.q, r: targetHex.r }];
+      return [];
+    },
+    getHex: (q, r) => {
+      if (q === ownHex.q && r === ownHex.r) return ownHex;
+      if (q === targetHex.q && r === targetHex.r) return targetHex;
+      return null;
+    },
+    getHexByKey: (key) => {
+      if (key === targetHex.key()) return targetHex;
+      if (key === ownHex.key()) return ownHex;
+      return null;
+    }
+  };
+  game.diplomacy = { isAlly: () => false, isAtWar: () => true };
+  game.selectedCommand = { intent: 'attack', targetKey: targetHex.key(), mobilize: false, preview: null };
+
+  game.refreshSelectedCommandPreview({ mobilize: false });
+  const forcePlain = game.selectedCommand.preview.attackForce;
+
+  game.refreshSelectedCommandPreview({ mobilize: true });
+  assert.equal(game.selectedCommand.mobilize, true);
+  assert.ok(game.selectedCommand.preview.attackForce > forcePlain);
+});
+
+test('refreshSelectedCommandPreview returns null when no selectedCommand', () => {
+  const ctx = loadGameScripts();
+  const game = Object.create(ctx.Game.prototype);
+  game.selectedCommand = null;
+
+  const result = game.refreshSelectedCommandPreview({ mobilize: true });
+  assert.equal(result, null);
+});
+
+test('refreshSelectedCommandPreview returns selectedCommand unchanged for non-attack intent', () => {
+  const ctx = loadGameScripts();
+  const game = Object.create(ctx.Game.prototype);
+  const targetHex = new ctx.HexCell(2, 3);
+  const originalCommand = { intent: 'scout', targetKey: '2,3', mobilize: false };
+
+  game.selectedCommand = originalCommand;
+  game.map = { getHexByKey: (k) => (k === '2,3' ? targetHex : null) };
+
+  const result = game.refreshSelectedCommandPreview({ mobilize: true });
+  assert.equal(result, originalCommand);
+  assert.equal(game.selectedCommand.mobilize, false);
+});
