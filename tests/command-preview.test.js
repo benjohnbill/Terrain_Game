@@ -149,6 +149,41 @@ test('preview rejects non-adjacent attack targets with the same player-facing re
   assert.equal(preview.message, '인접한 영토만 공격할 수 있습니다.');
 });
 
+test('wall-ignore parity: preview reduces defenseForce by wall bonus when attacker has military tech 3+', () => {
+  const ctx = loadPreviewScripts();
+  const attacker = newFaction(ctx, 0);
+  attacker.techs.military = 3; // canIgnoreWalls() → true
+
+  const defender = newFaction(ctx, 1);
+
+  const ownHex = new ctx.HexCell(4, 4);
+  ownHex.owner = 0;
+  attacker.territories.add(ownHex.key());
+
+  const targetHex = new ctx.HexCell(4, 5);
+  targetHex.owner = 1;
+  targetHex.terrain = 'plains';
+  targetHex.localGarrison = 8;
+  targetHex.defenseValue = 10;
+  targetHex.building = 'wall';
+  defender.territories.add(targetHex.key());
+
+  const game = makeGame(ctx, { attacker, defender, targetHex, ownHex });
+  const preview = ctx.CommandPreview.buildAttackPreview(game, attacker, targetHex, { mobilize: false });
+
+  assert.equal(preview.valid, true);
+
+  const rawDefense = ctx.CombatSystem.computeDefenseForce(targetHex, defender);
+  const wallDef = ctx.BUILDINGS.wall.effects.defenseBonus || 0;
+
+  // guard: the wall bonus must actually be positive so the branch is meaningful
+  assert.ok(wallDef > 0);
+  // guard: the wall-ignore branch must have reduced defenseForce
+  assert.ok(preview.defenseForce < rawDefense);
+  // primary parity assertion
+  assert.equal(preview.defenseForce, Math.max(1, rawDefense - wallDef));
+});
+
 test('Game creates an attack command preview for an adjacent enemy target', () => {
   const ctx = loadScripts([
     'js/domain-data.js',
