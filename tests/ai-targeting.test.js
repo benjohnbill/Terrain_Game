@@ -151,14 +151,16 @@ test('AI scoring penalizes coast and strait attacks unless a port mitigates the 
 
   const coastWithoutPort = makeHex(ctx, 1, 1, 1, 'coast_strait', 8, 10, 11, 20);
   const coastWithPort = makeHex(ctx, 2, 1, 1, 'coast_strait', 8, 10, 11, 20);
+  const plainsTarget = makeHex(ctx, 3, 1, 1, 'plains', 8, 10, 11, 20);
   defender.territories.add(coastWithoutPort.key());
   defender.territories.add(coastWithPort.key());
+  defender.territories.add(plainsTarget.key());
 
   const noPortGame = makeTargetGame(ctx, {
     faction: ai,
     defenders: [defender],
     ownHexes: [staging],
-    targetHexes: [coastWithoutPort]
+    targetHexes: [coastWithoutPort, plainsTarget]
   });
   const portGame = makeTargetGame(ctx, {
     faction: ai,
@@ -168,8 +170,10 @@ test('AI scoring penalizes coast and strait attacks unless a port mitigates the 
   });
 
   const noPortScore = ctx.AIPlayer.scoreTarget(noPortGame, ai, coastWithoutPort);
+  const landScore = ctx.AIPlayer.scoreTarget(noPortGame, ai, plainsTarget);
   const portScore = ctx.AIPlayer.scoreTarget(portGame, ai, coastWithPort);
 
+  assert.ok(landScore > noPortScore);
   assert.ok(portScore > noPortScore);
 });
 
@@ -185,7 +189,6 @@ test('AI scoring can prefer a richer province when combat outlook is comparable'
 
   const poorTarget = makeHex(ctx, 3, 1, 1, 'plains', 8, 10, 4, 10);
   const richTarget = makeHex(ctx, 4, 1, 1, 'plains', 8, 10, 20, 36);
-  richTarget.building = 'market';
   defender.territories.add(poorTarget.key());
   defender.territories.add(richTarget.key());
 
