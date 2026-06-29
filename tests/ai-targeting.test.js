@@ -135,3 +135,67 @@ test('AI scoring ignores wall defense when attacker has wall-ignore technology',
 
   assert.equal(ctx.AIPlayer.scoreTarget(wallGame, ai, wallTarget), ctx.AIPlayer.scoreTarget(noWallGame, ai, noWallTarget));
 });
+
+test('AI scoring penalizes coast and strait attacks unless a port mitigates the crossing', () => {
+  const ctx = loadAIScripts();
+  ctx.Math.random = () => 0.5;
+
+  const ai = newFaction(ctx, 0, 90);
+  const defender = newFaction(ctx, 1, 60);
+
+  const staging = makeHex(ctx, 1, 0, 0, 'plains', 8, 8, 10, 20);
+  const portStaging = makeHex(ctx, 2, 0, 0, 'plains', 8, 8, 10, 20);
+  portStaging.primaryFunction = 'port';
+  ai.territories.add(staging.key());
+  ai.territories.add(portStaging.key());
+
+  const coastWithoutPort = makeHex(ctx, 1, 1, 1, 'coast_strait', 8, 10, 11, 20);
+  const coastWithPort = makeHex(ctx, 2, 1, 1, 'coast_strait', 8, 10, 11, 20);
+  defender.territories.add(coastWithoutPort.key());
+  defender.territories.add(coastWithPort.key());
+
+  const noPortGame = makeTargetGame(ctx, {
+    faction: ai,
+    defenders: [defender],
+    ownHexes: [staging],
+    targetHexes: [coastWithoutPort]
+  });
+  const portGame = makeTargetGame(ctx, {
+    faction: ai,
+    defenders: [defender],
+    ownHexes: [portStaging],
+    targetHexes: [coastWithPort]
+  });
+
+  const noPortScore = ctx.AIPlayer.scoreTarget(noPortGame, ai, coastWithoutPort);
+  const portScore = ctx.AIPlayer.scoreTarget(portGame, ai, coastWithPort);
+
+  assert.ok(portScore > noPortScore);
+});
+
+test('AI scoring can prefer a richer province when combat outlook is comparable', () => {
+  const ctx = loadAIScripts();
+  ctx.Math.random = () => 0.5;
+
+  const ai = newFaction(ctx, 0, 100);
+  const defender = newFaction(ctx, 1, 70);
+
+  const staging = makeHex(ctx, 3, 0, 0, 'plains', 8, 8, 10, 20);
+  ai.territories.add(staging.key());
+
+  const poorTarget = makeHex(ctx, 3, 1, 1, 'plains', 8, 10, 4, 10);
+  const richTarget = makeHex(ctx, 4, 1, 1, 'plains', 8, 10, 20, 36);
+  richTarget.building = 'market';
+  defender.territories.add(poorTarget.key());
+  defender.territories.add(richTarget.key());
+
+  const game = makeTargetGame(ctx, {
+    faction: ai,
+    defenders: [defender],
+    ownHexes: [staging],
+    targetHexes: [poorTarget, richTarget]
+  });
+
+  assert.ok(ctx.AIPlayer.scoreTarget(game, ai, richTarget) > ctx.AIPlayer.scoreTarget(game, ai, poorTarget));
+  assert.equal(ctx.AIPlayer.chooseBestTarget(game, ai), richTarget);
+});
