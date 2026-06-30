@@ -17,6 +17,54 @@ window.ActionSystem = class ActionSystem {
     });
   }
 
+  /* ──────────────────────── 0. SCOUT ──────────────────────── */
+
+  /** Gold cost of one scout action — cheap relative to attack so information
+   *  is an affordable alternative to committing force. */
+  static _scoutCost(faction) {
+    return Math.max(1, Math.ceil(faction.calculateIncome() * 0.1));
+  }
+
+  /**
+   * Scout an adjacent enemy/neutral hex to raise its information confidence.
+   * @param {Game}    game
+   * @param {Faction} faction
+   * @param {HexCell} targetHex
+   * @returns {{success:boolean, message:string, scoutCost?:number,
+   *            confidenceBefore?:number, confidenceAfter?:number, intel?:object}}
+   */
+  static scout(game, faction, targetHex) {
+    if (!targetHex) {
+      return { success: false, message: '대상 지역이 없습니다.' };
+    }
+    if (targetHex.owner === faction.id) {
+      return { success: false, message: '자신의 영토는 정찰할 필요가 없습니다.' };
+    }
+    if (!ActionSystem._isAdjacentToFaction(game, faction.id, targetHex.q, targetHex.r)) {
+      return { success: false, message: '인접한 지역만 정찰할 수 있습니다.' };
+    }
+
+    const cost = ActionSystem._scoutCost(faction);
+    if (!faction.canAfford(cost)) {
+      return { success: false, message: `정찰 비용이 부족합니다. (필요: 💰${cost}, 보유: 💰${faction.gold})` };
+    }
+    faction.spend(cost);
+
+    const before = targetHex.informationConfidence;
+    const after = window.IntelSystem.applyScout(before);
+    targetHex.informationConfidence = after;
+
+    const name = targetHex.provinceName || targetHex.key();
+    return {
+      success: true,
+      message: `${faction.emoji} ${faction.name}이(가) ${name} 지역을 정찰했습니다. (정보 신뢰도 ${Math.round(before * 100)}% → ${Math.round(after * 100)}%)`,
+      scoutCost: cost,
+      confidenceBefore: before,
+      confidenceAfter: after,
+      intel: window.IntelSystem.tierOf(after)
+    };
+  }
+
   /* ──────────────────────── 1. ATTACK ──────────────────────── */
 
   /**
