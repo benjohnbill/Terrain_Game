@@ -9,7 +9,7 @@
     const tags = hex.strategicTags || [];
     const owned = hex.owner === currentFactionId;
     const enemy = hex.owner !== null && hex.owner !== currentFactionId;
-    const lowConfidence = hex.informationConfidence < 0.55;
+    const lowConfidence = !window.IntelSystem.isReliable(hex.informationConfidence);
     const highEconomy = hex.economyValue >= 12;
     const weakOwnDefense = owned && hex.localGarrison < 7;
     const routeTag = tags.includes('pass') || tags.includes('river_crossing') || tags.includes('strait_crossing');

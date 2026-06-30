@@ -167,7 +167,23 @@ window.Game = class Game {
       const mobilize = !!(options && options.mobilize);
       return this.executeAction('attack', { targetHex, mobilize });
     }
+    if (this.selectedCommand.intent === 'scout') {
+      return this.executeAction('scout', { targetHex });
+    }
     return { success: false, message: '이 명령은 아직 실행할 수 없습니다.' };
+  }
+
+  /** Scout the currently selected command's target regardless of its default
+   *  intent (used by the "정찰" option on an attack card). */
+  executeScoutOnSelected() {
+    if (!this.selectedCommand) {
+      return { success: false, message: '선택된 명령이 없습니다.' };
+    }
+    const targetHex = this.map.getHexByKey(this.selectedCommand.targetKey);
+    if (!targetHex) {
+      return { success: false, message: '대상 지역이 없습니다.' };
+    }
+    return this.executeAction('scout', { targetHex });
   }
 
   /* ──────────────────── getters ──────────────────── */
@@ -182,6 +198,12 @@ window.Game = class Game {
 
   getFaction(id) {
     return this.factions.find(f => f.id === id);
+  }
+
+  /** The faction whose information confidence the map tracks (single-player: faction 0). */
+  getHumanFactionId() {
+    const human = this.factions.find((f) => !f.isAI);
+    return human ? human.id : 0;
   }
 
   /* ──────────────────── event log ──────────────────── */
@@ -211,6 +233,9 @@ window.Game = class Game {
 
     let result;
     switch (action) {
+      case 'scout':
+        result = window.ActionSystem.scout(this, faction, params.targetHex);
+        break;
       case 'attack':
         result = window.ActionSystem.attack(this, faction, params.targetHex, { mobilize: !!params.mobilize });
         break;
@@ -247,6 +272,11 @@ window.Game = class Game {
 
     // Victory check after action
     this._checkAndHandleVictory();
+
+    // Scouting changes information; re-analyze so the map reclassifies this turn.
+    if (action === 'scout' && result.success) {
+      this.refreshStrategicState();
+    }
 
     return result;
   }
@@ -311,7 +341,11 @@ window.Game = class Game {
       if (f.alive) f.startTurn();
     }
     if (this.map) {
-      this.map.getAllHexes().forEach((hex) => hex.regenerateGarrison());
+      const humanId = this.getHumanFactionId();
+      this.map.getAllHexes().forEach((hex) => {
+        hex.regenerateGarrison();
+        if (window.IntelSystem) window.IntelSystem.maintainConfidence(hex, humanId);
+      });
     }
   }
 

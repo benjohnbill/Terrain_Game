@@ -127,3 +127,97 @@ test('scout rejects when the faction cannot afford the cost', () => {
   assert.ok(result.message.startsWith('정찰 비용이 부족합니다.'));
   assert.equal(targetHex.informationConfidence, 0.45);
 });
+
+test('a low-confidence enemy hex reads as uncertainty, then opportunity once scouted', () => {
+  const ctx = loadScripts([
+    'js/domain-data.js',
+    'js/province-data.js',
+    'js/intel.js',
+    'js/situation.js'
+  ]);
+
+  function enemyHex(confidence) {
+    return {
+      key: () => '5,5',
+      owner: 1,
+      provinceId: 'x',
+      provinceName: '루오위안 평야',
+      terrain: 'plains',
+      localGarrison: 9,
+      defenseValue: 10,
+      economyValue: 14, // >= 12 so the opportunity branch is eligible
+      informationConfidence: confidence,
+      strategicTags: []
+    };
+  }
+
+  const uncertain = ctx.SituationAnalyzer.analyze({ currentFactionId: 0, hexes: [enemyHex(0.45)] });
+  assert.equal(uncertain.highlights[0].type, 'uncertainty');
+
+  const scouted = ctx.SituationAnalyzer.analyze({ currentFactionId: 0, hexes: [enemyHex(0.7)] });
+  assert.equal(scouted.highlights[0].type, 'opportunity');
+});
+
+test('executeSelectedCommand executes a scout command and consumes the turn action', () => {
+  const ctx = loadScripts([
+    'js/domain-data.js',
+    'js/province-data.js',
+    'js/intel.js',
+    'js/buildings.js',
+    'js/tech.js',
+    'js/faction.js',
+    'js/map.js',
+    'js/diplomacy.js',
+    'js/combat.js',
+    'js/actions.js',
+    'js/command-preview.js',
+    'js/game.js'
+  ]);
+
+  const game = Object.create(ctx.Game.prototype);
+  const human = new ctx.Faction({ id: 0, name: 'A', color: '#000', colorLight: '#111', emoji: 'A' }, false);
+  const enemy = new ctx.Faction({ id: 1, name: 'D', color: '#111', colorLight: '#222', emoji: 'D' }, true);
+  human.gold = 1000;
+
+  const ownHex = new ctx.HexCell(2, 2);
+  ownHex.owner = 0;
+  human.territories.add(ownHex.key());
+
+  const targetHex = new ctx.HexCell(2, 3);
+  targetHex.owner = 1;
+  targetHex.provinceName = '형강 수로';
+  targetHex.informationConfidence = 0.45;
+
+  game.factions = [human, enemy];
+  game.currentTurnIndex = 0;
+  game.state = 'playing';
+  game.turnNumber = 1;
+  game.eventLog = [];
+  game.selectedCommand = { intent: 'scout', targetKey: targetHex.key(), targetName: '형강 수로' };
+  game.map = {
+    getNeighbors: (q, r) => {
+      if (q === targetHex.q && r === targetHex.r) return [{ q: ownHex.q, r: ownHex.r }];
+      if (q === ownHex.q && r === ownHex.r) return [{ q: targetHex.q, r: targetHex.r }];
+      return [];
+    },
+    getHex: (q, r) => {
+      if (q === ownHex.q && r === ownHex.r) return ownHex;
+      if (q === targetHex.q && r === targetHex.r) return targetHex;
+      return null;
+    },
+    getHexByKey: (key) => (key === targetHex.key() ? targetHex : ownHex),
+    clearHighlights: () => {}
+  };
+  // Stub the heavy refresh + victory paths; they are exercised in browser verification.
+  game.refreshStrategicState = () => {};
+  game._checkAndHandleVictory = () => {};
+
+  const before = targetHex.informationConfidence;
+  const result = game.executeSelectedCommand();
+
+  assert.equal(result.success, true);
+  assert.ok(targetHex.informationConfidence > before);
+  assert.equal(targetHex.informationConfidence, 0.7);
+  assert.equal(human.actionTaken, true);
+  assert.equal(game.selectedCommand, null);
+});

@@ -6,6 +6,7 @@ test('situation analysis produces map-first highlights with command defaults', (
   const context = loadScripts([
     'js/domain-data.js',
     'js/province-data.js',
+    'js/intel.js',
     'js/situation.js'
   ]);
 

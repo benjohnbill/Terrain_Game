@@ -320,14 +320,14 @@ test('executeSelectedCommand returns failure when targetHex is missing', () => {
   assert.equal(result.message, '대상 지역이 없습니다.');
 });
 
-test('executeSelectedCommand returns not-implemented for non-attack intent without calling executeAction', () => {
+test('executeSelectedCommand returns not-implemented for unrecognised intent without calling executeAction', () => {
   const ctx = loadGameScripts();
   const game = Object.create(ctx.Game.prototype);
   const targetHex = new ctx.HexCell(2, 3);
 
-  game.selectedCommand = { intent: 'scout', targetKey: '2,3' };
+  game.selectedCommand = { intent: 'reinforce', targetKey: '2,3' };
   game.map = { getHexByKey: (k) => (k === '2,3' ? targetHex : null) };
-  game.executeAction = () => { throw new Error('executeAction must not be called for non-attack intent'); };
+  game.executeAction = () => { throw new Error('executeAction must not be called for unrecognised intent'); };
 
   const result = game.executeSelectedCommand({});
   assert.equal(result.success, false);
