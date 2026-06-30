@@ -47,3 +47,9 @@ test('maintainConfidence pins owned hexes high and decays non-owned hexes', () =
   ctx.IntelSystem.maintainConfidence(neutral, 0);
   assert.equal(neutral.informationConfidence, 0.45);
 });
+
+test('tierOf returns partial/reliable exactly at the threshold boundaries', () => {
+  const ctx = loadIntel();
+  assert.equal(ctx.IntelSystem.tierOf(0.55).id, 'partial');
+  assert.equal(ctx.IntelSystem.tierOf(0.75).id, 'reliable');
+});

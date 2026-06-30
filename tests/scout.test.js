@@ -264,3 +264,86 @@ test('canScoutSelected reflects adjacency and ownership of the selected target',
   game.selectedCommand = null;
   assert.equal(game.canScoutSelected(), false);
 });
+
+test('scout succeeds on an adjacent neutral hex (owner null)', () => {
+  const ctx = loadScoutScripts();
+  const scout = newFaction(ctx, 0);
+
+  const ownHex = new ctx.HexCell(3, 3);
+  ownHex.owner = 0;
+  scout.territories.add(ownHex.key());
+
+  const targetHex = new ctx.HexCell(3, 4);
+  targetHex.owner = null;
+  targetHex.informationConfidence = 0.45;
+
+  const game = makeScoutGame(ctx, { ownHex, targetHex });
+  const result = ctx.ActionSystem.scout(game, scout, targetHex);
+
+  assert.equal(result.success, true);
+  assert.equal(targetHex.informationConfidence, 0.7);
+});
+
+test('scout rejects a null target hex', () => {
+  const ctx = loadScoutScripts();
+  const scout = newFaction(ctx, 0);
+  const game = { map: { getNeighbors: () => [], getHex: () => null } };
+
+  const result = ctx.ActionSystem.scout(game, scout, null);
+
+  assert.equal(result.success, false);
+  assert.equal(result.message, '대상 지역이 없습니다.');
+});
+
+test('executeScoutOnSelected scouts the target regardless of command intent', () => {
+  const ctx = loadScripts([
+    'js/domain-data.js', 'js/province-data.js', 'js/intel.js', 'js/buildings.js', 'js/tech.js',
+    'js/faction.js', 'js/map.js', 'js/diplomacy.js', 'js/combat.js', 'js/actions.js',
+    'js/command-preview.js', 'js/game.js'
+  ]);
+  const game = Object.create(ctx.Game.prototype);
+  const human = new ctx.Faction({ id: 0, name: 'A', color: '#000', colorLight: '#111', emoji: 'A' }, false);
+  const enemy = new ctx.Faction({ id: 1, name: 'D', color: '#111', colorLight: '#222', emoji: 'D' }, true);
+  human.gold = 1000;
+
+  const ownHex = new ctx.HexCell(2, 2);
+  ownHex.owner = 0;
+  human.territories.add(ownHex.key());
+
+  const targetHex = new ctx.HexCell(2, 3);
+  targetHex.owner = 1;
+  targetHex.provinceName = '형강 수로';
+  targetHex.informationConfidence = 0.45;
+
+  game.factions = [human, enemy];
+  game.currentTurnIndex = 0;
+  game.state = 'playing';
+  game.turnNumber = 1;
+  game.eventLog = [];
+  // intent is 'attack' — executeScoutOnSelected must scout the target regardless
+  game.selectedCommand = { intent: 'attack', targetKey: targetHex.key(), targetName: '형강 수로' };
+  game.map = {
+    getNeighbors: (q, r) => {
+      if (q === targetHex.q && r === targetHex.r) return [{ q: ownHex.q, r: ownHex.r }];
+      if (q === ownHex.q && r === ownHex.r) return [{ q: targetHex.q, r: targetHex.r }];
+      return [];
+    },
+    getHex: (q, r) => {
+      if (q === ownHex.q && r === ownHex.r) return ownHex;
+      if (q === targetHex.q && r === targetHex.r) return targetHex;
+      return null;
+    },
+    getHexByKey: (key) => (key === targetHex.key() ? targetHex : ownHex),
+    clearHighlights: () => {}
+  };
+  game.refreshStrategicState = () => {};
+  game._checkAndHandleVictory = () => {};
+
+  const before = targetHex.informationConfidence;
+  const result = game.executeScoutOnSelected();
+
+  assert.equal(result.success, true);
+  assert.ok(targetHex.informationConfidence > before);
+  assert.equal(targetHex.informationConfidence, 0.7);
+  assert.equal(human.actionTaken, true);
+});

@@ -463,4 +463,5 @@ test('attack preview marks reliable information when confidence is high', () => 
 
   assert.equal(preview.intelReliable, true);
   assert.equal(preview.intel.id, 'reliable');
+  assert.ok(!preview.warnings.some((warning) => warning.level === 'medium'));
 });
