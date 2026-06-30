@@ -18,6 +18,10 @@
       forecast: null,
       mobilization: { enabled: false, estimatedTroops: 0, populationCost: 0 },
       capacityCost: null,
+      confidence: null,
+      intel: null,
+      intelReliable: false,
+      scout: { available: false, confidenceAfter: null },
       warnings: []
     };
   }
@@ -81,6 +85,15 @@
       warnings.push({ level: 'medium', text: '도하/해협 지형은 공격 효율을 낮춥니다.' });
     }
 
+    const confidence = typeof targetHex.informationConfidence === 'number'
+      ? targetHex.informationConfidence
+      : null;
+    const intel = confidence === null ? null : window.IntelSystem.tierOf(confidence);
+    const intelReliable = confidence === null ? true : window.IntelSystem.isReliable(confidence);
+    if (!intelReliable) {
+      warnings.push({ level: 'medium', text: '정보 신뢰도가 낮아 예측이 부정확할 수 있습니다. 정찰로 정확도를 높이세요.' });
+    }
+
     return {
       kind: 'attack',
       valid: true,
@@ -97,6 +110,13 @@
         populationCost: mobilizedTroops
       },
       capacityCost: mobilizedTroops > 0 ? { capacity: 'command', amount: mobilizedTroops } : null,
+      confidence,
+      intel,
+      intelReliable,
+      scout: {
+        available: true,
+        confidenceAfter: confidence === null ? null : window.IntelSystem.applyScout(confidence)
+      },
       warnings
     };
   }

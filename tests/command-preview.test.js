@@ -5,6 +5,7 @@ const { loadScripts } = require('./helpers/load-browser-scripts');
 function loadPreviewScripts() {
   return loadScripts([
     'js/domain-data.js',
+    'js/intel.js',
     'js/buildings.js',
     'js/faction.js',
     'js/map.js',
@@ -190,6 +191,7 @@ test('Game creates an attack command preview for an adjacent enemy target', () =
     'js/province-data.js',
     'js/capacity.js',
     'js/situation.js',
+    'js/intel.js',
     'js/buildings.js',
     'js/tech.js',
     'js/faction.js',
@@ -255,6 +257,7 @@ function loadGameScripts() {
     'js/province-data.js',
     'js/capacity.js',
     'js/situation.js',
+    'js/intel.js',
     'js/buildings.js',
     'js/tech.js',
     'js/faction.js',
@@ -408,4 +411,56 @@ test('refreshSelectedCommandPreview returns selectedCommand unchanged for non-at
   const result = game.refreshSelectedCommandPreview({ mobilize: true });
   assert.equal(result, originalCommand);
   assert.equal(game.selectedCommand.mobilize, false);
+});
+
+test('attack preview annotates low information confidence and offers scouting', () => {
+  const ctx = loadPreviewScripts();
+  const attacker = newFaction(ctx, 0);
+  const defender = newFaction(ctx, 1);
+
+  const ownHex = new ctx.HexCell(4, 4);
+  ownHex.owner = 0;
+  attacker.territories.add(ownHex.key());
+
+  const targetHex = new ctx.HexCell(4, 5);
+  targetHex.owner = 1;
+  targetHex.terrain = 'plains';
+  targetHex.localGarrison = 8;
+  targetHex.defenseValue = 10;
+  targetHex.informationConfidence = 0.45;
+  defender.territories.add(targetHex.key());
+
+  const game = makeGame(ctx, { attacker, defender, targetHex, ownHex });
+  const preview = ctx.CommandPreview.buildAttackPreview(game, attacker, targetHex, { mobilize: false });
+
+  assert.equal(preview.confidence, 0.45);
+  assert.equal(preview.intel.id, 'low');
+  assert.equal(preview.intelReliable, false);
+  assert.equal(preview.scout.available, true);
+  assert.equal(preview.scout.confidenceAfter, 0.7);
+  assert.ok(preview.warnings.some((warning) => warning.level === 'medium'));
+});
+
+test('attack preview marks reliable information when confidence is high', () => {
+  const ctx = loadPreviewScripts();
+  const attacker = newFaction(ctx, 0);
+  const defender = newFaction(ctx, 1);
+
+  const ownHex = new ctx.HexCell(4, 4);
+  ownHex.owner = 0;
+  attacker.territories.add(ownHex.key());
+
+  const targetHex = new ctx.HexCell(4, 5);
+  targetHex.owner = 1;
+  targetHex.terrain = 'plains';
+  targetHex.localGarrison = 8;
+  targetHex.defenseValue = 10;
+  targetHex.informationConfidence = 0.85;
+  defender.territories.add(targetHex.key());
+
+  const game = makeGame(ctx, { attacker, defender, targetHex, ownHex });
+  const preview = ctx.CommandPreview.buildAttackPreview(game, attacker, targetHex, { mobilize: false });
+
+  assert.equal(preview.intelReliable, true);
+  assert.equal(preview.intel.id, 'reliable');
 });
