@@ -186,6 +186,17 @@ window.Game = class Game {
     return this.executeAction('scout', { targetHex });
   }
 
+  /** True when the currently selected command's target can actually be scouted
+   *  (adjacent to the current faction and not already owned by it). */
+  canScoutSelected() {
+    if (!this.selectedCommand) return false;
+    const targetHex = this.map.getHexByKey(this.selectedCommand.targetKey);
+    if (!targetHex) return false;
+    const factionId = this.getCurrentFaction().id;
+    return targetHex.owner !== factionId &&
+      window.ActionSystem._isAdjacentToFaction(this, factionId, targetHex.q, targetHex.r);
+  }
+
   /* ──────────────────── getters ──────────────────── */
 
   getCurrentFaction() {

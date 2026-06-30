@@ -221,3 +221,46 @@ test('executeSelectedCommand executes a scout command and consumes the turn acti
   assert.equal(human.actionTaken, true);
   assert.equal(game.selectedCommand, null);
 });
+
+test('canScoutSelected reflects adjacency and ownership of the selected target', () => {
+  const ctx = loadScripts([
+    'js/domain-data.js', 'js/province-data.js', 'js/intel.js', 'js/buildings.js', 'js/tech.js',
+    'js/faction.js', 'js/map.js', 'js/diplomacy.js', 'js/combat.js', 'js/actions.js',
+    'js/command-preview.js', 'js/game.js'
+  ]);
+  const game = Object.create(ctx.Game.prototype);
+  const human = new ctx.Faction({ id: 0, name: 'A', color: '#000', colorLight: '#111', emoji: 'A' }, false);
+  game.factions = [human];
+  game.currentTurnIndex = 0;
+
+  const ownHex = new ctx.HexCell(2, 2);
+  ownHex.owner = 0;
+  human.territories.add(ownHex.key());
+  const adjacentEnemy = new ctx.HexCell(2, 3);
+  adjacentEnemy.owner = 1;
+  const farEnemy = new ctx.HexCell(9, 9);
+  farEnemy.owner = 1;
+  const hexes = { [ownHex.key()]: ownHex, [adjacentEnemy.key()]: adjacentEnemy, [farEnemy.key()]: farEnemy };
+
+  game.map = {
+    getNeighbors: (q, r) => {
+      if (q === adjacentEnemy.q && r === adjacentEnemy.r) return [{ q: ownHex.q, r: ownHex.r }];
+      if (q === ownHex.q && r === ownHex.r) return [{ q: adjacentEnemy.q, r: adjacentEnemy.r }];
+      return [];
+    },
+    getHex: (q, r) => hexes[`${q},${r}`] || null,
+    getHexByKey: (key) => hexes[key] || null
+  };
+
+  game.selectedCommand = { intent: 'scout', targetKey: adjacentEnemy.key() };
+  assert.equal(game.canScoutSelected(), true);
+
+  game.selectedCommand = { intent: 'scout', targetKey: farEnemy.key() };
+  assert.equal(game.canScoutSelected(), false);
+
+  game.selectedCommand = { intent: 'scout', targetKey: ownHex.key() };
+  assert.equal(game.canScoutSelected(), false);
+
+  game.selectedCommand = null;
+  assert.equal(game.canScoutSelected(), false);
+});

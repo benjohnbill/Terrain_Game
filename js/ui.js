@@ -191,7 +191,7 @@ window.GameUI = class GameUI {
       return;
     }
 
-    const isScout = command.intent === 'scout';
+    const isScout = command.intent === 'scout' && this.game.canScoutSelected();
     const fallbackActions = isScout
       ? `<div class="command-card-actions">
           <button id="command-scout-btn" class="modal-btn small primary" type="button">정찰 실행</button>
