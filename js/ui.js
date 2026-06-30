@@ -172,6 +172,7 @@ window.GameUI = class GameUI {
         <div class="command-card-row"><span>예상 전력</span><strong>⚔${preview.attackForce} vs 🛡${preview.defenseForce}</strong></div>
         <div class="command-card-row"><span>전황</span><strong>${forecast ? forecast.band : '-'}</strong></div>
         <div class="command-card-row"><span>예상 범위</span><strong>${forecast ? `${forecast.low.toFixed(2)}-${forecast.high.toFixed(2)}` : '-'}</strong></div>
+        <div class="command-card-row"><span>정보</span><strong>${preview.intel ? this._escape(preview.intel.label) : '-'} (${preview.confidence != null ? Math.round(preview.confidence * 100) : '-'}%)</strong></div>
         <label class="command-toggle">
           <input id="command-mobilize-toggle" type="checkbox" ${preview.mobilization.enabled ? 'checked' : ''}>
           <span>공세 동원</span>
@@ -182,6 +183,7 @@ window.GameUI = class GameUI {
         <p>${this._escape(preview.message)}</p>
         <div class="command-card-actions">
           <button id="command-confirm-btn" class="modal-btn small primary" type="button" ${preview.valid ? '' : 'disabled'}>공격 실행</button>
+          ${preview.intelReliable ? '' : '<button id="command-scout-btn" class="modal-btn small" type="button">정찰</button>'}
           <button id="command-cancel-btn" class="modal-btn small" type="button">취소</button>
         </div>
       `;
@@ -189,13 +191,23 @@ window.GameUI = class GameUI {
       return;
     }
 
+    const isScout = command.intent === 'scout';
+    const fallbackActions = isScout
+      ? `<div class="command-card-actions">
+          <button id="command-scout-btn" class="modal-btn small primary" type="button">정찰 실행</button>
+          <button id="command-cancel-btn" class="modal-btn small" type="button">취소</button>
+        </div>`
+      : '';
+
     el.innerHTML = `
       <div class="command-card-title">${this._escape(command.targetName)}</div>
       <div class="command-card-row"><span>명령</span><strong>${this._escape(command.intentLabel)}</strong></div>
       <div class="command-card-row"><span>강도</span><strong>${this._escape(command.intensity)}</strong></div>
       <div class="command-card-row"><span>정보 신뢰도</span><strong>${Math.round(command.confidence * 100)}%</strong></div>
       <p>${this._escape(command.reason)}</p>
+      ${fallbackActions}
     `;
+    this.bindCommandCardActions();
   }
 
   bindCommandCardActions() {
@@ -215,6 +227,17 @@ window.GameUI = class GameUI {
         if (result.success && result.attackRoll !== undefined) {
           this.showBattleResult(result);
         } else if (this.game.onNotification) {
+          this.game.onNotification(result.message, result.success ? 'success' : 'warning');
+        }
+        this.updateAll();
+      });
+    }
+
+    const scoutBtn = document.getElementById('command-scout-btn');
+    if (scoutBtn) {
+      scoutBtn.addEventListener('click', () => {
+        const result = this.game.executeScoutOnSelected();
+        if (this.game.onNotification) {
           this.game.onNotification(result.message, result.success ? 'success' : 'warning');
         }
         this.updateAll();
