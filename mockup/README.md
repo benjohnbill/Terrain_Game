@@ -17,25 +17,47 @@ python3 -m http.server 8007
 
 ## Pages
 
-- **`situation-map.html`** — **the model-faithful page.** Realigned to the code
-  (`js/situation.js` + `HIGHLIGHT_TYPES`), which is the canonical, ADR-0013
-  implementation. The earlier `payoff-loop.html` map used three invented
-  *continuous* metrics; this page uses the real model instead:
-  - **Unit = named province** (a hex cluster, per `DOMAIN_MAP`), owner color
-    filling the whole cluster with a drawn perimeter.
-  - **Situation = a category, not a score.** Each province is classified by a
-    verbatim port of `classifyHex` into one of six ADR-0013 types
-    (defense / threat / uncertainty / opportunity / route / growth) from the
-    real Phase-1 stats (economyValue, localGarrison, informationConfidence,
-    strategicTags, owner).
-  - **Sparse.** Only the turn's top highlights are emphasized (situation.js
-    caps at 7); everything else stays calm — ADR 0013 / DOMAIN_MAP "limit
-    strong highlights to avoid noise."
-  - **Briefing + click.** A briefing panel lists the highlights with reason and
-    recommended command; clicking a province opens that recommended command
-    prefilled. Command *adjustment* (the skill edge) is left OPEN.
-  - `threat` is defined in the code enum but not emitted by `classifyHex`, so
-    it is shown only via a clearly-marked proposed "위협 렌즈" toggle.
+- **`situation-map.html`** — **the model-faithful page (v3, ADR 0019 + fog).**
+  The stage-1 situation-judgment model, with fog-of-war folded in as the `불확실`
+  axis and rendered in the A2 military-cartographic (block-wargame) visual
+  language (fog-of-war-discovery). v1 ported `situation.js`'s flat six-type list;
+  v2 rebuilt the structured ADR 0019 reading; v3 integrates fog + the A2 skin:
+  - **Structured reading, not a flat list.** 판세 (aggregate "am I winning"
+    glance) + three located axes 위협 / 기회 / 불확실. Growth folds into 판세
+    (owned-development glow); route folds into reachability.
+  - **Unit = named province** (a hex cluster, per `DOMAIN_MAP`); adjacency is
+    computed from the hexes; hover is the cell-level drill-down.
+  - **Fog = the `불확실` axis (A2 military-cartographic).** Each foe province
+    carries a knowledge state derived from information confidence — **undiscovered**
+    (murk wash + `?`, occupant unseen) / **glimpsed** (dim block-counter + a faded
+    *estimate-range band* on the 4-segment strength meter, width ∝ 1−confidence) /
+    **reliable** (crisp counter, exact meter) / **owned** (your crisp counters).
+    Terrain stays visible under murk (position fog). Low-confidence borders route
+    to 불확실.
+  - **Scout = the axis transition.** Clicking a 불확실 province opens a 정찰
+    command; scouting raises confidence (→ MAX 0.90) and re-runs the classifier —
+    murk lifts, the meter narrows, and the axis resolves to 위협/기회, on the
+    province *or a neighbour* (fog can hide a threat: revealing an under-scouted
+    border can light up your adjacent province as 위협). Scouting spends the turn's
+    **one action**, so you see the resolution but respond next turn — attention >
+    budget, made tangible. 되돌리기 resets the turn.
+  - **Relational threat.** 위협 needs an adjacent enemy whose *estimated* force
+    beats the province's weakest-link garrison, gated by confidence — drawn as an
+    arrow from the enemy driver to the threatened province. `defense` + `threat`
+    are merged into one 위협 axis.
+  - **Posture is a lens, truth is invariant.** The posture control (균형 / 공세 /
+    방어 / 정찰 중시) re-orders and re-emphasizes highlights but never changes what
+    is classified; **dissonance** warns when the posture-recommended action is not
+    the turn's most pressing tension (e.g. 정찰 중시 recommends scouting, but the
+    biggest tension is an active 위협). The dissonance signal is the first concrete
+    piece of the OPEN skill edge (SPEC pillars 2-3).
+  - **Stage-1 → stage-2 bridge (1 action).** You see ~5–7 tensions but hold one
+    action; clicking a highlight opens the prefilled command card, and 확정 (or
+    정찰) spends the single action (others dim). Choosing *which* tension to spend
+    it on is the stage-1 decision. Command *adjustment* (the skill edge) is left OPEN.
+  - **Veil tuning.** A collapsible slider panel (murk / glimpse brightness /
+    estimate-band fade / recon marker / counter size) is retained to keep dialing
+    in the fog visual language against live data.
 
 ## Earlier exploration pages
 

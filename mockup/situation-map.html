@@ -3,23 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Terrain Game — 형세 판단 (situation.js 정본 재정렬)</title>
+    <title>Terrain Game — 형세 판단 + 안개 (ADR 0019 · 불확실 축)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Orbitron:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="situation-map.css">
 </head>
 <body>
     <div class="mock-banner">
-        <span class="mock-tag">정본 재정렬</span>
-        <span class="mock-note">형세 판단 (1단계) · 단위=지방(헥스 클러스터) · 6 상황타입 = situation.js/HIGHLIGHT_TYPES 정본 · 희소 강조 · 더미 데이터</span>
-        <span class="mock-spec">src: js/situation.js · ADR 0013</span>
+        <span class="mock-tag">형세판단 v3 · 안개</span>
+        <span class="mock-note">1단계 형세 판단 · 지방 단위 · 4축(판세/위협/기회/불확실) · 안개=불확실 축 · 정찰=축 전이 · 군사지도(A2) 블록카운터 · 행동 1회 · 더미 데이터</span>
+        <span class="mock-spec">src: ADR 0019 + fog-of-war-discovery</span>
     </div>
 
     <div class="app">
-        <!-- slim "am I winning" glance for context -->
+        <!-- 판세: aggregate "am I winning" glance -->
         <header class="glance glass">
-            <div class="g-faction"><span class="g-k">내 세력</span><span class="g-n">玄陽 · 현양</span></div>
+            <div class="g-faction"><span class="g-k">판세 · 내 세력</span><span class="g-n">玄陽 · 현양</span></div>
             <div class="g-pd">
                 <span class="g-side"><span class="g-lbl">나</span><span class="g-val" id="g-self">142</span></span>
                 <span class="g-track"><span class="g-fill-self" id="g-fill-self"></span><span class="g-fill-rival" id="g-fill-rival"></span><span class="g-lead" id="g-lead">+17% ▲</span></span>
@@ -31,18 +31,27 @@
         <div class="body">
             <main class="map-wrap glass">
                 <div class="toolbar">
-                    <span class="tb-title">이번 턴 형세 <span class="tb-sub">색=소유 · 강조 <b id="br-count">0</b>개만 (situation.js 상위 7)</span></span>
-                    <button id="btn-threat" class="toggle" aria-pressed="false" title="ADR 0013엔 있으나 classifyHex 미배선">위협 렌즈 <em>제안</em></button>
+                    <span class="tb-title">이번 턴 형세</span>
+                    <div class="posture" id="posture" role="group" aria-label="전략 자세 (렌즈)">
+                        <span class="pt-k">자세</span>
+                        <button class="pt" data-pt="balanced"  aria-pressed="true">균형</button>
+                        <button class="pt" data-pt="offensive" aria-pressed="false">공세</button>
+                        <button class="pt" data-pt="defensive" aria-pressed="false">방어</button>
+                        <button class="pt" data-pt="recon"     aria-pressed="false">정찰 중시</button>
+                    </div>
                     <div class="legend" id="legend"></div>
                 </div>
                 <div class="map-stage" id="map-stage">
-                    <svg id="map-svg" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="형세 지도 — 지방(헥스 클러스터) 단위, 이번 턴 상위 상황만 강조">
+                    <svg id="map-svg" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="형세 지도 — 지방 단위 군사지도, 블록 카운터=병력, 안개=불확실(미발견 murk·글림프스 추정범위), 정찰이 축을 해소">
                         <defs>
                             <filter id="soft" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="7"/></filter>
                         </defs>
+                        <g id="l-terrain"></g>
+                        <g id="l-murk"></g>
                         <g id="l-glow"></g>
-                        <g id="l-fill"></g>
                         <g id="l-perim"></g>
+                        <g id="l-arrow"></g>
+                        <g id="l-counter"></g>
                         <g id="l-label"></g>
                         <g id="l-mark"></g>
                         <g id="l-fx"></g>
@@ -50,29 +59,42 @@
                     <div id="chip" class="chip hidden"></div>
                     <div id="card" class="card hidden"></div>
                 </div>
-                <p class="hint">지방 hover → 형세·실제 stat · 강조된 지방 click → 추천 명령 카드 · 나머지는 <b>차분한 소유색</b>(노이즈 방지, ADR 0013)</p>
+                <p class="hint">블록 카운터 = 병력(4단 미터) · <b>글림프스</b>는 흐린 셀 = 추정 범위 · <b>미발견</b>은 murk + <b>?</b> · 지방 hover → 실제 stat · 불확실 click → <b>정찰</b>해 해소 · 화살표 = 관계형 위협</p>
             </main>
 
             <aside class="rail">
+                <div id="advice" class="advice glass"></div>
+                <div id="action-pill" class="action-pill glass"></div>
                 <section class="panel glass">
-                    <h2 class="panel-h">턴 브리핑 <span class="panel-sub">상황 타입 우선순위 · 클릭=지방으로</span></h2>
+                    <h2 class="panel-h">턴 브리핑 <span class="panel-sub">형세순 (자세 무관) · 클릭=지방/명령으로</span></h2>
                     <div class="briefing" id="briefing"></div>
                 </section>
+                <details class="veil glass">
+                    <summary>안개 튜닝 (Veil v3)</summary>
+                    <div class="veil-body">
+                        <div class="veil-ctrl"><label>미발견 murk <span id="v-murk">0.66</span></label><input type="range" min="0" max="0.92" step="0.01" value="0.66" data-var="--murk" data-out="v-murk"></div>
+                        <div class="veil-ctrl"><label>미발견 지형밝기 <span id="v-mterr">0.50</span></label><input type="range" min="0.15" max="1" step="0.01" value="0.5" data-var="--murk-terrain" data-out="v-mterr"></div>
+                        <div class="veil-ctrl"><label>글림프스 밝기 <span id="v-dim">0.62</span></label><input type="range" min="0.25" max="1" step="0.01" value="0.62" data-var="--glimpse-dim" data-out="v-dim"></div>
+                        <div class="veil-ctrl"><label>추정범위 흐림 <span id="v-fade">0.40</span></label><input type="range" min="0" max="0.85" step="0.01" value="0.4" data-var="--range-fade" data-out="v-fade"></div>
+                        <div class="veil-ctrl"><label>정찰 마커 <span id="v-recon">0.90</span></label><input type="range" min="0" max="1" step="0.01" value="0.9" data-var="--recon" data-out="v-recon"></div>
+                        <div class="veil-ctrl"><label>카운터 크기 <span id="v-cnt">1.00</span></label><input type="range" min="0.7" max="1.3" step="0.01" value="1" data-var="--counter" data-out="v-cnt"></div>
+                    </div>
+                </details>
                 <section class="panel glass note-panel">
-                    <h2 class="panel-h">이 목업이 정본을 따르는 방식</h2>
+                    <h2 class="panel-h">이 목업이 따르는 방식</h2>
                     <ul class="model-note">
-                        <li><b>단위</b> = 지방(헥스 클러스터). 소유색이 지방 전체에 깔림.</li>
-                        <li><b>상황</b> = 연속 점수가 아니라 <b>6개 범주</b>(situation.js가 실제 stat으로 분류).</li>
-                        <li><b>희소</b> = 이번 턴 상위 강조만, 나머진 차분.</li>
-                        <li><b>클릭</b> = 추천 명령(정비/공세준비/증원/정찰…) 프리필.</li>
-                        <li><b>위협</b>은 ADR 0013엔 있으나 classifyHex 미배선 → <em>제안</em> 렌즈로 분리.</li>
+                        <li><b>안개 = 불확실 축</b>: 적 지방은 정보 신뢰에 따라 미발견(murk)·글림프스(추정 범위)·정찰됨(확정) 상태. 저신뢰 접경은 <b>불확실</b>로 라우팅.</li>
+                        <li><b>정찰 = 축 전이</b>: 정찰이 신뢰를 올려(→최대 90%) classify를 재실행 — murk가 걷히고 미터가 좁혀지며 축이 <b>위협/기회</b>로 확정. 리빌 자체가 전이.</li>
+                        <li><b>위협</b> = 관계형: 인접 적 추정 병력 &gt; 내 최약 수비 (신뢰도 게이팅). 안개가 위협을 숨길 수 있음.</li>
+                        <li><b>자세 = 추천</b>: 형세(진실)는 자세 무관하게 다 보이고, 자세는 1행동 추천만 바꿈. <b>부조화</b> = 추천이 최급선무와 어긋나면 경고.</li>
+                        <li><b>행동 1회</b>: 정찰도 그 1행동을 씀 — 해소는 봐도 대응은 다음 턴. 보이는 것 &gt; 할 수 있는 것.</li>
                     </ul>
                 </section>
             </aside>
         </div>
     </div>
 
-    <script src="situation-data.js"></script>
-    <script src="situation-map.js"></script>
+    <script src="situation-data.js?v=5"></script>
+    <script src="situation-map.js?v=5"></script>
 </body>
 </html>
