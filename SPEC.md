@@ -37,6 +37,42 @@ Phase 1 should not feel like only a set of generic terrain tiles. The first
 active area should include medium-sized named provinces with population,
 economy, terrain composition, strategic value, and background hooks.
 
+## Positioning and Fun Pillars
+
+**Positioning.** A "simple Civilization": a Civilization-depth *world* (terrain,
+regional value, some historical flavor) operated with a League-of-Legends-shaped
+*hand* — a low skill floor (anyone plays via posture presets and prefilled
+commands) with an optional skill ceiling (fine situational adjustment rewards
+mastery). System complexity is high; *required* interaction complexity is low;
+*expressed* interaction complexity is opt-in.
+
+**Fun pillars.**
+
+1. **Growth you can feel.** The core satisfaction is being validated that you
+   are getting stronger; each well-chosen conquest visibly compounds your
+   position.
+2. **Skill is fitting the situation.** A posture preset is the statistical-average
+   setup for a stance; the specific situation is never average. Skill is reading
+   the real situation and adjusting from that average toward what this turn
+   actually needs.
+3. **A skill-driven snowball, not a state-driven one.** Advantage accumulates
+   from *skill differences* at each decision — small edges from better
+   situation-fit, chained through newly opened opportunities — not from an
+   automatic "own more → grow stronger → own more" loop. The anti-snowball
+   mechanics exist to bind the lead to skill, not to state.
+4. **Opt-in depth.** Casual players succeed on presets and prefilled commands;
+   engaged players capture compounding edges by overriding the decisions that
+   matter. Neither is punished.
+
+**To validate (not committed).** Time pressure as a separate opt-in mode — it may
+convert analysis into tested skill (Hearthstone-style), but whether it reads as
+skill-testing or merely stressful is a prototype question. Casual play stays
+untimed.
+
+**Open thread.** Preset differentiation — how our posture presets create a
+distinctive, legible gap-to-close (the density of meaningful small-edge
+decisions) — is an ongoing design question.
+
 ## Phase Roadmap
 
 ### Phase 1: Terrain, Regions, and Combat
