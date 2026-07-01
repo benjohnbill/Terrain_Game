@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terrain Game — Payoff Loop Mockup</title>
+    <meta name="description" content="Judgment mockup of the Phase 1 MVP payoff-loop representation model. Dummy data only.">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Orbitron:wght@600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="payoff-loop.css">
+</head>
+<body>
+    <!-- Mockup banner: this is NOT production UI -->
+    <div class="mock-banner">
+        <span class="mock-tag">MOCKUP</span>
+        <span class="mock-note">Phase 1 페이오프 루프 표현 모델 · 더미 데이터 · 감 판단용 (프로덕션 UI 아님)</span>
+        <span class="mock-spec">spec: payoff-loop-design.md</span>
+    </div>
+
+    <div class="app">
+        <!-- ================= TOP HUD: "Am I Winning?" glance ================= -->
+        <header class="hud glass" aria-label="Am I winning glance">
+            <div class="hud-title">
+                <span class="hud-kicker">내 세력</span>
+                <span class="hud-faction" id="hud-self-name">玄陽 · 현양</span>
+            </div>
+
+            <!-- Power-differential bar: self vs strongest rival -->
+            <div class="powerdiff" id="powerdiff">
+                <div class="pd-side pd-self">
+                    <span class="pd-label">나</span>
+                    <span class="pd-val" id="pd-self-val">142</span>
+                </div>
+                <div class="pd-track" role="img" aria-label="국력차 바">
+                    <div class="pd-fill-self" id="pd-fill-self"></div>
+                    <div class="pd-fill-rival" id="pd-fill-rival"></div>
+                    <div class="pd-mid"></div>
+                    <div class="pd-lead" id="pd-lead">+18% ▲</div>
+                </div>
+                <div class="pd-side pd-rival">
+                    <span class="pd-label" id="pd-rival-name">흑철</span>
+                    <span class="pd-val" id="pd-rival-val">121</span>
+                </div>
+            </div>
+
+            <!-- Momentum: recent gained / lost -->
+            <div class="momentum" id="momentum" aria-label="최근 획득/상실 모멘텀">
+                <span class="mom-title">모멘텀</span>
+                <div class="mom-items" id="mom-items"><!-- js --></div>
+            </div>
+
+            <div class="hud-turn">
+                <span class="turn-label">턴 <b id="turn-num">7</b></span>
+                <button id="btn-next-turn" class="btn-turn">다음 턴 ▶</button>
+                <button id="btn-reset" class="btn-reset" title="처음으로">↺</button>
+            </div>
+        </header>
+
+        <div class="body">
+            <!-- ================= CENTER: Map ================= -->
+            <main class="map-wrap glass">
+                <div class="map-toolbar">
+                    <div class="lens-toggle" id="lens-toggle" role="tablist" aria-label="오버레이 렌즈">
+                        <button class="lens-btn is-active" data-lens="value"       role="tab">◆ 가치</button>
+                        <button class="lens-btn"           data-lens="development" role="tab">▲ 발전</button>
+                        <button class="lens-btn"           data-lens="threat"      role="tab">⚔ 위협</button>
+                        <button class="lens-btn"           data-lens="control"     role="tab">▣ 장악</button>
+                    </div>
+                    <div class="map-legend" id="map-legend"><!-- js --></div>
+                </div>
+
+                <div class="map-stage" id="map-stage">
+                    <svg id="map-svg" xmlns="http://www.w3.org/2000/svg" role="img"
+                         aria-label="헥스 지도 — 발전은 시각 무게(색농도·아이콘밀도·발광)로 표현">
+                        <defs>
+                            <filter id="glow-dev" x="-60%" y="-60%" width="220%" height="220%">
+                                <feGaussianBlur stdDeviation="3.5" result="b"/>
+                                <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+                            </filter>
+                        </defs>
+                        <g id="hex-layer"></g>
+                        <g id="icon-layer"></g>
+                        <g id="fx-layer"></g>
+                    </svg>
+
+                    <!-- hover = compact stat chip (icons + mini-bars), no prose -->
+                    <div id="hex-chip" class="hex-chip hidden" aria-hidden="true"><!-- js --></div>
+
+                    <!-- click = prefilled command card (action), not lore -->
+                    <div id="command-card" class="command-card hidden"><!-- js --></div>
+                </div>
+
+                <p class="map-hint" id="map-hint">
+                    hover → 스탯 칩 · click → 프리필 명령 카드 · <b>다음 턴 ▶</b> 을 눌러 페이오프 루프를 움직임으로 확인
+                </p>
+            </main>
+
+            <!-- ================= RIGHT RAIL ================= -->
+            <aside class="rail">
+                <!-- Ranking ladder: re-orders visibly -->
+                <section class="panel glass" aria-label="순위 사다리">
+                    <h2 class="panel-h">순위 사다리 <span class="panel-sub">강함 순 · 턴마다 재정렬</span></h2>
+                    <ol class="ladder" id="ladder"><!-- js --></ol>
+                </section>
+
+                <!-- Map area share -->
+                <section class="panel glass" aria-label="소유 맵 면적">
+                    <h2 class="panel-h">맵 면적 <span class="panel-sub">소유 지방 점유율</span></h2>
+                    <div class="area-bar" id="area-bar"><!-- js --></div>
+                    <div class="area-legend" id="area-legend"><!-- js --></div>
+                </section>
+
+                <!-- OPEN: skill-edge visualization (pillars 2-3) — placeholder only -->
+                <section class="panel glass panel-open" aria-label="실력 edge 가시화 (설계 미확정)">
+                    <h2 class="panel-h">
+                        실력 edge <span class="open-badge" title="설계 미확정 — 플래닝 세션 질문">OPEN ?</span>
+                    </h2>
+                    <p class="open-note">
+                        pillar 2·3 (실력이 보이게)은 spec에서 <b>미해결</b>. 아래는 방향 탐색용
+                        <b>플레이스홀더</b>일 뿐 — 확정 설계 아님.
+                    </p>
+                    <div class="edge-demo" id="edge-demo">
+                        <div class="edge-row">
+                            <span class="edge-k">내 판단 vs 프리셋 기본값</span>
+                            <span class="edge-v" id="edge-delta">—</span>
+                        </div>
+                        <div class="edge-row">
+                            <span class="edge-k">이 정복이 여는 기회</span>
+                            <span class="edge-v" id="edge-chain">명령 카드에서 조정 시 표시</span>
+                        </div>
+                    </div>
+                </section>
+            </aside>
+        </div>
+    </div>
+
+    <script src="payoff-loop.data.js"></script>
+    <script src="payoff-loop.js"></script>
+</body>
+</html>
