@@ -15,6 +15,26 @@ python3 -m http.server 8007
 # then open http://localhost:8007/mockup/payoff-loop.html
 ```
 
+## Two pages
+
+- **`payoff-loop.html`** — the full payoff-loop representation model (below).
+- **`encoding-compare.html`** — a focused A/B/C study of *how the map cell
+  encodes multiple dimensions at once*, built to judge one question by eye:
+  - **A · color-stack** — ownership as base hue, with value → opacity,
+    threat → saturation, development → lightness all stacked on the *same* fill
+    (the "everything in one color" proposal). Rendered honestly so its
+    weakness is visible: the three metrics cross-contaminate and low-value
+    cells lose their ownership color.
+  - **B · separable channels** — ownership → base hue (always legible),
+    development → brightness/glow, value → gold ◆ mark, threat → red border.
+    Each dimension on a *different* channel, so they do not interfere.
+  - **C · change toggle** — one toggle that swaps the steady-state view for an
+    "이번 턴 변화량" overlay (dims everything, shows only what grew / flipped /
+    was lost this turn).
+  - A **decode-test strip** at the bottom shows the *same* five value/dev/threat
+    scenarios rendered in A and B side by side, so discriminability can be
+    compared directly. Keys: `1`=A, `2`=B, `D`=change overlay.
+
 ## What to judge
 
 Principle from the spec: **see state, read only the *why*.**

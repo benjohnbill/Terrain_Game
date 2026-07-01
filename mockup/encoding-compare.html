@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terrain Game — 맵 인코딩 비교 (A 색스택 / B 분리채널 / C 변화량)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Orbitron:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="encoding-compare.css">
+</head>
+<body>
+    <div class="mock-banner">
+        <span class="mock-tag">비교 MOCKUP</span>
+        <span class="mock-note">맵 인코딩 판단용 · 소유=베이스색 상시 / 가치·발전·위협 복합 / 변화량 토글 · 더미 데이터</span>
+        <span class="mock-spec">spec: payoff-loop-design.md · ADR 0013</span>
+    </div>
+
+    <div class="app">
+        <header class="bar glass">
+            <div class="bar-title">
+                <span class="bar-kicker">인코딩 모드</span>
+                <div class="segmented" id="mode-seg" role="tablist" aria-label="인코딩 모드">
+                    <button class="seg-btn is-active" data-mode="A" role="tab">A · 색 스택 (원안)</button>
+                    <button class="seg-btn"           data-mode="B" role="tab">B · 분리 채널</button>
+                </div>
+            </div>
+
+            <button id="btn-delta" class="toggle" aria-pressed="false" title="이번 턴에 무엇이 바뀌었나">
+                <span class="tg-dot"></span> 변화량
+            </button>
+
+            <div class="bar-right">
+                <span class="turn-label">턴 <b id="turn-num">7</b></span>
+                <button id="btn-next" class="btn-next">다음 턴 ▶</button>
+                <button id="btn-reset" class="btn-reset" title="처음으로">↺</button>
+            </div>
+        </header>
+
+        <div class="legend glass" id="legend"><!-- js: adapts to mode --></div>
+
+        <main class="map-wrap glass">
+            <div class="map-stage" id="map-stage">
+                <svg id="map-svg" xmlns="http://www.w3.org/2000/svg" role="img"
+                     aria-label="헥스 지도 — 인코딩 비교용">
+                    <defs>
+                        <filter id="glow-b" x="-60%" y="-60%" width="220%" height="220%">
+                            <feGaussianBlur stdDeviation="3.2" result="b"/>
+                            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+                        </filter>
+                    </defs>
+                    <g id="hex-layer"></g>
+                    <g id="mark-layer"></g>
+                    <g id="fx-layer"></g>
+                </svg>
+                <div id="hex-chip" class="hex-chip hidden"><!-- js: ground-truth numbers --></div>
+                <div class="delta-empty hidden" id="delta-empty">이번 턴 변화 없음. <b>다음 턴 ▶</b> 진행 후 켜보세요</div>
+            </div>
+            <p class="hint" id="hint">키: <b>1</b>=A · <b>2</b>=B · <b>D</b>=변화량 · hover=수치 확인(정답지) · <b>다음 턴 ▶</b> 로 변화 생성</p>
+        </main>
+
+        <!-- Decode test strip: SAME data shown in A and B, side by side -->
+        <section class="strip glass">
+            <h2 class="strip-h">디코드 테스트 <span class="strip-sub">같은 수치를 A·B로 나란히: "가치·발전·위협을 눈으로 구분할 수 있나?"</span></h2>
+            <p class="strip-note">전부 <b style="color:#2dd4bf">현양(자기 세력)</b> 소유로 고정. 소유색은 같고 <b>가치·발전·위협 인코딩만</b> 달라요. 위=정답지, 가운데=A, 아래=B.</p>
+            <div class="strip-grid" id="strip-grid"><!-- js --></div>
+        </section>
+    </div>
+
+    <script src="payoff-loop.data.js"></script>
+    <script src="encoding-compare.js"></script>
+</body>
+</html>
