@@ -2,7 +2,7 @@
 
 Date: 2026-07-01
 
-Status: Accepted
+Status: Accepted (capacity-layer scope amended by ADR 0020)
 
 ## Context
 
@@ -33,6 +33,9 @@ Treat Phase 1 as an MVP of the core fun.
 - **Defer the capacity/overclock layer** (four-capacity focus, carryover,
   overclock) beyond the first fun-validation slice. The code remains in the
   repository (display-only); it is not required to be wired for the MVP.
+  (Amended by ADR 0020: this deferral covers the four-capacity / carryover /
+  overclock **system**; a single divisible action-capacity pool is reclassified
+  as MVP core, because the core skill fun depends on it.)
 - **Prioritize making the core fun felt** — the growth/skill/edge loop and the
   map's readable response (result reports, map changes) — over adding systemic
   breadth.

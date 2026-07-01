@@ -24,6 +24,11 @@ Active design. Positioning and MVP scope settled; MVP payoff loop in design.
   situation judgment model: structured province reading (판세/위협/기회/불확실),
   relational threat, posture-as-lens with anti-bias guardrails, fog variety
   contract, and the attention-vs-action-budget bridge to stage 2.
+- `docs/adr/0020-minimal-action-capacity-divisibility-core.md` - amends ADR 0018:
+  a single divisible action-capacity pool (commit-vs-average + surplus
+  redirection) is reclassified as MVP core, because the core skill fun (SPEC
+  pillars 2-3) depends on it; the four-capacity/carryover/overclock system stays
+  deferred.
 - Foundations: `0010` (high-complexity/low-micromanagement), `0009` and `0014`
   (anti-snowball force roles and local-garrison economy).
 

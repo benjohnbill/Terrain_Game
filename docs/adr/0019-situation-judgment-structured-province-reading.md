@@ -71,10 +71,12 @@ province level**, not a flat list of salient cells.
    than the per-turn action budget. The gap — seeing more than can be acted on —
    is the stage-1 decision: which surfaced tensions earn this turn's limited
    action. Posture never shrinks what is seen (coverage), only what the player
-   leans toward spending on. The MVP action budget is one action per turn
-   (confirmed): "of the ~5-7 surfaced tensions, which single one do I spend this
-   turn on?" The wider capacity layer stays deferred (ADR 0018); the invariant is
-   budget < attention.
+   leans toward spending on. The MVP turn is one *primary* action drawing from a
+   single divisible action-capacity pool (ADR 0020): the recommendation prefills
+   the statistical-average commit, and skill is committing tighter than average
+   and redirecting the surplus (economy/scouting). The four-capacity / carryover
+   / overclock system stays deferred (ADR 0018); the invariant is budget <
+   attention.
 
 ## Considered Options
 

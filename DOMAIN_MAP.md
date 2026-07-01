@@ -44,7 +44,10 @@ Markers:
 - ✅ `Strategic posture`: A guidance preset for interpreting the turn and
   allocating action capacities. It is not a direct hidden-bonus mode.
 - ✅ `Action capacity`: Turn-available national capability such as command,
-  administration, diplomacy, or scholarship/technology.
+  administration, diplomacy, or scholarship/technology. The MVP uses a single
+  *divisible* pool (commit a variable amount to the primary action, redirect the
+  surplus); the four-capacity split + carryover + overclock are deferred
+  (ADR 0018, ADR 0020).
 - ✅ `Map-first situation UX`: Interaction principle where briefing and map
   highlights guide the player to important threats/opportunities before command
   creation.
@@ -93,11 +96,13 @@ Markers:
     `intel.js` MAX_CONFIDENCE 0.90 ceiling + decay forbid an oracle so readings
     stay fresh. An over-legible analyzer is the variety risk.
   - ✅ Stage-1 → stage-2 bridge: attention (surfaced highlights, coverage-
-    guaranteed, capped ~5-7) is decoupled from and larger than the per-turn
-    action budget. The gap (see many, act on few) *is* the stage-1 decision.
-    MVP action budget = one action per turn (confirmed): "of the ~5-7 surfaced
-    tensions, which single one do I spend this turn on?" The wider capacity layer
-    stays deferred (ADR 0018); the invariant is budget < attention. See ADR 0019.
+    guaranteed, capped ~5-7) is decoupled from and larger than what one turn can
+    act on. The gap (see many, act on few) *is* the stage-1 decision. MVP turn =
+    one *primary* action drawing from a single divisible action-capacity pool
+    (ADR 0020): the recommendation prefills the average commit, and skill =
+    committing tighter than average and redirecting the surplus (economy/
+    scouting). The four-capacity/carryover/overclock system stays deferred
+    (ADR 0018). See ADR 0019, ADR 0020.
 - ✅ `Capacity carryover`: Unused action capacity that partially persists into
   later turns as preparation or accumulated work, subject to decay and caps.
 - ✅ `Capacity overclock`: Emergency redirection of one action capacity into
