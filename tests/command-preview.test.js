@@ -465,3 +465,86 @@ test('attack preview marks reliable information when confidence is high', () => 
   assert.equal(preview.intel.id, 'reliable');
   assert.ok(!preview.warnings.some((warning) => warning.level === 'medium'));
 });
+
+test('attack preview estimates defender strength as a true-containing range that narrows with confidence', () => {
+  const ctx = loadPreviewScripts();
+  const attacker = newFaction(ctx, 0);
+  const defender = newFaction(ctx, 1);
+
+  const ownHex = new ctx.HexCell(4, 4);
+  ownHex.owner = 0;
+  attacker.territories.add(ownHex.key());
+
+  function target(confidence) {
+    const targetHex = new ctx.HexCell(4, 5);
+    targetHex.owner = 1;
+    targetHex.terrain = 'plains';
+    targetHex.localGarrison = 12;
+    targetHex.defenseValue = 14;
+    targetHex.informationConfidence = confidence;
+    return targetHex;
+  }
+
+  const lowConf = target(0.45);
+  const gameLow = makeGame(ctx, { attacker, defender, targetHex: lowConf, ownHex });
+  const pLow = ctx.CommandPreview.buildAttackPreview(gameLow, attacker, lowConf, { mobilize: false });
+
+  const highConf = target(0.85);
+  const gameHigh = makeGame(ctx, { attacker, defender, targetHex: highConf, ownHex });
+  const pHigh = ctx.CommandPreview.buildAttackPreview(gameHigh, attacker, highConf, { mobilize: false });
+
+  // True defense force is always inside the estimate.
+  assert.ok(pLow.defenseEstimate.low <= pLow.defenseForce && pLow.defenseForce <= pLow.defenseEstimate.high);
+  assert.ok(pHigh.defenseEstimate.low <= pHigh.defenseForce && pHigh.defenseForce <= pHigh.defenseEstimate.high);
+  // Higher confidence -> narrower estimate.
+  assert.ok(pLow.defenseEstimate.width > pHigh.defenseEstimate.width);
+});
+
+test('attack preview widens the outcome forecast when information is poor', () => {
+  const ctx = loadPreviewScripts();
+  const attacker = newFaction(ctx, 0);
+  const defender = newFaction(ctx, 1);
+
+  const ownHex = new ctx.HexCell(4, 4);
+  ownHex.owner = 0;
+  attacker.territories.add(ownHex.key());
+
+  const targetHex = new ctx.HexCell(4, 5);
+  targetHex.owner = 1;
+  targetHex.terrain = 'plains';
+  targetHex.localGarrison = 12;
+  targetHex.defenseValue = 14;
+  targetHex.informationConfidence = 0.45;
+
+  const game = makeGame(ctx, { attacker, defender, targetHex, ownHex });
+  const preview = ctx.CommandPreview.buildAttackPreview(game, attacker, targetHex, { mobilize: false });
+
+  const pointSpread = preview.forecast.high - preview.forecast.low;
+  const rangeSpread = preview.forecastRange.high - preview.forecastRange.low;
+  assert.ok(rangeSpread >= pointSpread, 'information uncertainty must not shrink the outcome band');
+  assert.ok(rangeSpread > pointSpread, 'a low-confidence target should widen the outcome band');
+});
+
+test('attack preview shows a bucket label at a glimpse and a numeric label when reliable', () => {
+  const ctx = loadPreviewScripts();
+  const attacker = newFaction(ctx, 0);
+  const defender = newFaction(ctx, 1);
+
+  const ownHex = new ctx.HexCell(4, 4);
+  ownHex.owner = 0;
+  attacker.territories.add(ownHex.key());
+
+  function labelAt(confidence) {
+    const targetHex = new ctx.HexCell(4, 5);
+    targetHex.owner = 1;
+    targetHex.terrain = 'plains';
+    targetHex.localGarrison = 12;
+    targetHex.defenseValue = 14;
+    targetHex.informationConfidence = confidence;
+    const game = makeGame(ctx, { attacker, defender, targetHex, ownHex });
+    return ctx.CommandPreview.buildAttackPreview(game, attacker, targetHex, { mobilize: false }).defenseEstimate.label;
+  }
+
+  assert.ok(!labelAt(0.45).startsWith('약'), 'a glimpse should show a qualitative bucket');
+  assert.ok(labelAt(0.85).startsWith('약'), 'reliable info should show a near-exact numeric label');
+});
