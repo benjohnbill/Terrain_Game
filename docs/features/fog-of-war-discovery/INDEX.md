@@ -1,9 +1,11 @@
-# Feature: Fog of War and Discovery (Proposed)
+# Feature: Fog of War and Discovery (Designed)
 
 ## Status
 
-Proposed - needs its own brainstorming session before design or build. Sequenced
-after the MVP payoff-loop mockup provides a representation foundation.
+Design approved. Brainstorming complete; the design is recorded in
+`docs/superpowers/specs/2026-07-01-fog-of-war-discovery-design.md`. Next step is
+an implementation plan. Scope is the Standard fog MVP (position fog); the heavier
+Challenge/terrain-fog work is deferred.
 
 ## Idea
 
@@ -27,17 +29,24 @@ the fog is fair; if no, it is fate. Guardrail candidates: minimum spawn spacing,
 scout reachability in time to respond, viable responses once a threat is seen,
 subtle warning signals before total blindness.
 
-## Open Questions (for the dedicated session)
+## Resolved Questions (see the design spec)
 
-- **AI information model under fog:** symmetric (AI also has fog) vs omniscient
-  (AI cheats). The current model assumes confidence is the human player's single
-  view; AI scouting was out of scope.
-- **Preset impact:** a default "scout early" baseline so casual players are not
-  blindsided (preset = safe average; skill = knowing when to deviate).
-- **Fog intensity as an opt-in dial:** casual (known or partial spawns) vs
-  challenge (full fog + random spawn), consistent with opt-in depth (ADR 0017).
-- **Situation-judgment logic:** the map-first briefing must operate on discovered
-  information only and emphasize blind spots (purple = scouting need).
+- **AI information model under fog:** resolved to **contact-gating** — each
+  faction holds a lightweight `contactedFactions` set and only targets factions
+  it has met. No per-hex AI knowledge map; behavioral symmetry.
+- **Preset impact:** resolved — the "scout early" baseline is **emergent** from
+  passive ring-1 vision + spawn spacing + the purple blind-spot nudge + the
+  one-click prefilled scout. Casual players are not blindsided; skill is
+  deviating from that baseline.
+- **Fog intensity as an opt-in dial:** resolved — **define three (Casual /
+  Standard / Challenge), ship Standard only**. The `FogProfile` injection point
+  is the deferred dial's seam.
+- **Situation-judgment logic:** resolved — the briefing operates on discovered
+  information only and emits purple blind-spot items for undiscovered border
+  regions and uncontacted factions.
+- **Ambiguity model (new):** resolved — the ambiguous middle state shows a
+  deterministic, true-containing magnitude **estimate range** that scouting
+  narrows (never collapses; residual ceiling + decay keep ownership superior).
 
 ## Related
 

@@ -22,6 +22,8 @@
       intel: null,
       intelReliable: false,
       scout: { available: false, confidenceAfter: null },
+      defenseEstimate: null,
+      forecastRange: null,
       warnings: []
     };
   }
@@ -94,6 +96,39 @@
       warnings.push({ level: 'medium', text: '정보 신뢰도가 낮아 예측이 부정확할 수 있습니다. 정찰로 정확도를 높이세요.' });
     }
 
+    // Estimate the defender's strength as a true-containing range (spec §5).
+    // Combat still resolves on the true defenseForce; this is preview-only.
+    const defenseSeed = window.IntelSystem.hexSeed(targetHex.q, targetHex.r);
+    const estimate = confidence === null
+      ? { low: defenseForce, high: defenseForce, mid: defenseForce, width: 0 }
+      : window.IntelSystem.estimateRange(defenseForce, confidence, defenseSeed);
+
+    const dTier = confidence === null ? 'reliable' : window.IntelSystem.tierOf(confidence).id;
+    let defenseLabel;
+    if (estimate.width === 0) {
+      defenseLabel = `${Math.round(estimate.mid)}`;
+    } else if (dTier === 'reliable') {
+      defenseLabel = `약 ${Math.round(estimate.low)}~${Math.round(estimate.high)}`;
+    } else {
+      const bLow = window.IntelSystem.magnitudeBucket(estimate.low);
+      const bHigh = window.IntelSystem.magnitudeBucket(estimate.high);
+      defenseLabel = bLow === bHigh ? bLow : `${bLow}~${bHigh}`;
+    }
+    const defenseEstimate = { ...estimate, label: defenseLabel, tier: dTier };
+
+    // Forecast across the estimated defense band: strongest defense is the
+    // attacker's worst case, weakest defense the best case, mid the best guess.
+    const dLow = Math.max(1, estimate.low);
+    const dMid = Math.max(1, estimate.mid);
+    const dHigh = Math.max(1, estimate.high);
+    const fMid = window.CombatSystem.forecast(attackForce, dMid);
+    const forecastRange = {
+      low: window.CombatSystem.forecast(attackForce, dHigh).low,
+      expected: fMid.expected,
+      high: window.CombatSystem.forecast(attackForce, dLow).high,
+      band: fMid.band
+    };
+
     return {
       kind: 'attack',
       valid: true,
@@ -117,6 +152,8 @@
         available: true,
         confidenceAfter: confidence === null ? null : window.IntelSystem.applyScout(confidence)
       },
+      defenseEstimate,
+      forecastRange,
       warnings
     };
   }
