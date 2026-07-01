@@ -27,11 +27,13 @@ province level**, not a flat list of salient cells.
    Map highlights are the located evidence under each axis. This replaces the
    flat six-type sorted list.
 
-2. **Province unit, hex drill-down.** The reading is per Named province; the
-   player drills into specific hexes beneath it (progressive disclosure). Combat
-   and movement still resolve at hex level. Hex→province aggregation per axis:
-   위협/defense = weakest link, 기회/value = sum, 불확실 = minimum confidence,
-   route = any hex carrying a pass/river/strait-crossing tag.
+2. **Province unit, sector drill-down, hex evidence.** The reading is per Named
+   province; the player drills into front sectors beneath it for one-turn
+   occupation and defense focus, then into specific hexes/map units for terrain
+   evidence (progressive disclosure). Combat and movement calculations may still
+   inspect hexes. Hex→sector→province aggregation per axis: 위협/defense =
+   weakest link, 기회/value = sum, 불확실 = minimum confidence, route = any sector
+   carrying a pass/river/strait-crossing tag.
 
 3. **Relational threat.** A province is `위협` when it borders or is reachable by
    an enemy province whose estimated force exceeds the province's weakest-link
@@ -74,16 +76,18 @@ province level**, not a flat list of salient cells.
    leans toward spending on. The MVP turn is one *primary* action drawing from a
    single divisible action-capacity pool (ADR 0020): the recommendation prefills
    the statistical-average commit, and skill is committing tighter than average
-   and redirecting the surplus (economy/scouting). The four-capacity / carryover
-   / overclock system stays deferred (ADR 0018); the invariant is budget <
-   attention.
+   and redirecting the surplus (economy/scouting). Concretely: "of the ~5-7
+   surfaced tensions, which single one do I focus this turn on, and how much
+   capacity do I commit?" The four-capacity / carryover / overclock system stays
+   deferred (ADR 0018); the invariant is budget < attention.
 
 ## Considered Options
 
 - **Flat highlight list** (keep `classifyHex` behavior): rejected — freezes
   situation judgment as a set of heuristic cells with no definable intent.
 - **Hex-unit reading**: rejected — contradicts the Named-province meaning
-  (DOMAIN_MAP) and blocks relational reasoning.
+  (DOMAIN_MAP) and blocks relational reasoning. This does not reject hexes as
+  terrain evidence under a front sector.
 - **Absolute threat** (garrison below a fixed floor): rejected — "understaffed"
   is not "in danger"; it cannot express an incoming invasion and fires on safe
   interior provinces.
@@ -95,14 +99,17 @@ province level**, not a flat list of salient cells.
 ## Consequences
 
 - `js/situation.js` is reworked: `classifyHex` → a province-level classifier
-  with aggregation; add relational threat with adjacency/reachability and
-  confidence gating; wire posture into salience and recommendation only; add the
-  coverage guarantee, collapsed-count legibility, and dissonance signal. The
-  `threat` type gets a real emitter; `defense` folds into `위협`.
+  with front-sector drill-down and hex evidence aggregation; add relational
+  threat with adjacency/reachability and confidence gating; wire posture into
+  salience and recommendation only; add the coverage guarantee, collapsed-count
+  legibility, and dissonance signal. The `threat` type gets a real emitter;
+  `defense` folds into `위협`.
 - Replayability depends on fog-of-war-discovery; this ADR defines the contract
   that feature must satisfy (path-dependence, no oracle). The MVP mockup
   demonstrates the lens and the stage-1→stage-2 bridge, not variety.
-- The MVP uses one action per turn (confirmed); the wider capacity layer stays
-  deferred (ADR 0018). Larger budgets remain a later balance lever.
+- The MVP uses one primary action per turn with variable capacity commitment and
+  limited surplus redirection; the four-capacity/carryover/overclock system
+  stays deferred (ADR 0018, ADR 0020). Larger budgets remain a later balance
+  lever.
 - Updates DOMAIN_MAP `Situation judgment`. Complements ADR 0013 (map-first UX),
   ADR 0011 (posture as guidance), ADR 0017 (opt-in depth), ADR 0018 (MVP scope).

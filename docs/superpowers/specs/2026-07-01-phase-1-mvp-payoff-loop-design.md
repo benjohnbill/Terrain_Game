@@ -19,7 +19,8 @@ not the pixels or layout, which belong to a separate UI/UX session.
 
 - Product truth: `SPEC.md` - "Positioning and Fun Pillars".
 - Positioning decision: ADR 0017 (Civ-depth world, LoL-shaped interaction).
-- Scope decision: ADR 0018 (MVP core-fun first; capacity/overclock deferred).
+- Scope decision: ADR 0018 (MVP core-fun first; heavy capacity/overclock
+  deferred) and ADR 0020 (single divisible capacity commitment is MVP core).
 - Anti-snowball foundation: ADR 0009, ADR 0014. Map-first color language:
   ADR 0013.
 
@@ -35,6 +36,10 @@ decision -> system resolves -> player SEES:
 The MVP must make every arrow after "system resolves" perceptible without
 reading. Text is reserved for the *why* (a one-line reason or a forecast band),
 never for conveying state.
+
+For combat/defense outcomes, "what changed" should show both the front-sector
+result and the province-level summary change: e.g. a sector gained/lost plus
+`border → split`, `split → occupied`, or another province status transition.
 
 ## Growth Spine — What the Player Watches Grow
 
@@ -80,6 +85,11 @@ reads dim.
   the ADR 0013 color language (red, gold, blue, green, purple, silver).
 - **Hover = a compact stat chip** (icons + numbers + mini-bars), not a paragraph.
 - **Click = a prefilled command card** (an action), not a lore dump.
+- **Control/status vs judgment highlight are separate visual layers.** Province
+  status/control share provides the base fill or ownership mix; situation axis
+  provides the current-turn highlight (threat/opportunity/uncertainty pulse or
+  outline); confidence provides fog, hatching, dotted outlines, or uncertainty
+  treatment.
 
 ```
 development overlay:  [rich/developed]  [growing]  [undeveloped/new]
@@ -119,7 +129,8 @@ sharpened alongside mockup learnings.
 
 ## Non-Goals / Deferred
 
-- Capacity/overclock layer — deferred (ADR 0018).
+- Four-capacity/carryover/overclock system — deferred (ADR 0018). Single
+  divisible capacity commitment remains MVP core (ADR 0020).
 - Pixel layout, styling, screen IA — belong to the separate UI/UX session.
 - Time pressure — an opt-in mode and a prototype question (SPEC "To validate"),
   not part of this loop.
