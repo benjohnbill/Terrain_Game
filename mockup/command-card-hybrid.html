@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>stage-2 명령 카드 — 방어 vs 정찰 · 승률 · 겜빗</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper0:#23281c;--paper1:#2c3324;--ink:#e8e3d2;--sec:#b7b39f;--dim:#8f8c78;
+  --edge:rgba(232,227,210,.12);--panel:rgba(28,32,22,.74);--inset:rgba(12,15,8,.4);
+  --recon:#c79a45;--self:#2dd4bf;--rival:#e0716a;
+  --hold:#5fbf7a;--risk:#e0b062;--lose:#e0655f;
+  --mono:"SF Mono","Cascadia Code","Consolas",ui-monospace,"D2Coding",monospace;
+  --body:'Noto Sans KR',system-ui,sans-serif;
+}
+*{box-sizing:border-box;}
+body{margin:0;font-family:var(--body);color:var(--ink);
+  background:radial-gradient(1100px 700px at 30% -10%,#333a28 0,transparent 60%),linear-gradient(180deg,var(--paper1),var(--paper0));
+  background-attachment:fixed;min-height:100vh;-webkit-font-smoothing:antialiased;}
+header{padding:18px 26px 4px;}
+header h1{margin:0;font-family:var(--mono);font-size:19px;font-weight:600;}
+header p{margin:7px 0 0;color:var(--sec);font-size:13px;max-width:820px;line-height:1.6;}
+header b{color:var(--recon);}
+.stage{display:flex;justify-content:center;padding:16px 26px 40px;}
+
+.card{width:490px;background:var(--panel);border:1px solid var(--edge);border-radius:14px;box-shadow:0 18px 50px rgba(0,0,0,.5);overflow:hidden;}
+.vtag{display:flex;align-items:center;gap:8px;padding:9px 16px;background:var(--inset);border-bottom:1px solid var(--edge);}
+.vtag .v{font-family:var(--mono);font-weight:700;font-size:11.5px;color:#1a1408;background:var(--recon);border-radius:5px;padding:1px 8px;}
+.vtag .vn{font-family:var(--mono);font-size:11.5px;color:var(--sec);}
+.cbody{padding:14px 16px 0;}
+
+/* plan selector — the act-now vs buy-info choice */
+.plans{display:flex;gap:8px;margin-bottom:12px;}
+.plan{flex:1;font-family:var(--body);font-size:13px;cursor:pointer;color:var(--sec);background:rgba(255,255,255,.04);border:1px solid var(--edge);border-radius:9px;padding:9px 8px;display:flex;flex-direction:column;gap:2px;align-items:flex-start;}
+.plan .pt{font-weight:700;color:var(--ink);display:flex;align-items:center;gap:6px;}
+.plan .pd{font-size:10.5px;color:var(--dim);}
+.plan .rec{font-family:var(--mono);font-size:9px;font-weight:700;color:#06231f;background:var(--self);border-radius:4px;padding:1px 5px;}
+.plan.sel{border-color:var(--self);background:rgba(45,212,191,.10);}
+.plan.sel.scout{border-color:var(--recon);background:rgba(199,154,69,.10);}
+
+.pre-fields{display:flex;flex-wrap:wrap;gap:4px 8px;margin-bottom:11px;}
+.pf{font-size:10.5px;color:var(--sec);background:rgba(255,255,255,.04);border:1px solid var(--edge);border-radius:5px;padding:2px 7px;}
+.pf b{color:var(--ink);font-weight:500;}
+.enrow{display:flex;justify-content:space-between;align-items:baseline;font-size:12px;color:var(--sec);margin-bottom:4px;}
+.enrow b{font-family:var(--mono);color:var(--rival);} .enrow .cf{color:var(--dim);font-size:11px;}
+.intent{font-size:11px;color:var(--dim);margin-bottom:8px;font-style:italic;}
+.intent b{color:var(--recon);font-style:normal;}
+
+/* confrontation axis */
+.axis{position:relative;height:66px;margin:4px 0 2px;}
+.axis .track{position:absolute;top:30px;left:0;right:0;height:13px;border-radius:6px;overflow:hidden;display:flex;}
+.z-lose{background:rgba(224,101,95,.34);} .z-risk{background:rgba(224,176,98,.34);} .z-hold{background:rgba(95,191,122,.30);}
+.axis .band{position:absolute;top:26px;height:21px;background:repeating-linear-gradient(45deg,rgba(224,113,106,.5) 0 5px,rgba(224,113,106,.2) 5px 10px);border-left:2px solid var(--rival);border-right:2px solid var(--rival);border-radius:3px;}
+.axis .ghost{position:absolute;top:24px;height:25px;border:1.5px dashed rgba(95,191,122,.85);border-radius:4px;background:rgba(95,191,122,.08);}
+.axis .band-l{position:absolute;top:4px;font-family:var(--mono);font-size:10px;color:var(--rival);transform:translateX(-50%);}
+.axis .rec-tick{position:absolute;top:22px;height:29px;border-left:2px dotted rgba(232,227,210,.55);}
+.axis .rec-l{position:absolute;top:1px;font-family:var(--mono);font-size:9px;color:var(--dim);transform:translateX(-50%);}
+.axis .mk{position:absolute;top:20px;width:0;height:34px;border-left:3px solid var(--self);}
+.axis .mk.bare{border-left-color:var(--lose);}
+.axis .mk::after{content:'';position:absolute;top:-6px;left:-6px;border:6px solid transparent;border-top-color:var(--self);}
+.axis .mk.bare::after{border-top-color:var(--lose);}
+.axis .mk-l{position:absolute;top:50px;font-family:var(--mono);font-size:10.5px;font-weight:700;color:var(--self);transform:translateX(-50%);white-space:nowrap;}
+.axis .mk-l.bare{color:var(--lose);}
+
+/* win-rate verdict */
+.verdict{display:flex;align-items:baseline;gap:10px;margin:8px 0 4px;}
+.verdict .big{font-family:var(--mono);font-weight:700;font-size:19px;}
+.verdict.hold .big{color:var(--hold);} .verdict.risk .big{color:var(--risk);} .verdict.lose .big{color:var(--lose);}
+.verdict .sub{font-size:11px;color:var(--sec);}
+.microbar{display:flex;height:10px;border-radius:4px;overflow:hidden;border:1px solid var(--edge);margin:2px 0 10px;}
+.microbar span{transition:flex-basis .12s;} .mb-hold{background:var(--hold);} .mb-lose{background:var(--lose);}
+.mb-leg{display:flex;justify-content:space-between;font-size:10px;color:var(--dim);margin:-6px 0 10px;}
+
+/* scout (gambit) view */
+.gambit{margin:6px 0 8px;padding:11px 12px;border-radius:10px;background:rgba(199,154,69,.08);border:1px solid rgba(199,154,69,.4);}
+.gambit .row{display:flex;gap:8px;font-size:12px;line-height:1.55;margin-bottom:8px;}
+.gambit .row:last-child{margin-bottom:0;}
+.gambit .ic{flex-shrink:0;font-family:var(--mono);font-weight:700;}
+.gambit .win{color:var(--hold);} .gambit .lose{color:var(--lose);}
+.gambit b{color:var(--recon);font-family:var(--mono);}
+.gambit .ph{color:var(--ink);font-weight:700;}
+
+.commit-row{display:flex;justify-content:space-between;align-items:baseline;font-size:11.5px;color:var(--sec);margin:6px 0 2px;}
+.commit-row b{font-family:var(--mono);font-size:14px;color:var(--ink);} .commit-row .rec{color:var(--dim);}
+input[type=range]{width:100%;accent-color:var(--self);margin:3px 0 6px;}
+.srow{display:flex;justify-content:space-between;font-size:11.5px;margin-bottom:12px;}
+.srow .k{color:var(--sec);} .srow .v{font-family:var(--mono);font-weight:700;color:var(--recon);}
+.foot{display:flex;gap:8px;padding:0 16px 16px;}
+.go{flex:1;font-family:var(--body);font-weight:700;font-size:13px;cursor:pointer;color:#06231f;background:linear-gradient(135deg,var(--self),#157a70);border:none;padding:9px;border-radius:8px;}
+.go.scout{color:#1a1408;background:linear-gradient(135deg,#e0b062,var(--recon));}
+.warn{font-family:var(--body);font-weight:700;font-size:13px;cursor:pointer;color:#1a1408;background:linear-gradient(135deg,var(--lose),#b5433d);border:none;padding:9px;border-radius:8px;flex:1;}
+.cancel{font-size:13px;cursor:pointer;color:var(--sec);background:rgba(255,255,255,.05);border:1px solid var(--edge);border-radius:8px;padding:9px 14px;}
+.note{margin:14px 26px 0;max-width:840px;font-size:11.5px;color:var(--dim);line-height:1.6;text-align:center;}
+.note b{color:var(--sec);}
+.hidden{display:none;}
+</style>
+</head>
+<body>
+<header>
+  <h1>stage-2 명령 카드 · 방어 vs 정찰 · 승률</h1>
+  <p>두 <b>대안 계획</b> 중 하나에 이번 턴 행동을 씁니다 — <b>방어 강화</b>(지금 버틴다) 또는 <b>정찰</b>(정보를 산다, 이번 턴 무방비). 결과는 <b>승률(사수 %)</b>로 표기. 계획 탭을 눌러 보세요.</p>
+</header>
+
+<div class="stage">
+  <div class="card">
+    <div class="vtag"><span class="v">stage-2</span><span class="vn">소현 · 남부 전선구역 · 위협 (철옹)</span></div>
+    <div class="cbody">
+      <div class="plans">
+        <button class="plan sel" data-plan="defend"><span class="pt">방어 강화 <span class="rec">추천</span></span><span class="pd">지금 커밋해 사수</span></button>
+        <button class="plan scout" data-plan="scout"><span class="pt">정찰</span><span class="pd">정보를 산다 · 이번 턴 무방비</span></button>
+      </div>
+      <div class="pre-fields"><span class="pf">대상 <b>남부 전선구역</b></span><span class="pf">지형 <b>구릉</b></span><span class="pf">내 방어 base <b>9</b></span></div>
+      <div class="enrow"><span>적 추정 <b>흑철 철옹 12–16</b></span><span class="cf" id="cf">신뢰 75% · 밴드 폭 = 불확실</span></div>
+      <div class="intent">적의 <b>힘</b>은 추정하되, <b>칠지(의도)</b>는 또 다른 안개 — 네 판단.</div>
+
+      <div class="axis" id="axis"></div>
+
+      <!-- DEFEND view -->
+      <div id="defend-view">
+        <div class="verdict" id="verdict"><span class="big" id="v-big"></span><span class="sub" id="v-sub"></span></div>
+        <div class="microbar" id="microbar"></div>
+        <div class="mb-leg"><span>사수</span><span>함락</span></div>
+        <div class="commit-row"><span>내 커밋 <b id="cv">70</b> / 100</span><span class="rec" id="recl">안전 사수 추천 70</span></div>
+        <input type="range" id="commit" min="0" max="100" value="70">
+        <div class="srow"><span class="k">확보 여력(surplus)</span><span class="v" id="sp">+30</span></div>
+      </div>
+
+      <!-- SCOUT (gambit) view -->
+      <div id="scout-view" class="hidden">
+        <div class="gambit">
+          <div class="row"><span class="ic win">적 안 침 →</span><span><span class="ph">막대한 이득.</span> 다음 턴 이 밴드가 <b>좁아짐</b>(신뢰 75→88%). 어디로 좁혀질진 <b>정찰해 봐야 앎</b> — 적이 약했으면 커밋 아껴 여력, 강했으면 위협 실체를 미리 확인.</span></div>
+          <div class="row"><span class="ic lose">적 침 →</span><span><span class="ph">구역 상실.</span> 이번 턴 소현은 무방비(커밋 0). 강심장의 대가.</span></div>
+          <div class="row"><span class="ic">▶</span><span>이건 도박이에요 — 적이 <b>1자로 밀고 오는 느낌</b>이면 정찰 말고 방어가 답. 노출·힘·포지션으로 읽어요.</span></div>
+        </div>
+        <div class="srow"><span class="k">이번 행동</span><span class="v">정찰 (방어 포기)</span></div>
+      </div>
+    </div>
+    <div class="foot" id="foot"></div>
+  </div>
+</div>
+
+<p class="note">핵심: 정찰은 <b>공짜 미리보기가 아니라 행동 하나를 쓰는 대안 계획</b> — 방어와 배타적. 결과는 <b>승률(사수 %)</b>로, loss-framing의 turtling 편향을 피함. 정찰 겜빗의 성패는 <b>적 의도라는 두 번째 안개</b>를 읽는 실력.</p>
+
+<script>
+(function(){
+  'use strict';
+  const CAP=100, BASE=9, CONV=0.1, AXMIN=6, AXMAX=20;
+  const BAND={lo:12,hi:16}, SCOUT={lo:13,hi:15};
+  let c=70, plan='defend';
+  const def=cc=>BASE+cc*CONV;
+  const pct=v=>(v-AXMIN)/(AXMAX-AXMIN)*100;
+  const recFor=band=>Math.round((band.hi-BASE)/CONV);
+  function lossVs(d,band){
+    if(d>=band.hi) return Math.max(3,Math.round(6-(d-band.hi)));
+    if(d<=band.lo) return Math.min(96,Math.round(58+(band.lo-d)*11));
+    return Math.round(12+(band.hi-d)/(band.hi-band.lo)*44);
+  }
+  const holdOf=d=>100-lossVs(d,BAND);                    // WIN-rate framing
+  function zoneOf(h){ return h>=85?'hold':h>=50?'risk':'lose'; }
+  const ZL={hold:'사수 유력',risk:'접전',lose:'함락 위험'};
+
+  const axis=document.getElementById('axis');
+  function drawAxis(){
+    const scouting = plan==='scout';
+    const d = scouting ? BASE : def(c);                  // scouting = undefended (base 9)
+    const recTick=BAND.hi;
+    let h=`<div class="track"><div class="z-lose" style="flex-basis:${pct(BAND.lo)}%"></div><div class="z-risk" style="flex-basis:${(pct(BAND.hi)-pct(BAND.lo))}%"></div><div class="z-hold" style="flex-basis:${100-pct(BAND.hi)}%"></div></div>`;
+    h+=`<div class="band" style="left:${pct(BAND.lo)}%;width:${(pct(BAND.hi)-pct(BAND.lo))}%"></div>`;
+    h+=`<div class="band-l" style="left:${pct((BAND.lo+BAND.hi)/2)}%">적 12–16</div>`;
+    if(scouting){   // no ghost band: the post-scout position is unknown until you actually scout (never spoil the fog). Only the current wide band + your undefended marker show.
+      h+=`<div class="band-l" style="left:${pct((BAND.lo+BAND.hi)/2)}%;top:52px;color:var(--hold)">정찰 시 폭↓ (좁혀질 위치는 미지)</div>`;
+      h+=`<div class="mk bare" style="left:${pct(d)}%"></div><div class="mk-l bare" style="left:${pct(d)}%">무방비 ${d}</div>`;
+    } else {
+      h+=`<div class="rec-tick" style="left:${pct(recTick)}%"></div><div class="rec-l" style="left:${pct(recTick)}%">추천 70</div>`;
+      h+=`<div class="mk" style="left:${pct(d)}%"></div><div class="mk-l" style="left:${pct(d)}%">내 방어 ${d.toFixed(0)}</div>`;
+    }
+    axis.innerHTML=h;
+  }
+  function render(){
+    document.getElementById('defend-view').classList.toggle('hidden',plan!=='defend');
+    document.getElementById('scout-view').classList.toggle('hidden',plan!=='scout');
+    document.querySelectorAll('.plan').forEach(b=>b.classList.toggle('sel',b.dataset.plan===plan));
+    document.getElementById('cf').textContent = plan==='scout'?'신뢰 75% → 정찰 시 88%(밴드 좁아짐)':'신뢰 75% · 밴드 폭 = 불확실';
+    const foot=document.getElementById('foot');
+    if(plan==='scout'){
+      foot.innerHTML=`<button class="go scout">정찰 실행 — 이번 턴 방어 포기</button><button class="cancel">취소</button>`;
+      drawAxis(); return;
+    }
+    const d=def(c), hold=holdOf(d), zone=zoneOf(hold);
+    document.getElementById('cv').textContent=c;
+    document.getElementById('sp').textContent='+'+(CAP-c);
+    const vd=document.getElementById('verdict'); vd.className='verdict '+zone;
+    document.getElementById('v-big').textContent='사수 '+hold+'%';
+    document.getElementById('v-sub').textContent = zone==='hold'?'· '+ZL[zone]+' · 안전 여유':zone==='risk'?'· '+ZL[zone]+' · 실패 시 구역 상실':'· '+ZL[zone]+' · 이대로면 함락';
+    document.getElementById('microbar').innerHTML=`<span class="mb-hold" style="flex-basis:${hold}%"></span><span class="mb-lose" style="flex-basis:${100-hold}%"></span>`;
+    document.getElementById('recl').textContent='안전 사수 추천 '+recFor(BAND);
+    const under=d<BAND.hi;
+    foot.innerHTML = under
+      ? `<button class="warn">저커밋 확정 — 실패 시 구역 상실</button><button class="cancel">취소</button>`
+      : `<button class="go">이 계획으로 확정</button><button class="cancel">취소</button>`;
+    drawAxis();
+  }
+  document.getElementById('commit').addEventListener('input',e=>{c=+e.target.value;render();});
+  document.querySelectorAll('.plan').forEach(b=>b.addEventListener('click',()=>{plan=b.dataset.plan;render();}));
+  render();
+})();
+</script>
+</body>
+</html>

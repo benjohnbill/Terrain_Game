@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>stage-2 명령 카드 — commit·forecast 인코딩 A/B/C</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper0:#23281c; --paper1:#2c3324; --paper2:#1b2015;
+  --ink:#e8e3d2; --sec:#b7b39f; --dim:#8f8c78;
+  --edge:rgba(232,227,210,.12); --panel:rgba(28,32,22,.74); --inset:rgba(12,15,8,.4);
+  --recon:#c79a45; --self:#2dd4bf; --rival:#e0716a;
+  --hold:#5fbf7a; --risk:#e0b062; --lose:#e0655f;
+  --mono:"SF Mono","Cascadia Code","Consolas",ui-monospace,"D2Coding",monospace;
+  --body:'Noto Sans KR',system-ui,sans-serif;
+}
+*{box-sizing:border-box;}
+body{margin:0;font-family:var(--body);color:var(--ink);
+  background:radial-gradient(1100px 700px at 30% -10%,#333a28 0,transparent 60%),linear-gradient(180deg,var(--paper1),var(--paper0));
+  background-attachment:fixed;min-height:100vh;-webkit-font-smoothing:antialiased;}
+header{padding:18px 26px 4px;}
+header h1{margin:0;font-family:var(--mono);font-size:19px;font-weight:600;letter-spacing:.3px;}
+header p{margin:7px 0 0;color:var(--sec);font-size:13px;max-width:900px;line-height:1.6;}
+header b{color:var(--recon);}
+.master{margin:14px 26px 6px;padding:12px 16px;background:var(--panel);border:1px solid var(--edge);border-radius:11px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
+.master .mk{font-family:var(--mono);font-size:11px;color:var(--sec);letter-spacing:.4px;text-transform:uppercase;}
+.master .scen{font-size:12.5px;color:var(--ink);} .master .scen b{color:var(--recon);}
+.master .scen .en{color:var(--rival);}
+.wrap{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;padding:12px 26px 40px;align-items:start;}
+@media(max-width:1100px){.wrap{grid-template-columns:1fr;}}
+
+.card{background:var(--panel);border:1px solid var(--edge);border-radius:13px;padding:0 0 14px;box-shadow:0 16px 46px rgba(0,0,0,.42);overflow:hidden;}
+.card.sel{border-color:var(--recon);box-shadow:0 0 0 1px var(--recon),0 16px 46px rgba(0,0,0,.5);}
+.vtag{display:flex;align-items:center;gap:8px;padding:9px 14px;background:var(--inset);border-bottom:1px solid var(--edge);}
+.vtag .v{font-family:var(--mono);font-weight:700;font-size:12px;color:#1a1408;background:var(--recon);border-radius:5px;padding:1px 7px;}
+.vtag .vn{font-family:var(--mono);font-size:12px;color:var(--sec);letter-spacing:.3px;}
+.cbody{padding:12px 14px 0;}
+
+/* preset header */
+.pre-h{display:flex;align-items:baseline;gap:8px;margin-bottom:8px;}
+.pre-cmd{font-family:var(--mono);font-weight:700;font-size:16px;color:var(--self);}
+.pre-tg{font-size:12px;color:var(--sec);}
+.pre-fields{display:flex;flex-wrap:wrap;gap:4px 8px;margin-bottom:11px;}
+.pf{font-size:10.5px;color:var(--sec);background:rgba(255,255,255,.04);border:1px solid var(--edge);border-radius:5px;padding:2px 7px;}
+.pf b{color:var(--ink);font-weight:500;}
+
+.enrow{display:flex;justify-content:space-between;align-items:baseline;font-size:11.5px;color:var(--sec);margin-bottom:6px;}
+.enrow b{font-family:var(--mono);color:var(--rival);}
+.enrow .cf{color:var(--dim);}
+
+/* ── A: confrontation axis ── */
+.axis{position:relative;height:58px;margin:6px 0 4px;}
+.axis .track{position:absolute;top:26px;left:0;right:0;height:12px;border-radius:6px;overflow:hidden;display:flex;}
+.axis .z-lose{background:rgba(224,101,95,.35);} .axis .z-risk{background:rgba(224,176,98,.35);} .axis .z-hold{background:rgba(95,191,122,.32);}
+.axis .band{position:absolute;top:22px;height:20px;background:repeating-linear-gradient(45deg,rgba(224,113,106,.5) 0 5px,rgba(224,113,106,.22) 5px 10px);border-left:2px solid var(--rival);border-right:2px solid var(--rival);border-radius:3px;}
+.axis .band-l{position:absolute;top:2px;font-family:var(--mono);font-size:10px;color:var(--rival);transform:translateX(-50%);}
+.axis .mk{position:absolute;top:16px;width:0;height:32px;border-left:3px solid var(--self);}
+.axis .mk::after{content:'';position:absolute;top:-6px;left:-6px;border:6px solid transparent;border-top-color:var(--self);}
+.axis .mk-l{position:absolute;top:44px;font-family:var(--mono);font-size:10.5px;font-weight:700;color:var(--self);transform:translateX(-50%);white-space:nowrap;}
+.axis .scale{position:absolute;top:40px;left:0;right:0;height:1px;}
+
+/* ── B: forecast probabilities ── */
+.fc{display:flex;height:26px;border-radius:6px;overflow:hidden;border:1px solid var(--edge);margin:8px 0 6px;}
+.fc span{display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;font-weight:700;color:#12160c;transition:flex-basis .12s;overflow:hidden;white-space:nowrap;}
+.fc .s-hold{background:var(--hold);} .fc .s-risk{background:var(--risk);} .fc .s-lose{background:var(--lose);}
+.fc-leg{display:flex;gap:12px;font-size:10.5px;color:var(--sec);margin-bottom:2px;}
+.fc-leg i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:4px;vertical-align:-1px;}
+
+/* ── C: efficiency ledger ── */
+.led{display:flex;gap:10px;margin:8px 0 6px;}
+.led .col{flex:1;}
+.led .lh{font-size:10.5px;color:var(--sec);display:flex;justify-content:space-between;margin-bottom:4px;}
+.led .lh b{font-family:var(--mono);}
+.led .bar{height:34px;border-radius:7px;background:var(--inset);border:1px solid var(--edge);position:relative;overflow:hidden;}
+.led .fill{position:absolute;bottom:0;left:0;right:0;}
+.led .fill.commit{background:linear-gradient(180deg,#2a7f75,var(--self));}
+.led .fill.surplus{background:linear-gradient(180deg,#8f7327,var(--recon));}
+.led .rec-tick{position:absolute;left:0;right:0;border-top:2px dashed rgba(255,255,255,.5);}
+.led .rec-l{position:absolute;right:3px;font-family:var(--mono);font-size:9px;color:var(--ink);}
+
+/* shared: risk pill + slider + surplus + commit */
+.riskpill{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;font-weight:700;padding:3px 9px;border-radius:6px;margin:2px 0 8px;}
+.riskpill.hold{color:var(--hold);background:rgba(95,191,122,.12);border:1px solid rgba(95,191,122,.4);}
+.riskpill.risk{color:var(--risk);background:rgba(224,176,98,.12);border:1px solid rgba(224,176,98,.4);}
+.riskpill.lose{color:var(--lose);background:rgba(224,101,95,.12);border:1px solid rgba(224,101,95,.4);}
+.commit-row{display:flex;justify-content:space-between;align-items:baseline;font-size:11px;color:var(--sec);margin:6px 0 2px;}
+.commit-row b{font-family:var(--mono);font-size:13px;color:var(--ink);}
+.commit-row .rec{color:var(--dim);}
+input[type=range]{width:100%;accent-color:var(--self);margin:2px 0 6px;}
+.srow{display:flex;justify-content:space-between;font-size:11px;margin-bottom:10px;}
+.srow .k{color:var(--sec);} .srow .v{font-family:var(--mono);font-weight:700;color:var(--recon);}
+.foot{display:flex;gap:8px;padding:0 14px;}
+.go{flex:1;font-family:var(--body);font-weight:700;font-size:12.5px;cursor:pointer;color:#06231f;background:linear-gradient(135deg,var(--self),#157a70);border:none;padding:8px;border-radius:8px;}
+.pick{font-size:12px;cursor:pointer;color:var(--sec);background:rgba(255,255,255,.05);border:1px solid var(--edge);border-radius:8px;padding:8px 12px;}
+.pick:hover{color:var(--ink);border-color:var(--recon);}
+.note{padding:2px 14px 0;font-size:10.5px;color:var(--dim);line-height:1.5;}
+</style>
+</head>
+<body>
+<header>
+  <h1>stage-2 명령 카드 · commit ↔ forecast 인코딩 A / B / C</h1>
+  <p>같은 결정을 3가지로 인코딩했어요. <b>슬라이더 하나를 움직이면 세 카드가 같이 반응</b>합니다 — 어느 인코딩이 "빠듯하게 버틸까 / 안전하게 갈까 / 포기하고 여력 뺄까"를 가장 잘 읽히게 하는지 눈+손으로 보세요. 카드 하단 <b>이 인코딩</b> 클릭 = 선택.</p>
+</header>
+
+<div class="master">
+  <span class="mk">시나리오</span>
+  <span class="scen"><b>방어 강화</b> → 소현 · 남부 전선구역(구릉) · 내 구역방어 <b>base 9</b>(수비4+지형3+방벽2) · 적 <span class="en">흑철 철옹 추정 12–16</span>(신뢰 75%) · capacity 100</span>
+</div>
+
+<div class="wrap" id="wrap"></div>
+
+<script>
+(function(){
+  'use strict';
+  const CAP=100, BASE=9, EN_LO=12, EN_HI=16, EN_MID=14, CONF=75, REC=70, CONV=0.1;
+  const AXMAX=20; // force axis 0..20
+  let c=REC;
+
+  const def = cc => BASE + cc*CONV;                 // my sector defense at commitment cc
+  function lossPct(d){
+    if(d>=EN_HI) return Math.max(3, Math.round(6-(d-EN_HI)));
+    if(d<=EN_LO) return Math.min(96, Math.round(58+(EN_LO-d)*11));
+    return Math.round(12 + (EN_HI-d)/(EN_HI-EN_LO)*44);
+  }
+  function outcome(d){ const l=lossPct(d); return {loss:l, hold: d>=EN_HI?'hold':(d<=EN_LO?'lose':'risk'), p:l}; }
+  const pct = v => (v/AXMAX*100);
+
+  const cards=[
+    {v:'A', vn:'대치 축 — 힘 축 위 내 방어 vs 적 추정 밴드'},
+    {v:'B', vn:'예보 게이지 — 사수 / 교착 / 상실 확률'},
+    {v:'C', vn:'효율 원장 — 투입 vs 확보 여력 + 리스크'},
+  ];
+  const wrap=document.getElementById('wrap');
+  const sel={A:false,B:false,C:false};
+
+  function presetHead(){
+    return `<div class="pre-h"><span class="pre-cmd">방어 강화</span><span class="pre-tg">→ 소현 · 남부 전선구역</span></div>
+      <div class="pre-fields"><span class="pf">목표 <b>구역 유지</b></span><span class="pf">접근 <b>진지 방어</b></span><span class="pf">동원 <b>제한</b></span><span class="pf">리스크 <b>낮음</b></span></div>
+      <div class="enrow"><span>적 추정 <b>철옹 12–16</b></span><span class="cf">신뢰 ${CONF}% · 정찰이 밴드 좁힘</span></div>`;
+  }
+  function commitRow(){
+    return `<div class="commit-row"><span>내 커밋 <b id="cv-{V}">${c}</b> / ${CAP}</span><span class="rec">추천 ${REC}</span></div>
+      <input type="range" min="0" max="${CAP}" value="${c}" data-v="{V}">
+      <div class="srow"><span class="k">확보 여력(surplus)</span><span class="v" id="sp-{V}">+${CAP-c}</span></div>`;
+  }
+  function riskPill(){ return `<div class="riskpill" id="rp-{V}"></div>`; }
+  function foot(v){
+    return `<div class="foot"><button class="go">이 계획으로 확정</button><button class="pick" data-pick="${v}">이 인코딩</button></div>`;
+  }
+
+  function bodyA(){
+    return `<div class="cbody">${presetHead()}
+      <div class="axis" id="ax-A">
+        <div class="track"><div class="z-lose" style="flex-basis:${pct(EN_LO)}%"></div><div class="z-risk" style="flex-basis:${pct(EN_HI-EN_LO)}%"></div><div class="z-hold" style="flex-basis:${100-pct(EN_HI)}%"></div></div>
+        <div class="band" style="left:${pct(EN_LO)}%;width:${pct(EN_HI-EN_LO)}%"></div>
+        <div class="band-l" style="left:${pct(EN_MID)}%">적 12–16</div>
+        <div class="mk" id="mkA" style="left:${pct(def(c))}%"></div>
+        <div class="mk-l" id="mkAl" style="left:${pct(def(c))}%">내 방어 ${def(c).toFixed(0)}</div>
+      </div>
+      ${riskPill()}${commitRow()}</div>${foot('A')}
+      <div class="note">공간형: 내 마커가 적 밴드를 <b>넘어서면</b> 사수, 밴드 <b>안</b>이면 교착, <b>못 미치면</b> 상실. 정찰하면 밴드가 좁아짐.</div>`;
+  }
+  function bodyB(){
+    return `<div class="cbody">${presetHead()}
+      <div class="fc-leg"><span><i style="background:var(--hold)"></i>사수</span><span><i style="background:var(--risk)"></i>교착</span><span><i style="background:var(--lose)"></i>상실</span></div>
+      <div class="fc" id="fcB"></div>
+      ${riskPill()}${commitRow()}</div>${foot('B')}
+      <div class="note">결과형: 커밋을 올리면 <b>사수</b> 비중이 커지고 <b>상실</b>이 줄어듦. 밴드 폭(불확실)이 곧 교착 구간.</div>`;
+  }
+  function bodyC(){
+    return `<div class="cbody">${presetHead()}
+      <div class="led">
+        <div class="col"><div class="lh"><span>투입 commit</span><b id="lc-C">${c}</b></div>
+          <div class="bar"><div class="fill commit" id="fc-C" style="height:${c}%"></div><div class="rec-tick" style="bottom:${REC}%"></div><div class="rec-l" style="bottom:${REC}%">추천</div></div></div>
+        <div class="col"><div class="lh"><span>확보 여력</span><b id="ls-C">+${CAP-c}</b></div>
+          <div class="bar"><div class="fill surplus" id="fs-C" style="height:${CAP-c}%"></div></div></div>
+      </div>
+      ${riskPill()}${commitRow()}</div>${foot('C')}
+      <div class="note">트레이드형: 왼쪽 투입 ↔ 오른쪽 여력이 시소. 추천선 아래로 내리면 여력이 늘지만 리스크 pill이 붉어짐.</div>`;
+  }
+
+  function render(){
+    cards.forEach(cd=>{
+      let el=document.getElementById('card-'+cd.v);
+      if(!el){ el=document.createElement('div'); el.className='card'; el.id='card-'+cd.v;
+        el.innerHTML=`<div class="vtag"><span class="v">${cd.v}</span><span class="vn">${cd.vn}</span></div>`+
+          (cd.v==='A'?bodyA():cd.v==='B'?bodyB():bodyC());
+        el.innerHTML=el.innerHTML.replace(/\{V\}/g,cd.v);
+        wrap.appendChild(el);
+        el.querySelector('input[type=range]').addEventListener('input',e=>{c=+e.target.value;sync();});
+        el.querySelector('[data-pick]').addEventListener('click',()=>{sel[cd.v]=!sel[cd.v];el.classList.toggle('sel',sel[cd.v]);});
+      }
+    });
+    sync();
+  }
+  function sync(){
+    const d=def(c), o=outcome(d), l=o.loss;
+    const rpTxt = o.hold==='hold'?`사수 유력 · 상실 ${l}%`:o.hold==='lose'?`상실 위험 · ${l}%`:`교착 · 상실 ${l}%`;
+    // per-card shared bits
+    ['A','B','C'].forEach(v=>{
+      const cv=document.getElementById('cv-'+v); if(cv)cv.textContent=c;
+      const sp=document.getElementById('sp-'+v); if(sp)sp.textContent='+'+(CAP-c);
+      const rp=document.getElementById('rp-'+v); if(rp){rp.className='riskpill '+o.hold;rp.textContent=rpTxt;}
+      const rng=document.querySelector('input[data-v="'+v+'"]'); if(rng&&+rng.value!==c)rng.value=c;
+    });
+    // A
+    const mk=document.getElementById('mkA'), mkl=document.getElementById('mkAl');
+    if(mk){mk.style.left=pct(d)+'%';mkl.style.left=pct(d)+'%';mkl.textContent='내 방어 '+d.toFixed(0);}
+    // B
+    const fc=document.getElementById('fcB');
+    if(fc){ const hold=Math.max(0,100-l - (o.hold==='hold'?0:12)); const risk=o.hold==='hold'?100-l-hold:Math.max(0,100-l-hold);
+      // simpler: hold = 100-loss weighted; show hold/contested/loss
+      const holdP = o.hold==='hold'?100-l:Math.round((100-l)*0.55);
+      const riskP = 100-l-holdP; const loseP=l;
+      fc.innerHTML=`<span class="s-hold" style="flex-basis:${holdP}%">${holdP>13?'사수 '+holdP+'%':''}</span>`+
+        `<span class="s-risk" style="flex-basis:${riskP}%">${riskP>13?'교착 '+riskP+'%':''}</span>`+
+        `<span class="s-lose" style="flex-basis:${loseP}%">${loseP>13?'상실 '+loseP+'%':''}</span>`;
+    }
+    // C
+    const lc=document.getElementById('lc-C'),ls=document.getElementById('ls-C'),fcm=document.getElementById('fc-C'),fss=document.getElementById('fs-C');
+    if(lc){lc.textContent=c;ls.textContent='+'+(CAP-c);fcm.style.height=c+'%';fss.style.height=(CAP-c)+'%';}
+  }
+  render();
+})();
+</script>
+</body>
+</html>
