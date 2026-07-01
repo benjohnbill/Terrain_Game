@@ -110,3 +110,19 @@ test('magnitudeBucket classifies strength into coarse tiers', () => {
   assert.equal(ctx.IntelSystem.magnitudeBucket(28), '대');
   assert.equal(ctx.IntelSystem.magnitudeBucket(50), '특대');
 });
+
+test('estimateRange never collapses to exact even at a zero true value', () => {
+  const ctx = loadIntel();
+  const seed = ctx.IntelSystem.hexSeed(6, 1);
+  assert.ok(ctx.IntelSystem.estimateRange(0, 0.9, seed).width > 0);
+});
+
+test('estimateRange contains a non-integer true value despite rounding', () => {
+  const ctx = loadIntel();
+  for (const seed of [0, 1, 2, 3, 4, 5]) {
+    for (const t of [0.013, 13.7, 2.5]) {
+      const r = ctx.IntelSystem.estimateRange(t, 0.45, seed);
+      assert.ok(r.low <= t && t <= r.high, `true ${t} inside [${r.low}, ${r.high}] (seed ${seed})`);
+    }
+  }
+});

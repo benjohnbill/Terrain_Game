@@ -49,6 +49,7 @@
   const U_AT_FLOOR = 1.0;   // uncertainty at/below DECAY_FLOOR (0.45)
   const U_AT_CEIL = 0.15;   // residual uncertainty at/above MAX_CONFIDENCE (0.90)
   const WIDTH_PCT = 0.35;   // band half-width as a fraction of the true value at u = 1
+  const WIDTH_ABS = 1.0;    // absolute half-width floor so the band never fully collapses
 
   function _clamp(value, lo, hi) {
     return Math.max(lo, Math.min(hi, value));
@@ -80,11 +81,12 @@
   function estimateRange(trueValue, confidence, seed) {
     const t = typeof trueValue === 'number' && trueValue > 0 ? trueValue : 0;
     const u = _uncertainty(confidence);
-    const half = t * WIDTH_PCT * u;
+    const half = (t * WIDTH_PCT + WIDTH_ABS) * u;
     const width = 2 * half;
     const p = _seedToUnit(typeof seed === 'number' ? seed : 0); // hidden position of the truth, [0,1)
-    const low = Math.max(0, round2(t - p * width));
-    const high = round2(t + (1 - p) * width);
+    // Clamp so the true value is always contained even after independent rounding.
+    const low = Math.min(t, Math.max(0, round2(t - p * width)));
+    const high = Math.max(t, round2(t + (1 - p) * width));
     return { low, high, mid: round2((low + high) / 2), width: round2(width) };
   }
 
