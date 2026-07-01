@@ -48,6 +48,56 @@ Markers:
 - ✅ `Map-first situation UX`: Interaction principle where briefing and map
   highlights guide the player to important threats/opportunities before command
   creation.
+- ✅ `Situation judgment` (형세판단): The stage-1 reading the player performs
+  before issuing any command. Its output is a *structured strategic reading*
+  answering a small fixed question set — not a flat list of salient cells. Map
+  highlights are the located *evidence* under each question. (Contrast: the
+  current `situation.js` emits a flat, priority-sorted top-7 highlight list;
+  that is the under-implementation of this term, not its intent.)
+  - ✅ Question set (validated — see ADR 0019): `판세` (standing — am I winning;
+    aggregate, faction-level), `위협` (threat to me), `기회` (opening), `불확실`
+    (blind spot / scouting need). The located axes are 위협/기회/불확실; 판세 is
+    an aggregate layer that sits above the map unit.
+  - ✅ Unit: the reading is per `Named province`; the player drills down to
+    specific hexes (cells) beneath it (progressive disclosure — province at a
+    glance, cell detail on inspect). Combat/movement resolution stays at hex
+    level; only the *reading* is aggregated to province.
+  - ✅ Hex→province aggregation per located axis: 위협/수비 = weakest link (the
+    province's weakest hex governs its risk); 기회/가치 = sum (total economy);
+    불확실 = minimum confidence (the least-visible hex); route = any hex carrying
+    a pass/river/strait-crossing tag flags the province as a route variable.
+  - ✅ `위협` is relational, not absolute: a province is threatened if it borders
+    or is reachable by an enemy province whose *estimated* force exceeds the
+    province's weakest-link defense, gated by information confidence. The old
+    `defense` (my-weakness) and `threat` (enemy-pressure) types merge into this
+    one 위협 axis; which of the two drives it is a drill-down *reason*, not a
+    separate axis.
+  - ✅ Fog gating: a border province with high enemy-info confidence is judged
+    위협-or-safe from the estimate; with low confidence it routes to `불확실`
+    instead. Scouting is the bridge — scouting a 불확실 border resolves it to 위협
+    or safe. (Ties into `js/intel.js` and the fog-of-war-discovery feature.)
+  - ✅ Posture is a lens, truth is invariant: the reading has three layers —
+    truth (which provinces are 위협/기회/불확실 and their magnitude;
+    posture-invariant), salience (posture tilts order/emphasis of the finite
+    top-N), recommendation (posture shapes the prefilled command). Posture never
+    edits truth. Hard constraints: (a) coverage — every non-empty axis keeps at
+    least one surfaced highlight; (b) legibility — collapsed counts are always
+    shown ("정비 자세 · 위협 3건 접힘"); (c) dissonance — a strong posture↔truth
+    mismatch surfaces first. The dissonance signal is a concrete first piece of
+    the OPEN skill edge (SPEC pillars 2-3).
+  - ✅ Variety contract with fog: 형세판단 is a lens — it transmits and amplifies
+    input variety, it does not generate it. Cross-playthrough content variety is
+    the fog-of-war-discovery feature's job (random spawn + fog on the authored
+    map; no procedural generation needed). 형세판단 is designed to carry it —
+    confidence-gated 위협 + the 불확실 axis make readings path-dependent, and the
+    `intel.js` MAX_CONFIDENCE 0.90 ceiling + decay forbid an oracle so readings
+    stay fresh. An over-legible analyzer is the variety risk.
+  - ✅ Stage-1 → stage-2 bridge: attention (surfaced highlights, coverage-
+    guaranteed, capped ~5-7) is decoupled from and larger than the per-turn
+    action budget. The gap (see many, act on few) *is* the stage-1 decision.
+    MVP action budget = one action per turn (confirmed): "of the ~5-7 surfaced
+    tensions, which single one do I spend this turn on?" The wider capacity layer
+    stays deferred (ADR 0018); the invariant is budget < attention. See ADR 0019.
 - ✅ `Capacity carryover`: Unused action capacity that partially persists into
   later turns as preparation or accumulated work, subject to decay and caps.
 - ✅ `Capacity overclock`: Emergency redirection of one action capacity into

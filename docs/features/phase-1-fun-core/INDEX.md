@@ -20,6 +20,10 @@ Active design. Positioning and MVP scope settled; MVP payoff loop in design.
   world, LoL-shaped interaction; opt-in depth.
 - `docs/adr/0018-phase-1-mvp-core-fun-first.md` - MVP core-fun first; defer the
   capacity/overclock layer.
+- `docs/adr/0019-situation-judgment-structured-province-reading.md` - stage-1
+  situation judgment model: structured province reading (판세/위협/기회/불확실),
+  relational threat, posture-as-lens with anti-bias guardrails, fog variety
+  contract, and the attention-vs-action-budget bridge to stage 2.
 - Foundations: `0010` (high-complexity/low-micromanagement), `0009` and `0014`
   (anti-snowball force roles and local-garrison economy).
 
