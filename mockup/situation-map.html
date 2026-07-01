@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terrain Game — 형세 판단 (situation.js 정본 재정렬)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Orbitron:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="situation-map.css">
+</head>
+<body>
+    <div class="mock-banner">
+        <span class="mock-tag">정본 재정렬</span>
+        <span class="mock-note">형세 판단 (1단계) · 단위=지방(헥스 클러스터) · 6 상황타입 = situation.js/HIGHLIGHT_TYPES 정본 · 희소 강조 · 더미 데이터</span>
+        <span class="mock-spec">src: js/situation.js · ADR 0013</span>
+    </div>
+
+    <div class="app">
+        <!-- slim "am I winning" glance for context -->
+        <header class="glance glass">
+            <div class="g-faction"><span class="g-k">내 세력</span><span class="g-n">玄陽 · 현양</span></div>
+            <div class="g-pd">
+                <span class="g-side"><span class="g-lbl">나</span><span class="g-val" id="g-self">142</span></span>
+                <span class="g-track"><span class="g-fill-self" id="g-fill-self"></span><span class="g-fill-rival" id="g-fill-rival"></span><span class="g-lead" id="g-lead">+17% ▲</span></span>
+                <span class="g-side"><span class="g-lbl" id="g-rival-n">흑철</span><span class="g-val rival" id="g-rival">121</span></span>
+            </div>
+            <ol class="ladder" id="ladder"></ol>
+        </header>
+
+        <div class="body">
+            <main class="map-wrap glass">
+                <div class="toolbar">
+                    <span class="tb-title">이번 턴 형세 <span class="tb-sub">색=소유 · 강조 <b id="br-count">0</b>개만 (situation.js 상위 7)</span></span>
+                    <button id="btn-threat" class="toggle" aria-pressed="false" title="ADR 0013엔 있으나 classifyHex 미배선">위협 렌즈 <em>제안</em></button>
+                    <div class="legend" id="legend"></div>
+                </div>
+                <div class="map-stage" id="map-stage">
+                    <svg id="map-svg" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="형세 지도 — 지방(헥스 클러스터) 단위, 이번 턴 상위 상황만 강조">
+                        <defs>
+                            <filter id="soft" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="7"/></filter>
+                        </defs>
+                        <g id="l-glow"></g>
+                        <g id="l-fill"></g>
+                        <g id="l-perim"></g>
+                        <g id="l-label"></g>
+                        <g id="l-mark"></g>
+                        <g id="l-fx"></g>
+                    </svg>
+                    <div id="chip" class="chip hidden"></div>
+                    <div id="card" class="card hidden"></div>
+                </div>
+                <p class="hint">지방 hover → 형세·실제 stat · 강조된 지방 click → 추천 명령 카드 · 나머지는 <b>차분한 소유색</b>(노이즈 방지, ADR 0013)</p>
+            </main>
+
+            <aside class="rail">
+                <section class="panel glass">
+                    <h2 class="panel-h">턴 브리핑 <span class="panel-sub">상황 타입 우선순위 · 클릭=지방으로</span></h2>
+                    <div class="briefing" id="briefing"></div>
+                </section>
+                <section class="panel glass note-panel">
+                    <h2 class="panel-h">이 목업이 정본을 따르는 방식</h2>
+                    <ul class="model-note">
+                        <li><b>단위</b> = 지방(헥스 클러스터). 소유색이 지방 전체에 깔림.</li>
+                        <li><b>상황</b> = 연속 점수가 아니라 <b>6개 범주</b>(situation.js가 실제 stat으로 분류).</li>
+                        <li><b>희소</b> = 이번 턴 상위 강조만, 나머진 차분.</li>
+                        <li><b>클릭</b> = 추천 명령(정비/공세준비/증원/정찰…) 프리필.</li>
+                        <li><b>위협</b>은 ADR 0013엔 있으나 classifyHex 미배선 → <em>제안</em> 렌즈로 분리.</li>
+                    </ul>
+                </section>
+            </aside>
+        </div>
+    </div>
+
+    <script src="situation-data.js"></script>
+    <script src="situation-map.js"></script>
+</body>
+</html>

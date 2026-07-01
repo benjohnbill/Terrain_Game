@@ -15,7 +15,29 @@ python3 -m http.server 8007
 # then open http://localhost:8007/mockup/payoff-loop.html
 ```
 
-## Two pages
+## Pages
+
+- **`situation-map.html`** — **the model-faithful page.** Realigned to the code
+  (`js/situation.js` + `HIGHLIGHT_TYPES`), which is the canonical, ADR-0013
+  implementation. The earlier `payoff-loop.html` map used three invented
+  *continuous* metrics; this page uses the real model instead:
+  - **Unit = named province** (a hex cluster, per `DOMAIN_MAP`), owner color
+    filling the whole cluster with a drawn perimeter.
+  - **Situation = a category, not a score.** Each province is classified by a
+    verbatim port of `classifyHex` into one of six ADR-0013 types
+    (defense / threat / uncertainty / opportunity / route / growth) from the
+    real Phase-1 stats (economyValue, localGarrison, informationConfidence,
+    strategicTags, owner).
+  - **Sparse.** Only the turn's top highlights are emphasized (situation.js
+    caps at 7); everything else stays calm — ADR 0013 / DOMAIN_MAP "limit
+    strong highlights to avoid noise."
+  - **Briefing + click.** A briefing panel lists the highlights with reason and
+    recommended command; clicking a province opens that recommended command
+    prefilled. Command *adjustment* (the skill edge) is left OPEN.
+  - `threat` is defined in the code enum but not emitted by `classifyHex`, so
+    it is shown only via a clearly-marked proposed "위협 렌즈" toggle.
+
+## Earlier exploration pages
 
 - **`payoff-loop.html`** — the full payoff-loop representation model (below).
 - **`encoding-compare.html`** — a focused A/B/C study of *how the map cell
