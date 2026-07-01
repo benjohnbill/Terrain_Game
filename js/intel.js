@@ -42,6 +42,61 @@
     return { id: 'reliable', label: '신뢰 가능' };
   }
 
+  /* ── Estimate-range model (fog "ambiguous" magnitude — design spec §5) ──
+   * Tuning knobs live here (see spec §11). Uncertainty maps a confidence scalar
+   * to a band half-width: maximal at the glimpse floor, a small nonzero residual
+   * at the enemy ceiling. It never collapses to exact — only ownership is exact. */
+  const U_AT_FLOOR = 1.0;   // uncertainty at/below DECAY_FLOOR (0.45)
+  const U_AT_CEIL = 0.15;   // residual uncertainty at/above MAX_CONFIDENCE (0.90)
+  const WIDTH_PCT = 0.35;   // band half-width as a fraction of the true value at u = 1
+
+  function _clamp(value, lo, hi) {
+    return Math.max(lo, Math.min(hi, value));
+  }
+
+  // Normalized uncertainty (U_AT_FLOOR .. U_AT_CEIL) from a confidence scalar.
+  function _uncertainty(confidence) {
+    const c = _clamp(typeof confidence === 'number' ? confidence : 0, DECAY_FLOOR, MAX_CONFIDENCE);
+    const frac = (c - DECAY_FLOOR) / (MAX_CONFIDENCE - DECAY_FLOOR); // 0 at floor, 1 at ceiling
+    return U_AT_FLOOR + frac * (U_AT_CEIL - U_AT_FLOOR);
+  }
+
+  // Stable unsigned 32-bit seed from hex coordinates (independent of gameplay RNG).
+  function hexSeed(q, r) {
+    const a = ((q | 0) * 73856093) | 0;
+    const b = ((r | 0) * 19349663) | 0;
+    return (a ^ b) >>> 0;
+  }
+
+  // Stable pseudo-random position in [0, 1) from a seed (no gameplay RNG).
+  function _seedToUnit(seed) {
+    const s = Math.sin(((seed >>> 0) + 1) * 12.9898) * 43758.5453;
+    return s - Math.floor(s);
+  }
+
+  // A true-containing estimate range whose width shrinks as confidence rises and
+  // whose center is offset from the truth by a stable per-hex position `p`, so the
+  // midpoint is a guess rather than the answer.
+  function estimateRange(trueValue, confidence, seed) {
+    const t = typeof trueValue === 'number' && trueValue > 0 ? trueValue : 0;
+    const u = _uncertainty(confidence);
+    const half = t * WIDTH_PCT * u;
+    const width = 2 * half;
+    const p = _seedToUnit(typeof seed === 'number' ? seed : 0); // hidden position of the truth, [0,1)
+    const low = Math.max(0, round2(t - p * width));
+    const high = round2(t + (1 - p) * width);
+    return { low, high, mid: round2((low + high) / 2), width: round2(width) };
+  }
+
+  // Coarse qualitative magnitude bucket for display. Thresholds are tuning knobs.
+  function magnitudeBucket(value) {
+    const v = typeof value === 'number' ? value : 0;
+    if (v < 12) return '소';
+    if (v < 22) return '중';
+    if (v < 35) return '대';
+    return '특대';
+  }
+
   // The only mutator: refresh one hex's confidence at the start of a round.
   function maintainConfidence(hex, humanFactionId) {
     if (!hex) return;
@@ -64,6 +119,9 @@
     decay,
     isReliable,
     tierOf,
-    maintainConfidence
+    maintainConfidence,
+    hexSeed,
+    estimateRange,
+    magnitudeBucket
   });
 })();
