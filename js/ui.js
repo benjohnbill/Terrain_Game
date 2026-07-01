@@ -153,6 +153,8 @@ window.GameUI = class GameUI {
     if (command.preview && command.preview.kind === 'attack') {
       const preview = command.preview;
       const forecast = preview.forecast;
+      const range = preview.forecastRange || forecast;
+      const defenseText = preview.defenseEstimate ? preview.defenseEstimate.label : String(preview.defenseForce);
       const warningHTML = preview.warnings.length > 0
         ? `<div class="command-warnings">${preview.warnings.map((warning) => `
             <div class="command-warning ${warning.level}">${this._escape(warning.text)}</div>
@@ -169,9 +171,9 @@ window.GameUI = class GameUI {
         <div class="command-card-title">${this._escape(command.targetName)}</div>
         <div class="command-card-row"><span>명령</span><strong>${this._escape(command.intentLabel)}</strong></div>
         <div class="command-card-row"><span>공격 비용</span><strong>💰${preview.attackCost}</strong></div>
-        <div class="command-card-row"><span>예상 전력</span><strong>⚔${preview.attackForce} vs 🛡${preview.defenseForce}</strong></div>
-        <div class="command-card-row"><span>전황</span><strong>${forecast ? forecast.band : '-'}</strong></div>
-        <div class="command-card-row"><span>예상 범위</span><strong>${forecast ? `${forecast.low.toFixed(2)}-${forecast.high.toFixed(2)}` : '-'}</strong></div>
+        <div class="command-card-row"><span>예상 전력</span><strong>⚔${preview.attackForce} vs 🛡${this._escape(defenseText)}</strong></div>
+        <div class="command-card-row"><span>전황</span><strong>${range ? range.band : '-'}</strong></div>
+        <div class="command-card-row"><span>예상 범위</span><strong>${range ? `${range.low.toFixed(2)}-${range.high.toFixed(2)}` : '-'}</strong></div>
         <div class="command-card-row"><span>정보</span><strong>${preview.intel ? this._escape(preview.intel.label) : '-'} (${preview.confidence != null ? Math.round(preview.confidence * 100) : '-'}%)</strong></div>
         <label class="command-toggle">
           <input id="command-mobilize-toggle" type="checkbox" ${preview.mobilization.enabled ? 'checked' : ''}>
