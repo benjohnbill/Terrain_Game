@@ -69,9 +69,11 @@ convert analysis into tested skill (Hearthstone-style), but whether it reads as
 skill-testing or merely stressful is a prototype question. Casual play stays
 untimed.
 
-**Open thread.** Preset differentiation — how our posture presets create a
-distinctive, legible gap-to-close (the density of meaningful small-edge
-decisions) — is an ongoing design question.
+**Open thread.** Preset differentiation — how our posture presets and
+command-card operation plan presets create a distinctive, legible gap-to-close
+(the density of meaningful small-edge decisions) — is an ongoing design question.
+The command-card preset structure is accepted in ADR 0024; preset content and
+differentiation remain open.
 
 ## Phase Roadmap
 
@@ -86,9 +88,26 @@ over the underlying map units.
 Each province should be legible through three lenses: broad archetype region,
 terrain composition, and settlement/function.
 
+Named provinces are the strategic reading and regional-identity unit. Phase 1
+combat should also support a smaller operational layer inside provinces: front
+sectors such as a southern river basin, harbor basin, pass approach, or border
+zone. A front sector is the intended one-turn occupation and defense-focus unit,
+larger than one hex but smaller than an entire named province. Front sectors are
+defined by operational meaning, not by equal area: a dense capital basin may be
+small and highly valuable, while a sparse plateau or frontier may cover many map
+units with lower population and economy. Each front sector should carry a small
+Phase 1 value profile for control, economy, population, defense, military
+importance, and route value; later phases can extend this with political,
+symbolic, governance, unrest, or event values.
+
 Phase 1 uses a combat + economy basic stat scope. It should include regional
 population/economy differences because those make conquest targets meaningful,
 but it should avoid full domestic governance until later phases.
+
+Control and route effects can apply immediately when territory changes hands;
+economy and population should use the MVP usable-value recovery placeholder
+until later governance systems define richer occupation, administration, unrest,
+and recovery behavior.
 
 ### Phase 2: Diplomacy and International Order
 

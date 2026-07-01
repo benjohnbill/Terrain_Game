@@ -27,6 +27,16 @@ Before substantial work, read:
   later move to province-style irregular maps.
 - Avoid feature work before the current design/spec is approved.
 
+## Design Guardrails
+
+- Keep Phase 1 war and regional systems grounded in legible real-world
+  intuitions. Terrain, fortifications, population, economy, local garrisons,
+  routes, and post-battle recovery should behave plausibly even when represented
+  with simple MVP placeholders.
+- Avoid treating conquest or control as an instant full-value transfer. Control
+  and route access can change immediately, while economy, population, garrison,
+  and recovery may lag until deeper governance systems are introduced.
+
 ## Verification
 
 This is currently a static HTML/CSS/JavaScript app. Use a local static server

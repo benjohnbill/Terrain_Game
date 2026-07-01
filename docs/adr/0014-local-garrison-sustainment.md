@@ -2,7 +2,7 @@
 
 Date: 2026-06-29
 
-Status: Accepted
+Status: Accepted (amended by ADR 0022)
 
 ## Context
 
@@ -21,6 +21,12 @@ the exact failure mode Phase 1 is meant to fix.
 Local garrisons are sustained by their own province's economy and population,
 not by the national treasury. Standing forces carry national upkeep paid from
 the treasury.
+
+ADR 0022 later introduced front sectors as the MVP territorial ownership and
+one-turn operational unit. Under that model, the local-garrison sustainment
+principle attaches to the front sector: sector economy and population sustain
+the sector's local garrison, while province economy is an aggregate/readout over
+its sectors.
 
 This means:
 
