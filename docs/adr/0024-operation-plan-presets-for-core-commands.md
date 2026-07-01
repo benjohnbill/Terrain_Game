@@ -120,6 +120,37 @@ capacity commitment converts into applied effect magnitude; that
 commitment → effect-size formula is combat balancing and is defined in the
 numeric combat pass, not here.
 
+### Attack, defense, and non-combat in one catalog
+
+The catalog is not split by attack versus defense. Each effect axis is
+bidirectional and target-relative: the same axis that damages an enemy element
+can build or recover a friendly one (fortification *build* is the friendly
+direction of fortificationDamage; garrison *reinforce* of garrisonDamage; usable
+value *recovery* of usableValueDamage). Attack, defense, and non-combat plans
+therefore share the six axes and one schema; `availabilityConditions` decide
+which plans a focus surfaces — enemy-sector focus surfaces attack plans, own or
+threatened sector focus surfaces defense/recovery plans.
+
+Non-combat activity (scouting via confidenceGain, defensive build/recovery via
+the friendly-direction axes) appears in two places, both inside the command card:
+
+- as a primary operation plan (its own tab), when the player commits the turn's
+  main action to it; and
+- as the destination of surplus, when the primary is combat and committed
+  capacity is below the recommendation. Lowering the commitment slider frees
+  surplus, and a single outlet control on the same card sends it to one activity
+  (scouting, economy/recovery, defensive build, or reserve), with the preset
+  proposing a situation-based default. This is a lightweight redirect, not a
+  second action or a separate step; the turn still has one primary action
+  (ADR 0020).
+
+MVP surplus outlets are exactly those friendly-direction activities plus reserve.
+Diplomacy and scholarship are not outlets, because the MVP runs a single
+divisible capacity pool with the four typed capacities deferred (ADR 0020). This
+single-pool framing is an MVP assumption: once typed capacities are introduced,
+same-type redirection stays cheap while crossing types needs overclock, so the
+outlet set and this attack/defense/non-combat unification are a revisit point.
+
 ## Considered Options
 
 - **Expose every tactical field directly:** rejected — rich, but too much

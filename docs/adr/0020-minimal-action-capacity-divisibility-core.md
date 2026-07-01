@@ -72,3 +72,9 @@ the former as MVP core, the latter as still deferred.
 - Guardrail against scope creep: the MVP pool stays single, no-carryover, with at
   most a small number of surplus outlets; anything heavier is explicitly
   post-MVP.
+- Surplus outlets are the friendly-direction operation activities (scouting,
+  economy/recovery, defensive build) plus reserve, selected via a single outlet
+  control on the command card (ADR 0024). Because the pool is single, surplus can
+  go to any of these freely; diplomacy/scholarship are not outlets. When typed
+  capacities are later introduced, same-type redirection stays cheap while
+  crossing types needs overclock, so this outlet set is a revisit point.

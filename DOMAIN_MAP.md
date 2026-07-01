@@ -147,9 +147,12 @@ Markers:
   `routeDisruption` (`routeValue` / route access), `usableValueDamage` (actively
   destroys usable economy/population; independent of capture; the permanent-
   weakening path), and `confidenceGain` (information confidence). Preset effects
-  are authored as a per-axis magnitude, not a primary/secondary split.
-  `statusTransition` is _not_ an axis: province status is derived and recomputed
-  from controlWeight/contact per ADR 0023. _Note_: which element an axis touches
+  are authored as a per-axis magnitude, not a primary/secondary split. Each axis
+  is bidirectional and target-relative: the same axis that damages an enemy
+  element builds/recovers a friendly one (fortification build, garrison
+  reinforce, usable-value recovery), so attack, defense, and non-combat plans
+  share one catalog (ADR 0024). `statusTransition` is _not_ an axis: province
+  status is derived and recomputed from controlWeight/contact per ADR 0023. _Note_: which element an axis touches
   (mapping) is separate from how strongly a capacity commitment drives it
   (combat-balancing, deferred).
 - ✅ `Operation plan catalog`: The authored set of operation plans, defined
