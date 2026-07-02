@@ -17,12 +17,15 @@ python3 -m http.server 8007
 
 ## Pages
 
-- **`situation-map.html`** — **the model-faithful page (v4, ADR 0019 + fog +
-  front-sector drill).** The stage-1 situation-judgment model, with fog-of-war
+- **`situation-map.html`** — **the model-faithful page (v5, ADR 0019 + fog +
+  front-sector drill + map-only shell).** The stage-1 situation-judgment model, with fog-of-war
   folded in as the `불확실` axis and rendered in the A2 military-cartographic
   (block-wargame) visual language (fog-of-war-discovery). v1 ported `situation.js`'s
   flat six-type list; v2 rebuilt the structured ADR 0019 reading; v3 integrated
-  fog + the A2 skin; v4 stitches the front-sector drill (①→③→④) into one turn flow:
+  fog + the A2 skin; v4 stitches the front-sector drill (①→③→④) into one turn flow;
+  v5 removes the sidebar entirely — map-only reading with lens annotations and a
+  leak-through warning, a summoned work surface, and one unified action grammar
+  (name target → summon surface → seal plan):
   - **Structured reading, not a flat list.** 판세 (aggregate "am I winning"
     glance) + three located axes 위협 / 기회 / 불확실. Growth folds into 판세
     (owned-development glow); route folds into reachability.
@@ -46,12 +49,19 @@ python3 -m http.server 8007
     beats the province's weakest-link garrison, gated by confidence — drawn as an
     arrow from the enemy driver to the threatened province. `defense` + `threat`
     are merged into one 위협 axis.
-  - **Posture is a lens, truth is invariant.** The posture control (균형 / 공세 /
-    방어 / 정찰 중시) re-orders and re-emphasizes highlights but never changes what
-    is classified; **dissonance** warns when the posture-recommended action is not
-    the turn's most pressing tension (e.g. 정찰 중시 recommends scouting, but the
-    biggest tension is an active 위협). The dissonance signal is the first concrete
-    piece of the OPEN skill edge (SPEC pillars 2-3).
+  - **Lens annotations, no recommendation (v5).** The posture control (균형 / 공세 /
+    방어 / 정찰 중시) is a pure reading lens — the rec-ring, advice text, and
+    dissonance warning are retired; posture never changes what is classified, only
+    what the map annotates. Each lens answers a different question with on-map
+    annotations over an invariant truth: 방어 = "where can I be breached"
+    (weakest-garrison labels on own border provinces), 공세 = "what can I take"
+    (force-comparison chips on reachable foes), 정찰 중시 = "what can't I see"
+    (confidence % labels on foes), 균형 = base view. The active lens brightens its
+    axis; other axes dim. **Leak-through** is the dissonance successor: while a
+    lens is active, any suppressed-axis tension whose magnitude exceeds
+    `LEAK_RATIO` (1.5×) the strongest active-lens tension stays at full brightness
+    and gets a red pulse ring — the lens may dim things, but a sufficiently urgent
+    fact bleeds through.
   - **Stage-1 → stage-2 bridge (1 action).** You see ~5–7 tensions but hold one
     action; for a normal province, clicking a highlight opens the prefilled floating
     command card, and 확정 (or 정찰) spends the single action (others dim). Choosing
@@ -76,12 +86,18 @@ python3 -m http.server 8007
     estimate-band fade / recon marker / counter size) is retained to keep dialing
     in the fog visual language against live data.
 
-  **v4 known limitations (grammar probe, not a systems probe):** only 소현 is wired
+  **v5 known limitations (grammar probe, not a systems probe):** only 소현 is wired
   for the drill (mixed-control / split encoding never demonstrated); the card shows
   only the *magnitude* layer of the ADR 0025 uncertainty duel (categorical
   plan-vs-plan is out of scope); duel-beat resolution is deferred ("해소는 다음
   슬라이스"); the plan list (방어 강화 / 정찰) predates the operation-plan catalog
-  roster; all magnitudes are illustrative.
+  roster; all magnitudes are illustrative; the leak threshold and all annotation
+  values are illustrative; the minimal-card plan list (정찰/공세 준비) predates the
+  operation-plan catalog roster.
+
+  **Charter bar (v5):** hover is mechanism-explanation only; state needed for
+  cross-province comparison must be readable ON the map; every meaningful state
+  change must be confirmable on the map without opening the work surface.
 
 ## Earlier exploration pages
 
