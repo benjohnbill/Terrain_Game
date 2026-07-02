@@ -483,7 +483,7 @@
   function enterDrill() { state.mode = 'drill'; state.sectorOn = null; state.sealed = false; render(); animateVB(VB_DRILL); }
   function exitDrill() { state.mode = 'overview'; state.sectorOn = null; state.sealed = false; render(); setSurfaceOpen(false); animateVB(VB_FULL); }
   function backNav() {
-    if (state.mode === 'commit-min') { state.mode = 'overview'; state.minTarget = null; id('work-surface').classList.remove('open'); render(); return; }
+    if (state.mode === 'commit-min') { state.mode = 'overview'; state.minTarget = null; setSurfaceOpen(false); render(); return; }
     if (state.mode === 'commit') { state.mode = 'drill'; state.sectorOn = null; state.sealed = false; render(); setSurfaceOpen(false); animateVB(VB_DRILL); } else if (state.mode === 'drill') exitDrill();
   }
 
@@ -694,7 +694,7 @@
   function summonMinimalCard(p) {
     state.mode = 'commit-min'; state.minTarget = p.id;
     render();
-    id('work-surface').classList.add('open');
+    setSurfaceOpen(true);
   }
   function renderMinimalCard(p) {
     const rc = id('work-surface'), t = AXES[p._c.axis], owner = FACTIONS[p.owner];
@@ -712,11 +712,11 @@
     if (!REDUCED) rc.querySelectorAll('.cc2-cbody > *').forEach((n, i) => { n.classList.add('ws-anim'); n.style.animationDelay = (80 * i) + 'ms'; });
     rc.querySelector('.cc2-go').onclick = () => {
       state.mode = 'overview'; state.minTarget = null;
-      id('work-surface').classList.remove('open');
+      setSurfaceOpen(false);
       if (isScout) scout(p); else { state.spentOn = p.id; state.spentKind = 'act'; }
       render();
     };
-    rc.querySelector('.cc2-back').onclick = () => { state.mode = 'overview'; state.minTarget = null; id('work-surface').classList.remove('open'); render(); };
+    rc.querySelector('.cc2-back').onclick = () => { state.mode = 'overview'; state.minTarget = null; setSurfaceOpen(false); render(); };
   }
 
   /* ---------- 판세 glance ---------- */
