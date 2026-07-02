@@ -202,12 +202,23 @@
     const x0 = Math.min(...xs) - S * 1.5, x1 = Math.max(cheol._cx + S * 0.6, Math.max(...xs) + S * 1.3);
     const y0 = Math.min(...ys) - S * 2.0, y1 = Math.max(...ys) + S * 2.0;
     VB_DRILL = [x0, y0, x1 - x0, y1 - y0].map(v => Math.round(v));
-    // commit frame: widen so the evidence (sector + arrow + 철옹) sits centered
-    // in the ~54% of the stage the work surface leaves visible. Initial guess —
-    // tune by eye in the browser (mockup work, judged on screen).
-    const k = 1.7;
+    // commit frame: widen so the evidence (sector + arrow + 철옹) sits fully clear
+    // of #work-surface once it opens. Measure the panel's ACTUAL CSS-resolved geometry
+    // (`width: min(46%,500px)`, `right:10px`) against the live stage — elements already
+    // exist at this point (this IIFE runs after DOM parse) — instead of assuming a
+    // worst-case percentage, so the frame is provably correct for the viewport this
+    // page is actually running at, not eyeballed. getComputedStyle().width reflects the
+    // panel's true box width regardless of its (transform-only) open/closed state.
+    const wsW = parseFloat(getComputedStyle(id('work-surface')).width) || 0;
+    const stageW = stage.getBoundingClientRect().width || 1;
+    const unoccluded = Math.max(0.3, 1 - (wsW + 10) / stageW); // floor guards a pathologically narrow stage
+    const CHEOL_CLEARANCE = 60; // px past cheol._cx before the panel may start (clears the 48-wide counter + a hex-scale buffer)
+    const xOffset = VB_DRILL[2] * 0.08;
+    const cx0 = VB_DRILL[0] - xOffset;
+    const neededWidth = (cheol._cx + CHEOL_CLEARANCE - cx0) / unoccluded;
+    const k = Math.max(1.7, neededWidth / VB_DRILL[2]);
     VB_COMMIT = [
-      Math.round(VB_DRILL[0] - VB_DRILL[2] * 0.08),
+      Math.round(cx0),
       Math.round(VB_DRILL[1] - (VB_DRILL[3] * (k - 1)) / 2),
       Math.round(VB_DRILL[2] * k),
       Math.round(VB_DRILL[3] * k),
