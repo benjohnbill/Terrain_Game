@@ -211,12 +211,15 @@
     // panel's true box width regardless of its (transform-only) open/closed state.
     const wsW = parseFloat(getComputedStyle(id('work-surface')).width) || 0;
     const stageW = stage.getBoundingClientRect().width || 1;
-    const unoccluded = Math.max(0.3, 1 - (wsW + 10) / stageW); // floor guards a pathologically narrow stage
+    // fraction of the stage NOT covered by the panel. No floor here: the CSS ceiling
+    // (`width: min(46%,500px)`) keeps this comfortably positive (>=~0.3) for any stage
+    // width down to ~42px, far below anything this mockup renders at in practice.
+    const unoccluded = 1 - (wsW + 10) / stageW;
     const CHEOL_CLEARANCE = 60; // px past cheol._cx before the panel may start (clears the 48-wide counter + a hex-scale buffer)
     const xOffset = VB_DRILL[2] * 0.08;
     const cx0 = VB_DRILL[0] - xOffset;
     const neededWidth = (cheol._cx + CHEOL_CLEARANCE - cx0) / unoccluded;
-    const k = Math.max(1.7, neededWidth / VB_DRILL[2]);
+    const k = Math.max(1.7, neededWidth / VB_DRILL[2]);   // also the guard against a degenerate (near-zero/negative) `unoccluded`, which cannot occur at a realistic stage width
     VB_COMMIT = [
       Math.round(cx0),
       Math.round(VB_DRILL[1] - (VB_DRILL[3] * (k - 1)) / 2),
