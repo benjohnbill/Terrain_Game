@@ -123,9 +123,10 @@ Markers:
   objective, approach, recommended capacity commitment, mobilization posture, and
   risk tolerance into a statistical-average baseline. Casual play can accept the
   preset; skilled play fine-tunes selected fields to fit the actual sector
-  situation. Presets belong to a catalog, but the command card should expose only
-  the few plans made plausible by the target sector's value profile, state,
-  adjacency/reachability, terrain tags, and confidence.
+  situation. Presets belong to a catalog; the command card surfaces the plans
+  that pass physical availability gates, ordered by statistically derived fit
+  with the top plan as the recommendation. Ill-advised but physically possible
+  plans are shown low-ranked with a poor forecast rather than hidden (ADR 0024).
 - ✅ `Core command`: The player's primary turn action against a focused front
   sector. Internally it can include objective, approach, capacity commitment,
   mobilization, and risk tolerance; externally it should appear first as an
@@ -160,12 +161,60 @@ Markers:
   `effectAxes` (a magnitude per operation effect axis), and `riskProfile`. There
   is no authored "target traits" field — fit to a sector is derived by matching
   `effectAxes` against the sector's value profile, so recommendation ranking
-  surfaces fit automatically. Concrete plan content is authored later; the schema
+  surfaces fit automatically. `availabilityConditions` gate on physical
+  applicability only (reachability, target presence, required elements); being
+  ill-advised never hides a plan — advisability is expressed through fit ranking
+  and forecast (ADR 0024). Concrete plan content is authored later; the schema
   is fixed now (ADR 0024).
 - ✅ `Under-commitment failure`: A failed contested defense caused by committing
   too little capacity. In the MVP, this causes immediate front-sector loss
   rather than only gradual damage, so deliberate sacrifice and surplus
   redirection are legible strategic choices (ADR 0021).
+- ✅ `Atomic turn resolution`: Every operation plan resolves fully within the
+  turn it is issued — the march/deploy/search fiction is compressed inside
+  that single resolution, and no "operation in progress" state spans turns.
+  Multi-turn campaigns (sieges, strangle-then-assault chains) are *emergent*:
+  chains of independently chosen atomic actions over persistent world state
+  (a cut route stays cut until repaired; a cut sector degrades passively by
+  stages). A plan's authored effect axes apply exactly once, at resolution;
+  any ongoing effect afterward comes from standing world rules reading the
+  persistent state (e.g. "an unsupplied sector degrades by stages each
+  turn"), never from the plan re-applying its axes. The enemy ends the tick
+  by removing the state (repair/relief), not by dispelling the plan. Plan availability may read persistent state (e.g. "already
+  isolated") — that is state-reading, not a multi-turn action. _Avoid_:
+  casting times, progress bars, multi-turn scripted operations (a HOI4-style
+  authored multi-stage plan would be a model change, parked post-MVP).
+- ✅ `Position as product`: The MVP has no standalone move action and no
+  tracked army counters. Position is a *product* of operations: taking a
+  sector or opening a route changes what is reachable next turn, and
+  availability gates read that position (adjacency, routes, water
+  boundaries). Crossing/landing is an attack plan whose fiction is movement
+  under fire — the turn is spent forcing the passage; its products are the
+  far-bank sector and an opened route, and the inland attack is the next
+  turn's separate decision from the new position. Hexes keep doing movement
+  *math* (reachability, ADR 0015 penalties) as calculation substrate.
+  _Avoid_: a generic move order, hex-by-hex marching, movement turn-tolls
+  before attacks (a scripted two-turn sequence violates atomic turn
+  resolution).
+- ✅ `Standing world rule`: A per-turn world process that reads persistent
+  state and applies consequences without consuming any faction's action
+  capacity (ADR 0026). Phase-1 instances: usable-value recovery (ADR 0022),
+  local-garrison regeneration, fog confidence decay, and supply starvation —
+  a supply-cut sector degrades in staged severity each turn until the route
+  state is repaired (stages/rates are combat-pass dials). Plans stamp state
+  once; standing rules are how time itself matters. _Avoid_: plan effects
+  that re-apply across turns.
+- ✅ `Uncertainty duel`: The information-asymmetric, effectively simultaneous
+  commitment exchange that is the game's core pressure engine (ADR 0025). The
+  player commits capacity against a banded estimate of enemy force and an
+  unrevealed enemy intent; the enemy acts on its own agenda without waiting.
+  Tension comes from information asymmetry and simultaneity, not a wall clock.
+  Two layers: magnitude (how much to commit — the poker bet) and categorical
+  (which plan against which plan — requires attacker-plan × defender-plan
+  interaction in the combat formula). AI tendencies are probabilistic and
+  learnable across turns and matches — readable ranges, never deterministic
+  tells; random spawn keeps the learning at system level. _Avoid_: intent
+  meter, deterministic AI tells, oracle-grade information.
 - ✅ `Offensive mobilization`: Temporary risky force drawn from population or
   local capacity to support attacks.
 - ✅ `Local defense`: Defensive support from garrisons and mobilizable local

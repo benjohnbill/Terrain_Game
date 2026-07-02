@@ -46,6 +46,18 @@ commands) with an optional skill ceiling (fine situational adjustment rewards
 mastery). System complexity is high; *required* interaction complexity is low;
 *expressed* interaction complexity is opt-in.
 
+**Match envelope.** A match is a war/empire arc compressed into roughly 30-40
+minutes — an hour at the outside — in the spirit of a LoL game, not a Paradox
+campaign. Assuming a turn resolves in roughly 1.5-2 minutes — an untested
+playtest variable — the envelope implies roughly 15-25 turns per match; that
+turn count is a derived estimate, not a design commitment. The binding target
+is the wall-clock envelope, with two consequences: a match must end at a
+decision point
+rather than by map completion (the match-arc/victory-condition thread), and
+required per-turn interaction must stay inside the preset-first budget. The
+envelope is a design budget, not a wall clock; casual play stays untimed (time
+pressure remains the separate opt-in question below).
+
 **Fun pillars.**
 
 1. **Growth you can feel.** The core satisfaction is being validated that you
@@ -74,6 +86,11 @@ command-card operation plan presets create a distinctive, legible gap-to-close
 (the density of meaningful small-edge decisions) — is an ongoing design question.
 The command-card preset structure is accepted in ADR 0024; preset content and
 differentiation remain open.
+
+**Open thread.** Match arc and victory conditions — how a match reaches a
+decision point inside the envelope (settlement/capitulation conditions,
+world-clock pressure events, opt-in clock modes). ADR 0025 parks the deferred
+clock/event questions here.
 
 ## Phase Roadmap
 

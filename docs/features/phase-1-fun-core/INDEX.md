@@ -40,6 +40,16 @@ Active design. Positioning and MVP scope settled; MVP payoff loop in design.
 - `docs/adr/0024-operation-plan-presets-for-core-commands.md` - core commands
   are presented as statistical-average operation plan presets with optional
   fine-tuning, preserving low required interaction and a skill edge.
+- `docs/adr/0025-turn-based-core-and-uncertainty-duel.md` - the game stays
+  turn-based (real-time rejected, trigger-based revisit); the core pressure
+  engine is the uncertainty duel — information-asymmetric simultaneous
+  commitment under fog, with learnable-but-never-solvable AI tendencies and a
+  plan-vs-plan categorical layer required in the combat formula.
+- `docs/adr/0026-one-shot-effects-persistent-state-standing-rules.md` - plans
+  stamp state once at resolution; standing world rules (supply starvation,
+  usable-value recovery, garrison regeneration, confidence decay) read
+  persistent state each turn; long operations are emergent chains, never
+  multi-turn scripted actions.
 - Foundations: `0010` (high-complexity/low-micromanagement), `0009` and `0014`
   (anti-snowball force roles and local-garrison economy).
 
@@ -50,6 +60,10 @@ Active design. Positioning and MVP scope settled; MVP payoff loop in design.
 
 ## Open Threads
 
+- Match arc / victory conditions: end the match at a decision point within the
+  SPEC 30-40 minute envelope (settlement function, world-clock pressure
+  events, opt-in clock modes — ADR 0025 parking). A major thread alongside
+  the combat-balancing formula.
 - Preset differentiation (SPEC "Open thread").
 - Time pressure as an opt-in mode - prototype question (SPEC "To validate").
 - UI/UX information architecture - to be designed in a separate session, seeded
