@@ -116,9 +116,10 @@
   reclassify();
 
   /* ---------- reading (truth, posture-invariant) + recommendation (posture) ---------- */
-  const state = { postureId: 'balanced', spentOn: null, spentKind: null, reveal: null, cardOn: null,
+  const state = { postureId: 'balanced', spentOn: null, spentKind: null, reveal: null,
     // front-sector drill v4: overview -> drill(소현) -> commit(sector) -> sealed(duel beat)
-    mode: 'overview', sectorOn: null, plan: 'defend', commit: 70, sealed: false, sealedPlan: null, enemySealed: false };
+    // v5 slice D: overview -> commit-min (sectorless minimal card) for non-hero targets
+    mode: 'overview', sectorOn: null, minTarget: null, plan: 'defend', commit: 70, sealed: false, sealedPlan: null, enemySealed: false };
   function reading() {
     return PROVINCES.filter(p => p._c).map(p => ({ p, axis: p._c.axis, mag: p._c.mag })).sort((a, b) => b.mag - a.mag).slice(0, CAP);
   }
@@ -181,7 +182,7 @@
   /* ---------- DOM refs ---------- */
   const svg = document.getElementById('map-svg');
   const L = { terrain: id('l-terrain'), murk: id('l-murk'), glow: id('l-glow'), perim: id('l-perim'), arrow: id('l-arrow'), counter: id('l-counter'), sector: id('l-sector'), label: id('l-label'), mark: id('l-mark'), fx: id('l-fx') };
-  const stage = id('map-stage'), chip = id('chip'), card = id('card');
+  const stage = id('map-stage'), chip = id('chip');
   const secById = sid => byId[HERO].sectors.find(s => s.id === sid);
   const secDef = s => s.garrison + s.terrain + s.fort;
   function id(x) { return document.getElementById(x); }
@@ -255,7 +256,9 @@
     PROVINCES.forEach(p => {
       const st = stateOf(p), owner = FACTIONS[p.owner], orgb = hexToRgb(owner.color);
       const isHero = p.id === HERO;
-      const dim = (heroFocus ? !isHero : (state.spentOn && state.spentOn !== p.id)) ? ' dimmed' : '';
+      const dim = (heroFocus ? !isHero
+        : state.mode === 'commit-min' ? p.id !== state.minTarget
+        : (state.spentOn && state.spentOn !== p.id)) ? ' dimmed' : '';
 
       // terrain hexes (position fog: terrain is always visible)
       p.hexes.forEach(([c, r]) => { const q = center(c, r);
@@ -305,7 +308,8 @@
     }
 
     if (state.mode === 'commit') { if (state.sealed) renderSealNotice(); else renderWorkSurface(secById(state.sectorOn)); }
-    setSurfaceOpen(state.mode === 'commit');
+    else if (state.mode === 'commit-min') renderMinimalCard(byId[state.minTarget]);
+    setSurfaceOpen(state.mode === 'commit' || state.mode === 'commit-min');
     renderMissionPill(read);
     renderPosture();
   }
@@ -439,6 +443,7 @@
   function missionLabel() {
     if (state.mode === 'drill') return '구역 선택 — 소현';
     if (state.mode === 'commit') return state.sealed ? '명령 봉인' : '커밋 결정 — ' + secById(state.sectorOn).name;
+    if (state.mode === 'commit-min') return '계획 확정 — ' + byId[state.minTarget].name;
     return '긴장 선택';
   }
   function renderMissionPill(read) {
@@ -453,6 +458,7 @@
     const reset = bEl.querySelector('#ap-reset'); if (reset) reset.onclick = () => { resetTurn(); state.enemySealed = false; state.sealedPlan = null; render(); };
   }
   function pillBody(read) {
+    if (state.mode === 'commit-min') return '<span class="ap-note">이 지방에 이번 턴 행동을 쓸지 결정</span>';
     if (state.mode === 'drill')
       return '<span class="ap-note">위협이 드는 곳과 뒤에 잃을 것을 <b>저울질</b> — 구역 하나에 이번 턴 행동</span><button class="ap-back">← 형세로</button>';
     if (state.mode === 'commit')
@@ -474,9 +480,12 @@
 
   /* ---------- drill flow: overview -> drill -> commit -> sealed -> overview ---------- */
   let sealTimer = null;
-  function enterDrill() { closeCard(); state.mode = 'drill'; state.sectorOn = null; state.sealed = false; render(); animateVB(VB_DRILL); }
+  function enterDrill() { state.mode = 'drill'; state.sectorOn = null; state.sealed = false; render(); animateVB(VB_DRILL); }
   function exitDrill() { state.mode = 'overview'; state.sectorOn = null; state.sealed = false; render(); setSurfaceOpen(false); animateVB(VB_FULL); }
-  function backNav() { if (state.mode === 'commit') { state.mode = 'drill'; state.sectorOn = null; state.sealed = false; render(); setSurfaceOpen(false); animateVB(VB_DRILL); } else if (state.mode === 'drill') exitDrill(); }
+  function backNav() {
+    if (state.mode === 'commit-min') { state.mode = 'overview'; state.minTarget = null; id('work-surface').classList.remove('open'); render(); return; }
+    if (state.mode === 'commit') { state.mode = 'drill'; state.sectorOn = null; state.sealed = false; render(); setSurfaceOpen(false); animateVB(VB_DRILL); } else if (state.mode === 'drill') exitDrill();
+  }
 
   function selectSector(sec) {
     if (!sec) return;
@@ -673,49 +682,42 @@
   }
   const hideChip = () => chip.classList.add('hidden');
 
-  /* ---------- command card ---------- */
-  // hero province drills into front sectors; everything else keeps the v3 floating card
-  function pick(p) { if (!p || !p._c) return; if (p.id === HERO) enterDrill(); else openCard(p); }
-  function openCard(p) {
-    if (!p._c) return;
-    state.cardOn = p.id;
-    const t = AXES[p._c.axis], owner = FACTIONS[p.owner], conf = confOf(p), st = stateOf(p), cmd = INTENTS[p._c.intent];
-    const isScout = p._c.intent === 'scout';
-    const already = state.spentOn === p.id, spentElsewhere = state.spentOn && state.spentOn !== p.id;
-    const estLine = st === 'unknown' ? '병력 미상 — 정찰 전' : isSelf(p) ? `경제 ${p.economyValue} · 최약 수비 ${p.weakestGarrison}` : `경제 ${p.economyValue} · 병력 ~${p.estForce}${st === 'glimpse' ? ' (추정 범위)' : ''}`;
-    card.innerHTML =
-      `<div class="cc-h"><span class="cc-cmd" style="color:rgb(${t.rgb})">${cmd}</span>` +
-        `<span class="cc-tg">→ ${p.name} <i style="color:${owner.color}">${owner.short}</i></span>` +
-        `<button class="cc-x" id="cc-x" aria-label="닫기">✕</button></div>` +
-      `<div class="cc-why"><span class="cc-badge" style="border-color:rgb(${t.rgb});color:rgb(${t.rgb})">${t.glyph} ${t.label}</span><span class="cc-reason">${p._c.reason}</span></div>` +
-      `<div class="cc-fields">` +
-        `<div class="cc-f"><span>추천 명령 (프리필)</span><b>${cmd}</b></div>` +
-        `<div class="cc-f"><span>대상</span><b>${p.name} · ${p.terrain} · ${p.hexes.length} 헥스</b></div>` +
-        `<div class="cc-f"><span>${isSelf(p) ? '실제 stat' : '추정'}</span><b>${estLine}</b></div>` +
-        `<div class="cc-f"><span>정보 신뢰</span><b class="${conf < 50 ? 'low' : ''}">${conf}%${conf < 100 ? ' · 추정' : ''}</b></div>` +
-      `</div>` +
-      (isScout
-        ? `<div class="cc-scout">정찰하면 신뢰가 <b>${conf}% → ${Math.round(Math.min(MAX_CONFIDENCE, p.minConfidence + SCOUT_GAIN) * 100)}%</b>로 올라 <b>불확실이 해소</b>됩니다 — 미터가 좁혀지고 축이 위협/기회로 확정. 단, 그 <b>1행동</b>을 쓰는 것.</div>`
-        : `<div class="cc-open">명령 조정(강도·병력·FOCUS)은 <b>실력 edge — OPEN</b>. 이 목업은 형세 판단→추천까지.</div>`) +
-      (spentElsewhere
-        ? `<div class="cc-actions"><div class="cc-spent-msg">이번 턴 행동은 <b>${byId[state.spentOn].name}</b>에 소진됨</div></div>`
-        : `<div class="cc-actions"><button class="cc-go${isScout ? ' scout' : ''}">${already ? '선택됨 ✓' : isScout ? '정찰 (1회)' : '이 행동으로 확정 (1회)'}</button><button class="cc-cancel" id="cc-cancel">취소</button></div>`);
-    positionCard(p);
-    id('cc-x').onclick = closeCard;
-    const cancel = id('cc-cancel'); if (cancel) cancel.onclick = closeCard;
-    const go = card.querySelector('.cc-go');
-    if (go) go.onclick = () => { if (isScout) scout(p); else { state.spentOn = p.id; state.spentKind = 'act'; } closeCard(); render(); };
+  /* ---------- minimal card (sectorless, non-hero targets) ---------- */
+  // unified grammar: name target -> summon surface -> seal plan.
+  // 소현 routes through its sector drill (sector = the unit of strategic action);
+  // other classified provinces summon a sectorless minimal card.
+  function pick(p) {
+    if (!p || !p._c) return;
+    if (p.id === HERO) { enterDrill(); return; }
+    summonMinimalCard(p);
   }
-  function positionCard(p) {
-    const r = svg.getBoundingClientRect(), vb = svg.viewBox.baseVal;
-    let x = (p._cx / vb.width) * r.width + 20, y = (p._cy / vb.height) * r.height - 40;
-    card.style.visibility = 'hidden'; card.classList.remove('hidden');
-    const cw = card.offsetWidth, ch = card.offsetHeight;
-    if (x + cw > stage.clientWidth) x = (p._cx / vb.width) * r.width - cw - 20;
-    x = Math.max(4, x); y = Math.max(4, Math.min(y, stage.clientHeight - ch - 6));
-    card.style.left = x + 'px'; card.style.top = y + 'px'; card.style.visibility = '';
+  function summonMinimalCard(p) {
+    state.mode = 'commit-min'; state.minTarget = p.id;
+    render();
+    id('work-surface').classList.add('open');
   }
-  function closeCard() { card.classList.add('hidden'); state.cardOn = null; }
+  function renderMinimalCard(p) {
+    const rc = id('work-surface'), t = AXES[p._c.axis], owner = FACTIONS[p.owner];
+    const isScout = p._c.intent === 'scout', conf = confOf(p), st = stateOf(p);
+    const estLine = st === 'unknown' ? '병력 미상 — 정찰 전' : `경제 ${p.economyValue} · 병력 ~${p.estForce}${st === 'glimpse' ? ' (추정 범위)' : ''}`;
+    rc.innerHTML =
+      `<div class="cc2-tag"><span class="v">계획 확정</span><span class="vn">${p.name} <i style="color:${owner.color}">${owner.short}</i> · <span style="color:rgb(${t.rgb})">${t.glyph} ${t.label}</span></span></div>` +
+      `<div class="cc2-cbody">` +
+        `<div class="cc2-fields"><span class="pf">대상 <b>${p.name}</b></span><span class="pf">지형 <b>${p.terrain}</b></span><span class="pf">${st === 'unknown' ? '정보' : '추정'} <b>${estLine}</b></span><span class="pf">신뢰 <b>${conf}%</b></span></div>` +
+        (isScout
+          ? `<div class="cc2-rear">정찰하면 신뢰가 <b>${conf}% → ${Math.round(Math.min(MAX_CONFIDENCE, p.minConfidence + SCOUT_GAIN) * 100)}%</b> — 안개가 걷히며 축이 위협/기회로 확정됩니다. 이 <b>1행동</b>을 씁니다.</div>`
+          : `<div class="cc2-rear">${p._c.reason} 이번 턴 행동을 <b>공세 준비</b>에 씁니다 — 실행은 다음 턴.</div>`) +
+        `<div class="cc2-foot"><button class="cc2-go${isScout ? ' scout' : ''}">${isScout ? '정찰 봉인 (1회)' : '공세 준비 봉인 (1회)'}</button><button class="cc2-back">취소</button></div>` +
+      `</div>`;
+    if (!REDUCED) rc.querySelectorAll('.cc2-cbody > *').forEach((n, i) => { n.classList.add('ws-anim'); n.style.animationDelay = (80 * i) + 'ms'; });
+    rc.querySelector('.cc2-go').onclick = () => {
+      state.mode = 'overview'; state.minTarget = null;
+      id('work-surface').classList.remove('open');
+      if (isScout) scout(p); else { state.spentOn = p.id; state.spentKind = 'act'; }
+      render();
+    };
+    rc.querySelector('.cc2-back').onclick = () => { state.mode = 'overview'; state.minTarget = null; id('work-surface').classList.remove('open'); render(); };
+  }
 
   /* ---------- 판세 glance ---------- */
   function renderGlance() {
@@ -759,8 +761,8 @@
       const d = id('corner-drawer'), open = d.classList.toggle('hidden');
       id('drawer-toggle').setAttribute('aria-expanded', String(!open));
     };
-    id('posture').querySelectorAll('.pt').forEach(b => b.addEventListener('click', () => { state.postureId = b.dataset.pt; closeCard(); render(); }));
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') { if (state.cardOn) closeCard(); else if (state.mode !== 'overview') backNav(); } });
+    id('posture').querySelectorAll('.pt').forEach(b => b.addEventListener('click', () => { state.postureId = b.dataset.pt; render(); }));
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && state.mode !== 'overview') backNav(); });
     bindVeil();
   }
 
