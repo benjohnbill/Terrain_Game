@@ -41,13 +41,13 @@ const INTENTS = { reinforce: '방어 강화', prepare_offensive: '공세 준비'
  * Terrain stays visible under murk (position fog, not full fog). */
 const MAX_CONFIDENCE = 0.90;   // ADR 0019 oracle ceiling — a scout can never make it certain
 
-/* Postures = the player's stance. In this (A) model a posture does NOT re-rank
- * the reading — the truth (all surfaced tensions) is shown in full, posture-
- * invariant. A posture only sets which axis the game leans toward RECOMMENDING
- * for the turn's single action (ADR 0011: "which actions become easier to
- * prioritize"). `prefer: null` = recommend the raw most-pressing tension.
- * Skill = overriding the recommendation when the board disagrees; the dissonance
- * signal warns when the recommendation is not the turn's most pressing tension. */
+/* Postures = READING LENSES (v5). A posture never changes what is classified
+ * (truth invariant) and never recommends — it answers a different question
+ * with on-map annotations: defensive "where can I be breached", offensive
+ * "what can I take", recon "what can't I see", balanced = base view.
+ * `prefer` names the axis a lens emphasizes (null = no emphasis).
+ * Leak-through: a suppressed-axis tension urgent enough (see LEAK_RATIO in
+ * situation-map.js) stays at full brightness and pulses through the lens. */
 const POSTURES = {
   balanced:  { id: 'balanced',  label: '균형',     prefer: null },
   offensive: { id: 'offensive', label: '공세',     prefer: 'opportunity' },

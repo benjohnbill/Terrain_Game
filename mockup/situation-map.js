@@ -28,6 +28,7 @@
   const THREAT = { lo: 12, hi: 16, conf: 75 };   // 철옹 estimate band shown on the pressure arrow + card (illustrative)
   const CAM_DUR = 520;                           // camera focus / rewind duration (ms)
   const SEAL_HOLD = 2000;                         // how long the duel beat holds before the rewind
+  const LEAK_RATIO = 1.5; // a suppressed tension pierces the lens above this × the lens-top magnitude (illustrative)
 
   const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
   const reliable = c => c >= RELIABLE;
@@ -122,6 +123,38 @@
     return PROVINCES.filter(p => p._c).map(p => ({ p, axis: p._c.axis, mag: p._c.mag })).sort((a, b) => b.mag - a.mag).slice(0, CAP);
   }
 
+  /* ---------- lens (v5): emphasis + annotations + leak-through ---------- */
+  const lensAxis = () => POSTURES[state.postureId].prefer;   // null on 균형
+  function leakSet(read) {
+    const lens = lensAxis(); if (!lens) return new Set();
+    const inLens = read.filter(s => s.axis === lens);
+    const top = inLens.length ? inLens[0].mag : 0;           // read is mag-sorted
+    return new Set(read.filter(s => s.axis !== lens && s.mag > top * LEAK_RATIO).map(s => s.p.id));
+  }
+  // small on-map annotation label under a province (comparison state lives ON the map)
+  function drawNote(p, text, cls) {
+    const w = text.length * 6.4 + 14, h = 16, x = p._cx - w / 2, y = p._cy + 44;
+    const g = el('g', { class: 'lens-note ' + cls });
+    g.appendChild(el('rect', { x: x.toFixed(1), y: y.toFixed(1), width: w.toFixed(1), height: h, rx: 8 }));
+    g.appendChild(txt(p._cx, y + 12, text, 'lens-note-t', 10));
+    L.mark.appendChild(g);
+  }
+  function drawLensNotes() {
+    const lens = lensAxis(); if (!lens) return;
+    if (lens === 'threat') PROVINCES.forEach(p => {          // 방어: where can I be breached
+      if (isSelf(p) && p._adj.some(a => isFoe(byId[a]))) drawNote(p, '수비 ' + p.weakestGarrison, 'def');
+    });
+    if (lens === 'opportunity') PROVINCES.forEach(p => {     // 공세: what can I take
+      if (isFoe(p) && p._adj.some(a => isSelf(byId[a]))) {
+        const our = ourAdjForce(p), est = stateOf(p) === 'unknown' ? '?' : '~' + p.estForce;
+        drawNote(p, `아군 ${our} vs ${est}`, our >= (p.estForce || 99) ? 'adv' : 'even');
+      }
+    });
+    if (lens === 'uncertainty') PROVINCES.forEach(p => {     // 정찰 중시: what can't I see
+      if (isFoe(p)) drawNote(p, '정보 ' + confOf(p) + '%', confOf(p) < 50 ? 'low' : 'ok');
+    });
+  }
+
   /* ---------- scout: the fog reveal that IS the axis transition ---------- */
   function scout(p) {
     p.discovered = true;
@@ -209,7 +242,11 @@
       // 판세 development glow (owned + high economy)
       if (developed(p) && !dim) glow(p, GROWTH_RGB, 0.14, S * 1.2);
       // located-axis glow (suppressed on the hero while drilled — sectors carry the signal)
-      if (!(heroFocus && isHero) && p._c && shownIds.has(p.id)) glow(p, AXES[p._c.axis].rgb, dim ? 0.06 : 0.16, S * 1.28);
+      if (!(heroFocus && isHero) && p._c && shownIds.has(p.id)) {
+        const lens0 = lensAxis();
+        const a = dim ? 0.06 : lens0 ? (p._c.axis === lens0 ? 0.22 : 0.07) : 0.16;
+        glow(p, AXES[p._c.axis].rgb, a, S * 1.28);
+      }
 
       // province perimeter in owner colour
       p.hexes.forEach(([c, r]) => { const q = center(c, r), cn = corners(q.x, q.y);
@@ -231,7 +268,13 @@
       if (state.sealed) drawSeals();           // the duel beat: both orders sealed at once
     } else {
       read.filter(s => s.axis === 'threat' && s.p._c.driver).forEach(s => L.arrow.appendChild(arrow(byId[s.p._c.driver]._cx, byId[s.p._c.driver]._cy, s.p._cx, s.p._cy)));
-      read.forEach(s => drawBadge(s.p, s.axis, state.spentOn === s.p.id, cntScale()));
+      const leaks = leakSet(read), lens = lensAxis();
+      read.forEach(s => {
+        const suppressed = lens && s.axis !== lens && !leaks.has(s.p.id);
+        drawBadge(s.p, s.axis, state.spentOn === s.p.id, cntScale(), suppressed);
+        if (leaks.has(s.p.id)) drawLeakPulse(s.p);
+      });
+      drawLensNotes();
       if (state.enemySealed) drawEnemySeal();  // face-down marker persists after a sealed turn
     }
 
@@ -285,14 +328,20 @@
     return g;
   }
 
-  function drawBadge(p, axis, isSpent, scale) {
+  function drawBadge(p, axis, isSpent, scale, dimmed) {
     const t = AXES[axis], label = t.glyph + ' ' + t.label;
     const w = label.length * 11 + 24, h = 22, x = p._cx - w / 2, y = p._cy + 20 * scale;
-    const g = el('g', { class: 'badge', 'data-prov': p.id, opacity: state.spentOn && !isSpent ? 0.32 : 1 });
+    const g = el('g', { class: 'badge', 'data-prov': p.id, opacity: state.spentOn && !isSpent ? 0.32 : dimmed ? 0.4 : 1 });
     g.appendChild(el('rect', { x: x.toFixed(1), y: y.toFixed(1), width: w, height: h, rx: 11, fill: isSpent ? rgba(t.rgb, 0.92) : 'rgba(18,22,12,0.9)', stroke: rgba(t.rgb, 0.9), 'stroke-width': 1.5 }));
     const label_t = txt(p._cx, y + h / 2 + 4, label, 'badge-t', 12); label_t.setAttribute('fill', isSpent ? '#12160c' : rgba(t.rgb, 1));
     g.appendChild(label_t);
     L.mark.appendChild(g);
+  }
+
+  function drawLeakPulse(p) {  // urgency pierces the active lens (dissonance successor)
+    const g = el('g', { class: 'leak' });
+    g.appendChild(el('circle', { cx: p._cx.toFixed(1), cy: p._cy.toFixed(1), r: (S * 1.35).toFixed(1), fill: 'none', class: 'leak-ring' + (REDUCED ? ' still' : '') }));
+    L.fx.appendChild(g);
   }
 
   /* ---------- front-sector drill: spatial sectors drawn inside 소현 ---------- */
