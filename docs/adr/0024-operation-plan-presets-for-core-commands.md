@@ -50,7 +50,19 @@ command card should generate a small available set from the target front sector'
 value profile, status, adjacency/reachability, terrain tags, and information
 confidence. A typical card should expose only a few valid plans plus one
 recommendation. Conditional plans such as supply interdiction or encirclement
-should appear only when the sector state makes them plausible.
+should appear only when the sector state makes them physically applicable (for
+example, supply interdiction requires a route to cut).
+
+Availability gating is physical, not advisory. `availabilityConditions` hide a
+plan only when it is physically impossible or meaningless for the target
+(unreachable, no enemy present, no required element such as a route to cut).
+Being ill-advised is never a gate: a possible-but-poor plan — a swift seizure
+against an intact fortress — stays on the card, ranked low by derived fit and
+carrying a visibly bad forecast band. The card's default presentation principle
+is statistical ordering: available plans appear in order of statistically
+expected fit for the target sector, with the top plan doubling as the
+recommendation. Deliberately choosing a low-ranked plan is a legitimate, legible
+decision, consistent with ADR 0021's chosen-risk principle.
 
 Operational effects should primarily be expressed as changes to front-sector
 value/profile axes and state: controlWeight share, route access, local garrison,
