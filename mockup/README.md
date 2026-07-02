@@ -63,8 +63,8 @@ python3 -m http.server 8007
     and gets a red pulse ring — the lens may dim things, but a sufficiently urgent
     fact bleeds through.
   - **Stage-1 → stage-2 bridge (1 action).** You see ~5–7 tensions but hold one
-    action; for a normal province, clicking a highlight opens the prefilled floating
-    command card, and 확정 (or 정찰) spends the single action (others dim). Choosing
+    action; for a normal province, clicking it summons the work surface with a
+    sectorless minimal card, and 봉인 (or 정찰) spends the single action (others dim). Choosing
     *which* tension to spend it on is the stage-1 decision.
   - **Front-sector drill (v4, hero-only path).** For the one wired hero province
     (`소현`, under 위협 from `철옹`), clicking its tension *drills in* instead: the
@@ -73,7 +73,7 @@ python3 -m http.server 8007
     (sector identity is spatial — ADR 0022). Each sector shows one collapsed defense
     meter, a ★ on the reachable weakest link (`남부 전선`), and one value chip (the
     stake). A `철옹 → 남부` pressure arrow carries the estimate band `12–16 · 75%`.
-    Clicking a sector swaps the right rail to a **compact command card** (transplant
+    Clicking a sector summons the **work surface** with a compact command card (transplant
     of `command-card-hybrid.html`): the faced sector gets the full 방어/정찰 card
     (base defense unpacked into 주둔+지형+축성, confrontation axis, 승률); rear sectors
     get a read-only stake readout. On 확정, the **duel beat** seals both orders in the

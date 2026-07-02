@@ -115,7 +115,7 @@
   const reclassify = () => PROVINCES.forEach(p => { p._c = classify(p); });
   reclassify();
 
-  /* ---------- reading (truth, posture-invariant) + recommendation (posture) ---------- */
+  /* ---------- reading (truth, posture-invariant) ---------- */
   const state = { postureId: 'balanced', spentOn: null, spentKind: null, reveal: null,
     // front-sector drill v4: overview -> drill(소현) -> commit(sector) -> sealed(duel beat)
     // v5 slice D: overview -> commit-min (sectorless minimal card) for non-hero targets
@@ -299,7 +299,7 @@
       read.filter(s => s.axis === 'threat' && s.p._c.driver).forEach(s => L.arrow.appendChild(arrow(byId[s.p._c.driver]._cx, byId[s.p._c.driver]._cy, s.p._cx, s.p._cy)));
       const leaks = leakSet(read), lens = lensAxis();
       read.forEach(s => {
-        const suppressed = lens && s.axis !== lens && !leaks.has(s.p.id);
+        const suppressed = (lens && s.axis !== lens && !leaks.has(s.p.id)) || (state.mode === 'commit-min' && s.p.id !== state.minTarget);
         drawBadge(s.p, s.axis, state.spentOn === s.p.id, cntScale(), suppressed);
         if (leaks.has(s.p.id)) drawLeakPulse(s.p);
       });
@@ -541,7 +541,7 @@
     render(); setSurfaceOpen(false); animateVB(VB_FULL);
   }
 
-  /* ---------- compact command card in the rail (transplant of command-card-hybrid) ---------- */
+  /* ---------- compact command card in the summoned work surface (transplant of command-card-hybrid) ---------- */
   const CCONV = 0.1, CAXMIN = 6, CAXMAX = 20;
   const cpct = v => clamp((v - CAXMIN) / (CAXMAX - CAXMIN) * 100, 0, 100);
   const cdef = (base, cc) => base + cc * CCONV;
