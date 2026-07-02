@@ -17,11 +17,12 @@ python3 -m http.server 8007
 
 ## Pages
 
-- **`situation-map.html`** — **the model-faithful page (v3, ADR 0019 + fog).**
-  The stage-1 situation-judgment model, with fog-of-war folded in as the `불확실`
-  axis and rendered in the A2 military-cartographic (block-wargame) visual
-  language (fog-of-war-discovery). v1 ported `situation.js`'s flat six-type list;
-  v2 rebuilt the structured ADR 0019 reading; v3 integrates fog + the A2 skin:
+- **`situation-map.html`** — **the model-faithful page (v4, ADR 0019 + fog +
+  front-sector drill).** The stage-1 situation-judgment model, with fog-of-war
+  folded in as the `불확실` axis and rendered in the A2 military-cartographic
+  (block-wargame) visual language (fog-of-war-discovery). v1 ported `situation.js`'s
+  flat six-type list; v2 rebuilt the structured ADR 0019 reading; v3 integrated
+  fog + the A2 skin; v4 stitches the front-sector drill (①→③→④) into one turn flow:
   - **Structured reading, not a flat list.** 판세 (aggregate "am I winning"
     glance) + three located axes 위협 / 기회 / 불확실. Growth folds into 판세
     (owned-development glow); route folds into reachability.
@@ -52,12 +53,35 @@ python3 -m http.server 8007
     biggest tension is an active 위협). The dissonance signal is the first concrete
     piece of the OPEN skill edge (SPEC pillars 2-3).
   - **Stage-1 → stage-2 bridge (1 action).** You see ~5–7 tensions but hold one
-    action; clicking a highlight opens the prefilled command card, and 확정 (or
-    정찰) spends the single action (others dim). Choosing *which* tension to spend
-    it on is the stage-1 decision. Command *adjustment* (the skill edge) is left OPEN.
+    action; for a normal province, clicking a highlight opens the prefilled floating
+    command card, and 확정 (or 정찰) spends the single action (others dim). Choosing
+    *which* tension to spend it on is the stage-1 decision.
+  - **Front-sector drill (v4, hero-only path).** For the one wired hero province
+    (`소현`, under 위협 from `철옹`), clicking its tension *drills in* instead: the
+    camera focuses 소현 (surroundings dim, viewBox tweens), and its three front
+    **sectors** appear as bordered, named, clickable areas *on the map itself*
+    (sector identity is spatial — ADR 0022). Each sector shows one collapsed defense
+    meter, a ★ on the reachable weakest link (`남부 전선`), and one value chip (the
+    stake). A `철옹 → 남부` pressure arrow carries the estimate band `12–16 · 75%`.
+    Clicking a sector swaps the right rail to a **compact command card** (transplant
+    of `command-card-hybrid.html`): the faced sector gets the full 방어/정찰 card
+    (base defense unpacked into 주둔+지형+축성, confrontation axis, 승률); rear sectors
+    get a read-only stake readout. On 확정, the **duel beat** seals both orders in the
+    same tick — the player's `봉인` on 남부 and a face-down `?` on 철옹 ("적도 이번 턴
+    계획을 굳혔다. 내용은 안개 속.", ADR 0025) — then the camera rewinds to the
+    overview. Every state transition is animated and the mission label morphs
+    (긴장 선택 → 구역 선택 → 커밋 결정 → 명령 봉인) so each state answers "what am I
+    here to do?". Command *adjustment* (the skill edge) is left OPEN.
   - **Veil tuning.** A collapsible slider panel (murk / glimpse brightness /
     estimate-band fade / recon marker / counter size) is retained to keep dialing
     in the fog visual language against live data.
+
+  **v4 known limitations (grammar probe, not a systems probe):** only 소현 is wired
+  for the drill (mixed-control / split encoding never demonstrated); the card shows
+  only the *magnitude* layer of the ADR 0025 uncertainty duel (categorical
+  plan-vs-plan is out of scope); duel-beat resolution is deferred ("해소는 다음
+  슬라이스"); the plan list (방어 강화 / 정찰) predates the operation-plan catalog
+  roster; all magnitudes are illustrative.
 
 ## Earlier exploration pages
 

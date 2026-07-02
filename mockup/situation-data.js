@@ -62,7 +62,19 @@ const PROVINCES = [
   // --- self (현양) : bottom-left ---
   { id: 'yeoncheon', name: '연천', owner: 'self', hexes: [[0, 4], [1, 4], [0, 3]], economyValue: 16, weakestGarrison: 8, minConfidence: 1.00, terrain: '평야' }, // developed core -> 판세 glow
   { id: 'garim',     name: '가림', owner: 'self', hexes: [[0, 2], [1, 2], [1, 1]], economyValue: 8,  weakestGarrison: 9, minConfidence: 1.00, terrain: '평야' }, // solid -> calm
-  { id: 'sohyeon',   name: '소현', owner: 'self', hexes: [[1, 3], [2, 3], [2, 4]], economyValue: 9,  weakestGarrison: 4, minConfidence: 1.00, terrain: '구릉' }, // WEAK border, faces 철옹 -> 위협
+  { id: 'sohyeon',   name: '소현', owner: 'self', hexes: [[1, 3], [2, 3], [2, 4]], economyValue: 9,  weakestGarrison: 4, minConfidence: 1.00, terrain: '구릉', // WEAK border, faces 철옹 -> 위협
+    // Front sectors (front-sector drill v4, hero-only path). One sector per hex —
+    // sector identity is SPATIAL (ADR 0022). defense = garrison + terrain + fort
+    // (collapsed at drill level; the card unpacks the four layers). economy
+    // sum 2+1+6 = 9 = province economyValue; 남부's garrison 4 = province
+    // weakestGarrison under the reachable-weakest-link rule (this turn 철옹
+    // reaches only 남부). value chip is the stake that creates the weighing.
+    // All magnitudes illustrative (mockup charter: grammar probe, not balance).
+    sectors: [
+      { id: 'sec-south', name: '남부 전선', hex: [2, 4], garrison: 4, terrain: 3, fort: 2, value: 2, faces: 'cheolong', star: true }, // threat entry; ★ reachable weakest link; def 9 = card base
+      { id: 'sec-pass',  name: '북령 고개', hex: [2, 3], garrison: 2, terrain: 5, fort: 0, value: 1, route: '대관' },                   // pass toward 대관 (route rule demo) def 7
+      { id: 'sec-gran',  name: '서안 곡창', hex: [1, 3], garrison: 3, terrain: 0, fort: 0, value: 6 },                                  // soft rich rear ("naked granary") — the stake, def 3
+    ] },
 
   // --- baeksan (백산) : top-left ---
   { id: 'seorak',    name: '서락', owner: 'baeksan', hexes: [[0, 0]],          economyValue: 7, estForce: 6, estForceConfidence: 0.70, minConfidence: 0.70, terrain: '산지' }, // not reachable -> calm

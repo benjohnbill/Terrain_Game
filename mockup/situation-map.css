@@ -1,5 +1,6 @@
-/* Terrain Game — situation-map mockup v3 (ADR 0019 + fog). A2 military-cartographic
- * map-table palette (block-wargame). Display: monospace. Body: Noto Sans KR. */
+/* Terrain Game — situation-map mockup v4 (ADR 0019 + fog + front-sector drill).
+ * A2 military-cartographic map-table palette (block-wargame).
+ * Display: monospace. Body: Noto Sans KR. */
 :root {
   /* map-table palette */
   --paper0: #23281c; --paper1: #2c3324; --paper2: #1b2015;
@@ -7,6 +8,7 @@
   --edge: rgba(232,227,210,0.12); --line: rgba(0,0,0,0.4);
   --panel: rgba(28,32,22,0.74); --panel-inset: rgba(12,15,8,0.4);
   --recon-c: #c79a45; --self: #2dd4bf;
+  --rival: #e0716a; --hold: #5fbf7a; --risk: #e0b062; --lose: #e0655f;
   --font-display: "SF Mono","Cascadia Code","Consolas",ui-monospace,"D2Coding",monospace;
   --font-body: 'Noto Sans KR', system-ui, sans-serif;
   --radius: 11px; --dur: 200ms;
@@ -231,5 +233,137 @@ body {
 .veil-ctrl label { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-secondary); }
 .veil-ctrl label span { color: var(--recon-c); font-family: var(--font-display); }
 .veil-ctrl input[type=range] { width: 100%; accent-color: var(--recon-c); }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+ * v4 — front-sector drill: spatial sectors, evidence continuity, duel beat
+ * ═════════════════════════════════════════════════════════════════════════ */
+
+/* hero province title while drilled */
+.p-name.hero-title { fill: #ffffff; font-size: 15px; }
+
+/* ── spatial front sectors (drawn inside 소현) ── */
+.sector text, .sec-meter, .sec-val, .sec-border { pointer-events: none; }
+.sec-hit { fill: rgba(45,212,191,.05); pointer-events: all; cursor: pointer; }
+.sector.faces .sec-hit { fill: rgba(255,70,70,.06); }
+.sector.sel .sec-hit { fill: rgba(45,212,191,.14); }
+.sec-border { fill: none; stroke: rgba(45,212,191,.55); stroke-width: 2; stroke-dasharray: 5 4; }
+.sec-border.faces { stroke: rgba(255,70,70,.72); }
+.sec-border.sel { stroke: var(--self); stroke-width: 3; stroke-dasharray: none; }
+.sector:hover .sec-border { stroke-width: 3; }
+.sec-name { fill: var(--ink); font-weight: 700; font-family: var(--font-body); paint-order: stroke; stroke: rgba(0,0,0,.78); stroke-width: 2.6px; }
+.sec-name.star { fill: #ffd98a; }
+.sec-route, .sec-def { fill: var(--text-secondary); font-family: var(--font-display); paint-order: stroke; stroke: rgba(0,0,0,.7); stroke-width: 2px; }
+.sec-meter-bg { fill: rgba(10,12,7,.55); stroke: var(--edge); stroke-width: .5; }
+.sec-cell.lit { fill: #f0ead6; } .sec-cell.off { fill: rgba(240,234,214,.18); }
+.sec-val-bg { fill: rgba(20,24,15,.85); stroke: var(--edge); stroke-width: 1; }
+.sec-val.high .sec-val-bg { fill: rgba(70,210,120,.22); stroke: rgba(70,210,120,.6); }
+.sec-val-t { fill: var(--text-secondary); font-family: var(--font-display); }
+.sec-val.high .sec-val-t { fill: #8ef0b0; font-weight: 700; }
+.sec-star { color: #ffd98a; }
+
+/* pressure-arrow estimate band (the evidence that travels) */
+.band-box { fill: rgba(20,24,15,.92); stroke: rgba(255,70,70,.7); stroke-width: 1; }
+.band-txt { fill: #ff9a9a; font-family: var(--font-display); font-weight: 700; paint-order: stroke; stroke: rgba(0,0,0,.6); stroke-width: 2px; }
+
+/* duel beat — both orders sealed in the same tick */
+.seal { transform-box: fill-box; transform-origin: center; }
+.seal:not(.still) { animation: seal-drop .5s cubic-bezier(.22,1,.36,1) both; }
+.seal .seal-box { stroke-width: 1.5; }
+.seal.player .seal-box { fill: rgba(45,212,191,.92); stroke: #0b3b36; }
+.seal.enemy .seal-box { fill: #1a1e13; stroke: #3a3f2c; }
+.seal-wax { fill: #c0392b; stroke: rgba(0,0,0,.4); stroke-width: .6; }
+.seal.player .seal-wax { fill: #06231f; }
+.seal-glyph { fill: #12160c; font-family: var(--font-display); font-weight: 700; }
+.seal.enemy .seal-glyph { fill: var(--recon-c); }
+@keyframes seal-drop { 0% { transform: translateY(-30px) scale(.5); opacity: 0; } 65% { transform: translateY(2px) scale(1.08); opacity: 1; } 100% { transform: translateY(0) scale(1); opacity: 1; } }
+.seal-flash { stroke: var(--recon-c); stroke-width: 2; stroke-dasharray: 5 5; opacity: 0; }
+.seal-flash:not(.still) { animation: flash-arc .9s ease-out both; }
+@keyframes flash-arc { 0% { opacity: 0; } 25% { opacity: .85; } 100% { opacity: 0; } }
+
+/* evidence-continuity flight clones (map element -> its card counterpart) */
+.fly { position: fixed; z-index: 80; pointer-events: none; border-radius: 6px; transform-origin: top left;
+  font-family: var(--font-display); font-size: 10.5px; font-weight: 700; display: flex; align-items: center; justify-content: center;
+  transition: transform .46s cubic-bezier(.4,0,.2,1), opacity .46s ease; will-change: transform, opacity; }
+.fly.band { background: repeating-linear-gradient(45deg, rgba(224,113,106,.5) 0 5px, rgba(224,113,106,.2) 5px 10px); border: 1.5px solid var(--rival); color: var(--rival); }
+.fly.meter { background: #f0ead6; border: 1px solid var(--edge); }
+
+/* mission label (morphs per state) + pill body */
+.ap-mission { font-family: var(--font-display); font-weight: 700; font-size: 14px; letter-spacing: .3px; color: var(--recon-c); transition: opacity .15s ease, transform .15s ease; }
+.ap-mission.morph { opacity: 0; transform: translateY(-4px); }
+.ap-body { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.ap-back { font-size: 12px; cursor: pointer; color: var(--text-secondary); background: rgba(255,255,255,.06); border: 1px solid var(--edge); padding: 4px 10px; border-radius: 8px; margin-left: auto; }
+.ap-back:hover { color: var(--text-primary); }
+
+/* ── compact command card in the rail (transplant of command-card-hybrid) ── */
+.rail-card { padding: 0; overflow: hidden; }
+.cc2-tag { display: flex; align-items: center; gap: 8px; padding: 9px 13px; background: var(--panel-inset); border-bottom: 1px solid var(--edge); }
+.cc2-tag .v { font-family: var(--font-display); font-weight: 700; font-size: 11px; color: #1a1408; background: var(--recon-c); border-radius: 5px; padding: 1px 8px; }
+.cc2-tag .v.seal { background: var(--self); color: #06231f; }
+.cc2-tag .vn { font-family: var(--font-display); font-size: 11px; color: var(--text-secondary); }
+.cc2-cbody { padding: 12px 13px 13px; }
+.cc2-plans { display: flex; gap: 8px; margin-bottom: 11px; }
+.cc2-plan { flex: 1; font-family: var(--font-body); font-size: 12.5px; cursor: pointer; color: var(--text-secondary); background: rgba(255,255,255,.04); border: 1px solid var(--edge); border-radius: 9px; padding: 8px; display: flex; flex-direction: column; gap: 2px; align-items: flex-start; }
+.cc2-plan .pt { font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 6px; }
+.cc2-plan .pd { font-size: 10px; color: var(--text-dim); }
+.cc2-plan .rec { font-family: var(--font-display); font-size: 9px; font-weight: 700; color: #06231f; background: var(--self); border-radius: 4px; padding: 1px 5px; }
+.cc2-plan.sel { border-color: var(--self); background: rgba(45,212,191,.1); }
+.cc2-plan.scout.sel { border-color: var(--recon-c); background: rgba(199,154,69,.1); }
+.cc2-fields { display: flex; flex-wrap: wrap; gap: 4px 6px; margin-bottom: 10px; }
+.cc2-fields .pf { font-size: 10px; color: var(--text-secondary); background: rgba(255,255,255,.04); border: 1px solid var(--edge); border-radius: 5px; padding: 2px 7px; }
+.cc2-fields .pf b { color: var(--text-primary); font-family: var(--font-display); }
+.cc2-enrow { display: flex; justify-content: space-between; align-items: baseline; font-size: 11.5px; color: var(--text-secondary); margin-bottom: 4px; }
+.cc2-enrow b { font-family: var(--font-display); color: var(--rival); }
+.cc2-enrow .cf { color: var(--text-dim); font-size: 10.5px; }
+.cc2-rear { font-size: 12px; color: var(--text-secondary); background: rgba(199,154,69,.08); border: 1px dashed rgba(199,154,69,.4); border-radius: 8px; padding: 10px 11px; margin-bottom: 11px; line-height: 1.6; }
+.cc2-rear b { color: var(--text-primary); }
+
+/* confrontation axis (card) */
+.axis { position: relative; height: 60px; margin: 4px 0 2px; }
+.axis .track { position: absolute; top: 28px; left: 0; right: 0; height: 12px; border-radius: 6px; overflow: hidden; display: flex; }
+.axis .z-lose { background: rgba(224,101,95,.34); } .axis .z-risk { background: rgba(224,176,98,.34); } .axis .z-hold { background: rgba(95,191,122,.3); }
+.axis .band { position: absolute; top: 24px; height: 20px; background: repeating-linear-gradient(45deg, rgba(224,113,106,.5) 0 5px, rgba(224,113,106,.2) 5px 10px); border-left: 2px solid var(--rival); border-right: 2px solid var(--rival); border-radius: 3px; transition: opacity .2s ease; }
+.pending-band .axis .band { opacity: 0; }
+.axis .band-l { position: absolute; top: 2px; font-family: var(--font-display); font-size: 9.5px; color: var(--rival); transform: translateX(-50%); white-space: nowrap; }
+.axis .band-l.scout { top: 48px; color: var(--self); }
+.axis .rec-tick { position: absolute; top: 20px; height: 28px; border-left: 2px dotted rgba(232,227,210,.55); }
+.axis .rec-l { position: absolute; top: 1px; font-family: var(--font-display); font-size: 9px; color: var(--text-dim); transform: translateX(-50%); }
+.axis .mk { position: absolute; top: 18px; width: 0; height: 32px; border-left: 3px solid var(--self); }
+.axis .mk.bare { border-left-color: var(--lose); }
+.axis .mk::after { content: ''; position: absolute; top: -6px; left: -6px; border: 6px solid transparent; border-top-color: var(--self); }
+.axis .mk.bare::after { border-top-color: var(--lose); }
+.axis .mk-l { position: absolute; top: 46px; font-family: var(--font-display); font-size: 10px; font-weight: 700; color: var(--self); transform: translateX(-50%); white-space: nowrap; }
+.axis .mk-l.bare { color: var(--lose); }
+
+.verdict { display: flex; align-items: baseline; gap: 8px; margin: 8px 0 4px; }
+.verdict .big { font-family: var(--font-display); font-weight: 700; font-size: 18px; }
+.verdict.hold .big { color: var(--hold); } .verdict.risk .big { color: var(--risk); } .verdict.lose .big { color: var(--lose); }
+.verdict .sub { font-size: 11px; color: var(--text-secondary); }
+.microbar { display: flex; height: 9px; border-radius: 4px; overflow: hidden; border: 1px solid var(--edge); margin: 2px 0 10px; }
+.mb-hold { background: var(--hold); } .mb-lose { background: var(--lose); }
+.commit-row { display: flex; justify-content: space-between; align-items: baseline; font-size: 11px; color: var(--text-secondary); margin: 6px 0 2px; }
+.commit-row b { font-family: var(--font-display); font-size: 13px; color: var(--text-primary); } .commit-row .rec { color: var(--text-dim); }
+.rail-card input[type=range] { width: 100%; accent-color: var(--self); margin: 3px 0 6px; }
+.srow { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 10px; }
+.srow .k { color: var(--text-secondary); } .srow .v { font-family: var(--font-display); font-weight: 700; color: var(--recon-c); }
+.gambit { margin: 6px 0 8px; padding: 10px 11px; border-radius: 9px; background: rgba(199,154,69,.08); border: 1px solid rgba(199,154,69,.4); }
+.gambit .row { display: flex; gap: 8px; font-size: 11.5px; line-height: 1.5; margin-bottom: 7px; }
+.gambit .row:last-child { margin-bottom: 0; }
+.gambit .ic { flex-shrink: 0; font-family: var(--font-display); font-weight: 700; }
+.gambit .win { color: var(--hold); } .gambit .lose { color: var(--lose); }
+.gambit b { color: var(--recon-c); }
+.cc2-foot { display: flex; gap: 8px; margin-top: 4px; }
+.cc2-go { flex: 1; font-family: var(--font-body); font-weight: 700; font-size: 12.5px; cursor: pointer; color: #06231f; background: linear-gradient(135deg, var(--self), #157a70); border: none; padding: 9px; border-radius: 8px; }
+.cc2-go.scout { color: #1a1408; background: linear-gradient(135deg, #e0b062, var(--recon-c)); }
+.cc2-go.warn { color: #1a1408; background: linear-gradient(135deg, var(--lose), #b5433d); }
+.cc2-back { font-size: 12.5px; cursor: pointer; color: var(--text-secondary); background: rgba(255,255,255,.06); border: 1px solid var(--edge); border-radius: 8px; padding: 9px 12px; }
+.cc2-back:hover { color: var(--text-primary); }
+
+/* seal notice (rail card, after commit) */
+.seal-note { text-align: center; padding: 8px 6px 4px; }
+.seal-h { font-family: var(--font-display); font-weight: 700; font-size: 14px; color: var(--self); margin-bottom: 8px; }
+.seal-b { font-size: 12.5px; color: var(--text-primary); line-height: 1.55; margin-bottom: 8px; } .seal-b b { color: var(--recon-c); }
+.seal-both { font-size: 11.5px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 8px; } .seal-both b { color: var(--text-primary); }
+.seal-slice { font-family: var(--font-display); font-size: 10.5px; color: var(--text-dim); letter-spacing: .5px; margin-bottom: 12px; }
+.cc2-cont { width: 100%; font-family: var(--font-body); font-weight: 700; font-size: 12.5px; cursor: pointer; color: #06231f; background: linear-gradient(135deg, var(--self), #157a70); border: none; padding: 9px; border-radius: 8px; }
 
 @media (prefers-reduced-motion: reduce) { *, .g-fill-self, .g-fill-rival, .flow { transition: none !important; animation: none !important; } }

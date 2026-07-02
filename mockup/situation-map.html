@@ -11,9 +11,9 @@
 </head>
 <body>
     <div class="mock-banner">
-        <span class="mock-tag">형세판단 v3 · 안개</span>
-        <span class="mock-note">1단계 형세 판단 · 지방 단위 · 4축(판세/위협/기회/불확실) · 안개=불확실 축 · 정찰=축 전이 · 군사지도(A2) 블록카운터 · 행동 1회 · 더미 데이터</span>
-        <span class="mock-spec">src: ADR 0019 + fog-of-war-discovery</span>
+        <span class="mock-tag">형세판단 v4 · 전선 구역</span>
+        <span class="mock-note">①형세 → ③전선 구역 드릴(소현) → ④명령 카드 → 봉인(듀얼 비트)을 한 턴 흐름으로 · 구역=공간(지도 위) · 증거 연속성 · 안개=불확실 · 히어로 단일 경로 · 더미 데이터</span>
+        <span class="mock-spec">src: ADR 0019/0022/0023/0025</span>
     </div>
 
     <div class="app">
@@ -52,12 +52,14 @@
                         <g id="l-perim"></g>
                         <g id="l-arrow"></g>
                         <g id="l-counter"></g>
+                        <g id="l-sector"></g>
                         <g id="l-label"></g>
                         <g id="l-mark"></g>
                         <g id="l-fx"></g>
                     </svg>
                     <div id="chip" class="chip hidden"></div>
                     <div id="card" class="card hidden"></div>
+                    <div id="band-tag" class="band-tag hidden"></div>
                 </div>
                 <p class="hint">블록 카운터 = 병력(4단 미터) · <b>글림프스</b>는 흐린 셀 = 추정 범위 · <b>미발견</b>은 murk + <b>?</b> · 지방 hover → 실제 stat · 불확실 click → <b>정찰</b>해 해소 · 화살표 = 관계형 위협</p>
             </main>
@@ -65,10 +67,11 @@
             <aside class="rail">
                 <div id="advice" class="advice glass"></div>
                 <div id="action-pill" class="action-pill glass"></div>
-                <section class="panel glass">
-                    <h2 class="panel-h">턴 브리핑 <span class="panel-sub">형세순 (자세 무관) · 클릭=지방/명령으로</span></h2>
+                <section id="briefing-panel" class="panel glass">
+                    <h2 id="briefing-h" class="panel-h">턴 브리핑 <span class="panel-sub">형세순 (자세 무관) · 클릭=지방/명령으로</span></h2>
                     <div class="briefing" id="briefing"></div>
                 </section>
+                <div id="rail-card" class="rail-card glass hidden"></div>
                 <details class="veil glass">
                     <summary>안개 튜닝 (Veil v3)</summary>
                     <div class="veil-body">
@@ -94,7 +97,7 @@
         </div>
     </div>
 
-    <script src="situation-data.js?v=5"></script>
-    <script src="situation-map.js?v=5"></script>
+    <script src="situation-data.js?v=6"></script>
+    <script src="situation-map.js?v=6"></script>
 </body>
 </html>
