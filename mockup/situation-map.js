@@ -23,7 +23,6 @@
   const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const CAP = 6;          // show up to CAP surfaced tensions (posture-independent)
   const RELIABLE = 0.5;   // IntelSystem.isReliable threshold — the fog knowledge gate
-  const DISS_RATIO = 1.2; // recommendation is dissonant if the raw top is >1.2x its magnitude
   const SCOUT_GAIN = 0.5; // confidence a single scout buys (clamped to MAX_CONFIDENCE)
   const HERO = 'sohyeon';                        // the one province wired for the front-sector drill (hero-only path)
   const THREAT = { lo: 12, hi: 16, conf: 75 };   // 철옹 estimate band shown on the pressure arrow + card (illustrative)
@@ -122,14 +121,6 @@
   function reading() {
     return PROVINCES.filter(p => p._c).map(p => ({ p, axis: p._c.axis, mag: p._c.mag })).sort((a, b) => b.mag - a.mag).slice(0, CAP);
   }
-  function recommend(read, posture) {
-    const rawTop = read[0];
-    let rec = rawTop;
-    if (posture.prefer) { const top = read.find(c => c.axis === posture.prefer); if (top) rec = top; }
-    const dissonant = rec.p.id !== rawTop.p.id && rawTop.mag > rec.mag * DISS_RATIO;
-    return { rec, rawTop, dissonant };
-  }
-  const recNow = () => recommend(reading(), POSTURES[state.postureId]);
 
   /* ---------- scout: the fog reveal that IS the axis transition ---------- */
   function scout(p) {
@@ -196,8 +187,8 @@
   /* ---------- render (mode-aware: overview shows the full board; drill/commit
    * focus 소현 and replace its counter with spatial front sectors) ---------- */
   function render() {
-    const heroFocus = state.mode !== 'overview';
-    const read = reading(), posture = POSTURES[state.postureId], { rec, rawTop, dissonant } = recommend(read, posture);
+    const heroFocus = state.mode === 'drill' || state.mode === 'commit';
+    const read = reading();
     const shownIds = new Set(read.map(s => s.p.id));
     const scale = cntScale();
     Object.values(L).forEach(g => (g.innerHTML = ''));
@@ -241,24 +232,15 @@
     } else {
       read.filter(s => s.axis === 'threat' && s.p._c.driver).forEach(s => L.arrow.appendChild(arrow(byId[s.p._c.driver]._cx, byId[s.p._c.driver]._cy, s.p._cx, s.p._cy)));
       read.forEach(s => drawBadge(s.p, s.axis, state.spentOn === s.p.id, cntScale()));
-      if (!state.spentOn) drawRecRing(rec.p);
       if (state.enemySealed) drawEnemySeal();  // face-down marker persists after a sealed turn
     }
 
-    renderRail(read, rec, rawTop, dissonant, posture);
+    if (state.mode === 'commit') {                 // commit-mode dispatch moves here from renderRail
+      if (state.sealed) renderSealNotice(); else renderRailCard(secById(state.sectorOn));
+    }
+    id('work-surface').classList.toggle('open', state.mode === 'commit');
+    renderMissionPill(read);
     renderPosture();
-  }
-
-  /* ---------- rail: which panels are live in each mode ---------- */
-  function renderRail(read, rec, rawTop, dissonant, posture) {
-    const overview = state.mode === 'overview';
-    id('advice').classList.toggle('hidden', !overview);
-    id('briefing-panel').classList.toggle('hidden', state.mode === 'commit');
-    id('rail-card').classList.toggle('hidden', state.mode !== 'commit');
-    if (overview) { renderAdvice(posture, rec, rawTop, dissonant); renderBriefing(read, rec); renderLegend(read); }
-    else if (state.mode === 'drill') renderBriefingDrill();
-    else if (state.mode === 'commit') { if (state.sealed) renderSealNotice(); else renderRailCard(secById(state.sectorOn)); }
-    renderActionPill(read);
   }
 
   function glow(p, rgb, a, r) {
@@ -311,12 +293,6 @@
     const label_t = txt(p._cx, y + h / 2 + 4, label, 'badge-t', 12); label_t.setAttribute('fill', isSpent ? '#12160c' : rgba(t.rgb, 1));
     g.appendChild(label_t);
     L.mark.appendChild(g);
-  }
-
-  function drawRecRing(p) {
-    const g = el('g', { class: 'rec-ring' });
-    g.appendChild(el('circle', { cx: p._cx.toFixed(1), cy: p._cy.toFixed(1), r: (S * 1.5).toFixed(1), fill: 'none', stroke: FACTIONS.self.color, 'stroke-width': 2.5, 'stroke-dasharray': '7 5', class: REDUCED ? '' : 'flow' }));
-    L.fx.appendChild(g);
   }
 
   /* ---------- front-sector drill: spatial sectors drawn inside 소현 ---------- */
@@ -386,29 +362,14 @@
     return g;
   }
 
-  /* ---------- rail: advice (recommendation + dissonance) ---------- */
-  function renderAdvice(posture, rec, rawTop, dissonant) {
-    const t = AXES[rec.axis];
-    let html = `<div class="ad-row"><span class="ad-k">자세 <b>${posture.label}</b></span>` +
-      `<span class="ad-rec">게임 추천 <b style="color:rgb(${t.rgb})">${rec.p.name}</b> · ${INTENTS[rec.p._c.intent]}</span></div>`;
-    if (dissonant) {
-      const rt = AXES[rawTop.axis];
-      html += `<div class="ad-diss"><span class="ad-diss-tag">부조화</span><span class="ad-diss-body">이번 턴 최대 형세는 <b style="color:rgb(${rt.rgb})">${rawTop.p.name} ${rt.label}</b>입니다 — 추천을 따르면 이걸 놓쳐요.<span class="ad-why">${rawTop.p._c.reason}</span></span></div>`;
-    } else {
-      html += `<div class="ad-ok">이 추천이 이번 턴 최급선무와 일치합니다.</div>`;
-    }
-    id('advice').innerHTML = html;
-  }
-
-  // the mission label morphs per state — every state answers "what am I here to do?"
+  // one floating, morphing label per state — answers "what am I here to do?"
   function missionLabel() {
-    if (state.mode === 'overview') return '긴장 선택';
     if (state.mode === 'drill') return '구역 선택 — 소현';
-    return state.sealed ? '명령 봉인' : '커밋 결정 — ' + secById(state.sectorOn).name;
+    if (state.mode === 'commit') return state.sealed ? '명령 봉인' : '커밋 결정 — ' + secById(state.sectorOn).name;
+    return '긴장 선택';
   }
-  function renderActionPill(read) {
-    const ap = id('action-pill');
-    if (!ap.querySelector('.ap-mission')) ap.innerHTML = '<div class="ap-mission"></div><div class="ap-body"></div>';
+  function renderMissionPill(read) {
+    const ap = id('mission-pill');
     const mEl = ap.querySelector('.ap-mission'), bEl = ap.querySelector('.ap-body'), mission = missionLabel();
     if (mEl.dataset.txt !== mission) {
       if (REDUCED) { mEl.textContent = mission; mEl.dataset.txt = mission; }
@@ -416,33 +377,33 @@
     }
     bEl.innerHTML = pillBody(read);
     const back = bEl.querySelector('.ap-back'); if (back) back.onclick = backNav;
-    const reset = bEl.querySelector('#ap-reset'); if (reset) reset.onclick = () => { resetTurn(); closeCard(); state.enemySealed = false; state.sealedPlan = null; render(); };
+    const reset = bEl.querySelector('#ap-reset'); if (reset) reset.onclick = () => { resetTurn(); state.enemySealed = false; state.sealedPlan = null; render(); };
   }
   function pillBody(read) {
     if (state.mode === 'drill')
       return '<span class="ap-note">위협이 드는 곳과 뒤에 잃을 것을 <b>저울질</b> — 구역 하나에 이번 턴 행동</span><button class="ap-back">← 형세로</button>';
     if (state.mode === 'commit')
       return state.sealed
-        ? '<span class="ap-note">이번 턴 양쪽 명령이 <b>동시에</b> 굳었다 — 해소는 다음 턴</span>'
-        : '<span class="ap-note">커밋을 정하고 확정 — 되돌리려면 구역 선택으로</span><button class="ap-back">← 구역 선택</button>';
+        ? '<span class="ap-note">양쪽 명령이 <b>동시에</b> 굳었다 — 해소는 다음 턴</span>'
+        : '<button class="ap-back">← 구역 선택</button>';
     if (state.spentOn && state.spentKind === 'scout' && state.reveal) {
       const rv = state.reveal;
       return `<div class="ap-line"><span class="ap-k">이번 턴 행동</span><span class="ap-spent scout">정찰 완료</span><button class="ap-reset" id="ap-reset">되돌리기</button></div>` +
-        `<div class="ap-reveal ${rv.kind}"><span class="ap-reveal-h">${rv.kind === 'threat' ? '안개가 위협을 숨기고 있었다' : rv.kind === 'opportunity' ? '안개가 기회를 숨기고 있었다' : '안개 너머는 조용했다'}</span><span class="ap-reveal-b">${rv.text}</span>${rv.kind !== 'calm' ? '<span class="ap-next">해소는 봤지만 이번 턴 행동은 정찰에 소진 — 대응은 다음 턴</span>' : ''}</div>`;
+        `<div class="ap-reveal ${rv.kind}"><span class="ap-reveal-h">${rv.kind === 'threat' ? '안개가 위협을 숨기고 있었다' : rv.kind === 'opportunity' ? '안개가 기회를 숨기고 있었다' : '안개 너머는 조용했다'}</span><span class="ap-reveal-b">${rv.text}</span></div>`;
     }
     if (state.spentOn) {
       const p = byId[state.spentOn];
       const label = state.enemySealed ? `소진 — ${p.name} ${state.sealedPlan || ''} · 적도 봉인` : `소진 — ${p.name} ${INTENTS[p._c.intent]}`;
       return `<div class="ap-line"><span class="ap-k">이번 턴 행동</span><span class="ap-spent">${label}</span><button class="ap-reset" id="ap-reset">되돌리기</button></div>`;
     }
-    return `<div class="ap-line"><span class="ap-k">이번 턴 행동</span><span class="ap-left">1회</span><span class="ap-note">형세 ${read.length}개 중 <b>하나만</b> — 추천을 따르거나, 불확실을 <b>정찰</b>해 해소하거나</span></div>`;
+    return `<div class="ap-line"><span class="ap-k">행동 1회</span><span class="ap-note">형세 ${read.length}개 중 하나를 지목 — 렌즈를 돌려 보며 판단은 네 몫</span></div>`;
   }
 
   /* ---------- drill flow: overview -> drill -> commit -> sealed -> overview ---------- */
   let sealTimer = null;
   function enterDrill() { closeCard(); state.mode = 'drill'; state.sectorOn = null; state.sealed = false; render(); animateVB(VB_DRILL); }
-  function exitDrill() { state.mode = 'overview'; state.sectorOn = null; state.sealed = false; render(); animateVB(VB_FULL); }
-  function backNav() { if (state.mode === 'commit') { state.mode = 'drill'; state.sectorOn = null; state.sealed = false; render(); } else if (state.mode === 'drill') exitDrill(); }
+  function exitDrill() { state.mode = 'overview'; state.sectorOn = null; state.sealed = false; render(); id('work-surface').classList.remove('open'); animateVB(VB_FULL); }
+  function backNav() { if (state.mode === 'commit') { state.mode = 'drill'; state.sectorOn = null; state.sealed = false; render(); id('work-surface').classList.remove('open'); } else if (state.mode === 'drill') exitDrill(); }
 
   function selectSector(sec) {
     if (!sec) return;
@@ -452,8 +413,9 @@
     const bandEl = sec.faces ? L.sector.parentNode.querySelector('.band-txt') : null;
     const bandSrc = bandEl ? bandEl.getBoundingClientRect() : null;
     state.mode = 'commit'; state.sectorOn = sec.id; state.sealed = false; state.plan = 'defend'; state.commit = 70;
-    render();                                   // draws focused sector + rail card (band pending)
-    const rc = id('rail-card');
+    render();                                   // draws focused sector + work surface (band pending)
+    id('work-surface').classList.add('open');
+    const rc = id('work-surface');
     rc.classList.toggle('pending-band', !!bandSrc);
     requestAnimationFrame(() => {
       if (bandSrc) { const d = rc.querySelector('.axis .band'); if (d) flyEl(bandSrc, d.getBoundingClientRect(), `${THREAT.lo}–${THREAT.hi}`, 'band', () => rc.classList.remove('pending-band')); }
@@ -486,39 +448,7 @@
     clearTimeout(sealTimer);
     state.spentOn = HERO; state.spentKind = 'act'; state.enemySealed = true;
     state.mode = 'overview'; state.sealed = false; state.sectorOn = null;
-    render(); animateVB(VB_FULL);
-  }
-
-  function renderBriefing(read, rec) {
-    id('briefing-h').innerHTML = '턴 브리핑 <span class="panel-sub">형세순 (자세 무관) · 클릭=지방/명령으로</span>';
-    id('briefing').innerHTML = read.map(s => {
-      const p = s.p, t = AXES[s.axis], conf = confOf(p), st = stateOf(p);
-      const dim = state.spentOn && state.spentOn !== p.id, isRec = rec.p.id === p.id;
-      return `<button class="br-item${dim ? ' dim' : ''}${state.spentOn === p.id ? ' chosen' : ''}${isRec && !state.spentOn ? ' rec' : ''}" data-prov="${p.id}">` +
-        `<span class="br-dot" style="background:rgb(${t.rgb})"></span>` +
-        `<span class="br-body"><span class="br-top"><b>${p.name}</b> <span class="br-type" style="color:rgb(${t.rgb})">${t.label}</span>${isRec && !state.spentOn ? '<span class="br-rec">추천</span>' : ''}${st !== 'owned' ? `<span class="br-state ${st}">${st === 'unknown' ? '미발견' : st === 'glimpse' ? '글림프스' : '정찰됨'}</span>` : ''}${conf < 100 ? `<span class="br-conf${conf < 50 ? ' low' : ''}">정보 ${conf}%</span>` : ''}</span>` +
-        `<span class="br-reason">${p._c.reason}</span></span>` +
-        `<span class="br-cmd">${INTENTS[p._c.intent]}</span></button>`;
-    }).join('');
-    id('briefing').querySelectorAll('.br-item').forEach(b => b.addEventListener('click', () => pick(byId[b.dataset.prov])));
-  }
-
-  // the drill rail mirrors the map sectors (clickable from either place)
-  function renderBriefingDrill() {
-    id('briefing-h').innerHTML = '전선 구역 <span class="panel-sub">소현 · 지도 또는 아래에서 구역 선택</span>';
-    const secs = byId[HERO].sectors, tRgb = AXES.threat.rgb;
-    id('briefing').innerHTML = secs.map(s => {
-      const def = secDef(s);
-      return `<button class="br-item sec-br${s.faces ? ' faces' : ''}" data-sec="${s.id}">` +
-        `<span class="br-dot" style="background:${s.faces ? `rgb(${tRgb})` : 'var(--text-dim)'}"></span>` +
-        `<span class="br-body"><span class="br-top"><b>${s.star ? '★ ' : ''}${s.name}</b>` +
-          `${s.faces ? `<span class="br-type" style="color:rgb(${tRgb})">위협 진입</span>` : ''}` +
-          `${s.route ? `<span class="br-state">${s.route} 통로 ▸</span>` : ''}` +
-          `<span class="br-conf">가치 ${s.value}</span></span>` +
-        `<span class="br-reason">수비 ${def} = 주둔 ${s.garrison} + 지형 ${s.terrain} + 축성 ${s.fort}</span></span>` +
-        `<span class="br-cmd">${s.value >= 5 ? '후방 요지' : s.faces ? '전선' : '통로'}</span></button>`;
-    }).join('');
-    id('briefing').querySelectorAll('.sec-br').forEach(b => b.addEventListener('click', () => selectSector(secById(b.dataset.sec))));
+    render(); id('work-surface').classList.remove('open'); animateVB(VB_FULL);
   }
 
   /* ---------- compact command card in the rail (transplant of command-card-hybrid) ---------- */
@@ -535,7 +465,7 @@
   const CZL = { hold: '사수 유력', risk: '접전', lose: '함락 위험' };
 
   function renderRailCard(sec) {
-    const rc = id('rail-card'), faced = !!sec.faces, def = secDef(sec), cheol = faced ? byId[sec.faces] : null;
+    const rc = id('work-surface'), faced = !!sec.faces, def = secDef(sec), cheol = faced ? byId[sec.faces] : null;
     rc.innerHTML =
       `<div class="cc2-tag"><span class="v">전선 명령</span><span class="vn">소현 · ${sec.name} · ${faced ? `위협 (${FACTIONS[cheol.owner].short} ${cheol.name})` : '후방 · 직접 위협 없음'}</span></div>` +
       `<div class="cc2-cbody">` +
@@ -551,9 +481,9 @@
     const bk = rc.querySelector('.cc2-back'); if (bk) bk.onclick = backNav;
   }
   function wireCardPlans(sec) {
-    id('rail-card').querySelectorAll('.cc2-plan').forEach(b => b.onclick = () => {
+    id('work-surface').querySelectorAll('.cc2-plan').forEach(b => b.onclick = () => {
       state.plan = b.dataset.plan;
-      id('rail-card').querySelectorAll('.cc2-plan').forEach(x => x.classList.toggle('sel', x.dataset.plan === state.plan));
+      id('work-surface').querySelectorAll('.cc2-plan').forEach(x => x.classList.toggle('sel', x.dataset.plan === state.plan));
       renderCardView(sec);
     });
   }
@@ -596,7 +526,7 @@
     const bk = foot.querySelector('.cc2-back'); if (bk) bk.onclick = backNav;
   }
   function renderSealNotice() {
-    const sec = secById(state.sectorOn), rc = id('rail-card');
+    const sec = secById(state.sectorOn), rc = id('work-surface');
     rc.classList.remove('pending-band');
     rc.innerHTML =
       `<div class="cc2-tag"><span class="v seal">봉인</span><span class="vn">소현 · ${sec.name}</span></div>` +
@@ -610,15 +540,11 @@
 
   function confOf(p) { return Math.round((isSelf(p) ? p.minConfidence : (p._c && p._c.axis !== 'uncertainty' ? p.estForceConfidence : p.minConfidence)) * 100); }
 
-  function renderLegend(read) {
-    id('legend').innerHTML = `<span class="lg-title">형세 축</span>` +
-      Object.values(AXES).map(t => `<span class="lg"><i class="sw" style="background:rgb(${t.rgb})"></i>${t.label}</span>`).join('') +
+  function renderLegendStatic() {
+    id('legend').innerHTML = Object.values(AXES).map(t => `<span class="lg"><i class="sw" style="background:rgb(${t.rgb})"></i>${t.label}</span>`).join('') +
       `<span class="lg"><i class="sw" style="background:rgb(${GROWTH_RGB})"></i>발전(판세)</span>` +
-      `<span class="lg"><i class="sw ring"></i>게임 추천</span>` +
-      `<span class="lg-sep"></span><span class="lg-title">안개</span>` +
       `<span class="lg"><i class="sw murk-sw"></i>미발견</span>` +
-      `<span class="lg"><i class="sw meter-sw"><i class="c on"></i><i class="c fade"></i><i class="c off"></i><i class="c off"></i></i>글림프스(추정 범위)</span>` +
-      `<span class="lg-note">형세 ${read.length}개는 자세 무관 (진실). 안개=불확실, 정찰이 해소</span>`;
+      `<span class="lg"><i class="sw meter-sw"><i class="c on"></i><i class="c fade"></i><i class="c off"></i><i class="c off"></i></i>글림프스(추정 범위)</span>`;
   }
 
   function renderPosture() { id('posture').querySelectorAll('.pt').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.pt === state.postureId))); }
@@ -654,7 +580,6 @@
     state.cardOn = p.id;
     const t = AXES[p._c.axis], owner = FACTIONS[p.owner], conf = confOf(p), st = stateOf(p), cmd = INTENTS[p._c.intent];
     const isScout = p._c.intent === 'scout';
-    const rec = recNow().rec, isRec = rec.p.id === p.id;
     const already = state.spentOn === p.id, spentElsewhere = state.spentOn && state.spentOn !== p.id;
     const estLine = st === 'unknown' ? '병력 미상 — 정찰 전' : isSelf(p) ? `경제 ${p.economyValue} · 최약 수비 ${p.weakestGarrison}` : `경제 ${p.economyValue} · 병력 ~${p.estForce}${st === 'glimpse' ? ' (추정 범위)' : ''}`;
     card.innerHTML =
@@ -662,7 +587,6 @@
         `<span class="cc-tg">→ ${p.name} <i style="color:${owner.color}">${owner.short}</i></span>` +
         `<button class="cc-x" id="cc-x" aria-label="닫기">✕</button></div>` +
       `<div class="cc-why"><span class="cc-badge" style="border-color:rgb(${t.rgb});color:rgb(${t.rgb})">${t.glyph} ${t.label}</span><span class="cc-reason">${p._c.reason}</span></div>` +
-      `<div class="cc-pick ${isRec ? 'follow' : 'override'}">${isRec ? '게임 추천을 따르는 선택' : '추천과 다른 선택 — 내 판단(실력)'}</div>` +
       `<div class="cc-fields">` +
         `<div class="cc-f"><span>추천 명령 (프리필)</span><b>${cmd}</b></div>` +
         `<div class="cc-f"><span>대상</span><b>${p.name} · ${p.terrain} · ${p.hexes.length} 헥스</b></div>` +
@@ -721,17 +645,23 @@
     L.terrain.addEventListener('mouseover', ev => { const p = hit(ev); if (p) showChip(p); });
     L.terrain.addEventListener('mousemove', moveChip);
     L.terrain.addEventListener('mouseout', hideChip);
-    L.terrain.addEventListener('click', ev => {
-      const p = hit(ev); if (!p) return;
+    svg.addEventListener('click', ev => {
+      const secG = ev.target.closest('[data-sec]');
+      if (secG && state.mode === 'drill') { selectSector(secById(secG.getAttribute('data-sec'))); return; }
+      const provG = ev.target.closest('[data-prov]');
+      if (!provG) return;
+      const p = byId[provG.getAttribute('data-prov')];
       if (state.mode === 'overview') { if (p._c) pick(p); }
-      else if (state.mode === 'drill' && p.id !== HERO) exitDrill();   // click the dimmed surround to zoom out
+      else if (state.mode === 'drill' && p.id !== HERO) exitDrill();
     });
-    L.sector.addEventListener('click', ev => { const g = ev.target.closest('[data-sec]'); if (g) selectSector(secById(g.getAttribute('data-sec'))); });
-    L.mark.addEventListener('click', ev => { const g = ev.target.closest('.badge'); if (g) pick(byId[g.getAttribute('data-prov')]); });
+    id('drawer-toggle').onclick = () => {
+      const d = id('corner-drawer'), open = d.classList.toggle('hidden');
+      id('drawer-toggle').setAttribute('aria-expanded', String(!open));
+    };
     id('posture').querySelectorAll('.pt').forEach(b => b.addEventListener('click', () => { state.postureId = b.dataset.pt; closeCard(); render(); }));
     document.addEventListener('keydown', e => { if (e.key === 'Escape') { if (state.cardOn) closeCard(); else if (state.mode !== 'overview') backNav(); } });
     bindVeil();
   }
 
-  render(); renderGlance(); bind();
+  render(); renderGlance(); renderLegendStatic(); bind();
 })();

@@ -11,69 +11,56 @@
 </head>
 <body>
     <div class="mock-banner">
-        <span class="mock-tag">형세판단 v4 · 전선 구역</span>
-        <span class="mock-note">①형세 → ③전선 구역 드릴(소현) → ④명령 카드 → 봉인(듀얼 비트)을 한 턴 흐름으로 · 구역=공간(지도 위) · 증거 연속성 · 안개=불확실 · 히어로 단일 경로 · 더미 데이터</span>
+        <span class="mock-tag">형세판단 v5 · 지도 전용</span>
+        <span class="mock-note">①형세(지도=화면 전부) → ③구역 드릴 → ④작업면 소환 → 봉인 · 렌즈 4종=주석+누출 경고(추천 없음) · 통일 행동 문법(지목→소환→봉인) · 히어로 경로 · 더미 데이터</span>
         <span class="mock-spec">src: ADR 0019/0022/0023/0025</span>
     </div>
 
     <div class="app">
-        <!-- 판세: aggregate "am I winning" glance -->
-        <header class="glance glass">
-            <div class="g-faction"><span class="g-k">판세 · 내 세력</span><span class="g-n">玄陽 · 현양</span></div>
+        <!-- thin top strip: 판세 glance (compact) + lens buttons. The map owns the rest. -->
+        <header class="strip glass">
+            <div class="g-faction"><span class="g-k">판세</span><span class="g-n">玄陽 · 현양</span></div>
             <div class="g-pd">
                 <span class="g-side"><span class="g-lbl">나</span><span class="g-val" id="g-self">142</span></span>
                 <span class="g-track"><span class="g-fill-self" id="g-fill-self"></span><span class="g-fill-rival" id="g-fill-rival"></span><span class="g-lead" id="g-lead">+17% ▲</span></span>
                 <span class="g-side"><span class="g-lbl" id="g-rival-n">흑철</span><span class="g-val rival" id="g-rival">121</span></span>
             </div>
             <ol class="ladder" id="ladder"></ol>
+            <div class="posture" id="posture" role="group" aria-label="읽기 렌즈 (주석)">
+                <span class="pt-k">렌즈</span>
+                <button class="pt" data-pt="balanced"  aria-pressed="true">균형</button>
+                <button class="pt" data-pt="offensive" aria-pressed="false">공세</button>
+                <button class="pt" data-pt="defensive" aria-pressed="false">방어</button>
+                <button class="pt" data-pt="recon"     aria-pressed="false">정찰 중시</button>
+            </div>
         </header>
 
-        <div class="body">
-            <main class="map-wrap glass">
-                <div class="toolbar">
-                    <span class="tb-title">이번 턴 형세</span>
-                    <div class="posture" id="posture" role="group" aria-label="전략 자세 (렌즈)">
-                        <span class="pt-k">자세</span>
-                        <button class="pt" data-pt="balanced"  aria-pressed="true">균형</button>
-                        <button class="pt" data-pt="offensive" aria-pressed="false">공세</button>
-                        <button class="pt" data-pt="defensive" aria-pressed="false">방어</button>
-                        <button class="pt" data-pt="recon"     aria-pressed="false">정찰 중시</button>
-                    </div>
+        <main class="map-wrap glass">
+            <div class="map-stage" id="map-stage">
+                <svg id="map-svg" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="형세 지도 — 지도 전용 읽기, 렌즈=주석, 안개=불확실, 구역 지명 시 작업면 소환">
+                    <defs>
+                        <filter id="soft" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="7"/></filter>
+                    </defs>
+                    <g id="l-terrain"></g>
+                    <g id="l-murk"></g>
+                    <g id="l-glow"></g>
+                    <g id="l-perim"></g>
+                    <g id="l-arrow"></g>
+                    <g id="l-counter"></g>
+                    <g id="l-sector"></g>
+                    <g id="l-label"></g>
+                    <g id="l-mark"></g>
+                    <g id="l-fx"></g>
+                </svg>
+                <div id="mission-pill" class="mission-pill glass"><div class="ap-mission"></div><div class="ap-body"></div></div>
+                <div id="chip" class="chip hidden"></div>
+                <div id="card" class="card hidden"></div>
+                <div id="work-surface" class="work-surface glass" aria-hidden="true"></div>
+                <button id="drawer-toggle" class="drawer-toggle" aria-expanded="false" title="범례 · 안개 튜닝 · 목업 노트">ℹ</button>
+                <div id="corner-drawer" class="corner-drawer glass hidden">
+                    <h2 class="panel-h">범례</h2>
                     <div class="legend" id="legend"></div>
-                </div>
-                <div class="map-stage" id="map-stage">
-                    <svg id="map-svg" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="형세 지도 — 지방 단위 군사지도, 블록 카운터=병력, 안개=불확실(미발견 murk·글림프스 추정범위), 정찰이 축을 해소">
-                        <defs>
-                            <filter id="soft" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="7"/></filter>
-                        </defs>
-                        <g id="l-terrain"></g>
-                        <g id="l-murk"></g>
-                        <g id="l-glow"></g>
-                        <g id="l-perim"></g>
-                        <g id="l-arrow"></g>
-                        <g id="l-counter"></g>
-                        <g id="l-sector"></g>
-                        <g id="l-label"></g>
-                        <g id="l-mark"></g>
-                        <g id="l-fx"></g>
-                    </svg>
-                    <div id="chip" class="chip hidden"></div>
-                    <div id="card" class="card hidden"></div>
-                    <div id="band-tag" class="band-tag hidden"></div>
-                </div>
-                <p class="hint">블록 카운터 = 병력(4단 미터) · <b>글림프스</b>는 흐린 셀 = 추정 범위 · <b>미발견</b>은 murk + <b>?</b> · 지방 hover → 실제 stat · 불확실 click → <b>정찰</b>해 해소 · 화살표 = 관계형 위협</p>
-            </main>
-
-            <aside class="rail">
-                <div id="advice" class="advice glass"></div>
-                <div id="action-pill" class="action-pill glass"></div>
-                <section id="briefing-panel" class="panel glass">
-                    <h2 id="briefing-h" class="panel-h">턴 브리핑 <span class="panel-sub">형세순 (자세 무관) · 클릭=지방/명령으로</span></h2>
-                    <div class="briefing" id="briefing"></div>
-                </section>
-                <div id="rail-card" class="rail-card glass hidden"></div>
-                <details class="veil glass">
-                    <summary>안개 튜닝 (Veil v3)</summary>
+                    <h2 class="panel-h">안개 튜닝 (Veil)</h2>
                     <div class="veil-body">
                         <div class="veil-ctrl"><label>미발견 murk <span id="v-murk">0.66</span></label><input type="range" min="0" max="0.92" step="0.01" value="0.66" data-var="--murk" data-out="v-murk"></div>
                         <div class="veil-ctrl"><label>미발견 지형밝기 <span id="v-mterr">0.50</span></label><input type="range" min="0.15" max="1" step="0.01" value="0.5" data-var="--murk-terrain" data-out="v-mterr"></div>
@@ -82,22 +69,20 @@
                         <div class="veil-ctrl"><label>정찰 마커 <span id="v-recon">0.90</span></label><input type="range" min="0" max="1" step="0.01" value="0.9" data-var="--recon" data-out="v-recon"></div>
                         <div class="veil-ctrl"><label>카운터 크기 <span id="v-cnt">1.00</span></label><input type="range" min="0.7" max="1.3" step="0.01" value="1" data-var="--counter" data-out="v-cnt"></div>
                     </div>
-                </details>
-                <section class="panel glass note-panel">
                     <h2 class="panel-h">이 목업이 따르는 방식</h2>
                     <ul class="model-note">
-                        <li><b>안개 = 불확실 축</b>: 적 지방은 정보 신뢰에 따라 미발견(murk)·글림프스(추정 범위)·정찰됨(확정) 상태. 저신뢰 접경은 <b>불확실</b>로 라우팅.</li>
-                        <li><b>정찰 = 축 전이</b>: 정찰이 신뢰를 올려(→최대 90%) classify를 재실행 — murk가 걷히고 미터가 좁혀지며 축이 <b>위협/기회</b>로 확정. 리빌 자체가 전이.</li>
-                        <li><b>위협</b> = 관계형: 인접 적 추정 병력 &gt; 내 최약 수비 (신뢰도 게이팅). 안개가 위협을 숨길 수 있음.</li>
-                        <li><b>자세 = 추천</b>: 형세(진실)는 자세 무관하게 다 보이고, 자세는 1행동 추천만 바꿈. <b>부조화</b> = 추천이 최급선무와 어긋나면 경고.</li>
-                        <li><b>행동 1회</b>: 정찰도 그 1행동을 씀 — 해소는 봐도 대응은 다음 턴. 보이는 것 &gt; 할 수 있는 것.</li>
+                        <li><b>지도 = 화면 전부</b>: 읽기는 지도 인코딩과 호버로만. 호버는 <b>설명 전용</b> — 비교가 필요한 수치는 지도 위 상설.</li>
+                        <li><b>렌즈 = 주석</b>: 자세는 추천이 아니라 서로 다른 질문에 답하는 지도 주석. 진실(형세 분류)은 불변.</li>
+                        <li><b>누출 경고</b>: 렌즈가 억누른 축의 긴장이 충분히 급하면 렌즈를 뚫고 붉게 새어 나옴.</li>
+                        <li><b>통일 문법</b>: 지목 → 작업면 소환 → 봉인. 소현=구역(전략 행동 단위) 경유, 안개/기회 지방=최소 카드.</li>
+                        <li><b>행동 1회</b>: 봉인이 그 1행동을 씀 — 적도 같은 순간 봉인(듀얼 비트), 해소는 다음 슬라이스.</li>
                     </ul>
-                </section>
-            </aside>
-        </div>
+                </div>
+            </div>
+        </main>
     </div>
 
-    <script src="situation-data.js?v=6"></script>
-    <script src="situation-map.js?v=6"></script>
+    <script src="situation-data.js?v=7"></script>
+    <script src="situation-map.js?v=7"></script>
 </body>
 </html>
