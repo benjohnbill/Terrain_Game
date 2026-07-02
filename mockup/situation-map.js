@@ -186,8 +186,10 @@
   const secDef = s => s.garrison + s.terrain + s.fort;
   function id(x) { return document.getElementById(x); }
   const cntScale = () => parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--counter')) || 1;
+  // the work surface is a real toggle target for AT — .open and aria-hidden must never disagree
+  function setSurfaceOpen(open) { const el = id('work-surface'); el.classList.toggle('open', open); el.setAttribute('aria-hidden', String(!open)); }
 
-  let VB_FULL, VB_DRILL;
+  let VB_FULL, VB_DRILL, VB_COMMIT;
   (function viewBox() {
     let mx = 0, my = 0;
     PROVINCES.forEach(p => p.hexes.forEach(([c, r]) => { const q = center(c, r); mx = Math.max(mx, q.x + S); my = Math.max(my, q.y + HH / 2); }));
@@ -200,6 +202,16 @@
     const x0 = Math.min(...xs) - S * 1.5, x1 = Math.max(cheol._cx + S * 0.6, Math.max(...xs) + S * 1.3);
     const y0 = Math.min(...ys) - S * 2.0, y1 = Math.max(...ys) + S * 2.0;
     VB_DRILL = [x0, y0, x1 - x0, y1 - y0].map(v => Math.round(v));
+    // commit frame: widen so the evidence (sector + arrow + 철옹) sits centered
+    // in the ~54% of the stage the work surface leaves visible. Initial guess —
+    // tune by eye in the browser (mockup work, judged on screen).
+    const k = 1.7;
+    VB_COMMIT = [
+      Math.round(VB_DRILL[0] - VB_DRILL[2] * 0.08),
+      Math.round(VB_DRILL[1] - (VB_DRILL[3] * (k - 1)) / 2),
+      Math.round(VB_DRILL[2] * k),
+      Math.round(VB_DRILL[3] * k),
+    ];
   })();
 
   /* ---------- camera (viewBox tween — the focus / rewind choreography) ---------- */
@@ -278,10 +290,8 @@
       if (state.enemySealed) drawEnemySeal();  // face-down marker persists after a sealed turn
     }
 
-    if (state.mode === 'commit') {                 // commit-mode dispatch moves here from renderRail
-      if (state.sealed) renderSealNotice(); else renderRailCard(secById(state.sectorOn));
-    }
-    id('work-surface').classList.toggle('open', state.mode === 'commit');
+    if (state.mode === 'commit') { if (state.sealed) renderSealNotice(); else renderWorkSurface(secById(state.sectorOn)); }
+    setSurfaceOpen(state.mode === 'commit');
     renderMissionPill(read);
     renderPosture();
   }
@@ -451,8 +461,8 @@
   /* ---------- drill flow: overview -> drill -> commit -> sealed -> overview ---------- */
   let sealTimer = null;
   function enterDrill() { closeCard(); state.mode = 'drill'; state.sectorOn = null; state.sealed = false; render(); animateVB(VB_DRILL); }
-  function exitDrill() { state.mode = 'overview'; state.sectorOn = null; state.sealed = false; render(); id('work-surface').classList.remove('open'); animateVB(VB_FULL); }
-  function backNav() { if (state.mode === 'commit') { state.mode = 'drill'; state.sectorOn = null; state.sealed = false; render(); id('work-surface').classList.remove('open'); } else if (state.mode === 'drill') exitDrill(); }
+  function exitDrill() { state.mode = 'overview'; state.sectorOn = null; state.sealed = false; render(); setSurfaceOpen(false); animateVB(VB_FULL); }
+  function backNav() { if (state.mode === 'commit') { state.mode = 'drill'; state.sectorOn = null; state.sealed = false; render(); setSurfaceOpen(false); animateVB(VB_DRILL); } else if (state.mode === 'drill') exitDrill(); }
 
   function selectSector(sec) {
     if (!sec) return;
@@ -463,7 +473,8 @@
     const bandSrc = bandEl ? bandEl.getBoundingClientRect() : null;
     state.mode = 'commit'; state.sectorOn = sec.id; state.sealed = false; state.plan = 'defend'; state.commit = 70;
     render();                                   // draws focused sector + work surface (band pending)
-    id('work-surface').classList.add('open');
+    setSurfaceOpen(true);
+    animateVB(VB_COMMIT);                        // widen the camera so evidence stays visible beside the surface
     const rc = id('work-surface');
     rc.classList.toggle('pending-band', !!bandSrc);
     requestAnimationFrame(() => {
@@ -471,6 +482,10 @@
       if (meterSrc) { const m = rc.querySelector('.cc2-base'); if (m) flyEl(meterSrc, m.getBoundingClientRect(), '', 'meter'); }
     });
   }
+
+  // convert an SVG user-space point to a fixed-position screen rect (for flyEl targets on the map)
+  const svgToScreen = (x, y) => { const r = svg.getBoundingClientRect(), vb = svg.viewBox.baseVal;
+    return { left: r.left + (x - vb.x) / vb.width * r.width - 14, top: r.top + (y - vb.y) / vb.height * r.height - 10, width: 28, height: 20 }; };
 
   // evidence continuity: fly a clone from a map element to its card counterpart
   function flyEl(from, to, label, kind, done) {
@@ -488,16 +503,19 @@
   }
 
   function sealOrder(sec, plan) {
-    state.sealed = true; state.sealedPlan = plan === 'scout' ? '정찰' : '방어 강화';
-    render();                                   // both seals drop in this tick (simultaneity)
-    clearTimeout(sealTimer);
-    if (!REDUCED) sealTimer = setTimeout(rewindToOverview, SEAL_HOLD);
+    state.sealedPlan = plan === 'scout' ? '정찰' : '방어 강화';
+    const go = id('work-surface').querySelector('.cc2-go');
+    const q = secCenter(sec);
+    const drop = () => { state.sealed = true; render(); clearTimeout(sealTimer);
+      if (!REDUCED) sealTimer = setTimeout(rewindToOverview, SEAL_HOLD); };
+    if (go && !REDUCED) flyEl(go.getBoundingClientRect(), svgToScreen(q.x, q.y), '봉인', 'seal', drop);
+    else drop();
   }
   function rewindToOverview() {
     clearTimeout(sealTimer);
     state.spentOn = HERO; state.spentKind = 'act'; state.enemySealed = true;
     state.mode = 'overview'; state.sealed = false; state.sectorOn = null;
-    render(); id('work-surface').classList.remove('open'); animateVB(VB_FULL);
+    render(); setSurfaceOpen(false); animateVB(VB_FULL);
   }
 
   /* ---------- compact command card in the rail (transplant of command-card-hybrid) ---------- */
@@ -513,7 +531,7 @@
   const czone = h => h >= 85 ? 'hold' : h >= 50 ? 'risk' : 'lose';
   const CZL = { hold: '사수 유력', risk: '접전', lose: '함락 위험' };
 
-  function renderRailCard(sec) {
+  function renderWorkSurface(sec) {
     const rc = id('work-surface'), faced = !!sec.faces, def = secDef(sec), cheol = faced ? byId[sec.faces] : null;
     rc.innerHTML =
       `<div class="cc2-tag"><span class="v">전선 명령</span><span class="vn">소현 · ${sec.name} · ${faced ? `위협 (${FACTIONS[cheol.owner].short} ${cheol.name})` : '후방 · 직접 위협 없음'}</span></div>` +
@@ -525,6 +543,7 @@
           : `<div class="cc2-rear">이 구역은 이번 턴 <b>철옹의 도달 범위 밖</b> — 직접 위협 없음. 수비는 <b>${def}</b>뿐, 가치는 <b>${sec.value}</b>. 위협이 드는 <b>남부 전선</b>이 이번 턴 급선무.</div>`) +
         `<div class="cc2-foot" id="cc2-foot"></div>` +
       `</div>`;
+    if (!REDUCED) rc.querySelectorAll('.cc2-cbody > *').forEach((n, i) => { n.classList.add('ws-anim'); n.style.animationDelay = (80 * i) + 'ms'; });
     if (faced) { wireCardPlans(sec); renderCardView(sec); }
     else { id('cc2-foot').innerHTML = '<button class="cc2-back">← 구역 선택</button>'; }
     const bk = rc.querySelector('.cc2-back'); if (bk) bk.onclick = backNav;
@@ -560,19 +579,38 @@
       scoutv.innerHTML = '<div class="gambit"><div class="row"><span class="ic win">적 안 침 →</span><span><b>막대한 이득.</b> 다음 턴 밴드가 좁아짐(75→88%). 어디로 좁혀질진 정찰해 봐야 앎.</span></div><div class="row"><span class="ic lose">적 침 →</span><span><b>구역 상실.</b> 이번 턴 남부는 무방비.</span></div></div>';
       foot.innerHTML = '<button class="cc2-go scout">정찰 봉인 — 방어 포기</button><button class="cc2-back">← 구역</button>';
     } else {
-      const band = { lo: THREAT.lo, hi: THREAT.hi }, base = secDef(sec), d = cdef(base, state.commit), hold = choldOf(d, band), zone = czone(hold), under = d < band.hi;
-      defend.innerHTML = `<div class="verdict ${zone}"><span class="big">사수 ${hold}%</span><span class="sub">· ${CZL[zone]}</span></div>` +
-        `<div class="microbar"><span class="mb-hold" style="flex-basis:${hold}%"></span><span class="mb-lose" style="flex-basis:${100 - hold}%"></span></div>` +
-        `<div class="commit-row"><span>커밋 <b>${state.commit}</b> / 100</span><span class="rec">투입 = 4번째 수비층</span></div>` +
-        `<input type="range" id="cc2-commit" min="0" max="100" value="${state.commit}">` +
-        `<div class="srow"><span class="k">확보 여력(surplus)</span><span class="v">+${100 - state.commit}</span></div>`;
-      foot.innerHTML = (under
-        ? '<button class="cc2-go warn">저커밋 봉인 — 실패 시 상실</button>'
-        : '<button class="cc2-go">이 계획으로 봉인 (1회)</button>') + '<button class="cc2-back">← 구역</button>';
-      const slider = id('cc2-commit'); if (slider) slider.oninput = e => { state.commit = +e.target.value; renderCardView(sec); };
+      const rec = recCommitFor(sec);
+      defend.innerHTML = `<div class="verdict" id="cc2-verdict"><span class="big" id="cc2-hold"></span><span class="sub" id="cc2-zone"></span></div>` +
+        `<div class="microbar" id="cc2-bar"></div>` +
+        `<div class="commit-row"><span>커밋 <b id="cc2-cv"></b> / 100</span><span class="rec">안전 사수 눈금 ${rec}</span></div>` +
+        `<div class="commit-slider"><input type="range" id="cc2-commit" min="0" max="100" value="${state.commit}"><span class="commit-notch" style="left:${rec}%" title="안전 사수 추천"></span></div>` +
+        `<div class="srow"><span class="k">확보 여력(surplus)</span><span class="v" id="cc2-sp"></span></div>`;
+      id('cc2-commit').oninput = e => { state.commit = +e.target.value; updateCommitReadout(sec); };  // input survives — only readouts update
+      updateCommitReadout(sec);
     }
+    wireFoot(sec);
+  }
+  const recCommitFor = sec => Math.round((THREAT.hi - secDef(sec)) / CCONV);   // commit that reaches the band top
+  function updateCommitReadout(sec) {      // everything EXCEPT the <input> — drag-safe by construction
+    const band = { lo: THREAT.lo, hi: THREAT.hi }, d = cdef(secDef(sec), state.commit);
+    const hold = choldOf(d, band), zone = czone(hold), under = d < band.hi;
+    id('cc2-hold').textContent = '사수 ' + hold + '%';
+    id('cc2-zone').textContent = '· ' + CZL[zone];
+    id('cc2-verdict').className = 'verdict ' + zone;
+    id('cc2-bar').innerHTML = `<span class="mb-hold" style="flex-basis:${hold}%"></span><span class="mb-lose" style="flex-basis:${100 - hold}%"></span>`;
+    id('cc2-cv').textContent = state.commit;
+    id('cc2-sp').textContent = '+' + (100 - state.commit);
+    drawCardAxis(sec);                     // axis rebuild is fine — it holds no input
+    const go = id('cc2-foot').querySelector('.cc2-go');
+    if (go) { go.classList.toggle('warn', under); go.textContent = under ? '저커밋 봉인 — 실패 시 상실' : '이 계획으로 봉인 (1회)'; }
+  }
+  function wireFoot(sec) {
+    const foot = id('cc2-foot');
+    if (state.plan !== 'scout' && !foot.querySelector('.cc2-go'))
+      foot.innerHTML = '<button class="cc2-go"></button><button class="cc2-back">← 구역</button>';
     const go = foot.querySelector('.cc2-go'); if (go) go.onclick = () => sealOrder(sec, state.plan);
     const bk = foot.querySelector('.cc2-back'); if (bk) bk.onclick = backNav;
+    if (state.plan !== 'scout') updateCommitReadout(sec);
   }
   function renderSealNotice() {
     const sec = secById(state.sectorOn), rc = id('work-surface');
