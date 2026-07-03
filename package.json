@@ -4,6 +4,7 @@
   "private": true,
   "type": "commonjs",
   "scripts": {
-    "test": "node --test tests/*.test.js"
+    "test": "node --test tests/*.test.js",
+    "battery": "node mockup/combat-calc/battery.js"
   }
 }
