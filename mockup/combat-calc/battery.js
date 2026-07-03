@@ -372,8 +372,55 @@ function timeline() {
   console.log('  war) — proactive AI wars between AI realms are load-bearing for mid-match fun.');
 }
 
+// ---------------------------------------------------------------- Sheet 9
+function manpower() {
+  h('SHEET 9 — Economy→mass dials (M13): cap, recruitment rate, pool size');
+  console.log('Template mid realm: 6 provinces, garrisons 4,200 + field army 4,500');
+  console.log('(initial military 8,700). Dials under test: national standing cap 6,000;');
+  console.log('모병 +10% of cap/turn (600/turn); pool = 1.5 × initial military = 13,050.\n');
+
+  sub('Check 1 — buildup & recovery windows (+600/turn toward cap 6,000)');
+  for (const start of [4500, 4200, 3000, 1500]) {
+    const turns = Math.ceil((6000 - start) / 600);
+    console.log(`  standing ${start} → cap: ${turns} turns of recruitment primaries`);
+  }
+  console.log('  → intact realm reaches war-ready in 2–3 primaries (matches the arc\'s');
+  console.log('    buildup phase); a shattered realm needs 5–8 — the D3 counterattack');
+  console.log('    window generalized to the national scale.');
+
+  sub('Check 2 — the free-rider window (11-turn war between rivals, I sit out)');
+  const riderGain = Math.min(6000 - 4500, 600 * 11);
+  const riderSpareTurns = 11 - Math.ceil((6000 - 4500) / 600);
+  console.log(`  my growth: +${riderGain} (cap-bound after ${Math.ceil((6000 - 4500) / 600)} turns) → ${11 - Math.ceil((6000 - 4500) / 600)} primaries left free`);
+  console.log('  fighters (sheet 7 run): winner −1,132 dead, loser army destroyed.');
+  console.log('  → FINDING: the cap converts free-riding into READINESS + ' + riderSpareTurns + ' spare');
+  console.log('    primaries (scouting/forts/recovery), never into unbounded mass.');
+  console.log('    Raising the cap itself = economy development — the future long lever.');
+
+  sub('Check 3 — pool ledger across the tempo-sheet war (finite blood)');
+  const pool = 13050;
+  const winnerDead = 1132;                      // sheet 7: attacker blood (curve+rout, all dead)
+  const loserDead = 5000, loserDispersed = 800; // sheet 7: fort+field+capital losses, ~85% dead
+  console.log(`  winner: pool ${pool} − ${winnerDead} dead = ${pool - winnerDead} (−${(winnerDead / pool * 100).toFixed(1)}%) — rebuild to cap: trivial`);
+  console.log(`  loser: −${loserDead} dead (+${loserDispersed} dispersed RETURN to pool), and ceded`);
+  console.log('  provinces take their pool along (pool is per-province) → remaining realm');
+  const loserPoolLeft = Math.round((pool - loserDead + loserDispersed) * 0.45); // ~55% of land ceded/vassalized
+  console.log(`  holds ~${loserPoolLeft} pool on ~45% of the land — can refill a garrison line,`);
+  console.log('  CANNOT field a second 6,000 army this match. Blood is permanent; the match');
+  console.log('  self-terminates toward thin late armies. Third full war: impossible. ✓');
+
+  sub('Check 4 — recruitment price sanity vs raid/conquest income (M8 anchors)');
+  console.log('  proposed price: 1 부대(100명) = 0.5 sector-turn yield');
+  console.log('  raid loot ≈ 1.5 sector-turn yield (M8) → funds ~3 부대 — real but small');
+  console.log('  conquered sector ≈ 1 yield/turn permanent → ~2 부대/turn forever');
+  console.log('  → conquest ≫ raid for army-building, consistent with M8\'s ~30:1. ✓');
+
+  console.log('\n  Dial verdicts to confirm: cap 6,000 (mid realm; center ~9,000 scales with');
+  console.log('  economy), recruit +10%/turn, pool ×1.5 initial military, 부대 = 0.5 yield.');
+}
+
 // ----------------------------------------------------------------
-const SHEETS = { myeongnyang, fortress, raid, delaying, grinding, feint, tempo, timeline };
+const SHEETS = { myeongnyang, fortress, raid, delaying, grinding, feint, tempo, timeline, manpower };
 const pick = process.argv[2];
 if (pick && SHEETS[pick]) SHEETS[pick]();
 else if (pick) { console.error(`unknown sheet: ${pick} (${Object.keys(SHEETS).join(', ')})`); process.exit(1); }
