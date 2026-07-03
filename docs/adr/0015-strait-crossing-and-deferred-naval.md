@@ -31,6 +31,21 @@ A true naval system — naval capacity or force role, blockade, sea movement, an
 dedicated amphibious doctrine — is recorded as a later-phase candidate, not a
 Phase 1 requirement.
 
+## Amendment (2026-07-03, magnitude pass)
+
+Penalty values are set and refined by the combat-formula magnitude pass
+(`docs/features/combat-formula/MAGNITUDE.md` M5):
+
+- The crossing penalty is an attack-side multiplier, never a defense
+  multiplier (water weakens the attacker; it does not strengthen the
+  defender).
+- River crossing: ×0.85 uncontested, deepening to ×0.70 when the
+  defender holds the far bank (survey-validated: an opposed crossing is
+  a different event from an unopposed one).
+- Strait crossing: ×0.70; an opposed-strait deepening (~×0.55) is
+  recorded as a candidate dial, pending the plan-roster magnitude work.
+- Port/harbor staging mitigation unchanged.
+
 ## Consequences
 
 - The future movement and supply slice implements strait/coast penalties and

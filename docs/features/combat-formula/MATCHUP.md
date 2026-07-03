@@ -113,6 +113,18 @@ dangerous maneuver — caught retreats become routs. It also completes the
 Moscow-trap chain: scorch to lure → cut supply → and when the invader
 finally turns back, encirclement voids the escape.
 
+Family addition (2026-07-03, magnitude pass — candidate): **반도이격
+(strike at half-crossing).** When the intercepted force's withdrawal or
+escape crosses a water boundary this turn, the water splits its engaged
+body — only a fraction (가안 50%, dial owned by this sheet's magnitude
+values) is engageable, and the water side counts as blocked escape for
+that engaged body (M4 escape-state check). A situation-classifying cap in
+the D9/throttle family, never a multiplier; detection reads only the
+declared crossing flow + map water edges. Grounding: Sunzi 行軍
+"令半濟而擊之利"; Salsu, Berezina. Without it, a numerically superior
+withdrawing mass cannot be annihilated at realistic ratios (validated in
+the 5:1 Salsu run, MAGNITUDE.md M4).
+
 ### Confirmed: the fortress-ignoring family (2026-07-03, closed under user delegation)
 
 Two strengths of "not meeting the wall", a deliberate contrast (the
@@ -143,6 +155,19 @@ history → close autonomously"). Numbers remain magnitude-pass scope; any
 future cell *not* traceable to survey/real-war grounding still requires
 explicit user decision.
 
+### Confirmed: 항복 수확 (surrender harvest — Encirclement success discount, 2026-07-03)
+
+On Encirclement & Annihilation headline SUCCESS only, attacker casualties
+are read from the shared curve and then discounted (fraction 가안 0.5 —
+dial owned by this sheet). No discount on failure; defender losses
+unchanged (rout conversion governs them). Grounding: sealed starving
+pockets collapse rather than fight — Ulm 1805 (~60,000 captured vs
+~1,500 French losses), Sedan, Kiev; the encircler's cost was prepaid in
+the preparation turns. Design role: restores the high-risk/high-reward
+principle in the stander branch — the highest threshold (2.2,
+all-or-nothing under fog) buys the lowest blood price per army erased
+(MAGNITUDE.md M6).
+
 Authoring notes carried in from the catalog shape pass:
 
 - Delaying Defense's bargain (cheap contest, no repulsion, erosion, bought
@@ -152,6 +177,18 @@ Authoring notes carried in from the catalog shape pass:
   grammar are candidates for dedicated cells/verbs once magnitudes exist.
 - Every cell must survive the anti-gamey test: the verb must name something
   a briefing officer could say about the real methods meeting.
+
+## Fraction values (2026-07-03, magnitude pass — user-confirmed)
+
+- Flanking `discount fortification`: effective = 1 + (fort − 1) × 0.5;
+  the wall-assault frontage cap does not apply to Flanking (seam entry).
+- Flanking `discount escape`: the escape clause × 0.5 wherever it
+  appears (refuse-escape 100% → 50%; open-rout survival 50% → 25%).
+- 반도이격: engaged body = 50% of the crossing force.
+- 항복 수확: Encirclement-success attacker casualties × 0.5.
+- Delaying Defense bargain (authored terms of its refuse cells):
+  attacker threshold +0.3; casualty exchange × 0.5 both ways; defender
+  escape default 100% (prey of the escape-hunting family).
 
 ## Forecast consequence
 

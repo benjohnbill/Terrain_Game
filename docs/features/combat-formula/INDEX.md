@@ -95,6 +95,11 @@ pass: plan axis magnitudes only gain meaning through this formula.
   *drains* economy/population (making chronic war expensive and blood a
   situationally priced currency) is undecided. Owner: standing-rules /
   economy design thread + magnitude pass (rates).
+- **Bloodless panic collapse (Fei River class)**: the D10 rout cliff is
+  blood-triggered (30% cumulative losses); a command/panic collapse at
+  near-zero casualties (비수대전 383) is not representable. Owner: a
+  deferred morale/panic system — recorded 2026-07-03 during the
+  magnitude pass, deliberately not absorbed.
 - **Anti-safe-play pressure (the poker blinds)**: the MVP baseline is
   proactive AI only (ADR 0025 — the board does not wait). The structural
   backstop — match clock, settlement function, tempo scoring — belongs to
@@ -103,6 +108,10 @@ pass: plan axis magnitudes only gain meaning through this formula.
 
 ## Workspace Files
 
+- `MAGNITUDE.md` — magnitude-pass working decisions (scale anchors,
+  authored numbers); the pass is IN PROGRESS as of 2026-07-03.
+- `GLOSSARY.md` — the fixed resolution vocabulary: every term in the
+  battle pipeline with value, range, and decision source.
 - `FORMULA.md` — working decisions D1–D10 and the formula skeleton.
 - `MATCHUP.md` — plan-vs-plan engagement-rule sheet (authored balance data).
 - `RESEARCH.md` — survey digests, cross-survey synthesis, stacking analysis.
