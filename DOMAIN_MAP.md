@@ -230,7 +230,11 @@ Markers:
   administration, diplomacy, or scholarship/technology. The MVP uses a single
   *divisible* pool (commit a variable amount to the primary action, redirect the
   surplus); the four-capacity split + carryover + overclock are deferred
-  (ADR 0018, ADR 0020).
+  (ADR 0018, ADR 0020). Capacity is **command attention, independent of realm
+  scale**: it is not troops or resources, and a great empire and a small realm
+  hold the same per-turn pool — what differs is the scale and risk each
+  committed point sets in motion. Troops and resources are world stocks the
+  capacity directs, never the capacity itself (combat-formula D2).
 - ✅ `Map-first situation UX`: Interaction principle where briefing and map
   highlights guide the player to important threats/opportunities before command
   creation.

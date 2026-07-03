@@ -68,6 +68,14 @@ commitment). Keeping these distinct preserves the difference between natural
 strongholds, built fortresses, populous defended areas, and sectors the player
 deliberately reinforces this turn.
 
+*Amendment (2026-07-03, combat-formula D6):* the four layers compose as
+substance × lever × multipliers, not as four additive contributions.
+`localGarrison` is the substance, `defenseCommitment` is a lever on that
+substance with baseline 1 (an unattended garrison still fights at its own
+strength; commitment layers court attention on top), and
+`terrainDefense`/`fortificationDefense` are multipliers (terrain invariant,
+fortification damageable). See `docs/features/combat-formula/FORMULA.md`.
+
 ## Considered Options
 
 - **One hex per turn:** rejected — simple and close to the current prototype, but
