@@ -676,6 +676,36 @@ confirm M12 only after the scenario battery runs a full-match tempo
 sheet; escalate the match-arc thread — the tempo unease is correctly
 locating that hole, not these values.
 
+## M13 — Economy→mass conversion, MVP single track (2026-07-04, match-arc pass)
+
+Adopted during the match-arc pass (see `docs/features/match-arc/`):
+
+- **모병 (recruitment)**: one primary action = +10% of the national
+  sustainable cap that turn, drawn from the manpower pool, paid from
+  treasury yield, fighting at 100%. The +10% grammar deliberately
+  mirrors garrison regeneration (M12) — all mass flows are "%/turn
+  toward a cap." A discounted levy tier was rejected: it would reopen
+  the sealed quality = 1 simplification through the back door (a
+  persistent 75% troop type is a quality tier; the reserve's 50% is a
+  this-turn state, not a troop kind). 공세 동원 (ADR 0009 role 3) is a
+  reserved seat — triggers: quality/tech system, Phase 3 domestic,
+  or flat-buildup playtest signal.
+- **국가 상한 (national sustainable cap)**: economy-derived ceiling on
+  standing forces; the cap replaces per-turn upkeep bookkeeping
+  (low-micromanagement). Garrison ceilings stay local (ADR 0014).
+- **인력 풀 (manpower pool)**: per-province, population-proportional,
+  finite within a match — the dead never return, the dispersed do.
+  Closes the M3 blood-economy flag.
+- **Confirmed values (2026-07-04, battery sheet 9)**: national cap
+  6,000 for a mid realm (center ~9,000; scales with economy);
+  recruitment +10% of cap per turn; pool = 1.5 × initial military;
+  price 1 부대 = 0.5 sector-turn yield. Validated: buildup 2–3 turns /
+  shattered recovery 5–8; cap converts free-riding into readiness +
+  spare primaries; one lost war ends a realm's ability to field a
+  second full army (pool travels with territory — settlement value
+  includes population automatically); recruit pricing consistent with
+  M8 raid/conquest income ordering.
+
 ## Deferred comparison threads (recorded 2026-07-03)
 
 The "1 primary action + surplus" turn structure was chosen for the MVP;
