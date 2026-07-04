@@ -3,9 +3,9 @@
 ## Current Prototype
 
 The app is a static browser game with plain JavaScript modules loaded through
-`index.html`.
+`index.html` and wired together by `js/main.js` (entry point / orchestrator).
 
-Current major modules:
+Original prototype modules:
 
 - `js/game.js` - turn state and action dispatch.
 - `js/map.js` - hex map generation, selection, and canvas rendering.
@@ -14,6 +14,23 @@ Current major modules:
 - `js/ai.js` - AI turn choice.
 - `js/diplomacy.js` - relationship and proposal state.
 - `js/ui.js` - DOM UI and modal rendering.
+- `js/buildings.js`, `js/tech.js` - building and tech-tree data (data layer).
+
+Phase 1 terrain-first modules already landed:
+
+- `js/domain-data.js` - Phase 1 domain catalogs (terrain taxonomy, etc.).
+- `js/province-data.js` - initial 30 named-province draft.
+- `js/combat.js` - terrain-mediated, force-role combat (Slice 2).
+- `js/capacity.js` - action-capacity calculations.
+- `js/situation.js` - map-first situation analysis (the stage-1 형세판단
+  under-implementation; see DOMAIN_MAP `Situation judgment`).
+- `js/intel.js` - information-confidence model (scouting / fog).
+- `js/command-preview.js` - deterministic command previews (the prefilled
+  command card).
+
+The design docs below run ahead of the code: several layers are sealed in
+design (the combat-resolution formula, the match-arc/settlement model) but not
+yet implemented in these modules.
 
 ## Design Direction
 
@@ -161,8 +178,45 @@ priorities, and player-readable strategic purpose.
 Province and target previews should show expected changes to command,
 administration, diplomacy, and scholarship/technology capacity where possible.
 
+## Combat Resolution
+
+Combat resolves through a deterministic ratio core, not dice. Attack and defense
+powers are built from one shared grammar — substance × commitment lever ×
+multipliers — and compared as a scale-invariant ratio R. A per-plan threshold
+gates only whether the plan's core intent lands (the headline) and how deep its
+effects stamp; casualties are paid on both sides regardless, on a single shared
+R-curve, so grinding is unprofitable by arithmetic. The same computation run on
+fogged band inputs is the pre-battle forecast, and inverted over the band it is
+the commit recommendation — one engine, three views. Effects are the six
+one-shot operation effect axes stamped into persistent state; time is expressed
+by standing world rules reading that state, never by a plan re-applying.
+
+The structural pass (decisions D1-D11) and the magnitude pass (M1-M13 dials) are
+complete in design and live in `docs/features/combat-formula/` (FORMULA,
+GLOSSARY, MAGNITUDE, MATCHUP); `DOMAIN_MAP.md` (Combat Resolution) carries the
+vocabulary. Implementation in `js/combat.js` still trails the sealed design.
+
+## Match Arc and Settlement
+
+Above single battles, a match is a bounded arc, not an open sandbox. The map is
+fully partitioned among 4-6 mature-state realms from turn 1; a match runs
+standoff → buildup → war(s) → decision point → settlement inside the
+30-40-minute envelope, budgeted so one player's hand fights ~2-3 wars. Wars are
+decided by field-army destruction and converted to territory / indemnity /
+vassalage through reach-priced settlement bundles rather than sector-by-sector
+conquest; the match ends at a hegemony settlement, judged by shield-ratio
+arithmetic (leadership + unassailability) that the player reads through fog as a
+banded estimate. The sealed model lives in `docs/features/match-arc/` and
+`DOMAIN_MAP.md` (Match Arc and Settlement); it is a design layer with no
+dedicated module yet.
+
 ## Documentation Policy
 
-Use ADRs for decisions that shape future implementation. Use `DOMAIN_MAP.md`
-for terms and constraints. Use `docs/features/<slug>/` for active feature
-research and slice planning.
+Use ADRs (`docs/adr/`) for decisions that shape future implementation. Use
+`DOMAIN_MAP.md` as the promoted single glossary for terms and constraints;
+feature-level vocabulary is authored in `docs/features/<slug>/GLOSSARY.md` and
+promoted up to `DOMAIN_MAP.md` once confirmed. Keep tunable numbers (dials) in
+`docs/features/combat-formula/MAGNITUDE.md` (M1-M13) and reference them by
+pointer from the glossaries, so the root docs do not go stale when a dial is
+re-cut. Use `docs/features/<slug>/` for active feature research and slice
+planning, and `docs/DESIGN-RISKS.md` for the living design-risk register.

@@ -371,6 +371,251 @@ Markers:
 - ⛔ Do not model a literal historical map so strictly that gameplay balance and
   readability become secondary.
 
+## Combat Resolution
+
+The battle-resolution layer (turn decision ladder layer 5). One deterministic
+computation used three ways: on true state it is the verdict; on fogged band
+inputs it is the forecast; inverted over the fog band it is the recommendation.
+Structural decisions D1–D11 are in `docs/features/combat-formula/FORMULA.md`;
+the fixed vocabulary in `docs/features/combat-formula/GLOSSARY.md`; every dial
+value lives in `docs/features/combat-formula/MAGNITUDE.md` (M1–M13). Terms here
+are qualitative — numbers are MAGNITUDE's.
+
+- ✅ `Resolution pipeline`: `attack power = troop stock × lever(commit) ×
+  quality × plan/matchup mods × water penalty`; `defense power = garrison ×
+  lever × terrain × fortification`; `R = attack ÷ defense`. R past the plan's
+  threshold stamps the headline; casualties are paid both ways regardless of the
+  headline.
+- ✅ `R` (전투비, combat ratio): attack power ÷ defense power; scale-invariant
+  (same odds at any absolute size). The central gauge of the deterministic core
+  (D5).
+- ✅ `Troop stock` (병력) / `Unit` (부대): actual bodies are an integer ledger at
+  the front sector where casualties are written; the unit (부대) is a display
+  quantum only, never used in logic (D2/D3; scale → M1). _Avoid_: fractional
+  bodies in logic, treating 부대 as a compute unit.
+- ✅ `Command pool` (명령 풀) / `Commitment` (커밋): per-turn attention that
+  refills fully and is identical for every realm size (never converts to
+  troops); commitment is the points placed on one action. Both sides use the
+  same grammar (D2/D6). This is the resolution-layer face of `Action capacity`.
+- ✅ `Lever` (레버): what commitment buys — an activation/direction multiplier on
+  substance, concave (early points buy more than late) with a knee and a
+  ceiling; defense holds a baseline lever at zero commit (D8; curve → M2).
+- ✅ `Quality` (질): the weapons/tech/drill multiplier slot. The MVP fixes
+  quality = 1 (a single troop tier); a quality/tech axis is a reserved post-MVP
+  seat whose arrival voids the single-tier simplification (D4/D8).
+- ✅ `Terrain multiplier` (지형 배수) / `Fortification multiplier` (요새 배수):
+  defense multipliers. Terrain is world-owned and never degrades; fortification
+  is player-built and damageable (a `fortificationDamage` stamp lowers it and
+  widens assault frontage). Ladders and caps → M5. See `Sector defense layers`.
+- ✅ `World product` (세계 곱): terrain × fortification, raw — no engine clamp;
+  the ceiling is the natural product of the authored ladders (M5).
+- ✅ `Water penalty` (도하 페널티): an attack-side multiplier when the attack
+  crosses water; water never strengthens the defender, and port/harbor staging
+  mitigates it (ADR 0015 amended; values → M5). See `Strait`.
+- ✅ `Frontage` (협로/강습 폭): a cap on the engaged attacker body at authored
+  chokes and wall assaults — it classifies, never multiplies, and every choke
+  carries a mandatory removal path (D9; capacities → M5/M11).
+- ❓ `반도이격` (strike at half-crossing): a force whose same-turn flow is
+  crossing water, if intercepted, engages with a split body and the water side
+  counts as blocked escape (candidate; engaged fraction → matchup stage, M4).
+- ✅ `Threshold` (문턱): the per-plan R at which the plan's core intent lands. It
+  gates *stamps only* — never blood, never availability. Attacking below
+  threshold is always legal (priced by the casualty curve, ADR 0021 chosen
+  risk); the system cannot pre-judge failure because it only ever sees the fogged
+  R band. Threshold values are public doctrine; fog hides the enemy's actual
+  strength (D4/D11; values → M7). _Avoid_: threshold as an availability gate.
+- ✅ `Headline` (헤드라인) / `Margin` (마진): the headline is the binary — did the
+  core intent land (sector taken / repulsed). Margin is R − threshold; it buys
+  lower winner casualties and deeper stamps (D4).
+- ✅ `Casualty curve` (사상자 곡선): one shared curve of R applied both directions,
+  success and failure alike — the winner's losses fall as R rises, the loser's
+  climb. Grinding is unprofitable by arithmetic (Lanchester-shaped; base rate and
+  exponent → M4).
+- ✅ `Rout cliff` (궤주 절벽): organizational collapse for the headline loser only,
+  triggered when its losses cross a casualty fraction within the engagement
+  (atomic — no cross-battle accumulation; threshold → M4).
+- ✅ `Escape state` (도주 상태): a derived check at the moment of rout, never
+  stored — OPEN if an adjacent non-water friendly/neutral route exists and the
+  isolation gate is unsatisfied, else BLOCKED. Water never counts as escape; a
+  BLOCKED rout annihilates with no regeneration debt (M4). See `Position as
+  product`.
+- ✅ `Isolation gate` (고립 게이트): supply already cut OR all approaches
+  enemy-held — the availability gate for Encirclement and the escape-blocker.
+  Boolean, read from existing stamps (catalog, D10).
+- ✅ `Effect axes / stamps` (효과 축 / 도장): the six per-axis one-shot effects
+  stamped into persistent state on success — the same concept as `Operation
+  effect axis` above; ongoing consequences belong to `Standing world rule`, not
+  to the stamp re-applying (ADR 0024/0026; magnitudes → M-pass).
+- ✅ `Standing rules` (상비 규칙): the combat-layer name for `Standing world rule`
+  — per-turn world processes that read persistent state: starvation stages
+  (holding → attack-incapable → defenseless), garrison regeneration, recovery.
+  Starvation must outpace an unsupplied 2–3-sector advance (rates → M-pass;
+  ADR 0026).
+- ✅ `Forecast` (예보) / `Recommendation` (추천) / `Preset pin` (프리셋 핀): the
+  same computation run on fog. Forecast = R band + expected losses + escape-state
+  line on fogged inputs; recommendation = the formula inverted (threshold →
+  required-commit band); preset pin = where the slider prefills inside that band
+  (safe end). Confidence is capped at 0.90 — no oracle (D1/D7, M3). See
+  `js/intel.js` and the fog-of-war-discovery feature.
+
+## Match Arc and Settlement
+
+The layer above battle resolution: how a full match arcs from opening standoff
+to a hegemony settlement. Vocabulary is authored in
+`docs/features/match-arc/GLOSSARY.md` (promoted here); the winning archetypes
+that gate every value are in `docs/features/match-arc/STRATEGY-SPACE.md`; dials
+live in `docs/features/combat-formula/MAGNITUDE.md` (M8–M13). Status: ✅ = AGREED
+wording, ❓ = PROPOSED (awaiting grill).
+
+### Arc ladder (scale layers)
+
+- ✅ `Engagement` (교전): one click, one turn — the resolution layer above.
+- ❓ `Operation` (작전): a shield-break or siege, ~3–6 turns.
+- ❓ `War` (전쟁): declaration → settlement, ~8–12 turns. A war is *decided* by
+  field-army destruction (shield-break → decisive battle → cascade), never by
+  grinding occupation to completion.
+- ❓ `Match` (매치): pre-war standoff → hegemony settlement, ~15–25 turns /
+  30–40 min (the wall-clock envelope is the binding target; turn count is a
+  derived estimate). A match, not a campaign.
+
+### Match structure (frame decisions, AGREED 2026-07-03)
+
+- ✅ `Full adjacency, no neutral zones`: every realm starts bordering its
+  neighbors; the map is fully partitioned from turn 1. No expand-into-empty-land
+  opening — the envelope has no room for it and the `Uncertainty duel` needs live
+  neighbors immediately (ADR 0025).
+- ✅ `Realm count 4–6 (authoring default 5)`: the partition is decided by
+  authored terrain cradles (basin, shielded valley, plain, coast); 4–6 is the
+  verification condition on how many viable cradles the active region holds, not
+  an imposed cut.
+- ✅ `Viability parity, mass/geometry asymmetry`: what is balanced is
+  survivability, not mass. A multipolar Warring-States / Three-Kingdoms shape
+  with one "small 중원" — a richer center that pays in multi-front exposure;
+  periphery realms are smaller but shielded and coalition-capable. Whoever takes
+  the center inherits its exposure (the anti-snowball loop). No realm is
+  one-war-killable from turn 1 without buildup (~1.7 shield-mass ratio is the
+  sizing tool; values → battery).
+- ✅ `Match arc as design budget`: buildup cost, war length, and the hegemony
+  threshold are tuned so one player's hand fights ~2–3 wars per match; the match
+  ends at the hegemony settlement. A tuning target, never a mechanical cap — the
+  arithmetic prices out a fourth war, no rule forbids it.
+- ❓ `Mature-state start`: realms begin as functioning states — fortresses
+  standing at historical chokes, armies raised. A from-zero opening would spend
+  the whole envelope on construction (a legendary fortress alone ≈ a third of a
+  match, M5).
+
+### Arc phases and settlement
+
+- ✅ `Match arc` (매치 아크): the phase curve a match traverses — standoff →
+  buildup → first war → realignment → deciding war → decision point →
+  settlement.
+- ❓ `Shield-break` (방패 깨기): the opening operation of a war — reducing the
+  border fortification line that shields a realm's interior (erosion or bypass).
+  The pre-war mass ratio at the shield largely decides the war.
+- ❓ `Decisive battle` (결전): the field engagement that destroys the defender's
+  field army once the shield is open; after it, the interior cascades.
+- ❓ `Cascade` (캐스케이드): the post-decision sweep — ordinary sectors fall in
+  one-turn takes against garrison-only defense. The victory lap that makes
+  winning *felt*; ending grammar must not amputate it.
+- ✅ `Decision point` (결정점): the first moment the irreversibility check opens
+  *settlement negotiation* — the system detects that no remaining realm or
+  coalition can realistically overturn the balance (R arithmetic over remaining
+  mass). The ending itself is a *player decision* (winner: accept-terms or
+  press-on; loser: capitulate or fight-on); the match ends when the hegemony
+  settlement concludes, not when the math first tips. (Operational definition of
+  SPEC's "matches end at decision points.")
+- ✅ `Hegemony decision point` (패권 결정점): the match-ending decision point.
+  Shield-ratio arithmetic, no new physics: **leadership** — the candidate's
+  projectable mass clears the war-deciding shield ratio (~1.7) against every
+  in-balance realm (rejects the turtle hegemon); AND **unassailability** — no
+  coalition of in-balance realms can reach ~1.7 × the candidate's shield within
+  the regeneration window. Trips on true values; the player reads a banded 판세
+  estimate (shape AGREED; values → battery).
+- ✅ `Projectable mass` (투사 가능 질량): the mass a realm can actually deliver to
+  fronts beyond its own shield — derived from exit-choke frontage caps (M11) and
+  the route graph; never a stored variable. Chokes narrow doors both ways: the
+  unbreakable are usually also unable to march out.
+- ✅ `In/out of the balance — hermit clause` (판세 안/밖 · 은둔국 조항): a realm
+  whose projectable mass falls below the floor (reuse the raid visibility
+  threshold; value → battery) is *outside the balance* — excluded from coalition
+  sums and the leadership denominator. Derived per turn (a hermit can buy back in
+  via choke-removal paths). Out-of-balance realms are acknowledged at settlement
+  (tributary/hermit narrative), never forced to capitulate — the match ends
+  without requiring 100% of the map. A projecting-but-unbreakable realm stays in
+  and legitimately blocks the decision point (Parthia pattern).
+- ✅ `Settlement` (정산): the procedure converting a decided war into gains
+  *without* occupation grinding — annexation arrives through settlement, not
+  sector-by-sector conquest. Two levels: 전쟁 정산 (ends one war) and 패권 정산
+  (concludes the match). Settlement territory arrives *alive* (undamaged usable
+  value, vs conquest damage + M6 inheritance cost); the saved friction is the
+  trade surplus, split naturally (no discount dial). MVP: no free negotiation —
+  2–3 auto-priced preset bundles (관대/표준/최대); bluffing and free terms → Phase
+  2 diplomacy.
+- ✅ `Settlement currencies` (정산 통화): the MVP menu of three — 할양 (cession:
+  named sectors, undamaged, ceiling = occupation reach), 배상 (indemnity: one-time
+  economy transfer, ceiling = loot value of raid reach per M8's 50% rule), 복속
+  (vassalage: the realm survives subordinated, its mass leaving the coalition
+  pool and counting to the winner's side; available only when the capital is
+  within reach). Demilitarization and route access → Phase 2. Mixed-bundle total
+  ≤ reach value.
+- ✅ `Reach` (도달권): the closed-form price base of every settlement, never a
+  runtime simulation. 점령 도달권 (occupation reach): sectors the winner could take
+  before resistance re-forms — route graph from army positions, stopped by intact
+  shields, bounded by the regeneration window (M12). 약탈 도달권 (raid reach): the
+  wider zone reachable by sub-threshold raiding (bypasses shields, M8). Demands
+  beyond reach → deterministic refusal, war resumes; reach is recomputed at
+  suing time. "칼이 닿는 곳까지가 청구서다 — 점령의 칼은 땅을, 약탈의 칼은 돈을,
+  수도에 닿은 칼은 무릎을 청구한다."
+- ✅ `Acceptance arithmetic` (수락 산술): a loser-AI accepts a bundle iff bundle
+  value ≤ its continued-war expected loss × personality coefficient — computed on
+  *true values*, deterministic (no dice). The coefficient (완고/실리/유화) is drawn
+  per realm at match start from a narrow band (ADR 0025 tendency). A player-loser
+  decides freely. The settlement card shows a per-bundle acceptance *band* (the
+  player predicts through fog though the AI decides deterministically — tension
+  without dice). Deferred-with-trigger: fogged-read acceptance + bluffing ship
+  with Phase 2; pull earlier iff playtest shows settlement reads as solved/flat.
+- ❓ `Capitulation` (복속): a settlement outcome — the losing realm survives
+  diminished, counted on the loser's side of the hegemony judgment. Choosing
+  capitulation over a fight to the capital must be the losing player's own
+  decision (surrender grammar).
+- ✅ `Recruitment` (모병): the single MVP economy→mass conversion — a primary
+  action adding a capped share of the national sustainable cap per turn, drawn
+  from the manpower pool, paid from treasury yield, fighting at 100% (single
+  troop quality — a discounted levy tier would reopen the sealed quality = 1
+  simplification). The temporary-levy track (공세 동원, ADR 0009 role 3) is a
+  reserved seat with three reopen triggers (a quality/tech system; Phase 3
+  domestic hooks; a flat-reading buildup phase in playtest). Force-adjustment
+  stack: ① recruitment (create, player) / ② garrison regeneration to local caps
+  (automatic, ADR 0014) / ③ standing-force stationing (deploy, player) / ④ commit
+  lever + reserve (activate, per-turn) — the player hand-manages only ① and ③.
+  Rates → M13.
+- ✅ `Manpower pool` (인력 풀): per-province latent manpower (ADR 0009 role 4),
+  *finite within a match* — the dead leave it permanently, the dispersed return,
+  settlement-inherited land arrives pool-intact (M6 made literal). Blood becomes
+  a permanent match currency (closing the blood-economy coupling gap flagged at
+  M3); generational regrowth is ~0 inside 25 turns. Values → M13/battery.
+- ❓ `Blinds` (블라인드): the escalation device that makes safe, passive play
+  progressively more expensive as the match ages — the anti-safe-play pressure
+  ADR 0025 parked into this thread. Mechanism undecided.
+
+### Winning archetypes (STRATEGY-SPACE.md — the value-dial checklist)
+
+Derived backward from the hegemony inequality; before sealing any value, ask
+"which archetype does this kill?" (✅ AGREED framing 2026-07-04). Not mechanics
+themselves — the check the mechanics must keep alive.
+
+1. `정복 축적형` (conquest snowball) — cascade economics; conquest ≈ 30:1 over raiding.
+2. `복속 사슬형` (vassal chain) — 복속 moves coalition mass to my side of the balance.
+3. `어부지리형` (free-rider timing) — wait out AI-vs-AI wars, harvest on timing.
+4. `약탈 소모형` (raid attrition) — burn to lower the coalition's reachable mass.
+5. `방패 우위형` (shield-first) — buy cheap unassailability to fund aggression
+   (not the turtle; the leadership condition rejects pure turtling).
+6. `중원 내선형` (interior lines) — defeat coalition members in detail from the
+   center seat.
+
+Cross-cutting skill multiplier (not a seventh archetype): deception/information
+— the opt-in skill ceiling that sits on top of any archetype.
+
 ## Resolved Phase 1 Decisions
 
 Previously open, now decided. Pointers show where each decision lives.

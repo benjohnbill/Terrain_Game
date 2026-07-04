@@ -53,10 +53,25 @@ playtest variable — the envelope implies roughly 15-25 turns per match; that
 turn count is a derived estimate, not a design commitment. The binding target
 is the wall-clock envelope, with two consequences: a match must end at a
 decision point
-rather than by map completion (the match-arc/victory-condition thread), and
+rather than by map completion (see Match structure below), and
 required per-turn interaction must stay inside the preset-first budget. The
 envelope is a design budget, not a wall clock; casual play stays untimed (time
 pressure remains the separate opt-in question below).
+
+**Match structure.** The match-arc pass (2026-07-04) resolved the shape inside
+that envelope. The map is fully partitioned from turn 1 — 4-6 realms (authoring
+default 5), every realm bordering neighbors, no expand-into-empty-land opening.
+Realms start as mature states (fortresses standing at chokes, armies raised)
+balanced on *survivability* but asymmetric in mass and geometry: a richer,
+multi-front "small 중원" center against smaller, shielded, coalition-capable
+peripheries, so whoever takes the center inherits its exposure (the anti-snowball
+loop). A match arcs standoff → buildup → first war → realignment → deciding
+war → decision point → settlement, budgeted so one player's hand fights ~2-3
+wars. A war is decided by field-army destruction (shield-break → decisive battle
+→ cascade) and converted to gains through settlement rather than
+sector-by-sector conquest; the match ends when a hegemony settlement is
+concluded, not at 100% map control. The sealed model and vocabulary live in
+`docs/features/match-arc/` and `DOMAIN_MAP.md` (Match Arc and Settlement).
 
 **Fun pillars.**
 
@@ -87,10 +102,15 @@ command-card operation plan presets create a distinctive, legible gap-to-close
 The command-card preset structure is accepted in ADR 0024; preset content and
 differentiation remain open.
 
-**Open thread.** Match arc and victory conditions — how a match reaches a
-decision point inside the envelope (settlement/capitulation conditions,
-world-clock pressure events, opt-in clock modes). ADR 0025 parks the deferred
-clock/event questions here.
+**Resolved (match-arc pass, 2026-07-04).** Match arc and victory conditions —
+the decision-point / settlement / hegemony model is sealed (see Match structure
+above and `DOMAIN_MAP.md` Match Arc and Settlement). A match ends when a hegemony
+settlement concludes, reached through reach-priced settlement bundles and
+deterministic acceptance arithmetic read by the player through fog. The
+remaining questions are playtest-shaped rather than open design: the blinds
+mechanism (anti-safe-play pressure), showdown staging (the read-vs-reality
+reveal), and the loser-side experience between "decided" and "settled." Deferred
+clock/event pressure stays parked (ADR 0025).
 
 ## Phase Roadmap
 
@@ -133,8 +153,11 @@ peace terms, war justification, and relationship risk.
 
 ### Phase 3: National Management
 
-Add domestic indicators such as public order, inflation, tax pressure,
-maintenance, food, production, recruitment pool, and unrest.
+Add deeper domestic indicators such as public order, inflation, tax pressure,
+maintenance, food, production, unrest, and a richer recruitment/troop-quality
+system. (The MVP already includes single-track recruitment — 모병 drawing a
+finite per-match manpower pool; Phase 3 is where quality tiers, temporary levies,
+and domestic pressure extend it. See `DOMAIN_MAP.md`.)
 
 ### Phase 4: Events and Historical Liveliness
 
