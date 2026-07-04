@@ -642,7 +642,12 @@ situation judgment's opportunity ranking (ADR 0019); within-sector
 approach choice is plan availability + fit ranking. Display details →
 command-card IA session.
 
-## M12 (PROPOSED — awaiting user confirmation) — World-pulse rates (2026-07-03)
+## M12 (CONFIRMED 2026-07-04) — World-pulse rates (2026-07-03)
+
+Confirmation gate (full-match tempo sheet) met by battery sheets 7–8:
+war settles in 11 turns, match in 23 (35–46 min); the tempo unease was
+resolved by the match-arc thread (decision point + settlement), as the
+disposition below predicted. Values below stand as sealed.
 
 Proposed set, each chained to its derived boundary:
 
