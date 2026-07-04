@@ -42,8 +42,12 @@ Penalty values are set and refined by the combat-formula magnitude pass
 - River crossing: ×0.85 uncontested, deepening to ×0.70 when the
   defender holds the far bank (survey-validated: an opposed crossing is
   a different event from an unopposed one).
-- Strait crossing: ×0.70; an opposed-strait deepening (~×0.55) is
-  recorded as a candidate dial, pending the plan-roster magnitude work.
+- Strait crossing: ×0.70 uncontested, deepening to ×0.55 when the
+  defender holds the far shore (CONFIRMED 2026-07-05, A-1 ruling ⑦:
+  preserves the ladder's uniform −0.15 aggravation step; relaxing to
+  0.70 would erase both the opposed/uncontested distinction at straits
+  and the river/strait distinction under opposition; S1 명량
+  validation ran on this value).
 - Port/harbor staging mitigation unchanged.
 
 ## Consequences

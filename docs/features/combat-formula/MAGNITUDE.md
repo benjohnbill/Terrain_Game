@@ -223,6 +223,18 @@ winner loses `base ÷ R^e`, loser loses `base × R^e` of the engaged body.
 - **Honest gap (recorded):** Fei-River-class bloodless panic collapse
   (command rout at <5% casualties) is not representable — the cliff is
   blood-triggered; morale/panic systems are deferred.
+- **Reserved seat — morale (both directions, ruled 2026-07-05):** the
+  deferred morale system owns two mirror gaps: (a) panic collapse above
+  — will breaking *before* organization (Fei River); (b) **결사항전**
+  (last stand with escape OPEN) — will holding *after* organization
+  breaks (Ansi, Jinju). Blocked-escape annihilation stands are already
+  representable (escape state BLOCKED → no rout conversion, fight to
+  100%); what is deferred is only the *voluntary* refusal to rout.
+  Reopen triggers: sieges read samey in playtest, or players ask why
+  garrisons never hold to the last man. Natural shape when opened: a
+  third defense posture beside Stronghold/Delaying (accept annihilation
+  to buy turns — pairs with 긴급 투입 relief timing). The 30% cliff
+  itself is not touched.
 
 ## Candidate rule — 반도이격 (strike at half-crossing) → owned by the matchup-fraction stage
 
@@ -513,10 +525,26 @@ defense. Effect:
 
 1. **Emergency movement**: route-connected stock within the same
    province rushes to the attacked sector. Moved units fight this turn
-   at **50% effectiveness (가안 — forced-march exhaustion)** and
-   **remain garrisoned afterward** — not single-use. The stripped
-   neighbors are thinner: feint plays (attack A to drain the province's
-   reserve reach, then strike B) emerge from the rules.
+   at **50% effectiveness (CONFIRMED 2026-07-05 — forced-march
+   exhaustion; member of the 0.5-under-duress family with 반도이격's
+   engaged fraction and delaying's exchange)** and **remain garrisoned
+   afterward** — not single-use. **Movement schedule (ruled
+   2026-07-05): 1 reserve point awakens 12.5% of the province's
+   route-connected stock; 8 points (the knee) = the whole province
+   answers.** Relative grammar by design — points buy an awakening
+   *fraction* of what insurance geography placed there, never absolute
+   bodies (an absolute per-point volume was considered and rejected as
+   off-idiom for the attention doctrine). Integer ledger rounds down.
+   With the emergency lever also knee-capped, the reserve bet space
+   closes naturally at 0–8 points. Owed: S6 re-run on this schedule at
+   the next battery run. Timing grammar (clarified 2026-07-05): the
+   *decision* is made before sealing (binding surplus points = the
+   threat-reading bet), the *firing* is automatic after sealing —
+   pre-purchased reaction is the only reaction a simultaneous-seal
+   turn structure allows; the reserve covers what the 20-point hand
+   could not cover with primary defenses. The stripped neighbors are
+   thinner: feint plays (attack A to drain the province's reserve
+   reach, then strike B) emerge from the rules.
 2. **Emergency lever**, capped at the knee (**×1.5**) — the ceiling
    requires a dedicated primary (Myeongnyang requires showing up).
    Conversion 1:1 (the cap is the discount; the insurance premium — 
@@ -535,7 +563,15 @@ redeployment = multi-turn flows whose initiation is primary-action
 work (ADR 0026 grammar — state-scale changes are actions). Historical
 frame: 진관체제 (provincial garrisons answer local incursions);
 its collapse into centralized draw (제승방략) failing in 1592 is the
-historical proof of the layer split.
+historical proof of the layer split. **Range CONFIRMED 2026-07-05:
+same province ∧ route-connected.** A route-distance variant (a nearer
+sector across the province border may respond) was weighed as more
+realistic (beacon-fire coordination between neighboring garrisons) but
+rejected on game grounds: it invents an N-steps dial, and the province
+boundary keeps the reserve pool legible at map scale for both sides —
+enabling province-scale scouting reads and the hollow-province
+conquest-value estimate ("most of that province's stock is standing in
+front of me, so a bloody win here leaves little worth taking").
 
 **Consequences banked:** peacetime troop distribution across provinces
 becomes insurance geography (frozen decisions price the liquid

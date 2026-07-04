@@ -40,7 +40,7 @@ casualties (both directions, headline-blind):
 | Terrain multiplier (지형 배수) | The ground itself; world-owned, never degrades | plains 1.0 / forest·hills 1.2 / mountains 1.5 / pass 2.0 / legendary 2.5 (authored) | D6, M5 |
 | Fortification multiplier (요새 배수) | Player-built works; damageable — `fortificationDamage` stamps lower it AND widen assault frontage | none 1.0 / field works 1.3 / town walls 1.8 / fortress 2.4 / legendary 3.0 (wonder-class build) | D6, M5 |
 | World product (세계 곱) | terrain × fortification, raw — no engine clamp; ceiling is the natural product | buildable max 2.0×3.0=6.0; authored max 2.5×3.0=7.5 | M5 |
-| Water penalty (도하 페널티) | Attack-side multiplier when the attack crosses water; water never strengthens the defender | river 0.85 (uncontested) / 0.70 (opposed bank); strait 0.70 (opposed ~0.55 candidate); port staging mitigates | ADR 0015 (amended), M5 |
+| Water penalty (도하 페널티) | Attack-side multiplier when the attack crosses water; water never strengthens the defender | river 0.85 (uncontested) / 0.70 (opposed bank); strait 0.70 / 0.55 (opposed — CONFIRMED 2026-07-05); port staging mitigates | ADR 0015 (amended), M5 |
 | Frontage (협로/강습 폭) | Cap on the engaged attacker body — classifies, never multiplies; mandatory removal paths | authored per choke sector and per fort tier; values → matchup stage | D9, M5 |
 | 반도이격 (strike at half-crossing) | A force whose same-turn flow crosses water, if intercepted, engages with a split body and the water side counts as blocked escape | engaged fraction 가안 50% → matchup stage | M4 (candidate) |
 | R (전투비) | attack power ÷ defense power; scale-invariant | same odds at any absolute size | D5 |

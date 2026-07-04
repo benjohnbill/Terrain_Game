@@ -53,7 +53,11 @@ sometimes correct, never mandatory (free-riding is a legitimate line).
    scope: single-track 모병 (+10% of national cap/turn, 100%
    effectiveness, pool-drawn) + finite manpower pool; 동원 is a
    reserved seat (MAGNITUDE.md M13). Dial values → battery sheet 9.
-2. **Vassal permanence in the MVP** — can a vassal defect? (Phase 2
-   betrayal's reserved seat; MVP needs a one-line ruling.)
+2. ~~Vassal permanence in the MVP~~ — resolved 2026-07-05: no
+   defection within the match; **chain collapse** on overlord fall
+   releases all vassals (GLOSSARY 복속 row, full four-line terms).
+   Archetype 2 rider: the chain hegemon's neck is single — "kill the
+   head" becomes the coalition's counterplay, strengthening the
+   counter-web.
 3. **Blinds** tax the slow archetypes (3/5) — their balance is coupled
    to the blinds design (GLOSSARY queue #5).

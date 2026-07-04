@@ -54,4 +54,56 @@ pending** per sheet.
 
 ## User verdicts
 
-(to be filled in as ruled; delete or absorb this prototype afterward)
+- **Finding 1 — strait-choke absolutism: ACCEPTED in principle
+  (2026-07-05).** The triple stack is not a double-count — frontage
+  classifies (how many can fight), terrain multiplies (how well the
+  holder fights), water penalizes (the crossing's cost); S1 is a
+  reproduction of Myeongnyang, not a bug. The strategic price of
+  absolute defense is already charged at the match layer by the
+  hermit clause (chokes narrow doors both ways → projectable mass
+  falls → out of the balance). Riders (authoring discipline, owed to
+  B's map-authoring stage): (1) legendary chokes are a scarce
+  resource — a handful per active region; (2) a legendary choke's
+  removal paths must be authored one grade more concretely than
+  ordinary chokes (actual port sectors / sea routes on the map) —
+  a strengthening of M11's mandate. The opposed-strait 0.55 value
+  itself is explicitly deferred to ruling ⑦ (confirm vs relax 0.70).
+- **Finding 3 — siege blood rate: ACCEPTED (2026-07-05).** 12%÷R^1.4
+  of the whole army per DP siege turn (~24% of 6,000 for one
+  fortress ≈ 2.4 turns of recruitment ≈ ~16% of the match manpower
+  budget) is the price that keeps the fortress quartet
+  (storm / DP siege / starvation bypass / encirclement)
+  non-dominated — cut it and DP becomes the single answer, the
+  fortress turns from a puzzle into a toll booth. The inversion
+  (higher commit → higher R → less blood, absolute as well as
+  fractional) is the R-prices-everything law applied consistently,
+  not an exception. **Principle worth carrying into the fortress
+  claim block (user, 2026-07-05): "a fortress guarantees only THAT
+  the attacker pays; WHICH currency he pays in (blood / time+pinning
+  / preconditions) is the attacker's choice."** Rider: the
+  fortification-vs-recruitment exchange rate (1 build turn vs 1
+  recruit turn) is registered as an A-3 verification target.
+- **Finding 4 — delaying + fortification: CONFIRMED as assumed
+  (2026-07-05).** A delaying defender loses the fortification
+  multiplier (walls are a promise to hold a point; refusing decisive
+  battle abandons them) but keeps the terrain multiplier (the world's
+  ground travels with the fight — "지형은 싸움을 따라오지만, 성벽은
+  못 따라온다"). Keeping the fort multiplier would merge half-blood +
+  rout immunity + top defense into one card, killing Stronghold
+  Defense and breaking the S2 siege quartet. The abandoned works fall
+  to the attacker intact — denying them is Strategic Abandonment +
+  Scorched Earth's job, which keeps all three defense cards alive for
+  different reasons. Partial retention (e.g., half fort value)
+  rejected: walls are discrete — you are on them or you are not.
+- **Finding 2 — DP one-click demolition: ACCEPTED as-sealed
+  (2026-07-05).** Grounds: the demolition is a property of the
+  casualty curve, not of the plan — 12% × R^1.4 crosses the 30% rout
+  cliff at R ≈ 1.92 regardless of plan; Deliberate Pressure is merely
+  the only plan that reaches that R against walls (no escalade
+  frontage cap). Risk is priced upstream (buildup mass, commit
+  concentration, exposure elsewhere, worn prize via
+  usableValueDamage), so overwhelming-R sieges ending in one turn is
+  the curve's natural end, not an exploit. Display language owed at
+  implementation: "수비대 와해 · 성 포기". Rider: 결사항전
+  (voluntary last stand with escape open) registered into the morale
+  reserved seat and deferred — see MAGNITUDE.md M4 validation notes.
