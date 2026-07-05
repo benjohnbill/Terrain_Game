@@ -153,11 +153,14 @@ resident; display-debts, post-B-map):
    after the small realm is digested — no peer war launches, no match
    ends.** War appetite needs a designed rule (fog misreads +
    opportunism reads + blinds pressure are the candidates); the
-   harness placeholders are named in `TEST-LADDER.md`. Seven further
-   spec gaps registered in `mockup/combat-calc/tournament.js`
-   §SPEC_GAPS (two-front allocation, attacking-a-vassal semantics,
-   settlement initiative, stalled-war exit, indemnity spend,
-   truce/redeclaration, front redraw after cession).
+   harness placeholders are named in `TEST-LADDER.md`. **Disposition
+   sealed 2026-07-06 (A-4 B4):** this gap plus six further prototype
+   spec gaps (two-front allocation, attacking-a-vassal semantics,
+   settlement initiative, stalled-war exit, truce/redeclaration, front
+   redraw after cession) are routed to owning feature + B-design phase
+   in `RULINGS.md` §SPEC_GAPS disposition — all seven defer to B, none
+   authored as paper rules (indemnity spend, the eighth, was paid by
+   M14). See that record before designing any of them.
 9. **Showdown staging (UX requirement, registered 2026-07-04)**: the
    resolution moment must dramatically reveal "my read vs what was
    actually there" — this single surface carries both the highlight-reel

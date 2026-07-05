@@ -21,15 +21,6 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   Vocabulary Law; renames are the dangerous case for agents. Add an
   alias field (Korean casual phrases, code identifiers) to glossary
   schema (Codex P2).
-- [ ] **Sheet-12 spec gaps → canon** (registered 2026-07-05 evening):
-  the undocumented rules in `mockup/combat-calc/tournament.js`
-  §SPEC_GAPS (AI war appetite, two-front allocation, attacking-a-vassal
-  semantics, settlement initiative, stalled-war exit,
-  truce/redeclaration, front redraw after cession) are recorded only in
-  the prototype + GLOSSARY queue-8 note. Each needs a canon home
-  (GLOSSARY row, ADR, or B-map requirement) — work during A-4 or when
-  the owning feature is touched. *Indemnity spend PAID 2026-07-05:
-  M14 treasury (배상 lands as cash, spent at normal prices).*
 - [ ] **Economy legibility surface** (registered 2026-07-05, A-3
   epistemic rider): the thin economy is numbers-only; a UI read (where
   my 생산 comes from / where it goes) is owed to the A-4 display-debt
@@ -55,6 +46,17 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
 
 ## Paid
 
+- [x] 2026-07-06 — **Sheet-12 spec gaps → canon (A-4 B4)** — the 7 open
+  `mockup/combat-calc/tournament.js` §SPEC_GAPS given a canon home:
+  disposition record in `docs/features/match-arc/RULINGS.md` §SPEC_GAPS
+  disposition routes each to owning feature + B-design phase + harness
+  candidate + recommended lean. All seven defer to B (AI-behavior /
+  force-allocation / map-topology — playtest- and B-map-shaped; no paper
+  rules authored, per the handoff over-authoring warning). GLOSSARY
+  queue-8 and combat-formula INDEX Honest Gaps point to it. Indemnity
+  spend (the 8th) was already paid by M14 treasury. Gap ③ (attacking a
+  vassal) carries an identity choice surfaced to the user; the rest are
+  structural/disposition closes.
 - [x] 2026-07-05 — **DOMAIN_MAP slimming (Codex P1)** — Match Arc
   section entries (패권 결정점, 투사 가능 질량, 수락 산술, 복속) cut from
   duplicated mini-spec (sealed numbers, riders, dates) to qualitative

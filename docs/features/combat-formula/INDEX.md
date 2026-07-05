@@ -114,6 +114,13 @@ pass: plan axis magnitudes only gain meaning through this formula.
   perfect-information board freezes into deterrence equilibrium without an
   attack-inducement mechanism; acceptance test registered in
   `../match-arc/TEST-LADDER.md`.
+- **Force allocation + front topology (SPEC_GAPS ②/⑧, disposed A-4 B4)**:
+  two prototype-surfaced gaps in this feature's scope — the single mobile
+  field army's allocation across simultaneous wars (ruling ⑨ already fixes
+  the static garrison side), and front-graph redraw after cession (ruling ⑨
+  derives fronts from adjacency, but the border graph only exists in B's
+  map). Both defer to B; disposition + harness candidates in
+  `../match-arc/RULINGS.md` §SPEC_GAPS disposition.
 
 ## Workspace Files
 

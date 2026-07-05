@@ -60,4 +60,7 @@ PVP debts). Sheet 12 (L2 tournament) COMPLETE 2026-07-05: rulings
 ⑮/⑯/⑰ sealed; AI war appetite (queue 8) confirmed load-bearing; 8 spec
 gaps registered in `mockup/combat-calc/tournament.js` §SPEC_GAPS.
 A-3 COMPLETE same day (M14, rulings ⑱–㉑ — cap-growth pricing paid,
-sheet-12 re-run closed 27% at derived caps). Next: A-4 doc debts.
+sheet-12 re-run closed 27% at derived caps). **A-4 B4 COMPLETE
+2026-07-06:** the 7 open spec gaps given a canon home in `RULINGS.md`
+§SPEC_GAPS disposition — all defer to B (owning feature + design phase
++ harness candidate + lean; no paper rules). Next: A-4 B5–B6.

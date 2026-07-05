@@ -128,3 +128,86 @@ Small/hermit seats' L2 losing record is ACCEPTED for MVP — their win
 paths live in the L2 placeholder list (`TEST-LADDER.md` reading
 rule); no compensator now, standing L3 playtest watch. Temperament
 neutrality PASS at the same batch.
+
+## SPEC_GAPS disposition (A-4 B4, 2026-07-06)
+
+Not a mechanic seal — a **disposition record**. The sheet-12
+tournament (`mockup/combat-calc/tournament.js`) is a Working-layer
+spec-completeness auditor: to run at all it had to invent placeholder
+rules for gaps the canon does not state (`§SPEC_GAPS`). This section
+gives each open gap a canon home so it stops living only in the
+prototype. **The ruling here is where/when each gets designed, NOT the
+rule itself** — the handoff's explicit warning stands: these are
+AI-behavior, force-allocation, and map-topology questions that are
+playtest- and B-map-shaped; authoring paper rules now would over-fit
+ahead of the slice. Each gap therefore routes to (owning feature,
+design phase, harness candidate, recommended lean); all seven **defer
+to B** (the playable slice / terrain-cradle map). Indemnity spend —
+the eighth `§SPEC_GAPS` entry — was PAID separately by M14 treasury
+(배상 lands as cash at normal prices) and is not carried here.
+
+Match-arc-owned (match flow + AI + settlement):
+
+- **① AI war appetite** → GLOSSARY queue 8 (confirmed load-bearing);
+  MVP AI-behavior requirement designed in B alongside ADR 0025
+  personalities. On true values every bot requires the ~1.7 pre-war
+  ratio, so a viability-parity board freezes after the small realm is
+  digested — no peer war launches, no match ends. Candidate levers
+  (TEST-LADDER placeholders): fog misreads + opportunism reads +
+  blinds pressure. **Lean:** the opportunism read — the ratio is
+  checked against screen + garrison when a realm's field army is
+  pinned on another front — is the load-bearing motion the sheet-8 arc
+  hand-scripted (중원–동평 war); B's AI must produce that motion, not
+  a static ratio gate.
+- **③ Attacking a vassal** → vassalage, deferred to B / Phase-2
+  betrayal design (pre-Phase-2 vassals are permanent, ruling ⑤).
+  Harness candidate: vassals cannot be attacked at all — they sit
+  behind the overlord's shield, war routes through the overlord (the
+  ⑨ shared-front widening already makes attacking the overlord the
+  path). **Lean:** the harness simplification is the clean MVP default
+  and consistent with vassal permanence — BUT it gates the
+  chain-collapse liberation horizon (queue 10), so the final call is
+  B/playtest, not paper. *Identity-flavored — surfaced to the user.*
+- **④ Settlement initiative** → 정산 layer + showdown staging
+  (queue 9), deferred to B. Canon has the acceptance arithmetic
+  (수락 산술); initiative and concession tempo are the flow around it,
+  same family as the showdown-staging UX debt. Harness candidate:
+  winner proposes, one step down the preset ladder per turn. **Lean:**
+  "winner proposes" is the natural structural default; concession
+  tempo is a UX/AI-tuning number for B.
+- **⑤ Stalled-war exit (white peace)** → match flow, deferred to B,
+  coupled to gap ①. No status-quo / white-peace rule exists; a
+  designed war appetite that launches wars must also resolve stalls or
+  it manufactures permanent stalemate wars. Harness candidate: 2
+  stalled turns → occupied sectors return, truce 4. **Lean:** a
+  status-quo exit is structurally required; the thresholds are
+  B-tuning. (The board-level bipolar stalemate is already owned by
+  blinds, queue 5; white-peace is its war-level analog.)
+- **⑦ Truce / redeclaration** → match flow, deferred to B, pairs with
+  gap ⑤. Nothing bars an instant re-war after settlement, which would
+  make settlement meaningless. Harness candidate: 4-turn truce lock.
+  **Lean:** a truce lock is structurally required; the duration is
+  B-tuning.
+
+Combat-formula / map-owned (force allocation + topology):
+
+- **② Two-front army allocation** → force roles (ADR 0009) + B-map
+  requirement (two simultaneous fronts need the front graph). Partly
+  already answered: ruling ⑨ fixes that border garrisons hold their
+  own facing regardless, so the residual is only the single MOBILE
+  field army's allocation among simultaneous wars. Harness candidate:
+  field defends the biggest defensive war, other fronts get a 20%
+  screen, garrisons hold sieges alone. **Lean:** the ⑨ split
+  (garrisons static per facing; field army = the one mobile reserve)
+  is the structural spine; screen % and which-war-picked are
+  B/AI-tuning.
+- **⑧ Front redraw after cession** → B-map requirement (explicit).
+  Ruling ⑨ derives fronts from adjacency, but the border graph only
+  exists in B's map; ceded interior sectors must re-wire adjacency
+  (the prototype holds adjacency static). No paper rule is possible
+  without the map — hard B-map dependency.
+
+Close-out: this section is the canon home for all seven; GLOSSARY
+queue 8 points here. When B opens a terrain-cradle / slice feature
+dir, these B-inputs migrate there (with the handoff §B undesigned-input
+list) and this record becomes the historical why.
