@@ -16,16 +16,6 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   Vocabulary Law; renames are the dangerous case for agents. Add an
   alias field (Korean casual phrases, code identifiers) to glossary
   schema (Codex P2).
-- [ ] **Economy legibility surface** (registered 2026-07-05, A-3
-  epistemic rider): the thin economy is numbers-only; a UI read (where
-  my 생산 comes from / where it goes) is owed to the A-4 display-debt
-  family / B's UI work.
-- [ ] **Validation level as seal metadata** (Codex P2): stamp seals
-  with their test-trust level (L0 hand reasoning / L1 grid / L2
-  tournament / L3 playtest) so a reader sees how verified a value is.
-- [ ] **`npm run docs:check` lint** (Codex P2, optional tooling):
-  grep-level checks — "amended" references without ADR stamp, quickref
-  older than newest seal date, duplicate term headers.
 - [ ] **Model-doc naming unification + promotion ladders to root**
   (registered 2026-07-05, A-4 B1 discussion): the bespoke per-feature
   model-doc names (MAGNITUDE / FORMULA / MATCHUP / CATALOG /
@@ -35,11 +25,30 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   ladder (model docs → DESIGN) symmetric with GLOSSARY→DOMAIN_MAP and
   RULINGS→ADR, so all three Production tiers connect to root the same
   way. NOT A-4 B1 scope; a deliberate separate pass (user-flagged).
+## Deferred (user-decided 2026-07-06, A-4 B6 — revisit on trigger)
+
+- [ ] **`npm run docs:check` lint** (Codex P2, optional tooling):
+  grep-level checks — "amended" references without ADR stamp, quickref
+  older than newest seal date, duplicate term headers. **User deferred:
+  no generator yet; adopt when a misfile actually slips (YAGNI).**
 - [ ] **Working-layer sublabels** (Codex P2): distinguish staging
   verdicts / generated digests / planning scratch / risk register
-  inside the Working layer if misfiling actually occurs.
+  inside the Working layer. **User deferred: no misfiling observed —
+  revisit if it occurs (emergence-limit).**
 
 ## Paid
+
+- [x] 2026-07-06 — **L-level seal-stamp convention ADOPTED (Codex P2,
+  A-4 B6)** — the optional validation-level stamp (L0 hand / L1 grid /
+  L2 tournament / L3 playtest) codified into
+  `.claude/rules/documentation-law.md` § seal mechanics: seals MAY carry
+  an L-stamp; applied going forward, retrofit optional, not a fourth
+  mandatory field. The other two Codex P2s (`docs:check` lint,
+  Working-layer sublabels) were user-deferred — see Deferred above.
+- [x] 2026-07-06 — **Economy-legibility surface relocated (A-4 B6)** —
+  moved from a doc-sync debt to `docs/DISPLAY-DEBT.md` (the display-debt
+  register), where the whole UI-read family now parks. Design deferred
+  to B's UI work.
 
 - [x] 2026-07-06 — **ADR header normalization sweep (Codex P1, A-4 B5)**
   — amendment-carrying ADR headers normalized to the law's structured

@@ -14,7 +14,7 @@ restate this law elsewhere. Auto-load carries LAW only; canon CONTENT
 | Projection (투영) | `DESIGN.md`, `DOMAIN_MAP.md` | Stable summaries of sealed truth (architecture / language). Updated only in doc-sync batches; truth is never authored here first. |
 | Record (기록) | `docs/adr/` (promoted) · feature `RULINGS.md` (birthplace) | Why decisions were made. ADR = architecture-grade / cross-feature; RULINGS = feature-local rulings that promote up when they outgrow the feature. Append-only + supersession protocol below. |
 | Production (생산) | `docs/features/<slug>/` | The workshop where truth is minted (with user seal). File roles below. |
-| Working (작업) | `mockup/*/NOTES.md`, `docs/superpowers/`, `docs/DESIGN-RISKS.md`, `docs/GLOSSARY-QUICKREF.md` (generated), `.context/` (untracked handoffs) | Time-stamped records and idea banks — consult for context and parked/deferred ideas; CURRENT truth lives in the seal chain, not here. NOTES verdicts are a staging area: they must sync to Production/Projection in the same session's doc-sync batch. |
+| Working (작업) | `mockup/*/NOTES.md`, `docs/superpowers/`, `docs/DESIGN-RISKS.md`, `docs/GLOSSARY-QUICKREF.md` (generated), tracked debt ledgers (`docs/SYNC-DEBT.md` doc-sync debts, `docs/DISPLAY-DEBT.md` UI-design debts), `.context/` (untracked handoffs) | Time-stamped records and idea banks — consult for context and parked/deferred ideas; CURRENT truth lives in the seal chain, not here. NOTES verdicts are a staging area: they must sync to Production/Projection in the same session's doc-sync batch. Debt ledgers are registers only — a row points to the mechanic's birthplace, never redefines it. |
 | Sanctuary (성역) | `docs/teach/` | The user's own space. Agents do not touch it. |
 
 ### Production file roles (`docs/features/<slug>/`)
@@ -57,6 +57,17 @@ battery sheet, or user quote). Bold prose without these three is not a
 seal. Sync debts that cannot be paid in-session are recorded in
 `docs/SYNC-DEBT.md` (tracked ledger) — an unrecorded debt is a
 violation, an unpaid-but-recorded one is normal operation.
+
+**Validation level (optional seal metadata, adopted 2026-07-06)**: a
+seal MAY additionally carry a test-trust stamp showing how verified its
+value is — **L0** hand reasoning · **L1** decision grid · **L2**
+tournament / battery sheet · **L3** playtest (the test-trust ladder,
+`docs/features/match-arc/TEST-LADDER.md`). Applied going forward;
+retrofitting existing seals is optional, not required. A seal without an
+L-stamp is still a valid seal — the stamp adds legibility, it is not a
+fourth mandatory field. (Codex P2; the `docs:check` lint and
+Working-layer sublabels from the same audit stay deferred — see
+`docs/SYNC-DEBT.md`.)
 
 ## ADR supersession protocol
 
