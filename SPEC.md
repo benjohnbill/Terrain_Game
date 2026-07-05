@@ -37,6 +37,58 @@ Phase 1 should not feel like only a set of generic terrain tiles. The first
 active area should include medium-sized named provinces with population,
 economy, terrain composition, strategic value, and background hooks.
 
+## Core Design Principles
+
+The propositions below are the game's identity — the always-true design
+commitments the rest of this spec, the domain model, and the ADRs elaborate.
+They carry no numbers on purpose: each names *what is true*, while values,
+rules, and the full definition live at the pointer (birthplace stays
+authoritative — this spec declares, it does not restate).
+
+1. **Land-derived state.** Every mutable state — economy, population,
+   military, recovery, projectable mass — is derived each turn from the
+   sectors a realm holds; substance is never stored where it can be derived
+   from the land. The land gives the body; the player gives the mind — command
+   attention is the one deliberate exception, supplied regardless of realm
+   size. (DOMAIN_MAP § Design Principle; ADR 0001; combat MAGNITUDE M14.)
+
+2. **The uncertainty duel is the core pressure engine.** Tension comes from
+   information-asymmetric simultaneous commitment under fog — with
+   learnable-but-never-solvable opponent tendencies — not from a wall clock.
+   (ADR 0025; DOMAIN_MAP `Uncertainty duel`.)
+
+3. **One judgment per turn.** The fun is a single high-stakes read each turn —
+   one poker hand, not a checklist. Spreading a turn across many commands would
+   dilute both the reward of a good read and the sting of a bad one. (Combat
+   MAGNITUDE § Identity tension; ADR 0020 action-capacity divisibility.)
+
+4. **Deterministic resolution; all uncertainty is information.** There is no
+   random roll at resolution — every experienced uncertainty is fog over known
+   machinery. Poker, not dice. (Combat FORMULA D1; DOMAIN_MAP § Combat
+   Resolution.)
+
+5. **The ending is the detection of irreversibility.** A match ends not when
+   the math first tips but when the system detects that no realm or coalition
+   can reverse the balance — that moment opens settlement negotiation, and
+   concluding it is the player's decision, never an automatic game-over.
+   (match-arc GLOSSARY 결정점; DOMAIN_MAP § Arc phases.)
+
+6. **Uncertainty must be skill-piercable, never fate.** Every loss must trace
+   to a decision, not to a spawn dice — the test is whether a perfect player in
+   the same seat could have survived. (fog-of-war-discovery § Design Guardrail;
+   ADR 0013.)
+
+7. **Blood is a permanent currency.** Casualties leave the match's finite
+   manpower pool for good — only the dispersed return; war's cost is paid in
+   something that does not refill within the match. (match-arc GLOSSARY 인력 풀;
+   combat MAGNITUDE M13.)
+
+*Candidate, deferred to post-L3 playtest:* balancing is governed by war
+arithmetic rather than politics — checking a runaway leader is available and
+sometimes correct but never mandatory (free-riding is a legitimate line). Held
+for wording until a playtest confirms the framing (STRATEGY-SPACE § Balancing
+note).
+
 ## Positioning and Fun Pillars
 
 **Positioning.** A "simple Civilization": a Civilization-depth *world* (terrain,
