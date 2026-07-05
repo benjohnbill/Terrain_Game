@@ -9,6 +9,23 @@ game.
 Conversation with the user should follow the global Korean honorific style.
 Generated project artifacts should use neutral professional language.
 
+## Domain Terminology Policy (adopted 2026-07-05)
+
+- Canonical domain vocabulary lives in `DOMAIN_MAP.md` and the feature
+  glossaries (`docs/features/*/GLOSSARY.md`). Use registered terms only —
+  in conversation, documents, and code alike.
+- The canonical identifier is the **industry-standard English term**
+  (e.g., hermit kingdom, power projection, decisive victory, peace
+  terms). Korean display names are paired in the glossaries for UI copy
+  and briefing sentences; do not invent ad-hoc Korean translations in
+  conversation — use the English term directly. Abbreviations are fine
+  after introducing the full form once in parentheses.
+- Coining a new term mid-work requires an explicit `[조어]`/`[coinage]`
+  tag, and the term must be registered into the relevant glossary or
+  discarded within the same exchange — no silent vocabulary growth.
+- Glossary entries pair three columns: Korean display name ↔ standard
+  English identifier (matching code identifiers) ↔ definition.
+
 ## Read Order
 
 Before substantial work, read:
