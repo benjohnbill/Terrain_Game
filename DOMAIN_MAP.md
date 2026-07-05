@@ -316,15 +316,21 @@ naming, promotion, the generated Quick Reference) lives in
     instead. Scouting is the bridge — scouting a 불확실 border resolves it to 위협
     or safe. Its concrete one-turn defense focus is a front sector. (Ties into
     `js/intel.js` and the fog-of-war-discovery feature.)
-  - ✅ Posture is a lens, truth is invariant: the reading has three layers —
-    truth (which provinces are 위협/기회/불확실 and their magnitude;
-    posture-invariant), salience (posture tilts order/emphasis of the finite
-    top-N), recommendation (posture shapes the prefilled command). Posture never
-    edits truth. Hard constraints: (a) coverage — every non-empty axis keeps at
-    least one surfaced highlight; (b) legibility — collapsed counts are always
-    shown ("정비 자세 · 위협 3건 접힘"); (c) dissonance — a strong posture↔truth
-    mismatch surfaces first. The dissonance signal is a concrete first piece of
-    the OPEN skill edge (SPEC pillars 2-3).
+  - ✅ Posture is an annotation lens, truth is invariant (v5 surface —
+    ADR 0019 amended 2026-07-06): posture never edits truth; it annotates
+    the invariant reading on a map-only overview. Each lens asks a
+    different question — 방어 = "where can I be breached"
+    (reachable-weakest-link labels on own border provinces), 공세 = "what
+    can I take", 정찰 중시 = "what can't I see", 균형 = base — brightening
+    its axis and dimming the rest. The overview no longer recommends
+    (rec-ring / advice retired); the ADR 0020 commit prefill lives on the
+    summoned work surface. Hard constraints: (a) coverage — every
+    non-empty axis keeps a surfaced highlight; (b) legibility — collapsed
+    counts always shown ("정비 자세 · 위협 3건 접힘"); (c) leak-through
+    (succeeds the old dissonance signal) — a suppressed-axis tension above
+    LEAK_RATIO 1.5 × the strongest active-lens tension stays bright with a
+    red pulse, so an urgent fact cannot be hidden by the lens. Authoritative
+    definition + history: ADR 0019 + its 2026-07-06 amendment.
   - ✅ Variety contract with fog: 형세판단 is a lens — it transmits and amplifies
     input variety, it does not generate it. Cross-playthrough content variety is
     the fog-of-war-discovery feature's job (random spawn + fog on the authored

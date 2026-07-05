@@ -3,6 +3,7 @@
 Date: 2026-07-01
 
 Status: Accepted
+Amended: 2026-07-06 (situation-map v5 front-sector pass) — posture becomes a pure annotation lens (overview salience/recommendation retired), the dissonance signal is succeeded by leak-through, and the recommendation moves to the summoned work surface; the reading model itself is unchanged. See § Amendment.
 
 ## Context
 
@@ -113,3 +114,51 @@ province level**, not a flat list of salient cells.
   lever.
 - Updates DOMAIN_MAP `Situation judgment`. Complements ADR 0013 (map-first UX),
   ADR 0011 (posture as guidance), ADR 0017 (opt-in depth), ADR 0018 (MVP scope).
+
+## Amendment (2026-07-06, situation-map v5 front-sector — A-4 B5)
+
+The situation-map v5 design pass (2026-07-02 design session; the mockup
+landed on main via SDD — `docs/superpowers/plans/2026-07-02-situation-map-v5-map-only.md`)
+refines the *surface* of this decision. The reading MODEL above is
+unchanged: truth-invariance, the 판세/위협/기회/불확실 question set,
+province→sector→hex drill-down, weakest-link / sum / min-confidence
+aggregation, relational fog-gated 위협, the variety contract, and the
+budget < attention bridge all stand. What changes is how posture and
+the recommendation reach the player.
+
+- **Posture becomes a pure annotation lens — retires the salience and
+  recommendation layers of § Decision 4 on the overview.** The overview
+  is map-only: no sidebar top-N list, no rec-ring, no advice text. Each
+  posture answers a different question with on-map annotations over the
+  invariant truth — 방어 = "where can I be breached" (reachable-weakest-link
+  labels on own border provinces), 공세 = "what can I take"
+  (force-comparison chips on reachable foes), 정찰 중시 = "what can't I
+  see" (confidence labels on foes), 균형 = base view. The active lens
+  brightens its axis and dims the others; it never edits truth. Judgment
+  is the player's — the overview no longer recommends.
+- **Leak-through succeeds the dissonance signal (§ Decision 4c).** While a
+  lens is active, any suppressed-axis tension whose magnitude exceeds
+  `LEAK_RATIO (1.5) ×` the strongest active-lens tension stays at full
+  brightness with a red pulse ring — same guardrail intent (an urgent
+  fact cannot be hidden by the lens), expressed as a persistent on-map
+  encoding instead of a warning line. Constraints 4a (coverage) and 4b
+  (legibility) survive as on-map encodings.
+- **Recommendation moves off the overview onto the summoned work
+  surface.** The ADR 0020 statistical-average commit prefill (§ Decision
+  6) is unchanged, but it now lives only on the transient work surface
+  summoned when a target is named — not as a map rec-ring. The overview
+  reads; the work surface commits.
+- **Unified action grammar: name target → summon surface → seal plan.**
+  The front sector is the unit of strategic action (ADR 0022): the hero
+  province routes through its sector drill; fog / opportunity provinces
+  summon a sectorless minimal card. One grammar for every action.
+
+Consequence delta: the `js/situation.js` rework in § Consequences now
+targets posture → annotation-lens (not salience + recommendation) and
+leak-through (not dissonance); the commit prefill is owned by the
+command / work-surface layer. The v5 mockup demonstrates this; the
+game-code rework remains an owed follow-up (front-sector-drill deferred
+items). SPEC was re-read at amendment time and is already consistent
+(posture guides analysis rather than granting bonuses; the preset-first
+skill floor survives via the work-surface prefill), so no SPEC change.
+DOMAIN_MAP `Situation judgment` synced this batch.

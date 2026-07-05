@@ -49,7 +49,7 @@ a target; ← is amended/superseded by a later ADR.
 | 0016 | Web Technology Stack With Trigger-Based Migration Path | 2026-06-29 | Accepted | — |
 | 0017 | Positioning — Civ-Depth World, LoL-Shaped Interaction | 2026-07-01 | Accepted | — |
 | 0018 | Phase 1 MVP — Core Fun First, Defer Capacity/Overclock | 2026-07-01 | Accepted | ← Amended by 0020 (single divisible pool → core) |
-| 0019 | Situation Judgment as a Structured, Posture-Lensed Reading | 2026-07-01 | Accepted | v5 front-sector amendment pending (A-4 B5) |
+| 0019 | Situation Judgment as a Structured, Posture-Lensed Reading | 2026-07-01 | Accepted | Self-amended 2026-07-06 (v5 front-sector — lens/leak-through, no overview recommendation) |
 | 0020 | Minimal Action-Capacity Divisibility is Core | 2026-07-01 | Accepted | → Amends 0018 |
 | 0021 | Under-Commitment Failure Causes Front-Sector Loss | 2026-07-01 | Accepted | — |
 | 0022 | Front Sectors as the One-Turn Operational Layer | 2026-07-01 | Accepted | → Amends 0014 |
