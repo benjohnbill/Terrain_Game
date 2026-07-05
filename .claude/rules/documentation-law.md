@@ -75,10 +75,18 @@ Decision section.
   (birthplace and single definition point of feature terms, status
   AGREED/PROPOSED) · Tier 2 = everything else — USE and REFERENCE
   only, never define.
-- **Single-definition rule**: a term's definition exists in exactly
-  one place (Tier 1 until promotion, Tier 0 after — the Tier-1 row
-  then becomes a pointer). Paraphrasing a definition in a Tier-2 file
-  is drift.
+- **Single-definition rule**: a term's authoritative definition lives
+  at its **birthplace** — the tier where it is actively worked — and
+  nowhere else copies it. A feature-born term is authoritative in its
+  feature `GLOSSARY.md` (definition) + `RULINGS.md` (history);
+  promotion adds a Tier-0 `DOMAIN_MAP.md` entry that is a qualitative
+  **summary + pointer**, NOT a second definition or a value restatement
+  (the feature doc stays authoritative). A project-native term (no
+  feature birthplace) is authoritative directly in `DOMAIN_MAP.md`.
+  Every non-birthplace surface (a promoted term's DOMAIN_MAP entry,
+  `INDEX.md`, the QUICKREF, any Tier-2 file) holds a pointer/summary,
+  never a normative copy — paraphrasing an authoritative definition as
+  if normative is drift.
 - **Naming**: canonical identifier = industry-standard English,
   matching code identifiers (`projectable mass` ↔ `projectableMass`);
   header format `English canonical (한국어 표시어)`. Prefer standard
@@ -92,7 +100,9 @@ Decision section.
   `AGREED/PROPOSED/rejected-recorded`.
 - **Promotion**: a Tier-1 term is a promotion candidate once a second
   feature or a root doc needs it; promotion happens in doc-sync
-  batches, never silently.
+  batches, never silently. Promotion *adds* a Tier-0 summary entry (per
+  the single-definition rule above) — it does not move the definition
+  out of the feature doc, which stays authoritative.
 
 ## Session-close ritual (standing duties)
 

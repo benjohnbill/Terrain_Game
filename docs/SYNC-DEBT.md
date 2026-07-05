@@ -16,11 +16,6 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   ADR-XXXX (date)` + one-line delta). Known offenders: ADR 0015 still
   `Accepted` while combat GLOSSARY says "(amended)"; ADR 0014 lacks
   date + delta. Include a status index table in `docs/adr/README.md`.
-- [ ] **DOMAIN_MAP slimming** (Codex P1): promoted entries carry
-  mini-spec prose duplicating feature seals (projectable mass,
-  settlement, acceptance arithmetic, vassalage). Cut to definition +
-  pointer per the single-definition rule; add source-seal + last-sync
-  metadata line per entry (Codex fix 6).
 - [ ] **Term lifecycle beyond promotion** (Codex P1): define
   proposed → agreed → promoted → renamed → deprecated states in the
   Vocabulary Law; renames are the dangerous case for agents. Add an
@@ -60,6 +55,17 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
 
 ## Paid
 
+- [x] 2026-07-05 — **DOMAIN_MAP slimming (Codex P1)** — Match Arc
+  section entries (패권 결정점, 투사 가능 질량, 수락 산술, 복속) cut from
+  duplicated mini-spec (sealed numbers, riders, dates) to qualitative
+  definition + pointer to the feature GLOSSARY/RULINGS, matching the
+  Combat Resolution section's existing discipline. Added the 5 missing
+  promoted terms (긴급 투입/예비대, 동원 가시성, 항복 수확, 양동 후속타,
+  기축통화 원칙). Sync metadata added at SECTION granularity (not
+  per-entry — always-load/maintenance economy; flagged for review).
+  A-4 batch B2. *Note: exposed a law-wording tension (single-definition
+  rule "Tier 0 after promotion" vs DOMAIN_MAP-as-Projection-summary) —
+  see A-4 plan law-gap log.*
 - [x] 2026-07-05 — **glossary row splitting (Codex P1)** — match-arc
   GLOSSARY rows cut to definition + current value + seal stamp;
   ruling history (⑧–⑰) relocated to `docs/features/match-arc/

@@ -425,6 +425,10 @@ the fixed vocabulary in `docs/features/combat-formula/GLOSSARY.md`; every dial
 value lives in `docs/features/combat-formula/MAGNITUDE.md` (M1–M13). Terms here
 are qualitative — numbers are MAGNITUDE's.
 
+_Last synced from Production 2026-07-05 (A-4 B2), authoritative source
+`docs/features/combat-formula/` GLOSSARY + MAGNITUDE. This section summarizes;
+on any divergence the Production seal is truth (documentation-law conflict rule)._
+
 - ✅ `Resolution pipeline`: `attack power = troop stock × lever(commit) ×
   quality × plan/matchup mods × water penalty`; `defense power = garrison ×
   lever × terrain × fortification`; `R = attack ÷ defense`. R past the plan's
@@ -501,6 +505,31 @@ are qualitative — numbers are MAGNITUDE's.
   required-commit band); preset pin = where the slider prefills inside that band
   (safe end). Confidence is capped at 0.90 — no oracle (D1/D7, M3). See
   `js/intel.js` and the fog-of-war-discovery feature.
+- ✅ `Emergency reserve` (긴급 투입 / 예비대): a third surplus outlet — points
+  bound before sealing that auto-answer an own sector attacked without a primary
+  defense. Route-connected stock within the province rushes in, fights this turn
+  at reduced effectiveness (forced-march), and stays garrisoned after (not
+  single-use). Points buy an *awakening fraction* of the stock insurance
+  geography placed there, never absolute bodies (진관 grammar). Dials (awakening
+  rate, forced-march effectiveness, knee) → combat-formula MAGNITUDE M9.
+- ✅ `Mobilization visibility` (동원 가시성): force concentration leaks intent — a
+  massing army raises a banded tension signal with a short lead time, so a
+  first-strike buildup is partly readable rather than a free surprise. Prices the
+  scout-vs-conceal economy over the surprise premium (M10; survey in
+  `docs/features/combat-formula/research/first-strike-and-mobilization-visibility.md`).
+- ✅ `Surrender harvest` (항복 수확): an Encirclement success discounts the
+  winner's *own* casualties — a surrounded army that cannot escape capitulates
+  cheaply (the Ulm effect) instead of selling its life dear. Discount value →
+  combat-formula MAGNITUDE M6/M8.
+- ✅ `Feint follow-up` (양동 후속타): emergent play, not a mechanic — strike sector
+  A to draw a province's reserve toward it, then hit the thinned sector B.
+  Emerges from tension granularity + reserve triage + observable post-hoc troop
+  movement; the skill gate is the attacker's scouting (M10).
+- ✅ `Attack axis as numeraire` (기축통화 원칙): the pricing principle that the
+  attack axis is the game's reserve currency — defense, information, and static
+  investment are priced by what they *save or deny* in attack currency, so they
+  need no independent value survey (combat-formula method principle, M8). The
+  force-side counterpart of the economy's `Yield` unit.
 
 ## Match Arc and Settlement
 
@@ -510,6 +539,12 @@ to a hegemony settlement. Vocabulary is authored in
 that gate every value are in `docs/features/match-arc/STRATEGY-SPACE.md`; dials
 live in `docs/features/combat-formula/MAGNITUDE.md` (M8–M13). Status: ✅ = AGREED
 wording, ❓ = PROPOSED (awaiting grill).
+
+_Last synced from Production 2026-07-05 (A-4 B2), authoritative source
+`docs/features/match-arc/` GLOSSARY + RULINGS. This section summarizes
+qualitatively; sealed dial values and ruling history live in the feature docs,
+and on any divergence the Production seal is truth (documentation-law conflict
+rule)._
 
 ### Arc ladder (scale layers)
 
@@ -570,24 +605,20 @@ wording, ❓ = PROPOSED (awaiting grill).
   SPEC's "matches end at decision points.")
 - ✅ `Hegemony decision point` (패권 결정점): the match-ending decision point.
   Shield-ratio arithmetic, no new physics: **leadership** — the candidate's
-  projectable mass clears the war-deciding shield ratio (~1.7) against every
+  projectable mass clears the war-deciding shield ratio against every
   in-balance realm (rejects the turtle hegemon); AND **unassailability** — no
-  coalition of in-balance realms can reach ~1.7 × the candidate's shield within
-  the regeneration window. Trips on true values; the player reads a banded 판세
-  estimate. Values sealed 2026-07-05 (battery sheet 10): **shield mass =
-  field army + border-shield garrisons on the fronts FACING the counting side**
-  (facing-front reading, derived per turn from adjacency — conquest inherits
-  exposure); **regeneration window = 6 turns** (the time depth of
-  "irreversible"; applies to unassailability only — leadership is judged on the
-  present punch); ~1.7 validated (not the binding lever). Full seal text:
-  `docs/features/match-arc/GLOSSARY.md`.
+  coalition of in-balance realms can reach that ratio × the candidate's shield
+  within a regeneration window. Shield mass is a facing-front reading derived
+  from adjacency (conquest inherits exposure); the check trips on true values
+  while the player reads a banded 판세 estimate. Sealed dials (ratio,
+  regeneration window, facing-front rule) + history → match-arc GLOSSARY
+  패권 결정점 row / RULINGS ⑨⑪⑮⑰.
 - ✅ `Projectable mass` (투사 가능 질량): the mass a realm can actually deliver to
-  fronts beyond its own shield — derived from exit-choke frontage caps (M11) and
-  the route graph; never a stored variable. Chokes narrow doors both ways: the
-  unbreakable are usually also unable to march out. Formula sealed 2026-07-05:
-  **projectable = min(field army, Σ exit-door width × 2)** — flow 2 keeps
-  pass-locked realms in the balance (small-punch blockers) while strait-locked
-  realms are hermits with a working staging buy-back.
+  fronts beyond its own shield — a derived reading of the field army through the
+  realm's exit-choke geography (M11 + route graph), never a stored variable.
+  Chokes narrow doors both ways: the unbreakable are usually also unable to
+  march out. Sealed formula + flow value + history → match-arc GLOSSARY
+  투사 가능 질량 row / RULINGS ⑩.
 - ✅ `In/out of the balance — hermit clause` (판세 안/밖 · 은둔국 조항): a realm
   whose projectable mass falls below the floor (1,000 — reuses the raid
   visibility threshold; confirmed 2026-07-05) is *outside the balance* — excluded from coalition
@@ -627,26 +658,18 @@ wording, ❓ = PROPOSED (awaiting grill).
   player predicts through fog though the AI decides deterministically — tension
   without dice). Deferred-with-trigger: fogged-read acceptance + bluffing ship
   with Phase 2; pull earlier iff playtest shows settlement reads as solved/flat.
-  Sealed 2026-07-05 (sheet 11): continued-war expected loss carries a
-  **resistance discount ×0.6** (fighting on must often cost less than the full
-  bill, or refusal — and with it the preset ladder — cannot exist); the lenient
-  preset's identity is the **tempo-peace preset** (its product is acceptance
-  certainty, not value).
+  Sealed dials (resistance discount, coefficient anchors, the lenient=tempo-peace
+  identity) + history → match-arc GLOSSARY 수락 산술 row / RULINGS ⑫⑬.
 - ✅ `Vassalage / capitulation` (복속): a settlement outcome — the losing realm
   survives diminished and subordinated; its mass leaves the coalition pool and
-  counts to the **overlord's** side of the hegemony arithmetic (the earlier
-  "loser's side" phrasing was a drafting error, corrected at A-1). Choosing
-  capitulation over a fight to the capital must be the losing player's own
-  decision (surrender grammar). MVP terms sealed 2026-07-05: no in-match
-  defection; chain collapse on overlord fall; the vassal seat keeps full
-  internal sovereignty (부마국 model); substance–sovereignty exchange axis.
-  Pricing structure sealed (ruling ⑭): in **acceptance currency**, never reach
-  currency — vassal bundle = standard-preset material + sovereignty premium ×
-  loser remaining value. Premium **sealed at 0.25** (ruling ⑯, 2026-07-05,
-  sheet-12 tournament gate paid) with the floor-setter rider: above 0.25
-  acceptance saturates (capital-risk dominates), so future chain-weakening
-  belongs to the loss model's capital-risk side, not this number. Full seal
-  text: `docs/features/match-arc/GLOSSARY.md` 복속 row.
+  counts to the **overlord's** side of the hegemony arithmetic. Choosing
+  capitulation over a fight to the capital is the losing player's own decision
+  (surrender grammar). MVP terms: no in-match defection; chain collapse on
+  overlord fall; the vassal seat keeps full internal sovereignty (부마국 model);
+  substance–sovereignty exchange axis (할양 trades substance to keep sovereignty,
+  복속 the reverse). Priced in **acceptance currency** = standard-preset material
+  + sovereignty premium × loser remaining value. Sealed premium value +
+  floor-setter rider + history → match-arc GLOSSARY 복속 row / RULINGS ⑭⑯.
 - ✅ `Recruitment` (모병): the single MVP economy→mass conversion — a primary
   action adding a capped share of the national sustainable cap per turn, drawn
   from the manpower pool, paid from treasury yield, fighting at 100% (single
