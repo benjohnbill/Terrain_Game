@@ -30,8 +30,9 @@ const DIALS = {
   bandoIgyeok: 0.5,         // engaged body = 50% of a crossing force
   surrenderHarvest: 0.5,    // Encirclement-success winner casualties ×0.5
   delaying: { thresholdShift: 0.3, exchange: 0.5, escapeRate: 1.0 },
-  // M9 reserve
-  reserve: { leverCap: 1.5, marchEffect: 0.5 },
+  // M9 reserve — movement schedule ruled 2026-07-05: 1 point awakens 12.5%
+  // of the province's route-connected stock; 8 points (knee) = whole province
+  reserve: { leverCap: 1.5, marchEffect: 0.5, awakenPerPoint: 0.125 },
   // M8 dial extracts used by the battery
   dpErosion: { base: -0.3, deep: -0.6, deepMargin: 0.5 },
   raidBurn: { base: -15, cap: -30, lootShare: 0.5 },
@@ -190,4 +191,11 @@ function resolve(spec) {
   };
 }
 
-module.exports = { DIALS, lever, resolve };
+// M9 movement schedule: reserve points → bodies awakened from the
+// province's route-connected stock (integer ledger rounds down).
+function reserveAwaken(provinceStock, points) {
+  const frac = Math.min(1, Math.max(0, points) * DIALS.reserve.awakenPerPoint);
+  return Math.floor(provinceStock * frac);
+}
+
+module.exports = { DIALS, lever, resolve, reserveAwaken };

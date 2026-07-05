@@ -1,4 +1,88 @@
-# Battery findings (2026-07-03 run) — answers pending user rulings
+# Battery findings — answers pending user rulings
+
+# 2026-07-05 run — sheets 10–11 + S6 re-run (A-2)
+
+Question: does the hegemony decision-point formula + settlement
+acceptance arithmetic behave when computed end-to-end? (`match.js` is
+the new pure module; sheets `hegemony` / `settlement`.)
+
+## What validated cleanly (2026-07-05)
+
+- **S6 re-run (ruling-⑥ schedule)**: the reserve bet space closes
+  naturally at 0–8 points (awakening fraction AND emergency lever both
+  saturate at the knee); A holds from 6 pts; the 양동 후속타 hole at B
+  now scales with the defender's own bet; a cut route suppresses the
+  awakening pool to the local garrison. No new ruling needed.
+- **S10 arc**: check trips at T23 (15–25 envelope ✓) under the
+  shield-line base; a single war from parity start cannot trip it
+  (short by ~11,000 vs 중원 even after a clean war-1 + vassalage) ✓;
+  hermit clause fires on the strait-locked realm and out-of-balance
+  exclusion works ✓; unassailability passes once vassal shields count
+  toward the candidate ✓; ratio 1.5/1.7/1.9 shifts the trip only
+  T22/T23/T24 — the ~1.7 reuse is safe (it is not the binding lever;
+  the shield-base definition is).
+- **S10 structural insight (not a ruling)**: a solo hegemon can NEVER
+  clear leadership against a healthy full-cap rival (own field cap
+  6,000 < 1.7 × 7,200) — the check arithmetically requires vassal mass
+  or a worn world. The two legitimate ending shapes (exhaustion winner
+  / vassal-chain acknowledgment) are forced by the inequality itself,
+  and vassal rebuild-and-count is load-bearing for the trip (the
+  archetype-2 overpower watch stands).
+- **S11 fill-order decoupling**: same claim rate → same acceptance,
+  different composition (할양 8+배상 1 vs 5+4) — rate carries
+  acceptance risk, composition carries the archetype benefit, exactly
+  separable as the spec required ✓.
+
+## Findings that need user rulings (continuing the numbering)
+
+6. **Shield-base definition (S10 — the unsealed term in 패권 결정점)**:
+   what mass does the ~1.7 multiply? `total` (field + all garrisons)
+   → NEVER trips inside 26 turns; `shieldLine` (field + border-shield
+   garrisons — faithful to sheet 7's measured 4,000) → T23;
+   `field` only → T15, i.e. it trips mid-war on paper superiority
+   before the decisive battle is fought. Recommendation: shieldLine.
+7. **Projection flow through chokes (S10)**: projectable = choke cap ×
+   flow. flow 1 makes hermit buy-back-in IMPOSSIBLE (staged 1,000 ≤
+   floor — breaks the sealed hermit-clause promise); flow 2 = hermit
+   until staging is built (intended reading); flow 3 = strait realms
+   are never hermits. Recommendation: flow 2, floor stays 1,000.
+8. **Regeneration window W (S10)**: never bites in the main arc (the
+   blocking rival sat at cap — no recruit headroom); micro-case (worn
+   hegemon 8,000 vs two worn-but-rich rivals): W=4 trip stands, W=6/8
+   trip blocked. Recommendation: W=6 (matches the M12/M13 recovery
+   anchors); accept that worn-but-rich worlds stay contested — the
+   untilted tail belongs to the blinds thread.
+9. **Continued-loss scale λ (S11 — FAILS the registered bar as
+   drafted)**: under the sheet's own GAAN loss model the acceptance
+   matrix saturates — 유화-최대 acceptance 100% (bar: ≤40–50%), 최대
+   picked 23/30, 관대 niche 2/30. λ sweep: bar passes at λ≈0.6
+   (유화-최대 40%, 관대 niche 11/30, 최대 acceptance 6/30). Ruling
+   needed on the escalation anchors: continued war must be priced
+   BELOW the full composite bill often enough — λ 0.6-scaled anchors
+   ≈ esc decisive 0.9 / grinding 0.7 / marginal 0.5, capitalRisk 0.3.
+10. **관대's identity (S11)**: under deterministic acceptance, 관대 can
+    never beat 표준 on value when both are accepted (turns saved are
+    identical) — its entire niche is the acceptance edge (표준
+    rejected, 관대 accepted). It IS the tempo-peace / rejection-hedge
+    preset by construction. Recommendation: embrace the relabel now
+    (registered contingency), rather than waiting for playtest.
+11. **Vassalage pricing (S11 — the registered open input, proposal)**:
+    pricing 복속 in reach currency is structurally broken — the
+    hegemony swing (≈2× loser remaining mass) per yield forgone beats
+    recruitment ~15–20:1, so it would ALWAYS be the buy. Proposal:
+    price it in acceptance currency — vassal bundle = 표준 material +
+    sovereignty premium (GAAN 0.5 × loser remaining value). Result:
+    복속 clears only when the capital threat inflates L (완고 mostly
+    refuses — fights to the death; 실리/유화 kneel after decisive
+    wars). Premium coefficient → user dial.
+
+## User verdicts (2026-07-05 run)
+
+- (pending)
+
+---
+
+# 2026-07-03 run — sheets 1–9 (answers sealed via A-1, 2026-07-05)
 
 Question being answered: does the sealed M1–M11 set (+ M12 draft) produce
 historically-shaped outcomes as one machine? Full output:

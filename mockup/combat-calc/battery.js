@@ -2,7 +2,9 @@
 // PROTOTYPE — scenario battery over engine.js. Prints worked sheets.
 // Run: npm run battery   |   node mockup/combat-calc/battery.js <sheet>
 
-const { DIALS, lever, resolve } = require('./engine');
+const { DIALS, lever, resolve, reserveAwaken } = require('./engine');
+const { MATCH_DIALS, projectable, shieldMass, hegemonyCheck,
+  presetBundle, expectedContinuedLoss, accepts } = require('./match');
 
 const fmt = (n) => typeof n === 'number' && !Number.isInteger(n) ? n.toFixed(2) : String(n);
 const men = (n) => `${Math.round(n).toLocaleString()}명(${(n / 100).toFixed(1)}부대)`;
@@ -180,18 +182,38 @@ function grinding() {
 
 // ---------------------------------------------------------------- Sheet 6
 function feint() {
-  h('SHEET 6 — Reserve & feint geography (양동 후속타)');
-  console.log('Province: A(garrison 600), B(garrison 500), depot C(1,200) adjacent to both.');
-  console.log('Attacker has 2,000 at each approach. Terrain hills(×1.2). Reserve set pre-seal.');
-  sub('T1 — attack A, no reserve bound');
-  line(resolve({ plan: 'Swift', attacker: { stock: 2000, commit: 8 }, defender: { stock: 600, commit: 0 }, terrain: 'hills' }), 'A undefended');
-  sub('T1′ — attack A, reserve triggers: C rushes 1,200 (fight ×0.5, lever knee-capped ×1.5)');
-  line(resolve({ plan: 'Swift', attacker: { stock: 2000, commit: 8 }, defender: { stock: 600, commit: 8, reserveStock: 1200, defenderReserveLever: true }, terrain: 'hills' }), 'A + 긴급 투입');
-  sub('T2 — the follow-up strike: B with C stripped (reserve reach empty)');
-  line(resolve({ plan: 'Swift', attacker: { stock: 2000, commit: 8 }, defender: { stock: 500, commit: 0 }, terrain: 'hills' }), 'B after the feint');
-  console.log('  → the feint costs T1 attacker blood at A; the payoff is B at reserve-empty.');
-  console.log('    Attacker skill gate: scouting the drained sectors (estimate bands drop).');
-  sub("Route tooth: SI cut C–B beforehand removes C from B's reach without any feint");
+  h('SHEET 6 — Reserve & feint geography — RE-RUN under ruling ⑥ (2026-07-05)');
+  console.log('Province: A(garrison 600), B(garrison 500), depot C(1,200); route-connected');
+  console.log('stock outside A = 1,700. Attacker 2,000 at each approach, hills(×1.2).');
+  console.log('Movement schedule (M9, ruled): 1 pt awakens 12.5% of the province\'s');
+  console.log('route-connected stock; the same bound points act as the emergency lever');
+  console.log('(1:1, knee-capped ×1.5). Awakened bodies fight ×0.5 this turn, then stay.');
+
+  const provinceStock = 1700; // B 500 + C 1,200
+  sub('Reserve bet sweep: T1 attack on A → T2 follow-up on the thinned B');
+  const widths = [7, 9, 40, 36];
+  row(['points', 'awakened', 'T1 at A', 'T2 at B (garrison left)'], widths);
+  for (const pts of [0, 2, 4, 6, 8]) {
+    const awakened = reserveAwaken(provinceStock, pts);
+    const r1 = resolve({ plan: 'Swift', attacker: { stock: 2000, commit: 8 },
+      defender: { stock: 600, commit: pts, reserveStock: awakened, defenderReserveLever: pts > 0 },
+      terrain: 'hills' });
+    const bLeft = 500 - Math.round(500 * awakened / provinceStock);
+    const r2 = resolve({ plan: 'Swift', attacker: { stock: 2000, commit: 8 },
+      defender: { stock: bLeft, commit: 0 }, terrain: 'hills' });
+    row([pts, awakened,
+      `R=${r1.R.toFixed(2)} ${r1.success ? 'A TAKEN' : 'A HELD'} A−${r1.lossA}/D−${r1.lossB}`,
+      `${bLeft} · R=${r2.R.toFixed(2)} ${r2.success ? 'B taken' : 'B held'}`], widths);
+  }
+  console.log('\n  → the bet space closes at 0–8 as designed: awakening fraction AND lever');
+  console.log('    both saturate at the knee. The feint payoff (T2 vs stripped B) now');
+  console.log('    scales with the defender\'s own bet size — deeper insurance at A digs');
+  console.log('    the hole at B deeper. Attacker skill gate unchanged: scout the drain.');
+  sub("Route tooth: SI cut C–A beforehand → route-connected stock drops to B's 500");
+  const cut = reserveAwaken(500, 8);
+  const rc = resolve({ plan: 'Swift', attacker: { stock: 2000, commit: 8 },
+    defender: { stock: 600, commit: 8, reserveStock: cut, defenderReserveLever: true }, terrain: 'hills' });
+  line(rc, `8 pts on a cut province (awakens only ${cut})`);
   console.log('  (routeDisruption second tooth, M9 — interdiction suppresses reserves.)');
 }
 
@@ -419,8 +441,262 @@ function manpower() {
   console.log('  economy), recruit +10%/turn, pool ×1.5 initial military, 부대 = 0.5 yield.');
 }
 
+// ---------------------------------------------------------------- Sheet 10
+function hegemony() {
+  h('SHEET 10 — Hegemony-check full-match ledger (결정점 computed end-to-end)');
+  console.log('5 realms, sheet-8 arc, masses calibrated to sheets 7–9. Field armies under');
+  console.log('the M13 national cap; garrisons local; 북하 is strait-locked (hermit test).');
+  console.log('Check each turn for candidate 서령: leadership ∧ unassailability + 은둔국 조항.');
+  console.log(`Defaults: ratio ${MATCH_DIALS.shieldRatio}, base '${MATCH_DIALS.shieldBase}', floor ${MATCH_DIALS.projectionFloor}, window ${MATCH_DIALS.regenWindow}t, chokeFlow ${MATCH_DIALS.chokeFlow}.\n`);
+
+  const world = () => ([
+    { name: '서령', field: 4500, fieldCap: 6000, garrisons: 4200, shieldGarrisons: 1200, exits: [{ cap: Infinity }], alive: true, vassalOf: null, atWar: false },
+    { name: '중원', field: 7000, fieldCap: 9000, garrisons: 5600, shieldGarrisons: 1800, exits: [{ cap: Infinity }, { cap: Infinity }, { cap: Infinity }], alive: true, vassalOf: null, atWar: false },
+    { name: '남곡', field: 2500, fieldCap: 4500, garrisons: 3000, shieldGarrisons: 600, exits: [{ cap: Infinity }], alive: true, vassalOf: null, atWar: false },
+    { name: '동평', field: 4500, fieldCap: 6000, garrisons: 4200, shieldGarrisons: 1200, exits: [{ cap: Infinity }], alive: true, vassalOf: null, atWar: false },
+    { name: '북하', field: 5000, fieldCap: 6000, garrisons: 3000, shieldGarrisons: 800, exits: [{ cap: 500 }], alive: true, vassalOf: null, atWar: false },
+  ]);
+
+  // Scripted arc (per-turn mass deltas calibrated to the sheet-7/8 engine
+  // runs — this sheet re-fights nothing; it prices the balance):
+  // T5–8 war 1 (서령→남곡, rout T8) · T9 전쟁 정산 (복속+할양 600)
+  // T10–13 중원–동평 AI war (mutual wear −700/t, white peace)
+  // T14–19 war 2 (siege wear, 결전 T19 destroys 중원 field army)
+  // T20–21 cascade (중원 garrisons shed 800/t) · T22 패권 정산 후보 (복속+할양 1,200)
+  function runArc(D) {
+    const R = world(); const g = (n) => R.find((r) => r.name === n);
+    const rows = []; let tripTurn = null;
+    for (let t = 1; t <= 26; t++) {
+      if (t === 5) { g('서령').atWar = g('남곡').atWar = true; }
+      if (t >= 5 && t <= 8) { g('서령').field -= 150; g('남곡').field = Math.max(300, g('남곡').field - (t === 8 ? 1900 : 550)); }
+      if (t === 9) {
+        g('남곡').vassalOf = '서령'; g('남곡').garrisons -= 600; g('서령').garrisons += 600;
+        g('서령').atWar = g('남곡').atWar = false;
+      }
+      if (t === 10) { g('중원').atWar = g('동평').atWar = true; }
+      if (t >= 10 && t <= 13) { g('중원').field -= 700; g('동평').field -= 700; }
+      if (t === 13) { g('동평').atWar = false; } // white peace; 중원 stays mobilized
+      if (t === 14) { g('서령').atWar = true; }
+      if (t >= 14 && t <= 18) { g('서령').field -= 150; g('중원').field -= 300; }
+      if (t === 19) { g('서령').field -= 400; g('중원').field = 700; }
+      if (t === 20 || t === 21) { g('서령').field -= 50; g('중원').garrisons -= 800; }
+      if (t === 22) {
+        g('중원').vassalOf = '서령'; g('중원').garrisons -= 1200; g('서령').garrisons += 1200;
+        g('서령').atWar = g('중원').atWar = false;
+      }
+      // M13 peace recruitment (+10% of cap/turn toward cap); vassals keep
+      // internal sovereignty (복속 row) and rebuild too — watch the effect.
+      for (const r of R) if (r.alive && !r.atWar && r.field < r.fieldCap)
+        r.field = Math.min(r.fieldCap, r.field + Math.round(r.fieldCap * D.recruitPerTurn));
+      const c = hegemonyCheck(R, '서령', D);
+      if (c.trips && tripTurn === null) tripTurn = t;
+      rows.push({ t, c, R: R.map((r) => ({ name: r.name, field: r.field, vassal: !!r.vassalOf })) });
+    }
+    return { rows, tripTurn };
+  }
+
+  sub('Main ledger (default dials) — check components per turn');
+  const main = runArc(MATCH_DIALS);
+  const widths = [4, 9, 24, 26, 20, 6];
+  row(['turn', 'candProj', 'in balance (need @1.7)', 'leadership', 'coalition vs need', 'TRIP'], widths);
+  for (const { t, c } of main.rows) {
+    const worst = c.leadershipRows.filter((r) => !r.pass)
+      .sort((a, b) => b.need - a.need)[0];
+    row([`T${t}`, c.candProj,
+      c.leadershipRows.map((r) => `${r.name} ${Math.round(r.need)}`).join(' · ') || '(없음)',
+      c.leadership ? 'PASS' : `FAIL (${worst.name} −${Math.round(worst.need - c.candProj)})`,
+      `${Math.round(c.coalition)} < ${Math.round(c.coalitionNeed)} ${c.unassailable ? '✓' : '✗'}`,
+      c.trips ? '★' : ''], widths);
+  }
+  console.log(`\n  Out of balance throughout: ${main.rows[0].c.outOfBalance.join(', ')} (은둔국 조항 fires — strait 500 × flow 2 = 1,000 ≤ floor).`);
+  console.log(`  Trip turn: ${main.tripTurn ? 'T' + main.tripTurn : 'NEVER (within 26 turns)'} — envelope 15–25.`);
+
+  sub('Validation 1 — unreachable from a parity start in a single war (T9–10 detail)');
+  const t9 = main.rows[8].c;
+  console.log(`  after war 1 + settlement: candProj ${t9.candProj}; leadership needs vs 중원 ${Math.round(t9.leadershipRows.find((r) => r.name === '중원')?.need ?? 0)} — short by ${Math.round((t9.leadershipRows.find((r) => r.name === '중원')?.need ?? 0) - t9.candProj)}.`);
+  console.log('  → one war (even a clean one with vassalage) cannot trip the check. ✓');
+
+  sub('Validation 2 — shield-base definition sweep (the UNSEALED term)');
+  const w2 = [14, 12, 62];
+  row(['base', 'trip turn', 'reading'], w2);
+  for (const base of ['field', 'shieldLine', 'total']) {
+    const r = runArc({ ...MATCH_DIALS, shieldBase: base });
+    row([base, r.tripTurn ? `T${r.tripTurn}` : 'NEVER',
+      { field: 'field armies only — wars are decided by field-army destruction',
+        shieldLine: 'field + border-shield garrisons (sheet 7\'s measured 4,000)',
+        total: 'field + ALL garrisons — interior garrisons deter too' }[base]], w2);
+  }
+
+  sub('Validation 3 — ratio & floor sensitivity (default base)');
+  for (const ratio of [1.5, 1.7, 1.9]) {
+    const r = runArc({ ...MATCH_DIALS, shieldRatio: ratio });
+    console.log(`  ratio ${ratio}: trip ${r.tripTurn ? 'T' + r.tripTurn : 'NEVER'}`);
+  }
+  for (const floor of [500, 1000, 1500]) {
+    const r = runArc({ ...MATCH_DIALS, projectionFloor: floor });
+    const last = r.rows[r.rows.length - 1].c;
+    console.log(`  floor ${floor}: trip ${r.tripTurn ? 'T' + r.tripTurn : 'NEVER'} · out-of-balance at end: ${last.outOfBalance.join(', ') || '(none)'}`);
+  }
+
+  sub('Validation 4 — 투사 하한 × chokeFlow: the hermit door (북하, strait 500)');
+  const w4 = [10, 16, 22, 44];
+  row(['flow', '투사 (base)', '+port staging(+500)', 'verdict'], w4);
+  for (const flow of [1, 2, 3]) {
+    const D = { ...MATCH_DIALS, chokeFlow: flow };
+    const base = Math.min(6000, 500 * flow);
+    const staged = Math.min(6000, 1000 * flow);
+    row([flow, `${base} ${base <= D.projectionFloor ? 'OUT' : 'IN'}`,
+      `${staged} ${staged <= D.projectionFloor ? 'OUT' : 'IN'}`,
+      base <= D.projectionFloor && staged <= D.projectionFloor
+        ? 'buy-back-in IMPOSSIBLE — breaks the hermit clause promise'
+        : base <= D.projectionFloor ? 'hermit until staging built ✓ (intended)' : 'never a hermit'], w4);
+  }
+
+  sub('Validation 5 — regeneration-window length (micro-case: when does W bite?)');
+  console.log('  Worn hegemon shield 8,000; two rivals field 3,000 / cap 9,000 each');
+  console.log('  (recruit headroom 6,000). Coalition must stay < 1.7 × 8,000 = 13,600.');
+  for (const W of [4, 6, 8]) {
+    const coalition = 2 * (3000 + Math.min(6000, 900 * W));
+    console.log(`  W=${W}: coalition reaches ${coalition} → ${coalition < 13600 ? 'unassailable ✓ (trip stands)' : 'ASSAILABLE ✗ (trip blocked)'}`);
+  }
+  console.log('  → in the main arc W never bites (the blocker realm sat at cap — no');
+  console.log('    recruit headroom); W matters exactly when rivals are worn but rich.');
+}
+
+// ---------------------------------------------------------------- Sheet 11
+function settlement() {
+  h('SHEET 11 — Settlement acceptance battery (preset ladder × 수락 산술)');
+  const D = MATCH_DIALS;
+  console.log('War-end state grid × 3 temperaments. Units: sector-turn yield. occValue 8.');
+  console.log(`Loss model (GAAN, this sheet's own): L = occ×esc(margin) + raid + capitalRisk;`);
+  console.log(`esc ${JSON.stringify(D.lossModel.occEscalation)}, capitalRisk ${D.lossModel.capitalRiskFrac}×(occ+raid), extraTurns ${JSON.stringify(D.lossModel.extraTurns)}.\n`);
+
+  const states = [];
+  for (const margin of ['decisive', 'grinding', 'marginal'])
+    for (const capitalInReach of margin === 'marginal' ? [false] : [true, false])
+      for (const raidFactor of [0.5, 1.2])
+        states.push({ margin, capitalInReach, occValue: 8, raidLoot: 8 * raidFactor,
+          id: `${margin.slice(0, 4).padEnd(4)}·${capitalInReach ? '수도O' : '수도X'}·약탈${raidFactor}` });
+  console.log(`${states.length} war-end states × 3 temperaments = ${states.length * 3} evaluations.`);
+
+  const temps = Object.entries(D.temperament); // [name, coeff]
+  const presets = ['관대', '표준', '최대'];
+
+  sub('Acceptance matrix (관/표/최 accepted?) per temperament');
+  const wA = [20, 8, 8, 16, 16, 16];
+  row(['state', 'composite', 'L', ...temps.map(([n, c]) => `${n}(${c})`)], wA);
+  const cells = []; // {state, temp, coeff, preset, bundle, accepted}
+  for (const st of states) {
+    const L = expectedContinuedLoss(st, D);
+    const bundles = presets.map((p) => presetBundle(p, st, D));
+    const cols = temps.map(([tn, coeff]) => {
+      const marks = bundles.map((b) => {
+        const ok = accepts(b.value, L.total, coeff);
+        cells.push({ st, temp: tn, coeff, preset: b.preset, bundle: b, accepted: ok, L });
+        return `${b.preset[0]}${ok ? '○' : '×'}`;
+      });
+      return marks.join(' ');
+    });
+    row([st.id, st.occValue + st.raidLoot, L.total.toFixed(1), ...cols], wA);
+  }
+
+  sub('Registered metric — preset pick rates (winner argmax EV; fight-on as 4th option)');
+  console.log('  EV(accepted preset) = bundle value. EV(fight on) = occ×esc + raid −');
+  console.log('  extraTurns × (blood 1.0 + oppYield). oppYield swept 0.5 / 1.0 / 2.0.');
+  for (const oppYield of [0.5, 1.0, 2.0]) {
+    const picks = { 관대: 0, 표준: 0, 최대: 0, 계속: 0 };
+    for (const st of states) for (const [tn, coeff] of temps) {
+      const L = expectedContinuedLoss(st, D);
+      const fightOn = st.occValue * D.lossModel.occEscalation[st.margin] + st.raidLoot
+        - D.lossModel.extraTurns[st.margin] * (1.0 + oppYield);
+      let best = ['계속', fightOn];
+      for (const p of presets) {
+        const b = presetBundle(p, st, D);
+        if (accepts(b.value, L.total, coeff) && b.value > best[1]) best = [p, b.value];
+      }
+      picks[best[0]]++;
+    }
+    console.log(`  oppYield ${oppYield}: ` + Object.entries(picks).map(([k, v]) => `${k} ${v}/${states.length * 3}`).join(' · '));
+  }
+
+  sub('Registered metric — dominated-preset check (관대의 존재 이유)');
+  const both = cells.filter((c) => c.preset === '관대');
+  const gwins = both.filter((c) => {
+    const std = cells.find((x) => x.st === c.st && x.temp === c.temp && x.preset === '표준');
+    return c.accepted && !std.accepted;
+  });
+  const dominated = both.filter((c) => {
+    const std = cells.find((x) => x.st === c.st && x.temp === c.temp && x.preset === '표준');
+    return std.accepted; // both accepted → 표준 value always ≥ 관대 value, turns saved identical
+  });
+  console.log(`  표준 accepted (관대 dominated — same turns saved, less value): ${dominated.length}/${both.length}`);
+  console.log(`  관대-only acceptance window (표준 ×, 관대 ○ — the tempo-peace niche): ${gwins.length}/${both.length}`);
+  if (gwins.length) console.log('    cases: ' + gwins.map((c) => `${c.st.id}/${c.temp}`).join(', '));
+
+  sub('Registered PASS bar — conciliatory(유화 1.2) target, 최대 acceptance ≤ 40–50%');
+  const conc = cells.filter((c) => c.temp === '유화' && c.preset === '최대');
+  const concAcc = conc.filter((c) => c.accepted).length;
+  const rate = (concAcc / conc.length * 100).toFixed(0);
+  console.log(`  유화 최대 acceptance: ${concAcc}/${conc.length} = ${rate}% → ${concAcc / conc.length > 0.45 ? '*** FAIL ***' : 'PASS'}`);
+
+  sub('Where does the ladder come alive? — continued-loss scale λ sweep');
+  console.log('  The whole preset trade hangs on how L compares to the composite bill.');
+  console.log('  λ scales the loss model uniformly (λ=1.0 is the GAAN model above):');
+  for (const lam of [1.0, 0.8, 0.6]) {
+    let concMax = 0, gNiche = 0, maxPicks = 0;
+    for (const st of states) {
+      const L = expectedContinuedLoss(st, D).total * lam;
+      if (accepts(presetBundle('최대', st, D).value, L, 1.2)) concMax++;
+      for (const [, coeff] of temps) {
+        if (accepts(presetBundle('관대', st, D).value, L, coeff)
+          && !accepts(presetBundle('표준', st, D).value, L, coeff)) gNiche++;
+        if (accepts(presetBundle('최대', st, D).value, L, coeff)) maxPicks++;
+      }
+    }
+    console.log(`  λ=${lam}: 유화-최대 ${concMax * 10}% ${concMax / states.length > 0.45 ? 'FAIL' : 'PASS'} · 관대 niche ${gNiche}/30 · 최대 acceptance ${maxPicks}/30`);
+  }
+  console.log('  → the bar passes only once continued war is priced BELOW the full bill');
+  console.log('    often enough (λ ≈ 0.6–0.8) — i.e. the loser must frequently believe');
+  console.log('    fighting on costs less than 최대 demands. The escalation dial, not the');
+  console.log('    claim rates, carries the ladder. Number ruling → user.');
+
+  sub('Decoupled comparison — same claim rate (75%), different fill order');
+  const stX = states[0]; // decisive·수도O·약탈0.5
+  for (const fill of ['cessionFirst', 'indemnityFirst']) {
+    const D2 = { ...D, presets: { ...D.presets, 표준: { claimRate: 0.75, fill } } };
+    const b = presetBundle('표준', stX, D2);
+    const L = expectedContinuedLoss(stX, D);
+    console.log(`  ${fill.padEnd(14)}: 할양 ${b.cession.toFixed(1)} + 배상 ${b.indemnity.toFixed(1)} = ${b.value.toFixed(1)} → 실리 accepts: ${accepts(b.value, L.total, 1.0) ? '○' : '×'}`);
+  }
+  console.log('  → acceptance rides on VALUE (claim rate) only; fill order changes WHAT');
+  console.log('    arrives (alive land+pool vs one-time cash) — rate and composition');
+  console.log('    are separable in the data as required. Composition is the archetype');
+  console.log('    lever: cession feeds conquest-snowball, indemnity feeds raid-attrition.');
+
+  sub('Open input — vassalage pricing proposal (capital-in-reach states only)');
+  console.log('  Hegemony swing of 복속: loser remaining mass M leaves the coalition sum');
+  console.log('  AND joins the overlord → arithmetic swing ≈ 2M. At M = 6,000 that is');
+  console.log('  12,000 mass of balance swing; the 최대−표준 material gap (25% of');
+  console.log('  composite ≈ 3–4 yield) recruits ~6–8 부대 = 600–800 men. Ratio ~15–20:1');
+  console.log('  → 복속 priced in reach currency is ALWAYS the buy (archetype-2 overpower).');
+  console.log('  PROPOSAL: price 복속 in acceptance currency, not reach currency —');
+  console.log('  vassal bundle = 표준 material + sovereignty premium (GAAN 0.5 × loser');
+  console.log('  remaining value), so it clears only when the capital threat inflates L:');
+  const vrem = 20; // GAAN: loser remaining realm value, yield units
+  const wV = [22, 10, 10, 26];
+  row(['state (수도O only)', 'bundle', 'L', 'accepts (완고/실리/유화)'], wV);
+  for (const st of states.filter((s) => s.capitalInReach)) {
+    const L = expectedContinuedLoss(st, D);
+    const b = presetBundle('표준', st, D).value + 0.5 * vrem;
+    row([st.id, b.toFixed(1), L.total.toFixed(1),
+      temps.map(([n, c]) => `${n}${accepts(b, L.total, c) ? '○' : '×'}`).join(' ')], wV);
+  }
+  console.log('  → 복속 lands as the decisive-war, throne-under-the-sword outcome — not');
+  console.log('    a cheap Maximum substitute. Premium value (0.5×remaining) → user dial.');
+}
+
 // ----------------------------------------------------------------
-const SHEETS = { myeongnyang, fortress, raid, delaying, grinding, feint, tempo, timeline, manpower };
+const SHEETS = { myeongnyang, fortress, raid, delaying, grinding, feint, tempo, timeline, manpower, hegemony, settlement };
 const pick = process.argv[2];
 if (pick && SHEETS[pick]) SHEETS[pick]();
 else if (pick) { console.error(`unknown sheet: ${pick} (${Object.keys(SHEETS).join(', ')})`); process.exit(1); }
