@@ -570,7 +570,7 @@ function settlement() {
   h('SHEET 11 — Settlement acceptance battery (preset ladder × 수락 산술)');
   const D = MATCH_DIALS;
   console.log('War-end state grid × 3 temperaments. Units: sector-turn yield. occValue 8.');
-  console.log(`Loss model (GAAN, this sheet's own): L = occ×esc(margin) + raid + capitalRisk;`);
+  console.log(`Loss model: L = ${D.lossModel.resistanceDiscount} × (occ×esc(margin) + raid + capitalRisk) — discount SEALED (ruling ⑫);`);
   console.log(`esc ${JSON.stringify(D.lossModel.occEscalation)}, capitalRisk ${D.lossModel.capitalRiskFrac}×(occ+raid), extraTurns ${JSON.stringify(D.lossModel.extraTurns)}.\n`);
 
   const states = [];
@@ -641,13 +641,13 @@ function settlement() {
   const rate = (concAcc / conc.length * 100).toFixed(0);
   console.log(`  유화 최대 acceptance: ${concAcc}/${conc.length} = ${rate}% → ${concAcc / conc.length > 0.45 ? '*** FAIL ***' : 'PASS'}`);
 
-  sub('Where does the ladder come alive? — continued-loss scale λ sweep');
+  sub('Resistance-discount sweep (ruling ⑫ SEALED at 0.6 — how the bar moves)');
   console.log('  The whole preset trade hangs on how L compares to the composite bill.');
-  console.log('  λ scales the loss model uniformly (λ=1.0 is the GAAN model above):');
   for (const lam of [1.0, 0.8, 0.6]) {
+    const D2 = { ...D, lossModel: { ...D.lossModel, resistanceDiscount: lam } };
     let concMax = 0, gNiche = 0, maxPicks = 0;
     for (const st of states) {
-      const L = expectedContinuedLoss(st, D).total * lam;
+      const L = expectedContinuedLoss(st, D2).total;
       if (accepts(presetBundle('최대', st, D).value, L, 1.2)) concMax++;
       for (const [, coeff] of temps) {
         if (accepts(presetBundle('관대', st, D).value, L, coeff)
@@ -655,12 +655,11 @@ function settlement() {
         if (accepts(presetBundle('최대', st, D).value, L, coeff)) maxPicks++;
       }
     }
-    console.log(`  λ=${lam}: 유화-최대 ${concMax * 10}% ${concMax / states.length > 0.45 ? 'FAIL' : 'PASS'} · 관대 niche ${gNiche}/30 · 최대 acceptance ${maxPicks}/30`);
+    console.log(`  discount ${lam}: 유화-최대 ${concMax * 10}% ${concMax / states.length > 0.45 ? 'FAIL' : 'PASS'} · 관대 niche ${gNiche}/30 · 최대 acceptance ${maxPicks}/30`);
   }
-  console.log('  → the bar passes only once continued war is priced BELOW the full bill');
-  console.log('    often enough (λ ≈ 0.6–0.8) — i.e. the loser must frequently believe');
-  console.log('    fighting on costs less than 최대 demands. The escalation dial, not the');
-  console.log('    claim rates, carries the ladder. Number ruling → user.');
+  console.log('  → the ladder differentiates only once the loser prices continued war');
+  console.log('    BELOW the full bill often enough (discount ≈ 0.6): the winner also');
+  console.log('    bleeds, time flows, third parties move — 강화 결렬 must be possible.');
 
   sub('Decoupled comparison — same claim rate (75%), different fill order');
   const stX = states[0]; // decisive·수도O·약탈0.5

@@ -138,6 +138,19 @@ the new pure module; sheets `hegemony` / `settlement`.)
   summoned card names WHICH realm's open future blocks the trip and
   the closing means, turning the failing check into the hegemon's
   to-do list (system calls for action instead of predicting it).
+- **Finding 9 — resistance discount: SEALED at 0.6 (2026-07-05, ruling
+  ⑫, delegated to recommendation).** The loser prices continued war at
+  0.6 × the full model loss (single multiplier on the total, one
+  balance handle) — continued war must often cost LESS than the full
+  composite bill or 강화 결렬 cannot exist and the preset ladder
+  collapses to one button. Verified at 0.6: conciliatory-Maximum 40%
+  (bar ≤40–50% PASS), no always-right preset (pick spread 관대 6–8 /
+  표준 6–11 / 최대 6 / fight-on 5–12 across oppYield sweep), 관대
+  niche 11/30. Temperament identity emerged: 완고 (0.8) never signs
+  Maximum in the grid — hardliners cannot be handed the full bill,
+  only worn down or vassalized. Model shape (esc per victory margin +
+  capital risk) remains the sheet's own GAAN; the sealed number is the
+  discount. Playtest-provisional like all values.
 - **UI idea registered (user, 2026-07-05) — expansion break-even
   card**: surface the break-even read as a fog-banded, summoned
   estimate (never a resident advisor): value side = target land's

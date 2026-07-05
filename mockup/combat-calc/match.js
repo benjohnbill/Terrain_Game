@@ -36,14 +36,20 @@ const MATCH_DIALS = {
   },
   temperament: { 완고: 0.8, 실리: 1.0, 유화: 1.2 },     // acceptance coefficient anchors (가안, ruling ⑧)
 
-  // -- expected-continued-war-loss model (GAAN — the sheet's own model, not sealed) --
-  // L = occValue × occEscalation(margin) + raidLoot + capitalRisk
+  // -- expected cost of continuing the war (loser side) --
+  // L = resistanceDiscount × (occValue × occEscalation(margin) + raidLoot + capitalRisk)
   //   occEscalation: how much further the occupation sword reaches if war goes on
   //   capitalRisk:   the total-fall tail risk priced in when the capital is in reach
+  //   resistanceDiscount: SEALED 2026-07-05 (ruling ⑫, delegated) — the loser
+  //     prices continued war BELOW the full bill (the winner also bleeds, time
+  //     flows, third parties move; 강화 결렬 exists because resistance has
+  //     value). 0.6 is where the preset ladder differentiates: registered bar
+  //     passes (conciliatory-Maximum 40%) and no preset dominates.
   lossModel: {
     occEscalation: { decisive: 1.5, grinding: 1.15, marginal: 0.85 },
     extraTurns:    { decisive: 3,   grinding: 6,    marginal: 9 },   // expected further war length if refused
     capitalRiskFrac: 0.5,   // capital in reach → + (occ+raid) × 0.5 tail risk
+    resistanceDiscount: 0.6,
   },
 };
 
@@ -174,8 +180,9 @@ function expectedContinuedLoss(state, D = MATCH_DIALS) {
   const economic = state.raidLoot;
   const capitalRisk = state.capitalInReach
     ? (state.occValue + state.raidLoot) * m.capitalRiskFrac : 0;
-  return { territorial, economic, capitalRisk,
-    total: territorial + economic + capitalRisk };
+  const discount = m.resistanceDiscount ?? 1;
+  return { territorial, economic, capitalRisk, discount,
+    total: discount * (territorial + economic + capitalRisk) };
 }
 
 // 수락 산술 (sealed): accept iff bundle value ≤ expected loss × coefficient.
