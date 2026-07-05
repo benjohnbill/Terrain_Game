@@ -16,7 +16,11 @@ const MATCH_DIALS = {
                            // border-shield garrisons (closest to sheet 7's measured 4,000)
                            // / 'field' = field army only
   projectionFloor: 1000,   // hermit clause: projectable ≤ floor → out of balance (reuses M12 raid visibility threshold)
-  regenWindow: 6,          // turns the coalition gets to reach 1.7 × candidate shield (GAAN — swept)
+  regenWindow: 6,          // SEALED 2026-07-05 (ruling ⑪): the time depth of
+                           // "irreversible" — coalition counts current projection +
+                           // 6 turns of recruitment (reuses the M12/M13 recovery
+                           // anchors 5–8). W belongs to unassailability only:
+                           // hegemony = my PRESENT punch + their CLOSED futures
   chokeFlow: 2,            // SEALED 2026-07-05 (ruling ⑩): projectable through a choke
                            // = cap × 2 ("waves a campaign sustains through the door") —
                            // the one value where 촉-type pass realms stay in the balance

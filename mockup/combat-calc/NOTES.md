@@ -115,6 +115,29 @@ the new pure module; sheets `hegemony` / `settlement`.)
   the buy-back promise; flow 3 kills the hermit clause. Map-authoring
   rider: the cradle archetypes (shielded valley / island-peninsula)
   now have a fixed projection grammar for B.
+- **Finding 8 — regeneration window: SEALED at W=6 (2026-07-05,
+  ruling ⑪).** W is the time depth of the word "irreversible" — the
+  coalition side of unassailability counts current projection + W
+  turns of recruitment; 6 reuses the sealed recovery anchors (M12
+  shattered garrisons ~5+, M13 realm rebuild 5–8). Asymmetry is
+  intended: leadership takes no W (hegemony is claimed with the
+  PRESENT punch; the future is only used to close THEIRS). The check
+  deliberately does NOT simulate the candidate's own future actions —
+  folding them in would end matches on predicted, unperformed
+  victories (amputating cascade/showdown/loser agency); instead a
+  failing check *demands* those actions (복속·풀 소모·점령 are the
+  means of closing a rival's future). Full-sum coalition confirmed as
+  worst-case VERDICT logic, not prediction — coalition realism is
+  produced by the match history (hermit exits, vassal transfers,
+  permanent pool loss) and by threat-weighted AI convergence, not by
+  the formula. All values playtest-provisional (user rider: PVP
+  balancing will revisit). Two registrations: (1) **reachability
+  filter** — the sealed word "reach" licenses a route/distance
+  attenuation of coalition sums once B's map exists (prototype sums
+  globally); (2) **work-list card** — when the check fails, the
+  summoned card names WHICH realm's open future blocks the trip and
+  the closing means, turning the failing check into the hegemon's
+  to-do list (system calls for action instead of predicting it).
 - **UI idea registered (user, 2026-07-05) — expansion break-even
   card**: surface the break-even read as a fog-banded, summoned
   estimate (never a resident advisor): value side = target land's
