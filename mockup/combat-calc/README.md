@@ -40,6 +40,16 @@ Added 2026-07-05 (A-2, match-arc close-out — `match.js` + sheets 10–11):
 10. **S6 re-run** under the ruling-⑥ reserve movement schedule
    (1 pt = 12.5% province awakening).
 
+Added 2026-07-05 evening (A-2 close — `tournament.js` + sheet 12):
+
+11. **Match tournament (sheet 12, the L2 rung)** — policy bots per
+   archetype × temperament play full matches. Pass sentence: "each
+   temperament/archetype wins where it should, and no temperament is
+   absolutely favorable." Gates the vassalage sovereignty premium
+   (ruling ⑭, 0.25 가안). Honest limits printed on the sheet: bot
+   policy quality bounds proof power — dominance found is real,
+   dominance not found is not absence.
+
 ## Run
 
 ```
@@ -54,6 +64,10 @@ node mockup/combat-calc/battery.js myeongnyang   # one sheet by name
 - `match.js` — pure match-level arithmetic (hegemony check, settlement
   acceptance) mirroring the sealed match-arc GLOSSARY terms. Worth
   lifting alongside engine.js.
+- `tournament.js` — SEMI-DURABLE match-tournament harness (sheet 12):
+  policy bots over engine+match with a coarse world model. Re-point at
+  `js/` later as the balance regression rig; its §HARNESS/§BOT dials
+  are harness 가안 (they bound proof power), never seal candidates.
 - `battery.js` — scenario runner; prints worked sheets.
 - `NOTES.md` — the answer to the question, filled in as the user rules
   on each sheet.

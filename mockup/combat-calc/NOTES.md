@@ -1,5 +1,161 @@
 # Battery findings — answers pending user rulings
 
+# 2026-07-05 evening run — sheet 12 (match tournament, the L2 build)
+
+Question: does each temperament/archetype win where it should, and is
+no temperament absolutely favorable? (user's pass sentence.) Plus the
+ruling-⑭ gate: vassalage sovereignty premium 0.25. New module:
+`tournament.js` (semi-durable — re-point at `js/` later as the balance
+regression rig); sheet: `node mockup/combat-calc/battery.js tournament`.
+
+**HONEST LIMITS (bounds every claim below):** bot policy quality bounds
+proof power — dominance FOUND is real; dominance NOT found is not
+absence. Bots use no reserves/delaying/feints/scouting; one authored
+board; policy dials are harness GAAN, never seal candidates.
+
+## What the tournament measured (2026-07-05, 360 matches/world, seeded)
+
+- **World 1 (canon dials): 96% of matches never end.** The S10
+  structural insight, frequency-confirmed and sharpened: with static
+  national caps, leadership is arithmetically unreachable against ANY
+  healthy same-size peer (own cap 7,000 < 1.7 × rival shield ~7,150),
+  and since every loser recruits back to cap in ~5–8 turns while blood
+  falls on the POOL (not the cap), the board heals faster than any
+  single hand can wear it. Matches become endless material-settlement
+  churn (wars 7.7/match, settlements 2.7/match, trip 4%). The two
+  sealed ending shapes exist but are rare: vassal mass (rare by the
+  sealed acceptance shape — kneeling is decisive+capital only) and the
+  simultaneously-worn world (needs two big realms to bleed each other
+  in the same window the third can exploit).
+- **World 2 (A-3 probe: conquest raises cap +400/sector): matches end.**
+  Endings 26% (trip-solo 21% + trip-chain 5%), mean trip T26.6,
+  archetypes differentiate: snowball 12% > vassal-chain/interior-lines
+  8% > shield-first 3% > free-rider/raid-attrition 0%. The undesigned
+  A-3 cap-growth lever is not just pricing detail — it is the match's
+  ending mechanism.
+- **Temperament neutrality (pass sentence part 2): PASS in both worlds.**
+  World 2 participant-pooled win rates 완고 4.3% / 실리 5.9% / 유화
+  5.2% — no temperament absolutely favorable at L2 resolution.
+- **Vassalage premium (ruling-⑭ gate): 0.25 SUPPORTED, 0.15 overpowers.**
+  A-3-coupled sweep: premium 0.15 → 62% of demands accepted,
+  vassal-chain focal win 15% (top of the field); 0.25 → 28% accepted,
+  win 8% (in-family with snowball/interior); 0.35 ≈ 0.25 (acceptance
+  saturates — the capital-risk term dominates the margin). 0.25 sits at
+  the knee: rare-but-real kneeling without the chain being THE buy.
+- **Preset usage in context** (world 2 deals): 표준 849 / 관대 147 /
+  최대 79 / 복속 104. 관대 signs the NON-decisive wars (decisive 33%
+  vs 표준 68% / 최대 78%) — the tempo-peace identity (ruling ⑬) shows
+  up in frequency data exactly as sealed. 복속 94% decisive + 100%
+  capital-in-reach — the throne-under-the-sword shape holds at L2.
+- **Seat asymmetry**: 중원 center seat takes 15/24 of world-2 focal
+  wins (mass compensates exposure at bot quality — bots do not
+  coordinate coalitions); 남곡 small seat and 북하 hermit seat NEVER
+  win. Also: on the raw sheet-10 masses the center trips by T2 with two
+  recruit turns and no war (leadership + hermit exclusion pass from the
+  start state), so the tournament board raised rival caps — an all-cap
+  board must not satisfy leadership from T1. Both go to B's
+  map-authoring as sizing constraints.
+- **Wait-and-burn archetypes (free-rider, raid-attrition) never win at
+  L2.** Their identities live exactly in what the bots lack (timing
+  reads, blinds, burn-then-strike conversion) — honest-limits case, not
+  a design verdict; registered as the standing playtest watch.
+
+## Spec gaps the sim exposed (side product — the completeness audit)
+
+Eight undocumented rules the harness had to invent to run at all;
+printed at the end of the sheet (`SPEC_GAPS` in tournament.js). The
+load-bearing one: **AI war appetite (GLOSSARY queue 8) is confirmed
+load-bearing** — with every bot requiring the ~1.7 pre-war ratio, a
+viability-parity board freezes after the small realm is digested; no
+peer war ever launches. The harness had to invent the opportunism read
+(a field army pinned elsewhere leaves screen + garrison, and THAT is
+what the ratio is checked against) plus an idle-aggression fallback
+before matches moved. The sheet-8 arc hand-scripted this motion
+(중원–동평 war); canon has no rule that produces it. Others: two-front
+army allocation (ADR 0025 thinness), attacking-a-vassal semantics,
+settlement initiative/concession tempo, stalled-war exit (white peace),
+indemnity→force conversion, truce/redeclaration, front redraw after
+cession (needs B's map).
+
+## Findings that need user rulings (continuing the numbering)
+
+12. **Match-closure lever (S12 — the headline)**: under canon dials the
+    hegemony check is a door almost no bot-quality match walks through
+    (96% timeout). Something must let a winner's CEILING grow (or the
+    world's ceiling shrink) inside one match. Candidates, in my
+    preference order: (a) conquest/development raises the national cap
+    — the A-3 probe shows +400/sector already produces endings and
+    archetype spread; (b) permanent pool damage should also lower the
+    rival's effective SHIELD ceiling, not just rebuild speed; (c) accept
+    long matches and lean on the loser-experience/blinds thread. My
+    recommendation: rule (a) in principle now (structure), price it in
+    A-3 (numbers) — it is the existing "raising the cap itself =
+    economy development" line (sheet 9) coming due, not a new dial.
+13. **Vassalage premium 0.25 (ruling-⑭ gate)**: CONFIRM at 0.25 on the
+    L2 evidence above (0.15 overpowers the chain; 0.35 buys nothing
+    more). One rider: acceptance saturates above 0.25 because the
+    capital-risk term dominates — the premium is a floor-setter, not a
+    fine dial.
+14. **Seat sizing constraints (→ B map authoring, structure)**: (a) an
+    all-cap start must NOT satisfy leadership for any seat (the raw
+    sheet-10 board tripped at T2 for the center); (b) small/hermit
+    seats never win at L2 — either accept (their win path is the skill
+    ceiling the bots lack) or hand B's authoring a compensator
+    (legendary choke rent, richer per-sector yield). Recommend: accept
+    for MVP, register as playtest watch.
+
+## User verdicts (sheet 12)
+
+- **Finding 12 — match-closure lever: SEALED as option (a)
+  (2026-07-05, ruling ⑮).** Conquest/development raises the national
+  sustainable cap — STRUCTURE confirmed; all numbers (cap per sector /
+  development pricing / center-vs-periphery scaling) are A-3's to
+  price. This is the sheet-9 reservation ("raising the cap itself =
+  economy development — the future long lever") coming due, not a new
+  dial. Grounds: L2 evidence that a static-cap world cannot close (96%
+  timeout; leadership arithmetically unreachable vs any healthy
+  same-size peer) while the +400/sector probe world produces endings
+  (26%) AND archetype differentiation (snowball 12% > chain/interior
+  8% > shield 3%) — the cap-growth lever is the match's ending
+  mechanism, not pricing detail. A-3 verification target registered:
+  re-run the sheet-12 sweep at A-3's priced values; the probe's 400 is
+  harness 가안, NOT the sealed number.
+- **Finding 13 — vassalage sovereignty premium: SEALED at 0.25
+  (2026-07-05, ruling ⑯ — pays the ruling-⑭ gate; 가안 promoted).**
+  L2 frequency evidence: 0.15 → 62% of demands accepted, vassal-chain
+  focal win 15% (top of field, the chain becomes THE buy); 0.25 → 28%
+  accepted, win 8% (in-family with snowball/interior-lines); 0.35 ≈
+  0.25. **Rider sealed with it: the premium is a floor-setter, not a
+  fine dial** — above 0.25 acceptance saturates because the
+  capital-risk term dominates the loser's margin; if the chain ever
+  needs weakening later, the handle is the capital-risk side of the
+  loss model, not this number. Playtest-provisional like all values.
+- **Finding 14 — seat sizing: SEALED as recommended (2026-07-05,
+  ruling ⑰).** (1) **Map-authoring constraint registered for B**: an
+  all-cap start state must NOT satisfy leadership for any seat — on
+  the raw sheet-10 masses the center tripped the check at T2 with two
+  recruit turns and no war (leadership vs each rival individually +
+  hermit exclusion passed from the start state). Board authoring must
+  verify this before play. (2) **Small/hermit seat L2 losing record
+  ACCEPTED for MVP** — per the L2-charter reading rule, their win
+  paths (timing reads, fog exploitation, choke rent) live exactly in
+  the placeholder list, so the 0% is not a design verdict; no
+  compensator now. Registered as standing L3 playtest watch items.
+- **L2 charter ADOPTED (2026-07-05, user-directed).** The test-trust
+  ladder and the L2 epistemology are now documented in
+  `docs/features/match-arc/TEST-LADDER.md` (single home): asymmetric
+  proof rule (found = real / not-found = nothing / L2 values never
+  final), the harness-placeholder table (each invented bot behavior
+  named as a stand-in for a human-facing system — fog/scouting,
+  blinds, adaptation, negotiation reads), negative-space findings
+  (fog owns war frequency; blinds' acceptance test = board moves
+  without the idle-aggression placeholder), and archetype
+  pre-screening as a sanctioned secondary use (with the reading rule
+  that L2 failure only signals when the archetype's identity does not
+  depend on what bots lack). Purpose: fixing what L2 claims makes the
+  L3 delta measurable — the pre-work for measuring distance from
+  human-felt fun.
+
 # 2026-07-05 run — sheets 10–11 + S6 re-run (A-2)
 
 Question: does the hegemony decision-point formula + settlement

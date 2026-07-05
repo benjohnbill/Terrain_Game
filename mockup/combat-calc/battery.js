@@ -5,6 +5,7 @@
 const { DIALS, lever, resolve, reserveAwaken } = require('./engine');
 const { MATCH_DIALS, projectable, shieldMass, hegemonyCheck,
   presetBundle, expectedContinuedLoss, accepts } = require('./match');
+const TOURNEY = require('./tournament');
 
 const fmt = (n) => typeof n === 'number' && !Number.isInteger(n) ? n.toFixed(2) : String(n);
 const men = (n) => `${Math.round(n).toLocaleString()}명(${(n / 100).toFixed(1)}부대)`;
@@ -696,8 +697,110 @@ function settlement() {
   console.log('    a cheap Maximum substitute. Premium value (0.5×remaining) → user dial.');
 }
 
+// ---------------------------------------------------------------- Sheet 12
+function tournamentSheet() {
+  h('SHEET 12 — Match tournament (L2): archetype × seat × temperament frequencies');
+  console.log('Policy bots play full matches over engine.js + match.js on the sheet-10');
+  console.log('board. PASS SENTENCE (user): "each temperament/archetype wins where it');
+  console.log('should, and no temperament is absolutely favorable."');
+  console.log('HONEST LIMITS: bot policy quality bounds proof power — dominance FOUND is');
+  console.log('real; dominance NOT found is not absence. Bots use no reserves/delaying/');
+  console.log('feints/scouting; one authored board, not the map space. Policy dials are');
+  console.log('harness GAAN, never seal candidates (tournament.js §BOT/§HARNESS).\n');
+
+  const { ARCHETYPES, TEMPERAMENTS, SEATS } = TOURNEY;
+
+  function printGrids(recs, label) {
+    sub(`${label} — archetype × seat focal win rate (baseline ~20% if all even)`);
+    const widths = [20, ...SEATS.map(() => 12), 9];
+    row(['archetype \\ seat', ...SEATS.map((s) => {
+      const seat = recs.find((r) => r.seat === s);
+      return `${s}(${seat ? seat.finalRealms.find((x) => x.name === s).seat : ''})`;
+    }), 'overall'], widths);
+    for (const a of ARCHETYPES) {
+      const cells = SEATS.map((s) => {
+        const ms = recs.filter((r) => r.focal === a && r.seat === s);
+        const w = ms.filter((r) => r.winner === r.seat).length;
+        return `${w}/${ms.length}`;
+      });
+      const all = recs.filter((r) => r.focal === a);
+      const wins = all.filter((r) => r.winner === r.seat).length;
+      row([a, ...cells, `${(wins / all.length * 100).toFixed(0)}%`], widths);
+    }
+
+    const tSlots = {}, tWins = {};
+    for (const t of TEMPERAMENTS) { tSlots[t] = 0; tWins[t] = 0; }
+    for (const r of recs) {
+      for (const fr of r.finalRealms) tSlots[fr.temperament]++;
+      if (r.winnerTemperament) tWins[r.winnerTemperament]++;
+    }
+    console.log('  temperament (participant-pooled): ' + TEMPERAMENTS.map((t) =>
+      `${t} ${tWins[t]}/${tSlots[t]} (${(tWins[t] / tSlots[t] * 100).toFixed(1)}%)`).join(' · '));
+
+    const shapes = {};
+    for (const r of recs) shapes[r.endingShape] = (shapes[r.endingShape] ?? 0) + 1;
+    console.log('  endings: ' + Object.entries(shapes).map(([s, n]) =>
+      `${s} ${(n / recs.length * 100).toFixed(0)}%`).join(' · '));
+    const trips = recs.filter((r) => r.tripTurn).map((r) => r.tripTurn);
+    if (trips.length) {
+      const inEnv = trips.filter((t) => t >= 15 && t <= 25).length;
+      console.log(`  trip turns: min T${Math.min(...trips)} · mean T${(trips.reduce((a, b) => a + b) / trips.length).toFixed(1)} · max T${Math.max(...trips)} · in 15–25 envelope: ${(inEnv / trips.length * 100).toFixed(0)}%`);
+    }
+    console.log(`  wars/match: ${(recs.reduce((s, r) => s + r.warsStarted, 0) / recs.length).toFixed(1)} · settlements/match: ${(recs.reduce((s, r) => s + r.settlements.length, 0) / recs.length).toFixed(1)} · eliminations: ${recs.reduce((s, r) => s + r.eliminations, 0)}`);
+
+    const deals = recs.flatMap((r) => r.settlements);
+    const byPreset = {};
+    for (const d of deals) {
+      const k = `${d.kind === 'vassalage' ? '복속' : d.preset}`;
+      byPreset[k] = byPreset[k] ?? { n: 0, decisive: 0, capital: 0 };
+      byPreset[k].n++;
+      if (d.margin === 'decisive') byPreset[k].decisive++;
+      if (d.capital) byPreset[k].capital++;
+    }
+    console.log('  deals: ' + Object.entries(byPreset).map(([k, v]) =>
+      `${k} ${v.n} (decisive ${(v.decisive / v.n * 100).toFixed(0)}%, capital ${(v.capital / v.n * 100).toFixed(0)}%)`).join(' · '));
+  }
+
+  // ---- World 1: CANON dials (capPerSector 0 — conquest moves pool+yield, not cap)
+  console.log('WORLD 1 — canon dials. HEADLINE: the S10 structural insight, frequency-');
+  console.log('confirmed — with static caps, leadership is arithmetically unreachable');
+  console.log('against ANY healthy same-size peer (cap 7,000 < 1.7 × 7,150), so almost');
+  console.log('every bot match is an endless material-settlement churn. The only sealed');
+  console.log('paths to a trip are vassal mass (rare by the sealed acceptance shape) or');
+  console.log('a simultaneously-worn world.');
+  const canon = TOURNEY.runTournament({ reps: 12, seed: 42 });
+  console.log(`\n${ARCHETYPES.length} archetypes × ${SEATS.length} seats × 12 reps = ${canon.length} matches (seeded, deterministic).`);
+  printGrids(canon, 'WORLD 1 (canon)');
+
+  // ---- World 2: A-3-coupled variant — conquest raises the cap (+400/sector)
+  console.log('\nWORLD 2 — A-3 probe world (capPerSector 400): conquered land raises the');
+  console.log('national cap, the lever A-3 has not yet designed. Frequencies below are');
+  console.log('measured HERE because matches actually end in this world.');
+  const coupled = TOURNEY.runTournament({ reps: 12, seed: 42, harness: { capPerSector: 400 } });
+  printGrids(coupled, 'WORLD 2 (A-3-coupled)');
+
+  sub('Vassalage premium sweep (ruling ⑭ gate: 0.25 가안) — in the A-3-coupled world');
+  const wS = [9, 16, 18, 20, 14];
+  row(['premium', 'vassal deals', 'deals/offers', 'vassal-chain win%', 'trip-chain%'], wS);
+  for (const p of [0.15, 0.25, 0.35]) {
+    const rs = TOURNEY.runTournament({ reps: 8, seed: 7, harness: { vassalPremium: p, capPerSector: 400 } });
+    const vd = rs.reduce((s, r) => s + r.vassalDeals, 0);
+    const vo = rs.reduce((s, r) => s + r.vassalOffers, 0);
+    const vc = rs.filter((r) => r.focal === 'vassal-chain');
+    const vcw = vc.filter((r) => r.winner === r.seat).length;
+    const chain = rs.filter((r) => r.endingShape === 'trip-chain').length;
+    const ended = rs.filter((r) => r.winner).length;
+    row([p, vd, vo ? `${vd}/${vo} (${(vd / vo * 100).toFixed(0)}%)` : '0/0',
+      `${(vcw / vc.length * 100).toFixed(0)}%`,
+      ended ? `${(chain / ended * 100).toFixed(0)}% of ${ended}` : '—'], wS);
+  }
+
+  sub('SPEC GAPS the bots hit (undocumented rules the harness had to invent)');
+  TOURNEY.SPEC_GAPS.forEach((g, i) => console.log(`  ${i + 1}. ${g}`));
+}
+
 // ----------------------------------------------------------------
-const SHEETS = { myeongnyang, fortress, raid, delaying, grinding, feint, tempo, timeline, manpower, hegemony, settlement };
+const SHEETS = { myeongnyang, fortress, raid, delaying, grinding, feint, tempo, timeline, manpower, hegemony, settlement, tournament: tournamentSheet };
 const pick = process.argv[2];
 if (pick && SHEETS[pick]) SHEETS[pick]();
 else if (pick) { console.error(`unknown sheet: ${pick} (${Object.keys(SHEETS).join(', ')})`); process.exit(1); }
