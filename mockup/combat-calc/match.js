@@ -17,7 +17,11 @@ const MATCH_DIALS = {
                            // / 'field' = field army only
   projectionFloor: 1000,   // hermit clause: projectable ≤ floor → out of balance (reuses M12 raid visibility threshold)
   regenWindow: 6,          // turns the coalition gets to reach 1.7 × candidate shield (GAAN — swept)
-  chokeFlow: 2,            // projectable through a choke = cap × chokeFlow (GAAN — "turns of flow a campaign sustains"; swept)
+  chokeFlow: 2,            // SEALED 2026-07-05 (ruling ⑩): projectable through a choke
+                           // = cap × 2 ("waves a campaign sustains through the door") —
+                           // the one value where 촉-type pass realms stay in the balance
+                           // (2,000, small-punch Parthia blocker) while 일본-type strait
+                           // realms are hermits (1,000) with a staging buy-back (2,000)
   recruitPerTurn: 0.10,    // of field cap per recruitment primary (M13, sealed)
 
   // -- settlement (GLOSSARY 정산 / 수락 산술) --

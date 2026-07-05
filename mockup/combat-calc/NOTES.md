@@ -101,6 +101,20 @@ the new pure module; sheets `hegemony` / `settlement`.)
   field-only (its garrisons all face elsewhere) — prototype
   simplification accepted; the invasion-corridor edge case belongs to
   B's map authoring.
+- **Finding 7 — choke projection flow: SEALED at flow 2, floor 1,000
+  (2026-07-05, ruling ⑩).** Projectable mass = min(field army, Σ door
+  width × 2) — a derived reading of the real army through the realm's
+  geography, never a stored resource (escape-state doctrine). flow 2 is
+  the unique value separating the two historical archetypes correctly:
+  pass realms (촉, door 1,000 → 2,000) stay IN the balance as
+  small-punch Parthia blockers (북벌 possible; the hegemon must
+  actually break them — 음평 샛길 = the authored pass removal path),
+  while strait realms (일본, door 500 → 1,000) are hermits with a
+  working buy-back (staging → 2,000 = 임진왜란, and 명량 re-narrows
+  the door — both directions reproduced). flow 1 kills the 북벌 AND
+  the buy-back promise; flow 3 kills the hermit clause. Map-authoring
+  rider: the cradle archetypes (shielded valley / island-peninsula)
+  now have a fixed projection grammar for B.
 - **UI idea registered (user, 2026-07-05) — expansion break-even
   card**: surface the break-even read as a fog-banded, summoned
   estimate (never a resident advisor): value side = target land's
