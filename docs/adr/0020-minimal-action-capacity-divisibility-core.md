@@ -2,7 +2,8 @@
 
 Date: 2026-07-01
 
-Status: Accepted (amends ADR 0018)
+Status: Accepted
+Amends: ADR 0018 (2026-07-01) — reclassifies a single divisible action-capacity pool from deferred to core; the heavier four-capacity/overclock system stays deferred (see § Consequences).
 
 ## Context
 

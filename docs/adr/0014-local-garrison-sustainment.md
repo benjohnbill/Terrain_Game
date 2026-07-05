@@ -2,7 +2,8 @@
 
 Date: 2026-06-29
 
-Status: Accepted (amended by ADR 0022)
+Status: Accepted
+Amended by: ADR 0022 (2026-07-01) — local-garrison sustainment is now scoped to the front-sector operational layer; province economy becomes an aggregate/readout over its sectors (see § Consequences).
 
 ## Context
 

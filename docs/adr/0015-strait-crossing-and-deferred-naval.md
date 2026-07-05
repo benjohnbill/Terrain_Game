@@ -3,6 +3,7 @@
 Date: 2026-06-29
 
 Status: Accepted
+Amended: 2026-07-03 (combat-formula magnitude pass, M5) — strait/water crossing penalty values set as attack-side multipliers (strait opposed 0.55 confirmed 2026-07-05, ruling ⑦); the Phase-1 deferred-naval decision is unchanged. See § Amendment below.
 
 ## Context
 

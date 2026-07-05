@@ -2,7 +2,8 @@
 
 Date: 2026-07-01
 
-Status: Accepted (capacity-layer scope amended by ADR 0020)
+Status: Accepted
+Amended by: ADR 0020 (2026-07-01) — the deferral now covers only the four-capacity / carryover / overclock **system**; a single divisible action-capacity pool is reclassified as core (see § Decision).
 
 ## Context
 

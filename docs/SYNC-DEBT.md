@@ -11,11 +11,6 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
 
 ## Open
 
-- [ ] **ADR header normalization sweep** (Codex P1): all 27 ADRs get
-  normalized header fields (`Status:` / `Supersedes:` / `Amended by:
-  ADR-XXXX (date)` + one-line delta). Known offenders: ADR 0015 still
-  `Accepted` while combat GLOSSARY says "(amended)"; ADR 0014 lacks
-  date + delta. Include a status index table in `docs/adr/README.md`.
 - [ ] **Term lifecycle beyond promotion** (Codex P1): define
   proposed → agreed → promoted → renamed → deprecated states in the
   Vocabulary Law; renames are the dangerous case for agents. Add an
@@ -46,6 +41,16 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
 
 ## Paid
 
+- [x] 2026-07-06 — **ADR header normalization sweep (Codex P1, A-4 B5)**
+  — amendment-carrying ADR headers normalized to the law's structured
+  fields: 0014 (`Amended by: ADR 0022 (2026-07-01)` + delta), 0015
+  (self-amendment stamp for the 2026-07-03 magnitude pass), 0018
+  (`Amended by: ADR 0020` + delta), 0020 (`Amends: ADR 0018` + delta).
+  Status index table added to `docs/adr/README.md` (26 rows) with a
+  pointer to the documentation-law supersession protocol; plain-Accepted
+  ADRs carry no relationship field (index is their normalization
+  surface — anti-noise reading). *ADR 0019 v5 front-sector amendment is
+  a SEPARATE decision (a4-plan B5), user-gated — not part of this line.*
 - [x] 2026-07-06 — **Sheet-12 spec gaps → canon (A-4 B4)** — the 7 open
   `mockup/combat-calc/tournament.js` §SPEC_GAPS given a canon home:
   disposition record in `docs/features/match-arc/RULINGS.md` §SPEC_GAPS
