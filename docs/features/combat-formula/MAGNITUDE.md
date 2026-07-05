@@ -380,8 +380,10 @@ is dominated — recut it. The answer must exist in both forms: logic
 glossary vocabulary plus one natural-language sentence. Read by fit
 ranking and the forecast card (ADR 0024 advisability-as-ranking); closes
 the "regret through ignorance" gap (the card must say what the model
-already knows). Authoring of all 12 blocks joins the plan-roster
-magnitude table in this pass.
+already knows). **All 12 blocks authored 2026-07-05 (A-4 B3) in
+`../operation-plan-catalog/CATALOG.md`** (per plan; off-label test
+passed for all — none dominated); this doc owns the schema, the
+catalog owns the content.
 
 ## M7 — Plan thresholds (2026-07-03)
 

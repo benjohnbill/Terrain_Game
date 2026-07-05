@@ -11,9 +11,13 @@ multipliers.
 
 **Shape pass COMPLETE (2026-07-02): all 12 plans authored at shape level**
 (identity, core/secondary/none axes, risk character, availability gates).
-Schema fixed (ADR 0024). Remaining: the magnitude pass (relative calibration
-with the combat-balancing formula) and ADR promotion once the shapes have
-survived a review. Content may still churn at magnitude level.
+Schema fixed (ADR 0024). **Claim blocks COMPLETE (2026-07-05, A-4 B3): all 12
+plans carry a claim block** (핵심 이득 / 핵심 대가 / 반목표 조건 + briefing
+sentence + off-label cost test; schema in combat-formula MAGNITUDE § Authoring
+principle). Off-label test: all 12 pass (none dominated — each plan has a
+defining zero or a unique core axis). Remaining: the magnitude pass (relative
+calibration with the combat-balancing formula) and ADR promotion once the
+shapes have survived a review. Content may still churn at magnitude level.
 
 Authoring method (user-approved): **shape first, magnitude later**. Each plan
 first fixes its identity — core axes, deliberate zeros, sibling contrasts, risk
