@@ -78,7 +78,39 @@ the new pure module; sheets `hegemony` / `settlement`.)
 
 ## User verdicts (2026-07-05 run)
 
-- (pending)
+- **Finding 6 — shield-base definition: SEALED (2026-07-05, ruling ⑨).**
+  Shield mass = **field army + border-shield garrisons on the fronts
+  facing the counting side (facing-front reading)** — the field army is
+  interior-lines (meets any single invader, counts whole); frozen
+  border garrisons count only where they face the other side (a rival's
+  far-front garrisons are not my bill — 임진왜란 셈: 부산·동래 + 탄금대,
+  함경도 국경군은 제외). Historical anchor accepted: the two terms are
+  literally the late-Roman limitanei/comitatenses split. Implementation
+  ruling: DERIVED per turn, zero new state — "target's garrisons in
+  sectors adjacent to territory I or my vassals control" over the
+  existing adjacency graph; control changes redraw the fronts
+  automatically, which makes conquest-inherits-exposure (anti-snowball)
+  and vassalage-widens-the-front pure arithmetic (visible in the
+  ledger: vassalizing 중원 raises the 동평 bill 10,200 → 11,220 the
+  same turn the vassal masses trip the check, T22). Structural insight
+  banked: **expansion has a break-even point** — wider realm = deeper
+  floor (pool, cap ceiling) but wider surface (thinner per-front
+  shield, fixed 20-point attention); hegemony is 회맹-shaped
+  (acknowledgment, not annexation), so pure substance-chasing is
+  correctly taxed. Sub-note: a realm sharing no front counts at
+  field-only (its garrisons all face elsewhere) — prototype
+  simplification accepted; the invasion-corridor edge case belongs to
+  B's map authoring.
+- **UI idea registered (user, 2026-07-05) — expansion break-even
+  card**: surface the break-even read as a fog-banded, summoned
+  estimate (never a resident advisor): value side = target land's
+  pool/yield (reach arithmetic already prices it), cost side = new
+  front length + the NEW neighbors' facing strength. Scouting feeds
+  both sides — border-line strength is a stable, scoutable target
+  (province-scale read, pairs with the hollow-province read of ruling
+  ⑥), while field-army location stays a lucky catch — so scouting buys
+  the break-even band, not just map fill. Owed to the A-4
+  display-debts list (command-card IA family), post-B-map.
 
 ---
 

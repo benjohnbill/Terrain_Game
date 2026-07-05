@@ -449,12 +449,14 @@ function hegemony() {
   console.log('Check each turn for candidate 서령: leadership ∧ unassailability + 은둔국 조항.');
   console.log(`Defaults: ratio ${MATCH_DIALS.shieldRatio}, base '${MATCH_DIALS.shieldBase}', floor ${MATCH_DIALS.projectionFloor}, window ${MATCH_DIALS.regenWindow}t, chokeFlow ${MATCH_DIALS.chokeFlow}.\n`);
 
+  // fronts = per-neighbor border-shield garrisons (ruling ⑨ facing-front
+  // reading; in the real game this is derived from adjacency per turn)
   const world = () => ([
-    { name: '서령', field: 4500, fieldCap: 6000, garrisons: 4200, shieldGarrisons: 1200, exits: [{ cap: Infinity }], alive: true, vassalOf: null, atWar: false },
-    { name: '중원', field: 7000, fieldCap: 9000, garrisons: 5600, shieldGarrisons: 1800, exits: [{ cap: Infinity }, { cap: Infinity }, { cap: Infinity }], alive: true, vassalOf: null, atWar: false },
-    { name: '남곡', field: 2500, fieldCap: 4500, garrisons: 3000, shieldGarrisons: 600, exits: [{ cap: Infinity }], alive: true, vassalOf: null, atWar: false },
-    { name: '동평', field: 4500, fieldCap: 6000, garrisons: 4200, shieldGarrisons: 1200, exits: [{ cap: Infinity }], alive: true, vassalOf: null, atWar: false },
-    { name: '북하', field: 5000, fieldCap: 6000, garrisons: 3000, shieldGarrisons: 800, exits: [{ cap: 500 }], alive: true, vassalOf: null, atWar: false },
+    { name: '서령', field: 4500, fieldCap: 6000, garrisons: 4200, shieldGarrisons: 1200, fronts: { 남곡: 600, 중원: 600 }, exits: [{ cap: Infinity }], alive: true, vassalOf: null, atWar: false },
+    { name: '중원', field: 7000, fieldCap: 9000, garrisons: 5600, shieldGarrisons: 1800, fronts: { 서령: 600, 동평: 600, 남곡: 600 }, exits: [{ cap: Infinity }, { cap: Infinity }, { cap: Infinity }], alive: true, vassalOf: null, atWar: false },
+    { name: '남곡', field: 2500, fieldCap: 4500, garrisons: 3000, shieldGarrisons: 600, fronts: { 서령: 300, 중원: 300 }, exits: [{ cap: Infinity }], alive: true, vassalOf: null, atWar: false },
+    { name: '동평', field: 4500, fieldCap: 6000, garrisons: 4200, shieldGarrisons: 1200, fronts: { 중원: 600, 북하: 600 }, exits: [{ cap: Infinity }], alive: true, vassalOf: null, atWar: false },
+    { name: '북하', field: 5000, fieldCap: 6000, garrisons: 3000, shieldGarrisons: 800, fronts: { 동평: 800 }, exits: [{ cap: 500 }], alive: true, vassalOf: null, atWar: false },
   ]);
 
   // Scripted arc (per-turn mass deltas calibrated to the sheet-7/8 engine

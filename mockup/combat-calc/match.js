@@ -53,17 +53,34 @@ function projectable(realm, D = MATCH_DIALS) {
   return Math.min(realm.field, doors);
 }
 
-function shieldMass(realm, D = MATCH_DIALS) {
+// Border-shield garrisons on the fronts facing any of `againstNames`.
+// realm.fronts = { neighborName: shieldGarrisons } — in the real game this
+// is DERIVED per turn (garrisons of sectors adjacent to territory the
+// other side controls), zero new state; the prototype carries an authored
+// front map. No front map → fall back to the whole line.
+function frontGarrisons(realm, againstNames) {
+  if (!realm.fronts) return realm.shieldGarrisons ?? 0;
+  return Object.entries(realm.fronts)
+    .filter(([n]) => againstNames.includes(n))
+    .reduce((s, [, g]) => s + g, 0);
+}
+
+function shieldMass(realm, D = MATCH_DIALS, againstNames = null) {
   // The mass the ~1.7 ratio multiplies. The geometry premium (fort ×
   // terrain) lives inside the ratio (sheet 7 measured it against a realm
-  // defending with typical fort geometry), so the base is raw mass. WHICH
-  // mass is unsealed: sheet 7's measured 4,000 was border-fortress
-  // garrison + field reserve — interior/capital garrisons joined only in
-  // later war stages. Swept in sheet 10.
+  // defending with typical fort geometry), so the base is raw mass.
+  // SEALED 2026-07-05 (ruling ⑨): shieldLine, FACING-FRONT reading —
+  // field army (interior lines: meets any single invader) + border-shield
+  // garrisons facing the OTHER SIDE only (frozen bodies pinned to their
+  // own fronts; a rival's far-front garrisons are not my bill). This is
+  // also what makes conquest inherit exposure: control changes redraw
+  // the fronts, so the anti-snowball loop is pure arithmetic.
   switch (D.shieldBase) {
     case 'total': return realm.field + realm.garrisons;
     case 'field': return realm.field;
-    default: return realm.field + (realm.shieldGarrisons ?? 0); // 'shieldLine'
+    default: return realm.field + (againstNames
+      ? frontGarrisons(realm, againstNames)
+      : (realm.shieldGarrisons ?? 0)); // 'shieldLine'
   }
 }
 
@@ -84,13 +101,22 @@ function hegemonyCheck(realms, candName, D = MATCH_DIALS) {
   // candidate side: own projection + vassal projection (복속 row: vassal
   // mass counts to the overlord's side of the arithmetic)
   const candProj = projectable(cand, D) + vassals.reduce((s, v) => s + projectable(v, D), 0);
-  const candShield = shieldMass(cand, D) + vassals.reduce((s, v) => s + shieldMass(v, D), 0);
+  const candSide = [candName, ...vassals.map((v) => v.name)];
+  const inBalanceNames = [];
 
-  // leadership: candProj ≥ ratio × every in-balance shield
-  const leadershipRows = inBalance.map((x) => ({
-    name: x.realm.name, need: D.shieldRatio * shieldMass(x.realm, D),
-    pass: candProj >= D.shieldRatio * shieldMass(x.realm, D),
-  }));
+  // leadership: candProj ≥ ratio × every in-balance shield, where each
+  // rival's shield counts only the garrisons facing the candidate's side
+  // (ruling ⑨ facing-front reading; vassalage widens the shared front)
+  const leadershipRows = inBalance.map((x) => {
+    inBalanceNames.push(x.realm.name);
+    const s = shieldMass(x.realm, D, candSide);
+    return { name: x.realm.name, need: D.shieldRatio * s, pass: candProj >= D.shieldRatio * s };
+  });
+
+  // candidate's own shield vs the coalition: garrisons facing any
+  // in-balance realm, own + vassals'
+  const candShield = shieldMass(cand, D, inBalanceNames)
+    + vassals.reduce((s, v) => s + shieldMass(v, D, inBalanceNames), 0);
   const leadership = leadershipRows.every((r) => r.pass);
 
   // unassailability: no in-balance coalition reaches ratio × candidate
