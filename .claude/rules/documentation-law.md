@@ -25,10 +25,12 @@ restate this law elsewhere. Auto-load carries LAW only; canon CONTENT
   below).
 - `GLOSSARY.md` — Tier-1 vocabulary (see Vocabulary Law below).
 - `MAGNITUDE.md` / `FORMULA.md` / `MATCHUP.md` / `CATALOG.md` /
-  `STRATEGY-SPACE.md` — model documents. ALL tunable numbers (dials)
-  live in `combat-formula/MAGNITUDE.md` only; every other file
-  references them by pointer so nothing goes stale when a dial is
-  re-cut.
+  `STRATEGY-SPACE.md` — model documents. Each feature's dials live in
+  ONE owning model doc (resolution dials: `combat-formula/MAGNITUDE.md`;
+  match-arc values: its GLOSSARY seal rows until a magnitude home
+  exists); every other file references by pointer so nothing goes
+  stale when a dial is re-cut. Never restate a number outside its
+  owning doc.
 - `RESEARCH.md`, `research/*.md` — the evidence layer: surveys and
   audits. Inputs to seals; never normative on their own.
 
@@ -37,6 +39,14 @@ restate this law elsewhere. Auto-load carries LAW only; canon CONTENT
 Divergence between Projection and Production is a **sync debt**: the
 dated seal in the Production doc is truth meanwhile. SPEC is exempt —
 direction is not outrun by seals.
+
+**Seal, mechanically** (Codex-audited 2026-07-05): a seal is a
+Production-doc row/section carrying at minimum **status word
+(SEALED/AGREED/CONFIRMED) + date + verdict source** (ruling number,
+battery sheet, or user quote). Bold prose without these three is not a
+seal. Sync debts that cannot be paid in-session are recorded in
+`docs/SYNC-DEBT.md` (tracked ledger) — an unrecorded debt is a
+violation, an unpaid-but-recorded one is normal operation.
 
 ## ADR supersession protocol
 
@@ -84,6 +94,10 @@ these):
    changed; SPEC only via user-approved proposal.
 3. Refresh `INDEX.md` of every touched feature (status, pointers,
    open questions).
-4. Regenerate `docs/GLOSSARY-QUICKREF.md` after any seal batch
-   (generated file — never hand-edited, never cited as definition).
+4. Regenerate `docs/GLOSSARY-QUICKREF.md` after any seal batch — an
+   agent-curated digest (no generator script yet): convenience surface
+   only, never cited as definition; header must carry "last
+   regenerated" date.
 5. Stamp superseded/amended ADRs per the protocol above.
+6. Record any duty left unpaid (and any Projection/Production
+   divergence noticed) in `docs/SYNC-DEBT.md`.
