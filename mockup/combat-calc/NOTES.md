@@ -1,5 +1,138 @@
 # Battery findings — answers pending user rulings
 
+# 2026-07-05 night run — sheet 13 (thin economy, A-3)
+
+Question: the minimum economy that makes M13 prices and 정산 codable —
+sector yield, treasury, and what raises the national cap (ruling ⑮'s
+pricing duty). New module: `econ.js` (candidate structure, 가안).
+Sheet: `node mockup/combat-calc/battery.js economy`.
+
+## Candidate structure (closes autonomously if unopposed — handoff §A-3)
+
+**Everything derives from sector values × usable; zero new stored
+state** except the treasury stock:
+
+- income (yield/turn) = Σ economyValue × usableEconomy
+- national cap = capPerPop × Σ populationValue × usablePop
+- treasury = accumulated unspent yield; 배상 lands here (pays sheet-12
+  spec gap #6 — indemnity is treasury cash, spent through the normal
+  recruit/build prices, no special conversion rule)
+- conquest raises cap automatically (sectors arrive at 50/60 usable →
+  cap arrives discounted, matures with recovery — the anti-instant-
+  full-value guardrail for free); raids lower the rival's cap (usable
+  burns); development raises one sector's values permanently
+
+## What the sheet measured (L0/L1 + one L2 re-run)
+
+- **Sealed anchors re-derive**: capPerPop 600 × 10-sector mid realm =
+  cap 6,000 ✓; 12 rich sectors (econ 1.5 / pop 1.25) = 9,000 ✓ — the
+  M13 numbers become DERIVED, not authored. Recruit primary costs
+  30% (mid) / 25% (center) of turn income — affordable, real tension.
+- **Cap motion**: +1 fresh capture = +360 now / +600 recovered;
+  3 sectors raided to 0.7 usable = −540 cap, −0.9 income; development
+  (1 primary + 4 yield) = +300 cap, +0.5 income, 8-turn payback.
+- **Fort-vs-recruit exchange rate (STRATEGY-SPACE #5 verification,
+  due since A-1): the blood-EV is FLAT ≈ 27–30 men of extra attacker
+  blood per yield invested across ALL packages** (recruit 27, field-
+  works 30, walls 29, fortress 27/y) — emergent from the casualty
+  curve, not engineered. This is the no-fixed-optimum doctrine landing
+  in the economy: at these prices no package dominates on blood; the
+  choice is decided by the OTHER currencies — men are mobile but die
+  once and eat cap headroom; forts persist, deny the sector
+  (threshold), but cost PRIMARIES (tempo) and are position-locked.
+  Guarantee #5 ("build-rate dial is a real early-game opportunity
+  cost") holds by construction: build spends tempo, the scarcest
+  early currency.
+- **Sheet-12 re-run under the derived cap (capPerSector 600)**: 27%
+  of matches end (canon 4% / probe@400 26%), archetype spread survives
+  (chain 10% · interior 10% · snowball 8% · shield 3%), mean trip
+  T26.3. The derived structure closes the world at least as well as
+  the raw probe — ruling ⑮'s re-run duty paid at candidate values.
+
+## Findings that need user rulings (continuing the numbering)
+
+15. **capPerPop 600 + the sector templates** (mid = 10 ordinary
+    sectors, center = 12 rich at econ 1.5/pop 1.25): this single dial
+    re-derives both sealed cap anchors and closed the L2 world.
+    Recommendation: seal 600 with templates as authoring guidance
+    (B's cradle authoring keeps the freedom to vary sector counts —
+    the dial is per-pop, not per-realm).
+16. **Fort build prices** (fieldworks 2y+1pr / walls 6y+2pr /
+    fortress 12y+4pr / legendary 30y+8pr): satisfies the M5 rider
+    (wonder ≈ 8 turns ≈ ⅓ match) and lands the flat blood-EV above.
+    Recommendation: seal as-is; the flatness is the feature.
+17. **Development package** (1 primary + 4 yield → +0.5 economy +
+    +0.5 population on one sector, once per sector): +300 cap / +0.5
+    income, 8-turn payback — slow-lever identity (shield-first and
+    free-rider food). Recommendation: seal shape, keep once-per-sector
+    (a repeatable step needs a diminishing ladder — Phase 2).
+18. **Treasury start 5** (small war chest): matters only for turn-1..3
+    choices; pure feel dial. Recommendation: seal 가안 5, playtest owns.
+
+## User verdicts (sheet 13)
+
+- **Land-derived state principle: ADOPTED as Tier-0 design principle
+  (2026-07-05, user-confirmed after retrofit review).** "모든 것은
+  땅에서 파생된다" — substance is never stored where it can be derived
+  from held land; registered in DOMAIN_MAP §Design Principle with the
+  named exception (command pool — attention is realm-size-independent)
+  and the MVP boundary (muster geography abstracted; M9 grammar is the
+  extension point). The user's framing sealed the scope: "땅" includes
+  choke width → projection, cradle position → population base, muster
+  origin + march distance → combat power; 도/섹터/hex are the overlay
+  on that land.
+- **Finding 15 — capPerPop 600 + sector templates: SEALED (2026-07-05,
+  ruling ⑱).** One ordinary fully-usable sector sustains 600 men;
+  cap = 600 × Σ populationValue × usablePop. Templates (mid = 10
+  ordinary sectors → 6,000 ✓; center = 12 rich sectors econ 1.5 /
+  pop 1.25 → 9,000 ✓) are AUTHORING GUIDANCE, not rules — the dial is
+  per-pop, so B's cradle authoring freely varies sector counts. First
+  application of the land-derived principle; L2-validated (derived-cap
+  re-run closes 27% of matches with archetype spread intact).
+- **Finding 16 — fortification build prices: SEALED (2026-07-05,
+  ruling ⑲).** fieldworks 2y + 1 primary / walls 6y + 2 / fortress
+  12y + 4 / legendary 30y + 8. Grounds: (1) satisfies the M5 rider
+  (wonder-class ≈ 8 turns ≈ ⅓ of a 24-turn match); (2) this price
+  table produces the flat blood-EV (27–30 men per yield across all
+  defense packages) — cheaper makes forts THE answer, dearer makes
+  them dead letters; (3) the real price is primaries (tempo): yield
+  accumulates in the treasury, turns do not — 4 fortress turns forgo
+  4 recruit primaries (+2,400 men), which is the D7 "static investment
+  = effective tempo" identity landing as an actual price.
+- **Terminology — yield display term: SEALED (2026-07-05, user;
+  refined same session).** **yield (생산)** — defined as the **기본
+  생산량 (base production unit)**: the land-based fundamental unit of
+  production — one ordinary sector at full usable produces 생산 1 per
+  turn; the common measure of cost and asset across the whole game
+  (1 부대 = 생산 0.5, walls = 생산 6 + 2 primaries, raid loot ≈ 생산
+  1.5). Short form 생산 in running text; 기본 생산량 in the definition
+  (the user's framing: "yield를 토지 기반의 기초 생산 단위로 잡는다" —
+  the land-derived principle naming its own unit). Namespace note: the
+  documentation law's Production (생산) layer is docs-governance —
+  different namespace, no in-game collision. Registration owed to the
+  doc-sync batch (unit definition row + M14 economy section).
+- **Finding 17 — development package: SEALED (2026-07-05, ruling ⑳).**
+  1 primary + 생산 4 → one sector permanently +0.5 economy / +0.5
+  population (= cap +300, income +0.5/turn), ONCE per sector. Grounds:
+  8-turn payback makes it an early-window investment only (timing
+  question stays alive — no fixed answer); the slow archetypes'
+  (shield-first, free-rider) non-conquest cap path per ruling ⑮;
+  once-per-sector keeps MVP clean — a repeatable step needs a
+  diminishing ladder, parked as a Phase 2 reserved seat.
+- **Finding 18 — treasury start: SEALED 가안 5 (2026-07-05, ruling
+  ㉑, delegated to recommendation).** Pure feel dial (affects only
+  turn-1..3 choices); ownership handed to playtest.
+- **A-3 batch epistemic rider (user, 2026-07-05 — record verbatim
+  intent):** the user accepts the A-3 seals while explicitly NOT yet
+  seeing the match picture or feeling the economy ("수치 기반이니까,
+  거대한 톱니바퀴 일부를 설계하는 일이니까") — acceptance is
+  conditional on the standing feedback loop: keep running L2 as
+  values move, expect L3 to revise. This is the TEST-LADDER charter
+  operating as intended (L2 values never final), and it flags a
+  display debt for later: the economy is numbers-only until a
+  legibility surface exists (economy reads belong with the A-4
+  display-debt family / B's UI work).
+
 # 2026-07-05 evening run — sheet 12 (match tournament, the L2 build)
 
 Question: does each temperament/archetype win where it should, and is

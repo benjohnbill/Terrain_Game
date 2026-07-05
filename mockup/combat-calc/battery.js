@@ -799,8 +799,82 @@ function tournamentSheet() {
   TOURNEY.SPEC_GAPS.forEach((g, i) => console.log(`  ${i + 1}. ${g}`));
 }
 
+// ---------------------------------------------------------------- Sheet 13
+function economy() {
+  const E = require('./econ');
+  const D = E.ECON_DIALS;
+  h('SHEET 13 — Thin economy (A-3): yield ledger, fort-vs-recruit, derived cap');
+  console.log('Candidate structure (econ.js, 가안): everything derives from sector');
+  console.log('values × usable — income = Σ econ×usableE; cap = capPerPop × Σ pop×usableP.');
+  console.log('Conquest raises cap (sectors arrive), raids lower it (usable burns),');
+  console.log('development raises it permanently. Numbers → user rulings.\n');
+
+  sub('Check 1 — the sealed anchors re-derive (M13 cap 6,000 mid / 9,000 center)');
+  const mid = E.midRealm(), center = E.centerRealm();
+  console.log(`  mid realm (10 ordinary sectors): cap ${E.nationalCap(mid)} · income ${E.income(mid).toFixed(1)}/turn`);
+  console.log(`  center (12 rich sectors): cap ${E.nationalCap(center)} · income ${E.income(center).toFixed(1)}/turn`);
+  const rc = E.recruitCost(E.nationalCap(mid));
+  console.log(`  recruit primary (mid): +${rc.men}명 costs ${rc.yield.toFixed(1)} yield = ${(rc.yield / E.income(mid) * 100).toFixed(0)}% of turn income`);
+  const rcC = E.recruitCost(E.nationalCap(center));
+  console.log(`  recruit primary (center): +${rcC.men}명 costs ${rcC.yield.toFixed(1)} yield = ${(rcC.yield / E.income(center) * 100).toFixed(0)}% of turn income`);
+  console.log('  → recruitment consumes a meaningful-but-affordable slice; treasury');
+  console.log('    surplus funds forts/development — the fight-vs-grow wallet tension.');
+
+  sub('Check 2 — conquest/raid/development move the cap (ruling ⑮ mechanical)');
+  const conquered = [...mid, E.sector(1, 1, 0.5, 0.6)]; // fresh capture at 50/60 usable
+  console.log(`  +1 captured sector (usable 50/60): cap ${E.nationalCap(mid)} → ${E.nationalCap(conquered)} (+${E.nationalCap(conquered) - E.nationalCap(mid)}), full value after recovery: +${Math.round(D.capPerPop)}`);
+  const raided = mid.map((s, i) => i < 3 ? { ...s, usableEconomy: 0.7, usablePop: 0.7 } : s);
+  console.log(`  3 sectors raided to usable 0.7: cap ${E.nationalCap(mid)} → ${E.nationalCap(raided)} (−${E.nationalCap(mid) - E.nationalCap(raided)}) · income ${E.income(mid).toFixed(1)} → ${E.income(raided).toFixed(1)}`);
+  console.log('  → raid-attrition finally has an END-GAME lever: burning usable lowers');
+  console.log('    the rival\'s cap = lowers the shield ceiling the coalition needs.');
+  const dev = D.development;
+  const developed = [...mid.slice(0, 9), E.sector(1 + dev.economyStep, 1 + dev.populationStep)];
+  console.log(`  1 development (${dev.primaries} primary + ${dev.yield} yield): cap +${E.nationalCap(developed) - E.nationalCap(mid)}, income +${(E.income(developed) - E.income(mid)).toFixed(1)}/turn`);
+  console.log(`  payback: ${(dev.yield / dev.economyStep).toFixed(0)} turns of yield; cap/yield vs recruit: dev buys ${E.nationalCap(developed) - E.nationalCap(mid)} CEILING for ${dev.yield}y, recruit buys ${Math.round(dev.yield * D.menPerYield)} STANDING men for the same`);
+
+  sub('Check 3 — fortification-vs-recruitment exchange rate (STRATEGY-SPACE #5 due)');
+  console.log('  Question: what does 1 build turn buy vs 1 recruit turn, in attacker');
+  console.log('  blood extracted? Site: hills, garrison 1,500 commit 8; attacker 6,000');
+  console.log('  commit 8, best plan per case (DP vs walls, Swift in field).');
+  const wE = [26, 14, 14, 22];
+  row(['defense package', 'attacker loss', 'defender loss', 'blood per yield spent'], wE);
+  const base = { plan: 'Swift', attacker: { stock: 6000, commit: 8 }, defender: { stock: 1500, commit: 8 }, terrain: 'hills' };
+  const cases = [
+    ['no fort (baseline)', { ...base }, 0],
+    [`+600명 recruit (3y)`, { ...base, defender: { stock: 2100, commit: 8 } }, 3],
+    ['fieldworks (2y+1pr)', { ...base, plan: 'DP', fort: 'fieldworks' }, 2],
+    ['walls (6y+2pr)', { ...base, plan: 'DP', fort: 'walls' }, 6],
+    ['fortress (12y+4pr)', { ...base, plan: 'DP', fort: 'fortress' }, 12],
+  ];
+  const baseline = resolve(cases[0][1]);
+  for (const [label, spec, yieldCost] of cases) {
+    const r = resolve(spec);
+    const extra = r.lossA - baseline.lossA;
+    row([label, `−${r.lossA}`, `−${r.lossB}`,
+      yieldCost ? `+${extra} extra ÷ ${yieldCost}y = ${(extra / yieldCost).toFixed(0)}명/y` : '(baseline)'], wE);
+  }
+  console.log('  NOTE: forts also deny the sector (threshold), persist across battles,');
+  console.log('  and cost PRIMARIES (tempo) — men fight anywhere but die once. The');
+  console.log('  exchange is context-priced, not flat — the table shows one siege turn.');
+
+  sub('Check 4 — sheet-12 re-run under the derived cap (does the world still close?)');
+  console.log('  Tournament with capPerSector = capPerPop × pop 1.0 (600) — conquest,');
+  console.log('  cession, and elimination now move caps exactly as econ.js derives.');
+  const rs = TOURNEY.runTournament({ reps: 8, seed: 42, harness: { capPerSector: 600 } });
+  const ended = rs.filter((r) => r.winner);
+  const trips = rs.filter((r) => r.tripTurn).map((r) => r.tripTurn);
+  const byArch = {};
+  for (const a of TOURNEY.ARCHETYPES) {
+    const ms = rs.filter((r) => r.focal === a);
+    byArch[a] = (ms.filter((r) => r.winner === r.seat).length / ms.length * 100).toFixed(0);
+  }
+  console.log(`  matches ended: ${(ended.length / rs.length * 100).toFixed(0)}% (sheet-12 canon: 4%, probe@400: 26%)`);
+  if (trips.length) console.log(`  trip turns: mean T${(trips.reduce((x, y) => x + y) / trips.length).toFixed(1)}, in-envelope ${(trips.filter((t) => t >= 15 && t <= 25).length / trips.length * 100).toFixed(0)}%`);
+  console.log('  focal win rates: ' + Object.entries(byArch).map(([a, w]) => `${a} ${w}%`).join(' · '));
+}
+
 // ----------------------------------------------------------------
-const SHEETS = { myeongnyang, fortress, raid, delaying, grinding, feint, tempo, timeline, manpower, hegemony, settlement, tournament: tournamentSheet };
+const SHEETS = { myeongnyang, fortress, raid, delaying, grinding, feint, tempo, timeline, manpower, hegemony, settlement, tournament: tournamentSheet, economy };
 const pick = process.argv[2];
 if (pick && SHEETS[pick]) SHEETS[pick]();
 else if (pick) { console.error(`unknown sheet: ${pick} (${Object.keys(SHEETS).join(', ')})`); process.exit(1); }

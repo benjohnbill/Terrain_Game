@@ -50,6 +50,13 @@ Added 2026-07-05 evening (A-2 close — `tournament.js` + sheet 12):
    policy quality bounds proof power — dominance found is real,
    dominance not found is not absence.
 
+Added 2026-07-05 night (A-3 — `econ.js` + sheet 13):
+
+12. **Thin economy (sheet 13)** — does the land-derived structure
+   (income/cap from sector values × usable) re-derive the sealed M13
+   anchors, price fort-vs-recruit, and still close the L2 world at a
+   derived cap? Verdicts sealed as M14 (rulings ⑱–㉑).
+
 ## Run
 
 ```
@@ -64,6 +71,8 @@ node mockup/combat-calc/battery.js myeongnyang   # one sheet by name
 - `match.js` — pure match-level arithmetic (hegemony check, settlement
   acceptance) mirroring the sealed match-arc GLOSSARY terms. Worth
   lifting alongside engine.js.
+- `econ.js` — thin-economy candidate structure (sheet 13), sealed as
+  MAGNITUDE M14; worth lifting alongside engine.js/match.js.
 - `tournament.js` — SEMI-DURABLE match-tournament harness (sheet 12):
   policy bots over engine+match with a coarse world model. Re-point at
   `js/` later as the balance regression rig; its §HARNESS/§BOT dials
