@@ -151,6 +151,34 @@ the new pure module; sheets `hegemony` / `settlement`.)
   only worn down or vassalized. Model shape (esc per victory margin +
   capital risk) remains the sheet's own GAAN; the sealed number is the
   discount. Playtest-provisional like all values.
+- **Finding 10 — lenient preset identity: SEALED (2026-07-05, ruling
+  ⑬).** The registered contingency fired: under deterministic
+  acceptance, lenient can never beat standard on value when both are
+  accepted (a theorem of the sealed arithmetic, not a frequency claim
+  — L1-safe). Lenient's product is **acceptance certainty**: its whole
+  niche (11/30) is the "standard refused, lenient signed" window.
+  Identity confirmed as the **tempo-peace preset** — the button that
+  buys out refusal risk; the natural pick when the acceptance-outlook
+  band is wide (unscouted temperament), making it a price tag on
+  scouting neglect. No mechanics change; UI description duty
+  registered.
+- **Finding 11 — vassalage pricing: STRUCTURE SEALED, number 가안
+  (2026-07-05, ruling ⑭).** Sealed: vassalage is priced in
+  **acceptance currency**, never reach currency (reach-currency
+  pricing is structurally broken — hegemony swing ≈ 2× loser remaining
+  mass per few yield forgone, ~15–20:1 vs recruitment → always the
+  buy). Vassal bundle = standard-preset material + sovereignty premium
+  [조어→등록 예정: sovereignty premium] × loser remaining value.
+  Shape verified at L1: kneeling is rare and decisive-shaped
+  (conciliatory kneels under decisive victory + capital threat;
+  pragmatic only in the largest cases; hardliner NEVER — hardliners
+  also never sign Maximum, so vs a hardliner the ceiling is standard
+  or actual conquest; playtest watch item: hardliner-majority worlds
+  lengthen matches). The premium VALUE 0.25 stays 가안 — it is
+  frequency/dynamics-sensitive (vassal-chain archetype power rides on
+  match feedback), gated on sheet 12 (tournament) / playtest, per the
+  test-trust ladder (L0 hand reasoning / L1 decision grids / L2 match
+  tournament / L3 human playtest) adopted this session.
 - **UI idea registered (user, 2026-07-05) — expansion break-even
   card**: surface the break-even read as a fog-banded, summoned
   estimate (never a resident advisor): value side = target land's
