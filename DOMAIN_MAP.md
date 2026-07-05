@@ -6,55 +6,10 @@ Markers:
 - ❓ Assumption or proposed concept requiring validation.
 - ⛔ Forbidden or rejected direction.
 
-## Vocabulary Law (adopted 2026-07-05)
-
-How domain vocabulary is created, defined, and referenced across this
-repo. The conversation-level policy lives in `AGENTS.md` § Domain
-Terminology Policy; this section is the document-side law.
-
-### Tier ladder — where a term may be DEFINED
-
-| Tier | Documents | Role |
-|---|---|---|
-| 0 | `DOMAIN_MAP.md` | Project-wide canon. Promoted terms only. |
-| 1 | `docs/features/<f>/GLOSSARY.md` | Feature-scoped canon-in-progress: the birthplace and single definition point of feature terms, with status (AGREED / PROPOSED). |
-| 2 | Everything else — feature INDEX.md, NOTES.md, ADRs, SPEC/DESIGN prose, handoffs, mockup comments | USE and REFERENCE terms only; never define. A new term appears here only with a `[조어]`/`[coinage]` tag and must be registered into Tier 1 (or discarded) within the same exchange. |
-
-### Single-definition rule
-
-A term's definition exists in exactly one place: its Tier-1 row until
-promotion, its Tier-0 entry after (on promotion, the Tier-1 row is cut
-to a pointer). Every other mention references. Paraphrasing a
-definition in a Tier-2 file is drift, not documentation — SPEC/DESIGN
-may summarize systems, but term definitions point here.
-
-### Naming convention
-
-- Canonical identifier: **industry-standard English**, matching code
-  identifiers (`projectable mass` ↔ `projectableMass`).
-- Header format everywhere: `English canonical (한국어 표시어)`. Korean
-  is the display/UI name, never the definition key.
-- Prefer an existing standard term over a coinage (power projection,
-  hermit kingdom, decisive victory, peace terms); coin only for
-  genuinely novel mechanics (reach-pricing class), tagged at birth.
-
-### Status dictionary
-
-DOMAIN_MAP `✅ / ❓ / ⛔` ≡ GLOSSARY `AGREED / PROPOSED /
-rejected-recorded` — the same three states in two notations. A term is
-sealed when user-confirmed wording exists.
-
-### Promotion rule
-
-A Tier-1 term becomes a promotion candidate when a second feature or a
-root document needs it. Promotion is an explicit act, performed in
-doc-sync batches (never silently).
-
-### Quick Reference
-
-`docs/GLOSSARY-QUICKREF.md` is a GENERATED digest — one line per term
-(pair, short gloss, definition pointer) — regenerated at each seal
-batch. Never edit it directly; never cite it as a definition source.
+This file is Tier 0 of the Vocabulary Law — the promoted, project-wide
+canon. The law itself (definition tiers, single-definition rule,
+naming, promotion, the generated Quick Reference) lives in
+`.claude/rules/documentation-law.md` § Vocabulary Law.
 
 ## Core Terms
 

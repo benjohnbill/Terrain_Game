@@ -212,11 +212,11 @@ dedicated module yet.
 
 ## Documentation Policy
 
-Use ADRs (`docs/adr/`) for decisions that shape future implementation. Use
-`DOMAIN_MAP.md` as the promoted single glossary for terms and constraints;
-feature-level vocabulary is authored in `docs/features/<slug>/GLOSSARY.md` and
-promoted up to `DOMAIN_MAP.md` once confirmed. Keep tunable numbers (dials) in
-`docs/features/combat-formula/MAGNITUDE.md` (M1-M13) and reference them by
-pointer from the glossaries, so the root docs do not go stale when a dial is
-re-cut. Use `docs/features/<slug>/` for active feature research and slice
-planning, and `docs/DESIGN-RISKS.md` for the living design-risk register.
+The full documentation & terminology law — layer taxonomy, authority
+and conflict rules, ADR supersession protocol, vocabulary rules, and
+the session-close ritual — lives in `.claude/rules/documentation-law.md`.
+Summary of the load-bearing rules: truth is minted in
+`docs/features/<slug>/` (with user seal) and projected into the root
+docs via doc-sync batches; all dial numbers live only in
+`docs/features/combat-formula/MAGNITUDE.md` and are referenced by
+pointer; `docs/DESIGN-RISKS.md` is the living design-risk register.

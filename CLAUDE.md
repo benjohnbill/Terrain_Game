@@ -4,6 +4,7 @@ This project's agent guide is maintained in `AGENTS.md` (shared across Codex and
 Claude Code). Treat `AGENTS.md` as the single source of truth.
 
 @AGENTS.md
+@.claude/rules/documentation-law.md
 
 ## Claude Code Notes
 

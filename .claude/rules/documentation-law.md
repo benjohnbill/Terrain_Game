@@ -1,0 +1,89 @@
+# Documentation & Terminology Law — Terrain Game
+
+Project-specific, auto-loaded. The single source for document
+hierarchy, authority, production flow, and domain-vocabulary rules.
+`AGENTS.md`, `DESIGN.md`, and `DOMAIN_MAP.md` point here — do not
+restate this law elsewhere. Auto-load carries LAW only; canon CONTENT
+(glossaries, dials) is Read on demand where the law points.
+
+## Layer taxonomy
+
+| Layer | Documents | Authority & write rule |
+|---|---|---|
+| Direction (방향) | `SPEC.md` | What the product is. Changes only by explicit user decision; feature passes work inside SPEC bounds — a pass that needs a SPEC change files a proposal, never drifts it. |
+| Projection (투영) | `DESIGN.md`, `DOMAIN_MAP.md` | Stable summaries of sealed truth (architecture / language). Updated only in doc-sync batches; truth is never authored here first. |
+| Record (기록) | `docs/adr/` | Why decisions were made. Append-only + supersession protocol below. |
+| Production (생산) | `docs/features/<slug>/` | The workshop where truth is minted (with user seal). File roles below. |
+| Working (작업) | `mockup/*/NOTES.md`, `docs/superpowers/`, `docs/DESIGN-RISKS.md`, `docs/GLOSSARY-QUICKREF.md` (generated), `.context/` (untracked handoffs) | Time-stamped records and idea banks — consult for context and parked/deferred ideas; CURRENT truth lives in the seal chain, not here. NOTES verdicts are a staging area: they must sync to Production/Projection in the same session's doc-sync batch. |
+| Sanctuary (성역) | `docs/teach/` | The user's own space. Agents do not touch it. |
+
+### Production file roles (`docs/features/<slug>/`)
+
+- `INDEX.md` — the feature's front door: status, scope, pointers into
+  the other files, open questions. Never defines terms or dials.
+  Refreshed at every session close that touched the feature (ritual
+  below).
+- `GLOSSARY.md` — Tier-1 vocabulary (see Vocabulary Law below).
+- `MAGNITUDE.md` / `FORMULA.md` / `MATCHUP.md` / `CATALOG.md` /
+  `STRATEGY-SPACE.md` — model documents. ALL tunable numbers (dials)
+  live in `combat-formula/MAGNITUDE.md` only; every other file
+  references them by pointer so nothing goes stale when a dial is
+  re-cut.
+- `RESEARCH.md`, `research/*.md` — the evidence layer: surveys and
+  audits. Inputs to seals; never normative on their own.
+
+## Conflict rule
+
+Divergence between Projection and Production is a **sync debt**: the
+dated seal in the Production doc is truth meanwhile. SPEC is exempt —
+direction is not outrun by seals.
+
+## ADR supersession protocol
+
+A new ADR that changes or contradicts an existing one MUST, in the
+same commit: (1) name what it supersedes/amends in its own header;
+(2) stamp the OLD ADR's header — `Status: Superseded by ADR-XXXX
+(date)` or `Amended by ADR-XXXX (date)` — plus a one-line delta.
+Dates alone are not protection: a stale ADR read in isolation must
+announce its own staleness. Never silently edit an accepted ADR's
+Decision section.
+
+## Vocabulary Law
+
+- **Definition tiers**: Tier 0 = `DOMAIN_MAP.md` (project canon,
+  promoted terms only) · Tier 1 = `docs/features/<f>/GLOSSARY.md`
+  (birthplace and single definition point of feature terms, status
+  AGREED/PROPOSED) · Tier 2 = everything else — USE and REFERENCE
+  only, never define.
+- **Single-definition rule**: a term's definition exists in exactly
+  one place (Tier 1 until promotion, Tier 0 after — the Tier-1 row
+  then becomes a pointer). Paraphrasing a definition in a Tier-2 file
+  is drift.
+- **Naming**: canonical identifier = industry-standard English,
+  matching code identifiers (`projectable mass` ↔ `projectableMass`);
+  header format `English canonical (한국어 표시어)`. Prefer standard
+  terms (power projection, hermit kingdom, decisive victory) over
+  coinages; coin only for genuinely novel mechanics.
+- **Coinage duty**: a new term appears only with a `[조어]`/`[coinage]`
+  tag and is registered into Tier 1 (or discarded) within the same
+  exchange. In conversation use the standard English term directly;
+  abbreviations allowed after one parenthesized full form.
+- **Status dictionary**: DOMAIN_MAP `✅/❓/⛔` ≡ GLOSSARY
+  `AGREED/PROPOSED/rejected-recorded`.
+- **Promotion**: a Tier-1 term is a promotion candidate once a second
+  feature or a root doc needs it; promotion happens in doc-sync
+  batches, never silently.
+
+## Session-close ritual (standing duties)
+
+When a session or work unit closes (final-check in this repo includes
+these):
+
+1. Sync mockup NOTES verdicts into Production docs (seal text).
+2. Doc-sync batch into Projections (DOMAIN_MAP/DESIGN) if seals
+   changed; SPEC only via user-approved proposal.
+3. Refresh `INDEX.md` of every touched feature (status, pointers,
+   open questions).
+4. Regenerate `docs/GLOSSARY-QUICKREF.md` after any seal batch
+   (generated file — never hand-edited, never cited as definition).
+5. Stamp superseded/amended ADRs per the protocol above.

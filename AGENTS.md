@@ -9,25 +9,15 @@ game.
 Conversation with the user should follow the global Korean honorific style.
 Generated project artifacts should use neutral professional language.
 
-## Domain Terminology Policy (adopted 2026-07-05)
+## Documentation & Terminology Law
 
-- Canonical domain vocabulary lives in `DOMAIN_MAP.md` and the feature
-  glossaries (`docs/features/*/GLOSSARY.md`). Use registered terms only —
-  in conversation, documents, and code alike.
-- The canonical identifier is the **industry-standard English term**
-  (e.g., hermit kingdom, power projection, decisive victory, peace
-  terms). Korean display names are paired in the glossaries for UI copy
-  and briefing sentences; do not invent ad-hoc Korean translations in
-  conversation — use the English term directly. Abbreviations are fine
-  after introducing the full form once in parentheses.
-- Coining a new term mid-work requires an explicit `[조어]`/`[coinage]`
-  tag, and the term must be registered into the relevant glossary or
-  discarded within the same exchange — no silent vocabulary growth.
-- Glossary entries pair three columns: Korean display name ↔ standard
-  English identifier (matching code identifiers) ↔ definition.
-- Document-side rules — tier ladder (where terms may be DEFINED),
-  single-definition rule, promotion, and the generated Quick Reference
-  — live in `DOMAIN_MAP.md` § Vocabulary Law.
+The full law — document layer taxonomy (Direction / Projection /
+Record / Production / Working / Sanctuary), conflict rule, ADR
+supersession protocol, vocabulary rules (English-canonical
+identifiers, definition tiers, coinage duty), and the session-close
+ritual — lives in `.claude/rules/documentation-law.md` (auto-loaded
+for Claude Code). Codex and other agents MUST Read that file before
+any documentation or terminology work in this repo.
 
 ## Read Order
 
