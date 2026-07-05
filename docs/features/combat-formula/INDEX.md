@@ -120,7 +120,8 @@ pass: plan axis magnitudes only gain meaning through this formula.
 - `MAGNITUDE.md` — magnitude-pass working decisions (scale anchors,
   authored numbers); the pass is IN PROGRESS as of 2026-07-03.
 - `GLOSSARY.md` — the fixed resolution vocabulary: every term in the
-  battle pipeline with value, range, and decision source.
+  battle pipeline with value, range, decision source, and a Status
+  column (AGREED / 가안 / candidate; added 2026-07-05 A-4 B1).
 - `FORMULA.md` — working decisions D1–D10 and the formula skeleton.
 - `MATCHUP.md` — plan-vs-plan engagement-rule sheet (authored balance data).
 - `RESEARCH.md` — survey digests, cross-survey synthesis, stacking analysis.

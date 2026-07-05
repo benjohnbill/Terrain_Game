@@ -12,7 +12,7 @@ restate this law elsewhere. Auto-load carries LAW only; canon CONTENT
 |---|---|---|
 | Direction (방향) | `SPEC.md` | What the product is. Changes only by explicit user decision; feature passes work inside SPEC bounds — a pass that needs a SPEC change files a proposal, never drifts it. |
 | Projection (투영) | `DESIGN.md`, `DOMAIN_MAP.md` | Stable summaries of sealed truth (architecture / language). Updated only in doc-sync batches; truth is never authored here first. |
-| Record (기록) | `docs/adr/` | Why decisions were made. Append-only + supersession protocol below. |
+| Record (기록) | `docs/adr/` (promoted) · feature `RULINGS.md` (birthplace) | Why decisions were made. ADR = architecture-grade / cross-feature; RULINGS = feature-local rulings that promote up when they outgrow the feature. Append-only + supersession protocol below. |
 | Production (생산) | `docs/features/<slug>/` | The workshop where truth is minted (with user seal). File roles below. |
 | Working (작업) | `mockup/*/NOTES.md`, `docs/superpowers/`, `docs/DESIGN-RISKS.md`, `docs/GLOSSARY-QUICKREF.md` (generated), `.context/` (untracked handoffs) | Time-stamped records and idea banks — consult for context and parked/deferred ideas; CURRENT truth lives in the seal chain, not here. NOTES verdicts are a staging area: they must sync to Production/Projection in the same session's doc-sync batch. |
 | Sanctuary (성역) | `docs/teach/` | The user's own space. Agents do not touch it. |
@@ -23,7 +23,17 @@ restate this law elsewhere. Auto-load carries LAW only; canon CONTENT
   the other files, open questions. Never defines terms or dials.
   Refreshed at every session close that touched the feature (ritual
   below).
-- `GLOSSARY.md` — Tier-1 vocabulary (see Vocabulary Law below).
+- `GLOSSARY.md` — Tier-1 vocabulary (see Vocabulary Law below). A row
+  carries only definition + current value + seal stamp; ruling history
+  never lives in the definition row.
+- `RULINGS.md` (optional, per feature) — the **decision record**:
+  ruling history (evidence, rejected alternatives, riders) behind the
+  feature's seals. GLOSSARY/model rows cite ruling numbers into here.
+  This is the **birthplace tier of the Record layer**: a ruling
+  promotes to an ADR when it becomes architecture-grade or spans
+  features — the same ladder as GLOSSARY→DOMAIN_MAP (Vocabulary Law).
+  Most battery/grill rulings never promote, which is why the local
+  home exists.
 - `MAGNITUDE.md` / `FORMULA.md` / `MATCHUP.md` / `CATALOG.md` /
   `STRATEGY-SPACE.md` — model documents. Each feature's dials live in
   ONE owning model doc (resolution dials: `combat-formula/MAGNITUDE.md`;

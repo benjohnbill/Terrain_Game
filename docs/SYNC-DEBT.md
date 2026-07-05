@@ -16,12 +16,6 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   ADR-XXXX (date)` + one-line delta). Known offenders: ADR 0015 still
   `Accepted` while combat GLOSSARY says "(amended)"; ADR 0014 lacks
   date + delta. Include a status index table in `docs/adr/README.md`.
-- [ ] **Glossary row splitting** (Codex P1): match-arc GLOSSARY rows
-  have grown into decision records (definition + formula history +
-  rejected alternatives + validation). Split: row = definition +
-  seal stamp; ruling history moves to a per-feature seal/decision
-  section (or ADR). Do combat-formula GLOSSARY the same pass; add
-  AGREED/PROPOSED status discipline there (it lacks match-arc's).
 - [ ] **DOMAIN_MAP slimming** (Codex P1): promoted entries carry
   mini-spec prose duplicating feature seals (projectable mass,
   settlement, acceptance arithmetic, vassalage). Cut to definition +
@@ -51,12 +45,26 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
 - [ ] **`npm run docs:check` lint** (Codex P2, optional tooling):
   grep-level checks — "amended" references without ADR stamp, quickref
   older than newest seal date, duplicate term headers.
+- [ ] **Model-doc naming unification + promotion ladders to root**
+  (registered 2026-07-05, A-4 B1 discussion): the bespoke per-feature
+  model-doc names (MAGNITUDE / FORMULA / MATCHUP / CATALOG /
+  STRATEGY-SPACE) are one function ("model/dials doc") under five
+  names — a latent proliferation cost. Decide a disciplined convention,
+  then give the model layer an explicit birthplace→root promotion
+  ladder (model docs → DESIGN) symmetric with GLOSSARY→DOMAIN_MAP and
+  RULINGS→ADR, so all three Production tiers connect to root the same
+  way. NOT A-4 B1 scope; a deliberate separate pass (user-flagged).
 - [ ] **Working-layer sublabels** (Codex P2): distinguish staging
   verdicts / generated digests / planning scratch / risk register
   inside the Working layer if misfiling actually occurs.
 
 ## Paid
 
+- [x] 2026-07-05 — **glossary row splitting (Codex P1)** — match-arc
+  GLOSSARY rows cut to definition + current value + seal stamp;
+  ruling history (⑧–⑰) relocated to `docs/features/match-arc/
+  RULINGS.md`. combat-formula GLOSSARY gained a Status column
+  (AGREED / 가안 / candidate). A-4 batch B1.
 - [x] 2026-07-05 — **seal registry DECIDED (user): no `docs/SEALS.md`**
   — this ledger + dated in-doc seal stamps remain the mechanism.
 - [x] 2026-07-05 — law dial-ownership claim corrected (match-arc values

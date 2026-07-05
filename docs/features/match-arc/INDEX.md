@@ -21,7 +21,9 @@ vassalage), and the economy→mass conversion it needs (M13).
 ## Files
 
 - `GLOSSARY.md` — Tier-1 vocabulary, sealed terms with dates. THE
-  reference for this feature.
+  reference for this feature (definition + current value + seal stamp).
+- `RULINGS.md` — ruling history (⑧–⑰): evidence, rejected
+  alternatives, riders. Glossary rows cite ruling numbers into here.
 - `STRATEGY-SPACE.md` — six winning archetypes; the standing dial
   checklist ("which archetype does this value kill?").
 - `TEST-LADDER.md` — verification epistemology: the L0–L3 test-trust
