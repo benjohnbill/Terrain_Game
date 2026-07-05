@@ -25,6 +25,9 @@ Generated project artifacts should use neutral professional language.
   discarded within the same exchange — no silent vocabulary growth.
 - Glossary entries pair three columns: Korean display name ↔ standard
   English identifier (matching code identifiers) ↔ definition.
+- Document-side rules — tier ladder (where terms may be DEFINED),
+  single-definition rule, promotion, and the generated Quick Reference
+  — live in `DOMAIN_MAP.md` § Vocabulary Law.
 
 ## Read Order
 

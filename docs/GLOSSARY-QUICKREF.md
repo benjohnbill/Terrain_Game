@@ -1,0 +1,81 @@
+# Glossary Quick Reference
+
+> **GENERATED digest — do not edit, do not cite as a definition source.**
+> Regenerated at each seal batch from the canon (`DOMAIN_MAP.md` +
+> `docs/features/*/GLOSSARY.md`). One line per term: pair, short gloss,
+> where the definition lives. Generated 2026-07-05 (post A-2).
+> Definition sources: DM = DOMAIN_MAP.md · MA = match-arc GLOSSARY ·
+> CF = combat-formula docs (GLOSSARY/MAGNITUDE).
+
+## Spatial units
+
+| Term | Gloss | Def |
+|---|---|---|
+| Map unit | smallest geographic cell (hex now, province-compatible later) | DM |
+| Front sector (전선 섹터) | the one-turn occupation/defense unit; authored, fixed borders | DM |
+| Named province (지방) | identity/economy/reading unit made of front sectors | DM |
+| Province status | derived per-turn control state (secure…occupied), perspective-based | DM |
+| Realm (국가) | a political actor; 4–6 per match, one richer center seat | DM/MA |
+
+## Turn & command
+
+| Term | Gloss | Def |
+|---|---|---|
+| Command pool (커맨드 풀) | 20 attention points per turn, realm-size-independent | CF M1 |
+| Primary action (주 행동) | the one main operation per turn | DM |
+| Surplus (잉여) | leftover points feeding scouting/building/reserve | DM |
+| Commitment lever (커밋 레버) | points → ×1.0–×2.0 activation multiplier; knee at 8 (×1.5) | CF M2 |
+| Uncertainty duel (불확실성 대치) | simultaneous sealed commitment, deterministic resolution | DM |
+| Emergency reserve (긴급 투입) | pre-bound points auto-answer an unattended attack; 1 pt awakens 12.5% of the province's route-connected stock; arrivals fight ×0.5 | CF M9 |
+| Mobilization visibility (동원 가시성) | concentration leaks intent as banded tension signals, 1–3 turn lead | CF M10 |
+
+## Combat resolution
+
+| Term | Gloss | Def |
+|---|---|---|
+| R (force ratio) | attack power ÷ defense power; scale-invariant core number | CF |
+| Threshold (문턱) | per-plan R scoring line (DP 1.1 … Encirclement 2.2), never an availability gate | CF M7 |
+| Casualty curve | both sides bleed 12% ÷/× R^1.4 of the engaged body | CF M4 |
+| Rout cliff (와해 절벽) | loser-only organizational collapse at 30% engagement losses | CF M4 |
+| Escape state (도주로) | derived open/blocked check at rout time; blocked → annihilation | CF M4 |
+| World multipliers | terrain (×1.0–2.5, nature's) × fortification (×1.0–3.0, buildable); no clamp | CF M5 |
+| Frontage cap (문폭) | engaged-attacker body cap at chokes/walls (strait 500, pass 1,000 …) | CF M11 |
+| Erosion (침식) | DP stamps lower the fort multiplier and widen the assault frontage | CF M8 |
+| Delaying defense (지연 방어) | refuse decisive battle: +0.3 threshold shield, ×0.5 exchange, loses fort keeps terrain | CF |
+| Surrender harvest (항복 수확) | Encirclement-success winner casualties ×0.5 (Ulm effect) | CF M6 |
+
+## Match arc & settlement
+
+| Term | Gloss | Def |
+|---|---|---|
+| Match arc (매치 아크) | standoff → buildup → wars → decision point → settlement; ~2–3 wars, 15–25 turns | MA |
+| Shield-break (방패 깨기) | war's opening: reduce the border fortification line | MA |
+| Decisive battle (결전) | the field engagement that destroys the field army and decides the war | MA |
+| Cascade (캐스케이드) | post-decision one-click sweep of the interior — the felt victory lap | MA |
+| Decision point (결정점) | irreversibility check opens settlement NEGOTIATION; ending is a player decision | MA |
+| Hegemony decision point (패권 결정점) | leadership (my projection ≥ 1.7 × each rival's facing shield) ∧ unassailability (no coalition reaches 1.7 × my shield within 6 turns) | MA |
+| Shield mass (방패 질량) | field army + border-shield garrisons FACING the counting side; derived from adjacency | MA |
+| Projectable mass (투사 가능 질량) | min(field army, Σ exit-door width × 2) — the punch a realm can deliver abroad | MA |
+| Hermit clause (은둔국 조항) | projection ≤ 1,000 → outside the balance; acknowledged at settlement, can buy back in | MA |
+| Regeneration window (재생 창) | 6 turns — the time depth of "irreversible" in unassailability | MA |
+| Settlement (정산) | converts a decided war into gains without occupation grinding; war-level and hegemony-level | MA |
+| Reach (도달권) | closed-form price base: occupation reach → cession, raid reach → indemnity, capital in reach → vassalage | MA |
+| Settlement currencies (정산 통화) | cession (할양) / indemnity (배상) / vassalage (복속), each capped by its own reach | MA |
+| Preset ladder (프리셋 사다리) | lenient 50% / standard 75% / maximum 100% of composite reach value = claim rate = refusal risk | MA |
+| Tempo-peace preset | lenient's sealed identity: buys acceptance certainty, not value | MA |
+| Acceptance arithmetic (수락 산술) | AI signs iff bill ≤ continued-war expected loss × personality coefficient; deterministic | MA |
+| Resistance discount (저항 할인) | ×0.6 on continued-war loss — fighting on is often cheaper than the full bill | MA |
+| Personality coefficient (성향 계수) | hardliner 0.8 / pragmatic 1.0 / conciliatory 1.2 (±0.05 draw) | MA |
+| Vassalage (복속) | loser survives subordinated; mass counts to the OVERLORD; priced in acceptance currency via sovereignty premium | MA |
+| Sovereignty premium | vassalage's acceptance-side price: 0.25 × loser remaining value (provisional) | MA |
+| Chain collapse (사슬 붕괴) | overlord falls → all vassals released immediately | MA |
+| Recruitment (모병) | +10% of national cap per primary, from the finite manpower pool, quality 1.0 | CF M13 |
+| Manpower pool (인력 풀) | per-province, finite in-match; the dead never return — blood is a permanent currency | MA |
+| Blinds (블라인드) | undesigned anti-passivity escalation device; owns the untilted-ending tail | MA |
+
+## Winning archetypes (STRATEGY-SPACE.md)
+
+conquest snowball (정복 축적형) · vassal chain (복속 사슬형) · free-rider
+timing (어부지리형) · raid attrition (약탈 소모형) · shield-first (방패
+우위형) · interior lines (중원 내선형) — the dial checklist: before
+sealing any value, ask "which archetype does this kill?"

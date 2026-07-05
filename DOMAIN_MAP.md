@@ -6,6 +6,56 @@ Markers:
 - ❓ Assumption or proposed concept requiring validation.
 - ⛔ Forbidden or rejected direction.
 
+## Vocabulary Law (adopted 2026-07-05)
+
+How domain vocabulary is created, defined, and referenced across this
+repo. The conversation-level policy lives in `AGENTS.md` § Domain
+Terminology Policy; this section is the document-side law.
+
+### Tier ladder — where a term may be DEFINED
+
+| Tier | Documents | Role |
+|---|---|---|
+| 0 | `DOMAIN_MAP.md` | Project-wide canon. Promoted terms only. |
+| 1 | `docs/features/<f>/GLOSSARY.md` | Feature-scoped canon-in-progress: the birthplace and single definition point of feature terms, with status (AGREED / PROPOSED). |
+| 2 | Everything else — feature INDEX.md, NOTES.md, ADRs, SPEC/DESIGN prose, handoffs, mockup comments | USE and REFERENCE terms only; never define. A new term appears here only with a `[조어]`/`[coinage]` tag and must be registered into Tier 1 (or discarded) within the same exchange. |
+
+### Single-definition rule
+
+A term's definition exists in exactly one place: its Tier-1 row until
+promotion, its Tier-0 entry after (on promotion, the Tier-1 row is cut
+to a pointer). Every other mention references. Paraphrasing a
+definition in a Tier-2 file is drift, not documentation — SPEC/DESIGN
+may summarize systems, but term definitions point here.
+
+### Naming convention
+
+- Canonical identifier: **industry-standard English**, matching code
+  identifiers (`projectable mass` ↔ `projectableMass`).
+- Header format everywhere: `English canonical (한국어 표시어)`. Korean
+  is the display/UI name, never the definition key.
+- Prefer an existing standard term over a coinage (power projection,
+  hermit kingdom, decisive victory, peace terms); coin only for
+  genuinely novel mechanics (reach-pricing class), tagged at birth.
+
+### Status dictionary
+
+DOMAIN_MAP `✅ / ❓ / ⛔` ≡ GLOSSARY `AGREED / PROPOSED /
+rejected-recorded` — the same three states in two notations. A term is
+sealed when user-confirmed wording exists.
+
+### Promotion rule
+
+A Tier-1 term becomes a promotion candidate when a second feature or a
+root document needs it. Promotion is an explicit act, performed in
+doc-sync batches (never silently).
+
+### Quick Reference
+
+`docs/GLOSSARY-QUICKREF.md` is a GENERATED digest — one line per term
+(pair, short gloss, definition pointer) — regenerated at each seal
+batch. Never edit it directly; never cite it as a definition source.
+
 ## Core Terms
 
 - ✅ `Map unit`: A playable geographic unit. Currently rendered as a hex, but
@@ -530,14 +580,23 @@ wording, ❓ = PROPOSED (awaiting grill).
   in-balance realm (rejects the turtle hegemon); AND **unassailability** — no
   coalition of in-balance realms can reach ~1.7 × the candidate's shield within
   the regeneration window. Trips on true values; the player reads a banded 판세
-  estimate (shape AGREED; values → battery).
+  estimate. Values sealed 2026-07-05 (battery sheet 10): **shield mass =
+  field army + border-shield garrisons on the fronts FACING the counting side**
+  (facing-front reading, derived per turn from adjacency — conquest inherits
+  exposure); **regeneration window = 6 turns** (the time depth of
+  "irreversible"; applies to unassailability only — leadership is judged on the
+  present punch); ~1.7 validated (not the binding lever). Full seal text:
+  `docs/features/match-arc/GLOSSARY.md`.
 - ✅ `Projectable mass` (투사 가능 질량): the mass a realm can actually deliver to
   fronts beyond its own shield — derived from exit-choke frontage caps (M11) and
   the route graph; never a stored variable. Chokes narrow doors both ways: the
-  unbreakable are usually also unable to march out.
+  unbreakable are usually also unable to march out. Formula sealed 2026-07-05:
+  **projectable = min(field army, Σ exit-door width × 2)** — flow 2 keeps
+  pass-locked realms in the balance (small-punch blockers) while strait-locked
+  realms are hermits with a working staging buy-back.
 - ✅ `In/out of the balance — hermit clause` (판세 안/밖 · 은둔국 조항): a realm
-  whose projectable mass falls below the floor (reuse the raid visibility
-  threshold; value → battery) is *outside the balance* — excluded from coalition
+  whose projectable mass falls below the floor (1,000 — reuses the raid
+  visibility threshold; confirmed 2026-07-05) is *outside the balance* — excluded from coalition
   sums and the leadership denominator. Derived per turn (a hermit can buy back in
   via choke-removal paths). Out-of-balance realms are acknowledged at settlement
   (tributary/hermit narrative), never forced to capitulate — the match ends
@@ -574,10 +633,23 @@ wording, ❓ = PROPOSED (awaiting grill).
   player predicts through fog though the AI decides deterministically — tension
   without dice). Deferred-with-trigger: fogged-read acceptance + bluffing ship
   with Phase 2; pull earlier iff playtest shows settlement reads as solved/flat.
-- ❓ `Capitulation` (복속): a settlement outcome — the losing realm survives
-  diminished, counted on the loser's side of the hegemony judgment. Choosing
+  Sealed 2026-07-05 (sheet 11): continued-war expected loss carries a
+  **resistance discount ×0.6** (fighting on must often cost less than the full
+  bill, or refusal — and with it the preset ladder — cannot exist); the lenient
+  preset's identity is the **tempo-peace preset** (its product is acceptance
+  certainty, not value).
+- ✅ `Vassalage / capitulation` (복속): a settlement outcome — the losing realm
+  survives diminished and subordinated; its mass leaves the coalition pool and
+  counts to the **overlord's** side of the hegemony arithmetic (the earlier
+  "loser's side" phrasing was a drafting error, corrected at A-1). Choosing
   capitulation over a fight to the capital must be the losing player's own
-  decision (surrender grammar).
+  decision (surrender grammar). MVP terms sealed 2026-07-05: no in-match
+  defection; chain collapse on overlord fall; the vassal seat keeps full
+  internal sovereignty (부마국 model); substance–sovereignty exchange axis.
+  Pricing structure sealed (ruling ⑭): in **acceptance currency**, never reach
+  currency — vassal bundle = standard-preset material + sovereignty premium ×
+  loser remaining value (premium 0.25 provisional, tournament-gated). Full seal
+  text: `docs/features/match-arc/GLOSSARY.md` 복속 row.
 - ✅ `Recruitment` (모병): the single MVP economy→mass conversion — a primary
   action adding a capped share of the national sustainable cap per turn, drawn
   from the manpower pool, paid from treasury yield, fighting at 100% (single
