@@ -34,8 +34,16 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   schema (Codex P2).
 - [ ] **Seal registry decision** (Codex P1): decide whether
   `docs/SEALS.md` (ID/date/source/affected/synced?) earns its keep or
-  whether this ledger + dated seal stamps suffice. Decide at the next
-  doc-sync batch after sheet 12.
+  whether this ledger + dated seal stamps suffice. NOW DUE — sheet 12
+  ran and its doc-sync batch closed 2026-07-05 evening; user decision.
+- [ ] **Sheet-12 spec gaps → canon** (registered 2026-07-05 evening):
+  the 8 undocumented rules in `mockup/combat-calc/tournament.js`
+  §SPEC_GAPS (AI war appetite, two-front allocation, attacking-a-vassal
+  semantics, settlement initiative, stalled-war exit, indemnity spend,
+  truce/redeclaration, front redraw after cession) are recorded only in
+  the prototype + GLOSSARY queue-8 note. Each needs a canon home
+  (GLOSSARY row, ADR, or B-map requirement) — work during A-3/A-4 or
+  when the owning feature is touched.
 - [ ] **Validation level as seal metadata** (Codex P2): stamp seals
   with their test-trust level (L0 hand reasoning / L1 grid / L2
   tournament / L3 playtest) so a reader sees how verified a value is.

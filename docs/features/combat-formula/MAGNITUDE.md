@@ -734,6 +734,19 @@ Adopted during the match-arc pass (see `docs/features/match-arc/`):
 - **국가 상한 (national sustainable cap)**: economy-derived ceiling on
   standing forces; the cap replaces per-turn upkeep bookkeeping
   (low-micromanagement). Garrison ceilings stay local (ADR 0014).
+  **Cap growth SEALED as structure (2026-07-05, ruling ⑮, battery
+  sheet 12): conquest/development raises the national cap** — the
+  sheet-9 "raising the cap itself = economy development" reservation
+  coming due. Grounds: the L2 tournament showed a static-cap world
+  cannot close (96% of matches never trip the hegemony check —
+  leadership is arithmetically unreachable against any healthy
+  same-size peer while blood falls on the pool, not the cap), whereas
+  a cap-coupled probe world produced endings AND archetype
+  differentiation. Cap growth is the match's ending mechanism, not
+  pricing detail. All numbers (cap per sector, development pricing,
+  center scaling) belong to A-3; the probe's +400/sector is harness
+  가안, not a sealed value. A-3 verification target: re-run the
+  sheet-12 sweep at the priced values.
 - **인력 풀 (manpower pool)**: per-province, population-proportional,
   finite within a match — the dead never return, the dispersed do.
   Closes the M3 blood-economy flag.

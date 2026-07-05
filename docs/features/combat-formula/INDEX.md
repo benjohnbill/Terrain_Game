@@ -12,10 +12,14 @@ run on fogged inputs, is the pre-battle forecast.
 **Structural pass COMPLETE (2026-07-03): decisions D1–D11 settled** (see
 `FORMULA.md`), matchup matrix shaped 21/21 (6 authored cells + 15
 derived-by-design; `MATCHUP.md`), factor ranges survey-validated
-(`RESEARCH.md`). Remaining: the magnitude pass (all numbers — thresholds,
-curve exponents, lever knee, discount fractions, dial list below), joined
-with the operation-plan catalog's magnitude pass; plus the Honest Gaps
-routed to other threads.
+(`RESEARCH.md`). **Magnitude pass COMPLETE (2026-07-03 → 07-05): M1–M13
+sealed** (`MAGNITUDE.md`; M12 tempo-gated confirm, M13 economy→mass with
+cap growth structure sealed 07-05 ruling ⑮ — numbers → A-3), validated by
+the battery harness `mockup/combat-calc/` (sheets 1–12; sheet 12 = the L2
+tournament, charter in `../match-arc/TEST-LADDER.md`). Remaining: A-3
+economy framing (cap-growth pricing, fortification-vs-recruitment exchange
+rate), A-4 doc debts (claim blocks ×12), Honest Gaps routed to other
+threads.
 
 ## Where This Sits
 
@@ -105,6 +109,10 @@ pass: plan axis magnitudes only gain meaning through this formula.
   backstop — match clock, settlement function, tempo scoring — belongs to
   the undesigned match-arc thread and is now an explicit requirement on it.
   Until it exists, the only cost of always-safe play is opportunity cost.
+  **L2 update (2026-07-05, sheet 12): confirmed load-bearing** — a
+  perfect-information board freezes into deterrence equilibrium without an
+  attack-inducement mechanism; acceptance test registered in
+  `../match-arc/TEST-LADDER.md`.
 
 ## Workspace Files
 

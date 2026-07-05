@@ -603,7 +603,10 @@ wording, ❓ = PROPOSED (awaiting grill).
   internal sovereignty (부마국 model); substance–sovereignty exchange axis.
   Pricing structure sealed (ruling ⑭): in **acceptance currency**, never reach
   currency — vassal bundle = standard-preset material + sovereignty premium ×
-  loser remaining value (premium 0.25 provisional, tournament-gated). Full seal
+  loser remaining value. Premium **sealed at 0.25** (ruling ⑯, 2026-07-05,
+  sheet-12 tournament gate paid) with the floor-setter rider: above 0.25
+  acceptance saturates (capital-risk dominates), so future chain-weakening
+  belongs to the loss model's capital-risk side, not this number. Full seal
   text: `docs/features/match-arc/GLOSSARY.md` 복속 row.
 - ✅ `Recruitment` (모병): the single MVP economy→mass conversion — a primary
   action adding a capped share of the national sustainable cap per turn, drawn
@@ -623,7 +626,14 @@ wording, ❓ = PROPOSED (awaiting grill).
   M3); generational regrowth is ~0 inside 25 turns. Values → M13/battery.
 - ❓ `Blinds` (블라인드): the escalation device that makes safe, passive play
   progressively more expensive as the match ages — the anti-safe-play pressure
-  ADR 0025 parked into this thread. Mechanism undecided.
+  ADR 0025 parked into this thread. Mechanism undecided; design duty confirmed
+  load-bearing by the L2 tournament (a perfect-information board freezes into
+  deterrence equilibrium — acceptance test in match-arc `TEST-LADDER.md`).
+- ✅ `Test-trust ladder` (검증 신뢰 사다리): the four-rung verification
+  epistemology — L0 hand reasoning / L1 decision grids / L2 match tournament /
+  L3 human playtest — with asymmetric proof power (found-at-L2 is real;
+  not-found is nothing; L2-derived values are never final). Charter:
+  `docs/features/match-arc/TEST-LADDER.md`.
 
 ### Winning archetypes (STRATEGY-SPACE.md — the value-dial checklist)
 

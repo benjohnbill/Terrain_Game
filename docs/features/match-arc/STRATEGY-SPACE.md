@@ -61,3 +61,11 @@ sometimes correct, never mandatory (free-riding is a legitimate line).
    counter-web.
 3. **Blinds** tax the slow archetypes (3/5) — their balance is coupled
    to the blinds design (GLOSSARY queue #5).
+
+## L2 pre-screen (2026-07-05, sheet 12 — reading rule in TEST-LADDER.md)
+
+Arithmetic viability screened by the bot tournament (A-3-coupled
+world): 1/2/6 win at L2; 5 marginal; 3/4 win 0% — NOT a failure signal
+(their identities live in what bots lack: timing reads, fog
+exploitation, burn-then-strike conversion). 3 and 4 are the standing
+L3 playtest watch items.
