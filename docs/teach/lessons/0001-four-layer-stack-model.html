@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 1 · The Four-Layer Stack Model</title>
+<link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+<div class="wrap">
+<div class="col">
+
+  <p class="kicker">Game Stack Literacy · Lesson 1</p>
+  <h1>The four-layer stack model</h1>
+  <p class="subtitle">Why “changing the stack is hard” is true at exactly one
+  layer — and how to tell which layer a decision touches.</p>
+
+  <p>Every time a stack question comes up — <em>“should this be Next.js? Godot?
+  do I need a server?”</em> — it feels like one big, scary, irreversible
+  choice. It isn’t. A technology stack is <strong>four stacked layers</strong>,
+  and they have wildly different costs to change. Once you can name the layer a
+  decision lives in, the anxiety mostly evaporates: most changes turn out to be
+  cheap and reversible, and you can see exactly which one is not.</p>
+
+  <p>This lesson teaches only the model and one key insight. We ground every
+  layer in <em>this</em> repository, so it stays concrete.</p>
+
+  <h2>The four layers</h2>
+
+  <p class="sidenote"><span class="num">▸</span> Read the stack bottom-up:
+  Layer&nbsp;1 is the ground everything runs on; Layer&nbsp;4 is how it reaches
+  a player. Each higher layer <em>wraps</em> the one below without replacing it.</p>
+
+  <div class="stack">
+    <div class="layer l1">
+      <div class="n">1</div>
+      <div class="body">
+        <b>Language / runtime</b> — what code is written in and what executes it
+        <small>This project: JavaScript, run by the browser’s JS engine.</small>
+        <div class="cost">Cost to change: HIGH — this is the real “rewrite”</div>
+      </div>
+    </div>
+    <div class="layer l2">
+      <div class="n">2</div>
+      <div class="body">
+        <b>Framework</b> — how code is structured inside the runtime
+        <small>This project: none. The UI is hand-written DOM in <code>js/ui.js</code> (694 lines).</small>
+        <div class="cost">Cost to change: MODERATE, contained</div>
+      </div>
+    </div>
+    <div class="layer l3">
+      <div class="n">3</div>
+      <div class="body">
+        <b>Build tooling</b> — turns source into shippable files
+        <small>This project: none. <code>index.html</code> loads 16 raw <code>&lt;script&gt;</code> tags by hand.</small>
+        <div class="cost">Cost to change: LOW, additive</div>
+      </div>
+    </div>
+    <div class="layer l4">
+      <div class="n">4</div>
+      <div class="body">
+        <b>Packaging / distribution</b> — how it reaches players
+        <small>This project: a browser URL served by <code>python3 -m http.server</code>.</small>
+        <div class="cost">Cost to change: LOW, doesn’t touch logic</div>
+      </div>
+    </div>
+  </div>
+
+  <p>Notice what the “This project” lines say: at three of the four layers, this
+  game currently runs on <em>nothing</em> — no framework, no build tool, no
+  packaging beyond a URL. That is not a gap to feel bad about. It is the
+  starting point ADR&nbsp;0016 deliberately chose, because every one of those
+  empty layers can be filled later, cheaply, when a real need appears.<a
+  href="../docs/adr/0016-web-stack-with-trigger-based-migration.md"></a></p>
+
+  <h2>The one insight that dissolves the dread</h2>
+
+  <div class="callout key">
+    <span class="label">Key insight</span>
+    The fear that “stack changes are hard” is almost entirely a
+    <strong>Layer&nbsp;1</strong> phenomenon. Layers&nbsp;2–4 are incremental and
+    reversible. Everything this project might realistically do — add a build
+    tool, move the UI to a framework, wrap it for Steam — lives in Layers&nbsp;2–4
+    and <strong>never leaves JavaScript</strong>.
+  </div>
+
+  <p>Changing Layer&nbsp;1 means rewriting your code in a different language /
+  runtime — JavaScript&nbsp;→&nbsp;a game engine like Godot (GDScript) or
+  Unity&nbsp;(C#). That is the expensive, genuinely risky move, because your
+  whole codebase is rebuilt. Every <em>other</em> change wraps or restructures
+  the JavaScript you already have:</p>
+
+  <p class="sidenote"><span class="num">▸</span> This is why ADR&nbsp;0016 says
+  the only Layer-1 change “on the table” is a native engine — and the spec
+  doesn’t require one. The decision isn’t “web vs. engine forever”; it’s “don’t
+  pay the Layer-1 cost speculatively.”</p>
+
+  <ul>
+    <li><span class="chip l3">L3</span> Adopt <strong>Vite</strong> → a build
+      step appears; your <code>.js</code> files are unchanged.</li>
+    <li><span class="chip l2">L2</span> Move <code>js/ui.js</code> to
+      <strong>Svelte</strong> → the UI layer is restructured; <code>combat.js</code>,
+      <code>ai.js</code>, <code>actions.js</code> stay as they are.</li>
+    <li><span class="chip l4">L4</span> Wrap in <strong>Tauri/Electron</strong>
+      for Steam → a native shell appears around the same web build; zero logic
+      rewritten.</li>
+    <li><span class="chip l1">L1</span> Rebuild in <strong>Godot</strong> →
+      everything is rewritten. The only true rewrite in the list.</li>
+  </ul>
+
+  <h2>Why this project already makes Layer 2 cheap</h2>
+
+  <p>A Layer-2 change (swapping in a UI framework) is only cheap if your game
+  logic isn’t tangled into your UI. Open two files side by side:</p>
+
+  <p class="filename">js/combat.js — pure logic, no DOM, tested in Node</p>
+  <pre><code>static computeAttackForce(attacker, targetHex, opts) {
+  const base = attacker.calculateMilitary() * (1 + attacker.getAttackBonus());
+  const projected = base * CombatSystem.crossingPenalty(targetHex.terrain, ...);
+  ...
+}</code></pre>
+
+  <p class="filename">js/ui.js — the DOM layer (694 lines of getElementById / createElement)</p>
+
+  <p><code>combat.js</code> never touches the screen. It takes numbers, returns
+  numbers, and its tests run in plain Node with no browser. <code>ui.js</code> is
+  the opposite — it exists only to push data onto the page. That separation is
+  the whole reason a future framework swap is a <span class="chip l2">L2</span>
+  move and not a rewrite: a framework would replace <code>ui.js</code> and leave
+  every logic module untouched. ADR&nbsp;0016 calls preserving this separation
+  “the single discipline that keeps future migration cheap.”</p>
+
+  <h2>Check yourself</h2>
+
+  <p>For each change, pick the layer it lives in. Same four options every time —
+  the model is small on purpose. Retrieval is the point; guess, then read the
+  feedback.</p>
+
+  <div class="quiz">
+    <div class="quiz-q" data-answer="l3">
+      <p class="quiz-prompt">“I want to add <strong>Vite</strong> so I stop
+      hand-ordering <code>&lt;script&gt;</code> tags.”</p>
+      <div class="quiz-options">
+        <button data-v="l1">Language / runtime</button>
+        <button data-v="l2">Framework</button>
+        <button data-v="l3">Build tooling</button>
+        <button data-v="l4">Packaging</button>
+      </div>
+      <div class="quiz-explain">Vite turns source into shippable files — that is
+      Layer&nbsp;3. It is additive: your JavaScript and your logic are unchanged.</div>
+    </div>
+
+    <div class="quiz-q" data-answer="l2">
+      <p class="quiz-prompt">“I want to rewrite <code>js/ui.js</code> as
+      <strong>Svelte</strong> components.”</p>
+      <div class="quiz-options">
+        <button data-v="l1">Language / runtime</button>
+        <button data-v="l2">Framework</button>
+        <button data-v="l3">Build tooling</button>
+        <button data-v="l4">Packaging</button>
+      </div>
+      <div class="quiz-explain">A framework changes how code is structured inside
+      the runtime — Layer&nbsp;2. It replaces the UI layer only;
+      <code>combat.js</code> and the other logic modules stay put.</div>
+    </div>
+
+    <div class="quiz-q" data-answer="l4">
+      <p class="quiz-prompt">“I want to ship this on <strong>Steam</strong> using
+      a Tauri or Electron wrapper.”</p>
+      <div class="quiz-options">
+        <button data-v="l1">Language / runtime</button>
+        <button data-v="l2">Framework</button>
+        <button data-v="l3">Build tooling</button>
+        <button data-v="l4">Packaging</button>
+      </div>
+      <div class="quiz-explain">A native shell around the same web build is
+      Layer&nbsp;4 — packaging/distribution. It does not touch game logic. This is
+      exactly how a web game reaches Steam without an engine.</div>
+    </div>
+
+    <div class="quiz-q" data-answer="l1">
+      <p class="quiz-prompt">“I want to rebuild the whole game in
+      <strong>Godot</strong>.”</p>
+      <div class="quiz-options">
+        <button data-v="l1">Language / runtime</button>
+        <button data-v="l2">Framework</button>
+        <button data-v="l3">Build tooling</button>
+        <button data-v="l4">Packaging</button>
+      </div>
+      <div class="quiz-explain">This is the one true rewrite — Layer&nbsp;1. You
+      leave JavaScript for GDScript/C#, and the entire codebase is rebuilt.
+      Justified only by a genre shift to real-time/physics, or by success funding
+      a port — never paid speculatively.</div>
+    </div>
+  </div>
+
+  <h2>Primary source</h2>
+
+  <p>Read your own <a
+  href="../docs/adr/0016-web-stack-with-trigger-based-migration.md"><strong>ADR&nbsp;0016</strong></a>
+  end to end with this model in hand. It <em>is</em> the four-layer model applied
+  to this project, with the trigger-based stages (0&nbsp;→&nbsp;1&nbsp;→&nbsp;2)
+  that a later lesson will unpack. For outside grounding and the Vampire
+  Survivors case study, see <a href="../RESOURCES.md">RESOURCES.md</a>.</p>
+
+  <div class="ask">
+    <b>Ask your teacher.</b> Anything fuzzy here is a question worth asking — I’m
+    your instructor for this course. Good ones to fire back: “Is a database a
+    fifth layer?” · “Where does CSS sit?” · “Why is Layer&nbsp;1 the only
+    expensive one — isn’t a framework rewrite huge too?” Push until you can
+    re-derive the model, not just recall it.
+  </div>
+
+  <div class="lesson-nav">
+    <span>Lesson 1 of a sequence · <a href="../MISSION.md">Mission</a></span>
+    <span>Next up → logic/UI separation, in depth</span>
+  </div>
+
+</div>
+</div>
+<script src="../assets/quiz.js"></script>
+</body>
+</html>

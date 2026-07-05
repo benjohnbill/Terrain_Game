@@ -1,0 +1,276 @@
+/* ============================================================
+ *  lesson.css — shared stylesheet for the Game Stack Literacy course
+ *  Tufte-inspired: warm paper, serif measure, margin notes, print-clean.
+ *  Every lesson links this. Keep it the single source of visual truth.
+ * ============================================================ */
+
+:root {
+  --paper:      #fffff8;
+  --ink:        #111111;
+  --ink-soft:   #555555;
+  --rule:       #d8d4c2;
+  --accent:     #a00000;   /* Tufte red, used sparingly */
+  --code-bg:    #f3f1e7;
+
+  /* The four stack layers each get a stable colour, reused everywhere. */
+  --layer1:     #8e3b46;   /* language/runtime — deepest, the "rewrite" layer */
+  --layer2:     #b5651d;   /* framework */
+  --layer3:     #5b7c5b;   /* build tooling */
+  --layer4:     #3f6184;   /* packaging/distribution */
+
+  --ok:         #2f6b34;
+  --no:         #9a2c2c;
+
+  --measure:    40rem;     /* readable line length */
+  --serif:      "Charter", "Iowan Old Style", "Palatino Linotype", Palatino,
+                "Georgia", "Noto Serif KR", serif;
+  --sans:       "Inter", system-ui, "Segoe UI", "Noto Sans KR", sans-serif;
+  --mono:       "SF Mono", "JetBrains Mono", "Consolas", ui-monospace, monospace;
+}
+
+html { font-size: 17px; }
+
+body {
+  margin: 0;
+  padding: 4rem 0 8rem;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--serif);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Main column lives in the left ~70%, leaving room for margin notes. */
+.wrap {
+  max-width: 62rem;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+.col { max-width: var(--measure); }
+
+/* ---- Kicker / title block --------------------------------- */
+.kicker {
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin: 0 0 0.4rem;
+}
+h1 {
+  font-weight: 400;
+  font-size: 2.4rem;
+  line-height: 1.1;
+  margin: 0 0 0.4rem;
+  letter-spacing: -0.01em;
+}
+.subtitle {
+  font-style: italic;
+  font-size: 1.2rem;
+  color: var(--ink-soft);
+  margin: 0 0 2.2rem;
+}
+h2 {
+  font-weight: 400;
+  font-size: 1.5rem;
+  margin: 3rem 0 0.6rem;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid var(--rule);
+}
+h3 {
+  font-weight: 700;
+  font-size: 1.05rem;
+  font-family: var(--sans);
+  margin: 1.8rem 0 0.4rem;
+}
+p { margin: 0 0 1rem; }
+a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--accent); }
+a:hover { background: #faf3d8; }
+strong { font-weight: 700; }
+em { font-style: italic; }
+
+/* ---- Margin / side notes ---------------------------------- */
+.sidenote {
+  float: right;
+  clear: right;
+  width: 16rem;
+  margin: 0.3rem -18rem 1rem 0;
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  line-height: 1.4;
+  color: var(--ink-soft);
+}
+.sidenote .num { color: var(--accent); font-weight: 700; }
+
+/* ---- Callouts --------------------------------------------- */
+.callout {
+  border-left: 3px solid var(--accent);
+  background: #fbf8ec;
+  padding: 0.9rem 1.2rem;
+  margin: 1.6rem 0;
+  font-size: 0.97rem;
+}
+.callout .label {
+  font-family: var(--sans);
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  display: block;
+  margin-bottom: 0.3rem;
+}
+.callout.key { border-left-color: var(--layer1); background: #fbf2f1; }
+.callout.key .label { color: var(--layer1); }
+
+/* ---- Code ------------------------------------------------- */
+code {
+  font-family: var(--mono);
+  font-size: 0.85em;
+  background: var(--code-bg);
+  padding: 0.08em 0.35em;
+  border-radius: 3px;
+}
+pre {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  line-height: 1.5;
+  background: var(--code-bg);
+  border: 1px solid var(--rule);
+  border-radius: 5px;
+  padding: 1rem 1.2rem;
+  overflow-x: auto;
+}
+pre code { background: none; padding: 0; }
+.filename {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--ink-soft);
+  display: block;
+  margin-bottom: 0.2rem;
+}
+
+/* ---- Tables ----------------------------------------------- */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.85rem;
+  margin: 1.4rem 0;
+}
+th, td {
+  text-align: left;
+  padding: 0.55rem 0.7rem;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
+}
+th {
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+tbody tr:hover { background: #fbf8ec; }
+
+/* ---- The four-layer stack diagram ------------------------- */
+.stack { margin: 1.8rem 0; font-family: var(--sans); }
+.stack .layer {
+  display: grid;
+  grid-template-columns: 2.2rem 1fr;
+  align-items: stretch;
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+  overflow: hidden;
+  color: #fff;
+}
+.stack .layer .n {
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 1.1rem;
+  background: rgba(0,0,0,0.18);
+}
+.stack .layer .body { padding: 0.7rem 0.9rem; }
+.stack .layer .body b { font-size: 0.98rem; }
+.stack .layer .body small { display:block; opacity:0.92; font-size:0.78rem; margin-top:0.15rem; }
+.stack .l1 { background: var(--layer1); }
+.stack .l2 { background: var(--layer2); }
+.stack .l3 { background: var(--layer3); }
+.stack .l4 { background: var(--layer4); }
+.stack .cost {
+  font-size: 0.72rem; font-weight: 700; opacity: 0.95;
+  margin-top: 0.3rem; text-transform: uppercase; letter-spacing: 0.05em;
+}
+
+/* Inline layer chips for prose */
+.chip {
+  font-family: var(--sans); font-size: 0.7rem; font-weight: 700;
+  color: #fff; padding: 0.05em 0.5em; border-radius: 10px;
+  vertical-align: 0.08em;
+}
+.chip.l1 { background: var(--layer1); }
+.chip.l2 { background: var(--layer2); }
+.chip.l3 { background: var(--layer3); }
+.chip.l4 { background: var(--layer4); }
+
+/* ---- Quiz widget (styled by assets/quiz.js) --------------- */
+.quiz {
+  font-family: var(--sans);
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: #fcfaf1;
+  padding: 1.2rem 1.4rem;
+  margin: 1.8rem 0;
+}
+.quiz > h3 { margin-top: 0; }
+.quiz-q { margin: 1.1rem 0; padding-top: 1.1rem; border-top: 1px dashed var(--rule); }
+.quiz-q:first-of-type { border-top: none; padding-top: 0; }
+.quiz-prompt { font-family: var(--serif); font-size: 1rem; margin: 0 0 0.7rem; }
+.quiz-prompt code { font-family: var(--mono); }
+.quiz-options { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.quiz-options button {
+  font-family: var(--sans); font-size: 0.82rem;
+  border: 1px solid #c9c4af; background: #fff; color: var(--ink);
+  padding: 0.4rem 0.8rem; border-radius: 6px; cursor: pointer;
+  transition: transform 0.05s ease;
+}
+.quiz-options button:hover { background: #f5f2e4; }
+.quiz-options button:active { transform: translateY(1px); }
+.quiz-options button.correct { background: var(--ok); color: #fff; border-color: var(--ok); }
+.quiz-options button.incorrect { background: var(--no); color: #fff; border-color: var(--no); }
+.quiz-options button:disabled { cursor: default; opacity: 0.85; }
+.quiz-explain {
+  display: none; margin-top: 0.7rem; font-size: 0.85rem;
+  color: var(--ink-soft); line-height: 1.45;
+  border-left: 3px solid var(--ok); padding-left: 0.8rem;
+}
+.quiz-explain.show { display: block; }
+.quiz-explain.miss { border-left-color: var(--no); }
+
+/* ---- Footer / nav ----------------------------------------- */
+.lesson-nav {
+  margin-top: 4rem; padding-top: 1.2rem; border-top: 1px solid var(--rule);
+  font-family: var(--sans); font-size: 0.85rem; color: var(--ink-soft);
+  display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: space-between;
+}
+.ask {
+  font-family: var(--sans); font-size: 0.9rem;
+  background: #f1ede0; border-radius: 8px; padding: 1rem 1.2rem;
+  margin-top: 2.5rem;
+}
+.ask b { color: var(--accent); }
+
+/* ---- Responsive: collapse margin notes inline ------------- */
+@media (max-width: 1100px) {
+  .sidenote {
+    float: none; width: auto; margin: 0.8rem 0;
+    border-left: 3px solid var(--rule); padding-left: 0.8rem;
+  }
+}
+
+/* ---- Print ------------------------------------------------ */
+@media print {
+  body { padding: 0; font-size: 11pt; background: #fff; }
+  .quiz-options button { border: 1px solid #999; }
+  .sidenote { float: none; width: auto; }
+  a { border: none; color: #000; }
+  .ask, .lesson-nav { page-break-inside: avoid; }
+}

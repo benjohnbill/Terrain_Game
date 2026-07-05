@@ -11,6 +11,30 @@ canon. The law itself (definition tiers, single-definition rule,
 naming, promotion, the generated Quick Reference) lives in
 `.claude/rules/documentation-law.md` § Vocabulary Law.
 
+## Design Principle
+
+- ✅ `Land-derived state` (모든 것은 땅에서 파생된다) — **user-confirmed
+  2026-07-05 (A-3 session)**: substance is never stored where it can be
+  derived from the land the realm holds. Income = Σ sector economy ×
+  usable; national cap = capPerPop × Σ sector population × usable;
+  projectable mass = min(field, Σ door width × flow); shield mass =
+  facing-front garrisons from adjacency; reserve awakening = the
+  province's route-connected stock (march-worn on arrival); the
+  manpower pool travels with territory; usable value is the land's
+  current condition. Consequences arrive free of extra rules: conquest
+  raises the cap at a discount (fresh captures are 50/60% usable),
+  raids shrink the victim's cap, geography prices power projection.
+  The terrain-first thesis (SPEC) made mechanical; the escape-state
+  doctrine (도주로 is derived at rout time, never stored) is its
+  resolution-layer precedent. **Named exception (deliberate): the
+  command pool.** Attention is realm-size-independent (20 points) —
+  the land gives the body, the player gives the mind; this is what
+  prices expansion break-even and keeps the vassal seat a complete
+  game. **MVP boundary (reserved seat)**: realm-level recruitment
+  abstracts muster geography (recruits join the field army directly);
+  the province-level grammar (M9 awakening + march effect) is the
+  extension point if muster location ever needs to matter.
+
 ## Core Terms
 
 - ✅ `Map unit`: A playable geographic unit. Currently rendered as a hex, but
@@ -56,6 +80,21 @@ naming, promotion, the generated Quick Reference) lives in
   turn, and was not the target of active attack/defense resolution. These values
   are playtest-tunable and should not be treated as a full governance or
   occupation model.
+- ✅ `Yield` (생산): the economy's base unit — the **기본 생산량**: one ordinary
+  front sector at full usable produces 생산 1 per turn. The common measure of
+  cost and asset across the whole game (1 부대 = 생산 0.5; walls = 생산 6 +
+  2 primaries; raid loot ≈ 생산 1.5). Income = Σ economyValue × usableEconomy;
+  national cap = 600 × Σ populationValue × usablePop (land-derived state
+  principle). Dials and prices: MAGNITUDE M14. Namespace note: the
+  documentation law's Production (생산) layer is docs-governance — in game
+  docs 생산 means only this unit. **AGREED (2026-07-05, A-3 rulings ⑱–㉑)**
+- ✅ `Treasury` (국고): realm-level stock of unspent yield — the thin economy's
+  only stored state; indemnities land here as cash, spent through normal
+  prices. Values: MAGNITUDE M14. **AGREED (2026-07-05)**
+- ✅ `Development` (개발): the non-conquest permanent growth primary — one
+  sector +0.5 economy / +0.5 population, once per sector (repeatable steps =
+  Phase 2 reserved seat). Price and payback: MAGNITUDE M14. **AGREED
+  (2026-07-05)**
 - ✅ `Spatial extent`: The physical footprint of a front sector on the map, such
   as its hex count or visual area. It should not be used as a proxy for sector
   value.

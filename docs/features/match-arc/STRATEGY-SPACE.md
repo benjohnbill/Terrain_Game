@@ -25,7 +25,7 @@ the regeneration window). Only four things move it:
 | 2 | 복속 사슬형 (vassal chain) | 1+4 | 복속 = 판세 currency; settlement is instant and undamaged | vassal mass genuinely counts in the hegemony arithmetic |
 | 3 | 어부지리형 (free-rider timing) | 4+time | AI-vs-AI wars (MVP requirement); tension bands; commitment-horizon lens (buy tomorrow's R) | AI wars genuinely wear both sides; timing signals readable (형세 card) |
 | 4 | 약탈 소모형 (raid attrition) | 4-economic | M8 raid economy (loot 50%, sub-threshold); 배상 = raid-reach pricing; regeneration reads population/economy | burning value genuinely lowers coalition reachable mass in the regen window |
-| 5 | 방패 우위형 (shield-first) | 3 | M5 buildable fort ladder (legendary = wonder-priced); D7 rider (static investment = effective tempo). NOT the turtle — leadership condition rejects pure turtling; this buys cheap unassailability to fund aggression | build-rate dial is a real early-game opportunity cost |
+| 5 | 방패 우위형 (shield-first) | 3 | M5 buildable fort ladder (legendary = wonder-priced); D7 rider (static investment = effective tempo). NOT the turtle — leadership condition rejects pure turtling; this buys cheap unassailability to fund aggression | build-rate dial is a real early-game opportunity cost — **VERIFIED 2026-07-05 (M14, sheet 13): fort prices cost primaries (tempo) while blood-EV stays flat vs recruiting** |
 | 6 | 중원 내선형 (interior lines, center seat) | 2 sequenced | reserve triage, route cutting, reach geometry — defeat coalition members in detail before they combine | the center seat's exposure is winnable, not a death sentence |
 
 **Cross-cutting skill multiplier (not a seventh archetype):**

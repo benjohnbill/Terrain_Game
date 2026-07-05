@@ -760,6 +760,59 @@ Adopted during the match-arc pass (see `docs/features/match-arc/`):
   includes population automatically); recruit pricing consistent with
   M8 raid/conquest income ordering.
 
+## M14 — Thin economy (2026-07-05, A-3 session; rulings ⑱–㉑)
+
+The minimum economy that makes M13 prices and 정산 codable. Governed by
+the Tier-0 design principle **land-derived state** (DOMAIN_MAP): income
+and cap are derived from held sectors every turn, never stored. The
+only new stored state is the treasury. All values playtest-provisional
+under the A-3 epistemic rider (battery NOTES: economy feel is an L3
+question; keep re-running L2 as values move).
+
+- **Unit — yield (생산), the 기본 생산량**: one ordinary sector at full
+  usable produces 생산 1 per turn. The common measure of cost and asset
+  across the whole game (1 부대 = 생산 0.5 [M13]; raid loot ≈ 생산 1.5
+  [M8]; fort prices below). Term definition: DOMAIN_MAP (Tier 0).
+- **Income** = Σ sector economyValue × usableEconomy (생산/turn).
+  Authored anchors: ordinary sector econ 1.0; center-seat rich sector
+  1.5 (가안, B authoring).
+- **National cap** (ruling ⑱): cap = **capPerPop 600** × Σ sector
+  populationValue × usablePop — one fully-usable ordinary sector
+  sustains 600 men. Re-derives the sealed M13 anchors as derived
+  values: mid realm (template: 10 ordinary sectors) = 6,000 ✓; center
+  (template: 12 rich sectors, econ 1.5 / pop 1.25) = 9,000 ✓.
+  Templates are authoring guidance, not rules. Consequences free of
+  extra rules: conquest raises cap at a usable discount (fresh capture
+  50/60%), raids shrink the victim's cap (the raid-attrition end-game
+  lever), and ruling ⑮ (cap growth = match closure) becomes mechanical.
+  L2-validated: sheet-12 re-run at derived caps closes 27% of matches
+  with archetype spread intact (ruling ⑮ re-run duty paid at candidate
+  values; re-run again if these numbers move).
+- **Treasury** (ruling ㉑): realm-level stock of unspent income; start
+  생산 5 (가안, playtest owns). 배상 (indemnity) lands here as cash and
+  is spent through normal prices — no special conversion rule (pays
+  sheet-12 spec gap #6).
+- **Fortification build prices** (ruling ⑲): fieldworks 생산 2 +
+  1 primary / walls 6 + 2 / fortress 12 + 4 / legendary 30 + 8
+  (≈ ⅓ match — satisfies the M5 wonder rider). At these prices the
+  blood-EV of defense spending is FLAT (~27–30 men of extra attacker
+  blood per 생산 across recruit/fieldworks/walls/fortress — emergent
+  from the M4 curve, not engineered): no package dominates on blood;
+  the choice is priced in the other currencies (men are mobile but die
+  once and eat cap headroom; forts persist and deny ground but cost
+  primaries and are position-locked). This pays the A-1
+  fortification-vs-recruitment verification target and STRATEGY-SPACE
+  guarantee #5 (build spends tempo, the scarcest early currency).
+- **Development** (ruling ⑳): 1 primary + 생산 4 → one sector
+  permanently +0.5 economy / +0.5 population (= cap +300, income
+  +0.5/turn), **once per sector**. 8-turn payback = early-window
+  investment (timing stays a live question); the slow archetypes'
+  non-conquest cap path. Repeatable development steps = Phase 2
+  reserved seat (needs a diminishing ladder).
+- Prototype mirror: `mockup/combat-calc/econ.js` + battery sheet 13
+  (`node mockup/combat-calc/battery.js economy`); verdicts in its
+  NOTES.md §sheet 13.
+
 ## Deferred comparison threads (recorded 2026-07-03)
 
 The "1 primary action + surplus" turn structure was chosen for the MVP;

@@ -32,18 +32,19 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   Vocabulary Law; renames are the dangerous case for agents. Add an
   alias field (Korean casual phrases, code identifiers) to glossary
   schema (Codex P2).
-- [ ] **Seal registry decision** (Codex P1): decide whether
-  `docs/SEALS.md` (ID/date/source/affected/synced?) earns its keep or
-  whether this ledger + dated seal stamps suffice. NOW DUE — sheet 12
-  ran and its doc-sync batch closed 2026-07-05 evening; user decision.
 - [ ] **Sheet-12 spec gaps → canon** (registered 2026-07-05 evening):
-  the 8 undocumented rules in `mockup/combat-calc/tournament.js`
+  the undocumented rules in `mockup/combat-calc/tournament.js`
   §SPEC_GAPS (AI war appetite, two-front allocation, attacking-a-vassal
-  semantics, settlement initiative, stalled-war exit, indemnity spend,
+  semantics, settlement initiative, stalled-war exit,
   truce/redeclaration, front redraw after cession) are recorded only in
   the prototype + GLOSSARY queue-8 note. Each needs a canon home
-  (GLOSSARY row, ADR, or B-map requirement) — work during A-3/A-4 or
-  when the owning feature is touched.
+  (GLOSSARY row, ADR, or B-map requirement) — work during A-4 or when
+  the owning feature is touched. *Indemnity spend PAID 2026-07-05:
+  M14 treasury (배상 lands as cash, spent at normal prices).*
+- [ ] **Economy legibility surface** (registered 2026-07-05, A-3
+  epistemic rider): the thin economy is numbers-only; a UI read (where
+  my 생산 comes from / where it goes) is owed to the A-4 display-debt
+  family / B's UI work.
 - [ ] **Validation level as seal metadata** (Codex P2): stamp seals
   with their test-trust level (L0 hand reasoning / L1 grid / L2
   tournament / L3 playtest) so a reader sees how verified a value is.
@@ -56,6 +57,8 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
 
 ## Paid
 
+- [x] 2026-07-05 — **seal registry DECIDED (user): no `docs/SEALS.md`**
+  — this ledger + dated in-doc seal stamps remain the mechanism.
 - [x] 2026-07-05 — law dial-ownership claim corrected (match-arc values
   acknowledged in GLOSSARY seal rows, not MAGNITUDE).
 - [x] 2026-07-05 — mechanical seal definition added to the law

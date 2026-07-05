@@ -15,11 +15,12 @@ derived-by-design; `MATCHUP.md`), factor ranges survey-validated
 (`RESEARCH.md`). **Magnitude pass COMPLETE (2026-07-03 → 07-05): M1–M13
 sealed** (`MAGNITUDE.md`; M12 tempo-gated confirm, M13 economy→mass with
 cap growth structure sealed 07-05 ruling ⑮ — numbers → A-3), validated by
-the battery harness `mockup/combat-calc/` (sheets 1–12; sheet 12 = the L2
-tournament, charter in `../match-arc/TEST-LADDER.md`). Remaining: A-3
-economy framing (cap-growth pricing, fortification-vs-recruitment exchange
-rate), A-4 doc debts (claim blocks ×12), Honest Gaps routed to other
-threads.
+the battery harness `mockup/combat-calc/` (sheets 1–13; sheet 12 = the L2
+tournament, charter in `../match-arc/TEST-LADDER.md`). **A-3 thin economy
+COMPLETE (2026-07-05, M14 — rulings ⑱–㉑)**: yield (생산) unit, derived cap
+(capPerPop 600), treasury, fort prices (flat blood-EV — the
+fortification-vs-recruitment verification paid), development. Remaining:
+A-4 doc debts (claim blocks ×12), Honest Gaps routed to other threads.
 
 ## Where This Sits
 
