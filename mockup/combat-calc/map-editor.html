@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8">
+<title>Terrain-Cradle Map Editor v2 (region–sector seed)</title>
+<style>
+  html,body{margin:0;height:100%;overflow:hidden;font:13px system-ui,sans-serif;background:#0b1a24;color:#dfe6ec;}
+  #wrap{display:flex;height:100vh;}
+  #stage{flex:1;background:#16303f;touch-action:none;}
+  #side{width:320px;background:#141a20;padding:12px;overflow-y:auto;box-sizing:border-box;}
+  h2{font:700 11px system-ui;text-transform:uppercase;letter-spacing:.08em;color:#7fbf9f;
+     border-bottom:1px solid #2a2f37;padding-bottom:3px;margin:16px 0 6px;}
+  h2:first-child{margin-top:0;}
+  button{background:#22303a;color:#dfe6ec;border:1px solid #34434f;border-radius:4px;
+     padding:5px 9px;cursor:pointer;font:12px system-ui;margin:2px 2px;}
+  button.on{background:#2f5b48;border-color:#4a8a6c;color:#cfeede;}
+  button.mini{padding:2px 7px;font-size:11px;}
+  input[type=text]{background:#0e1418;color:#dfe6ec;border:1px solid #34434f;border-radius:4px;
+     padding:4px 6px;font:12px system-ui;width:120px;}
+  .terr{display:inline-block;padding:3px 6px;border-radius:3px;margin:2px;font-size:11px;
+     cursor:pointer;color:#0b1a24;font-weight:600;}
+  textarea{width:100%;height:110px;background:#0e1418;color:#9fd;border:1px solid #34434f;
+     border-radius:4px;font:11px monospace;box-sizing:border-box;}
+  .hint{color:#8a93a0;font-size:11px;line-height:1.55;}
+  .row{display:flex;align-items:center;gap:6px;margin:3px 0;}
+  .rowlist div{padding:2px 4px;border-radius:3px;cursor:pointer;}
+  .rowlist div:hover{background:#1c252d;}
+  .rowlist div.sel{background:#24382f;}
+  .x{color:#e08080;cursor:pointer;padding:0 4px;font-weight:700;}
+  details{margin:6px 0;} summary{cursor:pointer;color:#9fb9ad;font-size:11px;}
+  table.den{width:100%;border-collapse:collapse;font-size:10.5px;color:#b8c2cc;}
+  table.den td{border-bottom:1px solid #22303a;padding:1px 3px;}
+  .rlabel{fill:#fff;font:700 13px system-ui;paint-order:stroke;stroke:#0009;stroke-width:3px;
+     text-anchor:middle;pointer-events:none;user-select:none;}
+  .rsize{fill:#dfe6ec;font:10px system-ui;text-anchor:middle;pointer-events:none;opacity:.75;}
+  .handle{fill:#fff;stroke:#0b1a24;stroke-width:1.5;cursor:nwse-resize;}
+  .port{font:14px system-ui;text-anchor:middle;cursor:pointer;user-select:none;}
+</style></head>
+<body><div id="wrap">
+  <svg id="stage" viewBox="0 0 1200 820" preserveAspectRatio="xMidYMid meet"></svg>
+  <div id="side">
+    <h2>Mode</h2>
+    <div>
+      <button id="mMove" class="on">Select/Move</button><button id="mRiver">River</button>
+      <button id="mRange">산맥</button><button id="mStrait">Strait</button><button id="mPort">Port</button>
+      <button id="finishLine" style="display:none">Finish</button>
+    </div>
+    <div class="hint" id="modeHint"></div>
+
+    <h2>Terrain palette <span style="color:#66727e">(sector 칠하기·아키타입)</span></h2>
+    <div id="terrPalette"></div>
+    <details><summary>지형→값밀도 draft (가안 — 변환 때 시드)</summary>
+      <table class="den" id="denTable"></table>
+    </details>
+
+    <h2>Selected region</h2>
+    <div id="regCtl" class="hint">지역을 클릭해 선택하세요.</div>
+
+    <h2>Regions <button id="addReg" class="mini">+ 지역 추가</button></h2>
+    <div id="regList" class="hint rowlist"></div>
+
+    <h2>Features</h2>
+    <div id="featList" class="hint rowlist"></div>
+
+    <h2>Export / Load</h2>
+    <button id="exp">Export JSON</button>
+    <button id="loadBtn">Load JSON</button>
+    <button id="reset">Reset</button>
+    <textarea id="out" placeholder="Export를 누르면 여기 JSON이 나옵니다. 수정한 JSON을 붙여넣고 Load를 눌러도 됩니다."></textarea>
+    <div class="hint" id="saved"></div>
+  </div>
+</div>
+<script>
+'use strict';
+const NS='http://www.w3.org/2000/svg';
+const stage=document.getElementById('stage');
+const TERR={
+  plains:'#8aa561', hills:'#9a9350', mountain:'#8a7663', forest:'#4a7350',
+  steppe:'#b0a35a', desert:'#c9ae6e', 'river-valley':'#6f9f72', coast:'#4a7594',
+  island:'#5f8f78', marsh:'#5f7a72', oasis:'#79ab7f',
+};
+// 가안 v2 — sector 지형별 값밀도(변환 시드). 모델: 10k 면적=1 sector(영토 원자),
+// 지형이 sector당 가치를 정함. 스프레드를 넓게 잡아 "좁은 부유 핵 > 넓은 척박
+// 거인"이 총가치로 성립하고, 정복 시간은 면적(sector 수)이 가져간다.
+const DENSITY={
+  'river-valley':[2.5,2.5,'비옥 핵 — 좁고 값짐'], plains:[1.8,1.6,'곡창'],
+  oasis:[1.5,1.8,'사막 속 점 — 부유'], coast:[1.2,1.8,'교역 보정'],
+  hills:[1.0,0.9,''], forest:[0.8,0.7,'수비 보정'],
+  island:[0.8,1.0,'hermit 성격'], marsh:[0.5,0.4,'통행 불리'],
+  steppe:[0.4,0.4,'종심 — 넓고 희박'], mountain:[0.35,0.4,'산맥은 국경(선)'],
+  desert:[0.25,0.35,'가장 희박'],
+};
+const GA=2.399963;
+const SEC_MIN=3,SEC_MAX=10; // 가안: min=크래들 성립 하한, max=기름진 땅 꽉 참(정복 5~10턴 유지)
+function mkSector(i,n,terr){const r=Math.sqrt((i+0.5)/n)*0.85;const a=i*GA;
+  return{terr,u:+(r*Math.cos(a)).toFixed(3),v:+(r*Math.sin(a)).toFixed(3),moved:false};}
+function mkSectors(n,terr){return Array.from({length:n},(_,i)=>mkSector(i,n,terr));}
+function relayout(reg){const n=reg.sectors.length;
+  reg.sectors.forEach((s,i)=>{if(!s.moved){const t=mkSector(i,n,s.terr);s.u=t.u;s.v=t.v;}});}
+
+// defaults encode the adopted principle: 면적 ∝ 1/값밀도 (rich=small, barren=large)
+const DEFAULT=()=>([
+  {id:'r1',name:'중원',archetype:'plains',cx:600,cy:410,rx:68,ry:60,sectors:mkSectors(8,'plains')},
+  {id:'r2',name:'하북',archetype:'plains',cx:610,cy:245,rx:82,ry:64,sectors:mkSectors(6,'plains')},
+  {id:'r3',name:'초원',archetype:'steppe',cx:385,cy:160,rx:125,ry:85,sectors:mkSectors(4,'steppe')},
+  {id:'r4',name:'동북',archetype:'forest',cx:840,cy:195,rx:92,ry:75,sectors:mkSectors(4,'forest')},
+  {id:'r5',name:'서역',archetype:'desert',cx:280,cy:390,rx:118,ry:82,sectors:mkSectors(4,'desert')},
+  {id:'r6',name:'관중',archetype:'mountain',cx:420,cy:580,rx:88,ry:70,sectors:mkSectors(5,'mountain')},
+  {id:'r7',name:'한경',archetype:'river-valley',cx:775,cy:430,rx:62,ry:56,sectors:mkSectors(4,'river-valley')},
+  {id:'r8',name:'촉',archetype:'mountain',cx:475,cy:725,rx:92,ry:66,sectors:mkSectors(4,'mountain')},
+  {id:'r9',name:'강남',archetype:'river-valley',cx:705,cy:655,rx:78,ry:64,sectors:mkSectors(6,'river-valley')},
+  {id:'r10',name:'동남해',archetype:'island',cx:960,cy:625,rx:68,ry:56,sectors:mkSectors(4,'island')},
+]);
+const KEY='terrainMapEditor.v2';
+function migrateV1(){
+  try{const v1=JSON.parse(localStorage.getItem('terrainMapEditor.v1'));
+    if(!v1||!v1.regions)return null;
+    return{regions:v1.regions.map(r=>({id:r.id,name:r.name,archetype:r.terr,cx:r.cx,cy:r.cy,
+        rx:r.rx,ry:r.ry,sectors:mkSectors(Math.max(SEC_MIN,Math.min(SEC_MAX,Math.round(Math.PI*r.rx*r.ry/4500))),r.terr)})),
+      rivers:v1.rivers||[],ranges:[],straits:v1.straits||[],ports:[]};
+  }catch(e){return null;}
+}
+function load(){try{return JSON.parse(localStorage.getItem(KEY));}catch(e){return null;}}
+let state=load()||migrateV1()||{regions:DEFAULT(),rivers:[],ranges:[],straits:[],ports:[]};
+state.ranges=state.ranges||[];state.ports=state.ports||[];
+let mode='move',curLine=null,curTerr='plains',straitPick=[],selId=null,seq=state.regions.length;
+function save(){localStorage.setItem(KEY,JSON.stringify(state));
+  document.getElementById('saved').textContent='autosaved '+new Date().toLocaleTimeString();}
+
+function pt(evt){const m=stage.getScreenCTM().inverse();const p=stage.createSVGPoint();
+  p.x=evt.clientX;p.y=evt.clientY;const q=p.matrixTransform(m);return{x:q.x,y:q.y};}
+function el(tag,attrs){const e=document.createElementNS(NS,tag);
+  for(const k in attrs)e.setAttribute(k,attrs[k]);return e;}
+function hexPts(x,y,R){const pts=[];for(let i=0;i<6;i++){const a=Math.PI/180*(60*i-30);
+  pts.push((x+R*Math.cos(a)).toFixed(1)+','+(y+R*Math.sin(a)).toFixed(1));}return pts.join(' ');}
+function edgePoint(a,b){ // ellipse-a boundary point toward b's center
+  const dx=b.cx-a.cx,dy=b.cy-a.cy;const k=1/Math.sqrt((dx/a.rx)**2+(dy/a.ry)**2)||0;
+  return{x:a.cx+dx*k,y:a.cy+dy*k};}
+const area=r=>Math.round(Math.PI*r.rx*r.ry/1000);
+
+function linePath(pl){return 'M'+pl.map(p=>p[0]+','+p[1]).join(' L');}
+
+function render(){
+  stage.innerHTML='';
+  for(const rv of state.rivers) if(rv.length>1)
+    stage.appendChild(el('path',{d:linePath(rv),fill:'none',stroke:'#4db8d6',
+      'stroke-width':5,'stroke-linecap':'round','stroke-linejoin':'round',opacity:.9}));
+  for(const rg of state.ranges) if(rg.length>1){
+    stage.appendChild(el('path',{d:linePath(rg),fill:'none',stroke:'#6b543f',
+      'stroke-width':9,'stroke-linecap':'round','stroke-linejoin':'round',opacity:.95}));
+    stage.appendChild(el('path',{d:linePath(rg),fill:'none',stroke:'#a68a63',
+      'stroke-width':2.5,'stroke-dasharray':'2 8','stroke-linecap':'round'}));}
+  if(curLine&&curLine.length)
+    stage.appendChild(el('path',{d:linePath(curLine),fill:'none',
+      stroke:mode==='range'?'#c8a878':'#7fe0ff','stroke-width':4,'stroke-dasharray':'6 4'}));
+  for(const s of state.straits){
+    const a=state.regions.find(r=>r.id===s[0]),b=state.regions.find(r=>r.id===s[1]);
+    if(!a||!b)continue;const pa=edgePoint(a,b),pb=edgePoint(b,a);
+    stage.appendChild(el('line',{x1:pa.x,y1:pa.y,x2:pb.x,y2:pb.y,
+      stroke:'#7fe0ff','stroke-width':3,'stroke-dasharray':'2 7',opacity:.85}));}
+  for(const r of state.regions){
+    const g=el('g',{'data-region':r.id,style:'cursor:'+(mode==='move'?'grab':'pointer')});
+    g.appendChild(el('ellipse',{cx:r.cx,cy:r.cy,rx:r.rx,ry:r.ry,
+      fill:TERR[r.archetype]||'#888',opacity:.5,
+      stroke:r.id===selId?'#fff':'#0b1a24','stroke-width':r.id===selId?2.5:2}));
+    const chipR=Math.max(8,Math.min(14,Math.min(r.rx,r.ry)*0.18));
+    r.sectors.forEach((s,i)=>{
+      const x=r.cx+s.u*r.rx*0.8,y=r.cy+s.v*r.ry*0.8;
+      g.appendChild(el('polygon',{points:hexPts(x,y,chipR),fill:TERR[s.terr]||'#888',
+        stroke:'#0b1a24','stroke-width':1.2,'data-chip':r.id+':'+i,style:'cursor:pointer'}));});
+    g.appendChild(el('text',{x:r.cx,y:r.cy-r.ry-8,class:'rlabel'})).textContent=r.name;
+    g.appendChild(el('text',{x:r.cx,y:r.cy+r.ry+13,class:'rsize'}))
+      .textContent=r.archetype+' · '+r.sectors.length+'sec · '+area(r)+'k';
+    if(mode==='move'&&r.id===selId)
+      g.appendChild(el('rect',{class:'handle','data-h':r.id,
+        x:r.cx+r.rx-6,y:r.cy+r.ry-6,width:12,height:12}));
+    stage.appendChild(g);
+  }
+  for(let i=0;i<state.ports.length;i++){const p=state.ports[i];
+    const t=el('text',{x:p.x,y:p.y,class:'port','data-port':i});t.textContent='⚓';
+    stage.appendChild(t);}
+  // top-most invisible hit strokes: Move 모드에서 강/산맥/해협을 직접 클릭해 삭제
+  if(mode==='move'){
+    state.rivers.forEach((rv,i)=>{if(rv.length>1)stage.appendChild(el('path',{d:linePath(rv),
+      fill:'none',stroke:'#fff','stroke-opacity':0,'stroke-width':14,'data-riv':i,style:'cursor:pointer'}));});
+    state.ranges.forEach((rg,i)=>{if(rg.length>1)stage.appendChild(el('path',{d:linePath(rg),
+      fill:'none',stroke:'#fff','stroke-opacity':0,'stroke-width':16,'data-rng':i,style:'cursor:pointer'}));});
+    state.straits.forEach((s,i)=>{const a=state.regions.find(r=>r.id===s[0]),b=state.regions.find(r=>r.id===s[1]);
+      if(!a||!b)return;const pa=edgePoint(a,b),pb=edgePoint(b,a);
+      stage.appendChild(el('line',{x1:pa.x,y1:pa.y,x2:pb.x,y2:pb.y,
+        stroke:'#fff','stroke-opacity':0,'stroke-width':12,'data-str':i,style:'cursor:pointer'}));});
+  }
+  renderSide();save();
+}
+
+const MODE_HINT={
+  move:'몸통 드래그=이동 · 핸들=크기(<b>Shift</b> 가로/<b>Alt</b> 세로) · 지역 클릭=선택 · 더블클릭=이름 · <b>sector 칩 클릭=팔레트 지형 칠하기</b> · 칩 드래그=재배치 · <b>강/산맥/해협/⚓ 클릭=삭제</b>',
+  river:'캔버스 클릭으로 강 경로 점 추가 → <b>Finish</b>. 강이 지역 사이를 지나면 그 국경=river choke.',
+  range:'캔버스 클릭으로 산맥 능선 점 추가 → <b>Finish</b>. 산맥이 국경에 걸치면 그 국경=pass choke.',
+  strait:'두 지역을 차례로 클릭 = 해협(strait choke) 연결.',
+  port:'클릭=항구 추가 · 기존 ⚓ 클릭=삭제. 항구는 기능 지물(function 렌즈).',
+};
+function renderSide(){
+  document.getElementById('modeHint').innerHTML=MODE_HINT[mode];
+  const tp=document.getElementById('terrPalette');tp.innerHTML='';
+  for(const k of Object.keys(TERR)){
+    const s=document.createElement('span');s.className='terr';
+    s.style.background=TERR[k];s.style.outline=k===curTerr?'2px solid #fff':'none';
+    s.textContent=k;s.onclick=()=>{curTerr=k;renderSide();};tp.appendChild(s);}
+  const dt=document.getElementById('denTable');
+  dt.innerHTML='<tr><td><b>terrain</b></td><td><b>pop</b></td><td><b>econ</b></td><td></td></tr>'+
+    Object.entries(DENSITY).map(([k,[p,e,m]])=>`<tr><td>${k}</td><td>${p}</td><td>${e}</td><td>${m}</td></tr>`).join('');
+  const rc=document.getElementById('regCtl');
+  const r=state.regions.find(x=>x.id===selId);
+  if(!r){rc.innerHTML='지역을 클릭해 선택하세요.';}
+  else{
+    rc.innerHTML=`
+      <div class="row">이름 <input type="text" id="rn" value="${r.name}"></div>
+      <div class="row">아키타입 <span class="terr" style="background:${TERR[r.archetype]}">${r.archetype}</span>
+        <button class="mini" id="setArch">팔레트 지형 적용</button></div>
+      <div class="row">sectors <button class="mini" id="sMinus">−</button>
+        <b>${r.sectors.length}</b> <button class="mini" id="sPlus">+</button>
+        <span style="color:#66727e">(${SEC_MIN}–${SEC_MAX}) · 면적 ${area(r)}k
+        · 권장≈${Math.max(SEC_MIN,Math.min(SEC_MAX,Math.round(area(r)/10)))} <i>(10k=1sec)</i></span></div>
+      <div class="row"><button class="mini" id="delReg" style="color:#e08080">지역 삭제</button></div>`;
+    rc.querySelector('#rn').onchange=(e)=>{r.name=e.target.value;render();};
+    rc.querySelector('#setArch').onclick=()=>{const old=r.archetype;r.archetype=curTerr;
+      r.sectors.forEach(s=>{if(s.terr===old)s.terr=curTerr;});render();};
+    rc.querySelector('#sMinus').onclick=()=>{if(r.sectors.length>SEC_MIN){r.sectors.pop();relayout(r);render();}};
+    rc.querySelector('#sPlus').onclick=()=>{if(r.sectors.length<SEC_MAX){
+      r.sectors.push(mkSector(r.sectors.length,r.sectors.length+1,r.archetype));relayout(r);render();}};
+    rc.querySelector('#delReg').onclick=()=>{if(confirm(r.name+' 삭제?')){
+      state.regions=state.regions.filter(x=>x!==r);
+      state.straits=state.straits.filter(s=>s[0]!==r.id&&s[1]!==r.id);
+      selId=null;render();}};
+  }
+  const rl=document.getElementById('regList');rl.innerHTML='';
+  for(const rr of state.regions){
+    const d=document.createElement('div');if(rr.id===selId)d.className='sel';
+    d.textContent=`${rr.name} — ${rr.archetype} · ${rr.sectors.length}sec · ${area(rr)}k`;
+    d.onclick=()=>{selId=rr.id;render();};rl.appendChild(d);}
+  const fl=document.getElementById('featList');fl.innerHTML='';
+  const feat=(label,del)=>{const d=document.createElement('div');
+    d.innerHTML=label+' <span class="x">×</span>';
+    d.querySelector('.x').onclick=(e)=>{e.stopPropagation();del();render();};fl.appendChild(d);};
+  state.rivers.forEach((rv,i)=>feat(`강 #${i+1} (${rv.length}pt)`,()=>state.rivers.splice(i,1)));
+  state.ranges.forEach((rg,i)=>feat(`산맥 #${i+1} (${rg.length}pt)`,()=>state.ranges.splice(i,1)));
+  state.straits.forEach((s,i)=>{
+    const n=id=>{const x=state.regions.find(r=>r.id===id);return x?x.name:id;};
+    feat(`해협 ${n(s[0])}↔${n(s[1])}`,()=>state.straits.splice(i,1));});
+  state.ports.forEach((p,i)=>feat(`항구 ⚓ #${i+1}`,()=>state.ports.splice(i,1)));
+  if(!fl.children.length)fl.innerHTML='<div style="cursor:default">아직 없음 — River/산맥/Strait/Port 모드로 추가</div>';
+}
+
+// ---- interaction ----
+let drag=null;
+stage.addEventListener('pointerdown',e=>{
+  const p=pt(e);
+  if(mode==='river'||mode==='range'){(curLine=curLine||[]).push([Math.round(p.x),Math.round(p.y)]);render();return;}
+  if(mode==='port'){
+    const hit=state.ports.findIndex(pp=>Math.hypot(pp.x-p.x,pp.y-p.y)<16);
+    if(hit>=0)state.ports.splice(hit,1);else state.ports.push({x:Math.round(p.x),y:Math.round(p.y)});
+    render();return;}
+  if(mode==='move'){ // 강/산맥/해협/⚓ 직접 클릭 = 개별 삭제
+    const t=e.target;const has=a=>t.getAttribute&&t.getAttribute(a)!==null;
+    const kill=(arr,a,label)=>{const i=+t.getAttribute(a);
+      if(confirm(label+' #'+(i+1)+' 삭제할까요?')){arr.splice(i,1);render();}};
+    if(has('data-riv'))return kill(state.rivers,'data-riv','강');
+    if(has('data-rng'))return kill(state.ranges,'data-rng','산맥');
+    if(has('data-str'))return kill(state.straits,'data-str','해협');
+    if(has('data-port'))return kill(state.ports,'data-port','항구');
+  }
+  const chip=e.target.getAttribute&&e.target.getAttribute('data-chip');
+  if(chip&&mode==='move'){const[rid,idx]=chip.split(':');
+    const r=state.regions.find(x=>x.id===rid);
+    drag={type:'chip',r,s:r.sectors[+idx],ox:p.x,oy:p.y,moved:false};
+    stage.setPointerCapture(e.pointerId);return;}
+  const h=e.target.getAttribute&&e.target.getAttribute('data-h');
+  if(h){const r=state.regions.find(x=>x.id===h);
+    drag={type:'resize',r,ox:p.x,oy:p.y,brx:r.rx,bry:r.ry};stage.setPointerCapture(e.pointerId);return;}
+  const g=e.target.closest&&e.target.closest('g[data-region]');
+  if(g){const r=state.regions.find(x=>x.id===g.getAttribute('data-region'));
+    if(mode==='strait'){straitPick.push(r.id);
+      if(straitPick.length===2){
+        if(straitPick[0]!==straitPick[1])state.straits.push([straitPick[0],straitPick[1]]);
+        straitPick=[];}
+      render();return;}
+    selId=r.id;
+    drag={type:'move',r,ox:p.x,oy:p.y,bcx:r.cx,bcy:r.cy,moved:false};
+    stage.setPointerCapture(e.pointerId);render();}
+});
+stage.addEventListener('pointermove',e=>{
+  if(!drag)return;const p=pt(e);const dx=p.x-drag.ox,dy=p.y-drag.oy;
+  if(drag.type==='move'){drag.r.cx=Math.round(drag.bcx+dx);drag.r.cy=Math.round(drag.bcy+dy);
+    if(Math.abs(dx)+Math.abs(dy)>4)drag.moved=true;render();}
+  else if(drag.type==='resize'){
+    if(e.shiftKey)drag.r.rx=Math.max(28,Math.round(drag.brx+dx));
+    else if(e.altKey)drag.r.ry=Math.max(28,Math.round(drag.bry+dy));
+    else{const d=Math.round((dx+dy)/2);drag.r.rx=Math.max(28,drag.brx+d);drag.r.ry=Math.max(28,drag.bry+d);}
+    render();}
+  else if(drag.type==='chip'){
+    if(Math.abs(dx)+Math.abs(dy)>4)drag.moved=true;
+    let u=(p.x-drag.r.cx)/(drag.r.rx*0.8),v=(p.y-drag.r.cy)/(drag.r.ry*0.8);
+    const len=Math.hypot(u,v);if(len>1){u/=len;v/=len;}
+    drag.s.u=+u.toFixed(3);drag.s.v=+v.toFixed(3);drag.s.moved=true;render();}
+});
+stage.addEventListener('pointerup',()=>{
+  if(drag&&drag.type==='chip'&&!drag.moved){drag.s.terr=curTerr;drag.s.moved=drag.s.moved||false;render();}
+  drag=null;
+});
+stage.addEventListener('dblclick',e=>{
+  const g=e.target.closest&&e.target.closest('g[data-region]');if(!g)return;
+  const r=state.regions.find(x=>x.id===g.getAttribute('data-region'));
+  const n=prompt('지역 이름:',r.name);if(n){r.name=n;render();}
+});
+
+// ---- mode + buttons ----
+function setMode(m){
+  if((mode==='river'||mode==='range')&&curLine&&curLine.length>1)finishLine();
+  mode=m;straitPick=[];curLine=(m==='river'||m==='range')?[]:null;
+  for(const[id,mm]of[['mMove','move'],['mRiver','river'],['mRange','range'],['mStrait','strait'],['mPort','port']])
+    document.getElementById(id).classList.toggle('on',mm===m);
+  document.getElementById('finishLine').style.display=(m==='river'||m==='range')?'inline-block':'none';
+  render();}
+function finishLine(){
+  if(curLine&&curLine.length>1)(mode==='river'?state.rivers:state.ranges).push(curLine);
+  curLine=(mode==='river'||mode==='range')?[]:null;render();}
+document.getElementById('mMove').onclick=()=>setMode('move');
+document.getElementById('mRiver').onclick=()=>setMode('river');
+document.getElementById('mRange').onclick=()=>setMode('range');
+document.getElementById('mStrait').onclick=()=>setMode('strait');
+document.getElementById('mPort').onclick=()=>setMode('port');
+document.getElementById('finishLine').onclick=finishLine;
+document.getElementById('addReg').onclick=()=>{
+  seq++;const r={id:'r'+seq+'_'+Date.now()%1000,name:'새 지방 '+seq,archetype:curTerr,
+    cx:600,cy:410,rx:70,ry:60,sectors:mkSectors(4,curTerr)};
+  state.regions.push(r);selId=r.id;render();};
+document.getElementById('reset').onclick=()=>{
+  if(confirm('레이아웃을 기본값으로 초기화할까요?')){
+    state={regions:DEFAULT(),rivers:[],ranges:[],straits:[],ports:[]};selId=null;render();}};
+document.getElementById('exp').onclick=()=>{
+  document.getElementById('out').value=JSON.stringify(state,null,1);};
+document.getElementById('loadBtn').onclick=()=>{
+  try{const s=JSON.parse(document.getElementById('out').value);
+    if(!s.regions)throw new Error('regions 없음');
+    s.rivers=s.rivers||[];s.ranges=s.ranges||[];s.straits=s.straits||[];s.ports=s.ports||[];
+    state=s;selId=null;render();}
+  catch(err){alert('JSON 파싱 실패: '+err.message);}};
+
+render();
+</script></body></html>
