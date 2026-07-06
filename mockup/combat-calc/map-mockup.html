@@ -116,7 +116,11 @@ function renderMap() {
         const pk = pairKey(h.rid, n.rid);
         const cls = META.pairClass[pk] || 'open';
         const st = CLS_STYLE[cls];
-        if (st) seg(st[0], st[1]); else seg('#1c2b18', 2.5);
+        const hk = h.q + ',' + h.r;
+        const pr = META.partialRivers && META.partialRivers[pk];
+        if (pr && (pr.includes(hk + '|' + nk) || pr.includes(nk + '|' + hk)))
+          seg(CLS_STYLE.river[0], CLS_STYLE.river[1]); // partial river: visual only, class stays open
+        else if (st) seg(st[0], st[1]); else seg('#1c2b18', 2.5);
         const m = chokeMid[pk] || (chokeMid[pk] = [0, 0, 0]);
         m[0] += (c1[0] + c2[0]) / 2; m[1] += (c1[1] + c2[1]) / 2; m[2]++;
       } else if (n.sid !== h.sid && h.sid < n.sid) {

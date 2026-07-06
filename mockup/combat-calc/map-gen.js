@@ -467,6 +467,33 @@ for (const [pk, cap] of STRAITS) {
     choke: { class: 'strait', cap, removalPath: REMOVAL.strait }, frontageHexes: 0 });
 }
 
+// --- partial river (invasion-corridor authoring, user ruling 2026-07-07) ----
+// r3|r7 stays class OPEN (binary projection rule: an open segment admits the
+// full field), but the river VISUALLY covers the border except one westmost
+// gate sector's segment — the corridor where a 초원↔한경 campaign must cross.
+const partialRivers = {};
+{
+  const pk = 'r3|r7';
+  const pairs = []; // [r3hexKey, r7hexKey, xMid, r7sid]
+  for (const [k, rid] of owner) {
+    if (rid !== 'r3') continue;
+    const h = hexes.get(k);
+    for (const [dq, dr] of NB) {
+      const nk = kk(h.q + dq, h.r + dr);
+      if (owner.get(nk) !== 'r7') continue;
+      pairs.push([k, nk, (h.x + hexes.get(nk).x) / 2, hexSector.get(nk)]);
+    }
+  }
+  if (pairs.length) {
+    const secX = {}; // mean contact x per r7-side sector
+    for (const p of pairs) (secX[p[3]] = secX[p[3]] || []).push(p[2]);
+    const gateSid = Object.entries(secX)
+      .map(([sid, xs]) => [sid, xs.reduce((a, b) => a + b, 0) / xs.length])
+      .sort((a, b) => a[1] - b[1])[0][0]; // westmost 한경 sector = the gate
+    partialRivers[pk] = pairs.filter((p) => p[3] !== gateSid).map((p) => p[0] + '|' + p[1]);
+  }
+}
+
 const CRADLE_MAP = { regions, sectors, edges };
 // canonical reference binding (spec §2 A–E composite identities; viable in v4)
 const CRADLE_BINDING = {
@@ -478,7 +505,7 @@ const CRADLE_META = {
     const c = centroid(regionHexes[s[0]]); return [s[0], c];
   })),
   capitals: Object.fromEntries(Object.entries(capitals).map(([rid, i]) => [rid, `${rid}_s${i}`])),
-  pairClass, frontage,
+  pairClass, frontage, partialRivers,
   rangeHexes: rangeHexes.map((h) => ({ q: h.q, r: h.r, x: h.x, y: h.y })),
 };
 
