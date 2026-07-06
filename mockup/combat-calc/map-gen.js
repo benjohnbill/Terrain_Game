@@ -375,6 +375,25 @@ const rimCount = regionClusters.r6.map((cl) => {
 const rimIdx = rimCount.map((n, i) => [n, i]).sort((a, b) => b[0] - a[0] || a[1] - b[1])
   .slice(0, 3).map((x) => x[1]);
 
+// --- cities (coupled spikes, sector-grill rulings 2026-07-07) ----------------
+// City forwardness = the region's posture toward 중원: 하북/한경 forward
+// duelists on the open plain · 강남 one sector behind its river · 관중 deep
+// on the basin floor (장안) · 동남해 port city where both straits land.
+const contactTo = (cl, target) => {
+  let n = 0;
+  for (const k of cl) {
+    const h = hexes.get(k);
+    if (NB.some(([dq, dr]) => owner.get(kk(h.q + dq, h.r + dr)) === target)) n++;
+  }
+  return n;
+};
+const cities = {};
+cities.r2 = pickSector('r2', (p, cl) => contactTo(cl, 'r1'));
+cities.r7 = pickSector('r7', (p, cl) => contactTo(cl, 'r1'));
+cities.r9 = pickSector('r9', (p, cl) => (contactTo(cl, 'r1') ? -1e12 : 0) - dist2(p, byId.r1));
+cities.r6 = pickSector('r6', (p, cl, i) => (rimIdx.includes(i) ? -1e12 : 0) - dist2(p, byId.r6));
+cities.r10 = pickSector('r10', (p) => -(dist2(p, byId.r9) + dist2(p, byId.r4)));
+
 // --- sector values (parity v5 + econ ladder v2, 가안 2026-07-07) -----------------
 // Pop: Σ 6.0 per region — EQUAL START (user ruling: same blood budget for
 // every region; divergence only via play). Shapes only where a profile
@@ -382,22 +401,33 @@ const rimIdx = rimCount.map((n, i) => [n, i]).sort((a, b) => b[0] - a[0] || a[1]
 // Econ: Σ = ladderIndex × 6.0, ladder v2 = 0.55 + 0.45 × inbound/avg over
 // the border-class layout, + projection-shortfall credit (동남해). Core
 // debit and fiction band HELD by user (depth value unmeasured).
+// City rule (sealed direction 2026-07-07): coupled by default — where the
+// money spikes, the people spike (a city); 초원-style separation only where
+// the profile demands it. Flat lands stay flat by identity: 중원 (stakes
+// smeared over every sector) and 촉 (the whole basin is one dense city-land).
+// Spike tiers: strong ≈ 40–50% of the regional total (the land IS the point);
+// mild ≈ 25–35% (real hinterland behind the city).
 function sectorSpec(rid, i) { // [pop, econ, terrain]
   switch (rid) {
-    case 'r1': return [1.5, 1.875, 'plains'];       // 1.25 — sole crown
-    case 'r2': return [1.2, 1.38, 'plains'];        // 1.15 — twin
-    case 'r7': return [1.2, 1.38, 'river-valley'];  // 1.15 — twin
-    case 'r9': return [1.2, 1.1, 'plains'];         // 0.92 — river-shielded
-    case 'r8': return [2.0, 1.92, 'plains'];        // 0.96 — densest land
-    case 'r10': return [1.5, 1.16, 'plains'];       // 0.77 — island (fiction band parked)
-    case 'r3': return i === capitals.r3             // 1.09 — econ spike, pop spread
-      ? [0.75, 2.4, 'plains'] : [0.75, 0.59, 'steppe'];
-    case 'r4': return i === capitals.r4             // 0.93 — deep capital
-      ? [1.5, 1.5, 'plains'] : [0.9, 0.82, 'steppe'];
-    case 'r5': return i === capitals.r5             // 0.80 — oasis spike
+    case 'r1': return [1.5, 1.875, 'plains'];       // 1.25 — sole crown, flat by identity
+    case 'r2': return i === cities.r2               // 1.15 — forward duelist city
+      ? [2.0, 2.3, 'plains'] : [1.0, 1.15, 'plains'];
+    case 'r7': return i === cities.r7               // 1.15 — forward duelist city (mirror twin)
+      ? [2.0, 2.3, 'river-valley'] : [1.0, 1.15, 'river-valley'];
+    case 'r9': return i === cities.r9               // 0.92 — merchant city behind the river
+      ? [2.0, 1.84, 'plains'] : [1.0, 0.92, 'plains'];
+    case 'r8': return [2.0, 1.92, 'plains'];        // 0.96 — densest land, flat by identity
+    case 'r10': return i === cities.r10             // 0.77 — port city, straits land here
+      ? [2.4, 1.85, 'plains'] : [1.2, 0.923, 'plains'];
+    case 'r3': return i === capitals.r3             // 1.09 — SEPARATED (nomads): econ spike, pop spread
+      ? [0.75, 2.4, 'steppe'] : [0.75, 0.59, 'steppe'];
+    case 'r4': return i === capitals.r4             // 0.93 — deep highland city (개마고원)
+      ? [1.5, 1.5, 'highland'] : [0.9, 0.82, 'highland'];
+    case 'r5': return i === capitals.r5             // 0.80 — oasis city (strong tier)
       ? [1.5, 2.4, 'oasis'] : [0.5, 0.27, 'desert'];
-    case 'r6': return rimIdx.includes(i)            // 1.06 — rim/floor basin
-      ? [0.5, 0.5, 'mountain'] : [1.5, 1.62, 'plains'];
+    case 'r6': return rimIdx.includes(i)            // 1.06 — rim / floor / 장안
+      ? [0.5, 0.5, 'mountain']
+      : i === cities.r6 ? [2.1, 2.3, 'plains'] : [1.2, 1.28, 'plains'];
     default: return [1, 1, 'plains'];
   }
 }
@@ -451,12 +481,14 @@ for (const pk of Object.keys(INTENT)) {
 }
 for (const [pk, cap] of STRAITS) {
   const [a, b] = pk.split('|');
-  const other = byId[b === 'r10' ? a : b];
-  // representative coastal sectors: nearest centroids across the water
+  // representative coastal sectors: nearest centroids across the water.
+  // 동남해 side is ANCHORED to its port city ("the entrance IS the city",
+  // user ruling 2026-07-07) — both straits land at the same sector.
   let bestA = null, bestB = null, bd = Infinity;
   for (const saId of regions.find((r) => r.id === a).sectorIds) {
     const ca = centroid(sectors[saId].mapUnits.map((u) => kk(u.q, u.r)));
     for (const sbId of regions.find((r) => r.id === b).sectorIds) {
+      if (b === 'r10' && sbId !== `r10_s${cities.r10}`) continue;
       const cb = centroid(sectors[sbId].mapUnits.map((u) => kk(u.q, u.r)));
       const d = (ca.x - cb.x) ** 2 + (ca.y - cb.y) ** 2;
       if (d < bd) { bd = d; bestA = saId; bestB = sbId; }
@@ -505,6 +537,7 @@ const CRADLE_META = {
     const c = centroid(regionHexes[s[0]]); return [s[0], c];
   })),
   capitals: Object.fromEntries(Object.entries(capitals).map(([rid, i]) => [rid, `${rid}_s${i}`])),
+  cities: Object.fromEntries(Object.entries(cities).map(([rid, i]) => [rid, `${rid}_s${i}`])),
   pairClass, frontage, partialRivers,
   rangeHexes: rangeHexes.map((h) => ({ q: h.q, r: h.r, x: h.x, y: h.y })),
 };

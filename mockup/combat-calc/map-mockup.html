@@ -47,7 +47,7 @@ const NB = [[1, 0], [1, -1], [0, -1], [-1, 0], [-1, 1], [0, 1]];
 // on the wrong side of the hex)
 const EDGE_NB = [[1, 0], [0, 1], [-1, 1], [-1, 0], [0, -1], [1, -1]];
 const TERR = { plains: '#7d9a54', 'river-valley': '#5d9078', steppe: '#a89a55',
-  desert: '#c6aa69', mountain: '#877663', oasis: '#6fae7c' };
+  desert: '#c6aa69', mountain: '#877663', oasis: '#6fae7c', highland: '#5e6b4a' };
 const RANGE_FILL = '#4e4034';
 // choked-border stroke per class + door width (mirrors map-gen DOOR)
 const CLS_STYLE = { pass: ['#6b543f', 5], river: ['#57a7d8', 4.5],
@@ -72,6 +72,21 @@ for (const [sid, sec] of Object.entries(MAP.sectors)) {
     hexOwn.set(u.q + ',' + u.r, { sid, rid: sec.regionId, terr: u.terrainLayer, q: u.q, r: u.r, x, y });
   }
 }
+// city fine-tuning overrides: click a hex → re-seat its region's city there.
+// Values SWAP between old and new city sector (totals preserved) — a preview
+// tool; a confirmed move gets baked into map-gen.js cities picks.
+const CITY_LS = 'terrainCityOverride.v1';
+const cityOverrides = JSON.parse(localStorage.getItem(CITY_LS) || '{}');
+const cityOf = { ...META.cities };
+for (const [rid, sid] of Object.entries(cityOverrides)) {
+  const orig = cityOf[rid];
+  if (!orig || !MAP.sectors[sid] || MAP.sectors[sid].regionId !== rid || sid === orig) continue;
+  const a = MAP.sectors[orig], b = MAP.sectors[sid];
+  [a.economyValue, b.economyValue] = [b.economyValue, a.economyValue];
+  [a.populationValue, b.populationValue] = [b.populationValue, a.populationValue];
+  cityOf[rid] = sid;
+}
+
 function tint(hex, dv) {
   const n = parseInt(hex.slice(1), 16);
   const c = (v) => Math.max(0, Math.min(255, v + dv));
@@ -91,7 +106,7 @@ function renderMap() {
     bump(h.x, h.y);
     const dv = ((h.q * 13 + h.r * 7) % 5 - 2) * 5;
     const pts = corners(h.x, h.y).map(([x, y]) => x.toFixed(1) + ',' + y.toFixed(1)).join(' ');
-    fills.push(`<polygon points="${pts}" fill="${tint(TERR[h.terr] || '#888', dv)}"/>`);
+    fills.push(`<polygon points="${pts}" fill="${tint(TERR[h.terr] || '#888', dv)}" data-sid="${h.sid}"/>`);
   }
   // void range hexes (mountain wall / knot — non-sector terrain)
   for (const h of META.rangeHexes) {
@@ -141,10 +156,14 @@ function renderMap() {
     labels.push(`<line x1="${ca.x}" y1="${ca.y}" x2="${cb.x}" y2="${cb.y}" stroke="#7fd0e8" stroke-width="2.5" stroke-dasharray="3 7" opacity=".8"/>`);
     labels.push(`<text class="choke" x="${((ca.x + cb.x) / 2).toFixed(1)}" y="${((ca.y + cb.y) / 2 - 6).toFixed(1)}" style="fill:#9fe0f5">strait${e.choke.cap}</text>`);
   }
-  // capitals ★ + region labels
+  // capitals ★ + cities ◉ + region labels
   for (const [rid, sid] of Object.entries(META.capitals)) {
     const c = secCentroid(sid);
     labels.push(`<text class="cap" x="${c.x.toFixed(1)}" y="${(c.y + 4).toFixed(1)}">★</text>`);
+  }
+  for (const [rid, sid] of Object.entries(cityOf)) {
+    const c = secCentroid(sid);
+    labels.push(`<text class="cap" x="${c.x.toFixed(1)}" y="${(c.y + 5).toFixed(1)}" style="font-size:15px">◉</text>`);
   }
   for (const r of MAP.regions) {
     const c = META.regionCenters[r.id];
@@ -181,6 +200,8 @@ function renderPanel() {
   if (GEN_DIAG.extraResidual.length) diag.push('extra edges: ' + GEN_DIAG.extraResidual.join(', '));
   if (GEN_DIAG.disconnected.length) diag.push('disconnected: ' + GEN_DIAG.disconnected.join(', '));
   document.getElementById('panel').innerHTML = `
+    <h2>Inspect (hex click)</h2>
+    <div id="inspect" style="min-height:34px;color:#aab4c0">클릭한 hex의 섹터 정보가 여기 표시됩니다.</div>
     <h2>Canonical binding (A–E) — all-cap</h2>
     <table><tr><th>seat</th><th>cap</th><th>proj</th><th>shield</th></tr>${rows}</table>
     <h2>Gate B (seat sizing)</h2>
@@ -190,7 +211,8 @@ function renderPanel() {
     ${diag.length ? '<div class="warn">⚠ ' + diag.join('<br>⚠ ') + '</div>' : ''}
     <h2>Region ladder (parity v5 · econ ladder v2)</h2>
     <table><tr><th>region</th><th>sec</th><th>cap</th><th>생산/turn</th></tr>${ladder}</table>
-    <p style="color:#8a93a0">★ capital · borders: brown = pass · blue = river ·
+    <p style="color:#8a93a0">★ capital (spike w/o city) · ◉ city (coupled spike;
+    click hex → re-seat preview) · borders: brown = pass · blue = river ·
     green = forest · tan = hills (door widths labeled) ·
     dark hexes = void range (non-sector, war never crosses) · dashed = strait.
     Map derives from map-gen.js seed — edit seed + reload. Heavy checks:
@@ -199,6 +221,30 @@ function renderPanel() {
 
 renderMap();
 renderPanel();
+
+// hex click → inspect + city re-seat
+document.getElementById('map').addEventListener('click', (e) => {
+  const sid = e.target.dataset && e.target.dataset.sid;
+  if (!sid) return;
+  const sec = MAP.sectors[sid];
+  const rid = sec.regionId;
+  const rname = nameOf[rid];
+  const isCity = cityOf[rid] === sid;
+  const hasCity = !!cityOf[rid];
+  const el = document.getElementById('inspect');
+  el.innerHTML = `<b>${rname}</b> · ${sid} (${sec.mapUnits.length} hex) · ${sec.mapUnits[0].terrainLayer}
+    · pop ${sec.populationValue} / econ ${sec.economyValue}${isCity ? ' · <b>◉ 도시</b>' : ''}
+    ${hasCity && !isCity ? `<br><button id="mkcity" style="margin-top:4px">◉ 이 섹터를 ${rname} 도시로 (preview)</button>` : ''}
+    ${Object.keys(cityOverrides).length ? `<button id="rscity" style="margin-top:4px">override 초기화</button>` : ''}`;
+  const mk = document.getElementById('mkcity');
+  if (mk) mk.onclick = () => {
+    cityOverrides[rid] = sid;
+    localStorage.setItem(CITY_LS, JSON.stringify(cityOverrides));
+    location.reload();
+  };
+  const rs = document.getElementById('rscity');
+  if (rs) rs.onclick = () => { localStorage.removeItem(CITY_LS); location.reload(); };
+});
 </script>
 </body>
 </html>
