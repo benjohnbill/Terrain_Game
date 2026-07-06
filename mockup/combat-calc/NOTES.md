@@ -590,3 +590,13 @@ pending** per sheet.
   implementation: "수비대 와해 · 성 포기". Rider: 결사항전
   (voluntary last stand with escape open) registered into the morale
   reserved seat and deferred — see MAGNITUDE.md M4 validation notes.
+
+# Sheet 14 — map viability (2026-07-06, tooling)
+
+The map-authoring gate (spec: docs/superpowers/specs/2026-07-06-terrain-
+cradle-map-design.md). Tooling only — no map is sealed yet. The 5-region
+fixture is a first 가안 to exercise the loader/gate/mockup; its B1/B2
+result is a starting measurement, not a verdict.
+
+## User verdicts
+_(pending — first authored map)_

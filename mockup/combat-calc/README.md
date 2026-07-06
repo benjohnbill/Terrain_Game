@@ -57,6 +57,14 @@ Added 2026-07-05 night (A-3 — `econ.js` + sheet 13):
    anchors, price fort-vs-recruit, and still close the L2 world at a
    derived cap? Verdicts sealed as M14 (rulings ⑱–㉑).
 
+Added 2026-07-06 (B1 tooling — `map-data.js`/`map-loader.js`/`map-gate.js` + sheet 14):
+
+13. **Sheet 14 — map viability** (`viability`): loads a terrain-cradle map
+   (map-data.js), derives realm mass/shield/cap (map-loader.js), runs the
+   authoring gate (map-gate.js): B1/B2 + viable seat-binding count. The
+   C-loop loss for map authoring. Also renders in the browser via
+   map-mockup.html (same dual-mode arithmetic).
+
 ## Run
 
 ```

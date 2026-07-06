@@ -6,6 +6,9 @@ const { DIALS, lever, resolve, reserveAwaken } = require('./engine');
 const { MATCH_DIALS, projectable, shieldMass, hegemonyCheck,
   presetBundle, expectedContinuedLoss, accepts } = require('./match');
 const TOURNEY = require('./tournament');
+const { FIXTURE_MAP } = require('./map-data.js');
+const { loadMap } = require('./map-loader.js');
+const { gateReport, viableBindings } = require('./map-gate.js');
 
 const fmt = (n) => typeof n === 'number' && !Number.isInteger(n) ? n.toFixed(2) : String(n);
 const men = (n) => `${Math.round(n).toLocaleString()}명(${(n / 100).toFixed(1)}부대)`;
@@ -874,7 +877,34 @@ function economy() {
 }
 
 // ----------------------------------------------------------------
-const SHEETS = { myeongnyang, fortress, raid, delaying, grinding, feint, tempo, timeline, manpower, hegemony, settlement, tournament: tournamentSheet, economy };
+function mapViability() {
+  h('SHEET 14 — MAP VIABILITY (terrain-cradle authoring gate)');
+  sub('Loads a map, derives realm mass/shield/cap from the sector graph,');
+  sub('runs the seat-sizing gate: B1 (no all-cap leadership) + B2 (no');
+  sub('one-war-kill) + viable seat-binding count. Fixture is a 가안.');
+
+  const { realms } = loadMap(FIXTURE_MAP);
+  console.log(''); sub('Per-realm derived state (all-cap):');
+  row(['realm', 'cap', 'field', 'exits', 'garr', 'fronts'], [10, 7, 7, 16, 6, 24]);
+  for (const r of realms) {
+    const doors = r.exits.map((e) => (e.cap === Infinity ? 'open' : e.cap)).join('/');
+    const fronts = Object.entries(r.fronts).map(([n, g]) => `${n}:${g}`).join(' ');
+    row([r.name, String(r.fieldCap), String(r.field), doors, String(r.garrisons), fronts], [10, 7, 7, 16, 6, 24]);
+  }
+
+  const g = gateReport(FIXTURE_MAP);
+  console.log(''); sub('Gate:');
+  row(['check', 'pass', 'detail'], [8, 6, 40]);
+  row(['B1', g.b1.pass ? 'YES' : 'NO', g.b1.pass ? 'no all-cap leadership' : `leadership: ${g.b1.offenders.join(', ')}`], [8, 6, 40]);
+  row(['B2', g.b2.pass ? 'YES' : 'NO', g.b2.pass ? 'no one-war-kill' : g.b2.kills.map((k) => `${k.attacker}→${k.victim}`).join(', ')], [8, 6, 40]);
+
+  const v = viableBindings(FIXTURE_MAP, 5);
+  console.log(''); sub(`Viable seat-bindings: ${v.viableCount} / ${v.total} (diversity metric — target set empirically)`);
+  console.log(''); sub('VERDICT: user rules in NOTES.md. This sheet is the C-loop loss.');
+}
+
+// ----------------------------------------------------------------
+const SHEETS = { myeongnyang, fortress, raid, delaying, grinding, feint, tempo, timeline, manpower, hegemony, settlement, tournament: tournamentSheet, economy, viability: mapViability };
 const pick = process.argv[2];
 if (pick && SHEETS[pick]) SHEETS[pick]();
 else if (pick) { console.error(`unknown sheet: ${pick} (${Object.keys(SHEETS).join(', ')})`); process.exit(1); }
