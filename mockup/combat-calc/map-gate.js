@@ -38,6 +38,50 @@ function gateReport(map, assignment, D = MATCH.MATCH_DIALS) {
   return { b1, b2, viableForThisBinding: b1.pass && b2.pass, realms };
 }
 
-const _api = { checkB1, checkB2, gateReport };
+function regionAdjacency(map) {
+  const adj = {};
+  for (const r of map.regions) adj[r.id] = new Set();
+  for (const e of map.edges) {
+    const ra = map.sectors[e.a].regionId; const rb = map.sectors[e.b].regionId;
+    if (ra !== rb) { adj[ra].add(rb); adj[rb].add(ra); }
+  }
+  const out = {}; for (const k of Object.keys(adj)) out[k] = [...adj[k]];
+  return out;
+}
+
+// MVP: identity binding when regions==seats; adjacent-pair perfect matching
+// when regions==2×seats.
+function enumerateBindings(map, seatCount) {
+  const regionIds = map.regions.map((r) => r.id);
+  if (regionIds.length === seatCount) {
+    const a = {}; map.regions.forEach((r) => { a[r.name] = [r.id]; });
+    return [a];
+  }
+  if (regionIds.length !== 2 * seatCount) {
+    throw new Error(`enumerateBindings MVP supports regions==seats or 2×seats, got ${regionIds.length}/${seatCount}`);
+  }
+  const adj = regionAdjacency(map);
+  const results = [];
+  function recurse(remaining, pairs) {
+    if (remaining.length === 0) {
+      const a = {}; pairs.forEach((p, i) => { a[`seat${i + 1}`] = p; });
+      results.push(a); return;
+    }
+    const [first, ...rest] = remaining;
+    for (const other of rest) {
+      if (adj[first].includes(other)) recurse(rest.filter((x) => x !== other), [...pairs, [first, other]]);
+    }
+  }
+  recurse(regionIds, []);
+  return results;
+}
+
+function viableBindings(map, seatCount, D) {
+  const bindings = enumerateBindings(map, seatCount);
+  const viable = bindings.filter((a) => gateReport(map, a, D).viableForThisBinding);
+  return { total: bindings.length, viable, viableCount: viable.length };
+}
+
+const _api = { checkB1, checkB2, gateReport, regionAdjacency, enumerateBindings, viableBindings };
 if (typeof module !== 'undefined' && module.exports) module.exports = _api;
 else (window.TC = window.TC || {}).gate = _api;
