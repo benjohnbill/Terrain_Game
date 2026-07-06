@@ -102,6 +102,12 @@ const inVoid = (h) => {
   return false;
 };
 
+// Grid-form principle (sealed 2026-07-07, agenda-7 layer 4): orientation
+// (pointy-top) and resolution (~5-8 hex/sector) are FROZEN with the sealed
+// layout — any grid-form change re-runs growth/partition and is therefore
+// seed-reauthoring-tier, never a tweak. Occupation's atom is the SECTOR;
+// hexes carry physical space, frontage and texture only.
+
 // --- hex universe ----------------------------------------------------------
 const hexes = new Map();
 for (let r = -2; r <= 22; r++) {
@@ -402,6 +408,46 @@ for (const [k, h] of hexes) {
   if (ci >= 0) cls[ci] = cls[ci].filter((x) => x !== k);
   rangeHexes.push(h);
 }
+// --- coast roughening (agenda-7 layer 4, 2026-07-07): deterministic bays
+// and capes. Eat-only; a hex is eligible only if it faces open sea on 3+
+// sides and touches NO other region (all frontages/doors untouchable); its
+// sector must stay >3 hexes and connected. Values live on sectors — totals
+// untouched. Deterministic hash keeps node/browser identical.
+{
+  const hash = (q, r) => {
+    let x = (q * 374761393 + r * 668265263) | 0;
+    x = ((x ^ (x >> 13)) * 1274126177) | 0;
+    return ((x ^ (x >> 16)) >>> 0) / 4294967296;
+  };
+  // eligibility frozen BEFORE any removal (no erosion cascade)
+  const eligible = [];
+  for (const [k, h] of hexes) {
+    const rid = owner.get(k);
+    if (!rid) continue;
+    let sea = 0, foreign = false;
+    for (const [dq, dr] of NB) {
+      const nk = kk(h.q + dq, h.r + dr);
+      const o = owner.get(nk);
+      if (o && o !== rid) { foreign = true; break; }
+      if (o) continue;
+      const nh = hexes.get(nk);
+      if (!nh) { sea++; continue; }            // outside universe = open sea
+      if (!inVoid(nh) && !inCarve(nh)) sea++;  // sea hex (not mountain wall)
+    }
+    if (!foreign && sea >= 3 && hash(h.q, h.r) <= 0.5) eligible.push([k, rid]);
+  }
+  for (const [k, rid] of eligible) {
+    const cls = regionClusters[rid];
+    const ci = cls.findIndex((c) => c.includes(k));
+    if (ci < 0 || cls[ci].length <= 3) continue;
+    const rest = cls[ci].filter((x) => x !== k);
+    if (!connected(rest)) continue;
+    cls[ci] = rest;
+    owner.delete(k);
+    regionHexes[rid] = regionHexes[rid].filter((x) => x !== k);
+  }
+}
+
 // post-carve law checks: no INTENT edge severed, no sector fragmented
 {
   const con = regionContacts();
@@ -434,9 +480,9 @@ for (const [k, h] of hexes) {
   }
 }
 GEN_DIAG.rangeHexCount = rangeHexes.length;
-// central massif (중앙 산괴): the knot's hexes, exported for sacred-mountain
-// rendering — the ONLY mountain outside the wall system; proper name TBD by
-// the user. Structure sealed 2026-07-07: keeping it is what holds BOTH
+// central massif — proper name 태산 (user-named 2026-07-07): the sacred
+// isolated massif where four worlds meet and none owns the peak; the ONLY
+// mountain outside the wall system. Structure sealed 2026-07-07: it holds BOTH
 // quad-junction non-adjacencies (하북∦한경, 중원∦초원) without door special
 // cases (a near-zero "alps door" would legalize the 하북+한경 seat pair).
 const massifHexes = rangeHexes.filter((h) =>
@@ -626,7 +672,7 @@ const CRADLE_META = {
   rangeHexes: rangeHexes.map((h) => ({ q: h.q, r: h.r, x: h.x, y: h.y })),
   massif: {
     hexes: massifHexes.map((h) => ({ q: h.q, r: h.r, x: h.x, y: h.y })),
-    cx: VOID_KNOT.x, cy: VOID_KNOT.y, label: '중앙 산괴',
+    cx: VOID_KNOT.x, cy: VOID_KNOT.y, label: '태산',
   },
 };
 

@@ -147,6 +147,7 @@ function renderMap() {
   // void range hexes (mountain wall — non-sector terrain); the central massif
   // renders as ONE sacred mountain, not scattered dark hexes
   const massifKeys = new Set((META.massif?.hexes || []).map((h) => h.q + ',' + h.r));
+  const rangeKeys = new Set(META.rangeHexes.map((h) => h.q + ',' + h.r));
   for (const h of META.rangeHexes) {
     bump(h.x, h.y);
     const isMassif = massifKeys.has(h.q + ',' + h.r);
@@ -173,7 +174,12 @@ function renderMap() {
       const c1 = cs[i], c2 = cs[(i + 1) % 6];
       const seg = (col, w, dash) =>
         borders.push(`<line x1="${c1[0].toFixed(1)}" y1="${c1[1].toFixed(1)}" x2="${c2[0].toFixed(1)}" y2="${c2[1].toFixed(1)}" stroke="${col}" stroke-width="${w}" stroke-linecap="round"${dash ? ` stroke-dasharray="${dash}"` : ''}/>`);
-      if (!n) { seg('#0a1c26', 3); continue; }               // coast / void edge
+      if (!n) {
+        // land-vs-WALL inner face keeps a crisp line; sea-facing edges are
+        // handled by the smoothed silhouette pass below
+        if (rangeKeys.has(nk)) seg('#0a1c26', 3);
+        continue;
+      }
       if (n.rid !== h.rid) {
         if (h.rid > n.rid) continue; // draw each region border once
         const pk = pairKey(h.rid, n.rid);
@@ -217,9 +223,61 @@ function renderMap() {
     const c = META.regionCenters[r.id];
     labels.push(`<text class="rlabel" x="${c.x.toFixed(1)}" y="${c.y.toFixed(1)}">${r.name}</text>`);
   }
+  // --- smoothed outer silhouette (UoC-style): coast + wall outer face read
+  // as one continuous curve. Pure render layer — the hex truth (grid,
+  // ownership, doors) is untouched. Corner-cutting quadratics through hex
+  // edge midpoints; a sea-colored mask stroke trims the jagged corners.
+  const cellPts = new Map(); // 'q,r' -> {x,y} for every drawn cell (land + wall)
+  for (const h of hexOwn.values()) cellPts.set(h.q + ',' + h.r, h);
+  for (const h of META.rangeHexes) cellPts.set(h.q + ',' + h.r, h);
+  const pk2 = (x, y) => x.toFixed(1) + ',' + y.toFixed(1);
+  const segMap = new Map(); // startPointKey -> [{x1,y1,x2,y2}]
+  for (const [k, h] of cellPts) {
+    const [q, r] = k.split(',').map(Number);
+    const cs = corners(h.x, h.y);
+    for (let i = 0; i < 6; i++) {
+      if (cellPts.has((q + EDGE_NB[i][0]) + ',' + (r + EDGE_NB[i][1]))) continue;
+      const c1 = cs[i], c2 = cs[(i + 1) % 6];
+      const sk = pk2(c1[0], c1[1]);
+      if (!segMap.has(sk)) segMap.set(sk, []);
+      segMap.get(sk).push({ x1: c1[0], y1: c1[1], x2: c2[0], y2: c2[1] });
+    }
+  }
+  const usedSegs = new Set();
+  const loops = [];
+  for (const arr of segMap.values()) for (const s0 of arr) {
+    if (usedSegs.has(s0)) continue;
+    const pts = [[s0.x1, s0.y1]];
+    let cur = s0;
+    while (cur && !usedSegs.has(cur)) {
+      usedSegs.add(cur);
+      pts.push([cur.x2, cur.y2]);
+      cur = (segMap.get(pk2(cur.x2, cur.y2)) || []).find((s) => !usedSegs.has(s));
+    }
+    if (pts.length > 3) loops.push(pts);
+  }
+  const mid = (a, b) => [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+  const smoothD = (pts) => {
+    const v = (pk2(...pts[0]) === pk2(...pts[pts.length - 1])) ? pts.slice(0, -1) : pts;
+    const m = v.length;
+    const mids = v.map((p, i) => mid(p, v[(i + 1) % m]));
+    let d = `M${mids[0][0].toFixed(1)} ${mids[0][1].toFixed(1)}`;
+    for (let i = 1; i <= m; i++) {
+      const vi = v[i % m], mi = mids[i % m];
+      d += `Q${vi[0].toFixed(1)} ${vi[1].toFixed(1)} ${mi[0].toFixed(1)} ${mi[1].toFixed(1)}`;
+    }
+    return d + 'Z';
+  };
+  const ds = loops.map(smoothD);
+  const stroke = (col, w, op) => ds.map((d) =>
+    `<path d="${d}" fill="none" stroke="${col}" stroke-width="${w}" stroke-linejoin="round"${op ? ` opacity="${op}"` : ''}/>`).join('');
+  const shallow = stroke('#1d4056', 16, '.5');     // 연안 물빛
+  const seaMask = stroke('#102733', 8);            // trims jagged corners
+  const coastLine = stroke('#0a1c26', 3);
+
   const pad = HEX * 2.2;
   svg.setAttribute('viewBox', `${minX - pad} ${minY - pad} ${maxX - minX + pad * 2} ${maxY - minY + pad * 2}`);
-  svg.innerHTML = fills.join('') + borders.join('') + labels.join('');
+  svg.innerHTML = shallow + fills.join('') + borders.join('') + seaMask + coastLine + labels.join('');
 }
 function secCentroid(sid) {
   const us = MAP.sectors[sid].mapUnits;
