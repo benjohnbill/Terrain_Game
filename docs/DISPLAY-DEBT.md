@@ -52,6 +52,17 @@ and the A-3 economy rider.
   numbers-only; a UI read of where my 생산 comes from and where it goes
   is owed to B's UI work. Born: A-3 epistemic rider (2026-07-05);
   relocated here from `SYNC-DEBT.md` at B6.
+- [ ] **중원 visual centrality (composition pass)** — the region named
+  "center" sits south of the landmass's geometric center (large NW
+  regions push it down). Half-defended by real geography (the actual
+  Central Plains are not China's centroid either; 중원's centrality is
+  the road-network hub, which the map does implement — 5 doors radiate)
+  and softened by the Western Ring reading as frame rather than
+  content. A true fix means moving seed ellipses, which re-runs
+  growth/partition and scrambles the user-sealed sector layout —
+  deliberately deferred to the next seed re-authoring, where a
+  composition pass (NW mass reduction / camera framing) pays this row.
+  Born: user UX observation, C-loop sector grill (2026-07-07).
 
 ## Resolved
 

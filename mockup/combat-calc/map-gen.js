@@ -380,7 +380,10 @@ for (const [hk, sid] of Object.entries(USER_SWAPS)) {
 // is inviolable (ruling): post-carve verification below.
 // Tail hugs the 서역 side of the contact (eats desert flank, not 하북's
 // farmland) so the corridor narrows without starving 하북's west sector.
-const CARVE_POLY = [[285, 10], [350, 85], [400, 150], [422, 200], [428, 240], [420, 272]];
+// Corridor width ruling (2026-07-07): door-class rank must read on the map —
+// hills 1300 (하서회랑) is a WIDER door than pass 1000, so its physical
+// frontage stays above the passes' (4-5 contact edges, not a 2-hex slit).
+const CARVE_POLY = [[285, 10], [350, 85], [400, 150], [420, 195], [424, 235]];
 const CARVE_W = 48;
 const inCarve = (h) => {
   for (let i = 0; i < CARVE_POLY.length - 1; i++) {
@@ -431,6 +434,13 @@ for (const [k, h] of hexes) {
   }
 }
 GEN_DIAG.rangeHexCount = rangeHexes.length;
+// central massif (중앙 산괴): the knot's hexes, exported for sacred-mountain
+// rendering — the ONLY mountain outside the wall system; proper name TBD by
+// the user. Structure sealed 2026-07-07: keeping it is what holds BOTH
+// quad-junction non-adjacencies (하북∦한경, 중원∦초원) without door special
+// cases (a near-zero "alps door" would legalize the 하북+한경 seat pair).
+const massifHexes = rangeHexes.filter((h) =>
+  Math.hypot(h.x - VOID_KNOT.x, h.y - VOID_KNOT.y) < VOID_KNOT.rad + HEXR * 1.6);
 
 for (const s of SEED) GEN_DIAG.sectorSizes[s[0]] = regionClusters[s[0]].map((c) => c.length);
 
@@ -614,6 +624,10 @@ const CRADLE_META = {
   cities: Object.fromEntries(Object.entries(cities).map(([rid, i]) => [rid, `${rid}_s${i}`])),
   pairClass, frontage, partialRivers,
   rangeHexes: rangeHexes.map((h) => ({ q: h.q, r: h.r, x: h.x, y: h.y })),
+  massif: {
+    hexes: massifHexes.map((h) => ({ q: h.q, r: h.r, x: h.x, y: h.y })),
+    cx: VOID_KNOT.x, cy: VOID_KNOT.y, label: '중앙 산괴',
+  },
 };
 
 const _api = { CRADLE_MAP, CRADLE_BINDING, CRADLE_META, GEN_DIAG };

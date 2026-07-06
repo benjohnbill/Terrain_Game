@@ -144,12 +144,24 @@ function renderMap() {
     const pts = corners(h.x, h.y).map(([x, y]) => x.toFixed(1) + ',' + y.toFixed(1)).join(' ');
     fills.push(`<polygon points="${pts}" fill="${tint(TERR[h.terr] || '#888', dv)}" data-sid="${h.sid}" data-key="${h.q},${h.r}"/>`);
   }
-  // void range hexes (mountain wall / knot — non-sector terrain)
+  // void range hexes (mountain wall — non-sector terrain); the central massif
+  // renders as ONE sacred mountain, not scattered dark hexes
+  const massifKeys = new Set((META.massif?.hexes || []).map((h) => h.q + ',' + h.r));
   for (const h of META.rangeHexes) {
     bump(h.x, h.y);
+    const isMassif = massifKeys.has(h.q + ',' + h.r);
     const pts = corners(h.x, h.y).map(([x, y]) => x.toFixed(1) + ',' + y.toFixed(1)).join(' ');
-    fills.push(`<polygon points="${pts}" fill="${RANGE_FILL}" stroke="#2e2620" stroke-width="1"/>`);
-    fills.push(`<text x="${h.x.toFixed(1)}" y="${(h.y + 4).toFixed(1)}" text-anchor="middle" style="fill:#6d5c49;font-size:12px">▲</text>`);
+    if (isMassif) {
+      fills.push(`<polygon points="${pts}" fill="#6b6156" stroke="#514840" stroke-width="1"/>`);
+    } else {
+      fills.push(`<polygon points="${pts}" fill="${RANGE_FILL}" stroke="#2e2620" stroke-width="1"/>`);
+      fills.push(`<text x="${h.x.toFixed(1)}" y="${(h.y + 4).toFixed(1)}" text-anchor="middle" style="fill:#6d5c49;font-size:12px">▲</text>`);
+    }
+  }
+  if (META.massif) {
+    const m = META.massif;
+    labels.push(`<text x="${m.cx}" y="${m.cy + 9}" text-anchor="middle" style="font-size:26px;fill:#a99a85;paint-order:stroke;stroke:#0006;stroke-width:2px">▲</text>`);
+    labels.push(`<text x="${m.cx}" y="${m.cy + 26}" text-anchor="middle" style="font:600 10px system-ui;fill:#cfc2ae;paint-order:stroke;stroke:#0008;stroke-width:2px">${m.label}</text>`);
   }
   // borders: coast bold, region border by choke class, sector border thin
   const chokeMid = {}; // pairKey -> [sx, sy, n] for label placement
