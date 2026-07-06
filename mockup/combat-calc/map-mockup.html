@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>Terrain-Cradle Map Workbench</title>
+<style>
+  body { margin: 0; font: 13px/1.4 system-ui, sans-serif; display: flex; height: 100vh; }
+  #map { flex: 1; background: #0f1216; }
+  #panel { width: 340px; background: #171b21; color: #d8dee6; padding: 14px; overflow-y: auto; }
+  h2 { font-size: 13px; margin: 12px 0 6px; color: #8fa; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  td, th { padding: 2px 4px; text-align: right; border-bottom: 1px solid #2a2f37; }
+  th:first-child, td:first-child { text-align: left; }
+  .pass { color: #6f6; } .fail { color: #f77; }
+  .verdict { font-size: 14px; font-weight: bold; margin: 6px 0; }
+  text { font: 10px sans-serif; fill: #cdd; }
+  .choke { fill: #fc6; font-weight: bold; }
+</style>
+</head>
+<body>
+<svg id="map"></svg>
+<div id="panel"></div>
+
+<script type="module" src="econ.js"></script>
+<script type="module" src="match.js"></script>
+<script type="module" src="map-loader.js"></script>
+<script type="module" src="map-gate.js"></script>
+<script type="module" src="map-data.js"></script>
+<script type="module">
+'use strict';
+const { FIXTURE_MAP } = window.TC.data;
+const { loadMap } = window.TC.loader;
+const { gateReport } = window.TC.gate;
+const { projectable, shieldMass } = window.TC.match;
+
+const HEX = 26; // pixel size
+const REGION_COLOR = { center: '#c94', seoryeong: '#49c', dongpyeong: '#4c9',
+  namgok: '#a4c', bukha: '#c47' };
+
+// axial → pixel (pointy-top)
+function hexToPixel(q, r) {
+  return { x: HEX * Math.sqrt(3) * (q + r / 2), y: HEX * 1.5 * r };
+}
+
+function renderMap() {
+  const svg = document.getElementById('map');
+  const parts = [];
+  let minX = 1e9, minY = 1e9, maxX = -1e9, maxY = -1e9;
+  // hexes, colored by region
+  for (const [sid, sec] of Object.entries(FIXTURE_MAP.sectors)) {
+    for (const u of sec.mapUnits) {
+      const { x, y } = hexToPixel(u.q, u.r);
+      minX = Math.min(minX, x); minY = Math.min(minY, y);
+      maxX = Math.max(maxX, x); maxY = Math.max(maxY, y);
+      const pts = [];
+      for (let i = 0; i < 6; i++) {
+        const a = Math.PI / 180 * (60 * i - 30);
+        pts.push(`${(x + HEX * Math.cos(a)).toFixed(1)},${(y + HEX * Math.sin(a)).toFixed(1)}`);
+      }
+      parts.push(`<polygon points="${pts.join(' ')}" fill="${REGION_COLOR[sec.regionId]}" stroke="#0f1216" stroke-width="1.5"/>`);
+      parts.push(`<text x="${x.toFixed(1)}" y="${(y + 3).toFixed(1)}" text-anchor="middle">${sec.fortTier !== 'none' ? '▲' : ''}</text>`);
+    }
+  }
+  // choke markers at edge midpoints
+  for (const e of FIXTURE_MAP.edges) {
+    const ua = FIXTURE_MAP.sectors[e.a].mapUnits[0];
+    const ub = FIXTURE_MAP.sectors[e.b].mapUnits[0];
+    const pa = hexToPixel(ua.q, ua.r); const pb = hexToPixel(ub.q, ub.r);
+    const mx = (pa.x + pb.x) / 2, my = (pa.y + pb.y) / 2;
+    const label = e.choke.class === 'open' ? '' : `${e.choke.class}${e.choke.cap}`;
+    parts.push(`<line x1="${pa.x.toFixed(1)}" y1="${pa.y.toFixed(1)}" x2="${pb.x.toFixed(1)}" y2="${pb.y.toFixed(1)}" stroke="#556" stroke-width="1" stroke-dasharray="3 3"/>`);
+    if (label) parts.push(`<text class="choke" x="${mx.toFixed(1)}" y="${my.toFixed(1)}" text-anchor="middle">${label}</text>`);
+  }
+  const pad = HEX * 2;
+  svg.setAttribute('viewBox', `${minX - pad} ${minY - pad} ${maxX - minX + pad * 2} ${maxY - minY + pad * 2}`);
+  svg.innerHTML = parts.join('');
+}
+
+function renderPanel() {
+  const { realms } = loadMap(FIXTURE_MAP);
+  const g = gateReport(FIXTURE_MAP);
+  const rows = realms.map((r) => {
+    const proj = projectable(r);
+    const shield = shieldMass(r, undefined, Object.keys(r.fronts));
+    return `<tr><td>${r.name}</td><td>${r.fieldCap}</td><td>${proj}</td><td>${shield}</td></tr>`;
+  }).join('');
+  document.getElementById('panel').innerHTML = `
+    <h2>Realms (all-cap)</h2>
+    <table><tr><th>seat</th><th>cap</th><th>proj</th><th>shield</th></tr>${rows}</table>
+    <h2>Gate</h2>
+    <div class="verdict ${g.b1.pass ? 'pass' : 'fail'}">B1 ${g.b1.pass ? 'PASS' : 'FAIL'}${g.b1.pass ? '' : ' — ' + g.b1.offenders.join(', ')}</div>
+    <div class="verdict ${g.b2.pass ? 'pass' : 'fail'}">B2 ${g.b2.pass ? 'PASS' : 'FAIL'}${g.b2.pass ? '' : ' — ' + g.b2.kills.map((k) => k.attacker + '→' + k.victim).join(', ')}</div>
+    <p>Edit map-data.js and reload to re-measure. Heavy checks (full viable
+    enumeration, tournament) run in node: <code>node battery.js viability</code>.</p>`;
+}
+
+renderMap();
+renderPanel();
+</script>
+</body>
+</html>
