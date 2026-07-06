@@ -37,13 +37,17 @@ const { CRADLE_MAP: MAP, CRADLE_BINDING: BINDING, CRADLE_META: META, GEN_DIAG } 
 const { loadMap } = window.TC.loader;
 const { gateReport, viableBindings, enumerateBindings } = window.TC.gate;
 const { projectable, shieldMass } = window.TC.match;
-const { nationalCap } = window.TC.econ;
+const { nationalCap, income } = window.TC.econ;
 
 const HEX = META.hexR;
 const NB = [[1, 0], [1, -1], [0, -1], [-1, 0], [-1, 1], [0, 1]];
 const TERR = { plains: '#7d9a54', 'river-valley': '#5d9078', steppe: '#a89a55',
   desert: '#c6aa69', mountain: '#877663', oasis: '#6fae7c' };
 const RANGE_FILL = '#4e4034';
+// choked-border stroke per class + door width (mirrors map-gen DOOR)
+const CLS_STYLE = { pass: ['#6b543f', 5], river: ['#57a7d8', 4.5],
+  forest: ['#2f4d22', 4.5], hills: ['#8a744c', 4.5] };
+const DOORCAP = { pass: 1000, river: 1000, forest: 1500, hills: 1300 };
 const nameOf = Object.fromEntries(MAP.regions.map((r) => [r.id, r.name]));
 
 function hexToPixel(q, r) { return { x: HEX * Math.sqrt(3) * (q + r / 2), y: HEX * 1.5 * r }; }
@@ -106,7 +110,8 @@ function renderMap() {
         if (h.rid > n.rid) continue; // draw each region border once
         const pk = pairKey(h.rid, n.rid);
         const cls = META.pairClass[pk] || 'open';
-        if (cls === 'pass') seg('#6b543f', 5); else seg('#1c2b18', 2.5);
+        const st = CLS_STYLE[cls];
+        if (st) seg(st[0], st[1]); else seg('#1c2b18', 2.5);
         const m = chokeMid[pk] || (chokeMid[pk] = [0, 0, 0]);
         m[0] += (c1[0] + c2[0]) / 2; m[1] += (c1[1] + c2[1]) / 2; m[2]++;
       } else if (n.sid !== h.sid && h.sid < n.sid) {
@@ -114,10 +119,11 @@ function renderMap() {
       }
     }
   }
-  // choke labels (pass borders)
+  // choke labels (all choked border classes)
   for (const [pk, m] of Object.entries(chokeMid)) {
-    if (META.pairClass[pk] !== 'pass') continue;
-    labels.push(`<text class="choke" x="${(m[0] / m[2]).toFixed(1)}" y="${(m[1] / m[2]).toFixed(1)}">pass1000</text>`);
+    const cls = META.pairClass[pk];
+    if (!DOORCAP[cls]) continue;
+    labels.push(`<text class="choke" x="${(m[0] / m[2]).toFixed(1)}" y="${(m[1] / m[2]).toFixed(1)}">${cls}${DOORCAP[cls]}</text>`);
   }
   // straits: dashed sea lines between representative coastal sectors
   for (const e of MAP.edges) {
@@ -159,7 +165,7 @@ function renderPanel() {
   }).join('');
   const ladder = MAP.regions.map((r) => {
     const secs = r.sectorIds.map((i) => MAP.sectors[i]);
-    return `<tr><td>${r.name}</td><td>${r.sectorIds.length}</td><td>${nationalCap(secs)}</td></tr>`;
+    return `<tr><td>${r.name}</td><td>${r.sectorIds.length}</td><td>${nationalCap(secs)}</td><td>${income(secs).toFixed(1)}</td></tr>`;
   }).join('');
   const diag = [];
   if (GEN_DIAG.missingEdges.length) diag.push('missing edges: ' + GEN_DIAG.missingEdges.join(', '));
@@ -173,9 +179,10 @@ function renderPanel() {
     <div class="verdict ${g.b2.pass ? 'pass' : 'fail'}">B2 ${g.b2.pass ? 'PASS' : 'FAIL — ' + g.b2.kills.map((k) => k.attacker + '→' + k.victim).join(', ')}</div>
     <div class="verdict ${v.viableCount >= 2 ? 'pass' : 'fail'}">viable seatings ${v.viableCount} / ${total}</div>
     ${diag.length ? '<div class="warn">⚠ ' + diag.join('<br>⚠ ') + '</div>' : ''}
-    <h2>Region ladder (parity 가안)</h2>
-    <table><tr><th>region</th><th>sec</th><th>cap</th></tr>${ladder}</table>
-    <p style="color:#8a93a0">★ capital · thick brown border = mountain-pass choke ·
+    <h2>Region ladder (parity v5 · econ ladder v2)</h2>
+    <table><tr><th>region</th><th>sec</th><th>cap</th><th>생산/turn</th></tr>${ladder}</table>
+    <p style="color:#8a93a0">★ capital · borders: brown = pass · blue = river ·
+    green = forest · tan = hills (door widths labeled) ·
     dark hexes = void range (non-sector, war never crosses) · dashed = strait.
     Map derives from map-gen.js seed — edit seed + reload. Heavy checks:
     <code>node battery.js viability</code>.</p>`;

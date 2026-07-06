@@ -6,8 +6,8 @@
 // capitals/roles → authored chokes. Adjacency is DERIVED from hex contact,
 // then verified against INTENT — the map and the graph are one source.
 // Deterministic (no randomness): node and browser derive the same map.
-// js/ must not import. All values are 가안 (parity model v4: regional pop
-// totals ≈ equal, 중원 +20%; capitals concentrate value).
+// js/ must not import. All values are 가안 (parity v5: equal pop totals,
+// econ per ladder v2 from border-class exposure; capitals concentrate value).
 // hex = physical space/distance only (D4); values live on sectors.
 
 const HEXR = 25; // px per hex radius in seed (editor sketch) space
@@ -37,21 +37,33 @@ const HEX_PER_SEC = 5; // nominal; min–max band per sector is a future dial
 // intended semantic graph (user rulings): 15 mainland borders + 2 straits.
 // 하북-한경 NOT adjacent (twins split by 중원); 서역-초원 void range (no edge).
 const pairKey = (a, b) => (a < b ? a + '|' + b : b + '|' + a);
+// Border classes per user layout ruling 2026-07-07: rivers 강남-중원/
+// 한경-동북/한경-강남 (양쯔·창장), forest 하북-초원 (steppe borders are
+// never bare plains), hills 하북-서역 (천산 softened — isolation without
+// impotence). r3|r7 stays open: the user's PARTIAL river there cannot
+// throttle region flow under the sealed binary projection rule — it is
+// invasion-corridor authoring, owned by the sector-partition pass.
 const INTENT = {
-  'r1|r2': 'open', 'r1|r7': 'open', 'r1|r9': 'open', 'r1|r6': 'pass', 'r1|r8': 'pass',
-  'r2|r3': 'open', 'r2|r5': 'open', 'r2|r6': 'pass',
+  'r1|r2': 'open', 'r1|r7': 'open', 'r1|r9': 'river', 'r1|r6': 'pass', 'r1|r8': 'pass',
+  'r2|r3': 'forest', 'r2|r5': 'hills', 'r2|r6': 'pass',
   'r3|r4': 'open', 'r3|r7': 'open',
-  'r4|r7': 'open',
+  'r4|r7': 'river',
   'r5|r6': 'pass',
   'r6|r8': 'open', // basin brothers: no elevation gap
-  'r7|r9': 'open',
+  'r7|r9': 'river',
   'r8|r9': 'pass',
 };
+// door width per border class (M11 pass/river/strait sealed; forest M-pass;
+// hills 가안 2026-07-07 — between forest and pass)
+const DOOR = { pass: 1000, river: 1000, forest: 1500, hills: 1300 };
 const STRAITS = [ // [pair, cap(가안: 동북 route easier per user)]
   ['r9|r10', 500], ['r4|r10', 800],
 ];
 const REMOVAL = {
   pass: 'side-path bypass or road-build',
+  river: 'bridgehead or upstream crossing',
+  forest: 'clearing or road-build',
+  hills: 'ridge road',
   strait: 'port staging or sea control',
 };
 
@@ -363,19 +375,29 @@ const rimCount = regionClusters.r6.map((cl) => {
 const rimIdx = rimCount.map((n, i) => [n, i]).sort((a, b) => b[0] - a[0] || a[1] - b[1])
   .slice(0, 3).map((x) => x[1]);
 
-// --- sector values (parity v4, 가안) --------------------------------------------
+// --- sector values (parity v5 + econ ladder v2, 가안 2026-07-07) -----------------
+// Pop: Σ 6.0 per region — EQUAL START (user ruling: same blood budget for
+// every region; divergence only via play). Shapes only where a profile
+// demands (초원 spread pop / spiked econ = "no killable center").
+// Econ: Σ = ladderIndex × 6.0, ladder v2 = 0.55 + 0.45 × inbound/avg over
+// the border-class layout, + projection-shortfall credit (동남해). Core
+// debit and fiction band HELD by user (depth value unmeasured).
 function sectorSpec(rid, i) { // [pop, econ, terrain]
   switch (rid) {
-    case 'r1': return [1.8, 1.7, 'plains'];
-    case 'r2': return [1.2, 1.1, 'plains'];
-    case 'r7': return [1.2, 1.1, 'river-valley'];
-    case 'r9': return [1.2, 1.1, 'plains'];
-    case 'r8': return [2.0, 1.9, 'plains'];
-    case 'r10': return [1.5, 1.6, 'plains'];
-    case 'r3': return i === capitals.r3 ? [1.8, 1.4, 'plains'] : [0.6, 0.55, 'steppe'];
-    case 'r4': return i === capitals.r4 ? [1.6, 1.3, 'plains'] : [0.88, 0.8, 'steppe'];
-    case 'r5': return i === capitals.r5 ? [2.0, 2.2, 'oasis'] : [0.444, 0.4, 'desert'];
-    case 'r6': return rimIdx.includes(i) ? [0.5, 0.5, 'mountain'] : [1.5, 1.4, 'plains'];
+    case 'r1': return [1.5, 1.875, 'plains'];       // 1.25 — sole crown
+    case 'r2': return [1.2, 1.38, 'plains'];        // 1.15 — twin
+    case 'r7': return [1.2, 1.38, 'river-valley'];  // 1.15 — twin
+    case 'r9': return [1.2, 1.1, 'plains'];         // 0.92 — river-shielded
+    case 'r8': return [2.0, 1.92, 'plains'];        // 0.96 — densest land
+    case 'r10': return [1.5, 1.16, 'plains'];       // 0.77 — island (fiction band parked)
+    case 'r3': return i === capitals.r3             // 1.09 — econ spike, pop spread
+      ? [0.75, 2.4, 'plains'] : [0.75, 0.59, 'steppe'];
+    case 'r4': return i === capitals.r4             // 0.93 — deep capital
+      ? [1.5, 1.5, 'plains'] : [0.9, 0.82, 'steppe'];
+    case 'r5': return i === capitals.r5             // 0.80 — oasis spike
+      ? [1.5, 2.4, 'oasis'] : [0.5, 0.27, 'desert'];
+    case 'r6': return rimIdx.includes(i)            // 1.06 — rim/floor basin
+      ? [0.5, 0.5, 'mountain'] : [1.5, 1.62, 'plains'];
     default: return [1, 1, 'plains'];
   }
 }
@@ -424,7 +446,7 @@ for (const pk of Object.keys(INTENT)) {
   edges.push({ a: sa, b: sb,
     choke: cls === 'open'
       ? { class: 'open', cap: Infinity, removalPath: 'n/a (open border)' }
-      : { class: cls, cap: 1000, removalPath: REMOVAL[cls] },
+      : { class: cls, cap: DOOR[cls], removalPath: REMOVAL[cls] },
     frontageHexes: e.front });
 }
 for (const [pk, cap] of STRAITS) {

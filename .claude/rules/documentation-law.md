@@ -126,7 +126,10 @@ these):
 3. Refresh `INDEX.md` of every touched feature (status, pointers,
    open questions).
 4. Regenerate `docs/GLOSSARY-QUICKREF.md` after any seal batch — an
-   agent-curated digest (no generator script yet): convenience surface
+   agent-curated digest (no generator script yet). Extended role (user
+   ruling 2026-07-07): it also carries the **C-loop translation table**
+   (user statement → dial → checking scale), the user-audit surface;
+   가안 rows marked UNSEALED, always pointers: convenience surface
    only, never cited as definition; header must carry "last
    regenerated" date.
 5. Stamp superseded/amended ADRs per the protocol above.
