@@ -67,9 +67,18 @@ const REMOVAL = {
   strait: 'port staging or sea control',
 };
 
-// void mountain range (user's drawn 산맥, extended to seal the 서역–초원 gap):
-// LEGAL basis — not an untraversable choke (C3/C4 forbids) but NON-BORDER
-// terrain: hexes owned by no sector, like sea. War never crosses here.
+// void mountain range — ONTOLOGY SEALED 2026-07-07: void = sea expressed as
+// land (movement, ownership AND vision identical to sea; no special rules;
+// a Phase-2 tunnel would be a promotion to a removable choke, not a rule).
+// 대산맥 (great range): FILLS the 서역–초원 gap — sea-anchored north (the
+// non-adjacency ruling forces it), bowing east (천산 arc), dying south into
+// the 하서회랑 (Hexi corridor): the upper 서역–하북 contact is mountain-grade
+// (void eats it), only the lower hills door remains. Ruling: adjacency COUNT
+// is inviolable — 서역 keeps exactly 2 neighbors; the range narrows contact
+// hexes only.
+// Candidate-stage band: UNCHANGED from the sealed bake (growth/partition are
+// globally coupled — widening here reshuffles every region and scrambles the
+// user-sealed layout). The full-width range is CARVED post-partition below.
 const VOID_POLY = [[292, 39], [369, 122], [407, 192], [427, 220], [458, 252]];
 const VOID_W = 34;
 // central void KNOT at the 하북/한경/중원/초원 quad-junction. Four regions
@@ -185,6 +194,7 @@ for (let pass = 0; pass < 50; pass++) {
 for (const [k, h] of hexes) {
   if (!owner.has(k) && !inVoid(h) && inEllipse(h, byId.r10)) owner.set(k, 'r10');
 }
+
 
 // --- repair derived contacts to INTENT --------------------------------------
 function regionContacts() {
@@ -362,6 +372,66 @@ for (const [hk, sid] of Object.entries(USER_SWAPS)) {
   cls[from] = cls[from].filter((k) => k !== hk);
   cls[idx].push(hk);
 }
+// --- carve pass: 대산맥 full width + 하서회랑 (2026-07-07, post-partition) ----
+// The user's layout is sealed to this partition, so the wider range is carved
+// AFTER ownership instead of re-running growth. Carved hexes leave their
+// sector and become void range. The tail eats the UPPER 서역-하북 contact
+// (mountain-grade), leaving the lower hills door = 하서회랑. Adjacency COUNT
+// is inviolable (ruling): post-carve verification below.
+// Tail hugs the 서역 side of the contact (eats desert flank, not 하북's
+// farmland) so the corridor narrows without starving 하북's west sector.
+const CARVE_POLY = [[285, 10], [350, 85], [400, 150], [422, 200], [428, 240], [420, 272]];
+const CARVE_W = 48;
+const inCarve = (h) => {
+  for (let i = 0; i < CARVE_POLY.length - 1; i++) {
+    if (distSeg(h.x, h.y, CARVE_POLY[i][0], CARVE_POLY[i][1],
+      CARVE_POLY[i + 1][0], CARVE_POLY[i + 1][1]) < CARVE_W) return true;
+  }
+  return false;
+};
+for (const [k, h] of hexes) {
+  if (!owner.has(k) || !inCarve(h)) continue;
+  const rid = owner.get(k);
+  owner.delete(k);
+  regionHexes[rid] = regionHexes[rid].filter((x) => x !== k);
+  const cls = regionClusters[rid];
+  const ci = cls.findIndex((c) => c.includes(k));
+  if (ci >= 0) cls[ci] = cls[ci].filter((x) => x !== k);
+  rangeHexes.push(h);
+}
+// post-carve law checks: no INTENT edge severed, no sector fragmented
+{
+  const con = regionContacts();
+  for (const pk of Object.keys(INTENT)) if (!con.has(pk)) GEN_DIAG.missingEdges.push(pk + ' (post-carve)');
+  for (const s of SEED) {
+    for (const cl of regionClusters[s[0]]) {
+      if (!cl.length) { GEN_DIAG.disconnected.push(s[0] + ' (empty sector post-carve)'); continue; }
+      if (!connected(cl)) GEN_DIAG.disconnected.push(s[0] + ' (sector split post-carve)');
+    }
+  }
+}
+
+// 대환 (the Western Ring, ruling 2026-07-07): the left hemisphere's outer rim
+// — sea-side void mountains sweeping range → 서역 → 관중 → 촉. Pure visual
+// mass on SEA hexes: never touches land or the derived graph (doors read as
+// notches in the wall). One world-cause for the desert (rain shadow), the
+// basins, and the great range's finality.
+{
+  const rangeKeys = new Set(rangeHexes.map((h) => kk(h.q, h.r)));
+  const RING_REGIONS = new Set(['r5', 'r6', 'r8']);
+  for (const [k, h] of hexes) {
+    if (owner.has(k) || rangeKeys.has(k)) continue;
+    let nearRing = false, nearOther = false;
+    for (const [dq, dr] of NB) {
+      const o = owner.get(kk(h.q + dq, h.r + dr));
+      if (!o) continue;
+      if (RING_REGIONS.has(o)) nearRing = true; else nearOther = true;
+    }
+    if (nearRing && !nearOther) rangeHexes.push(h);
+  }
+}
+GEN_DIAG.rangeHexCount = rangeHexes.length;
+
 for (const s of SEED) GEN_DIAG.sectorSizes[s[0]] = regionClusters[s[0]].map((c) => c.length);
 
 // --- roles: user-sealed seats (2026-07-07, authored via mockup edit layer) ---
