@@ -30,6 +30,21 @@ cities/capitals, and the void mountain system. Born from the C-loop
   M11 · caps/econ units → M13/M14 · workbench spec →
   `docs/superpowers/specs/2026-07-06-terrain-cradle-map-design.md`.
 
+## Authoring rhythm (sealed 2026-07-07, user)
+
+The C-loop's collaboration law: **the sketch/edit-layer is the law of
+shape, prose profiles are the law of character; spoken word beats the
+drawing** — but a spoken change becomes law again only when baked into
+`map-gen.js` (the mockup edit layer is PREVIEW; Export JSON → agent
+bakes). Loop: user input (edit or verdict sentences) → agent converts
+& measures → render + gate verdicts + translation-table diff → user
+eye-judges. **Staleness note:** the original editor sketch
+(`map-editor.html` localStorage) is superseded — the baked
+USER_SWAPS/seats in `map-gen.js` ARE the current shape law; the
+editor→SEED path was manual transcription (no exporter). Re-authoring
+via the editor is seed-reauthoring-tier and belongs to the dedicated
+map-design session (with the DISPLAY-DEBT centrality row).
+
 ## Current verified state
 
 Derived graph ≡ intended graph (15 borders + 2 straits, 0 repairs) ·
@@ -43,6 +58,9 @@ browser agree.
   makes static gates a safety rail. 7 registered watch flags (QUICKREF
   table): crown needles ×2, develop-greedy, 강남 quiet winner, 촉-seat,
   region abandonment, 동남해 fertility funding, 관중 gate-city.
+  **Includes battery re-wiring**: sheet 14 still runs FIXTURE_MAP (the
+  regression anchor) — CRADLE_MAP node heavy-checks are owed to the
+  adapter session.
 - **Force-geography pass** — muster location/pool draw, garrison↔
   reserve, movement processing (needs this map; L2 can run on the
   positionless abstraction meanwhile).

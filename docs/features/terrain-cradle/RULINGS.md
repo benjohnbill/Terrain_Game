@@ -78,7 +78,10 @@ opposite pole. The layout was authored by the user in the mockup edit
 layer and baked as fixed seats + 38 hex swaps (USER_SWAPS):
 
 - 하북/한경 **gate-cities**: hold 3/3 and 4/4 of the 중원-border hexes —
-  every 중원↔twin campaign passes through the city sector.
+  every 중원↔twin campaign passes through the city sector. Twin
+  asymmetry accepted (user): 하북's city ALSO fronts the 관중 pass
+  (double gate) — unintended but kept ("있어서 나쁠 것 없다"; the
+  basin's mountain grade dampens it).
 - 강남 **pivot city**: fronts 중원(5)+촉(4); its strait lands in an
   INTERIOR harbor — the island's rear-strike dagger into 강남 vs its
   front-door landing at 동북's capital is an intended asymmetry.
