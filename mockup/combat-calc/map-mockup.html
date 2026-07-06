@@ -7,7 +7,8 @@
   body { margin: 0; font: 13px/1.4 system-ui, sans-serif; display: flex; height: 100vh; }
   #map { flex: 1; background: #0f1216; }
   #panel { width: 340px; background: #171b21; color: #d8dee6; padding: 14px; overflow-y: auto; }
-  h2 { font-size: 13px; margin: 12px 0 6px; color: #8fa; }
+  h2 { font-size: 11px; text-transform: uppercase; letter-spacing: .08em;
+    margin: 16px 0 5px; color: #7fbf9f; border-bottom: 1px solid #2a2f37; padding-bottom: 3px; }
   table { width: 100%; border-collapse: collapse; font-size: 12px; }
   td, th { padding: 2px 4px; text-align: right; border-bottom: 1px solid #2a2f37; }
   th:first-child, td:first-child { text-align: left; }
@@ -28,14 +29,19 @@
 <script type="module" src="map-data.js"></script>
 <script type="module">
 'use strict';
-const { FIXTURE_MAP } = window.TC.data;
+const { CANONICAL_MAP: MAP, CANONICAL_BINDING: BINDING } = window.TC.data;
 const { loadMap } = window.TC.loader;
-const { gateReport } = window.TC.gate;
+const { gateReport, viableBindings } = window.TC.gate;
 const { projectable, shieldMass } = window.TC.match;
 
 const HEX = 26; // pixel size
-const REGION_COLOR = { center: '#c94', seoryeong: '#49c', dongpyeong: '#4c9',
-  namgok: '#a4c', bukha: '#c47' };
+// one color per terrain cradle (region); a seat is a pair of these
+const REGION_COLOR = {
+  center: '#d4a017', hebei: '#6aa84f', steppe: '#a2a232', northeast: '#3d85c6',
+  xiyu: '#c27b0e', guanzhong: '#8e7cc3', hanjing: '#4aa8a8', sestrait: '#c74375',
+  shu: '#a06a3a', jiangnan: '#5fbb7a',
+};
+const regionName = Object.fromEntries(MAP.regions.map((r) => [r.id, r.name]));
 
 // axial → pixel (pointy-top)
 function hexToPixel(q, r) {
@@ -47,7 +53,7 @@ function renderMap() {
   const parts = [];
   let minX = 1e9, minY = 1e9, maxX = -1e9, maxY = -1e9;
   // hexes, colored by region
-  for (const [sid, sec] of Object.entries(FIXTURE_MAP.sectors)) {
+  for (const [sid, sec] of Object.entries(MAP.sectors)) {
     for (const u of sec.mapUnits) {
       const { x, y } = hexToPixel(u.q, u.r);
       minX = Math.min(minX, x); minY = Math.min(minY, y);
@@ -57,19 +63,27 @@ function renderMap() {
         const a = Math.PI / 180 * (60 * i - 30);
         pts.push(`${(x + HEX * Math.cos(a)).toFixed(1)},${(y + HEX * Math.sin(a)).toFixed(1)}`);
       }
-      parts.push(`<polygon points="${pts.join(' ')}" fill="${REGION_COLOR[sec.regionId]}" stroke="#0f1216" stroke-width="1.5"/>`);
+      parts.push(`<polygon points="${pts.join(' ')}" fill="${REGION_COLOR[sec.regionId] || '#666'}" stroke="#0f1216" stroke-width="1.5"/>`);
       parts.push(`<text x="${x.toFixed(1)}" y="${(y + 3).toFixed(1)}" text-anchor="middle">${sec.fortTier !== 'none' ? '▲' : ''}</text>`);
     }
   }
-  // choke markers at edge midpoints
-  for (const e of FIXTURE_MAP.edges) {
-    const ua = FIXTURE_MAP.sectors[e.a].mapUnits[0];
-    const ub = FIXTURE_MAP.sectors[e.b].mapUnits[0];
+  // region name label at each region's first sector
+  for (const r of MAP.regions) {
+    const u = MAP.sectors[r.sectorIds[0]].mapUnits[0];
+    const { x, y } = hexToPixel(u.q, u.r);
+    parts.push(`<text x="${x.toFixed(1)}" y="${(y - 16).toFixed(1)}" text-anchor="middle" style="fill:#fff;font-weight:bold">${r.name}</text>`);
+  }
+  // choke markers at edge midpoints — open fronts (center exposure) in red
+  for (const e of MAP.edges) {
+    const ua = MAP.sectors[e.a].mapUnits[0];
+    const ub = MAP.sectors[e.b].mapUnits[0];
     const pa = hexToPixel(ua.q, ua.r); const pb = hexToPixel(ub.q, ub.r);
     const mx = (pa.x + pb.x) / 2, my = (pa.y + pb.y) / 2;
-    const label = e.choke.class === 'open' ? '' : `${e.choke.class}${e.choke.cap}`;
-    parts.push(`<line x1="${pa.x.toFixed(1)}" y1="${pa.y.toFixed(1)}" x2="${pb.x.toFixed(1)}" y2="${pb.y.toFixed(1)}" stroke="#556" stroke-width="1" stroke-dasharray="3 3"/>`);
-    if (label) parts.push(`<text class="choke" x="${mx.toFixed(1)}" y="${my.toFixed(1)}" text-anchor="middle">${label}</text>`);
+    const isOpen = e.choke.class === 'open';
+    const label = isOpen ? 'open' : `${e.choke.class}${e.choke.cap}`;
+    const stroke = isOpen ? '#d0454a' : '#6a74a0';
+    parts.push(`<line x1="${pa.x.toFixed(1)}" y1="${pa.y.toFixed(1)}" x2="${pb.x.toFixed(1)}" y2="${pb.y.toFixed(1)}" stroke="${stroke}" stroke-width="1.5" stroke-dasharray="3 3"/>`);
+    parts.push(`<text class="choke" x="${mx.toFixed(1)}" y="${my.toFixed(1)}" text-anchor="middle" style="fill:${isOpen ? '#f88' : '#fc6'}">${label}</text>`);
   }
   const pad = HEX * 2;
   svg.setAttribute('viewBox', `${minX - pad} ${minY - pad} ${maxX - minX + pad * 2} ${maxY - minY + pad * 2}`);
@@ -77,21 +91,25 @@ function renderMap() {
 }
 
 function renderPanel() {
-  const { realms } = loadMap(FIXTURE_MAP);
-  const g = gateReport(FIXTURE_MAP);
+  const { realms } = loadMap(MAP, { assignment: BINDING });
+  const g = gateReport(MAP, BINDING);
+  const v = viableBindings(MAP, 5);
   const rows = realms.map((r) => {
     const proj = projectable(r);
     const shield = shieldMass(r, undefined, Object.keys(r.fronts));
-    return `<tr><td>${r.name}</td><td>${r.fieldCap}</td><td>${proj}</td><td>${shield}</td></tr>`;
+    const regs = (BINDING[r.name] || []).map((id) => regionName[id] || id).join('+');
+    return `<tr><td>${r.name} <span style="color:#8a93a0">${regs}</span></td><td>${r.fieldCap}</td><td>${proj}</td><td>${shield}</td></tr>`;
   }).join('');
   document.getElementById('panel').innerHTML = `
-    <h2>Realms (all-cap)</h2>
+    <h2>Canonical binding (§2 A–E) — all-cap</h2>
     <table><tr><th>seat</th><th>cap</th><th>proj</th><th>shield</th></tr>${rows}</table>
-    <h2>Gate</h2>
+    <h2>Gate B (seat sizing)</h2>
     <div class="verdict ${g.b1.pass ? 'pass' : 'fail'}">B1 ${g.b1.pass ? 'PASS' : 'FAIL'}${g.b1.pass ? '' : ' — ' + g.b1.offenders.join(', ')}</div>
     <div class="verdict ${g.b2.pass ? 'pass' : 'fail'}">B2 ${g.b2.pass ? 'PASS' : 'FAIL'}${g.b2.pass ? '' : ' — ' + g.b2.kills.map((k) => k.attacker + '→' + k.victim).join(', ')}</div>
-    <p>Edit map-data.js and reload to re-measure. Heavy checks (full viable
-    enumeration, tournament) run in node: <code>node battery.js viability</code>.</p>`;
+    <div class="verdict ${v.viableCount >= 2 ? 'pass' : 'fail'}">viable seatings ${v.viableCount} / ${v.total}</div>
+    <h2>Regions (legend)</h2>
+    <table>${MAP.regions.map((r) => `<tr><td><span style="display:inline-block;width:10px;height:10px;vertical-align:middle;background:${REGION_COLOR[r.id]}"></span> ${r.name}</td><td>${r.sizeClass}</td></tr>`).join('')}</table>
+    <p style="color:#8a93a0">▲ fort · red dashed = open front (center exposure) · blue dashed = choke. Edit CANONICAL_MAP in map-data.js + reload. Heavy checks: <code>node battery.js viability</code>.</p>`;
 }
 
 renderMap();
