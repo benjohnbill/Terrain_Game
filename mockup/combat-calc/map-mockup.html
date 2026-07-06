@@ -41,6 +41,11 @@ const { nationalCap, income } = window.TC.econ;
 
 const HEX = META.hexR;
 const NB = [[1, 0], [1, -1], [0, -1], [-1, 0], [-1, 1], [0, 1]];
+// neighbor across the edge between corners[i] and corners[i+1] — corner 0
+// sits at -30° (upper-right), so edge i=0 faces (1,0), i=1 faces (0,1), …
+// (NB above is unordered adjacency; using it per-edge draws 4 of 6 borders
+// on the wrong side of the hex)
+const EDGE_NB = [[1, 0], [0, 1], [-1, 1], [-1, 0], [0, -1], [1, -1]];
 const TERR = { plains: '#7d9a54', 'river-valley': '#5d9078', steppe: '#a89a55',
   desert: '#c6aa69', mountain: '#877663', oasis: '#6fae7c' };
 const RANGE_FILL = '#4e4034';
@@ -100,11 +105,11 @@ function renderMap() {
   for (const h of hexOwn.values()) {
     const cs = corners(h.x, h.y);
     for (let i = 0; i < 6; i++) {
-      const nk = (h.q + NB[i][0]) + ',' + (h.r + NB[i][1]);
+      const nk = (h.q + EDGE_NB[i][0]) + ',' + (h.r + EDGE_NB[i][1]);
       const n = hexOwn.get(nk);
       const c1 = cs[i], c2 = cs[(i + 1) % 6];
       const seg = (col, w, dash) =>
-        borders.push(`<line x1="${c1[0].toFixed(1)}" y1="${c1[1].toFixed(1)}" x2="${c2[0].toFixed(1)}" y2="${c2[1].toFixed(1)}" stroke="${col}" stroke-width="${w}"${dash ? ` stroke-dasharray="${dash}"` : ''}/>`);
+        borders.push(`<line x1="${c1[0].toFixed(1)}" y1="${c1[1].toFixed(1)}" x2="${c2[0].toFixed(1)}" y2="${c2[1].toFixed(1)}" stroke="${col}" stroke-width="${w}" stroke-linecap="round"${dash ? ` stroke-dasharray="${dash}"` : ''}/>`);
       if (!n) { seg('#0a1c26', 3); continue; }               // coast / void edge
       if (n.rid !== h.rid) {
         if (h.rid > n.rid) continue; // draw each region border once
