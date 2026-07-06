@@ -97,8 +97,10 @@ function swapSeat(origSid, newSid) {
   const a = MAP.sectors[origSid], b = MAP.sectors[newSid];
   [a.economyValue, b.economyValue] = [b.economyValue, a.economyValue];
   [a.populationValue, b.populationValue] = [b.populationValue, a.populationValue];
+  // terrain travels with the seat ONLY when the seat IS the terrain (oasis);
+  // elsewhere terrain belongs to the ground (관중 mountain gate-city lesson)
   const ta = a.mapUnits[0]?.terrainLayer, tb = b.mapUnits[0]?.terrainLayer;
-  if (ta && tb && ta !== tb) {
+  if (ta && tb && ta !== tb && (ta === 'oasis' || tb === 'oasis')) {
     for (const u of a.mapUnits) u.terrainLayer = tb;
     for (const u of b.mapUnits) u.terrainLayer = ta;
   }

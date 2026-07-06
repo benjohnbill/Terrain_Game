@@ -333,34 +333,55 @@ function partitionRegion(rid) {
 const regionClusters = {};
 for (const s of SEED) {
   regionClusters[s[0]] = partitionRegion(s[0]);
-  GEN_DIAG.sectorSizes[s[0]] = regionClusters[s[0]].map((c) => c.length);
 }
 
-// --- roles: capitals & basin rim ----------------------------------------------
+// --- user-sealed hex assignment (2026-07-07, mockup edit-layer export) -------
+// The mockup preview layer is the authoring surface; confirmed swaps bake
+// here. Keys are hex 'q,r' → target sector of the SAME region. NOTE: indices
+// are tied to this seed's deterministic partition — if SEED changes, re-author
+// via the editor rather than hand-patching this list.
+const USER_SWAPS = {
+  '9,17': 'r9_s3', '10,16': 'r9_s1', '9,15': 'r9_s4', '11,15': 'r9_s3',
+  '8,16': 'r9_s4', '12,14': 'r9_s3', '8,17': 'r9_s3', '12,16': 'r9_s1',
+  '12,15': 'r9_s0', '2,16': 'r6_s2', '2,15': 'r6_s1', '20,7': 'r4_s2',
+  '21,6': 'r4_s0', '11,9': 'r7_s4', '14,8': 'r7_s2', '13,9': 'r7_s3',
+  '12,11': 'r7_s4', '9,9': 'r2_s3', '6,10': 'r2_s2', '7,9': 'r2_s2',
+  '7,10': 'r2_s3', '8,8': 'r2_s4', '8,10': 'r2_s3', '11,5': 'r3_s6',
+  '13,6': 'r3_s7', '10,6': 'r3_s5', '11,6': 'r3_s7', '9,10': 'r1_s0',
+  '8,12': 'r1_s3', '10,10': 'r1_s2', '10,12': 'r1_s3', '4,14': 'r6_s5',
+  '3,14': 'r6_s2', '2,13': 'r6_s0', '2,14': 'r6_s0', '2,12': 'r6_s3',
+  '5,11': 'r6_s3', '4,12': 'r6_s5',
+};
+for (const [hk, sid] of Object.entries(USER_SWAPS)) {
+  const [rid, idxs] = sid.split('_s');
+  const idx = +idxs;
+  const cls = regionClusters[rid];
+  if (!cls || !cls[idx]) { GEN_DIAG.extraResidual.push('swap target missing: ' + sid); continue; }
+  const from = cls.findIndex((c) => c.includes(hk));
+  if (from < 0 || from === idx) continue;
+  cls[from] = cls[from].filter((k) => k !== hk);
+  cls[idx].push(hk);
+}
+for (const s of SEED) GEN_DIAG.sectorSizes[s[0]] = regionClusters[s[0]].map((c) => c.length);
+
+// --- roles: user-sealed seats (2026-07-07, authored via mockup edit layer) ---
 const centroid = (cl) => {
   let x = 0, y = 0;
   for (const k of cl) { const h = hexes.get(k); x += h.x; y += h.y; }
   return { x: x / cl.length, y: y / cl.length };
 };
-function pickSector(rid, score) { // returns cluster index maximizing score
-  let best = -1, bv = -Infinity;
-  regionClusters[rid].forEach((cl, i) => {
-    const v = score(centroid(cl), cl, i);
-    if (v > bv) { bv = v; best = i; }
-  });
-  return best;
-}
-const dist2 = (p, s) => (p.x - s[3]) ** 2 + (p.y - s[4]) ** 2;
-const capitals = {};
-// 서역: oasis capital, deep (max min-dist to 하북/관중 = Moscow)
-capitals.r5 = pickSector('r5', (p) => Math.min(dist2(p, byId.r2), dist2(p, byId.r6)));
-// 초원: forward capital (nearest to 하북–한경 midline = Ulaanbaatar-forward)
-const mid27 = { 3: (byId.r2[3] + byId.r7[3]) / 2, 4: (byId.r2[4] + byId.r7[4]) / 2 };
-capitals.r3 = pickSector('r3', (p) => -((p.x - mid27[3]) ** 2 + (p.y - mid27[4]) ** 2));
-// 동북: deep interior capital (max min-dist to 초원/한경/동남해)
-capitals.r4 = pickSector('r4', (p) =>
-  Math.min(dist2(p, byId.r3), dist2(p, byId.r7), dist2(p, byId.r10)));
-// 관중 rim: 3 sectors with most hexes adjacent to 서역/하북/중원 → mountain rim
+// capitals: 서역 farthest-NW oasis (max Moscow, depth ~6 hexes) · 초원 forward
+// (Ulaanbaatar) · 동북 ON its strait sector (port capital — the seat's meaning
+// IS the island link; profile amended from "deep interior")
+const capitals = { r5: 2, r3: 7, r4: 2 };
+// cities (battle-summoning placement principle, user 2026-07-07: every city
+// except 서역's pulls fights toward it): 하북/한경 gate-cities absorbing the
+// whole 중원 border · 강남 dual-axis pivot (중원+촉) · 관중 gate-city on the
+// mountain triple junction 중원/하북/촉 (basin-grammar named exception) ·
+// 동남해 port (both straits land here) · 중원 keep city (interior — the only
+// city invisible from any border; flatness amendment, mild spike)
+const cities = { r2: 3, r7: 4, r9: 4, r6: 5, r10: 3, r1: 3 };
+// 관중 rim: the 2 non-city sectors with most hexes adjacent to 서역/하북/중원
 const rimCount = regionClusters.r6.map((cl) => {
   let n = 0;
   for (const k of cl) {
@@ -372,27 +393,8 @@ const rimCount = regionClusters.r6.map((cl) => {
   }
   return n;
 });
-const rimIdx = rimCount.map((n, i) => [n, i]).sort((a, b) => b[0] - a[0] || a[1] - b[1])
-  .slice(0, 3).map((x) => x[1]);
-
-// --- cities (coupled spikes, sector-grill rulings 2026-07-07) ----------------
-// City forwardness = the region's posture toward 중원: 하북/한경 forward
-// duelists on the open plain · 강남 one sector behind its river · 관중 deep
-// on the basin floor (장안) · 동남해 port city where both straits land.
-const contactTo = (cl, target) => {
-  let n = 0;
-  for (const k of cl) {
-    const h = hexes.get(k);
-    if (NB.some(([dq, dr]) => owner.get(kk(h.q + dq, h.r + dr)) === target)) n++;
-  }
-  return n;
-};
-const cities = {};
-cities.r2 = pickSector('r2', (p, cl) => contactTo(cl, 'r1'));
-cities.r7 = pickSector('r7', (p, cl) => contactTo(cl, 'r1'));
-cities.r9 = pickSector('r9', (p, cl) => (contactTo(cl, 'r1') ? -1e12 : 0) - dist2(p, byId.r1));
-cities.r6 = pickSector('r6', (p, cl, i) => (rimIdx.includes(i) ? -1e12 : 0) - dist2(p, byId.r6));
-cities.r10 = pickSector('r10', (p) => -(dist2(p, byId.r9) + dist2(p, byId.r4)));
+const rimIdx = rimCount.map((n, i) => [n, i]).filter(([, i]) => i !== cities.r6)
+  .sort((a, b) => b[0] - a[0] || a[1] - b[1]).slice(0, 2).map((x) => x[1]);
 
 // --- sector values (parity v5 + econ ladder v2, 가안 2026-07-07) -----------------
 // Pop: Σ 6.0 per region — EQUAL START (user ruling: same blood budget for
@@ -409,25 +411,26 @@ cities.r10 = pickSector('r10', (p) => -(dist2(p, byId.r9) + dist2(p, byId.r4)));
 // mild ≈ 25–35% (real hinterland behind the city).
 function sectorSpec(rid, i) { // [pop, econ, terrain]
   switch (rid) {
-    case 'r1': return [1.5, 1.875, 'plains'];       // 1.25 — sole crown, flat by identity
-    case 'r2': return i === cities.r2               // 1.15 — forward duelist city
+    case 'r1': return i === cities.r1               // 1.25 — crown; keep city (interior)
+      ? [2.0, 2.4, 'plains'] : [4 / 3, 1.7, 'plains'];
+    case 'r2': return i === cities.r2               // 1.15 — gate-city duelist
       ? [2.0, 2.3, 'plains'] : [1.0, 1.15, 'plains'];
-    case 'r7': return i === cities.r7               // 1.15 — forward duelist city (mirror twin)
+    case 'r7': return i === cities.r7               // 1.15 — gate-city duelist (mirror twin)
       ? [2.0, 2.3, 'river-valley'] : [1.0, 1.15, 'river-valley'];
-    case 'r9': return i === cities.r9               // 0.92 — merchant city behind the river
+    case 'r9': return i === cities.r9               // 0.92 — dual-axis pivot city (중원+촉)
       ? [2.0, 1.84, 'plains'] : [1.0, 0.92, 'plains'];
     case 'r8': return [2.0, 1.92, 'plains'];        // 0.96 — densest land, flat by identity
     case 'r10': return i === cities.r10             // 0.77 — port city, straits land here
       ? [2.4, 1.85, 'plains'] : [1.2, 0.923, 'plains'];
     case 'r3': return i === capitals.r3             // 1.09 — SEPARATED (nomads): econ spike, pop spread
       ? [0.75, 2.4, 'steppe'] : [0.75, 0.59, 'steppe'];
-    case 'r4': return i === capitals.r4             // 0.93 — deep highland city (개마고원)
+    case 'r4': return i === capitals.r4             // 0.93 — port capital on the strait (개마고원)
       ? [1.5, 1.5, 'highland'] : [0.9, 0.82, 'highland'];
     case 'r5': return i === capitals.r5             // 0.80 — oasis city (strong tier)
       ? [1.5, 2.4, 'oasis'] : [0.5, 0.27, 'desert'];
-    case 'r6': return rimIdx.includes(i)            // 1.06 — rim / floor / 장안
-      ? [0.5, 0.5, 'mountain']
-      : i === cities.r6 ? [2.1, 2.3, 'plains'] : [1.2, 1.28, 'plains'];
+    case 'r6': return i === cities.r6               // 1.06 — GATE-CITY on the mountain
+      ? [2.1, 2.3, 'mountain']                      // triple junction (terrain stays)
+      : rimIdx.includes(i) ? [0.5, 0.5, 'mountain'] : [2.9 / 3, 1.02, 'plains'];
     default: return [1, 1, 'plains'];
   }
 }
@@ -487,6 +490,7 @@ for (const [pk, cap] of STRAITS) {
   let bestA = null, bestB = null, bd = Infinity;
   for (const saId of regions.find((r) => r.id === a).sectorIds) {
     const ca = centroid(sectors[saId].mapUnits.map((u) => kk(u.q, u.r)));
+    if (a === 'r4' && saId !== `r4_s${capitals.r4}`) continue; // port capital IS the landing
     for (const sbId of regions.find((r) => r.id === b).sectorIds) {
       if (b === 'r10' && sbId !== `r10_s${cities.r10}`) continue;
       const cb = centroid(sectors[sbId].mapUnits.map((u) => kk(u.q, u.r)));
