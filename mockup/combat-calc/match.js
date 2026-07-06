@@ -191,7 +191,6 @@ function accepts(bundleValue, expectedLossTotal, coeff) {
   return bundleValue <= expectedLossTotal * coeff;
 }
 
-module.exports = {
-  MATCH_DIALS, projectable, shieldMass, hegemonyCheck,
-  presetBundle, expectedContinuedLoss, accepts,
-};
+const _api = { MATCH_DIALS, projectable, shieldMass, hegemonyCheck, presetBundle, expectedContinuedLoss, accepts };
+if (typeof module !== 'undefined' && module.exports) module.exports = _api;
+else (window.TC = window.TC || {}).match = _api;

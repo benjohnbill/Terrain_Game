@@ -84,5 +84,6 @@ function centerRealm(D = ECON_DIALS) {
   return Array.from({ length: 12 }, () => sector(D.richYield, 1.25));
 }
 
-module.exports = { ECON_DIALS, income, nationalCap, recruitCost,
-  sector, midRealm, centerRealm };
+const _api = { ECON_DIALS, income, nationalCap, recruitCost, sector, midRealm, centerRealm };
+if (typeof module !== 'undefined' && module.exports) module.exports = _api;
+else (window.TC = window.TC || {}).econ = _api;
