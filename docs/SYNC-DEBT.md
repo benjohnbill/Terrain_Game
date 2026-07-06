@@ -25,6 +25,16 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   ladder (model docs → DESIGN) symmetric with GLOSSARY→DOMAIN_MAP and
   RULINGS→ADR, so all three Production tiers connect to root the same
   way. NOT A-4 B1 scope; a deliberate separate pass (user-flagged).
+- [ ] **Terrain-cradle → Projection sync** (registered 2026-07-07,
+  C-loop close): the TC-①…⑫ seals (parity start, economy ladder,
+  void ontology, border classes, city grammar, carve principle) live
+  in `docs/features/terrain-cradle/` (birthplace, authoritative);
+  DOMAIN_MAP has no terrain-cradle vocabulary yet and DESIGN does not
+  describe the authored-map pipeline. Promotion candidates at next
+  doc-sync batch: void terrain, parity start, battle-summoning
+  placement. SPEC untouched — the 중원-crown demotion to hypothesis
+  (TC-②) may warrant a user-approved SPEC proposal; flag, never drift.
+
 ## Deferred (user-decided 2026-07-06, A-4 B6 — revisit on trigger)
 
 - [ ] **`npm run docs:check` lint** (Codex P2, optional tooling):
