@@ -123,6 +123,23 @@ owed to match-arc RULINGS + M12/M13 amendment stamps at session close):
   deciding-contest window (Three Kingdoms census collapse, Thirty
   Years' War, 1814 France manpower exhaustion — blood runs out before
   money); era-level regrowth = between-match reset, out of scope.
+- **징집 명부 re-founding (Q0-5, structure SEALED; k pending)**: the
+  register is re-founded land-derived — **명부 = registerPerPop × Σ
+  populationValue, per province, at match start**; thereafter a pure
+  stock (deaths −, land transfer ±, development + via the same
+  formula's delta; usable never touches it — raids don't kill).
+  Accounting = **(b) total-bodies model** (user definition verbatim:
+  "군사력이 될 수 있는 모든 신체 인구") — the starting army is already
+  drawn from it; recruitment moves bodies civilian→serving (total
+  unchanged); only death shrinks it. Supersedes "1.5 × 시작 군사력"
+  (circular: tied to authored deployment, not population). Fixes the
+  harness double-count by definition; makes TC-① "equal lifetime
+  blood" literal (지방당 6.0 × registerPerPop); gives force-geography
+  its per-province muster structure for free. World stored stocks are
+  now exactly two: treasury (money) + register (blood).
+  **registerPerPop value = user's, pending; calibration target = the
+  sealed sheet-9 sentence ("one lost war forbids a second full army")
+  under (b) + P1 billing; L2 sweep verifies.**
 
 ## User rulings this session (2026-07-07)
 
