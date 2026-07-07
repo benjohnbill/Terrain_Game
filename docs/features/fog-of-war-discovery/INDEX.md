@@ -47,6 +47,9 @@ subtle warning signals before total blindness.
 - **Ambiguity model (new):** resolved — the ambiguous middle state shows a
   deterministic, true-containing magnitude **estimate range** that scouting
   narrows (never collapses; residual ceiling + decay keep ownership superior).
+- **Wall-grade visibility (2026-07-08):** resolved — fortification grade is
+  public (classified with terrain, not magnitude). See `RULINGS.md` ①; first
+  consumer is the tactical-plan-ai bot information model.
 
 ## Related
 
