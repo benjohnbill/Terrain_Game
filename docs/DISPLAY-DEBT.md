@@ -52,6 +52,16 @@ and the A-3 economy rider.
   numbers-only; a UI read of where my 생산 comes from and where it goes
   is owed to B's UI work. Born: A-3 epistemic rider (2026-07-05);
   relocated here from `SYNC-DEBT.md` at B6.
+- [ ] **Mobilization meter + draft bill quote (Surge Draft Model)** —
+  the recruit card owes three reads: (1) own mobilization-intensity
+  meter with the named zone (평시/전시/총동원/최후 — the story layer
+  over the continuous price curve); (2) the exact quoted bill (yield +
+  commit) for the chosen draft size BEFORE confirming (deterministic
+  pricing — the player never integrates the curve mentally); (3) the
+  M10 leak preview (which zone band the neighbors will see this turn).
+  Born: Surge Draft Model + curve/zone seals, match-tilting grill
+  (2026-07-07, staged in `mockup/combat-calc/NOTES.md`; canon home
+  owed at doc-sync).
 - [ ] **중원 visual centrality (composition pass)** — the region named
   "center" sits south of the landmass's geometric center (large NW
   regions push it down). Half-defended by real geography (the actual

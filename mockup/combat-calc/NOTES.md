@@ -190,8 +190,17 @@ adopted and refined into:
   (existing pool grammar, one-shot voluntary spend — no standing
   drain, 20-point economy untouched). Surge turn starves scouting/
   reserve/building that turn.
-- Depth axis: whole-draft unit price read from the POST-draft
-  intensity band (derived from ledger; zero new stored state).
+- Depth axis: unit price = a CONTINUOUS piecewise-linear marginal
+  curve over mobilization intensity; a draft's bill = the area under
+  the curve from pre-draft to post-draft intensity (integral pricing —
+  supersedes the earlier "post-draft band repricing" wording sealed
+  the same evening: no cliffs, no boundary exploits, boundary marginal
+  spikes eliminated). NAMED ZONES (평시 징집/전시 동원/총동원/최후
+  동원 — names 가안) overlay the curve for narration and the M10 leak;
+  zones carry no arithmetic. Derived from ledger; zero new stored
+  state. Knee positions anchor to the sealed start-state coordinates
+  (~42% start / ~58% structural max); exact knees and multipliers →
+  magnitude session.
 - Garrison regeneration (P1) pays the SAME band price — "사람 값은
   어디서나 같다"; deep-mobilized realms heal expensively (aging
   coupling).
