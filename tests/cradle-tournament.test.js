@@ -75,3 +75,19 @@ test('pairFlags aggregates winrate per region-pair seat across seatings', () => 
   assert.strictEqual(flags['r3+r7'].wins, 1);
   assert.strictEqual(flags['r1+r2'].matches, 1);
 });
+
+test('runCradleTournament threads boardGaan to the board factory', () => {
+  const { BOARD_GAAN } = require('../mockup/combat-calc/map-board.js');
+  const recs = runCradleTournament({
+    map: CRADLE_MAP, bindings: oneBinding, reps: 1, seed: 3,
+    boardGaan: { ...BOARD_GAAN, registerPerPop: 1000 },
+  });
+  // seat pop = 12 → register 12,000; pools only shrink or transfer,
+  // and world total can never exceed Σ initial registers
+  const worldInit = 5 * 12000;
+  for (const r of recs) {
+    const worldNow = r.finalRealms.reduce((s, x) => s + x.pool, 0);
+    assert.ok(worldNow <= worldInit + 1e-9, 'world register bounded by init');
+    assert.ok(worldNow > 0);
+  }
+});

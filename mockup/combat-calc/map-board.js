@@ -90,7 +90,7 @@ const TOURNEY = (typeof require !== 'undefined')
   ? require('./tournament.js')
   : window.TC && window.TC.tourney;
 
-function runCradleTournament({ map, bindings, reps = 1, seed = 1, harness } = {}) {
+function runCradleTournament({ map, bindings, reps = 1, seed = 1, harness, boardGaan } = {}) {
   const rng = TOURNEY.mulberry32(seed);
   const pickFrom = (arr) => arr[Math.floor(rng() * arr.length)];
   const records = [];
@@ -110,7 +110,7 @@ function runCradleTournament({ map, bindings, reps = 1, seed = 1, harness } = {}
             bindingIndex, binding, focal, seat,
             ...TOURNEY.runMatch(assignment, {
               seed: Math.floor(rng() * 1e9),
-              board: makeBoardFromMap(map, binding),
+              board: makeBoardFromMap(map, binding, boardGaan ?? BOARD_GAAN),
               harness,
             }),
           });
