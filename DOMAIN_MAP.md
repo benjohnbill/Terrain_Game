@@ -421,7 +421,30 @@ naming, promotion, the generated Quick Reference) lives in
 - ⛔ Do not model a literal historical map so strictly that gameplay balance and
   readability become secondary.
 
-## Combat Resolution
+## Terrain Cradle (Authored Map)
+
+The authored game world: 10 regions → 55 sectors → ~292 hexes, born from
+the C-loop authoring sessions (user sketches/edits → agent converts &
+measures → user eye-judges). Vocabulary is authored in
+`docs/features/terrain-cradle/GLOSSARY.md`; the decision record is
+`RULINGS.md` TC-①…⑫; the executable map source is
+`mockup/combat-calc/map-gen.js`.
+
+_Last synced from Production 2026-07-07 (C-loop close doc-sync batch),
+authoritative source `docs/features/terrain-cradle/` GLOSSARY + RULINGS.
+This section summarizes qualitatively; sealed values and ruling history
+live in the feature docs, and on any divergence the Production seal is
+truth (documentation-law conflict rule)._
+
+- ✅ `Void terrain` (공백 지형): sea expressed as land — non-sector hexes no
+  one owns; movement, ownership, and vision identical to sea. Exactly one
+  kind of "cannot cross" exists in the world, drawn two ways. (TC-⑧)
+- ✅ `Parity start` (동일 시작 인구): every region starts with an equal total
+  population — an equal lifetime blood budget; divergence comes only from
+  play. Historicity lives in geography, not demographics. (TC-①)
+- ✅ `Battle-summoning placement` (전장 소환 배치): the city placement
+  principle — cities are placed where fighting is invited; 서역 is the
+  deliberate opposite pole (max-hermit depth). (TC-⑦)
 
 The battle-resolution layer (turn decision ladder layer 5). One deterministic
 computation used three ways: on true state it is the verdict; on fogged band
@@ -546,8 +569,10 @@ that gate every value are in `docs/features/match-arc/STRATEGY-SPACE.md`; dials
 live in `docs/features/combat-formula/MAGNITUDE.md` (M8–M13). Status: ✅ = AGREED
 wording, ❓ = PROPOSED (awaiting grill).
 
-_Last synced from Production 2026-07-05 (A-4 B2), authoritative source
-`docs/features/match-arc/` GLOSSARY + RULINGS. This section summarizes
+_Last synced from Production 2026-07-07 (C-loop close: parity/asymmetry
+row re-cut from terrain-cradle TC-①/②; rest 2026-07-05 A-4 B2),
+authoritative sources `docs/features/match-arc/` and
+`docs/features/terrain-cradle/` GLOSSARY + RULINGS. This section summarizes
 qualitatively; sealed dial values and ruling history live in the feature docs,
 and on any divergence the Production seal is truth (documentation-law conflict
 rule)._
@@ -573,13 +598,18 @@ rule)._
   authored terrain cradles (basin, shielded valley, plain, coast); 4–6 is the
   verification condition on how many viable cradles the active region holds, not
   an imposed cut.
-- ✅ `Viability parity, mass/geometry asymmetry`: what is balanced is
-  survivability, not mass. A multipolar Warring-States / Three-Kingdoms shape
-  with one "small 중원" — a richer center that pays in multi-front exposure;
-  periphery realms are smaller but shielded and coalition-capable. Whoever takes
-  the center inherits its exposure (the anti-snowball loop). No realm is
-  one-war-killable from turn 1 without buildup (~1.7 shield-mass ratio is the
-  sizing tool; values → battery).
+- ✅ `Viability parity, geometry/economy asymmetry`: what is balanced is
+  survivability AND starting population (parity start, terrain-cradle
+  TC-①); asymmetry lives in geometry and economy. A multipolar
+  Warring-States / Three-Kingdoms shape with one multi-front 중원 center
+  whose crown is economic only (traffic centrality + economic stamina)
+  and pays in multi-front exposure; periphery realms are shielded and
+  coalition-capable. Whoever takes the center inherits its exposure (the
+  anti-snowball loop). The center-protagonist reading is a measured L2
+  hypothesis, not a design guarantee (TC-②). No realm is one-war-killable
+  from turn 1 without buildup (~1.7 shield-mass ratio is the sizing tool;
+  values → battery). _2026-07-07: supersedes the earlier "richer center,
+  mass asymmetry" wording (parity v4); SPEC amendment proposal pending._
 - ✅ `Match arc as design budget`: buildup cost, war length, and the hegemony
   threshold are tuned so one player's hand fights ~2–3 wars per match; the match
   ends at the hegemony settlement. A tuning target, never a mechanical cap — the

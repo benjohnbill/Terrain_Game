@@ -5,6 +5,12 @@ contiguous hex map exists as a deterministic generator, passes both
 static gates under every seating, and carries the user's hand-authored
 sector layout. Next tier of truth is L2 (tournament adapter).
 
+Projection sync (2026-07-07 doc-sync batch): void terrain / parity
+start / battle-summoning placement promoted to DOMAIN_MAP (summary +
+pointer; definitions stay here); DESIGN carries the authored-map
+pipeline subsection. SPEC 중원-crown amendment (TC-②) proposed,
+awaiting user decision — see `docs/SYNC-DEBT.md`.
+
 ## What this feature is
 
 The authored game world: 10 regions → 55 sectors → ~292 hexes, with

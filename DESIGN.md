@@ -134,6 +134,21 @@ mean every tile must be fully playable, simulated, or logged from turn one.
 Use active regions and relevance filtering so the player experiences a large
 world without being forced to manage all of it immediately.
 
+### Authored-map pipeline (terrain-cradle, 2026-07-07)
+
+The first authored world exists as a deterministic generator:
+`mockup/combat-calc/map-gen.js` derives the same 10-region / 55-sector /
+~292-hex map in node and browser from a fixed seed plus the user's sealed
+layout (fixed capital/city seats + hex swap overrides). Region adjacency
+is derived from hex contact — the drawn map IS the region graph. Static
+gates (`map-gate.js`) verify the intended graph, totals, contiguity, and
+seat viability on every run. Authoring follows the C-loop rhythm (user
+sketches/edits in the mockup edit layer → agent converts & measures →
+user eye-judges); after a layout seal, terrain edits are local carves on
+finished ownership, never candidate/growth re-runs (carve principle).
+Vocabulary, rulings TC-①…⑫, and current status live in
+`docs/features/terrain-cradle/`.
+
 ## Phase 1 Feature Shape
 
 Phase 1 should solve the current military snowball problem by moving combat

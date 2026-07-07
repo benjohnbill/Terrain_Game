@@ -25,15 +25,13 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   ladder (model docs → DESIGN) symmetric with GLOSSARY→DOMAIN_MAP and
   RULINGS→ADR, so all three Production tiers connect to root the same
   way. NOT A-4 B1 scope; a deliberate separate pass (user-flagged).
-- [ ] **Terrain-cradle → Projection sync** (registered 2026-07-07,
-  C-loop close): the TC-①…⑫ seals (parity start, economy ladder,
-  void ontology, border classes, city grammar, carve principle) live
-  in `docs/features/terrain-cradle/` (birthplace, authoritative);
-  DOMAIN_MAP has no terrain-cradle vocabulary yet and DESIGN does not
-  describe the authored-map pipeline. Promotion candidates at next
-  doc-sync batch: void terrain, parity start, battle-summoning
-  placement. SPEC untouched — the 중원-crown demotion to hypothesis
-  (TC-②) may warrant a user-approved SPEC proposal; flag, never drift.
+- [ ] **SPEC 중원-crown amendment (TC-②) — proposal drafted, awaiting
+  user decision** (registered 2026-07-07, C-loop close; proposal
+  presented 2026-07-07 doc-sync session): SPEC §Match structure still
+  says "asymmetric in mass … a richer, multi-front 'small 중원'
+  center"; parity v5 (TC-①) deleted the population crown and TC-②
+  demoted the center-protagonist to hypothesis. SPEC changes only by
+  explicit user decision — propose, never drift.
 
 ## Deferred (user-decided 2026-07-06, A-4 B6 — revisit on trigger)
 
@@ -48,6 +46,18 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
 
 ## Paid
 
+- [x] 2026-07-07 — **Terrain-cradle → Projection sync (C-loop close
+  doc-sync batch)** — DOMAIN_MAP gained a `Terrain Cradle (Authored
+  Map)` section (summary + pointer, sync-stamped) promoting void
+  terrain / parity start / battle-summoning placement; the Match
+  structure parity row re-cut from "mass asymmetry, richer center" to
+  parity-v5 wording (TC-①/②) with a supersession note; DESIGN
+  §Map Representation Strategy gained the authored-map pipeline
+  subsection (map-gen.js determinism, C-loop rhythm, carve principle);
+  QUICKREF regenerated (Realm row + 3 promoted-term rows + header
+  date). Definitions stay authoritative in
+  `docs/features/terrain-cradle/` (single-definition rule). SPEC
+  remainder split into its own Open row above.
 - [x] 2026-07-06 — **L-level seal-stamp convention ADOPTED (Codex P2,
   A-4 B6)** — the optional validation-level stamp (L0 hand / L1 grid /
   L2 tournament / L3 playtest) codified into
