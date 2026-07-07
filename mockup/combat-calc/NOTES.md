@@ -163,7 +163,48 @@ owed to match-arc RULINGS + M12/M13 amendment stamps at session close):
   Napoleonic successive levies; the design question = what drives the
   rate upward (deaths/desperation vs economy coupling). User framing:
   a system re-founding, "기존 틀을 많이 뒤집는" change. Grill opened —
-  see next entry when resolved.
+  resolved below.
+
+## Surge Draft Model (서지 모병) — shape SEALED 2026-07-07 late evening
+
+Grill path: agent proposed a mobilization-decree ladder (standing
+command-point upkeep); user caught the flaw — a standing drain on the
+20-point pool re-opens the sealed M1/M2 calibration (knee 8, lever
+ceiling) and couples army substance to judgment quality backwards
+(ADR 0018/0020: attention is realm-scale-independent). Decree dropped;
+user's counter-shape (price the EXISTING recruit primary dynamically)
+adopted and refined into:
+
+**The model (user's own three-point definition, sealed):**
+1. 모병 = converting register bodies into serving status (civilian →
+   serving; register total unchanged; deaths cut BOTH register and
+   serving).
+2. **Mobilization intensity (동원 강도) = serving ÷ current register**
+   determines the yield unit price per man — escalating bands.
+3. Register and serving can only grow through LAND — every population
+   number is land-bound (SPEC identity ① extended to the full
+   population system).
+
+**Sealed shape (numbers = next magnitude discussion):**
+- Size axis: recruit primary may be SURGED with surplus commit points
+  (existing pool grammar, one-shot voluntary spend — no standing
+  drain, 20-point economy untouched). Surge turn starves scouting/
+  reserve/building that turn.
+- Depth axis: whole-draft unit price read from the POST-draft
+  intensity band (derived from ledger; zero new stored state).
+- Garrison regeneration (P1) pays the SAME band price — "사람 값은
+  어디서나 같다"; deep-mobilized realms heal expensively (aging
+  coupling).
+- Visibility: surge/deep-band turns leak via M10 (decree turn = leak
+  turn, consistent with the sealed 1-3 turn lead).
+- Desperation is EMERGENT (no unlock gates, no decree state): the
+  Hitler/Marie-Louise line = repeated deep-band surges, legal but
+  torches yield+commit+future bodies; skill-dependence rises
+  (SPEC identity ⑥). Late-game blood price rises mechanically as
+  registers shrink (denominator falls) — aging made literal.
+- M13 amendment owed at doc-sync: fixed "+10%/turn at flat 0.5" becomes
+  the Band-1 base of this model. M14 flat blood-EV check owed at the
+  magnitude session (band escalation intentionally bends it at depth).
 
 ## User rulings this session (2026-07-07)
 
