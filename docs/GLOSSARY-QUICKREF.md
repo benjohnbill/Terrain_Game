@@ -87,7 +87,7 @@
 | Chain collapse (사슬 붕괴) | overlord falls → all vassals released immediately | MA |
 | Recruitment (모병) | +10% of national cap per primary, from the finite manpower pool, quality 1.0 | CF M13 |
 | National cap growth | conquest/development raises the sustainable cap — the match's ending mechanism (structure sealed ⑮; numbers → A-3) | CF M13 |
-| Manpower pool (인력 풀) | per-province, finite in-match; the dead never return — blood is a permanent currency | MA |
+| Manpower pool (징집 명부 · 구칭 인력 풀) | per-province, finite in-match; the dead never return — blood is a permanent currency | MA |
 | Blinds (블라인드) | undesigned anti-passivity escalation device; owns the untilted-ending tail; duty confirmed load-bearing at L2, quantified ~58% on the real map (2026-07-07) | MA |
 | Deterrence equilibrium (억지 평형, 별칭 동결 세계) | the failure mode blinds must break: 회복이 상처를 이겨 세계가 대칭 만땅으로 되돌아가 결정점이 영영 안 뜨는 상태 | MA |
 | Opportunism read (기회주의 읽기) | 상대 야전군이 딴 전선에 묶인 순간을 공격창으로 읽기 — parity 판을 억지 너머로 움직이는 하중 기동; "pile-on" 프로브 = 이 읽기 강화판 하네스 실험 | MA |

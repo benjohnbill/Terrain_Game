@@ -103,6 +103,11 @@ Decision section.
   header format `English canonical (한국어 표시어)`. Prefer standard
   terms (power projection, hermit kingdom, decisive victory) over
   coinages; coin only for genuinely novel mechanics.
+  **Intuitive over compact (user ruling 2026-07-07)**: when coining or
+  choosing a 한국어 표시어, prefer the self-explaining longer name over
+  the allusive short one — a term should teach its own meaning on first
+  read (징집 명부, not 인력 풀). A rename keeps the old name as a
+  `구칭` alias at the birthplace row.
 - **Coinage duty**: a new term appears only with a `[조어]`/`[coinage]`
   tag and is registered into Tier 1 (or discarded) within the same
   exchange. In conversation use the standard English term directly;

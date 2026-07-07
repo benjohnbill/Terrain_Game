@@ -749,7 +749,7 @@ Adopted during the match-arc pass (see `docs/features/match-arc/`):
   center scaling) belong to A-3; the probe's +400/sector is harness
   가안, not a sealed value. A-3 verification target: re-run the
   sheet-12 sweep at the priced values.
-- **인력 풀 (manpower pool)**: per-province, population-proportional,
+- **징집 명부 (manpower pool · 구칭 인력 풀)**: per-province, population-proportional,
   finite within a match — the dead never return, the dispersed do.
   Closes the M3 blood-economy flag.
 - **Confirmed values (2026-07-04, battery sheet 9)**: national cap

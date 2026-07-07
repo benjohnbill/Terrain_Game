@@ -718,7 +718,7 @@ rule)._
   (automatic, ADR 0014) / ③ standing-force stationing (deploy, player) / ④ commit
   lever + reserve (activate, per-turn) — the player hand-manages only ① and ③.
   Rates → M13.
-- ✅ `Manpower pool` (인력 풀): per-province latent manpower (ADR 0009 role 4),
+- ✅ `Manpower pool` (징집 명부 · 구칭 인력 풀): per-province latent manpower (ADR 0009 role 4),
   *finite within a match* — the dead leave it permanently, the dispersed return,
   settlement-inherited land arrives pool-intact (M6 made literal). Blood becomes
   a permanent match currency (closing the blood-economy coupling gap flagged at

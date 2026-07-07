@@ -80,7 +80,7 @@ authoritative — this spec declares, it does not restate).
 
 7. **Blood is a permanent currency.** Casualties leave the match's finite
    manpower pool for good — only the dispersed return; war's cost is paid in
-   something that does not refill within the match. (match-arc GLOSSARY 인력 풀;
+   something that does not refill within the match. (match-arc GLOSSARY 징집 명부;
    combat MAGNITUDE M13.)
 
 *Candidate, deferred to post-L3 playtest:* balancing is governed by war

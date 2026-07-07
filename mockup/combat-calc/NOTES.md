@@ -86,6 +86,44 @@ feints, scouting) — sheet-8's hand-scripted arc remains the proof a
 skilled hand can converge; the gap between probe-grade and hand-grade
 play is unmeasured.
 
+## Match-tilting grill — aging constitution SEALED (2026-07-07 evening, user)
+
+Anchor rulings of the match-tilting pass (grill in progress; doc-sync
+owed to match-arc RULINGS + M12/M13 amendment stamps at session close):
+
+- **Q0-1 = B**: the failure mode is the un-tilted world, not the
+  unfinished match. Ending devices are wear-family (aging), never
+  hard timers. (SPEC identity 5: ending = detection of
+  irreversibility.)
+- **Q0-2 = B (world aging)**: war #1 must leave both fighters bled in
+  the permanent currency; the world never returns to T1 symmetry.
+  Point-of-no-return metric: world total draft register below X% of
+  start (X → L2; decided-world median 53% is the reference point).
+- **P1 이중 청구 (dual billing) — SEALED**: replenishing men (모병 AND
+  garrison regen) bills blood (material, permanent) + yield (cost,
+  flow). No free healing anywhere. Garrison-regen billing = **both**
+  (pool + treasury at the recruitment price — "사람 값은 어디서나
+  같다"). Amends M12/ADR-0014 free self-heal (stamp owed).
+- **P2 흐름은 늙지 않는다 — SEALED**: economy determines healing SPEED,
+  never permanently damaged except identity acts (초토화). 피폐 문턱
+  (world register < Y% → usable-econ soft cap) PARKED to Phase 2.
+  Rejected: blood→economy coupling (경제 인구수) at match scale —
+  double-aging kills comebacks; the instinct's substance already lives
+  in populationValue (sustaining population) + pool travel.
+- **P3 스냅샷 정보 — SEALED**: immutable layer (terrain, fort
+  existence, roads) revealed forever; mutable layer (garrison counts,
+  fort tier, army position) is snapshotted at contact, then trust
+  decays — re-scout costs action economy. Feeds the fog estimate-band
+  design (band narrows at contact, re-widens over turns).
+- **Rename (user)**: 인력 풀 → **징집 명부 (manpower pool · 구칭 인력
+  풀)** — birthplace + MAGNITUDE + QUICKREF + DOMAIN_MAP + SPEC
+  updated. New naming law clause: intuitive-over-compact coinage
+  (documentation-law § Naming).
+- Historical grounding accepted: the match window = the
+  deciding-contest window (Three Kingdoms census collapse, Thirty
+  Years' War, 1814 France manpower exhaustion — blood runs out before
+  money); era-level regrowth = between-match reset, out of scope.
+
 ## User rulings this session (2026-07-07)
 
 - SPEC_GAPS ③ sealed for MVP: vassals cannot be attacked (same-boat
