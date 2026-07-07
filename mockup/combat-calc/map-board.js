@@ -16,9 +16,15 @@ const BOARD_GAAN = {
   interiorGarrison: 300,        // per interior sector (fixture-board constant)
   capitalGarrison: 1200,        // fixture-board default
   startFort: 'walls',           // mature-state start: walls at every front
-  registerPerPop: null,         // 징집 명부 per populationValue point (Q0-5
-                                // re-founding; USER-PENDING — null falls back
-                                // to the legacy ×1.5-military sizing)
+  registerPerPop: 1800,         // 징집 명부 per populationValue point —
+                                // SEALED 2026-07-07 (user, match-tilting
+                                // grill): register:cap ratio 3.0, i.e.
+                                // sustain fraction ⅓ (capPerPop 600 =
+                                // 1800/3). Anchors: Napoleonic 3-4× window
+                                // refill + game-convention sweet spot
+                                // 2.5-3× (research/ files). Rider: L2
+                                // re-verify after recovery-dial + blinds
+                                // devices land. null → legacy ×1.5 sizing.
 };
 
 function makeBoardFromMap(map, binding, gaan = BOARD_GAAN) {

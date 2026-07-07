@@ -140,6 +140,30 @@ owed to match-arc RULINGS + M12/M13 amendment stamps at session close):
   **registerPerPop value = user's, pending; calibration target = the
   sealed sheet-9 sentence ("one lost war forbids a second full army")
   under (b) + P1 billing; L2 sweep verifies.**
+- **registerPerPop SEALED 3.0 (2026-07-07 evening, user): 1,800 bodies
+  per populationValue point; capPerPop 600 re-founded as the DERIVED
+  constant (sustain fraction ⅓ — "a third of a land's lifetime bodies
+  can serve simultaneously," matching the historical peak/lifetime
+  ratio).** Anchors: two-track research (files:
+  `docs/features/match-arc/research/mobilization-historical-dynamics.md`
+  — bracket 2.5-4.0, point 3.0, Napoleonic arc; `.../manpower-pool-
+  game-conventions.md` — bracket 2-4×, sweet spot 2.5-3×). The sealed
+  sheet-9 sentence is re-interpreted from stock-arithmetic truth to
+  PRACTICAL truth (guarded by cession outflow of the register + P1
+  regen demand + 10-turn rebuild time), verified at L1 arithmetic;
+  **rider: L2 re-verification owed after recovery-dial + blinds
+  devices land.** Real-map values: seat register 21,600 (12 pop ×
+  1,800), start serving ~8,940, civilians ~12,660. Implied-census
+  check: register ≈ 6-7.5% of implied population (kokudaka grammar) —
+  inside the historical 5-12% envelope. Harness default updated
+  (BOARD_GAAN.registerPerPop 1800; suite 100/100).
+- **NEW SYSTEM PROPOSED (user, immediately after the seal): dynamic
+  mobilization rate (동원율)** — the fraction of the register
+  accessible per draft as a MOVING value, not the fixed M13 10%/turn:
+  Napoleonic successive levies; the design question = what drives the
+  rate upward (deaths/desperation vs economy coupling). User framing:
+  a system re-founding, "기존 틀을 많이 뒤집는" change. Grill opened —
+  see next entry when resolved.
 
 ## User rulings this session (2026-07-07)
 

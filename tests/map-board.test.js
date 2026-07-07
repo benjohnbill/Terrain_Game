@@ -91,10 +91,13 @@ test('carries every field the war machine reads', () => {
     assert.deepStrictEqual(r.truce, {});
     assert.deepStrictEqual(r.wars, []);
     assert.ok(Object.values(r.fortAt).every((f) => f === BOARD_GAAN.startFort));
-    const garrisonTotal = Object.values(r.frontG).reduce((s, g) => s + g, 0)
-      + r.interior * BOARD_GAAN.interiorGarrison + r.capitalGarrison;
-    assert.strictEqual(r.pool, Math.round((r.field + garrisonTotal) * 1.5),
-      `${r.name} pool = ×1.5 initial military (M13)`);
+    const pop = Object.values(CRADLE_MAP.sectors)
+      .filter((s) => r.regionIds.includes(s.regionId))
+      .reduce((t, s) => t + s.populationValue, 0);
+    assert.strictEqual(r.pool, Math.round(pop * BOARD_GAAN.registerPerPop),
+      `${r.name} register = registerPerPop × Σ populationValue (sealed 3.0 ratio)`);
+    assert.strictEqual(BOARD_GAAN.registerPerPop, 1800,
+      'sealed 2026-07-07: sustain fraction 1/3 → 600 = 1800/3');
     assert.ok(['center', 'flank'].includes(r.seatType));
   }
   const center = board().filter((r) => r.seatType === 'center');
