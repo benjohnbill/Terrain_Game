@@ -90,6 +90,12 @@ play is unmeasured.
 
 - SPEC_GAPS ③ sealed for MVP: vassals cannot be attacked (same-boat
   rationale; recorded in match-arc RULINGS).
+- **Bot-policy audit PARKED as L2-fidelity fine-tuning** (user,
+  2026-07-07 evening): the agent-designed "rational-agent
+  approximation" (opportunism/pile-on reads, BOT policy dials) is
+  itself unaudited — a future grill owes numeric verification that
+  the bot design is actually the best available approximation. Not
+  main-line now; wake when L2 needle rulings need higher trust.
 - **Session re-scoped as the match-tilting pass** (user, after the
   freeze headline): step 1 = bot opportunism fidelity (the pile-on
   probe above — "rational-agent approximation, like economics assuming
