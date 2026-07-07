@@ -137,7 +137,7 @@ const TOURNEY = (typeof require !== 'undefined')
   ? require('./tournament.js')
   : window.TC && window.TC.tourney;
 
-function runCradleTournament({ map, bindings, reps = 1, seed = 1, harness, boardGaan } = {}) {
+function runCradleTournament({ map, bindings, reps = 1, seed = 1, harness, boardGaan, brain, brainFor } = {}) {
   const rng = TOURNEY.mulberry32(seed);
   const pickFrom = (arr) => arr[Math.floor(rng() * arr.length)];
   const records = [];
@@ -147,18 +147,19 @@ function runCradleTournament({ map, bindings, reps = 1, seed = 1, harness, board
       for (const seat of seats) {
         for (let rep = 0; rep < reps; rep++) {
           const assignment = {};
-          for (const s of seats) {
+          seats.forEach((s, si) => {
             assignment[s] = {
               archetype: s === seat ? focal : pickFrom(TOURNEY.ARCHETYPES),
               temperament: pickFrom(TOURNEY.TEMPERAMENTS),
+              ...(brainFor ? { brain: brainFor(s, si) } : {}),
             };
-          }
+          });
           records.push({
             bindingIndex, binding, focal, seat,
             ...TOURNEY.runMatch(assignment, {
               seed: Math.floor(rng() * 1e9),
               board: makeBoardFromMap(map, binding, boardGaan ?? BOARD_GAAN),
-              harness,
+              harness, brain,
             }),
           });
         }

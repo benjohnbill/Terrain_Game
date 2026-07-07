@@ -12,8 +12,12 @@
 //
 // HONEST LIMITS (print with every result): bot policy quality bounds
 // proof power — dominance FOUND is real; dominance NOT found is not
-// absence. Bots do not use reserves, delaying, feints, or scouting;
-// the board is one authored 5-seat instance, not the map space.
+// absence. Attackers may carry a tactical plan brain (plan-ai.js,
+// sealed 2026-07-08: ladder over all 7 plans, fog-band judgment);
+// DEFENDERS remain passive — no reserves, delaying, feints, or
+// scouting actions — so brained results are upper bounds vs a passive
+// defender. The board is one authored 5-seat instance, not the map
+// space.
 //
 // DIAL HYGIENE: values in BOT (policy dials) and HARNESS (world-model
 // glue) are harness GAAN — they bound proof power and are NOT seal
@@ -163,7 +167,7 @@ function checkView(realms) {
 function newWar(att, def, turn) {
   return {
     att: att.name, def: def.name, start: turn,
-    stage: 'siege', stamps: 0,
+    stage: 'siege', stamps: 0, starve: 0,
     occupied: 0, raided: 0,        // sectors taken / loot extracted (yield)
     stalled: 0, margin: null,      // decisive | grinding | marginal
     proposalStep: 0,               // winner's concession ladder position
@@ -185,6 +189,68 @@ function combatFromBorderClass(cls, door = Infinity) {
     case 'strait': return { terrain: 'plains', water: 'straitOpposed', chokeCap: door };
     default:       return { terrain: 'hills', chokeCap: door };
   }
+}
+
+// ---------------------------------------------------------------- plan AI
+// Tactical plan AI wiring (docs/features/tactical-plan-ai/, sealed
+// 2026-07-08). A realm may carry `brain: { kind: 'ladder'|'random',
+// confidence, disposition }`; absent brain = the unchanged script bot.
+const PLAN_AI = require('./plan-ai.js');
+
+// Stable per-(war, front) band seed — the fog seal's "no flicker" rule:
+// the same war reads the same band position all war long.
+function warBandSeed(war, front) {
+  let h = (war.bandSeed || 0) >>> 0;
+  const s = `${war.att}|${war.def}|${front}`;
+  for (let i = 0; i < s.length; i++) h = Math.imul(h ^ s.charCodeAt(i), 2654435761) >>> 0;
+  return h;
+}
+
+// M12 starvation ladder from successful supply cuts (harness 가안: one SI
+// success ≈ one turn under a maintained cut; stage2Turn 3 / stage3Turn 5).
+function siStage(starve) {
+  if (!starve) return 0;
+  if (starve >= DIALS.pulse.starvation.stage3Turn) return 3;
+  if (starve >= DIALS.pulse.starvation.stage2Turn) return 2;
+  return 1;
+}
+
+function pickPlan(A, war, front, spec, opts) {
+  if (A.brain.kind === 'random') {
+    const rng = (opts && opts.rng)
+      || mulberry32(warBandSeed(war, front) + (war.planLog ? war.planLog.length : 0));
+    return PLAN_AI.choosePlan(spec, { random: rng });
+  }
+  return PLAN_AI.choosePlan(spec, {
+    confidence: A.brain.confidence,
+    disposition: A.brain.disposition || 0,
+    seed: warBandSeed(war, front),
+  });
+}
+
+function logPlan(war, stage, pick, r, stats) {
+  (war.planLog || (war.planLog = [])).push({
+    stage, plan: pick.plan, eligible: pick.eligible, rung: pick.rung,
+    judgedStock: pick.judgedStock, judgedR: pick.judgedR,
+    forced: pick.forced || false, actualR: r.R, success: r.success,
+  });
+  if (stats) {
+    stats.brained++;
+    stats.picks[pick.plan] = (stats.picks[pick.plan] || 0) + 1;
+    if (pick.forced) stats.forced++;
+    // misjudgment: predicted success (not forced), reality said no
+    if (!pick.forced && pick.judgedR !== null && !r.success) stats.misjudged++;
+  }
+}
+
+// Success semantics by plan family (harness 가안): assault-family success
+// advances the war machine; DP erodes; SI starves; Raid bleeds/loots
+// without occupying (raids never take ground).
+function advanceOnSuccess(war, r, plan) {
+  if (plan === 'DP') { war.stamps += r.margin >= DIALS.dpErosion.deepMargin ? 2 : 1; return false; }
+  if (plan === 'SI') { war.starve = (war.starve || 0) + 1; return false; }
+  if (plan === 'Raid') { war.raided += 1; return false; }
+  return true; // Swift / Crossing / Flanking / Encirclement take the ground
 }
 
 function warBattle(war, A, D, opts = {}) {
@@ -212,6 +278,20 @@ function warBattle(war, A, D, opts = {}) {
     const site = (D.frontClass && D.frontClass[front])
       ? { ...combatFromBorderClass(D.frontClass[front], D.frontDoor[front]), fort, erosionStamps: war.stamps }
       : { terrain: 'hills', fort, erosionStamps: war.stamps, ...crossing };
+    if (A.brain) {
+      const spec = { attacker: { stock: A.field, commit: BOT.siegeCommit },
+        defender: { stock: g, commit: BOT.siegeCommit, starvationStage: siStage(war.starve) },
+        ...site, defenderIsolated: D.field < 400 }; // no relief army → cut off
+      const pick = pickPlan(A, war, front, spec, opts);
+      const r = resolve({ ...spec, plan: pick.plan });
+      logPlan(war, 'siege', pick, r, opts.planStats);
+      applyBlood(A, D, r, front);
+      if (r.success && advanceOnSuccess(war, r, pick.plan)) {
+        war.stage = 'field'; war.occupied += 1; D.interior = Math.max(0, D.interior);
+      } else if (!r.success && r.R < 1.1) war.stalled++;
+      if (r.routed === 'defender') war.stage = 'field'; // garrison routs out of the works
+      return r;
+    }
     if (fortNow <= (BOT.stormAt[fort] ?? 1.2) + 1e-9) {
       const r = resolve({ plan: 'Swift', attacker: { stock: A.field, commit: BOT.siegeCommit },
         defender: { stock: g, commit: BOT.siegeCommit }, ...site });
@@ -233,6 +313,23 @@ function warBattle(war, A, D, opts = {}) {
     // a beaten SCREEN is never a decisive victory — the main army lives
     const routMargin = (fracA) => opts.screen ? 'grinding' : (fracA < 0.10 ? 'decisive' : 'grinding');
     if (defField < 400) { war.stage = 'cascade'; war.margin = war.margin ?? routMargin(0); return null; }
+    if (A.brain) {
+      const spec = { attacker: { stock: A.field, commit: BOT.fieldCommit },
+        defender: { stock: defField, commit: BOT.fieldCommit },
+        terrain: 'plains', ...crossing };
+      const pick = pickPlan(A, war, front, spec, opts);
+      const r = resolve({ ...spec, plan: pick.plan });
+      logPlan(war, 'field', pick, r, opts.planStats);
+      A.field = Math.max(0, r.stockAfterA); poolBleed(A, r.lossA);
+      D.field = Math.max(0, D.field - (defField - Math.max(0, r.stockAfterB))); poolBleed(D, r.lossB);
+      if (r.routed === 'defender') {
+        war.stage = 'cascade';
+        war.margin = routMargin(r.fracA);
+      } else if (!r.success && r.R < 1.2) {
+        war.stalled++; war.margin = 'marginal';
+      } else if (r.success && advanceOnSuccess(war, r, pick.plan)) war.margin = war.margin ?? 'grinding';
+      return r;
+    }
     const r = resolve({ plan: 'Swift', attacker: { stock: A.field, commit: BOT.fieldCommit },
       defender: { stock: defField, commit: BOT.fieldCommit }, terrain: 'plains', ...crossing });
     A.field = Math.max(0, r.stockAfterA); poolBleed(A, r.lossA);
@@ -248,6 +345,17 @@ function warBattle(war, A, D, opts = {}) {
 
   if (war.stage === 'cascade') {
     if (D.interior <= 0) { war.stage = 'capital'; return null; }
+    if (A.brain) {
+      const spec = { attacker: { stock: A.field, commit: BOT.siegeCommit },
+        defender: { stock: 500, commit: 0 }, terrain: 'plains',
+        defenderIsolated: D.field < 400 };
+      const pick = pickPlan(A, war, front, spec, opts);
+      const r = resolve({ ...spec, plan: pick.plan });
+      logPlan(war, 'cascade', pick, r, opts.planStats);
+      A.field = Math.max(0, r.stockAfterA); poolBleed(A, r.lossA);
+      if (r.success && advanceOnSuccess(war, r, pick.plan)) { war.occupied += 1; D.interior -= 1; }
+      return r;
+    }
     const r = resolve({ plan: 'Swift', attacker: { stock: A.field, commit: BOT.siegeCommit },
       defender: { stock: 500, commit: 0 }, terrain: 'plains' });
     A.field = Math.max(0, r.stockAfterA); poolBleed(A, r.lossA);
@@ -258,6 +366,19 @@ function warBattle(war, A, D, opts = {}) {
   if (war.stage === 'capital') {
     const site = { terrain: 'plains', fort: 'walls', erosionStamps: war.stamps };
     const fortNow = Math.max(1, DIALS.fort.walls - war.stamps * DIALS.erosionStep);
+    if (A.brain) {
+      const spec = { attacker: { stock: A.field, commit: BOT.fieldCommit },
+        defender: { stock: D.capitalGarrison, commit: BOT.fieldCommit, starvationStage: siStage(war.starve) },
+        ...site, defenderIsolated: D.field < 400 };
+      const pick = pickPlan(A, war, front, spec, opts);
+      const r = resolve({ ...spec, plan: pick.plan });
+      logPlan(war, 'capital', pick, r, opts.planStats);
+      A.field = Math.max(0, r.stockAfterA); poolBleed(A, r.lossA);
+      D.capitalGarrison = Math.max(0, r.stockAfterB); poolBleed(D, r.lossB);
+      if (r.success && advanceOnSuccess(war, r, pick.plan)) war.stage = 'fallen';
+      if (r.routed === 'defender') war.stage = 'fallen';
+      return r;
+    }
     if (fortNow <= 1.2 + 1e-9) {
       const r = resolve({ plan: 'Swift', attacker: { stock: A.field, commit: BOT.fieldCommit },
         defender: { stock: D.capitalGarrison, commit: BOT.fieldCommit }, ...site });
@@ -590,12 +711,14 @@ function runMatch(assignment, opts = {}) {
   for (const r of realms) {
     r.archetype = assignment[r.name].archetype;
     r.temperament = assignment[r.name].temperament;
+    r.brain = assignment[r.name].brain || opts.brain || null; // tactical plan AI (per-seat > uniform > script)
   }
   const record = {
     assignment, seed: opts.seed ?? 1,
     winner: null, endingShape: 'timeout', tripTurn: null,
     settlements: [], presetOffers: [], vassalOffers: 0, vassalDeals: 0,
     eliminations: 0, raids: 0, warsStarted: 0,
+    planStats: { picks: {}, brained: 0, forced: 0, misjudged: 0 },
   };
 
   for (let t = 1; t <= H.maxTurns; t++) {
@@ -615,6 +738,7 @@ function runMatch(assignment, opts = {}) {
     }
     for (const [r, target] of declarations) {
       const war = newWar(r, target, t);
+      war.bandSeed = Math.floor(rng() * 4294967296); // per-war fog band identity
       r.wars.push(war); target.wars.push(war);
       record.warsStarted++;
     }
@@ -636,7 +760,7 @@ function runMatch(assignment, opts = {}) {
       const A = realms.find((r) => r.name === war.att);
       const D = realms.find((r) => r.name === war.def);
       if (!A.alive || !D.alive) { war.stage = 'over'; continue; }
-      warBattle(war, A, D, { screen: mainDefWar[D.name] !== war });
+      warBattle(war, A, D, { screen: mainDefWar[D.name] !== war, rng, planStats: record.planStats });
       war.endTurn = t;
 
       if (war.stage === 'fallen') {
@@ -779,4 +903,4 @@ const SPEC_GAPS = [
 module.exports = { HARNESS, BOT, ARCHETYPES, TEMPERAMENTS, SEATS, SPEC_GAPS,
   makeBoard, runMatch, runTournament, mulberry32, yieldReach, realmValue,
   pickTarget, peacePrimary, doRecruit, poolBleed, servingBodies, regenGarrisons,
-  realmIncome, intensity, combatFromBorderClass };
+  realmIncome, intensity, combatFromBorderClass, newWar, warBattle };
