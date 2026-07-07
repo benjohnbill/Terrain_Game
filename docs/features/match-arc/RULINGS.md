@@ -168,6 +168,16 @@ Match-arc-owned (match flow + AI + settlement):
   and consistent with vassal permanence — BUT it gates the
   chain-collapse liberation horizon (queue 10), so the final call is
   B/playtest, not paper. *Identity-flavored — surfaced to the user.*
+  **SEALED for MVP 2026-07-07 (user, L2 adapter session): vassals
+  cannot be attacked — war routes through the overlord.** User
+  rationale (verbatim): "복속국에 자유를 주는 것이, 자원을 온전히
+  취하는 전략이기도 하지만, 그들의 역량에 맡긴다는 리스크를 지는
+  느낌인 거니까. 애초에 같은 배를 타버린 거로 취급을 해야지" —
+  vassal and overlord board the same boat; the overlord's return
+  (whole resources) is priced by betting on the vassal's capability,
+  so third parties treat the pair as one side. Phase-2 betrayal
+  design and the chain-collapse liberation horizon (queue 10) stay
+  open — this seals the MVP default only.
 - **④ Settlement initiative** → 정산 layer + showdown staging
   (queue 9), deferred to B. Canon has the acceptance arithmetic
   (수락 산술); initiative and concession tempo are the flow around it,
