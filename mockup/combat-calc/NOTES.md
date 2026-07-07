@@ -206,6 +206,39 @@ adopted and refined into:
   the Band-1 base of this model. M14 flat blood-EV check owed at the
   magnitude session (band escalation intentionally bends it at depth).
 
+## Start-state coordinates SEALED (2026-07-07 night, user; 3 stamps)
+
+Curve/zone shape agreed ("arithmetic continuous, story in zones" —
+piecewise-linear marginal price with named zones; exact knees deferred
+until the coordinates below were pinned). Research:
+`docs/features/match-arc/research/garrison-field-ratio-and-armed-peace.md`.
+
+- **ρ = 0.75** (war-footing garrison:field, Vauban band pin; per-seat
+  spread 0.58–0.96 by border exposure — exposure texture kept).
+  Correction on the record: agent misclaimed the old harness already
+  sat at 0.75; actual was 0.39 (garrison classes conflated). Carrier
+  dial: garrisonPerBorderSector 300 → **900**.
+- **g₀ = 1.0** (garrisons start at cap — cross-era regularity: peace
+  draw-down falls on the field army; capital start 1,200 → 1,500).
+- **f₀ = 0.5** (armed-peace field fill, [0.4–0.6] bracket): plain
+  buildup 5 turns, surged 2–3 (the surge draft gets its opening beat;
+  M13 "buildup 2–3 turns" re-read as SURGED buildup). **Rider: sheet-7
+  tempo revalidation owed** — first data point below.
+- Derived coordinates now principled: start intensity ≈ 42%,
+  structural max ≈ 58%, beyond-58% = blood-bought desperation zone.
+  Suite 101/101 (coordinate test added).
+
+**Rider first data — the Vauban world deepens the freeze (expected
+family, bigger size): decided 21% → 7%, wars/match 10.5 → 7.1,
+eliminations halved.** Reading: thicker shields raise both the war
+cost AND the leadership bar (shield mass includes facing garrisons) —
+the harness now reproduces the historical Vauban-era indecisiveness
+(the fortress-belt age of inconclusive wars). NOT grounds to unseal
+the physique: these are principled body values; making THIS world
+converge is precisely the remaining match-tilting duty (recovery
+dials + blinds), whose target just sharpened to ~93% frozen at
+bot-grade. Envelope note: converging matches still land mean T26.
+
 ## User rulings this session (2026-07-07)
 
 - SPEC_GAPS ③ sealed for MVP: vassals cannot be attacked (same-boat

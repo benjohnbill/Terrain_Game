@@ -110,3 +110,23 @@ test('deterministic: two builds are identical', () => {
   assert.deepStrictEqual(JSON.parse(JSON.stringify(board())),
     JSON.parse(JSON.stringify(board())));
 });
+
+test('sealed start-state coordinates: armed-peace fill + Vauban garrison ratio', () => {
+  // seals 2026-07-07 (research-anchored): f0 = 0.5 armed-peace field fill,
+  // g0 = 1.0 garrisons full, rho = garrison:field ~0.75 (Vauban band)
+  assert.strictEqual(BOARD_GAAN.startFieldFrac, 0.5);
+  assert.strictEqual(BOARD_GAAN.garrisonPerBorderSector, 900);
+  assert.strictEqual(BOARD_GAAN.capitalGarrison, 1500);
+  const realms = board();
+  let rhoSum = 0; let startIntSum = 0; let maxIntSum = 0;
+  for (const r of realms) {
+    const front = Object.values(r.frontCap).reduce((s, g) => s + g, 0);
+    rhoSum += (front + r.capitalGarrison) / r.fieldCap;
+    startIntSum += (r.field + front + r.capitalGarrison) / r.pool;
+    maxIntSum += (r.fieldCap + front + r.capitalGarrison) / r.pool;
+  }
+  const n = realms.length;
+  assert.ok(Math.abs(rhoSum / n - 0.75) < 0.02, `avg rho ${rhoSum / n}`);
+  assert.ok(Math.abs(startIntSum / n - 0.42) < 0.02, `start intensity ${startIntSum / n}`);
+  assert.ok(Math.abs(maxIntSum / n - 0.585) < 0.02, `structural max ${maxIntSum / n}`);
+});

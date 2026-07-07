@@ -11,10 +11,21 @@ const deps = (typeof require !== 'undefined')
   : { ECON: window.TC && window.TC.econ, LOADER: window.TC && window.TC.loader };
 
 const BOARD_GAAN = {
-  startFieldFrac: 0.7,          // parity start: field = 70% of cap for every seat
-  garrisonPerBorderSector: 300, // mature-state shield per border sector
-  interiorGarrison: 300,        // per interior sector (fixture-board constant)
-  capitalGarrison: 1200,        // fixture-board default
+  // Start-state coordinates SEALED 2026-07-07 (user, match-tilting grill;
+  // research anchors: docs/features/match-arc/research/
+  // garrison-field-ratio-and-armed-peace.md):
+  //   f0 = 0.5 armed-peace field fill [0.4-0.6 bracket, Louis XIV/Dutch]
+  //        — plain buildup 5 turns, surged 2-3; RIDER: sheet-7 tempo
+  //        revalidation owed at the L2 re-run
+  //   g0 = 1.0 garrisons start full (cross-era: peace draw-down falls on
+  //        the field army; the fortress shield stays manned)
+  //   rho = garrison:field ~0.75 avg (Vauban band pin; per-seat spread
+  //        0.58-0.96 by border exposure, inside the [0.6-1.0] bracket)
+  // Derived coordinates: start intensity ~42%, structural max ~58%.
+  startFieldFrac: 0.5,          // f0: armed peace — shields up, spear half-forged
+  garrisonPerBorderSector: 900, // rho carrier: shield per border sector
+  interiorGarrison: 300,        // per interior sector (legacy pool-sizing only)
+  capitalGarrison: 1500,        // g0 = 1.0: capital guard starts at its cap
   startFort: 'walls',           // mature-state start: walls at every front
   registerPerPop: 1800,         // 징집 명부 per populationValue point —
                                 // SEALED 2026-07-07 (user, match-tilting
