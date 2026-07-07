@@ -609,7 +609,8 @@ rule)._
   hypothesis, not a design guarantee (TC-②). No realm is one-war-killable
   from turn 1 without buildup (~1.7 shield-mass ratio is the sizing tool;
   values → battery). _2026-07-07: supersedes the earlier "richer center,
-  mass asymmetry" wording (parity v4); SPEC amendment proposal pending._
+  mass asymmetry" wording (parity v4); SPEC amended the same day
+  (user-approved)._
 - ✅ `Match arc as design budget`: buildup cost, war length, and the hegemony
   threshold are tuned so one player's hand fights ~2–3 wars per match; the match
   ends at the hegemony settlement. A tuning target, never a mechanical cap — the

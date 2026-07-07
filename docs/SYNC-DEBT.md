@@ -25,13 +25,6 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   ladder (model docs → DESIGN) symmetric with GLOSSARY→DOMAIN_MAP and
   RULINGS→ADR, so all three Production tiers connect to root the same
   way. NOT A-4 B1 scope; a deliberate separate pass (user-flagged).
-- [ ] **SPEC 중원-crown amendment (TC-②) — proposal drafted, awaiting
-  user decision** (registered 2026-07-07, C-loop close; proposal
-  presented 2026-07-07 doc-sync session): SPEC §Match structure still
-  says "asymmetric in mass … a richer, multi-front 'small 중원'
-  center"; parity v5 (TC-①) deleted the population crown and TC-②
-  demoted the center-protagonist to hypothesis. SPEC changes only by
-  explicit user decision — propose, never drift.
 
 ## Deferred (user-decided 2026-07-06, A-4 B6 — revisit on trigger)
 
@@ -46,6 +39,13 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
 
 ## Paid
 
+- [x] 2026-07-07 — **SPEC 중원-crown amendment (TC-②) APPLIED,
+  user-approved** — SPEC §Match structure re-cut: survivability +
+  starting-population parity balanced, geometry/economy asymmetry;
+  crown economic only (traffic centrality + long-war stamina, never a
+  population edge); center-protagonist stated as measured hypothesis
+  with the stable-digestion premium framing. Proposed and approved in
+  the 2026-07-07 doc-sync session (propose-never-drift honored).
 - [x] 2026-07-07 — **Terrain-cradle → Projection sync (C-loop close
   doc-sync batch)** — DOMAIN_MAP gained a `Terrain Cradle (Authored
   Map)` section (summary + pointer, sync-stamped) promoting void

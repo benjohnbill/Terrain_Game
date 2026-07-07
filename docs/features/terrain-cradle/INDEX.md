@@ -8,8 +8,9 @@ sector layout. Next tier of truth is L2 (tournament adapter).
 Projection sync (2026-07-07 doc-sync batch): void terrain / parity
 start / battle-summoning placement promoted to DOMAIN_MAP (summary +
 pointer; definitions stay here); DESIGN carries the authored-map
-pipeline subsection. SPEC 중원-crown amendment (TC-②) proposed,
-awaiting user decision — see `docs/SYNC-DEBT.md`.
+pipeline subsection. SPEC 중원-crown amendment (TC-②) applied
+2026-07-07, user-approved — the Projection/Direction sync debt from the
+C-loop close is fully paid (`docs/SYNC-DEBT.md`).
 
 ## What this feature is
 

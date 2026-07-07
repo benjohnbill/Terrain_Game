@@ -114,10 +114,16 @@ pressure remains the separate opt-in question below).
 that envelope. The map is fully partitioned from turn 1 — 4-6 realms (authoring
 default 5), every realm bordering neighbors, no expand-into-empty-land opening.
 Realms start as mature states (fortresses standing at chokes, armies raised)
-balanced on *survivability* but asymmetric in mass and geometry: a richer,
-multi-front "small 중원" center against smaller, shielded, coalition-capable
-peripheries, so whoever takes the center inherits its exposure (the anti-snowball
-loop). A match arcs standoff → buildup → first war → realignment → deciding
+balanced on *survivability and starting population* — every region opens with
+the same population total, so lifetime blood budgets are equal and divergence
+comes only from play — but asymmetric in geometry and economy: a multi-front
+중원 center whose crown is economic (traffic centrality plus long-war economic
+stamina, never a population edge) against shielded, coalition-capable
+peripheries, so whoever takes the center inherits its exposure (the
+anti-snowball loop). The center-protagonist reading is a measured hypothesis,
+not a design guarantee: the design does not script a higher 중원 win rate;
+whoever *digests* the center stably earns a hegemony-probability premium
+(terrain-cradle TC-②). A match arcs standoff → buildup → first war → realignment → deciding
 war → decision point → settlement, budgeted so one player's hand fights ~2-3
 wars. A war is decided by field-army destruction (shield-break → decisive battle
 → cascade) and converted to gains through settlement rather than
