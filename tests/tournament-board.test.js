@@ -101,3 +101,70 @@ test('pile-on probe: wounded neighbor opens the attack window (harness flag)', (
   assert.ok(probePick && probePick.name === 'W',
     'probe: wounded window + ratio relief lets the pack jump');
 });
+
+// ---- (b) total-bodies register accounting (Q0-5 structure seal) ----
+
+test('recruiting moves bodies civilian→serving: register unchanged', () => {
+  const board = makeBoardFromMap(CRADLE_MAP, CRADLE_BINDING);
+  const r = board[0];
+  const before = r.pool;
+  r.field = Math.round(r.fieldCap * 0.5); // room to recruit
+  TOURNEY.doRecruit(r);
+  assert.ok(r.field > Math.round(r.fieldCap * 0.5), 'recruit added men');
+  assert.strictEqual(r.pool, before, 'register is total bodies — drafting does not shrink it');
+});
+
+test('recruit is capped by remaining civilians (register − serving)', () => {
+  const board = makeBoardFromMap(CRADLE_MAP, CRADLE_BINDING);
+  const r = board[0];
+  // shrink register to exactly the serving body count → zero civilians
+  r.pool = TOURNEY.servingBodies(r);
+  r.field -= 1000; r.pool -= 1000; // 1000 died in the field: still zero civilians
+  const before = r.field;
+  TOURNEY.doRecruit(r);
+  assert.strictEqual(r.field, before, 'no civilians left — nothing to draft');
+});
+
+test('a drafted soldier who dies costs the register exactly once', () => {
+  const board = makeBoardFromMap(CRADLE_MAP, CRADLE_BINDING);
+  const r = board[0];
+  r.field = Math.round(r.fieldCap * 0.5);
+  const start = r.pool;
+  TOURNEY.doRecruit(r);
+  const drafted = r.field - Math.round(r.fieldCap * 0.5);
+  // the drafted men die
+  r.field -= drafted;
+  TOURNEY.poolBleed(r, drafted);
+  assert.strictEqual(r.pool, start - drafted,
+    'register drops by the deaths only — no draft double-count');
+});
+
+test('garrison regeneration draws from civilians (P1: no free healing)', () => {
+  const board = makeBoardFromMap(CRADLE_MAP, CRADLE_BINDING);
+  const r = board[0];
+  const front = Object.keys(r.frontG)[0];
+  r.frontG[front] = Math.round(r.frontCap[front] * 0.5); // wounded garrison
+  // zero civilians: regen must find no bodies
+  r.pool = TOURNEY.servingBodies(r);
+  const healed = TOURNEY.regenGarrisons(r, { garrisonRegen: 0.10 });
+  assert.strictEqual(healed, 0, 'no civilians — garrisons cannot regenerate');
+  // give civilians: regen works again, register unchanged (bodies move, not die)
+  r.pool += 5000;
+  const before = r.pool;
+  const healed2 = TOURNEY.regenGarrisons(r, { garrisonRegen: 0.10 });
+  assert.ok(healed2 > 0, 'civilians available — regen flows');
+  assert.strictEqual(r.pool, before, 'regen moves bodies; register unchanged');
+});
+
+test('registerPerPop sizes the cradle register from population when set', () => {
+  const { BOARD_GAAN: G } = require('../mockup/combat-calc/map-board.js');
+  const k = 1000;
+  const board = makeBoardFromMap(CRADLE_MAP, CRADLE_BINDING, { ...G, registerPerPop: k });
+  for (const r of board) {
+    const pop = Object.values(CRADLE_MAP.sectors)
+      .filter((s) => r.regionIds.includes(s.regionId))
+      .reduce((t, s) => t + s.populationValue, 0);
+    assert.strictEqual(r.pool, Math.round(pop * k),
+      `${r.name} register = registerPerPop × Σ populationValue`);
+  }
+});

@@ -16,6 +16,9 @@ const BOARD_GAAN = {
   interiorGarrison: 300,        // per interior sector (fixture-board constant)
   capitalGarrison: 1200,        // fixture-board default
   startFort: 'walls',           // mature-state start: walls at every front
+  registerPerPop: null,         // 징집 명부 per populationValue point (Q0-5
+                                // re-founding; USER-PENDING — null falls back
+                                // to the legacy ×1.5-military sizing)
 };
 
 function makeBoardFromMap(map, binding, gaan = BOARD_GAAN) {
@@ -54,6 +57,7 @@ function makeBoardFromMap(map, binding, gaan = BOARD_GAAN) {
 
     const interior = secs.length - borderSectors.size;
     const yieldBase = secs.reduce((t, s) => t + s.economyValue, 0);
+    const popTotal = secs.reduce((t, s) => t + s.populationValue, 0);
     const field = Math.round(fieldCap * gaan.startFieldFrac);
     const garrisonTotal = Object.values(frontG).reduce((s, g) => s + g, 0)
       + interior * gaan.interiorGarrison + gaan.capitalGarrison;
@@ -69,7 +73,9 @@ function makeBoardFromMap(map, binding, gaan = BOARD_GAAN) {
       usable: 1.0,
       yieldBase,
       sectorYield: yieldBase / interior,
-      pool: Math.round((field + garrisonTotal) * 1.5),
+      pool: gaan.registerPerPop            // (b) total-bodies register:
+        ? Math.round(popTotal * gaan.registerPerPop)   // land-derived (Q0-5)
+        : Math.round((field + garrisonTotal) * 1.5),   // legacy sizing (구칭)
       recruitBonus: 0,
       alive: true, vassalOf: null,
       truce: {}, wars: [],

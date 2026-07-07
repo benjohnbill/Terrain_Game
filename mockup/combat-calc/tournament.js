@@ -462,12 +462,39 @@ function peacePrimary(me, realms, rng, record) {
   return 'hold';
 }
 
+// (b) total-bodies register accounting (Q0-5 structure seal, 2026-07-07):
+// pool = living bodies TOTAL (serving + civilians). Drafting/regen move
+// bodies civilian→serving (pool unchanged); only death shrinks it
+// (poolBleed). Fixes the old draft double-count (recruit decremented
+// pool AND the recruit's later death decremented it again).
+function servingBodies(r) {
+  return r.field + Object.values(r.frontG).reduce((s, g) => s + g, 0)
+    + r.capitalGarrison;
+}
+const civilians = (r) => Math.max(0, r.pool - servingBodies(r));
+
 function doRecruit(me) {
   const base = Math.round(me.fieldCap * MATCH_DIALS.recruitPerTurn * me.usable);
   const bonus = Math.min(me.recruitBonus, base); // indemnity credit accelerates, same primary
   me.recruitBonus -= bonus;
-  const add = Math.min(me.fieldCap - me.field, Math.min(me.pool, base + bonus));
-  me.field += add; me.pool -= add;
+  const add = Math.min(me.fieldCap - me.field, Math.min(civilians(me), base + bonus));
+  me.field += add;
+}
+
+// P1 dual billing, register side: garrison regeneration draws real
+// bodies from the same register (no free healing). Returns men healed.
+// (Treasury side of P1 is not modeled in this harness — sheet limits.)
+function regenGarrisons(r, H) {
+  let avail = civilians(r); let healed = 0;
+  for (const f of Object.keys(r.frontG)) {
+    const want = Math.min(r.frontCap[f] - r.frontG[f], Math.round(r.frontCap[f] * H.garrisonRegen));
+    const add = Math.max(0, Math.min(want, avail));
+    r.frontG[f] += add; avail -= add; healed += add;
+  }
+  const capWant = Math.min(1500 - r.capitalGarrison, Math.round(1500 * H.garrisonRegen * 0.5));
+  const capAdd = Math.max(0, Math.min(capWant, avail));
+  r.capitalGarrison += capAdd; healed += capAdd;
+  return healed;
 }
 
 // ---------------------------------------------------------------- match
@@ -557,11 +584,9 @@ function runMatch(assignment, opts = {}) {
       }
     }
 
-    // --- M12/M13 pulse: garrison regen (all), usable recovery
+    // --- M12/M13 pulse: garrison regen (P1: draws civilians), usable recovery
     for (const r of alive) {
-      for (const f of Object.keys(r.frontG))
-        r.frontG[f] = Math.min(r.frontCap[f], r.frontG[f] + Math.round(r.frontCap[f] * H.garrisonRegen));
-      r.capitalGarrison = Math.min(1500, r.capitalGarrison + Math.round(1500 * H.garrisonRegen * 0.5));
+      regenGarrisons(r, H);
       r.usable = Math.min(1, r.usable + H.usableRecovery);
     }
 
@@ -664,4 +689,4 @@ const SPEC_GAPS = [
 
 module.exports = { HARNESS, BOT, ARCHETYPES, TEMPERAMENTS, SEATS, SPEC_GAPS,
   makeBoard, runMatch, runTournament, mulberry32, yieldReach, realmValue,
-  pickTarget };
+  pickTarget, doRecruit, poolBleed, servingBodies, regenGarrisons };
