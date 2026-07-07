@@ -58,3 +58,20 @@ test('watchFlags ignores undecided matches in rates but counts them', () => {
   assert.strictEqual(flags.regions.r1.wins, 1);
   assert.strictEqual(flags.undecided, 1);
 });
+
+test('pairFlags aggregates winrate per region-pair seat across seatings', () => {
+  const { pairFlags } = require('../mockup/combat-calc/map-board.js');
+  const b1 = { X: ['r1', 'r7'], Y: ['r2', 'r3'] };
+  const b2 = { P: ['r1', 'r2'], Q: ['r3', 'r7'] };
+  const records = [
+    { binding: b1, winner: 'X' }, { binding: b1, winner: null },
+    { binding: b2, winner: 'Q' },
+  ];
+  const flags = pairFlags(records);
+  assert.strictEqual(flags['r1+r7'].matches, 2);
+  assert.strictEqual(flags['r1+r7'].wins, 1);
+  assert.strictEqual(flags['r1+r7'].rate, 0.5);
+  assert.strictEqual(flags['r2+r3'].wins, 0);
+  assert.strictEqual(flags['r3+r7'].wins, 1);
+  assert.strictEqual(flags['r1+r2'].matches, 1);
+});

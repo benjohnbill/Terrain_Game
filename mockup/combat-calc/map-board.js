@@ -137,6 +137,22 @@ function watchFlags(records, regionIds) {
   };
 }
 
-const _api = { makeBoardFromMap, BOARD_GAAN, runCradleTournament, watchFlags };
+// Pair-level decomposition — the honest unit: a seat IS a region pair,
+// so region-level rates are partner-confounded; this table is not.
+function pairFlags(records) {
+  const out = {};
+  for (const r of records) {
+    for (const [seat, rids] of Object.entries(r.binding)) {
+      const key = [...rids].sort().join('+');
+      (out[key] ??= { matches: 0, wins: 0 });
+      out[key].matches++;
+      if (r.winner === seat) out[key].wins++;
+    }
+  }
+  for (const v of Object.values(out)) v.rate = v.wins / v.matches;
+  return out;
+}
+
+const _api = { makeBoardFromMap, BOARD_GAAN, runCradleTournament, watchFlags, pairFlags };
 if (typeof module !== 'undefined' && module.exports) module.exports = _api;
 else (window.TC = window.TC || {}).board = _api;

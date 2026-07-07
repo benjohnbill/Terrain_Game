@@ -10,7 +10,7 @@ const { FIXTURE_MAP } = require('./map-data.js');
 const { loadMap } = require('./map-loader.js');
 const { gateReport, viableBindings } = require('./map-gate.js');
 const { CRADLE_MAP, CRADLE_BINDING } = require('./map-gen.js');
-const { makeBoardFromMap, runCradleTournament, watchFlags } = require('./map-board.js');
+const { makeBoardFromMap, runCradleTournament, watchFlags, pairFlags } = require('./map-board.js');
 
 const fmt = (n) => typeof n === 'number' && !Number.isInteger(n) ? n.toFixed(2) : String(n);
 const men = (n) => `${Math.round(n).toLocaleString()}명(${(n / 100).toFixed(1)}부대)`;
@@ -935,7 +935,7 @@ function cradleSheet() {
   console.log('pricing + raid value only (no fort/recruit prices, M14 channel absent).');
 
   const { viable } = viableBindings(CRADLE_MAP, 5);
-  const REPS = 3; const SEED = 42;
+  const REPS = 30; const SEED = 42;
   const records = runCradleTournament({
     map: CRADLE_MAP, bindings: viable, reps: REPS, seed: SEED,
   });
@@ -945,13 +945,29 @@ function cradleSheet() {
   // --- watch-flag table: region-holder winrate, every region
   const regionName = Object.fromEntries(CRADLE_MAP.regions.map((r) => [r.id, r.name]));
   const flags = watchFlags(records, CRADLE_MAP.regions.map((r) => r.id));
-  sub(`Region-holder win rates (baseline = decided ÷ seat-slots = ${(flags.baseline * 100).toFixed(1)}%; undecided ${flags.undecided}/${records.length})`);
+  const se = Math.sqrt(flags.baseline * (1 - flags.baseline) / records.length);
+  sub(`Region-holder win rates (baseline = decided ÷ seat-slots = ${(flags.baseline * 100).toFixed(1)}%; undecided ${flags.undecided}/${records.length}; ~2σ noise band ±${(2 * se * 100).toFixed(2)}pp)`);
+  console.log('  NOTE: region rows are partner-confounded (a seat is a region PAIR) —');
+  console.log('  the pair table below is the honest unit.');
   row(['region', 'holder wins', 'rate', 'vs baseline'], [14, 12, 8, 12]);
   for (const [rid, f] of Object.entries(flags.regions)) {
     const delta = f.rate - flags.baseline;
     row([`${regionName[rid]} (${rid})`, `${f.wins}/${f.matches}`,
-      `${(f.rate * 100).toFixed(1)}%`, `${delta >= 0 ? '+' : ''}${(delta * 100).toFixed(1)}pp`],
+      `${(f.rate * 100).toFixed(1)}%`, `${delta >= 0 ? '+' : ''}${(delta * 100).toFixed(2)}pp (${(Math.abs(delta) / se).toFixed(1)}σ)`],
     [14, 12, 8, 12]);
+  }
+
+  // --- pair table: the seat IS a region pair
+  const pairs = pairFlags(records);
+  sub('Seat-pair win rates (sorted; the unit the tournament actually plays)');
+  row(['pair', 'wins', 'rate', 'vs baseline'], [16, 10, 8, 14]);
+  for (const [key, p] of Object.entries(pairs).sort((a, b) => b[1].rate - a[1].rate)) {
+    const label = key.split('+').map((rid) => regionName[rid]).join('+');
+    const pse = Math.sqrt(flags.baseline * (1 - flags.baseline) / p.matches);
+    const delta = p.rate - flags.baseline;
+    row([label, `${p.wins}/${p.matches}`, `${(p.rate * 100).toFixed(1)}%`,
+      `${delta >= 0 ? '+' : ''}${(delta * 100).toFixed(2)}pp (${(Math.abs(delta) / pse).toFixed(1)}σ)`],
+    [16, 10, 8, 14]);
   }
 
   // --- registered watch flags, measured where the machine allows
