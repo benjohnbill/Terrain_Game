@@ -60,10 +60,44 @@ doors, fronts, economy ledger) is the real map. Reproduce:
   first time: ~58% frozen tail at bot-grade play, plus envelope
   overshoot (converging half lands mean T33).
 
+## Pile-on probe result (2026-07-07 evening — the freeze is STRUCTURAL)
+
+Question: how much of the ~58% frozen tail is bot blindness (weak
+opportunism read) vs true design gap? Probe: HARNESS.pileOn — a
+strengthened opportunism read (wounded neighbor below `woundedFrac` of
+cap = attack window, window targets rank first, required ratio ×
+`ratioRelief`). Bot-policy fidelity lever only; never a game rule.
+Implemented TDD (pickTarget H param; suite 94/94).
+
+Sweep (7 seatings × 6 archetypes × 5 seats × 15 reps = 3,150 each,
+seed 42): canon 22% decided → mild(0.8/0.9) 23% → std(0.8/0.85) 24% →
+hot(0.9/0.8) 24% → std+A-3(cap 400) 26%. Eliminations flat 0.36/match,
+wars flat 10.5/match across ALL worlds.
+
+**Verdict: bot target-selection blindness explains almost none of the
+freeze.** The world is already war-saturated (a war every ~3 turns);
+sharper pack-hunting adds wars nobody converts. The frozen tail is
+structural — wars end in material settlements, wounds heal (M12/M13
+regen), nothing accumulates toward the leadership bar. The residual
+duty for the match-tilting pass (recovery dials + blinds + A-3
+numbers) is effectively the whole tail. Honest limit: the probe
+sharpens WHEN bots attack, not HOW they fight (no concentration,
+feints, scouting) — sheet-8's hand-scripted arc remains the proof a
+skilled hand can converge; the gap between probe-grade and hand-grade
+play is unmeasured.
+
 ## User rulings this session (2026-07-07)
 
 - SPEC_GAPS ③ sealed for MVP: vassals cannot be attacked (same-boat
   rationale; recorded in match-arc RULINGS).
+- **Session re-scoped as the match-tilting pass** (user, after the
+  freeze headline): step 1 = bot opportunism fidelity (the pile-on
+  probe above — "rational-agent approximation, like economics assuming
+  homo economicus"); step 2 = recovery-dial re-cut (SEALED M12 values —
+  grill + user seal required) + blinds device design. User insight
+  parked for a future pass: mutual pile-on fear as the seed of the
+  undiscussed DIPLOMACY tab (players not fighting because the pack
+  watches — deterrence as social layer).
 - **Session order re-cut (impact-first principle)**: match-tilting /
   escalation design (blinds) is promoted ahead of force-geography —
   the user did not expect the recovery dials to carry this much

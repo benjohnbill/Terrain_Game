@@ -68,3 +68,36 @@ test('record.finalCheck reports the closest hegemony candidate at match end', ()
     assert.strictEqual(fc.leadership && fc.unassailable, true);
   }
 });
+
+test('pile-on probe: wounded neighbor opens the attack window (harness flag)', () => {
+  // three-realm micro board: W wounded (field 40% of cap), P patient
+  // archetype at full strength, N neutral bystander
+  const mk = (name, field, fieldCap, fronts) => ({
+    name, seatType: 'flank', field, fieldCap, interior: 3,
+    capitalGarrison: 1200, frontG: { ...fronts }, frontCap: { ...fronts },
+    fortAt: Object.fromEntries(Object.keys(fronts).map((k) => [k, 'walls'])),
+    exits: [{ cap: Infinity }], staging: false, usable: 1.0,
+    pool: 10000, recruitBonus: 0, alive: true, vassalOf: null,
+    truce: {}, wars: [], _turn: 5,
+  });
+  const W = mk('W', 2000, 7000, { P: 300, N: 300 });
+  const P = mk('P', 5000, 7000, { W: 300, N: 300 });
+  const N = mk('N', 5000, 7000, { W: 300, P: 300 });
+  P.archetype = 'free-rider'; // patient redeclare, attackRatio 2.0
+  W.archetype = 'shield-first'; N.archetype = 'shield-first';
+  const realms = [W, P, N];
+  const rng = TOURNEY.mulberry32(9);
+
+  // W at 36% cap: canon 'worn' read SEES the target (< wornFrac 0.55)
+  // but won't jump — ratio 5000/(2500+300) = 1.79 < free-rider bar 2.0.
+  // The probe's contract: the pack jumps into an open wound (relief
+  // 0.85 → bar 1.7 ≤ 1.79) before healing closes it.
+  W.field = 2500;
+  const canonPick = TOURNEY.pickTarget(P, realms, rng, TOURNEY.HARNESS);
+  assert.strictEqual(canonPick, null, 'canon: sees the wound, ratio bar refuses');
+
+  const H = { ...TOURNEY.HARNESS, pileOn: { woundedFrac: 0.8, ratioRelief: 0.85 } };
+  const probePick = TOURNEY.pickTarget(P, realms, TOURNEY.mulberry32(9), H);
+  assert.ok(probePick && probePick.name === 'W',
+    'probe: wounded window + ratio relief lets the pack jump');
+});

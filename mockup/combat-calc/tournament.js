@@ -382,7 +382,7 @@ function adjacentNames(r, realms) {
   return [...names];
 }
 
-function pickTarget(me, realms, rng) {
+function pickTarget(me, realms, rng, H = HARNESS) {
   const pol = BOT.archetypes[me.archetype];
   const now = me._turn;
   const cands = adjacentNames(me, realms)
@@ -396,21 +396,31 @@ function pickTarget(me, realms, rng) {
   // archetype reads (this is what moves a parity board past deterrence)
   const engaged = (t) => t.wars.length > 0;
   const shield = (t) => (engaged(t) ? Math.round(t.field * 0.2) : t.field) + (t.frontG[me.name] ?? 0);
+  // pile-on probe (HARNESS 가안, sheet-15 freeze autopsy follow-up):
+  // a strengthened opportunism read — a neighbor below woundedFrac of
+  // cap is a WINDOW (strike before healing closes it), window targets
+  // rank first, and the required ratio gets ratioRelief. Bot-policy
+  // fidelity lever only; never a game rule.
+  const window_ = (t) => engaged(t)
+    || (H.pileOn ? t.field < t.fieldCap * H.pileOn.woundedFrac : false);
   let pool = cands;
-  if (pol.target === 'worn') pool = cands.filter((t) => t.field < t.fieldCap * BOT.wornFrac || engaged(t));
-  if (pol.target === 'raided') pool = cands.filter((t) => t.usable < 0.9 || engaged(t));
+  if (pol.target === 'worn') pool = cands.filter((t) => t.field < t.fieldCap * BOT.wornFrac || window_(t));
+  if (pol.target === 'raided') pool = cands.filter((t) => t.usable < 0.9 || window_(t));
   if (pol.target === 'threat') {
     // defeat-in-detail: the weakest of the realms currently strongest vs me
     pool = cands;
   }
+  if (H.pileOn) pool = pool.length ? pool : cands.filter(window_);
   if (!pool.length) return null;
-  pool = [...pool].sort((a, b) => shield(a) - shield(b));
+  pool = [...pool].sort((a, b) =>
+    (H.pileOn ? (window_(b) ? 1 : 0) - (window_(a) ? 1 : 0) : 0) || shield(a) - shield(b));
   const t = pool[0];
   const ratio = me.field / Math.max(1, shield(t));
   // one offensive war at a time
   if (me.wars.some((w) => w.att === me.name)) return null;
   if (pol.redeclare === 'patient' && me.wars.length) return null;
-  if (ratio >= pol.attackRatio) return t;
+  const needed = pol.attackRatio * (H.pileOn && window_(t) ? H.pileOn.ratioRelief : 1);
+  if (ratio >= needed) return t;
   // idle aggression: at cap, nothing to build, no war in sight — the
   // grinding option (excluded for the wait-and-burn identities)
   const ia = BOT.idleAggress;
@@ -487,7 +497,7 @@ function runMatch(assignment, opts = {}) {
       const defending = r.wars.some((w) => w.def === r.name);
       const attacking = r.wars.some((w) => w.att === r.name);
       if (attacking || defending) continue; // the war consumes the primary
-      const target = pickTarget(r, realms, rng);
+      const target = pickTarget(r, realms, rng, H);
       if (target) declarations.push([r, target]);
       else peacePrimary(r, realms, rng, record);
     }
@@ -653,4 +663,5 @@ const SPEC_GAPS = [
 ];
 
 module.exports = { HARNESS, BOT, ARCHETYPES, TEMPERAMENTS, SEATS, SPEC_GAPS,
-  makeBoard, runMatch, runTournament, mulberry32, yieldReach, realmValue };
+  makeBoard, runMatch, runTournament, mulberry32, yieldReach, realmValue,
+  pickTarget };
