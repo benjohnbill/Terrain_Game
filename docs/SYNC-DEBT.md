@@ -11,6 +11,14 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
 
 ## Open
 
+- [ ] **A-3 magnitude pass must ingest the L2 freeze evidence**
+  (registered 2026-07-07, sheet-15 session): cap-growth-alone does not
+  unfreeze the parity map (22→24% decided; on the asymmetric fixture
+  it had looked sufficient) — the "national cap growth = ending
+  mechanism" numbers (ruling ⑮, deferred to A-3) must be cut against
+  the frozen-world autopsy in `mockup/combat-calc/NOTES.md`
+  (2026-07-07 entry), alongside the blinds design outcome.
+
 - [ ] **Term lifecycle beyond promotion** (Codex P1): define
   proposed → agreed → promoted → renamed → deprecated states in the
   Vocabulary Law; renames are the dangerous case for agents. Add an

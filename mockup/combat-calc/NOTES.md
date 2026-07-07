@@ -1,5 +1,77 @@
 # Battery findings — answers pending user rulings
 
+# 2026-07-07 afternoon run — sheet 15 (L2 adapter: cradle tournament)
+
+The sealed 10-region map wired to the sheet-12 machine (map-board.js:
+board factory + runCradleTournament + watchFlags/pairFlags; sheet 14b
+CRADLE heavy checks; finalCheck timeout autopsy). 7 viable seatings ×
+6 archetypes × 5 focal seats, seeds 42/1234, 12,600 matches. Board
+start-state constants are BOARD_GAAN harness values; geography (caps,
+doors, fronts, economy ledger) is the real map. Reproduce:
+`node mockup/combat-calc/battery.js cradle`.
+
+## Watch-flag first data (registered flags, QUICKREF C-loop table)
+
+- ①a 중원 crown needle: holder winrate 3.6% vs baseline 4.5% —
+  slightly BELOW average, both seeds (3.4σ/3.8σ). Consistent with the
+  "difficulty highest, no scripted win rate" intent; band declaration
+  is the user's and is DEFERRED (see headline below — needle readings
+  from a frozen-world machine are low-trust until L2 fidelity rises).
+- ⑦ 관중: strongest region signal (+1.25pp, 4.8σ). Pair decomposition
+  shows the real carrier is the **관중+촉 twin-basin seat** (+2.9pp,
+  top of the world, both seeds) — the flag's substance is likely
+  "basin stacking", not the gate-city alone.
+- ③ 강남 quiet winner: no signal (within noise). ④ 촉 alone:
+  seed-unstable. ⑥ 동남해: weak positive, partial read (economy only
+  reaches settlement pricing in this machine).
+- NEW pair-level findings (not registered flags): 초원 is the worst
+  dowry (초원+한경 world-worst −2.2pp; 하북+초원 also negative;
+  초원+동북 harmless). 중원 is extremely partner-dependent (negative
+  with 강남/관중/촉/하북; only 중원+한경 — the gate-twin fold-in —
+  reaches neutral-to-positive, seed-dependent).
+- NOT MEASURED (machine limits, printed on the sheet): ①b stable-hold
+  premium (no region identity through cession, gap ⑧), ② develop-
+  greedy (no develop primary), ⑤ region abandonment (positionless),
+  ⑥ full fertility channel.
+
+## HEADLINE — the frozen-world finding (user-flagged, direction-grade)
+
+77% of matches time out at T32. Autopsy (finalCheck):
+
+- **Not slow — frozen.** maxTurns 64 → decided 41%, maxTurns 128 →
+  42%. Roughly half the worlds never end regardless of time.
+- **Healing outruns wounding.** Wars are frequent (10.5/match,
+  7 settlements/match) but M12/M13-grade regen (garrison 10%/turn,
+  recruit 10%/turn, usable recovery) restores the world to symmetric
+  full-cap between wars: timeout best-candidate projection median =
+  exactly the parity cap (7,200).
+- **The binding constraint is the leadership bar against a HEALED
+  rival** (~1.7 × 7,200+facing ≈ 11,700 vs my 7,200; median shortfall
+  4,500명). The coalition clause blocks only ~3%.
+- **A-3 cap growth alone does NOT unfreeze the parity map** (22%→24%
+  decided; on the asymmetric fixture it had looked sufficient). New
+  evidence the A-3 magnitude pass must ingest.
+- Sheet-8's hand-scripted arc DID reach the decision point inside the
+  envelope — a skilled hand can outpace healing; six bot hands cannot.
+  L2 proof-power caveat applies (found real / not-found nothing).
+- Owner of the tail per existing canon: **blinds** (match-arc GLOSSARY
+  queue 5, "owns the untilted-ending tail") + A-3 ending mechanism +
+  gap ① war appetite. This run quantifies the blinds duty for the
+  first time: ~58% frozen tail at bot-grade play, plus envelope
+  overshoot (converging half lands mean T33).
+
+## User rulings this session (2026-07-07)
+
+- SPEC_GAPS ③ sealed for MVP: vassals cannot be attacked (same-boat
+  rationale; recorded in match-arc RULINGS).
+- **Session order re-cut (impact-first principle)**: match-tilting /
+  escalation design (blinds) is promoted ahead of force-geography —
+  the user did not expect the recovery dials to carry this much
+  leverage; match-tilting devices are a meta change to the L2/L3
+  foundation itself (LoL late-game minion/Baron/Elder analogy).
+  Needle rulings (중원 band, 관중+촉 dial, 초원 flag registration)
+  deferred until L2 fidelity rises.
+
 # 2026-07-05 night run — sheet 13 (thin economy, A-3)
 
 Question: the minimum economy that makes M13 prices and 정산 codable —

@@ -61,13 +61,15 @@ browser agree.
 
 ## Open questions
 
-- **L2 tournament adapter** — the real discriminator now that parity
-  makes static gates a safety rail. 7 registered watch flags (QUICKREF
-  table): crown needles ×2, develop-greedy, 강남 quiet winner, 촉-seat,
-  region abandonment, 동남해 fertility funding, 관중 gate-city.
-  **Includes battery re-wiring**: sheet 14 still runs FIXTURE_MAP (the
-  regression anchor) — CRADLE_MAP node heavy-checks are owed to the
-  adapter session.
+- **L2 tournament adapter — BUILT & first-run (2026-07-07)**:
+  `map-board.js` (board factory / cradle tournament / flag reports) +
+  battery sheet 14b (CRADLE heavy checks) + sheet 15 (watch-flag run,
+  12,600 matches). First data + the **frozen-world headline** (healing
+  outruns wounding; blinds duty quantified ~58%; A-3 alone
+  insufficient) recorded in `mockup/combat-calc/NOTES.md` (2026-07-07
+  entry). Needle rulings (중원 band, 관중+촉, 초원 dowry flag)
+  DEFERRED until L2 fidelity rises — user impact-first ruling promoted
+  **blinds design ahead of force-geography**.
 - **Force-geography pass** — muster location/pool draw, garrison↔
   reserve, movement processing (needs this map; L2 can run on the
   positionless abstraction meanwhile).
