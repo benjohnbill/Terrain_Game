@@ -41,6 +41,22 @@ const BOARD_GAAN = {
                                 // devices land. null → legacy ×1.5 sizing.
 };
 
+// reachable-weakest-link: an attacker assaults through the softest crossing on
+// a front, so a seat-front spanning several region borders takes the most-open
+// one. Defensibility order: open < forest/hills < river < pass < strait. This
+// single chosen crossing drives combat terrain (fidelity, seal 2026-07-08) and,
+// if opted in via gaan.startFortByClass, the start fort (balance layer, dormant
+// on the default board so the sealed start-state and its tests are untouched).
+const CLASS_DEFENSE_RANK = { open: 0, forest: 1, hills: 1, river: 2, pass: 3, strait: 4 };
+function weakestCrossing(borders) {
+  let best = null;
+  for (const b of borders) {
+    const rank = CLASS_DEFENSE_RANK[b.cls] ?? 99;
+    if (best === null || rank < best.rank) best = { rank, cls: b.cls, door: b.door };
+  }
+  return best ? { cls: best.cls, door: best.door } : null;
+}
+
 function makeBoardFromMap(map, binding, gaan = BOARD_GAAN) {
   const regionToSeat = {};
   for (const [seat, rids] of Object.entries(binding))
@@ -53,14 +69,17 @@ function makeBoardFromMap(map, binding, gaan = BOARD_GAAN) {
     // cross-seat fronts: border-sector count + door caps per neighbor seat
     const borderSectors = new Set();
     const frontSectors = {};   // neighbor seat -> Set of own border sectors
+    const frontBorders = {};   // neighbor seat -> [{cls, door}] crossing borders
     const exits = [];
     for (const rid of regionIds) {
       const nbrs = deps.LOADER.neighborsOf(map, rid);
       for (const [nbrRegion, info] of Object.entries(nbrs)) {
         const nbrSeat = regionToSeat[nbrRegion];
         if (nbrSeat === name) continue; // internal border
-        exits.push({ cap: info.open ? Infinity : info.cap });
+        const door = info.open ? Infinity : info.cap;
+        exits.push({ cap: door });
         (frontSectors[nbrSeat] ??= new Set());
+        (frontBorders[nbrSeat] ??= []).push({ cls: info.borderClass, door });
         for (const sid of info.borderSectorIds) {
           frontSectors[nbrSeat].add(sid);
           borderSectors.add(sid);
@@ -70,9 +89,15 @@ function makeBoardFromMap(map, binding, gaan = BOARD_GAAN) {
     if (exits.length === 0) exits.push({ cap: Infinity });
 
     const frontG = {}; const fortAt = {};
+    const frontClass = {}; const frontDoor = {};
     for (const [nbrSeat, sids] of Object.entries(frontSectors)) {
       frontG[nbrSeat] = sids.size * gaan.garrisonPerBorderSector;
-      fortAt[nbrSeat] = gaan.startFort;
+      const soft = weakestCrossing(frontBorders[nbrSeat]);   // attacker's crossing
+      frontClass[nbrSeat] = soft.cls;
+      frontDoor[nbrSeat] = soft.door;
+      fortAt[nbrSeat] = gaan.startFortByClass
+        ? (gaan.startFortByClass[soft.cls] ?? gaan.startFort)
+        : gaan.startFort;
     }
 
     const interior = secs.length - borderSectors.size;
@@ -89,6 +114,7 @@ function makeBoardFromMap(map, binding, gaan = BOARD_GAAN) {
       field, fieldCap, interior,
       capitalGarrison: gaan.capitalGarrison,
       frontG, frontCap: { ...frontG }, fortAt,
+      frontClass, frontDoor,          // border crossing class + door per front
       exits, staging: false,
       usable: 1.0,
       yieldBase,
@@ -180,6 +206,6 @@ function pairFlags(records) {
   return out;
 }
 
-const _api = { makeBoardFromMap, BOARD_GAAN, runCradleTournament, watchFlags, pairFlags };
+const _api = { makeBoardFromMap, BOARD_GAAN, runCradleTournament, watchFlags, pairFlags, weakestCrossing };
 if (typeof module !== 'undefined' && module.exports) module.exports = _api;
 else (window.TC = window.TC || {}).board = _api;

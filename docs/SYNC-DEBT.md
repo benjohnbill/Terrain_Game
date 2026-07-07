@@ -53,6 +53,30 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   (b) **design**: the ~80% structural residual = the hegemony-bar / offense-
   defense-balance question — is leadership reachable among balanced realms
   on a parity map? May need a large ADR. Grill-worthy, fresh session.
+  **UPDATE 2026-07-08 (terrain-fidelity session)** — the pass split. The
+  fort sweep found fort strength is NOT the freeze lever (all-none 20% vs
+  all-walls 10.2%; ceiling ~20%, 80% structural holds); force-geography-
+  fort-by-class is therefore a *balance* lever (dormant opt-in
+  `gaan.startFortByClass`), not the fidelity fix. The real fidelity fix
+  (approved + **wired** this session): **combat terrain = border INTENT
+  class** — open→plains, forest→forest, hills→hills, pass→pass(2.0),
+  river→water riverOpposed 0.70, strait→water straitOpposed 0.55 + door
+  choke (`combatFromBorderClass` in tournament.js; `frontClass`/`frontDoor`
+  weakest-link in map-board.js; +5 tests, 116 green). Values sealed
+  (terrain M5/D6, water ADR-0015 + ruling ⑦); binding is the approved
+  decision. Also fixed: strait grammar now fires on the class (was hermit-
+  gated → dead on cradle); `engine.js` straitOpposed comment synced
+  (candidate→confirmed). Freeze re-measured on the un-flattened map ~12.6%
+  decided, leadShortfall ~4600 — verdict holds. **Doc-sync owed at the
+  integration batch (after item ②)**: (i) record the border-class→combat
+  seal to terrain-cradle RULINGS + GLOSSARY (cite combat-formula dials);
+  (ii) QUICKREF full regen (still batched here); (iii) NOTES freeze-verdict
+  entry. **Design reframe**: before the hegemony ADR, item (b)'s leading
+  suspect is now the **tactical plan-AI gap** — the bot never plays the
+  decisive plans (Flanking/Encirclement) that drive the consolidation axis
+  the autopsy found missing. Handoff written: `.context/handoff-2026-07-08-
+  tactical-plan-ai.md` (item ②, separate session). hegemony ADR sized only
+  after that re-measure.
 
 - [ ] **Term lifecycle beyond promotion** (Codex P1): define
   proposed → agreed → promoted → renamed → deprecated states in the

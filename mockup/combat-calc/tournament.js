@@ -171,6 +171,22 @@ function newWar(att, def, turn) {
   };
 }
 
+// L2 terrain fidelity (seal 2026-07-08): map the border's authored crossing
+// class to the engine combat spec. terrain M5/D6, water ADR-0015 + ruling ⑦.
+// The door throttles the assaulting body — the frontage half of the pass-2.0
+// package (research/terrain-fort-ladder-validation.md). Fallback = legacy hills.
+function combatFromBorderClass(cls, door = Infinity) {
+  switch (cls) {
+    case 'open':   return { terrain: 'plains', chokeCap: door };
+    case 'forest': return { terrain: 'forest', chokeCap: door };
+    case 'hills':  return { terrain: 'hills', chokeCap: door };
+    case 'pass':   return { terrain: 'pass', chokeCap: door };
+    case 'river':  return { terrain: 'plains', water: 'riverOpposed', chokeCap: door };
+    case 'strait': return { terrain: 'plains', water: 'straitOpposed', chokeCap: door };
+    default:       return { terrain: 'hills', chokeCap: door };
+  }
+}
+
 function warBattle(war, A, D, opts = {}) {
   // Defender field availability: the field army serves ONE war — the
   // defensive war with the biggest enemy (interior lines); other fronts
@@ -190,7 +206,12 @@ function warBattle(war, A, D, opts = {}) {
     const fortBase = DIALS.fort[fort];
     const fortNow = Math.max(1, fortBase - war.stamps * DIALS.erosionStep);
     const g = D.frontG[front];
-    const site = { terrain: 'hills', fort, erosionStamps: war.stamps, ...crossing };
+    // fidelity: read the front's authored crossing class (terrain/water/choke);
+    // legacy fixture boards without frontClass keep the hardcoded hills + hermit
+    // strait crossing.
+    const site = (D.frontClass && D.frontClass[front])
+      ? { ...combatFromBorderClass(D.frontClass[front], D.frontDoor[front]), fort, erosionStamps: war.stamps }
+      : { terrain: 'hills', fort, erosionStamps: war.stamps, ...crossing };
     if (fortNow <= (BOT.stormAt[fort] ?? 1.2) + 1e-9) {
       const r = resolve({ plan: 'Swift', attacker: { stock: A.field, commit: BOT.siegeCommit },
         defender: { stock: g, commit: BOT.siegeCommit }, ...site });
@@ -758,4 +779,4 @@ const SPEC_GAPS = [
 module.exports = { HARNESS, BOT, ARCHETYPES, TEMPERAMENTS, SEATS, SPEC_GAPS,
   makeBoard, runMatch, runTournament, mulberry32, yieldReach, realmValue,
   pickTarget, peacePrimary, doRecruit, poolBleed, servingBodies, regenGarrisons,
-  realmIncome, intensity };
+  realmIncome, intensity, combatFromBorderClass };

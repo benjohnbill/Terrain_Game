@@ -17,7 +17,7 @@ const DIALS = {
   fort: { none: 1.0, fieldworks: 1.3, walls: 1.8, fortress: 2.4, legendary: 3.0 },
   erosionStep: 0.3,         // one DP-success stamp
   // ADR 0015 amended water penalties (attack-side only)
-  water: { river: 0.85, riverOpposed: 0.70, strait: 0.70, straitOpposed: 0.55 /* candidate */ },
+  water: { river: 0.85, riverOpposed: 0.70, strait: 0.70, straitOpposed: 0.55 /* confirmed: ruling ⑦ 2026-07-05 */ },
   // M7 thresholds (scoring lines, never availability gates)
   thresholds: { DP: 1.1, Raid: 1.2, SI: 1.3, Swift: 1.5, Crossing: 1.5, Flanking: 1.6, Encirclement: 2.2 },
   // M11 wall-assault caps (escalade family only) + erosion widening

@@ -13,18 +13,22 @@ function sectorsOf(map, regionId) {
   return region.sectorIds.map((id) => map.sectors[id]);
 }
 
-// { neighborRegionId: { cap, open, borderSectorIds } }
+// { neighborRegionId: { cap, open, borderSectorIds, borderClass } }
+// borderClass is the crossing type authored in map-gen INTENT
+// (open/river/pass/forest/hills/strait) — one representative edge per
+// region pair, so one class per neighbour. Consumers may ignore it
+// (loadMap does); force-geography reads it to key defence to terrain.
 function neighborsOf(map, regionId) {
   const out = {};
   const rOf = (sid) => map.sectors[sid].regionId;
   for (const e of map.edges) {
     const ra = rOf(e.a); const rb = rOf(e.b);
     if (ra === regionId && rb !== regionId) {
-      (out[rb] ??= { cap: 0, open: false, borderSectorIds: [] });
+      (out[rb] ??= { cap: 0, open: false, borderSectorIds: [], borderClass: e.choke.class });
       if (e.choke.cap === Infinity) out[rb].open = true; else out[rb].cap += e.choke.cap;
       out[rb].borderSectorIds.push(e.a);
     } else if (rb === regionId && ra !== regionId) {
-      (out[ra] ??= { cap: 0, open: false, borderSectorIds: [] });
+      (out[ra] ??= { cap: 0, open: false, borderSectorIds: [], borderClass: e.choke.class });
       if (e.choke.cap === Infinity) out[ra].open = true; else out[ra].cap += e.choke.cap;
       out[ra].borderSectorIds.push(e.b);
     }
