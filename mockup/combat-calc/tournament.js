@@ -131,8 +131,10 @@ function makeBoard() {
   ];
 }
 
-const realmValue = (r, H) => r.interior * H.sectorValue + H.capitalValue;
-const yieldReach = (r, H) => Math.round(r.interior * H.sectorValue * r.usable * 10) / 10;
+// realm-level sectorYield (cradle boards: real sector economy ledger)
+// overrides the flat fixture-world sector value
+const realmValue = (r, H) => r.interior * (r.sectorYield ?? H.sectorValue) + H.capitalValue;
+const yieldReach = (r, H) => Math.round(r.interior * (r.sectorYield ?? H.sectorValue) * r.usable * 10) / 10;
 const totalGarrisons = (r) => Object.values(r.frontG).reduce((s, g) => s + g, 0)
   + r.interior * 300 + r.capitalGarrison;
 
@@ -462,7 +464,7 @@ function doRecruit(me) {
 function runMatch(assignment, opts = {}) {
   const H = { ...HARNESS, ...opts.harness };
   const rng = mulberry32(opts.seed ?? 1);
-  const realms = makeBoard();
+  const realms = opts.board ?? makeBoard();
   for (const r of realms) {
     r.archetype = assignment[r.name].archetype;
     r.temperament = assignment[r.name].temperament;
@@ -629,4 +631,4 @@ const SPEC_GAPS = [
 ];
 
 module.exports = { HARNESS, BOT, ARCHETYPES, TEMPERAMENTS, SEATS, SPEC_GAPS,
-  makeBoard, runMatch, runTournament, mulberry32 };
+  makeBoard, runMatch, runTournament, mulberry32, yieldReach, realmValue };

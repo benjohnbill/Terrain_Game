@@ -66,6 +66,6 @@ function loadMap(map, { assignment } = {}) {
   return { realms };
 }
 
-const _api = { loadMap, sectorsOf };
+const _api = { loadMap, sectorsOf, neighborsOf };
 if (typeof module !== 'undefined' && module.exports) module.exports = _api;
 else (window.TC = window.TC || {}).loader = _api;

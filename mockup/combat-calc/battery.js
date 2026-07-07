@@ -9,6 +9,8 @@ const TOURNEY = require('./tournament');
 const { FIXTURE_MAP } = require('./map-data.js');
 const { loadMap } = require('./map-loader.js');
 const { gateReport, viableBindings } = require('./map-gate.js');
+const { CRADLE_MAP, CRADLE_BINDING } = require('./map-gen.js');
+const { makeBoardFromMap, runCradleTournament, watchFlags } = require('./map-board.js');
 
 const fmt = (n) => typeof n === 'number' && !Number.isInteger(n) ? n.toFixed(2) : String(n);
 const men = (n) => `${Math.round(n).toLocaleString()}명(${(n / 100).toFixed(1)}부대)`;
@@ -900,11 +902,97 @@ function mapViability() {
 
   const v = viableBindings(FIXTURE_MAP, 5);
   console.log(''); sub(`Viable seat-bindings: ${v.viableCount} / ${v.total} (diversity metric — target set empirically)`);
+
+  // ---- CRADLE_MAP heavy checks (L2 adapter re-wiring, 2026-07-07):
+  // the sealed 10-region map through the same loader + gates, node-side.
+  console.log(''); h('SHEET 14b — CRADLE_MAP (sealed map, canonical binding A–E)');
+  const { realms: cr } = loadMap(CRADLE_MAP, { assignment: CRADLE_BINDING });
+  sub('Per-realm derived state (all-cap, canonical binding):');
+  row(['realm', 'regions', 'cap', 'exits (doors)', 'fronts'], [6, 10, 7, 30, 20]);
+  for (const r of cr) {
+    const doors = r.exits.map((e) => (e.cap === Infinity ? 'open' : e.cap)).join('/');
+    row([r.name, CRADLE_BINDING[r.name].join('+'), String(r.fieldCap), doors,
+      Object.keys(r.fronts).join(' ')], [6, 10, 7, 30, 20]);
+  }
+  const cg = gateReport(CRADLE_MAP, CRADLE_BINDING);
+  console.log(''); sub('Gate (canonical binding):');
+  row(['check', 'pass', 'detail'], [8, 6, 40]);
+  row(['B1', cg.b1.pass ? 'YES' : 'NO', cg.b1.pass ? 'no all-cap leadership' : `leadership: ${cg.b1.offenders.join(', ')}`], [8, 6, 40]);
+  row(['B2', cg.b2.pass ? 'YES' : 'NO', cg.b2.pass ? 'no one-war-kill' : cg.b2.kills.map((k) => `${k.attacker}→${k.victim}`).join(', ')], [8, 6, 40]);
+  const cv = viableBindings(CRADLE_MAP, 5);
+  console.log(''); sub(`Viable seatings: ${cv.viableCount} / ${cv.total} (seal state: 7/7)`);
   console.log(''); sub('VERDICT: user rules in NOTES.md. This sheet is the C-loop loss.');
 }
 
+// ---------------------------------------------------------------- Sheet 15
+function cradleSheet() {
+  h('SHEET 15 — CRADLE TOURNAMENT (L2 adapter): watch flags on the sealed map');
+  console.log('Policy bots play every viable seating of the sealed 10-region map.');
+  console.log('Board start-state constants are HARNESS 가안 (map-board.js §BOARD_GAAN);');
+  console.log('geography (caps, doors, fronts, economy ledger) is the real map.');
+  console.log('HONEST LIMITS: bot policy quality bounds proof power — found is real,');
+  console.log('not-found is nothing (test-trust ladder). Economy reaches settlement');
+  console.log('pricing + raid value only (no fort/recruit prices, M14 channel absent).');
+
+  const { viable } = viableBindings(CRADLE_MAP, 5);
+  const REPS = 3; const SEED = 42;
+  const records = runCradleTournament({
+    map: CRADLE_MAP, bindings: viable, reps: REPS, seed: SEED,
+  });
+  const seatsPerBinding = Object.keys(viable[0]).length;
+  console.log(`\n${viable.length} seatings × ${TOURNEY.ARCHETYPES.length} archetypes × ${seatsPerBinding} focal seats × ${REPS} reps = ${records.length} matches (seed ${SEED}, deterministic).`);
+
+  // --- watch-flag table: region-holder winrate, every region
+  const regionName = Object.fromEntries(CRADLE_MAP.regions.map((r) => [r.id, r.name]));
+  const flags = watchFlags(records, CRADLE_MAP.regions.map((r) => r.id));
+  sub(`Region-holder win rates (baseline = decided ÷ seat-slots = ${(flags.baseline * 100).toFixed(1)}%; undecided ${flags.undecided}/${records.length})`);
+  row(['region', 'holder wins', 'rate', 'vs baseline'], [14, 12, 8, 12]);
+  for (const [rid, f] of Object.entries(flags.regions)) {
+    const delta = f.rate - flags.baseline;
+    row([`${regionName[rid]} (${rid})`, `${f.wins}/${f.matches}`,
+      `${(f.rate * 100).toFixed(1)}%`, `${delta >= 0 ? '+' : ''}${(delta * 100).toFixed(1)}pp`],
+    [14, 12, 8, 12]);
+  }
+
+  // --- registered watch flags, measured where the machine allows
+  sub('Watch flags (registered 2026-07-07, QUICKREF C-loop table)');
+  console.log(`  ①a 중원 crown needle (holder winrate ≈ average?): r1 row above — the`);
+  console.log(`     band between needles is the USER's to declare, never auto-verdict.`);
+  console.log(`  ③ 강남 quiet winner: r9 row · ④ 촉-seat: r8 row · ⑦ 관중 gate-city: r6 row`);
+  console.log(`  ⑥ 동남해 fertility funding: r10 row (economy channel partial — see limits)`);
+
+  const shapes = {};
+  for (const r of records) shapes[r.endingShape] = (shapes[r.endingShape] ?? 0) + 1;
+  console.log('\n  endings: ' + Object.entries(shapes).map(([s, n]) =>
+    `${s} ${(n / records.length * 100).toFixed(0)}%`).join(' · '));
+  const trips = records.filter((r) => r.tripTurn).map((r) => r.tripTurn);
+  if (trips.length) {
+    const inEnv = trips.filter((t) => t >= 15 && t <= 25).length;
+    console.log(`  trip turns: min T${Math.min(...trips)} · mean T${(trips.reduce((a, b) => a + b) / trips.length).toFixed(1)} · max T${Math.max(...trips)} · in 15–25 envelope: ${(inEnv / trips.length * 100).toFixed(0)}%`);
+  }
+  console.log(`  wars/match: ${(records.reduce((s, r) => s + r.warsStarted, 0) / records.length).toFixed(1)} · settlements/match: ${(records.reduce((s, r) => s + r.settlements.length, 0) / records.length).toFixed(1)} · eliminations: ${records.reduce((s, r) => s + r.eliminations, 0)}`);
+
+  // per-seating decided rate (seating diversity read)
+  sub('Per-seating decided rate');
+  viable.forEach((b, i) => {
+    const rs = records.filter((r) => r.bindingIndex === i);
+    const d = rs.filter((r) => r.winner).length;
+    const desc = Object.values(b).map((p) => p.map((x) => regionName[x]).join('+')).join(' · ');
+    console.log(`  seating ${i + 1}: decided ${d}/${rs.length} — ${desc}`);
+  });
+
+  sub('NOT MEASURED (machine limits — owed to later rungs, never silent)');
+  console.log('  ①b 중원 stable-hold (N+ turns) → hegemony premium: region identity does');
+  console.log('     not transfer through cession in the positionless machine (gap ⑧).');
+  console.log('  ② develop-greedy opening: bots have no develop primary (M14 develop');
+  console.log('     not modeled). ⑤ region-abandonment meta: positionless — cannot abandon.');
+  console.log('  ⑥ full fertility-funding channel: yield feeds settlement/raid pricing');
+  console.log('     only; fort/recruit purchases are priceless in this harness.');
+  console.log('\n  VERDICT: user reads the needles (판정 grill). L2 values never final.');
+}
+
 // ----------------------------------------------------------------
-const SHEETS = { myeongnyang, fortress, raid, delaying, grinding, feint, tempo, timeline, manpower, hegemony, settlement, tournament: tournamentSheet, economy, viability: mapViability };
+const SHEETS = { myeongnyang, fortress, raid, delaying, grinding, feint, tempo, timeline, manpower, hegemony, settlement, tournament: tournamentSheet, economy, viability: mapViability, cradle: cradleSheet };
 const pick = process.argv[2];
 if (pick && SHEETS[pick]) SHEETS[pick]();
 else if (pick) { console.error(`unknown sheet: ${pick} (${Object.keys(SHEETS).join(', ')})`); process.exit(1); }
