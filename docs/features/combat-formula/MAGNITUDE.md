@@ -682,6 +682,14 @@ command-card IA session.
 
 ## M12 (CONFIRMED 2026-07-04) — World-pulse rates (2026-07-03)
 
+> **AMENDED 2026-07-07 (match-tilting pass, match-arc RULINGS MT-①,
+> P1 dual billing).** Garrison regeneration is **no longer free**: the
+> +10%/turn rate stands, but the regenerated bodies are now drawn from
+> the 징집 명부 (register) and paid at the recruit price — every heal
+> ages the world. This amends item 1 below and ADR 0014 (garrison
+> auto-regen). *ADR 0014 header stamp owed — see `docs/SYNC-DEBT.md`.*
+
+
 Confirmation gate (full-match tempo sheet) met by battery sheets 7–8:
 war settles in 11 turns, match in 23 (35–46 min); the tempo unease was
 resolved by the match-arc thread (decision point + settlement), as the
@@ -721,18 +729,31 @@ locating that hole, not these values.
 
 ## M13 — Economy→mass conversion, MVP single track (2026-07-04, match-arc pass)
 
+> **AMENDED 2026-07-07 (match-tilting pass, match-arc RULINGS MT-①…④).**
+> The flat "+10%/turn at 0.5 yield" recruit is now the **Band-1 base**
+> of the Surge Draft Model; the manpower pool is re-founded as the
+> land-derived 징집 명부 (registerPerPop 1,800; total-bodies
+> accounting); garrison regen now bills the register (P1). Deltas are
+> stamped inline below; the Confirmed-values block flags what is
+> superseded. Curve knees/multipliers + surge rate are deferred to the
+> magnitude session (SYNC-DEBT). Start-state coordinates added as
+> **M13a**.
+
 Adopted during the match-arc pass (see `docs/features/match-arc/`):
 
-- **모병 (recruitment)**: one primary action = +10% of the national
-  sustainable cap that turn, drawn from the manpower pool, paid from
-  treasury yield, fighting at 100%. The +10% grammar deliberately
-  mirrors garrison regeneration (M12) — all mass flows are "%/turn
-  toward a cap." A discounted levy tier was rejected: it would reopen
-  the sealed quality = 1 simplification through the back door (a
-  persistent 75% troop type is a quality tier; the reserve's 50% is a
-  this-turn state, not a troop kind). 공세 동원 (ADR 0009 role 3) is a
-  reserved seat — triggers: quality/tech system, Phase 3 domestic,
-  or flat-buildup playtest signal.
+- **모병 (recruitment)**: one primary action drawing bodies from the
+  register into serving toward the cap, paid from treasury yield,
+  fighting at 100%. **Priced by the Surge Draft Model (MT-③), not a
+  flat rate**: unit price = a continuous piecewise-linear marginal
+  curve over 동원 강도 (serving ÷ current register), a draft's bill =
+  the area under the curve pre→post intensity; the draft may be
+  **surged** with surplus commit points (+1%p/point 가안, one-shot).
+  The old flat "+10% of cap/turn at 부대=0.5 yield" is the **Band-1
+  base** of that curve. A discounted levy tier was rejected (reopens
+  quality=1); 공세 동원 (ADR 0009 role 3) stays a reserved seat.
+  Curve knees anchor to M13a coordinates; multipliers → magnitude
+  session. Rider: M14 flat blood-EV check owed (band escalation bends
+  it at depth).
 - **국가 상한 (national sustainable cap)**: economy-derived ceiling on
   standing forces; the cap replaces per-turn upkeep bookkeeping
   (low-micromanagement). Garrison ceilings stay local (ADR 0014).
@@ -749,18 +770,49 @@ Adopted during the match-arc pass (see `docs/features/match-arc/`):
   center scaling) belong to A-3; the probe's +400/sector is harness
   가안, not a sealed value. A-3 verification target: re-run the
   sheet-12 sweep at the priced values.
-- **징집 명부 (manpower pool · 구칭 인력 풀)**: per-province, population-proportional,
-  finite within a match — the dead never return, the dispersed do.
-  Closes the M3 blood-economy flag.
-- **Confirmed values (2026-07-04, battery sheet 9)**: national cap
-  6,000 for a mid realm (center ~9,000; scales with economy);
-  recruitment +10% of cap per turn; pool = 1.5 × initial military;
-  price 1 부대 = 0.5 sector-turn yield. Validated: buildup 2–3 turns /
-  shattered recovery 5–8; cap converts free-riding into readiness +
-  spare primaries; one lost war ends a realm's ability to field a
-  second full army (pool travels with territory — settlement value
-  includes population automatically); recruit pricing consistent with
-  M8 raid/conquest income ordering.
+- **징집 명부 (conscription register · 구칭 인력 풀)**: **re-founded
+  land-derived (MT-②, 2026-07-07)** — 명부 = **registerPerPop 1,800**
+  × Σ populationValue, per province, at match start; thereafter a pure
+  total-bodies stock (deaths −, land transfer ±, development +). The
+  starting army is already drawn from it; recruitment moves bodies
+  civilian→serving (register unchanged); only death shrinks it. The
+  register:cap ratio is **3.0**, so **capPerPop 600 is the derived
+  constant — sustain fraction ⅓** (a third of the register may serve
+  at once). Anchors: two-track research (`../match-arc/research/`,
+  historical 2.5–4.0 + game-convention 2.5–3×). Rider: L2 re-verify
+  after tilting devices land.
+- **Confirmed values (2026-07-04, battery sheet 9; register line
+  SUPERSEDED 2026-07-07 MT-②)**: national cap 6,000 for a mid realm
+  (center ~9,000; scales with economy); price 1 부대 = 0.5 sector-turn
+  yield. ~~recruitment +10% of cap per turn~~ → Band-1 base of the
+  Surge Draft Model (MT-③). ~~pool = 1.5 × initial military~~ →
+  **register = 1,800 × Σ populationValue** (MT-②). Validated: buildup
+  2–3 turns (**re-read as SURGED buildup under f₀ 0.5; sheet-7
+  revalidation owed, MT-④**) / shattered recovery 5–8; one lost war
+  ends a realm's ability to field a second full army (register travels
+  with territory — settlement value includes population automatically).
+
+## M13a — Start-state coordinates (2026-07-07, match-tilting pass, MT-④)
+
+Research-anchored (`../match-arc/research/garrison-field-ratio-and-
+armed-peace.md`); the sustain fraction ⅓ (M13/MT-②) is the only fixed
+formula, the rest pinned from history:
+
+- **f₀ = 0.5** — armed-peace field fill (field starts at 50% of cap;
+  bracket [0.4–0.6], Louis XIV / Dutch). Plain buildup 5 turns, surged
+  2–3. **Rider: sheet-7 tempo revalidation owed** (was calibrated at
+  f₀ 0.7).
+- **g₀ = 1.0** — garrisons start at cap (cross-era: peace draw-down
+  falls on the field army; the fortress shield stays manned).
+- **ρ = 0.75** — war-footing garrison:field ratio (Vauban band pin;
+  per-seat spread 0.58–0.96 by border exposure).
+- Derived: **start intensity ≈ 42%, structural max ≈ 58%** (the
+  Surge Draft Model knees, MT-③). Harness carrier: BOARD_GAAN in
+  `mockup/combat-calc/map-board.js` (startFieldFrac 0.5,
+  garrisonPerBorderSector 900, capitalGarrison 1500, registerPerPop
+  1800). First L2 data: sealed physique deepens the freeze (decided
+  21%→7%, Vauban indecisive-war signature) — the tilting devices'
+  target, not a reason to unseal.
 
 ## M14 — Thin economy (2026-07-05, A-3 session; rulings ⑱–㉑)
 

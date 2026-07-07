@@ -35,6 +35,19 @@ naming, promotion, the generated Quick Reference) lives in
   the province-level grammar (M9 awakening + march effect) is the
   extension point if muster location ever needs to matter.
 
+- ✅ `Aging constitution` (노화 헌법) — **user-sealed 2026-07-07
+  (match-tilting pass)**: how a match accrues irreversibility so the
+  decision point can arrive (the fix for the L2-observed frozen world).
+  **P1 dual billing** — replenishing men (recruit + garrison regen)
+  costs both blood (the permanent register) and yield (flow); no free
+  healing. **P2 flow never ages** — economy sets healing speed only,
+  never permanently damaged except by identity acts (초토화). **P3
+  snapshot information** — contact reveals the immutable layer forever,
+  the mutable layer decays. Extends land-derived state to the full
+  population/blood system; the register is the world's aging ledger.
+  Definition + rulings + parked items: match-arc GLOSSARY 노화 헌법 /
+  RULINGS MT-①.
+
 ## Core Terms
 
 - ✅ `Map unit`: A playable geographic unit. Currently rendered as a hex, but
@@ -708,21 +721,24 @@ rule)._
   + sovereignty premium × loser remaining value. Sealed premium value +
   floor-setter rider + history → match-arc GLOSSARY 복속 row / RULINGS ⑭⑯.
 - ✅ `Recruitment` (모병): the single MVP economy→mass conversion — a primary
-  action adding a capped share of the national sustainable cap per turn, drawn
-  from the manpower pool, paid from treasury yield, fighting at 100% (single
-  troop quality — a discounted levy tier would reopen the sealed quality = 1
-  simplification). The temporary-levy track (공세 동원, ADR 0009 role 3) is a
-  reserved seat with three reopen triggers (a quality/tech system; Phase 3
-  domestic hooks; a flat-reading buildup phase in playtest). Force-adjustment
-  stack: ① recruitment (create, player) / ② garrison regeneration to local caps
-  (automatic, ADR 0014) / ③ standing-force stationing (deploy, player) / ④ commit
-  lever + reserve (activate, per-turn) — the player hand-manages only ① and ③.
-  Rates → M13.
-- ✅ `Manpower pool` (징집 명부 · 구칭 인력 풀): per-province latent manpower (ADR 0009 role 4),
-  *finite within a match* — the dead leave it permanently, the dispersed return,
-  settlement-inherited land arrives pool-intact (M6 made literal). Blood becomes
-  a permanent match currency (closing the blood-economy coupling gap flagged at
-  M3); generational regrowth is ~0 inside 25 turns. Values → M13/battery.
+  action moving bodies from the register into serving toward the cap, paid from
+  treasury yield, fighting at 100% (single troop quality). **Priced by the Surge
+  Draft Model (2026-07-07): a continuous cost curve over 동원 강도 plus an
+  optional commit-point surge — not a flat rate.** The temporary-levy track
+  (공세 동원, ADR 0009 role 3) stays a reserved seat. Force-adjustment stack:
+  ① recruitment (create, player) / ② garrison regeneration (**now bills the
+  register + treasury — P1 dual billing, amends ADR 0014**) / ③ standing-force
+  stationing (deploy, player) / ④ commit lever + reserve (activate). Definition
+  + history: match-arc GLOSSARY 모병 / RULINGS MT-①③; rates → M13.
+- ✅ `Conscription register` (징집 명부 · 구칭 인력 풀 / manpower pool): "군사력이
+  될 수 있는 모든 신체 인구" — the total living draftable bodies a realm holds,
+  **land-derived** (registerPerPop 1,800 × Σ populationValue) and finite within
+  a match. Total-bodies accounting: the starting army is drawn from it,
+  recruitment moves bodies civilian→serving, only death shrinks it (the dead
+  never return — blood is a permanent currency). Land transfer moves it;
+  development grows it. capPerPop 600 = the derived sustain fraction ⅓.
+  Definition + value + history: match-arc GLOSSARY 징집 명부 / RULINGS MT-② /
+  MAGNITUDE M13.
 - ❓ `Blinds` (블라인드): the escalation device that makes safe, passive play
   progressively more expensive as the match ages — the anti-safe-play pressure
   ADR 0025 parked into this thread. Mechanism undecided; design duty confirmed

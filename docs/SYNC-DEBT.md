@@ -11,27 +11,18 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
 
 ## Open
 
-- [ ] **Match-tilting seals → Production sync** (registered 2026-07-07
-  night, match-tilting grill session close): the session's user seals
-  are staged in `mockup/combat-calc/NOTES.md` (2026-07-07 entries,
-  verdict source for every item) and are NOT yet in their birthplace
-  docs. Owed batch: (1) **aging constitution P1–P3** (dual billing /
-  flow never ages / snapshot information) → match-arc GLOSSARY+RULINGS
-  rows; P1 amends M12 garrison free-self-heal and ADR 0014 — amendment
-  stamps owed; (2) **징집 명부 re-founding** (registerPerPop 1,800 ·
-  sustain fraction ⅓ · total-bodies accounting · land-derived formula
-  supersedes "1.5 × starting military") → M13 amendment + GLOSSARY row
-  re-cut; (3) **Surge Draft Model** (동원 강도, commit surge, continuous
-  piecewise-linear marginal price + named zones, integral billing,
-  garrison regen same-price) → M13 recruit amendment + new Tier-1 terms
-  ([조어] duty: 동원 강도/서지 모병 등록); (4) **start-state
-  coordinates** (f₀ 0.5 / g₀ 1.0 / ρ 0.75, start ~42% / structural max
-  ~58%) → canon home decision (match-arc vs combat-formula M-row) +
-  research file citations; (5) QUICKREF full regeneration + match-arc
-  INDEX refresh after the batch. Riders traveling with the batch:
-  sheet-7 tempo revalidation (f₀ 0.5), M14 flat blood-EV re-check
-  (band escalation bends it), L2 re-verify of registerPerPop after
-  tilting devices land.
+- [ ] **Match-tilting pass — residual sync** (birthplace sync PAID
+  2026-07-07, see Paid below; these items remain): (a) **ADR 0014
+  header amendment stamp** — P1 removes garrison free self-heal; the
+  MAGNITUDE M12 + match-arc RULINGS MT-① amendments are recorded, but
+  stamping the accepted ADR 0014 header is a user-gated architecture
+  action (agent model Tier 3, propose-only) — flag for the user, do
+  not silently edit. (b) **Surge Draft Model curve numbers** — knees,
+  band multipliers, surge exchange rate (+1%p/pt 가안), zone names —
+  deferred to the magnitude session (structure sealed, numbers 가안).
+  (c) Riders: **sheet-7 tempo revalidation** under f₀ 0.5 (was 0.7),
+  **M14 flat blood-EV re-check** (band escalation bends it),
+  **L2 re-verify registerPerPop** after tilting devices land.
 
 - [ ] **A-3 magnitude pass must ingest the L2 freeze evidence**
   (registered 2026-07-07, sheet-15 session): cap-growth-alone does not
@@ -69,6 +60,20 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
 
 ## Paid
 
+- [x] 2026-07-07 — **Match-tilting seals → Production sync (birthplace
+  batch)** — the session's NOTES-staged seals written to their
+  authoritative homes so no session reads stale canon: match-arc
+  RULINGS **MT-①…④** (aging constitution / register re-founding /
+  Surge Draft Model / start-state coordinates — the decision record);
+  match-arc GLOSSARY rows (모병 re-cut, 징집 명부 re-founded, +노화
+  헌법 / 동원 강도 / 서지 모병 as new Tier-1 terms); combat-formula
+  MAGNITUDE **M13 amended + M13a added** (registerPerPop 1,800,
+  capPerPop derived ⅓, Surge Draft Model, f₀0.5/g₀1.0/ρ0.75) +
+  **M12 amendment stamp** (garrison regen bills the register);
+  DOMAIN_MAP (모병/징집 명부 rows re-cut as summary+pointer + 노화
+  헌법 Design-Principle entry); QUICKREF rows re-pointed to birthplace.
+  Residual (ADR 0014 stamp, curve numbers, riders) split to the Open
+  row above.
 - [x] 2026-07-07 — **SPEC 중원-crown amendment (TC-②) APPLIED,
   user-approved** — SPEC §Match structure re-cut: survivability +
   starting-population parity balanced, geometry/economy asymmetry;

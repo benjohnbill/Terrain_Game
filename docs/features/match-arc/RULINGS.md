@@ -11,7 +11,10 @@ layer staging — this file is the canon home).
 
 Scope: match-arc rulings ⑧–⑰. Rulings ①–⑦ live in their
 combat-formula homes (NOTES findings, MAGNITUDE M9, ADR 0015);
-⑱–㉑ live in `../combat-formula/MAGNITUDE.md` M14.
+⑱–㉑ live in `../combat-formula/MAGNITUDE.md` M14. The **match-tilting
+pass** rulings (2026-07-07 night) use a local MT-①… series (like
+terrain-cradle's TC-…) to avoid cross-doc number collision — see the
+Match-Tilting Pass section below.
 
 ## ⑧ Settlement preset ladder (A-1, 2026-07-05, Codex-consulted)
 
@@ -221,3 +224,129 @@ Close-out: this section is the canon home for all seven; GLOSSARY
 queue 8 points here. When B opens a terrain-cradle / slice feature
 dir, these B-inputs migrate there (with the handoff §B undesigned-input
 list) and this record becomes the historical why.
+
+## Match-Tilting Pass (2026-07-07 night)
+
+The L2 cradle tournament exposed the **frozen world** (deterrence
+equilibrium, ~58% of matches never trip the decision point; healing
+outruns wounding). The pile-on probe proved the freeze is STRUCTURAL,
+not bot blindness. This pass sealed the world's aging model — how a
+match accrues irreversibility so the decision point can arrive. All
+rulings user-sealed in the grill session; verdict source =
+`mockup/combat-calc/NOTES.md` 2026-07-07 entries. Values partly
+deferred to the magnitude session (marked). Riders travel with the
+doc-sync batch (`docs/SYNC-DEBT.md`).
+
+### MT-① Aging constitution P1–P3 — SEALED 2026-07-07 · L1
+
+Three principles govern how the world ages (verdict source: NOTES
+§Match-tilting grill):
+
+- **P1 Dual billing**: replenishing men — recruitment AND garrison
+  regeneration — bills BOTH blood (the register, permanent) and yield
+  (treasury, flow). No free healing anywhere. **Amends** M12 garrison
+  free self-heal and ADR 0014 (garrison auto-regen) — regen now draws
+  real bodies from the register at the recruitment price ("사람 값은
+  어디서나 같다"). *(ADR 0014 header stamp owed — SYNC-DEBT.)*
+- **P2 Flow never ages**: economy determines healing SPEED only; it is
+  never permanently damaged except by identity acts (초토화 scorched
+  earth −30pp). Rejected: blood→economy coupling (경제 인구수) at match
+  scale — double-aging kills comebacks and breaks the skill-snowball
+  identity (SPEC ③); the instinct's substance already lives in
+  populationValue + register travel. 피폐 문턱 (world-register floor →
+  usable-econ soft cap) PARKED to Phase 2.
+- **P3 Snapshot information**: contact reveals the immutable layer
+  (terrain, fort existence, roads) forever; the mutable layer
+  (garrison counts, fort tier, army position) is snapshotted at contact
+  then decays — re-scouting costs the action economy. Feeds the fog
+  estimate-band design (band narrows at contact, re-widens over turns).
+
+Grounds: the only permanent currency is blood (the register); the
+frozen world showed the largest military mass (garrisons) was healing
+free, outside the blood ledger. P1 closes that leak — every battle,
+siege or field, now ages the world. Historical grounding: the deciding-
+war window (Three Kingdoms census collapse, 1814 France manpower
+exhaustion — blood runs out before money).
+
+### MT-② 징집 명부 re-founding — SEALED 2026-07-07 · L1
+
+The register is re-founded **land-derived**: 명부 = registerPerPop ×
+Σ populationValue, per province, at match start; thereafter a pure
+stock (deaths −, land transfer ±, development + via the same formula).
+**Accounting = total-bodies (b)** (user: "군사력이 될 수 있는 모든
+신체 인구") — the starting army is already drawn from it; recruitment
+moves bodies civilian→serving (register unchanged); only death shrinks
+it. **registerPerPop = 1,800** (register:cap ratio 3.0); capPerPop 600
+is re-founded as the DERIVED constant — the **sustain fraction ⅓**
+(a third of a land's lifetime bodies can serve at once). Supersedes
+"pool = 1.5 × initial military" (circular: tied to authored deployment,
+not population). Evidence: two-track research — historical bracket
+2.5–4.0 (Napoleonic 3–4× window refill) and game-convention 2.5–3×
+(`research/mobilization-historical-dynamics.md`,
+`research/manpower-pool-game-conventions.md`). Sealed sheet-9 sentence
+("one lost war forbids a second full army") re-read from stock-
+arithmetic truth to PRACTICAL truth (guarded by cession outflow +
+P1 regen demand + 10-turn rebuild); **rider: L2 re-verify after the
+tilting devices land**. World stored stocks are now exactly two:
+treasury (money) + register (blood).
+
+### MT-③ Surge Draft Model — shape SEALED 2026-07-07 · L1 (numbers deferred)
+
+Recruitment stays one primary, priced dynamically on two axes:
+
+- **Depth (동원 강도 = serving ÷ current register)**: unit price = a
+  CONTINUOUS piecewise-linear marginal curve over intensity; a draft's
+  bill = the AREA under the curve from pre- to post-draft intensity
+  (integral pricing — no cliffs, no boundary exploits). Named zones
+  (평시 징집 / 전시 동원 / 총동원 / 최후 동원 — names 가안) overlay
+  the curve for narration and the M10 leak only; zones carry no
+  arithmetic. Knees anchor to the start-state coordinates (MT-④):
+  平時 top ≈ start intensity 42%, 戰時 top ≈ structural max 58%; beyond
+  58% = blood-bought desperation, reachable only by a bled realm
+  (smaller denominator). Exact knees + multipliers → magnitude session.
+- **Size (surge)**: the recruit primary may be surged with surplus
+  commit points (existing pool grammar, one-shot voluntary spend — no
+  standing drain, the 20-point economy is untouched; M1/M2 stay
+  sealed). Surge exchange rate +1%p/point 가안. Surge/deep-band turns
+  leak via M10 (surge turn = leak turn, consistent with the sealed
+  1–3 turn lead).
+- Garrison regeneration (P1) pays the SAME curve price — deep-mobilized
+  realms heal expensively (aging coupling). Desperation is EMERGENT
+  (no unlock gates, no state): the Hitler/Marie-Louise line = repeated
+  deep-band surges, legal but torches yield + commit + future bodies;
+  skill-dependence rises (SPEC ⑥).
+
+Rejected alternative: a **mobilization-decree ladder** with a standing
+command-point upkeep — the standing drain re-opens the sealed M1/M2
+calibration (knee 8, lever ceiling) and couples army substance to
+judgment quality backwards (ADR 0018/0020: attention is realm-scale-
+independent). Amends M13 "flat +10%/turn at 0.5" → that is now the
+Band-1 base of this curve. Rider: M14 flat blood-EV check owed (band
+escalation intentionally bends it at depth).
+
+### MT-④ Start-state coordinates — SEALED 2026-07-07 · L1
+
+The mature-state start is pinned from research anchors
+(`research/garrison-field-ratio-and-armed-peace.md`), with the sustain
+fraction ⅓ (MT-②) as the only fixed formula:
+
+- **f₀ = 0.5** armed-peace field fill (field starts at 50% of cap;
+  bracket [0.4–0.6], Louis XIV/Dutch). Plain buildup 5 turns, surged
+  2–3 — the surge draft gets its opening beat; M13 "buildup 2–3 turns"
+  re-read as SURGED buildup. **Rider: sheet-7 tempo revalidation owed.**
+- **g₀ = 1.0** garrisons start at cap (cross-era regularity: peace
+  draw-down falls on the field army; the fortress shield stays manned).
+- **ρ = 0.75** war-footing garrison:field ratio (Vauban band pin;
+  per-seat spread 0.58–0.96 by border exposure — exposure texture
+  kept, more-exposed realms shield more).
+- Derived: **start intensity ≈ 42%, structural max ≈ 58%** (the MT-③
+  knees). Implied-census check: register ≈ 6–7.5% of implied
+  population (kokudaka grammar) — inside the historical 5–12% envelope.
+
+Rider first data: the sealed physique deepens the freeze (decided
+21% → 7% on the L2 board — thicker shields raise BOTH the war cost and
+the leadership bar; the Vauban-era indecisive-war signature). NOT
+grounds to unseal — these are principled body values; converging THIS
+world is the remaining match-tilting duty (recovery dials + blinds,
+target ~93% frozen at bot-grade). Harness: BOARD_GAAN in
+`mockup/combat-calc/map-board.js` carries the stamps; suite 101/101.
