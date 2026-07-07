@@ -25,6 +25,7 @@
 // world model here mirrors throwaway assumptions.
 
 const { DIALS, resolve } = require('./engine');
+const ECON = require('./econ.js');
 const { MATCH_DIALS, hegemonyCheck, presetBundle,
   expectedContinuedLoss, accepts } = require('./match');
 
@@ -34,6 +35,7 @@ const HARNESS = {
   sectorValue: 2,           // yield units per interior sector (sheet-11 scale: occ 4 sectors ≈ 8)
   capitalValue: 4,          // capital sector worth (realm remaining value term)
   garrisonRegen: 0.10,      // M12: local garrison regen per turn toward its cap
+  capitalGarrisonCap: 1500, // g0=1.0 capital guard cap (regen target + shattered ref)
   usableRecovery: 0.10,     // +10pp/turn when not raided (M12 usableRecoveryPp)
   raidLoot: 1.5,            // M8: loot per uncontested raid primary, yield units
   raidBurnPp: 0.15,         // M8: usable −15pp per raid
@@ -66,6 +68,12 @@ const BOT = {
   // pure deterrence arithmetic — bots see true values, so an at-cap realm
   // with nothing left to buy opens a grinding war at a lower ratio)
   idleAggress: { turnsIdle: 4, minRatio: 1.25, capFrac: 0.95 },
+  // recovery-dial pass (Option A, 2026-07-07): garrison regen is commit-
+  // gated, not a free pulse. A garrison below this fraction of its cap is
+  // "shattered" and its repair preempts the archetype peace order this
+  // turn (fix the breached wall before forging more spears). Gaan —
+  // bounds proof power, sweepable; NOT a seal candidate.
+  regenThreshold: 0.8,
   fortLadder: ['none', 'fieldworks', 'walls', 'fortress'],
   stormAt: { fieldworks: 1.0, walls: 1.2, fortress: 1.5, legendary: 1.8, none: 0 },
   siegeCommit: 8, fieldCommit: 14,
@@ -432,8 +440,22 @@ function pickTarget(me, realms, rng, H = HARNESS) {
   return null;
 }
 
-function peacePrimary(me, realms, rng, record) {
+function peacePrimary(me, realms, rng, record, H = HARNESS) {
   const pol = BOT.archetypes[me.archetype];
+  // recovery-dial pass (Option A): garrison regen is no longer a free
+  // pulse — it costs the turn's action. A shattered shield preempts the
+  // peace order (regenThreshold), but only when civilians can fill it
+  // (else the turn would be wasted healing nothing). A realm at war never
+  // reaches here (the war consumes its primary) — that IS the throttle.
+  if (civilians(me) > 0) {
+    const shattered = Object.keys(me.frontG).some(
+      (f) => me.frontG[f] < BOT.regenThreshold * me.frontCap[f])
+      || me.capitalGarrison < BOT.regenThreshold * H.capitalGarrisonCap;
+    if (shattered) {
+      const healed = regenGarrisons(me, H);
+      if (healed > 0) { record.regens = (record.regens ?? 0) + 1; return 'regen'; }
+    }
+  }
   for (const act of pol.peace) {
     if (act === 'raid') {
       const cands = adjacentNames(me, realms).map((n) => realms.find((x) => x.name === n))
@@ -473,27 +495,69 @@ function servingBodies(r) {
 }
 const civilians = (r) => Math.max(0, r.pool - servingBodies(r));
 
+// Option B treasury: income/turn = land yield × usable (econ.income shape).
+const realmIncome = (r) => r.yieldBase * r.usable;
+// mobilization intensity (serving ÷ register) — the surge-curve x-axis.
+const intensity = (r) => (r.pool > 0 ? servingBodies(r) / r.pool : 1);
+
 function doRecruit(me) {
   const base = Math.round(me.fieldCap * MATCH_DIALS.recruitPerTurn * me.usable);
   const bonus = Math.min(me.recruitBonus, base); // indemnity credit accelerates, same primary
-  me.recruitBonus -= bonus;
-  const add = Math.min(me.fieldCap - me.field, Math.min(civilians(me), base + bonus));
+  const want = Math.min(me.fieldCap - me.field, Math.min(civilians(me), base + bonus));
+  if (want <= 0) return;
+  // Option B: the draft is priced along the surge curve (integral over the
+  // intensity it pushes through) and capped by treasury. Register erosion
+  // makes the same draft cost more as the war ages — the "blind".
+  const reg = me.pool;
+  const serving = servingBodies(me);
+  const billFor = (men) => ECON.draftBill(reg, serving / reg, (serving + men) / reg);
+  const budget = me.treasury ?? Infinity;
+  let add = want;
+  if (billFor(add) > budget) {
+    let lo = 0, hi = want; // max affordable men (draftBill monotonic in men)
+    while (lo < hi) {
+      const mid = Math.ceil((lo + hi) / 2);
+      if (billFor(mid) <= budget) lo = mid; else hi = mid - 1;
+    }
+    add = lo;
+  }
+  me.recruitBonus -= Math.min(bonus, add);
   me.field += add;
+  if (me.treasury != null) me.treasury -= billFor(add);
 }
 
 // P1 dual billing, register side: garrison regeneration draws real
 // bodies from the same register (no free healing). Returns men healed.
 // (Treasury side of P1 is not modeled in this harness — sheet limits.)
 function regenGarrisons(r, H) {
-  let avail = civilians(r); let healed = 0;
+  const reg = r.pool;
+  const serving = servingBodies(r);
+  const civ = civilians(r);
+  // P1 yield side (Option B): regen pays the SAME surge curve as recruit —
+  // deep-mobilized realms heal expensively. The men budget is the lesser of
+  // civilians (blood) and what treasury can afford at the current intensity.
+  const budget = r.treasury ?? Infinity;
+  const billFor = (men) => ECON.draftBill(reg, serving / reg, (serving + men) / reg);
+  let avail = civ;
+  if (budget !== Infinity && billFor(civ) > budget) {
+    let lo = 0, hi = civ;
+    while (lo < hi) {
+      const mid = Math.ceil((lo + hi) / 2);
+      if (billFor(mid) <= budget) lo = mid; else hi = mid - 1;
+    }
+    avail = lo;
+  }
+  let healed = 0;
   for (const f of Object.keys(r.frontG)) {
     const want = Math.min(r.frontCap[f] - r.frontG[f], Math.round(r.frontCap[f] * H.garrisonRegen));
     const add = Math.max(0, Math.min(want, avail));
     r.frontG[f] += add; avail -= add; healed += add;
   }
-  const capWant = Math.min(1500 - r.capitalGarrison, Math.round(1500 * H.garrisonRegen * 0.5));
+  const capCap = H.capitalGarrisonCap ?? 1500;
+  const capWant = Math.min(capCap - r.capitalGarrison, Math.round(capCap * H.garrisonRegen * 0.5));
   const capAdd = Math.max(0, Math.min(capWant, avail));
   r.capitalGarrison += capAdd; healed += capAdd;
+  if (r.treasury != null) r.treasury -= billFor(healed);
   return healed;
 }
 
@@ -526,7 +590,7 @@ function runMatch(assignment, opts = {}) {
       if (attacking || defending) continue; // the war consumes the primary
       const target = pickTarget(r, realms, rng, H);
       if (target) declarations.push([r, target]);
-      else peacePrimary(r, realms, rng, record);
+      else peacePrimary(r, realms, rng, record, H);
     }
     for (const [r, target] of declarations) {
       const war = newWar(r, target, t);
@@ -584,10 +648,14 @@ function runMatch(assignment, opts = {}) {
       }
     }
 
-    // --- M12/M13 pulse: garrison regen (P1: draws civilians), usable recovery
+    // --- M12/M13 pulse: usable recovery only. Garrison regen is NO LONGER
+    // a free pulse (recovery-dial pass, Option A / ADR 0027): re-manning a
+    // shattered shield now costs the turn's action, taken in peacePrimary.
+    // usable recovery stays passive — it is ambient world-flow (the land
+    // healing), not a force-shaping act (M12-5 standing floor).
     for (const r of alive) {
-      regenGarrisons(r, H);
       r.usable = Math.min(1, r.usable + H.usableRecovery);
+      r.treasury = (r.treasury ?? 0) + realmIncome(r);  // Option B income accrual
     }
 
     // --- hegemony check: every alive non-vassal candidate
@@ -689,4 +757,5 @@ const SPEC_GAPS = [
 
 module.exports = { HARNESS, BOT, ARCHETYPES, TEMPERAMENTS, SEATS, SPEC_GAPS,
   makeBoard, runMatch, runTournament, mulberry32, yieldReach, realmValue,
-  pickTarget, doRecruit, poolBleed, servingBodies, regenGarrisons };
+  pickTarget, peacePrimary, doRecruit, poolBleed, servingBodies, regenGarrisons,
+  realmIncome, intensity };

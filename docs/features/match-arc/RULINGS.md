@@ -350,3 +350,70 @@ grounds to unseal — these are principled body values; converging THIS
 world is the remaining match-tilting duty (recovery dials + blinds,
 target ~93% frozen at bot-grade). Harness: BOARD_GAAN in
 `mockup/combat-calc/map-board.js` carries the stamps; suite 101/101.
+
+### MT-⑤ Recovery-dial + blinds resolved by L2 — freeze is NOT economic — SEALED 2026-07-08 · L2
+
+The recovery-dial grill and the blinds design were carried to L2 (wire-
+first, per user). Verdict source: `mockup/combat-calc/NOTES.md` §Recovery-
+dial grill / §Option B / §L2 fidelity audit; user rulings this session.
+
+**Sealed structure — garrison regen is commit-gated (→ ADR 0027).**
+Main/surplus are magnitude labels over the freely-split commit pool, not
+fixed roles; no force-shaping act runs without commit (bottom 0). Garrison
+regeneration ceases to be automatic — it is a committed action, throttled
+by attention scarcity (a multi-front bled realm cannot re-man every
+shattered shield). **Amends M12-1** (auto-regen → commit-gated). Built +
+L2-validated: recovery-gating raises decided 7%→10% (+3pp, real but minor).
+This stays as a validated THIN supplement.
+
+**Q1 lean REVERSED by L2.** The sealed lean (2026-07-07) was "recovery-
+slowdown primary, blinds thin." L2 falsifies it: the freeze is a
+**multipolar standoff, not a healing problem**. Autopsy — 99% of frozen
+matches fail the LEADERSHIP gate (median 48% projection shortfall), only
+1% coalition-bound; decided worlds collapse to 3.8 sovereign survivors
+(vassal deals 0.97) vs frozen 4.5 (0.34). No economic lever moves it:
+recovery-gate +3pp, garrison-regen→0 +1pp, cap-growth 0 (A-3's fixture
+4%→27% does NOT transfer to the real map), and the **surge/mobilization
+tax runs BACKWARD (−4pp)** — taxing mobilization shrinks both armies so
+offense breaks fixed defense even less. Bot settlement-aggression cranked
+to max buys +5pp (still 85% frozen) — and masking a system problem with
+hyper-aggressive bots only widens the human-PvP gap (user). **The "blinds
+= economic aging" hypothesis is spent on this freeze.**
+
+**Blinds = the surge desperation tail, wired but INERT.** Option B (surge
+curve + treasury, integral pricing; suite 111/111) confirmed the blind is
+not a separate device but the deep tail of the sealed Surge Draft Model
+(MT-③) — yet at scale the curve never bites: treasury GROWS across a match
+(income ≫ war spend), so no economic throttle constrains anything.
+Steepening the curve deepens the freeze (above). Not unsealed; the
+placeholder file dials stand (magnitude session owns numbers).
+
+**L2 fidelity audit (independent subagent) — harness FAITHFUL.** Start
+intensity 42.1% / structural max 58.7% / register:cap 3.00 reproduced
+exactly; every combat/hegemony/settlement/MT dial FAITHFUL, zero drift in
+the resolution engine. The freeze is a genuine SYSTEM-DESIGN problem, not
+a stale value. Two bounds named: (a) the surge SIZE axis + the whole
+20-point commit economy are UNMODELED (1-action/turn — the harness cannot
+test whether richer per-turn play breaks the equilibrium; sheet-8 hand-arc
+is the standing convergence proof); (b) **uniform `walls` at every front is
+an artifact** — the map carries `fortTier: none` on all 56 sectors, the
+adapter overrides with `startFort: 'walls'` (BOARD_GAAN, not a seal), so
+"Vauban defense dominance" was partly circular.
+
+**Freeze decomposed into two ADR-grade axes** (startFort sweep: none 19.5%
+· walls 10.2% · fortress 9.5%):
+1. **Force-geography (~9pp, un-parked)**: uniform walls doubles the freeze.
+   Defense strength must vary per border, bound to terrain (the map already
+   carries hex terrain: plains/hills/mtn/pass) — both the START placement
+   AND the in-match fort-build rules, so armies find weak fronts (attack
+   windows). User direction (2026-07-08): "L2 must be measured on defense
+   strength + strategy grounded in our terrain data." This is the next
+   pass's spine.
+2. **Hegemony bar / combat balance (~80% structural residual)**: survives
+   even fort=none. Is the leadership margin reachable at all among 5
+   balanced realms on a parity map, or does the victory condition / offense-
+   defense balance need a large ADR? Open — the deeper of the two.
+
+Recovery-gate (ADR 0027) is kept; recovery/blinds economy is closed as the
+freeze lever. The pass now hands off to force-geography (spine) with the
+hegemony-bar question open beneath it.

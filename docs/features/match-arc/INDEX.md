@@ -4,17 +4,23 @@ Front door only (documentation law): status, scope, pointers, open
 questions. Definitions live in `GLOSSARY.md`; numbers in
 `../combat-formula/MAGNITUDE.md`.
 
-**Match-tilting pass IN PROGRESS (2026-07-07 night)**: the L2 cradle
-run exposed the frozen world (deterrence equilibrium, quantified);
-the session sealed the aging constitution P1–P3, re-founded 징집
-명부 (registerPerPop 1,800 / sustain fraction ⅓, total-bodies
-accounting), and sealed the Surge Draft Model + start-state
-coordinates (f₀ 0.5 / g₀ 1.0 / ρ 0.75 → start ~42%, structural max
-~58%). All staged in `mockup/combat-calc/NOTES.md` (2026-07-07
-entries) — **birthplace sync owed, see `docs/SYNC-DEBT.md`**.
-Research: `research/` (3 files, 2026-07-07). Next: recovery-dial
-grill + blinds design
-(`.context/handoff-2026-07-07-match-tilting-pass.md`).
+**Match-tilting pass — economy phase CLOSED (2026-07-08)**: the L2
+cradle run exposed the frozen world (deterrence equilibrium). The
+pass sealed the aging constitution P1–P3, re-founded 징집 명부
+(registerPerPop 1,800 / sustain fraction ⅓, total-bodies), the Surge
+Draft Model, and start-state coordinates (f₀ 0.5 / g₀ 1.0 / ρ 0.75 →
+start ~42%, structural max ~58%) — all in RULINGS MT-①…④. The
+recovery-dial + blinds phase (MT-⑤) was carried to L2 wire-first and
+**reversed the premise**: the freeze is NOT economic aging but a
+multipolar standoff (99% fail the leadership gate). Garrison regen is
+now commit-gated (ADR 0027, +3pp thin supplement); the economic-
+blinds hypothesis is spent. An independent L2 fidelity audit
+confirmed the harness FAITHFUL, and decomposed the freeze into two
+non-economic axes: **force-geography** (uniform `walls` artifact
+doubles the freeze — un-parked as the next pass's spine, terrain-
+bound defense) and the **hegemony bar** (~80% residual). Next pass =
+force-geography, hegemony-bar question open beneath it. Detail:
+RULINGS MT-⑤ + `mockup/combat-calc/NOTES.md` (2026-07-08).
 
 Status: **core SEALED** (2026-07-03 → 07-05). Structure and first
 values user-confirmed through the A-1 grill (rulings ①–⑧), the A-2

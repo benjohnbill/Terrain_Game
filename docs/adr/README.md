@@ -50,10 +50,11 @@ a target; ← is amended/superseded by a later ADR.
 | 0017 | Positioning — Civ-Depth World, LoL-Shaped Interaction | 2026-07-01 | Accepted | — |
 | 0018 | Phase 1 MVP — Core Fun First, Defer Capacity/Overclock | 2026-07-01 | Accepted | ← Amended by 0020 (single divisible pool → core) |
 | 0019 | Situation Judgment as a Structured, Posture-Lensed Reading | 2026-07-01 | Accepted | Self-amended 2026-07-06 (v5 front-sector — lens/leak-through, no overview recommendation) |
-| 0020 | Minimal Action-Capacity Divisibility is Core | 2026-07-01 | Accepted | → Amends 0018 |
+| 0020 | Minimal Action-Capacity Divisibility is Core | 2026-07-01 | Accepted | → Amends 0018 · ← Amended by 0027 (main/surplus = magnitude labels, no hard cap) |
 | 0021 | Under-Commitment Failure Causes Front-Sector Loss | 2026-07-01 | Accepted | — |
 | 0022 | Front Sectors as the One-Turn Operational Layer | 2026-07-01 | Accepted | → Amends 0014 |
 | 0023 | Province Status and Control Summary From Front Sectors | 2026-07-01 | Accepted | — |
 | 0024 | Operation Plan Presets for Core Commands | 2026-07-01 | Accepted | — |
 | 0025 | Turn-Based Core with the Uncertainty Duel | 2026-07-02 | Accepted | — |
 | 0026 | One-Shot Plan Effects, Persistent State, Standing Rules | 2026-07-02 | Accepted | — |
+| 0027 | Free Commit Allocation — Main/Surplus as Magnitude Labels | 2026-07-07 | Accepted | → Amends 0020 |

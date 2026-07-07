@@ -7,8 +7,14 @@ const { test } = require('node:test');
 const assert = require('node:assert');
 
 const TOURNEY = require('../mockup/combat-calc/tournament.js');
+const ECON = require('../mockup/combat-calc/econ.js');
 const { CRADLE_MAP, CRADLE_BINDING } = require('../mockup/combat-calc/map-gen.js');
 const { makeBoardFromMap } = require('../mockup/combat-calc/map-board.js');
+
+// Surge-draft intensity curve dials for the math tests — deliberately NOT
+// the production placeholders, so these assertions verify the curve MATH,
+// not the tunable values (which the magnitude session owns).
+const CURVE = { base: 0.01, peaceKnee: 0.40, warKnee: 0.60, warMult: 2, fullMult: 10 };
 
 const SEATS = Object.keys(CRADLE_BINDING);
 
@@ -154,6 +160,119 @@ test('garrison regeneration draws from civilians (P1: no free healing)', () => {
   const healed2 = TOURNEY.regenGarrisons(r, { garrisonRegen: 0.10 });
   assert.ok(healed2 > 0, 'civilians available — regen flows');
   assert.strictEqual(r.pool, before, 'regen moves bodies; register unchanged');
+});
+
+// ---- surge draft: intensity price curve (Option B, the "blind") ----
+
+test('intensityPrice: flat in peace, linear war ramp, steep desperation tail', () => {
+  const p = (i) => ECON.intensityPrice(i, CURVE);
+  assert.strictEqual(p(0.30), 0.01, 'peace zone flat at base');
+  assert.strictEqual(p(0.40), 0.01, 'peace knee still base');
+  assert.ok(Math.abs(p(0.50) - 0.015) < 1e-12, 'war ramp midpoint (0.01→0.02, half)');
+  assert.ok(Math.abs(p(0.60) - 0.02) < 1e-12, 'war knee = base×warMult');
+  assert.ok(Math.abs(p(0.80) - 0.06) < 1e-12, 'desperation midpoint (0.02→0.10, half)');
+  assert.ok(Math.abs(p(1.00) - 0.10) < 1e-12, 'full mobilization = base×fullMult');
+});
+
+test('draftBill integrates the curve × register (flat zone: base × men)', () => {
+  // reg 10000, 0.10→0.20 entirely in the flat peace zone: 1000 men at 0.01
+  assert.ok(Math.abs(ECON.draftBill(10000, 0.10, 0.20, CURVE) - 10) < 1e-9);
+});
+
+test('draftBill trapezoid over the desperation tail (hand-computed)', () => {
+  // reg 10000, 0.60→1.00: price 0.02→0.10 linear, men 4000, avg 0.06 → 240
+  assert.ok(Math.abs(ECON.draftBill(10000, 0.60, 1.00, CURVE) - 240) < 1e-6);
+});
+
+test('draftBill across a knee sums the pieces (peace flat + war ramp)', () => {
+  // reg 10000, 0.30→0.50: flat 0.30→0.40 (1000×0.01=10) + ramp 0.40→0.50
+  // (1000 men, price 0.01→0.015, avg 0.0125 = 12.5) = 22.5
+  assert.ok(Math.abs(ECON.draftBill(10000, 0.30, 0.50, CURVE) - 22.5) < 1e-6);
+});
+
+test('board realms start with a treasury war chest scaled to income', () => {
+  const { BOARD_GAAN: G } = require('../mockup/combat-calc/map-board.js');
+  const board = makeBoardFromMap(CRADLE_MAP, CRADLE_BINDING);
+  const r = board[0];
+  assert.ok(r.treasury > 0, 'treasury initialized');
+  assert.ok(Math.abs(r.treasury - G.treasuryStartTurns * r.yieldBase) < 1e-9,
+    'war chest = treasuryStartTurns × yieldBase (usable 1.0 at start)');
+});
+
+test('realmIncome = yieldBase × usable', () => {
+  const board = makeBoardFromMap(CRADLE_MAP, CRADLE_BINDING);
+  const r = board[0];
+  r.usable = 0.5;
+  assert.ok(Math.abs(TOURNEY.realmIncome(r) - r.yieldBase * 0.5) < 1e-9);
+});
+
+test('doRecruit is capped by treasury at the curve price (deep pockets → full draft)', () => {
+  const mkR = () => {
+    const r = makeBoardFromMap(CRADLE_MAP, CRADLE_BINDING)[0];
+    r.field = Math.round(r.fieldCap * 0.5); // headroom + peace-zone intensity
+    return r;
+  };
+  const ample = mkR(); ample.treasury = 1e6;
+  const t0 = ample.treasury; const f0 = ample.field;
+  TOURNEY.doRecruit(ample);
+  const fullDraft = ample.field - f0;
+  assert.ok(fullDraft > 100, 'ample treasury → full base draft');
+  assert.ok(ample.treasury < t0, 'paid the bill from treasury');
+
+  const broke = mkR(); broke.treasury = 0.05; // affords only a handful of men
+  const f1 = broke.field;
+  TOURNEY.doRecruit(broke);
+  const capped = broke.field - f1;
+  assert.ok(capped > 0 && capped < fullDraft, `treasury-capped well below full (got ${capped} vs ${fullDraft})`);
+  assert.ok(broke.treasury >= 0, 'never overspends into negative treasury');
+});
+
+test('regenGarrisons pays the surge curve from treasury (P1) and caps to affordability', () => {
+  const r = makeBoardFromMap(CRADLE_MAP, CRADLE_BINDING)[0];
+  const front = Object.keys(r.frontG)[0];
+  r.frontG[front] = Math.round(r.frontCap[front] * 0.3); // shattered shield
+  r.treasury = 1e6; // ample
+  const t0 = r.treasury; const pool0 = r.pool;
+  const healed = TOURNEY.regenGarrisons(r, { garrisonRegen: 0.10 });
+  assert.ok(healed > 0, 'healed with ample treasury');
+  assert.ok(r.treasury < t0, 'paid the P1 yield side from treasury');
+  assert.strictEqual(r.pool, pool0, 'regen moves bodies; register unchanged');
+
+  const r2 = makeBoardFromMap(CRADLE_MAP, CRADLE_BINDING)[0];
+  const f2 = Object.keys(r2.frontG)[0];
+  r2.frontG[f2] = Math.round(r2.frontCap[f2] * 0.3);
+  r2.treasury = 0; // cannot pay
+  assert.strictEqual(TOURNEY.regenGarrisons(r2, { garrisonRegen: 0.10 }), 0,
+    'no treasury → regen cannot be paid → no healing');
+});
+
+// ---- recovery-dial pass: garrison regen is commit-gated (Option A) ----
+
+test('peacePrimary regenerates a shattered garrison before recruiting (preempt)', () => {
+  const board = makeBoardFromMap(CRADLE_MAP, CRADLE_BINDING);
+  const r = board[0];
+  r.archetype = 'conquest-snowball'; // peace order ['recruit','fort']
+  r._turn = 5;
+  r.field = Math.round(r.fieldCap * 0.5); // recruit is available (field < cap)
+  const front = Object.keys(r.frontG)[0];
+  r.frontG[front] = Math.round(r.frontCap[front] * 0.5); // shattered, below 0.8×cap
+  const before = r.frontG[front];
+  const record = { raids: 0, regens: 0 };
+  const act = TOURNEY.peacePrimary(r, board, TOURNEY.mulberry32(1), record);
+  assert.strictEqual(act, 'regen', 'a shattered shield preempts recruit');
+  assert.ok(r.frontG[front] > before, 'the garrison healed this turn');
+});
+
+test('peacePrimary does NOT regen when garrisons are full — falls through to the peace order', () => {
+  const board = makeBoardFromMap(CRADLE_MAP, CRADLE_BINDING);
+  const r = board[0]; // fresh board: g0=1.0, all garrisons at cap
+  r.archetype = 'conquest-snowball'; // peace order ['recruit','fort']
+  r._turn = 5;
+  r.field = Math.round(r.fieldCap * 0.5); // recruit is available
+  const record = { raids: 0, regens: 0 };
+  const act = TOURNEY.peacePrimary(r, board, TOURNEY.mulberry32(1), record);
+  assert.strictEqual(act, 'recruit', 'full shields → normal peace order (recruit)');
+  assert.strictEqual(record.regens, 0, 'no regen was taken');
 });
 
 test('registerPerPop sizes the cradle register from population when set', () => {

@@ -53,6 +53,48 @@ const ECON_DIALS = {
   recruitFrac: 0.10,
 };
 
+// -- Surge Draft Model (MT-③): mobilization intensity (serving ÷ register)
+// prices each drafted/regenerated man via a continuous piecewise-linear
+// marginal curve. This is the "blind" — register erosion (permanent deaths)
+// raises steady-state intensity, dragging sustained war into the steep
+// desperation tail. Knees anchor to MT-④ start-state coordinates. ALL
+// values are placeholder 가안 for SHAPE testing; the magnitude session owns
+// the numbers (fullMult = the tunable steepness S). base = sealed 1부대 =
+// 0.5 yield → 0.005 yield/man.
+const SURGE = {
+  base: 0.005,      // yield/man in 평시 (i ≤ peaceKnee)
+  peaceKnee: 0.42,  // MT-④ start intensity — top of the flat peace band
+  warKnee: 0.58,    // MT-④ structural max — top of the 전시 ramp
+  warMult: 2,       // price × base at warKnee
+  fullMult: 12,     // price × base at i = 1.0 (desperation steepness — TUNABLE S)
+};
+
+// marginal yield-per-man at mobilization intensity i
+function intensityPrice(i, D = SURGE) {
+  if (i <= D.peaceKnee) return D.base;
+  if (i <= D.warKnee) {
+    const t = (i - D.peaceKnee) / (D.warKnee - D.peaceKnee);
+    return D.base * (1 + (D.warMult - 1) * t);
+  }
+  const t = (i - D.warKnee) / (1 - D.warKnee);
+  return D.base * (D.warMult + (D.fullMult - D.warMult) * t);
+}
+
+// integral pricing: bill for moving intensity iPre→iPost = the area under
+// the marginal curve × register (men per unit intensity = register). Exact
+// for the piecewise-linear curve by splitting trapezoids at the knees.
+function draftBill(register, iPre, iPost, D = SURGE) {
+  if (iPost <= iPre) return 0;
+  const knees = [D.peaceKnee, D.warKnee].filter((k) => k > iPre && k < iPost);
+  const pts = [iPre, ...knees, iPost];
+  let area = 0;
+  for (let k = 0; k < pts.length - 1; k++) {
+    const a = pts[k], b = pts[k + 1];
+    area += (intensityPrice(a, D) + intensityPrice(b, D)) / 2 * (b - a);
+  }
+  return register * area;
+}
+
 // sectors: [{ economyValue, populationValue, usableEconomy, usablePop }]
 function income(sectors, D = ECON_DIALS) {
   return sectors.reduce((s, x) => s + x.economyValue * x.usableEconomy, 0);
@@ -84,6 +126,6 @@ function centerRealm(D = ECON_DIALS) {
   return Array.from({ length: 12 }, () => sector(D.richYield, 1.25));
 }
 
-const _api = { ECON_DIALS, income, nationalCap, recruitCost, sector, midRealm, centerRealm };
+const _api = { ECON_DIALS, SURGE, intensityPrice, draftBill, income, nationalCap, recruitCost, sector, midRealm, centerRealm };
 if (typeof module !== 'undefined' && module.exports) module.exports = _api;
 else (window.TC = window.TC || {}).econ = _api;

@@ -485,8 +485,13 @@ on any divergence the Production seal is truth (documentation-law conflict rule)
   bodies in logic, treating 부대 as a compute unit.
 - ✅ `Command pool` (명령 풀) / `Commitment` (커밋): per-turn attention that
   refills fully and is identical for every realm size (never converts to
-  troops); commitment is the points placed on one action. Both sides use the
-  same grammar (D2/D6). This is the resolution-layer face of `Action capacity`.
+  troops); commitment is the points placed on an action. The 20-point pool
+  is split freely across ~1–2 actions; **main/surplus are magnitude labels
+  applied by commit size, not fixed roles bound to activity types** — no
+  hard action-count cap (the M2 knee soft-caps), and every force-shaping act
+  (recruit, garrison regen, fort, recovery) is commit-gated, bottom 0
+  (ADR 0027, amends ADR 0020). Both sides use the same grammar (D2/D6). This
+  is the resolution-layer face of `Action capacity`.
 - ✅ `Lever` (레버): what commitment buys — an activation/direction multiplier on
   substance, concave (early points buy more than late) with a knee and a
   ceiling; defense holds a baseline lever at zero commit (D8; curve → M2).

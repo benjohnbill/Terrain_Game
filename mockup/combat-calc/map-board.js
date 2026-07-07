@@ -27,6 +27,9 @@ const BOARD_GAAN = {
   interiorGarrison: 300,        // per interior sector (legacy pool-sizing only)
   capitalGarrison: 1500,        // g0 = 1.0: capital guard starts at its cap
   startFort: 'walls',           // mature-state start: walls at every front
+  treasuryStartTurns: 3,        // Option B: starting war chest = N turns of
+                                // income (yieldBase × usable). Gaan — funds
+                                // early surge/regen before income accrues.
   registerPerPop: 1800,         // 징집 명부 per populationValue point —
                                 // SEALED 2026-07-07 (user, match-tilting
                                 // grill): register:cap ratio 3.0, i.e.
@@ -89,6 +92,7 @@ function makeBoardFromMap(map, binding, gaan = BOARD_GAAN) {
       exits, staging: false,
       usable: 1.0,
       yieldBase,
+      treasury: (gaan.treasuryStartTurns ?? 0) * yieldBase,  // Option B war chest
       sectorYield: yieldBase / interior,
       pool: gaan.registerPerPop            // (b) total-bodies register:
         ? Math.round(popTotal * gaan.registerPerPop)   // land-derived (Q0-5)

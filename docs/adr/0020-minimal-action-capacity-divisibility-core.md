@@ -4,6 +4,7 @@ Date: 2026-07-01
 
 Status: Accepted
 Amends: ADR 0018 (2026-07-01) — reclassifies a single divisible action-capacity pool from deferred to core; the heavier four-capacity/overclock system stays deferred (see § Consequences).
+Amended by: ADR 0027 (2026-07-07) — "primary action" / "surplus outlets" are reframed as magnitude labels over a freely-split pool, not fixed roles bound to activity types; no hard action-count cap (the M2 knee soft-caps); force-shaping activities are commit-gated, bottom 0 (see § Decision).
 
 ## Context
 

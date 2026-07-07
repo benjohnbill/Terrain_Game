@@ -274,6 +274,203 @@ bot-grade. Envelope note: converging matches still land mean T26.
   Needle rulings (중원 band, 관중+촉 dial, 초원 flag registration)
   deferred until L2 fidelity rises.
 
+## Recovery-dial grill — commit-gated healing SEALED (2026-07-07 late night, user)
+
+Continuation of the match-tilting pass. The recovery slowdown lever (Q1
+= A, recovery-slowdown primary / blinds thin) was RESHAPED: it is not a
+rate cut but **commit-gating**. Sealed this session (verdict source =
+user, this grill):
+
+- **Main/surplus are magnitude labels, not fixed roles (→ ADR 0027,
+  amends ADR 0020, WRITTEN + stamped this session).** The 20-point pool
+  is freely split across ~1–2 activities; the bigger-commit one is
+  "main," smaller "surplus" — the label floats, the activity carries no
+  tag. Action count soft-capped by the M2 knee (8), NO hard cap;
+  deliberate fine-slicing allowed (player owns the judgment; over-
+  efficiency → L2/L3 balance patch, never a structural gate).
+- **No force-shaping activity runs without commit; bottom 0.** Garrison
+  regeneration (M12-1) was the last automatic/free force-shaping act;
+  it is now commit-gated with NO passive floor (a garrison re-mans only
+  when the nation sends bodies). Recruitment + fortification + economy-
+  recovery were already commit outlets (ADR 0020/0024); this closes the
+  one gap. Ambient world-flow stays passive (standing usable floor
+  M12-5, confidence decay M12-3, attrition M12-4, register death) — the
+  boundary is nation's *acts* vs world's *flows*.
+- **Q2 rate-cut dissolved.** The recovery throttle now emerges from
+  attention scarcity: a multi-front bled realm (20 pts, knee 8, ~2
+  meaningful acts) cannot re-man every shattered garrison + recruit +
+  scout. Throttle self-scales with the number of fronts bleeding —
+  exactly the frozen-world (pile-on) case. The +10%/turn rate stands as
+  the per-commit amount WHERE committed.
+
+Doc-sync owed (SYNC-DEBT, session close): (a) garrison-regen commit-
+gating → match-arc recovery-dial ruling citing ADR 0027 + M12-1
+amendment stamp; (b) DOMAIN_MAP `Action capacity` → floating-label
+framing.
+
+**Gated on L2, NOT yet resolved**: allocation SIZING (how much the
+commit-throttle converges the freeze) and whether a distinct BLINDS
+device is still needed BEYOND commit-throttle + surge-draft escalation
+(MT-③ deep-band price rises as registers shrink). Both require wiring
+the harness (commit-gated regen + curve pricing + treasury — none wired
+in L2 yet, per handoff) and re-measuring the Vauban world (7% frozen
+baseline). Next work unit = that wiring + re-measure, THEN resume the
+blinds grill with data.
+
+## L2 re-measure — Option A wired + freeze diagnosis (2026-07-08, agent+user)
+
+Option A (commit-gated garrison regen) built via TDD: auto-regen pulse
+removed, regen now a peacePrimary action (preempt when a shield is below
+regenThreshold 0.8×cap; realm at war can't reach it = the throttle).
+`BOT.regenThreshold`, `HARNESS.capitalGarrisonCap` added (harness gaan).
+Suite 103/103. Seams: `peacePrimary` exported; S1 (regen preempts recruit
+when shattered) / S2 (falls through when full). Measurements below are
+cradle, reps 30, seed 42, maxTurns 32 (turns NEVER raised — match-time
+constraint).
+
+- **Recovery-gating effect: decided 7% → 10.2%** (+199 matches, ~10σ —
+  real but MINOR). wars/match 7.1→7.3, mean trip T25.8.
+- **cap-growth does NOT transfer to the real map**: capPerSector {0,400,
+  600} → decided flat 10.2/10.1/10.0% (A-3's sheet-12 4%→27% was a
+  fixture artifact; on the cradle board conquest/cession is too rare for
+  capPerSector to fire).
+- **Freeze autopsy (the crux)**: 99% of frozen matches fail the
+  LEADERSHIP gate (32% unassailable-but-too-small + 67% both), only 1%
+  coalition-bound; the closest candidate is a **median 48% short** of the
+  projection it needs. A CHASM, not a dial near-miss. Decisiveness is the
+  axis: decided worlds collapse to **3.8 sovereign survivors** (vassal
+  deals 0.97, elim 0.29); frozen worlds keep **4.5** (vassal 0.34, elim
+  0.18). **The freeze is a multipolar standoff, not a healing problem.**
+- **Bot-timidity probe** (all archetypes cranked to pushCapital+
+  vassalDemand+holdOut+redeclare eager, turns unchanged): decided
+  10.2%→**15.2%** (vassal 0.41→1.30, survivors 4.43→3.70). So **~5pp is
+  bot timidity** (a real slice to un-park in the bot-policy audit) — but
+  **even MAX-aggression bots leave 85% frozen**: willing to press, unable
+  to militarily BREAK the enemy (balanced map + healing → wars wash out
+  to material/white peace). The bulk is a genuine DESIGN hole.
+
+**Consequences for the pass:**
+- **Q1 lean REVERSED by data.** Sealed lean was "recovery-slowdown
+  primary, blinds thin." L2 says the opposite: the primary lever must
+  FORCE DECISIVE WAR OUTCOMES that collapse the field (rival removal);
+  recovery-gating is the validated THIN supplement. (This is why wire-
+  first mattered.) Q1 seal amendment owed at doc-sync.
+- **"Aging" decomposed to a concrete target**: the match-ending
+  irreversibility = the multipolar field COLLAPSING. Blinds/aging devices
+  must make a **prolonged defensive standoff progressively unsustainable
+  so the defender BREAKS instead of healing back to symmetry** — and must
+  do so WITHOUT extending match length (force decision → shorter, not
+  more turns). Sealed devices (recovery-gate, surge blood-escalation) aim
+  this way but are too weak to force the break in 32 turns.
+- **Parked wake-item**: bot settlement-aggression ≈5pp headroom — a
+  concrete slice for the parked bot-policy audit (do bots press to
+  vassalage as a skilled hand would?).
+
+Next: blinds design grill, target = "make defensive stalemate
+unsustainable without adding turns."
+
+## Option B wired (surge curve + treasury) — INERT, then adverse (2026-07-08)
+
+Built via TDD (suite 111/111): `econ.intensityPrice` (piecewise-linear
+marginal curve over mobilization intensity) + `econ.draftBill` (integral
+pricing), `r.treasury` stock + `realmIncome` accrual, doRecruit + regen
+pay the curve from treasury (P1 yield side). File placeholder dials:
+SURGE base 0.005, peaceKnee 0.42, warKnee 0.58, warMult 2, fullMult 12;
+BOARD_GAAN.treasuryStartTurns 3. **These file values are UNCHANGED** —
+the steepness sweeps below were in-memory (`ECON.SURGE.x = …` inside
+throwaway scripts, separate node procs), never written to econ.js.
+
+Findings (cradle, reps 30, seed 42):
+- **The curve is INERT at placeholder values**: FULL Option B ≡ curve-OFF
+  control, decided 10.2% both, byte-identical guardrails. Cause is NOT a
+  bug — it is MAGNITUDE: treasury GROWS across a match (start ~35 → end
+  ~350–460; income ~15/turn ≫ war spend ~3/recruit), so the bill is
+  always affordable and never throttles. Even realm A ending at intensity
+  0.65 (desperation zone) had treasury 464.
+- **Reachable intensity is capped near the desperation knee**: all-serving-
+  at-cap intensity is only 0.53–0.65 (knee 0.58), so the deep tail is
+  reachable ONLY by register erosion (smaller denominator). Erosion is
+  bimodal: ~50% of realm-endings keep register ~100% (never fight), the
+  bottom ~30% erode below 70% (would reach the tail).
+- **Steepness sweep (in-memory) makes the freeze WORSE**: warMult/fullMult
+  2/12→10/60→30/180→100/600 gave decided 10.2%→8.5%→5.8%→8.3%, vassal
+  0.41→0.16. Taxing mobilization shrinks BOTH armies → offense breaks
+  fixed defense (walls) even less → deeper stalemate. **The sealed
+  "blind = mobilization/passivity tax" runs BACKWARD on this freeze.**
+- **Defense-healing degrade also barely moves it**: garrisonRegen
+  0.10→0.05→0.02→0.0 gave decided 10.2→10.2→10.1→11.2%.
+
+**Lever summary — nothing economic/healing breaks the freeze**: recovery-
+gate +3pp, regen→0 +1pp, cap-growth 0, mobilization-tax NEGATIVE, bot
+decisiveness +5pp (still 85% frozen). The freeze root is NOT economic
+aging — it is the combat balance (Vauban defense dominance) + the
+hegemony bar being arithmetically unreachable among same-size realms on a
+parity map (median 48% projection shortfall). This largely FALSIFIES the
+pass premise ("recovery dials + blinds unfreeze the world").
+
+**User decision (2026-07-08)**: do NOT revert Option B — keep it wired,
+file dials at placeholder. Before any design decision (hegemony bar /
+combat balance / map), run a SEPARATE L2-TRUSTWORTHINESS AUDIT: verify
+the sealed values in NOTES/docs are actually reflected in the L2 harness
+(map-board.js / tournament.js / econ.js). Only if the audit finds the
+harness faithful AND the freeze persists do we accept it as a system-
+design problem needing a large ADR (combat balance / hegemony / map).
+Cranking bots to mask a system problem widens the human-PVP gap — not a
+real fix.
+
+## L2 fidelity audit + freeze decomposition (2026-07-08, subagent + user)
+
+User ordered an independent L2-trustworthiness audit BEFORE accepting the
+freeze as a system-design problem (correctly: a stale harness value would
+invalidate every run). Separate general-purpose subagent audited engine/
+match/tournament/econ/map-board line-by-line vs sealed canon (MAGNITUDE /
+RULINGS / GLOSSARY), computing derived coordinates from the real board.
+
+**Audit verdict: FAITHFUL (yes-with-caveats).** Start intensity 42.1% /
+structural max 58.7% / register:cap 3.00 reproduced exactly; every combat
+(engine DIALS), hegemony (MATCH_DIALS), settlement, M12/M13/MT dial =
+FAITHFUL, zero drift in the resolution engine. The freeze is NOT a stale-
+value artifact. Minor notes: usable recovery applied ungated (should be
+"when not raided" — negligibly pro-freeze); legacy `makeBoard()` fixture
+still ×1.5 pool (stale but OFF the cradle path — sheet-12 trap only).
+Acknowledged proof-power bounds (not violations): surge SIZE axis + the
+whole 20-point commit/main-surplus economy are UNMODELED (1-action/turn) —
+the harness structurally cannot test whether richer per-turn play breaks
+the equilibrium (sheet-8 hand-arc remains the standing proof a skilled
+hand converges).
+
+**The audit's load-bearing catch — uniform walls is an artifact.** The map
+carries `fortTier: none` on ALL 56 sectors; the harness overrides this with
+`startFort: 'walls'` at every front (BOARD_GAAN — NOT a seal; no start-fort-
+tier seal exists). So the "Vauban defense dominance" diagnosis was partly
+CIRCULAR: we laid walls everywhere, then diagnosed defense dominance.
+
+**startFort sweep (cradle, reps 30, seed 42) — decomposes the freeze:**
+- none 19.5% · fieldworks 17.6% · walls 10.2% · fortress 9.5% decided.
+- **Uniform walls DOUBLES the freeze** (19.5%→10.2%). The freeze has two
+  layers: (1) an ARTIFACT/gap layer ~9pp from flattening fort geometry to
+  walls-everywhere — real terrain varies per border (a weak front = an
+  attack window); this is the parked FORCE-GEOGRAPHY problem, impact now
+  confirmed; (2) a STRUCTURAL layer ~80% that survives even fort=none —
+  the hegemony bar is arithmetically unreachable among same-size realms on
+  a parity map (median 48% projection shortfall).
+
+**Conclusion — the pass reframes.** System-design problem CONFIRMED (audit
+clean), and the axis is now narrowed to two ADR-grade candidates, NOT
+recovery/blinds economy:
+- **Force-geography**: fort/defense geometry must vary per border (uniform
+  walls is both an artifact AND a design gap) — un-parks the force-
+  geography thread; ~9pp of the freeze lives here.
+- **Hegemony bar / combat balance**: the ~80% structural residual — is the
+  leadership margin reachable at all among 5 balanced realms on a parity
+  map, or does the victory condition / offense-defense balance need a
+  large ADR? (Cranking bots to mask this widens the human-PVP gap — not a
+  fix, per user.)
+
+Match-tilting economy devices (recovery-gate, surge curve) are NOT the
+lever; recovery-gate stays a validated +3pp supplement (ADR 0027). The
+"blinds = economic aging" hypothesis is spent on THIS freeze.
+
 # 2026-07-05 night run — sheet 13 (thin economy, A-3)
 
 Question: the minimum economy that makes M13 prices and 정산 codable —

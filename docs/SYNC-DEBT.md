@@ -24,6 +24,16 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   **M14 flat blood-EV re-check** (band escalation bends it),
   **L2 re-verify registerPerPop** after tilting devices land.
 
+- [ ] **Recovery-dial grill — residual sync** (doc-sync batch PAID
+  2026-07-08, see Paid below; these remain): (a) **ADR 0014 header
+  amendment stamp** — P1 dual billing + now MT-⑤ commit-gating both
+  remove garrison free/auto-regen; MAGNITUDE M12 + RULINGS MT-①/⑤ carry
+  the deltas, but stamping the accepted ADR 0014 header is a Tier-3
+  user-gated action (propose-only) — flag, do not silently edit.
+  (b) **QUICKREF full regeneration** (C-loop table + MT-⑤ + ADR 0027 +
+  블라인드 supersession) — deferred to the force-geography pass's
+  doc-sync (batched to avoid double-regen).
+
 - [ ] **A-3 magnitude pass must ingest the L2 freeze evidence**
   (registered 2026-07-07, sheet-15 session): cap-growth-alone does not
   unfreeze the parity map (22→24% decided; on the asymmetric fixture
@@ -31,6 +41,18 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   mechanism" numbers (ruling ⑮, deferred to A-3) must be cut against
   the frozen-world autopsy in `mockup/combat-calc/NOTES.md`
   (2026-07-07 entry), alongside the blinds design outcome.
+
+- [ ] **Force-geography pass — the next spine** (registered 2026-07-08,
+  match-tilting close; source RULINGS MT-⑤ + `mockup/combat-calc/NOTES.md`
+  §L2 fidelity audit). L2 diagnosed the frozen world as NON-economic; the
+  next design pass is force-geography. Two things owed there, not now:
+  (a) **harness**: replace uniform `startFort: 'walls'` (an artifact — map
+  carries `fortTier: none`, hex terrain plains/hills/mtn/pass unused) with
+  terrain-bound defense strength, both start placement AND in-match fort-
+  build rules, so L2 measures the real terrain (user direction 2026-07-08);
+  (b) **design**: the ~80% structural residual = the hegemony-bar / offense-
+  defense-balance question — is leadership reachable among balanced realms
+  on a parity map? May need a large ADR. Grill-worthy, fresh session.
 
 - [ ] **Term lifecycle beyond promotion** (Codex P1): define
   proposed → agreed → promoted → renamed → deprecated states in the
@@ -74,6 +96,18 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   헌법 Design-Principle entry); QUICKREF rows re-pointed to birthplace.
   Residual (ADR 0014 stamp, curve numbers, riders) split to the Open
   row above.
+- [x] 2026-07-08 — **Recovery-dial + blinds phase → Production sync
+  (MT-⑤)** — the recovery-dial/blinds phase reached L2 wire-first and
+  reversed the premise (freeze non-economic). Paid this batch: ADR 0027
+  written + 0020 stamped + README index (main/surplus = magnitude
+  labels, commit-gated force-shaping); match-arc RULINGS **MT-⑤** (full
+  L2 record — recovery-gate +3pp, Q1 reversal, Option B inert, fidelity
+  audit, freeze decomposed to force-geography + hegemony-bar);
+  MAGNITUDE **M12-1 commit-gate amendment stamp**; GLOSSARY 블라인드 row
+  SUPERSEDED-as-economic-device; DOMAIN_MAP `Command pool` floating-label
+  framing; INDEX refreshed (economy phase closed). Residual (ADR 0014
+  stamp, QUICKREF regen) → Open row above; force-geography = next spine
+  (Open).
 - [x] 2026-07-07 — **SPEC 중원-crown amendment (TC-②) APPLIED,
   user-approved** — SPEC §Match structure re-cut: survivability +
   starting-population parity balanced, geometry/economy asymmetry;

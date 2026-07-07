@@ -688,6 +688,14 @@ command-card IA session.
 > the 징집 명부 (register) and paid at the recruit price — every heal
 > ages the world. This amends item 1 below and ADR 0014 (garrison
 > auto-regen). *ADR 0014 header stamp owed — see `docs/SYNC-DEBT.md`.*
+>
+> **AMENDED 2026-07-08 (recovery-dial grill, match-arc RULINGS MT-⑤ /
+> ADR 0027).** Garrison regeneration is **no longer automatic**: the
+> +10%/turn is the amount purchased per COMMITTED action (bottom 0, no
+> passive floor), throttled by attention scarcity — a realm at war cannot
+> re-man its shields. L2-validated (+3pp decided) but MINOR; the freeze is
+> not a healing problem (MT-⑤). Item 1's "per turn" now means "per
+> committed regen action," not an unconditional pulse.
 
 
 Confirmation gate (full-match tempo sheet) met by battery sheets 7–8:
