@@ -574,6 +574,28 @@ function runMatch(assignment, opts = {}) {
 }
 
 function finish(record, realms) {
+  // how far from the decision point did this world end? (timeout autopsy:
+  // per candidate, leadership shortfall = worst-rival need − own projection;
+  // coalition overhang = coalition mass − unassailability need. trip ⇔ 0 / ≤0)
+  const view = checkView(realms);
+  let best = null;
+  for (const r of realms) {
+    if (!r.alive || r.vassalOf) continue;
+    const c = hegemonyCheck(view, r.name, MATCH_DIALS);
+    const maxNeed = c.leadershipRows.length
+      ? Math.max(...c.leadershipRows.map((x) => x.need)) : 0;
+    const cand = {
+      name: r.name,
+      leadership: c.leadership, unassailable: c.unassailable,
+      leadershipShortfall: Math.max(0, maxNeed - c.candProj),
+      coalitionOverhang: c.coalition - c.coalitionNeed,
+      candProj: c.candProj,
+    };
+    if (!best || cand.leadershipShortfall < best.leadershipShortfall
+      || (cand.leadershipShortfall === best.leadershipShortfall
+        && cand.coalitionOverhang < best.coalitionOverhang)) best = cand;
+  }
+  record.finalCheck = best;
   record.finalRealms = realms.map((r) => ({
     name: r.name, seat: r.seatType, archetype: r.archetype, temperament: r.temperament,
     alive: r.alive, vassalOf: r.vassalOf, field: r.field, pool: r.pool, interior: r.interior,

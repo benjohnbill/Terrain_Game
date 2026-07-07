@@ -52,3 +52,19 @@ test('runMatch without a board still plays the fixture seats (sheet-12 regressio
   assert.deepStrictEqual(
     record.finalRealms.map((r) => r.name).sort(), [...TOURNEY.SEATS].sort());
 });
+
+test('record.finalCheck reports the closest hegemony candidate at match end', () => {
+  const record = TOURNEY.runMatch(cradleAssignment(), {
+    seed: 7, board: makeBoardFromMap(CRADLE_MAP, CRADLE_BINDING),
+  });
+  const fc = record.finalCheck;
+  assert.ok(fc && SEATS.includes(fc.name));
+  assert.ok(typeof fc.leadershipShortfall === 'number');
+  assert.ok(typeof fc.coalitionOverhang === 'number');
+  assert.strictEqual(typeof fc.leadership, 'boolean');
+  assert.strictEqual(typeof fc.unassailable, 'boolean');
+  if (record.winner) {
+    assert.strictEqual(fc.name, record.winner);
+    assert.strictEqual(fc.leadership && fc.unassailable, true);
+  }
+});
