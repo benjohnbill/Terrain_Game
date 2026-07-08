@@ -136,10 +136,18 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   = a third latent scarcity axis, off for scope); **sequencing** v1=(최소) /
   (정교) static standing-redistribution = deferred delta detailed after
   (최소) L2 data, measure minimal→sophisticated (FG-⑨). U3/U5 settled.
-  **STILL OPEN**: U4 band-weighting (own brainstorm), (정교) detail (after
-  (최소) L2 data), then the harness build (wire M9 reserve + FG-② mapping +
-  stop re-equalization). (a)/(c) remain DEBT. Row stays Open until (b)
-  ships.
+  **UPDATE 2026-07-09 (design continued — v1 DESIGN COMPLETE).** The
+  session ran on and closed the last forks: **U4 SEALED FG-⑦** (band-
+  weighting reuses the sealed disposition dial TP②, no new dial; pickTarget
+  scores facing-front first-blow defense = judged garrison(λ) × public
+  terrain × public fort); **reserve mass SEALED FG-⑩** = field-army
+  operational counter + M9 tactical fill (BOTH, M9 swept — field-army-only
+  rejected as a tactical-scale strawman per ladder rule 4). Design of v1
+  (최소) is now COMPLETE (FG-①…⑩). **STILL OPEN**: (정교) standing-
+  redistribution detail (after (최소) L2 data), plan-time scoping (M9
+  abstraction cost — board has no sector routing; field-army late-arrival
+  effectiveness), then the harness build. Next = **writing-plans**.
+  (a)/(c) remain DEBT. Row stays Open until (b) ships.
 
 - [ ] **Term lifecycle beyond promotion** (Codex P1): define
   proposed → agreed → promoted → renamed → deprecated states in the

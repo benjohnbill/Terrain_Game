@@ -1,8 +1,8 @@
 # Force Geography
 
-**Status**: IN DESIGN — v1 (최소) design sealed (RULINGS FG-①…⑨,
-2026-07-09), pending L2 (최소) build + measurement. Concept **(b)** of the
-hegemony-freeze three-concept sequence.
+**Status**: DESIGN COMPLETE (v1 최소) — RULINGS **FG-①…⑩** (2026-07-09);
+next = writing-plans → L2 (최소) build + measurement. Concept **(b)** of
+the hegemony-freeze three-concept sequence.
 
 ## What this is
 
@@ -36,9 +36,9 @@ shipping game code (`js/`) is behind.
 | Unit | Role | Status |
 |---|---|---|
 | **U1** terrain envelope (STATIC) | terrain keys the start fort tier | ✅ SEALED FG-② (adopt measured mapping, +33% L2) |
-| **U2** defense investment (DYNAMIC) | conserved budget → where defense concentrates | see below — v1 = the reactive **reserve** does it |
+| **U2** defense investment (DYNAMIC) | conserved budget → where defense concentrates | ✅ SEALED FG-⑤/⑥/⑩ — v1 = reactive reserve (field army + M9, M9 swept) does it |
 | **U3** resolution | the sealed 4-layer formula reads non-uniform inputs | ✅ SETTLED (unchanged; RULINGS §Settled) |
-| **U4** weak-front finding (attacker AI) | attacker targets the softest FRONT | ❓ OPEN — info contract sealed FG-⑦, band-weighting open |
+| **U4** weak-front finding (attacker AI) | attacker targets the softest FRONT | ✅ SEALED FG-⑦ — reuse disposition dial; pickTarget scores first-blow defense |
 | **U5** measurement | re-run the panel + duel metric | ✅ SETTLED (RULINGS §Settled) |
 
 **U2 is the heart of this pass.** The session reframed it: weak fronts do
@@ -49,15 +49,14 @@ by a **reactive mobile reserve** (FG-④/⑤/⑥). v1 keeps standing garrison
 uniform-by-geometry and lets the reserve do all concentration (최소,
 FG-⑨); deliberate standing redistribution is the deferred (정교) delta.
 
-## Open questions
+## Open questions (all deferred — design of v1 is complete)
 
-- **U4 band-weighting** (FG-⑦): does the attacker read the garrison
-  estimate band optimistically (low), at the midpoint, or worst-case
-  (high) when picking a front? Next brainstorm.
 - **(정교) standing redistribution** (FG-⑨): detailed only after (최소)
   L2 data.
 - **(a) per-front value** (FG-⑥): promote from whole-realm once province
   topology exists.
+- **Plan-time scoping** (FG-⑩): M9 abstraction wiring cost + field-army
+  late-arrival effectiveness — resolved in writing-plans, not a brainstorm.
 
 ## Key files (reuse hooks)
 

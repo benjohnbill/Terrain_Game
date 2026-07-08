@@ -102,7 +102,11 @@ role **exhausted**, +33% did not die). Confirming force-geography now
 invented "opportunism" read = attack the front the field army isn't at,
 SPEC_GAP #1) — making it real is the honest move.
 
-## FG-⑤ Reserve model — REACTIVE, first blow hits raw defense — SEALED 2026-07-09, L0
+## FG-⑤ Reserve model — REACTIVE, first blow hits raw defense — SEALED 2026-07-09, L0 (amended 2026-07-09 by FG-⑩)
+
+**Amendment (FG-⑩)**: the load-bearing reserve is the **field-army
+operational counter + M9 tactical fill — BOTH** (M9 swept), not M9 alone;
+the "reuse M9" bullet below is the tactical-fill layer only.
 
 **Ruling**: the reserve is **reactive**, not anticipatory (real players do
 both via scouting; reactive is v1, anticipatory is the later overlay).
@@ -159,9 +163,17 @@ Because the reserve is reactive (FG-⑤), the **defender's** reserve is
 effectively **fog-free** (the attack reveals the front and the assaulting
 force). The fog lives on the **attacker's** pre-attack read.
 
-**OPEN (→ U4 brainstorm)**: how the attacker WEIGHS the band (optimistic
-low end / midpoint / worst-case high) when picking a front. The band
-itself is sealed; only the weighting is open.
+**RESOLVED 2026-07-09 (U4 closes)**: band-weighting reuses the sealed
+**disposition dial** (tactical-plan-ai **TP②**, λ ∈ [−1 pessimist reads
+strong .. +1 optimist reads weak]) — **no new dial**. U4 = `pickTarget`
+scores the FACING front's **first-blow defense** = judged garrison(λ,
+confidence band) × public terrain × public fort, and picks the softest
+neighbor; reachable-weakest-link (**G8**) is the aggregation; **value-blind
+for the cradle** (whole-realm, FG-⑥). Today `pickTarget` sums RAW bodies
+INCLUDING the field army and IGNORES terrain/fort (a fortress-pass and a
+bare-plains with equal garrison look equally defended) — that is the bug
+U4 fixes. λ/confidence are swept harness params (TP④). A **targeted
+`pickTarget` change, not a rewrite**; archetype target preferences stay.
 
 ## FG-⑧ Commit-scarcity axis kept OFF for the pass — SEALED 2026-07-09, L0 (scope)
 
@@ -200,6 +212,39 @@ caused the result?). (정교) is not wrong; it is the **harder, truer test**
 result is only interpretable as a **delta off (최소)**. (최소) is also a
 cheap **gate**: if the reactive reserve alone re-freezes, pivot before
 building (정교).
+
+## FG-⑩ Reserve mass — field army (operational) + M9 (tactical fill), both, M9 swept — SEALED 2026-07-09, L0; amends FG-⑤
+
+**Ruling**: the (최소) reactive reserve is TWO layers, both included:
+
+- **Operational counter — the field army** (load-bearing): the realm's
+  mobile army repositions to the deficit×value front (FG-⑥) to fight the
+  decisive battle — the defender's real counter to a weak-front strike
+  (the user's "야전군을 데려가"). Today it auto-defends the biggest war +
+  20% screen; U2 changes it to reposition by deficit×value, arriving a
+  beat AFTER the first blow.
+- **Tactical fill — M9** (sealed 예비대/진관): route-connected garrison
+  stock rushes the attacked front at ×0.5. In the L2 board this is an
+  **ABSTRACTION** — the board holds per-front garrison aggregates
+  (`frontG`), not route-connected sector stock — e.g. pull from the
+  realm's other front / interior garrisons toward the attacked front at
+  ×0.5.
+
+**Field-army-only is REJECTED** as a tactical-scale strawman (ladder rule
+4): without M9 the first-blow window is more breakable than a human
+defender's (no local garrison rush), so a positive result could not
+confirm.
+
+**M9 is SWEPT on/off** (the fort-sweep method) to isolate its contribution
+— human-like completeness AND isolation at once, without muddying the
+(최소) baseline (M9 is a reserve LAYER, not a standing-redistribution
+policy; the (최소)/(정교) line stays at standing redistribution — FG-⑨).
+
+**Plan-time riders**: (i) M9 abstraction wiring cost — the board has no
+sector routing, so scope the abstraction at plan; if too large, field-army
+-first + M9 as a KNOWN swept fast-follow, never a silent omission. (ii)
+field-army late-arrival effectiveness (full vs a forced-march penalty
+~×0.75) — plan-time detail.
 
 ---
 
