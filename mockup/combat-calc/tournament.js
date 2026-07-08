@@ -605,8 +605,7 @@ function pickTarget(me, realms, rng, H = HARNESS) {
   // (garrison×terrain×fort, field army excluded) instead of the raw shield
   // read. Non-FG boards (me.forceGeo falsy) collapse `soft` to the exact
   // `shield` expression — byte-identical ranking, untouched by this change.
-  const soft = (t) => me.forceGeo ? frontSoftness(me, t)
-    : ((engaged(t) ? Math.round(t.field * 0.2) : t.field) + (t.frontG[me.name] ?? 0));
+  const soft = (t) => me.forceGeo ? frontSoftness(me, t) : shield(t);
   // pile-on probe (HARNESS 가안, sheet-15 freeze autopsy follow-up):
   // a strengthened opportunism read — a neighbor below woundedFrac of
   // cap is a WINDOW (strike before healing closes it), window targets
