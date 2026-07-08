@@ -54,3 +54,14 @@ test('peacePrimary does not upgrade fort above the terrain ceiling', () => {
   T.peacePrimary(me, [me], null, record);
   assert.strictEqual(me.fortAt.X, 'fieldworks', 'open front NOT pushed past fieldworks');
 });
+
+test('m9Fill pulls from other fronts + interior at the reserve rate, off when disabled', () => {
+  const D = {
+    frontG: { A: 200, B: 800, C: 600 }, interiorGarrison: 300,
+    m9Reserve: true,
+  };
+  // engine reserveAwaken: floor(provinceStock * points*0.125); BOT.reservePoints=4 → 50%
+  // provinceStock for front A = other fronts (800+600) + interior (300) = 1700
+  assert.strictEqual(T.m9Fill(D, 'A'), Math.floor(1700 * 0.5));
+  assert.strictEqual(T.m9Fill({ ...D, m9Reserve: false }, 'A'), 0);
+});

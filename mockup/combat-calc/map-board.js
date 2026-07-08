@@ -48,7 +48,7 @@ const FG_FORT_BY_CLASS = {
   forest: 'walls', hills: 'walls', river: 'walls',
   pass: 'fortress', strait: 'fortress',
 };
-const FG_BOARD_GAAN = { ...BOARD_GAAN, startFortByClass: FG_FORT_BY_CLASS };
+const FG_BOARD_GAAN = { ...BOARD_GAAN, startFortByClass: FG_FORT_BY_CLASS, m9Reserve: true };
 
 // reachable-weakest-link: an attacker assaults through the softest crossing on
 // a front, so a seat-front spanning several region borders takes the most-open
@@ -122,6 +122,8 @@ function makeBoardFromMap(map, binding, gaan = BOARD_GAAN) {
       regionIds: [...regionIds],
       field, fieldCap, interior,
       capitalGarrison: gaan.capitalGarrison,
+      interiorGarrison: interior * gaan.interiorGarrison,
+      m9Reserve: gaan.m9Reserve ?? false,
       frontG, frontCap: { ...frontG }, fortAt,
       frontClass, frontDoor,          // border crossing class + door per front
       fortCeil: gaan.startFortByClass

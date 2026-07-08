@@ -28,7 +28,7 @@
 // js/ modules later as the balance regression rig. Only the coarse
 // world model here mirrors throwaway assumptions.
 
-const { DIALS, resolve } = require('./engine');
+const { DIALS, resolve, reserveAwaken } = require('./engine');
 const ECON = require('./econ.js');
 const { MATCH_DIALS, hegemonyCheck, projectable, matchPanel, presetBundle,
   expectedContinuedLoss, accepts } = require('./match');
@@ -81,6 +81,8 @@ const BOT = {
   fortLadder: ['none', 'fieldworks', 'walls', 'fortress'],
   stormAt: { fieldworks: 1.0, walls: 1.2, fortress: 1.5, legendary: 1.8, none: 0 },
   siegeCommit: 8, fieldCommit: 14,
+  reservePoints: 4,   // FG-⑩ M9 fill: reserveAwaken points → 50% of adjacent stock
+                      // (engine then applies ×0.5 marchEffect). HARNESS 가안, swept.
   // war-goal depth: cascade this many sectors before proposing (bigger
   // claim = deeper occupation = longer, bloodier war — the composite the
   // claim rate multiplies only counts what the sword actually reached)
@@ -285,7 +287,8 @@ function warBattle(war, A, D, opts = {}) {
       : { terrain: 'hills', fort, erosionStamps: war.stamps, ...crossing };
     if (A.brain) {
       const spec = { attacker: { stock: A.field, commit: BOT.siegeCommit },
-        defender: { stock: g, commit: BOT.siegeCommit, starvationStage: siStage(war.starve) },
+        defender: { stock: g, commit: BOT.siegeCommit, starvationStage: siStage(war.starve),
+          reserveStock: m9Fill(D, front) },
         ...site, defenderIsolated: D.field < 400 }; // no relief army → cut off
       const pick = pickPlan(A, war, front, spec, opts);
       const r = resolve({ ...spec, plan: pick.plan });
@@ -299,14 +302,14 @@ function warBattle(war, A, D, opts = {}) {
     }
     if (fortNow <= (BOT.stormAt[fort] ?? 1.2) + 1e-9) {
       const r = resolve({ plan: 'Swift', attacker: { stock: A.field, commit: BOT.siegeCommit },
-        defender: { stock: g, commit: BOT.siegeCommit }, ...site });
+        defender: { stock: g, commit: BOT.siegeCommit, reserveStock: m9Fill(D, front) }, ...site });
       applyBlood(A, D, r, front);
       if (r.success) { war.stage = 'field'; war.occupied += 1; D.interior = Math.max(0, D.interior); }
       else if (r.R < 1.1) war.stalled++;
       return r;
     }
     const r = resolve({ plan: 'DP', attacker: { stock: A.field, commit: BOT.siegeCommit },
-      defender: { stock: g, commit: BOT.siegeCommit }, ...site });
+      defender: { stock: g, commit: BOT.siegeCommit, reserveStock: m9Fill(D, front) }, ...site });
     applyBlood(A, D, r, front);
     if (r.success) war.stamps += r.margin >= DIALS.dpErosion.deepMargin ? 2 : 1;
     else if (r.R < 1.1) war.stalled++;
@@ -408,6 +411,17 @@ function applyBlood(A, D, r, front) {
   D.frontG[front] = Math.max(0, r.stockAfterB); poolBleed(D, r.lossB);
 }
 function poolBleed(r, dead) { r.pool = Math.max(0, r.pool - dead); }
+
+// FG-⑩ M9 tactical fill: route-connected stock rushes the attacked front.
+// The L2 board has no per-sector routing, so "province stock" is abstracted
+// as the realm's OTHER fronts' garrison + interior garrison. Engine applies
+// the ×0.5 march penalty; this returns the awakened body count.
+function m9Fill(D, front) {
+  if (!D.m9Reserve) return 0;
+  const others = Object.entries(D.frontG)
+    .reduce((s, [n, g]) => s + (n === front ? 0 : g), 0);
+  return reserveAwaken(others + (D.interiorGarrison ?? 0), BOT.reservePoints);
+}
 
 // ---------------------------------------------------------------- settlement
 // Winner proposes down a concession ladder (preferred → more lenient);
@@ -924,4 +938,4 @@ const SPEC_GAPS = [
 module.exports = { HARNESS, BOT, ARCHETYPES, TEMPERAMENTS, SEATS, SPEC_GAPS,
   makeBoard, runMatch, runTournament, mulberry32, yieldReach, realmValue,
   pickTarget, peacePrimary, doRecruit, poolBleed, servingBodies, regenGarrisons,
-  realmIncome, intensity, combatFromBorderClass, newWar, warBattle };
+  realmIncome, intensity, combatFromBorderClass, newWar, warBattle, m9Fill };
