@@ -417,3 +417,68 @@ adapter overrides with `startFort: 'walls'` (BOARD_GAAN, not a seal), so
 Recovery-gate (ADR 0027) is kept; recovery/blinds economy is closed as the
 freeze lever. The pass now hands off to force-geography (spine) with the
 hegemony-bar question open beneath it.
+
+## Ending-Taxonomy Pass (2026-07-08)
+
+Opened on MT-⑤'s open axis — the ~80% hegemony-bar residual: is leadership
+reachable among balanced realms, or is the victory condition a wall? Before
+touching any victory-condition knob, this pass built the INSTRUMENT to tell
+those apart, because the ~87% `timeout` was one label hiding opposite
+realities. Verdict source: `mockup/combat-calc/NOTES.md` §Ending-taxonomy;
+grill Q1–Q4 user-sealed.
+
+### ET-① Bar-independent ending taxonomy — SEALED 2026-07-08 (grill) · L2
+
+How a match ends is measured by a **bar-INDEPENDENT** panel, so the timeout
+blob splits into a legitimate multipolar standoff vs a dominant realm the
+victory check failed to register. Measurement never changes the winner (the
+hegemony gate alone decides that); it is the evidence a later victory-
+condition / SPEC-terminal decision needs.
+
+- **Q1 — measure before redefining the terminal.** A no-hegemon match ends
+  `winner: null` today (no scored terminal); giving it one is a SPEC-5
+  amendment ("the ending is the detection of irreversibility"), user-gated —
+  deferred behind the measurement.
+- **Q2 — ruler B (bar-independent).** Concentration measured WITHOUT the
+  hegemony bar: measuring distance-to-bar bakes the suspect into the ruler.
+- **Q3 — 8-metric panel.** forceShare / controlShare / HHI (concentration)
+  + **shieldShare** (defense, 방패 질량 ⑨) + **reversibilityIndex**
+  (unassailability as a continuous scalar — in-balance rivals' offense ÷
+  leader shield) + **vassalShare** (복속 proxy) + **bloodAxis** (worldBlood
+  exhaustion, 징집 명부). Each maps to a sealed ending-shape or a named axis;
+  an internal survey and an external one (EU4 / Stellaris / HOI4 / Civ / CK3 /
+  Total War / Diplomacy) converged on the offense/defense split, subject-
+  weighting (~½ external vs our full-gate), and a coalition-pressure scalar.
+  Diplomacy Sum-of-Squares (leader² ÷ Σ²) banked as a candidate no-hegemon
+  score.
+- **Q4 — vassals fold FULL into the overlord side** (mirrors the gate's
+  candProj = self + Σ vassal; 복속 keeps its substance but trades
+  sovereignty — strategically the overlord's instrument, 부마국). vassalShare
+  reports the fragile proxy portion (evaporates on chain-collapse) separately.
+- **Buckets** (thresholds PROVISIONAL, calibrated post-measurement; tier
+  cutoffs borrow Stellaris relative-power 1.5× superior / 2.5× overwhelming):
+  hegemon (tripped) · **denied-dominant** (dominant + unassailable, no trip —
+  the wall) · standoff (multipolar balance) · bipolar-lock · contested.
+
+**First finding (L2, authored cradle, 1,680 matches, provisional
+thresholds).** The timeout splits ~56% standoff / ~28% **denied-dominant** /
+~11% hegemon. Bucket means validate a real bimodal split (not threshold
+noise): denied-dominant (forceShare 0.58, reversibility 0.39) sits beside the
+hegemons (0.68, 0.28) and far from standoff (0.26, 1.87) — statistically
+"hegemons the check missed." So the freeze is BOTH anti-snowball success (the
+standoff half) AND a victory-condition wall (the denied-dominant half).
+**Crown inversion** (bears on terrain-cradle TC-②, recorded as evidence, NOT
+a rewrite): the center leads mostly in standoffs (~10% of its leads are
+dominant) while flanks do the dominating (~66%) — the center's exposure pins
+it to standoff, the opposite of TC-②'s expected center hegemony-premium.
+exhausted ≈ 0 (blood never runs out under current dials — bloodAxis is a null
+signal today, kept as cheap future-proofing).
+
+Wired: `match.js matchPanel` (pure share arithmetic) · `tournament.js
+finish()` (record.panel + record.bodiesStart) · `plan-battery.js aggregate`
+(buckets + bucketByLeaderSeat crown crosstab + exhaustedPct); commit c082247,
+suite 148 green. Decomposes MT-⑤'s open hegemony-bar axis into two targetable
+problems: **the wall** (denied-dominant → shieldRatio / leadership shape,
+SPEC-adjacent) and **the crown inversion** (center can't convert →
+anti-snowball strength / map balance). Next: calibrate thresholds, then grill
+the wall.

@@ -22,6 +22,22 @@ bound defense) and the **hegemony bar** (~80% residual). Next pass =
 force-geography, hegemony-bar question open beneath it. Detail:
 RULINGS MT-⑤ + `mockup/combat-calc/NOTES.md` (2026-07-08).
 
+**Ending-taxonomy pass (2026-07-08)**: the hegemony grill opened on
+MT-⑤'s open hegemony-bar axis. Before touching any victory-condition
+knob it built a **bar-independent** measurement panel (RULINGS ET-①,
+commit c082247) so the ~87% `timeout` blob could be classified — the
+gate still alone decides winners; the panel is the evidence a later
+victory-condition / SPEC-terminal decision needs. First finding
+(authored cradle, 1,680 matches, provisional thresholds): the timeout
+splits ~56% standoff / ~28% **denied-dominant** (statistically "hegemons
+the check missed") / ~11% hegemon, with a **crown inversion** — the
+center leads mostly in standoffs while flanks dominate (bears on
+terrain-cradle TC-②, recorded as evidence). Decomposes the hegemony-bar
+residual into two targetable problems: **the wall** (denied-dominant →
+shieldRatio / leadership shape, SPEC-adjacent) and **the crown
+inversion** (anti-snowball strength / map balance). Detail: RULINGS ET-①
++ NOTES §Ending-taxonomy. Next: grill the wall.
+
 Status: **core SEALED** (2026-07-03 → 07-05). Structure and first
 values user-confirmed through the A-1 grill (rulings ①–⑧), the A-2
 battery pass (rulings ⑨–⑭), and the sheet-12 L2 tournament (rulings
@@ -40,8 +56,8 @@ vassalage), and the economy→mass conversion it needs (M13).
 
 - `GLOSSARY.md` — Tier-1 vocabulary, sealed terms with dates. THE
   reference for this feature (definition + current value + seal stamp).
-- `RULINGS.md` — ruling history (⑧–⑰): evidence, rejected
-  alternatives, riders. Glossary rows cite ruling numbers into here.
+- `RULINGS.md` — ruling history (⑧–⑰, MT-①…⑤, ET-①): evidence,
+  rejected alternatives, riders. Glossary rows cite ruling numbers here.
 - `STRATEGY-SPACE.md` — six winning archetypes; the standing dial
   checklist ("which archetype does this value kill?").
 - `TEST-LADDER.md` — verification epistemology: the L0–L3 test-trust

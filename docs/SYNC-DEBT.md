@@ -114,6 +114,20 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
 
 ## Paid
 
+- [x] 2026-07-08 — **Ending-taxonomy pass → Production sync (ET-①)** —
+  the hegemony grill's measurement-taxonomy design (grill Q1–Q4,
+  user-sealed) written to its authoritative homes: match-arc RULINGS
+  **ET-①** (the decision record — ruler B bar-independent, 8-metric
+  panel, vassals fold full, provisional thresholds, first finding);
+  match-arc GLOSSARY **종료 분류** row (definition + pointer to ET-①);
+  INDEX refreshed (ending-taxonomy pass block + RULINGS range); QUICKREF
+  header addendum + C-loop row (finding as UNSEALED evidence). Instrument
+  itself committed c082247 (match.js/tournament.js/plan-battery.js +
+  tests, 148 green). No DOMAIN_MAP change — feature-local, birthplace
+  stays authoritative (promotes only if a second feature needs it). The
+  crown-inversion finding is recorded as **evidence bearing on TC-②**,
+  never a rewrite (TC-② is a user seal). Residual: threshold calibration
+  + the wall/crown grill are live work, not doc debt.
 - [x] 2026-07-07 — **Match-tilting seals → Production sync (birthplace
   batch)** — the session's NOTES-staged seals written to their
   authoritative homes so no session reads stale canon: match-arc
