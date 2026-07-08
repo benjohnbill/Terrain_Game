@@ -67,16 +67,24 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   decision. Also fixed: strait grammar now fires on the class (was hermit-
   gated → dead on cradle); `engine.js` straitOpposed comment synced
   (candidate→confirmed). Freeze re-measured on the un-flattened map ~12.6%
-  decided, leadShortfall ~4600 — verdict holds. **Doc-sync owed at the
-  integration batch (after item ②)**: (i) record the border-class→combat
-  seal to terrain-cradle RULINGS + GLOSSARY (cite combat-formula dials);
-  (ii) QUICKREF full regen (still batched here); (iii) NOTES freeze-verdict
-  entry. **Design reframe**: before the hegemony ADR, item (b)'s leading
-  suspect is now the **tactical plan-AI gap** — the bot never plays the
-  decisive plans (Flanking/Encirclement) that drive the consolidation axis
-  the autopsy found missing. Handoff written: `.context/handoff-2026-07-08-
-  tactical-plan-ai.md` (item ②, separate session). hegemony ADR sized only
-  after that re-measure.
+  decided, leadShortfall ~4600 — verdict holds. **Doc-sync PAID 2026-07-08
+  (terrain-fidelity session, this integration batch)**: (i) border-class→
+  combat seal recorded — RULINGS **TC-⑬** + terrain-cradle GLOSSARY row
+  (values cite M5/ADR-0015, not restated); (ii) QUICKREF — item ② already
+  regenerated it this day, so this batch adds only the TC-⑬ line + two
+  C-loop rows + header addendum (no double-regen); (iii) NOTES gained the
+  residual-freeze autopsy entry (`freeze-autopsy.js` committed alongside).
+  **Design reframe RESOLVED 2026-07-08**: the tactical plan-AI suspect was
+  built + battered (item ②, commits 7508b3a/162c158) and absorbed only
+  **+0.8pp** (12.6→13.4%) — the freeze is NOT a bot artifact. The residual
+  autopsy (this session) pins item (b) as the **hegemony ADR**: the
+  leadership gate (own projection ≥ 1.7× the max live rival's shield) acts
+  like last-man-standing — consolidation plateaus ~1.28, elim ~0, so the
+  board freezes at parity. Terrain and tactics are both excluded by
+  measurement. **Next = hegemony ADR grill** (SPEC-level victory condition
+  — user-gated); knobs: shieldRatio, leadership shape, anti-snowball
+  exposure-inheritance, consolidation strength. This force-geography Open
+  item can close once that grill opens its own thread.
 
 - [ ] **Term lifecycle beyond promotion** (Codex P1): define
   proposed → agreed → promoted → renamed → deprecated states in the

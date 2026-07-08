@@ -149,3 +149,45 @@ reshuffles every region and scrambles the sealed sector layout
 (observed twice in-session). All terrain changes after a layout seal
 operate on the finished ownership (carve/restore + law checks: INTENT
 edges intact, no empty/split sectors, min-3 band).
+
+## TC-⑬ Border class carries combat terrain — SEALED 2026-07-08 (user grill) · L2
+
+A border's INTENT crossing class sets not only its **door** (frontage,
+M11) but the L2 combat site's **terrain / water / choke**, keying defense
+to the authored geography instead of the previously hardcoded constant.
+This ruling fixes only the *binding* — the multiplier values are sealed
+elsewhere and are cited, never restated normatively:
+
+| class | combat effect | value home |
+|---|---|---|
+| open | terrain plains | 1.0 · combat-formula M5 |
+| forest | terrain forest | 1.2 · M5 |
+| hills | terrain hills | 1.2 · M5 |
+| pass | terrain **pass** | 2.0 · M5 — carries the TC-⑦ 관중 mountain dampening |
+| river | water riverOpposed (attack-side) | 0.70 · ADR 0015 |
+| strait | water straitOpposed + door choke | 0.55 · ADR 0015 ruling ⑦ |
+
+The **door throttles the assaulting body** — the frontage half of the
+pass ×2.0 package (`research/../combat-formula/.../terrain-fort-ladder-
+validation.md`: ×2.0 is validated only as the residual AFTER a frontage
+cap; without it, ×2.0 is far too low). A seat-front spanning several
+region borders takes the **reachable-weakest-link** (softest crossing =
+the attack window an attacker actually uses). Also repairs a silent bug:
+the strait water grammar now fires on the `strait` class — it was gated
+on `seatType==='hermit'`, which no cradle seat is ever assigned, so on
+the real map both straits had resolved as plain land.
+
+Wired 2026-07-08 (`map-loader` borderClass · `map-board` frontClass/
+frontDoor + weakestCrossing · `tournament` combatFromBorderClass);
+commit 9452384, 116 tests green. Fort held at baseline (uniform walls)
+for the fidelity measure; force-geography fort-by-class is a **dormant
+balance-layer opt-in** (`gaan.startFortByClass`), not part of this seal.
+Freeze re-measured on the un-flattened map ~12.6% decided, leadership
+shortfall structural — the "80% freeze is not terrain" verdict holds.
+
+**Harness-granularity note** (not a defect): the seat = region-bundle
+model presents one front per neighbor *seat*, so a region's own crossing
+(관중's passes) can be masked by a softer co-seat border. TC-⑦ dampening
+therefore manifests only where the pass IS that front's weakest crossing
+— full per-region terrain would need a finer war machine than the coarse
+stage model.

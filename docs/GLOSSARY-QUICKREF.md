@@ -9,6 +9,9 @@
 > feature birthplace docs/features/tactical-plan-ai/ — decisiveness
 > ladder, disposition dial, judged value; fog RULINGS ① wall grade
 > ruled public; battery run 90k matches: freeze absorption +0.8pp).
+> Addendum 2026-07-08 (terrain-fidelity session): TC-⑬ border-class
+> combat binding sealed + wired; L2 residual-freeze autopsy →
+> victory-condition-unreachable diagnosis (feeds the hegemony ADR grill).
 > Prior batch 2026-07-07 (match-tilting, birthplace SYNCED: aging
 > constitution P1-P3, 징집 명부 re-founding, Surge Draft Model,
 > start-state coordinates — match-arc GLOSSARY/RULINGS MT-①…④ +
@@ -148,12 +151,13 @@
 
 User design statements → the dials/scales implementing them.
 Birthplace: `docs/features/terrain-cradle/` (GLOSSARY + RULINGS
-TC-①…⑫, created 2026-07-07). Rows here are pointers for user audit,
-never definitions. Promoted to DOMAIN_MAP (2026-07-07 doc-sync batch):
-void terrain, parity start, battle-summoning placement. The rest (great
-range/하서회랑/대환 TC-⑨, 태산 TC-⑩, grid-form freeze TC-⑪, carve
-principle TC-⑫, economy ladder TC-③, border classes TC-④) live in the
-birthplace only.
+TC-①…⑬, created 2026-07-07; TC-⑬ 2026-07-08). Rows here are pointers for
+user audit, never definitions. Promoted to DOMAIN_MAP (2026-07-07 doc-sync
+batch): void terrain, parity start, battle-summoning placement. The rest
+(great range/하서회랑/대환 TC-⑨, 태산 TC-⑩, grid-form freeze TC-⑪, carve
+principle TC-⑫, economy ladder TC-③, border classes TC-④, **border-class
+combat binding TC-⑬** — the crossing sets L2 combat terrain/water/choke,
+values from M5/ADR-0015) live in the birthplace only.
 
 | User statement | Translation | Checked by |
 |---|---|---|
@@ -165,6 +169,8 @@ birthplace only.
 | "경제 좋은 섹터 중심으로 번영시키는 그림 — 반복 개발 열어도 되지 않나" (2026-07-07 lean) | repeatable development is already a Phase 2 reserved seat (ruling ⑳: needs a diminishing ladder); user leans YES, with snowball / fortress-turtle meta named as the guard duty | Phase 2 reopen + L2 turtle probe |
 | (open pass, 2026-07-07) | **Force geography** — 모병 muster location & pool draw distribution, garrison↔reserve relation, whether main garrisons redeploy, how movement (attack & repositioning) is actually processed. Undesigned cluster; needs its own pass. L2 map wiring can run meanwhile on the current positionless-field-army abstraction | future force-geography pass |
 | "자연 국경 — 국경이 전부 평지인 건 말이 안 된다" (2026-07-07 layout APPROVED) | border classes baked into map-gen INTENT: rivers 중원-강남/한경-동북/한경-강남 · forest 하북-초원 · hills 하북-서역 (천산 softened; **hills door 1,300 = new 가안 class**) · 한경-초원 partial river stays open-class → invasion-corridor authoring (sector pass) | inbound-flow measure + render audit |
+| "우리 지형 정보에 맞는 방어 강도로 L2가 측정되게" (2026-07-08 APPROVED, TC-⑬) | L2 combat now reads the border class → terrain/water/choke (was hardcoded hills + uniform walls); strait grammar fires on class (bug fixed). Fort held at baseline; force-geography fort-by-class is a dormant balance opt-in | freeze re-measured un-flattened map ~12.6%; verdict held |
+| L2 residual-freeze autopsy (2026-07-08, UNSEALED evidence → next grill) | tactical AI absorbed only +0.8pp; residual = victory condition unreachable — leadership 1.7×-over-max-rival acts like last-man-standing, consolidation plateaus ~1.28, elim ~0. Feeds hegemony ADR grill (SPEC-level) | NOTES autopsy · freeze-autopsy.js |
 | "경제력의 지배 변수는 노출도와 투사" (ladder v2 structure APPROVED w/ holds) | econ index = 0.55 + 0.45 × (inbound flow ÷ world avg) + projection-shortfall credit; **HELD by user: core(심장부) debit, fiction band** — depth value unmeasured, constants 0.55/0.45 need their own grilling later | L1 formula now; L2/L3 validate |
 | (baked 2026-07-07, map-gen parity v5) | all regions Σpop 6.0 / cap 3,600; Σecon = index × 6.0 (중원 7.5 crown … 서역 4.8 · 동남해 4.6); 초원 = first pop-econ separation case (pop spread, econ capital-spiked) | B1/B2 PASS, viable 7/7 re-verified |
 | L2 watch flags (2026-07-07, user-agreed) | ① 중원 crown needles ×2 ② develop-greedy opening ③ 강남 quiet winner (two river shields + full projection) ④ 촉-seat overperformance (nerf deferred — door dial if needed, not econ) ⑤ region-abandonment meta ⑥ 동남해 fertility funding (parked with fiction band) ⑦ 관중 gate-city seat performance | L2 tournament adapter |

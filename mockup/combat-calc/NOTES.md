@@ -471,6 +471,50 @@ Match-tilting economy devices (recovery-gate, surge curve) are NOT the
 lever; recovery-gate stays a validated +3pp supplement (ADR 0027). The
 "blinds = economic aging" hypothesis is spent on THIS freeze.
 
+## L2 residual-freeze autopsy — victory condition unreachable (2026-07-08, agent)
+
+Both upper layers now closed: item ① terrain fidelity WIRED (combat reads
+border class, TC-⑬) — freeze re-measured on the un-flattened map ~12.6%,
+verdict held; item ② tactical plan AI built + battered (tactical-plan-ai
+feature) — freeze absorption only **+0.8pp** (12.6→13.4%), so the ~87%
+residual is NOT a bot artifact. This autopsy decomposes that residual on
+the best arm (L1 ladder conf 0.90, 12,600 matches, `freeze-autopsy.js`).
+CAVEAT: upper bound vs a passive defender (tactical-plan-ai Ruling ⑥).
+
+**Diagnosis: the leadership gate behaves like last-man-standing.**
+- Trip bar = own projection ≥ 1.7 × the BIGGEST live rival's shield. At
+  the parity start the front-runner is already only **0.74×** (projection
+  < shield is structural). Start 0.74 → bar 1.70 = a 0.96 gap.
+- **99.4% of timeouts fail leadership** (unassailability only 0.6%).
+  Timeout leadership-ratio (candProj / top-rival shield): **72.7% are
+  BELOW 1.0** (front-runner behind its top rival), mean 0.95, only 0.5%
+  reach 1.7.
+- **Consolidation raises the ratio but PLATEAUS ~1.28, never near 1.7**:
+  independents-left 5→0.99, 4→1.22, 3→1.28, 2→1.27. Because "1.7 × the
+  *max* rival" keeps the denominator high while ≥2 strong peers live — so
+  the gate cannot fire until the board is nearly emptied. The ratio bar is
+  effectively a last-man-standing condition.
+- **And consolidation itself is weak**: elimination ~never (0.06/match),
+  vassalization thin (timeout 0.29 vs decided 0.73/match). Deciders just
+  fight more wars (13.5 vs 8.8) and vassalize more — the 13.4% are the
+  tail that near-emptied the board by vassal chains (dead ~0.06 both, so
+  NOT via elimination). Geography swings decidability 2.8× (b0 20.8% ↔
+  b6 7.3%).
+
+**Conclusion → the hegemony ADR's exact target.** The freeze is a
+victory-condition ⇄ anti-snowball balance problem (NOT terrain, NOT
+tactics — both now excluded by measurement). The 1.7× "over every live
+peer" gate acts like near-total-conquest, and the anti-snowball
+arithmetic (conquest inherits exposure + max-rival denominator) caps the
+reachable ratio at ~1.28, while the conquest mechanics (elim ~0, thin
+vassalage) rarely near-empty the board inside the turn envelope. Grill
+knobs: shieldRatio 1.7 (bar height), leadership shape (1.7×-over-every-
+peer vs another dominance measure), anti-snowball exposure-inheritance
+strength, consolidation strength (vassalPremium 0.25, elim/vassal rates).
+SPEC implication: the victory condition is SPEC-level ("one judgment"
+decisive victory) — any change goes through the user-approved SPEC
+proposal (documentation law). Feeds the next grill (hegemony ADR).
+
 # 2026-07-05 night run — sheet 13 (thin economy, A-3)
 
 Question: the minimum economy that makes M13 prices and 정산 codable —
