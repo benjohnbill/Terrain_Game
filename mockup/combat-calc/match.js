@@ -247,6 +247,25 @@ function matchPanel(perRealm, opts = {}) {
   const forceShare = leader.proj / sumProj;
   const controlShare = leader.ctrl / sumCtrl;
   const shieldShare = leader.shield / sumShield;
+
+  // FG U5: boosted defense power (garrison × terrain × fort) and the
+  // within-realm spread that force-geography is supposed to create.
+  const boostOf = (name) => {
+    const r = perRealm.find((x) => x.name === name);
+    return r && r.frontPowers ? r.frontPowers.reduce((s, v) => s + v, 0) : 0;
+  };
+  const sumBoost = sides.reduce((s, x) => s + boostOf(x.name), 0) || 1;
+  const boostedShieldShare = boostOf(leader.name) / sumBoost;
+  const cv = (arr) => {
+    if (!arr || arr.length < 2) return 0;
+    const m = arr.reduce((s, v) => s + v, 0) / arr.length;
+    if (!m) return 0;
+    const v = arr.reduce((s, x) => s + (x - m) * (x - m), 0) / arr.length;
+    return Math.sqrt(v) / m;
+  };
+  const cvs = perRealm.filter((r) => r.alive).map((r) => cv(r.frontPowers));
+  const meanWithinRealmVariance = cvs.length ? cvs.reduce((s, v) => s + v, 0) / cvs.length : 0;
+
   const hhi = sides.reduce((s, x) => s + x.forceShare * x.forceShare, 0);
   const sos = hhi ? (forceShare * forceShare) / hhi : 0;
   const vassalShare = leader.proj ? leader.vassalProj / leader.proj : 0;
@@ -285,8 +304,9 @@ function matchPanel(perRealm, opts = {}) {
   }
 
   return {
-    leader: leader.name, forceShare, controlShare, shieldShare, hhi, sos,
-    reversibilityIndex, vassalShare, worldBlood, exhausted, tier, bucket, sides,
+    leader: leader.name, forceShare, controlShare, shieldShare,
+    boostedShieldShare, meanWithinRealmVariance,
+    hhi, sos, reversibilityIndex, vassalShare, worldBlood, exhausted, tier, bucket, sides,
   };
 }
 

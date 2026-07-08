@@ -96,3 +96,20 @@ test('frontSoftness reads public terrain×fort, excludes the field army', () => 
   assert.ok(T.frontSoftness(me, soft) < T.frontSoftness(me, hard),
     'the open/fieldworks front reads softer than the pass/fortress front');
 });
+
+// FG U5: boosted shieldShare + within-realm variance (pure panel math — fixture
+// perRealm objects carry frontPowers directly, no tournament run needed).
+const { matchPanel } = require('../mockup/combat-calc/match.js');
+
+test('matchPanel reports boostedShieldShare and within-realm variance', () => {
+  const perRealm = [
+    { name: 'A', seat: 'center', alive: true, vassalOf: null, proj: 100, shield: 100, ctrl: 5, bodies: 1000,
+      frontPowers: [4800, 130] },   // thick pass + thin plains → high variance
+    { name: 'B', seat: 'flank', alive: true, vassalOf: null, proj: 100, shield: 100, ctrl: 5, bodies: 1000,
+      frontPowers: [900, 900] },    // uniform → zero variance
+  ];
+  const p = matchPanel(perRealm, {});
+  assert.ok(p.boostedShieldShare > 0 && p.boostedShieldShare <= 1);
+  assert.ok(p.meanWithinRealmVariance > 0, 'A contributes nonzero within-realm CV');
+  assert.ok('shieldShare' in p, 'raw shieldShare kept alongside');
+});

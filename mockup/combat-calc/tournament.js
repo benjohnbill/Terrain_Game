@@ -916,6 +916,7 @@ function finish(record, realms) {
     proj: r.alive ? projectable(view[i]) : 0,
     shield: shieldOf(r), ctrl: r.interior,
     bodies: r.alive ? bodiesOf(r) : 0,
+    frontPowers: r.alive ? Object.keys(r.frontG).map((f) => frontDefense(r, f)) : [],
   }));
   record.panel = matchPanel(perRealm, { bodiesStart: record.bodiesStart });
   if (record.winner) record.panel.bucket = 'hegemon'; // a tripped match, not a timeout class
