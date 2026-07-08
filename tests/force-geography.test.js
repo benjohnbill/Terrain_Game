@@ -3,6 +3,7 @@ const { test } = require('node:test');
 const assert = require('node:assert');
 const { CRADLE_MAP, CRADLE_BINDING } = require('../mockup/combat-calc/map-gen.js');
 const { makeBoardFromMap, FG_BOARD_GAAN, FG_FORT_BY_CLASS } = require('../mockup/combat-calc/map-board.js');
+const T = require('../mockup/combat-calc/tournament.js');
 
 test('FG_FORT_BY_CLASS is the sealed FG-② mapping', () => {
   assert.deepStrictEqual(FG_FORT_BY_CLASS, {
@@ -36,11 +37,15 @@ test('FG board sets fortCeil = the terrain-class fort tier per front', () => {
 });
 
 test('peacePrimary does not upgrade fort above the terrain ceiling', () => {
-  // an open front (ceiling fieldworks) already at its ceiling stays there
-  const T = require('../mockup/combat-calc/tournament.js');
+  // an open front (ceiling fieldworks) already at its ceiling stays there.
+  // frontG on every front (and capitalGarrison) is held >= regenThreshold
+  // (0.8) of its cap so the shattered-garrison regen gate at the top of
+  // peacePrimary stays closed and execution actually reaches the
+  // pol.peace 'fort' action where the fortCeil predicate lives — a fixture
+  // that trips the regen gate returns 'regen' before ever touching fort.
   const me = {
     archetype: 'shield-first', _turn: 5, seatType: 'flank',
-    frontG: { X: 100, Y: 900 }, frontCap: { X: 900, Y: 900 },
+    frontG: { X: 800, Y: 900 }, frontCap: { X: 900, Y: 900 },
     fortAt: { X: 'fieldworks', Y: 'walls' }, fortCeil: { X: 'fieldworks', Y: 'fortress' },
     capitalGarrison: 1500, pool: 5000, field: 0, fieldCap: 5000,
     treasury: 1e9, usable: 1, truce: {}, staging: false, wars: [],
