@@ -148,6 +148,26 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   abstraction cost — board has no sector routing; field-army late-arrival
   effectiveness), then the harness build. Next = **writing-plans**.
   (a)/(c) remain DEBT. Row stays Open until (b) ships.
+  **UPDATE 2026-07-09 (v1 (최소) L2 HARNESS LANDED — SDD, main @ 0e8dc52).**
+  Plan `docs/superpowers/plans/2026-07-09-force-geography-minimal.md`
+  executed via subagent-driven-development: 7 TDD tasks + 2 review-fix
+  waves + housekeeping, 159/159, whole-branch review (opus) = merge-ready,
+  fast-forwarded to main. FG-①…⑩ wired opt-in (`FG_BOARD_GAAN`); engine/
+  `DIALS`/`BOARD_GAAN` untouched, non-FG behavior byte-identical. Outcome +
+  metric amendment recorded at the birthplace: `docs/features/force-
+  geography/RULINGS.md` "L2 implementation + metric amendment".
+  **STILL OWED (keeps this row Open):** (i) **high-reps measurement run**
+  (the `--fg` sweep was smoke-tested at reps=2 only — plumbing, not a
+  reading); headline read = **decided% + bucket deltas** across ctrl/
+  fgM9on/fgM9off (within-realm variance + boostedShieldShare demoted to
+  descriptive — they conflate garrison/terrain with the fort tier, user
+  ruling 2026-07-09). (ii) **Projection sync** — DOMAIN_MAP/DESIGN summary
+  entries for force-geography, owed when (b) is read as shipped. (iii)
+  **note the non-FG battery baseline shift**: Task 4 changed field-army
+  selection (biggest-field → biggest-**deficit**) UNCONDITIONALLY (intended
+  per FG-⑥), so the existing plan-AI battery on `BOARD_GAAN` is no longer
+  directly comparable to pre-branch numbers — record in the DOMAIN_MAP/
+  DESIGN sync so the shift isn't misread as noise.
 
 - [ ] **Term lifecycle beyond promotion** (Codex P1): define
   proposed → agreed → promoted → renamed → deprecated states in the

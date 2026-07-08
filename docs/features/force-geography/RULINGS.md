@@ -263,4 +263,45 @@ field-army late-arrival effectiveness (full vs a forced-march penalty
   **freeze-watch** (denied-dominant + standoff DOWN, decided% UP); and now
   (iv) **duel metric** — how often attacker concentration beats the
   reserve. Success = within-realm variance ↑ + defense-power spread ↑ +
-  denied-dominant/standoff ↓ + decided% ↑.
+  denied-dominant/standoff ↓ + decided% ↑. *(Success criterion AMENDED
+  2026-07-09 — see "L2 implementation + metric amendment" below: the
+  variance/shieldShare terms are demoted to descriptive; decided% + buckets
+  are the headline read.)*
+
+---
+
+## L2 (최소) implementation + metric amendment — LANDED 2026-07-09 (main @ 0e8dc52), L2-plumbing
+
+**Implementation**: FG-①…⑩ wired into the L2 harness
+(`mockup/combat-calc/`) across 7 TDD tasks (commits 108f89a…0e8dc52, on
+main; plan `docs/superpowers/plans/2026-07-09-force-geography-minimal.md`).
+The sealed engine (`engine.js resolve()` / `DIALS`) and the uniform-walls
+`BOARD_GAAN` are UNTOUCHED (G1); force-geography is opt-in via
+`FG_BOARD_GAAN` — per-crossing-class forts (`startFortByClass`,
+`FG_FORT_BY_CLASS`: open→fieldworks, forest/hills/river→walls,
+pass/strait→fortress), a terrain-ceiling cap on in-match fort upgrades, an
+M9 reactive reserve into the siege (`m9Fill` via engine `reserveAwaken`,
+swept), field-army **deficit** repositioning (`pickMainDefWar`/
+`frontDefense`), softest-front attacker targeting (`frontSoftness`,
+FG-gated by `forceGeo`), and a battery `--fg` arm (`runFgSweep`) sweeping
+M9 on/off vs a uniform-walls control. Whole-branch review (opus):
+non-force-geography behavior is byte-identical branch-wide, all binding
+constraints held, 159/159 tests. Reserve/attacker/measurement dials are
+HARNESS 가안 (sweepable, non-sealable), not seal candidates.
+
+**Metric amendment (user ruling 2026-07-09)** — AMENDS the "U5 measurement"
+success list above. The reps=2 plumbing smoke run exposed that
+**within-realm variance and boosted-defense shieldShare do NOT isolate the
+fort-tier contribution**: `frontPowers` is computed from END-STATE
+`frontG × terrain × fort`, so garrison dispersion + static terrain already
+yield CV ≈ 0.6 under uniform walls — the same magnitude as the FG arm. They
+measure total end-state front-power spread, not the authored fort envelope.
+→ **The headline freeze-ease read is decided% + the bucket-histogram delta
+across the three arms** (ctrl / fgM9on / fgM9off), which discriminate
+cleanly (smoke: decided% 14 / 31.7 / 50 — force-geography eases the freeze,
+M9 reserve re-stickies defense). `meanWithinRealmVariance` and
+`meanBoostedShieldShare` are RETAINED as **descriptive** end-state stats,
+not the success criterion. A fort-isolating metric measured at t0 (fort/
+terrain×fort multiplier with garrison held at start-state) is a possible
+future refinement, deferred. This decision must be on record before any
+high-reps run is read.

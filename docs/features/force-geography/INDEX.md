@@ -1,8 +1,12 @@
 # Force Geography
 
-**Status**: DESIGN COMPLETE (v1 최소) — RULINGS **FG-①…⑩** (2026-07-09);
-next = writing-plans → L2 (최소) build + measurement. Concept **(b)** of
-the hegemony-freeze three-concept sequence.
+**Status**: L2 (최소) HARNESS LANDED — RULINGS **FG-①…⑩** built via SDD
+(main @ `0e8dc52`, 2026-07-09, 159/159, whole-branch reviewed). Opt-in
+`FG_BOARD_GAAN`; engine/`BOARD_GAAN` untouched, non-FG byte-identical.
+Next = **high-reps measurement run** (headline = decided% + bucket deltas
+across ctrl/fgM9on/fgM9off; variance/boostedShieldShare are descriptive,
+metric amendment 2026-07-09) → Projection sync (owed, `docs/SYNC-DEBT.md`).
+Concept **(b)** of the hegemony-freeze three-concept sequence.
 
 ## What this is
 
@@ -39,7 +43,7 @@ shipping game code (`js/`) is behind.
 | **U2** defense investment (DYNAMIC) | conserved budget → where defense concentrates | ✅ SEALED FG-⑤/⑥/⑩ — v1 = reactive reserve (field army + M9, M9 swept) does it |
 | **U3** resolution | the sealed 4-layer formula reads non-uniform inputs | ✅ SETTLED (unchanged; RULINGS §Settled) |
 | **U4** weak-front finding (attacker AI) | attacker targets the softest FRONT | ✅ SEALED FG-⑦ — reuse disposition dial; pickTarget scores first-blow defense |
-| **U5** measurement | re-run the panel + duel metric | ✅ SETTLED (RULINGS §Settled) |
+| **U5** measurement | re-run the panel + duel metric | ✅ BUILT (`matchPanel`/`aggregate`/`runFgSweep`); headline read AMENDED 2026-07-09 → decided% + buckets (variance/boostedShieldShare descriptive) |
 
 **U2 is the heart of this pass.** The session reframed it: weak fronts do
 NOT come from a defender "concentrate on good terrain" policy (that is
