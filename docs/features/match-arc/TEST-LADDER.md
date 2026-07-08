@@ -40,6 +40,18 @@ number that comes out of L2 carries the model's assumptions in.
    가안 to sealed-with-provisional status; every such seal remains
    playtest-provisional by construction. No L2 result closes a
    question that belongs to L3.
+4. **Found against a strawman = also nothing.** Rule 2's mirror for a
+   mechanic-under-test: a mechanic that SUCCEEDS against an opponent that
+   cannot respond to it — a passive defender, a weaker configuration, a
+   placeholder — has beaten a strawman. Such a positive can only
+   FALSIFY (fail against the easiest target → kill it), never CONFIRM.
+   Confirmation requires the opponent's response modeled AND a baseline
+   to read the delta: measure minimal→responsive, and read the
+   sophisticated result only as a delta off the minimal. Building the
+   mechanic and its opponent-response bundled together is a confound —
+   isolate, then add. (Sharpened 2026-07-09, force-geography (b) grill:
+   the reactive-reserve / (최소)→(정교) discipline, force-geography
+   RULINGS FG-④/⑤/⑨.)
 
 ### What L2 is blind to, by design
 

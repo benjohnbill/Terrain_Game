@@ -127,7 +127,7 @@
 | Blinds (블라인드) | undesigned anti-passivity escalation device; owns the untilted-ending tail; duty confirmed load-bearing at L2, quantified ~58% on the real map (2026-07-07). NOTE: blinds-as-economic-device SUPERSEDED (MT-⑤ — freeze is non-economic; now attacked via force-geography + hegemony gate) | MA |
 | Deterrence equilibrium (억지 평형, 별칭 동결 세계) | the failure mode blinds must break: 회복이 상처를 이겨 세계가 대칭 만땅으로 되돌아가 결정점이 영영 안 뜨는 상태 | MA |
 | Opportunism read (기회주의 읽기) | 상대 야전군이 딴 전선에 묶인 순간을 공격창으로 읽기 — parity 판을 억지 너머로 움직이는 하중 기동; "pile-on" 프로브 = 이 읽기 강화판 하네스 실험 | MA |
-| Test-trust ladder (검증 신뢰 사다리) | L0 hand / L1 grids / L2 tournament / L3 playtest; found-at-L2 real, not-found nothing, L2 values never final | DM |
+| Test-trust ladder (검증 신뢰 사다리) | L0 hand / L1 grids / L2 tournament / L3 playtest; found-at-L2 real, not-found nothing, found-vs-strawman also nothing (needs opponent-response + baseline delta), L2 values never final | DM |
 
 ## Force geography (b, design v1 sealed 2026-07-09 — pending L2)
 

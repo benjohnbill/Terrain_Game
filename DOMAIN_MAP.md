@@ -759,7 +759,9 @@ rule)._
 - ✅ `Test-trust ladder` (검증 신뢰 사다리): the four-rung verification
   epistemology — L0 hand reasoning / L1 decision grids / L2 match tournament /
   L3 human playtest — with asymmetric proof power (found-at-L2 is real;
-  not-found is nothing; L2-derived values are never final). Charter:
+  not-found is nothing; found-against-a-strawman is also nothing —
+  confirmation needs the opponent's response modeled + a baseline for the
+  delta; L2-derived values are never final). Charter:
   `docs/features/match-arc/TEST-LADDER.md`.
 
 ### Winning archetypes (STRATEGY-SPACE.md — the value-dial checklist)

@@ -127,7 +127,17 @@ these):
 
 1. Sync mockup NOTES verdicts into Production docs (seal text).
 2. Doc-sync batch into Projections (DOMAIN_MAP/DESIGN) if seals
-   changed; SPEC only via user-approved proposal.
+   changed; SPEC only via user-approved proposal. **This includes a
+   promotion scan** (not only a seal-sync): check the session's output
+   for Tier-1→Tier-0 promotion candidates — not just new TERMS but
+   cross-cutting PRINCIPLES that a second feature or a root doc now
+   needs (a principle that RECURRED across the session is the signal).
+   Promote terms autonomously (DOMAIN_MAP, Tier-2); *propose*
+   principle / DESIGN / SPEC promotions (Tier-3). Absence of a promotion
+   is a valid outcome — but it must be a CHECKED conclusion, not an
+   unexamined default (learned 2026-07-09: a doc-sync that synced seals
+   but skipped the principle scan missed a root-level methodology
+   promotion until the user caught it).
 3. Refresh `INDEX.md` of every touched feature (status, pointers,
    open questions).
 4. Regenerate `docs/GLOSSARY-QUICKREF.md` after any seal batch — an
