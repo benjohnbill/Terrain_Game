@@ -807,7 +807,7 @@ function runMatch(assignment, opts = {}) {
     }
 
     // --- prosecute wars (attacker-side battle per war per turn); each
-    // realm's field army defends its biggest defensive war, others get a
+    // realm's field army defends its highest-deficit defensive war, others get a
     // screening detachment
     const mainDefWar = {};
     for (const r of alive) {

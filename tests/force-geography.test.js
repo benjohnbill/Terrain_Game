@@ -2,9 +2,10 @@
 const { test } = require('node:test');
 const assert = require('node:assert');
 const { CRADLE_MAP, CRADLE_BINDING } = require('../mockup/combat-calc/map-gen.js');
-const { makeBoardFromMap, FG_BOARD_GAAN, FG_FORT_BY_CLASS } = require('../mockup/combat-calc/map-board.js');
+const { makeBoardFromMap, FG_BOARD_GAAN, FG_FORT_BY_CLASS, runCradleTournament } = require('../mockup/combat-calc/map-board.js');
 const T = require('../mockup/combat-calc/tournament.js');
 const { DIALS } = require('../mockup/combat-calc/engine.js');
+const { matchPanel } = require('../mockup/combat-calc/match.js');
 
 test('FG_FORT_BY_CLASS is the sealed FG-② mapping', () => {
   assert.deepStrictEqual(FG_FORT_BY_CLASS, {
@@ -99,8 +100,6 @@ test('frontSoftness reads public terrain×fort, excludes the field army', () => 
 
 // FG U5: boosted shieldShare + within-realm variance (pure panel math — fixture
 // perRealm objects carry frontPowers directly, no tournament run needed).
-const { matchPanel } = require('../mockup/combat-calc/match.js');
-
 test('matchPanel reports boostedShieldShare and within-realm variance', () => {
   const perRealm = [
     { name: 'A', seat: 'center', alive: true, vassalOf: null, proj: 100, shield: 100, ctrl: 5, bodies: 1000,
@@ -117,12 +116,11 @@ test('matchPanel reports boostedShieldShare and within-realm variance', () => {
 // FG-⑩ Task 7: battery integration — a real (small) tournament on FG_BOARD_GAAN
 // must produce aggregate() output carrying the new panel means.
 const { viableBindings } = require('../mockup/combat-calc/map-gate.js');
-const { runCradleTournament, FG_BOARD_GAAN: FG } = require('../mockup/combat-calc/map-board.js');
 const { aggregate } = require('../mockup/combat-calc/plan-battery.js');
 
 test('FG tournament runs end-to-end and aggregate reports FG metrics', () => {
   const viable = viableBindings(CRADLE_MAP, 5).viable.slice(0, 2);
-  const recs = runCradleTournament({ map: CRADLE_MAP, bindings: viable, reps: 2, seed: 1, boardGaan: FG });
+  const recs = runCradleTournament({ map: CRADLE_MAP, bindings: viable, reps: 2, seed: 1, boardGaan: FG_BOARD_GAAN });
   const agg = aggregate(recs);
   assert.ok(recs.length > 0);
   assert.strictEqual(typeof agg.decidedPct, 'number');

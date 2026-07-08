@@ -9,7 +9,7 @@
 
 const { CRADLE_MAP } = require('./map-gen.js');
 const { viableBindings } = require('./map-gate.js');
-const { runCradleTournament, makeBoardFromMap, BOARD_GAAN } = require('./map-board.js');
+const { runCradleTournament, makeBoardFromMap, BOARD_GAAN, FG_BOARD_GAAN } = require('./map-board.js');
 const TOURNEY = require('./tournament.js');
 
 const SEEDS = [42, 7, 99];
@@ -157,7 +157,6 @@ function dispositionMarginals(rows) {
 // FG-⑩ sweep: control (uniform walls) vs force-geography with M9 on/off.
 // Isolates M9's contribution while keeping the human-like config primary.
 function runFgSweep(bindings, reps = 20, seed = 42) {
-  const { BOARD_GAAN, FG_BOARD_GAAN } = require('./map-board.js');
   const run = (gaan) => aggregate(runCradleTournament({
     map: CRADLE_MAP, bindings, reps, seed, boardGaan: gaan }));
   return {
