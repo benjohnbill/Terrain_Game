@@ -35,6 +35,7 @@ function aggregate(records) {
   const buckets = {}; const bucketByLeaderSeat = {};
   let exhausted = 0, paneled = 0;
   let elim = 0, vassal = 0, brained = 0, forced = 0, misjudged = 0;
+  let varSum = 0, boostSum = 0;
   for (const r of records) {
     shapes[r.endingShape] = (shapes[r.endingShape] || 0) + 1;
     elim += r.eliminations; vassal += r.vassalDeals;
@@ -45,6 +46,8 @@ function aggregate(records) {
       paneled++;
       buckets[r.panel.bucket] = (buckets[r.panel.bucket] || 0) + 1;
       if (r.panel.exhausted) exhausted++;
+      varSum += r.panel.meanWithinRealmVariance || 0;
+      boostSum += r.panel.boostedShieldShare || 0;
       const side = (r.panel.sides || []).find((s) => s.name === r.panel.leader);
       const seat = side ? side.seat : 'unknown';
       const row = bucketByLeaderSeat[seat] || (bucketByLeaderSeat[seat] = {});
@@ -65,6 +68,8 @@ function aggregate(records) {
     brained,
     forcedPct: brained ? (forced / brained) * 100 : null,
     misjudgedPct: brained ? (misjudged / brained) * 100 : null,
+    meanWithinRealmVariance: paneled ? varSum / paneled : null,
+    meanBoostedShieldShare: paneled ? boostSum / paneled : null,
   };
 }
 
@@ -149,15 +154,41 @@ function dispositionMarginals(rows) {
   return { byOptimists: byCount('opt'), byPessimists: byCount('pes'), perDisposition };
 }
 
+// FG-⑩ sweep: control (uniform walls) vs force-geography with M9 on/off.
+// Isolates M9's contribution while keeping the human-like config primary.
+function runFgSweep(bindings, reps = 20, seed = 42) {
+  const { BOARD_GAAN, FG_BOARD_GAAN } = require('./map-board.js');
+  const run = (gaan) => aggregate(runCradleTournament({
+    map: CRADLE_MAP, bindings, reps, seed, boardGaan: gaan }));
+  return {
+    ctrl:    run(BOARD_GAAN),
+    fgM9on:  run(FG_BOARD_GAAN),
+    fgM9off: run({ ...FG_BOARD_GAAN, m9Reserve: false }),
+  };
+}
+
 // ---------------------------------------------------------------- report
 function pct(v) { return v === null ? '—' : `${v.toFixed(1)}%`; }
 
 function main() {
   const quick = process.argv.includes('--quick');
   const skipD = process.argv.includes('--skip-d');
+  const fg = process.argv.includes('--fg');
   const reps = quick ? 2 : 20;
   const comboStep = quick ? 27 : 1;
   const bindings = viableBindings(CRADLE_MAP, 5).viable;
+
+  if (fg) {
+    console.log(`FG-⑩ sweep — bindings ${bindings.length}, reps ${reps}${quick ? ' (QUICK)' : ''}`);
+    console.log('ctrl = uniform walls (BOARD_GAAN) · fgM9on = force-geography, M9 reserve ON · fgM9off = force-geography, M9 reserve OFF\n');
+    const sweep = runFgSweep(bindings, reps);
+    for (const [id, agg] of Object.entries(sweep)) {
+      console.log(`[${id}] decided ${pct(agg.decidedPct)} · meanWithinRealmVariance ${agg.meanWithinRealmVariance === null ? '—' : agg.meanWithinRealmVariance.toFixed(1)} · meanBoostedShieldShare ${agg.meanBoostedShieldShare === null ? '—' : agg.meanBoostedShieldShare.toFixed(3)}`);
+      console.log(`  buckets ${JSON.stringify(agg.buckets)}`);
+    }
+    return;
+  }
+
   console.log(`plan-AI battery — bindings ${bindings.length}, reps ${reps}, seeds ${SEEDS.join('/')}${quick ? ' (QUICK)' : ''}`);
   console.log('CAVEAT: upper bound vs passive defender (Ruling ⑥); game-legal confidence only (≤0.90).\n');
 
@@ -205,5 +236,5 @@ function main() {
   }
 }
 
-module.exports = { aggregate, runArm, runDArm, dispositionMarginals, dispositionCombos, ARMS, SEEDS };
+module.exports = { aggregate, runArm, runDArm, runFgSweep, dispositionMarginals, dispositionCombos, ARMS, SEEDS };
 if (require.main === module) main();

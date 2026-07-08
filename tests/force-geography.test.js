@@ -113,3 +113,19 @@ test('matchPanel reports boostedShieldShare and within-realm variance', () => {
   assert.ok(p.meanWithinRealmVariance > 0, 'A contributes nonzero within-realm CV');
   assert.ok('shieldShare' in p, 'raw shieldShare kept alongside');
 });
+
+// FG-⑩ Task 7: battery integration — a real (small) tournament on FG_BOARD_GAAN
+// must produce aggregate() output carrying the new panel means.
+const { viableBindings } = require('../mockup/combat-calc/map-gate.js');
+const { runCradleTournament, FG_BOARD_GAAN: FG } = require('../mockup/combat-calc/map-board.js');
+const { aggregate } = require('../mockup/combat-calc/plan-battery.js');
+
+test('FG tournament runs end-to-end and aggregate reports FG metrics', () => {
+  const viable = viableBindings(CRADLE_MAP, 5).viable.slice(0, 2);
+  const recs = runCradleTournament({ map: CRADLE_MAP, bindings: viable, reps: 2, seed: 1, boardGaan: FG });
+  const agg = aggregate(recs);
+  assert.ok(recs.length > 0);
+  assert.strictEqual(typeof agg.decidedPct, 'number');
+  assert.ok(agg.meanWithinRealmVariance > 0, 'FG board produces uneven fronts');
+  assert.ok(typeof agg.meanBoostedShieldShare === 'number');
+});
