@@ -455,6 +455,12 @@ truth (documentation-law conflict rule)._
 - ✅ `Parity start` (동일 시작 인구): every region starts with an equal total
   population — an equal lifetime blood budget; divergence comes only from
   play. Historicity lives in geography, not demographics. (TC-①)
+- ✅ `Derived asymmetry` (파생 비대칭): all playable state (population,
+  fortification, garrison, investment) starts uniform across realms; a
+  playable value may begin unequal only when that inequality is derived
+  from the authored map (geometry + fog) — never baked per-realm.
+  Generalizes parity start beyond population. (SPEC Core Principle #8;
+  terrain-cradle TC-⑭; economy's terrain-fed inequality TC-③.)
 - ✅ `Battle-summoning placement` (전장 소환 배치): the city placement
   principle — cities are placed where fighting is invited; 서역 is the
   deliberate opposite pole (max-hermit depth). (TC-⑦)
@@ -617,8 +623,9 @@ rule)._
   verification condition on how many viable cradles the active region holds, not
   an imposed cut.
 - ✅ `Viability parity, geometry/economy asymmetry`: what is balanced is
-  survivability AND starting population (parity start, terrain-cradle
-  TC-①); asymmetry lives in geometry and economy. A multipolar
+  survivability AND starting population (parity start / derived asymmetry,
+  terrain-cradle TC-①/TC-⑭, SPEC Core Principle #8); asymmetry lives in
+  geometry and economy. A multipolar
   Warring-States / Three-Kingdoms shape with one multi-front 중원 center
   whose crown is economic only (traffic centrality + economic stamina)
   and pays in multi-front exposure; periphery realms are shielded and

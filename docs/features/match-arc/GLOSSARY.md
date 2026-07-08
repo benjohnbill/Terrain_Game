@@ -33,11 +33,14 @@ history. Raw verdict text stages in `mockup/combat-calc/NOTES.md`
   partition is decided by authored terrain cradles (basin, shielded
   valley, plain, coast), and 4–6 is the verification condition on how
   many viable cradles the active region holds — not an imposed cut.
-- **Viability parity, mass/geometry asymmetry** (AGREED direction
-  2026-07-03, supersedes "near-parity start"): what is balanced is
-  survivability, not mass. The map is multipolar Warring-States /
-  Three-Kingdoms shaped with one "small 중원": a richer central realm
-  that pays in multi-front exposure; periphery realms are smaller but
+- **Viability parity, geometry/economy asymmetry** (AGREED direction
+  2026-07-03; parity v5 2026-07-07 deleted the earlier mass edge): what
+  is balanced is survivability AND starting population — every realm
+  starts equal in playable state (SPEC Core Principle #8 "Derived
+  asymmetry"; terrain-cradle TC-①/TC-⑭). The map is multipolar
+  Warring-States / Three-Kingdoms shaped with one multi-front 중원 center
+  whose crown is economic only (traffic centrality + economic stamina,
+  TC-②/③) and pays in multi-front exposure; periphery realms are
   shielded and coalition-capable. Whoever takes the center inherits its
   exposure (anti-snowball loop). No realm can be one-war-killed from
   turn 1 without buildup (~1.7+ shield mass ratio is the sizing tool);

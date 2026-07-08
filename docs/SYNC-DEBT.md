@@ -11,6 +11,14 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
 
 ## Open
 
+- [ ] **Derived-asymmetry machine-check** (registered 2026-07-08, seal
+  TC-⑭): population parity (Σpop==6.0 per region) and the economy ladder
+  are authored as literals in `map-gen.js sectorSpec`, not recomputed from
+  geometry at load time — so SPEC #8 / TC-⑭ "derived, not baked" is
+  doc-enforced, not machine-checked. Add a load-time assertion (per-region
+  Σpop; econ == ladder(borders)) to harden it. Optional (compliant today);
+  flagged by the 2026-07-08 independent audit.
+
 - [ ] **Match-tilting pass — residual sync** (birthplace sync PAID
   2026-07-07, see Paid below; these items remain): (a) **ADR 0014
   header amendment stamp** — P1 removes garrison free self-heal; the

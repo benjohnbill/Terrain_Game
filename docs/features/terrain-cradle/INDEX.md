@@ -21,10 +21,12 @@ cities/capitals, and the void mountain system. Born from the C-loop
 
 ## Files
 
-- `RULINGS.md` — TC-①…⑫, the 2026-07-07 decision record (this
-  feature's authoritative history).
+- `RULINGS.md` — TC-①…⑭, the decision record (this feature's
+  authoritative history; ⑬–⑭ added 2026-07-08: border-class combat
+  binding, derived-asymmetry seal).
 - `GLOSSARY.md` — Tier-1 vocabulary (void, 대산맥/하서회랑/대환/태산,
-  parity start, economy ladder, city grammar, carve principle).
+  parity start, derived asymmetry, economy ladder, city grammar, carve
+  principle).
 - Executable map source: `mockup/combat-calc/map-gen.js` (deterministic
   seed→map; USER_SWAPS + fixed seats = the sealed layout; header
   carries the grid-form principle).

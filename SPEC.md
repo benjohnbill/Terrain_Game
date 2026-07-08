@@ -83,6 +83,19 @@ authoritative — this spec declares, it does not restate).
    something that does not refill within the match. (match-arc GLOSSARY 징집 명부;
    combat MAGNITUDE M13.)
 
+8. **Derived asymmetry.** The world's asymmetries are authored into the
+   land — its geometry (terrain, borders, position, adjacency) and the fog
+   over it — never into playable state. Every *playable* quantity
+   (population, fortification, garrison, investment) starts uniform across
+   realms; parity is set per region, so an equal-size seat inherits it. A
+   playable value may begin unequal only when that inequality is itself
+   derived from the map — a narrow strait lowering a projectable-mass
+   ceiling, treasury inheriting its terrain-fed economy — never baked
+   per-realm without a root in the land. (Economy and other land values stay
+   Principle #1's domain; their terrain-fed inequality is this same derived
+   pattern, not an exception. Birthplace: terrain-cradle Parity start / TC-①,
+   generalized beyond population and sealed for all playable state in TC-⑭.)
+
 *Candidate, deferred to post-L3 playtest:* balancing is governed by war
 arithmetic rather than politics — checking a runaway leader is available and
 sometimes correct but never mandatory (free-riding is a legitimate line). Held

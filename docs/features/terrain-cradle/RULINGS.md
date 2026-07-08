@@ -191,3 +191,34 @@ model presents one front per neighbor *seat*, so a region's own crossing
 therefore manifests only where the pass IS that front's weakest crossing
 — full per-region terrain would need a finer war machine than the coarse
 stage model.
+
+## TC-⑭ All playable state starts uniform (derived-asymmetry seal) — SEALED 2026-07-08 (user) · L1 (L2-audited)
+
+Generalizes TC-① (equal population) to the whole of playable state.
+Every player-varyable quantity — population, fortification (fort tier),
+garrison, field army, conscription register, investment — starts UNIFORM
+across realms; the only starting inequality permitted in a playable value
+is one *derived from the authored map* (geometry + fog), never a per-realm
+baked constant. This is the birthplace seal beneath SPEC Core Design
+Principle #8 "Derived asymmetry": population parity was already sealed
+(TC-①), economy's terrain-fed inequality is the derived bridge (TC-③), and
+fort/garrison/investment uniformity — previously only a harness convention
+(`BOARD_GAAN` uniform overlay, `map-gen.js` garrison:0 / fortTier:none) —
+is sealed here.
+
+Allowed derived-asymmetry examples on the sealed map: 동남해's
+projectable-mass ceiling 2,600 (both borders straits → `min(field, Σ door ×
+chokeFlow)`, computed live in `match.js` projectable, never stored), and
+treasury (= treasuryStartTurns × terrain-fed economy).
+
+L2 audit (2026-07-08, independent subagent) confirmed the sealed harness
+upholds this: zero baked violations; population sums to Σ6.0 per region by
+execution; projectable-mass 2,600 derived from strait door geometry, not a
+constant. The only baked per-region playable values live in the legacy hex
+prototype (`js/province-data.js`), which the terrain-first design replaces
+and which this seal does not govern.
+
+Debt (not a defect): population and the economy ladder are authored as
+literals in `map-gen.js sectorSpec`, not recomputed from geometry at load
+time — so "derived, not baked" is doc-enforced, not machine-checked. A
+load-time assertion is the optional hardening (see `docs/SYNC-DEBT.md`).
