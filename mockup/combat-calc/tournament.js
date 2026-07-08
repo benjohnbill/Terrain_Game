@@ -432,6 +432,19 @@ function frontDefense(D, front) {
   return (D.frontG[front] ?? 0) * terr * fort;
 }
 
+// FG-⑦ attacker's read of a neighbour's FACING front: judged first-blow
+// defense = judged garrison(λ) × public terrain × public fort. Field army
+// excluded (arrives a beat later). λ from disposition; harness bots see true
+// values, so the band centre is the garrison itself (disposition sweep in the
+// battery widens/shifts it). Reuses frontDefense's terrain×fort read.
+function frontSoftness(me, t) {
+  const front = me.name;
+  const lambda = (me.brain && me.brain.disposition) || 0;
+  const g = t.frontG[front] ?? 0;
+  const judgedG = Math.max(0, g * (1 - 0.25 * lambda)); // optimist (+) reads weaker
+  return frontDefense({ ...t, frontG: { ...t.frontG, [front]: judgedG } }, front);
+}
+
 // FG-⑥ field-army destination: the one mobile army serves the defensive war
 // whose front has the largest deficit (attacker field − standing defense).
 // Whole-realm value ⇒ deficit alone decides (fight-or-fold is elsewhere).
@@ -588,6 +601,12 @@ function pickTarget(me, realms, rng, H = HARNESS) {
   // archetype reads (this is what moves a parity board past deterrence)
   const engaged = (t) => t.wars.length > 0;
   const shield = (t) => (engaged(t) ? Math.round(t.field * 0.2) : t.field) + (t.frontG[me.name] ?? 0);
+  // FG-⑦: on force-geography boards, rank by the judged FACING-front defense
+  // (garrison×terrain×fort, field army excluded) instead of the raw shield
+  // read. Non-FG boards (me.forceGeo falsy) collapse `soft` to the exact
+  // `shield` expression — byte-identical ranking, untouched by this change.
+  const soft = (t) => me.forceGeo ? frontSoftness(me, t)
+    : ((engaged(t) ? Math.round(t.field * 0.2) : t.field) + (t.frontG[me.name] ?? 0));
   // pile-on probe (HARNESS 가안, sheet-15 freeze autopsy follow-up):
   // a strengthened opportunism read — a neighbor below woundedFrac of
   // cap is a WINDOW (strike before healing closes it), window targets
@@ -605,9 +624,9 @@ function pickTarget(me, realms, rng, H = HARNESS) {
   if (H.pileOn) pool = pool.length ? pool : cands.filter(window_);
   if (!pool.length) return null;
   pool = [...pool].sort((a, b) =>
-    (H.pileOn ? (window_(b) ? 1 : 0) - (window_(a) ? 1 : 0) : 0) || shield(a) - shield(b));
+    (H.pileOn ? (window_(b) ? 1 : 0) - (window_(a) ? 1 : 0) : 0) || soft(a) - soft(b));
   const t = pool[0];
-  const ratio = me.field / Math.max(1, shield(t));
+  const ratio = me.field / Math.max(1, soft(t));
   // one offensive war at a time
   if (me.wars.some((w) => w.att === me.name)) return null;
   if (pol.redeclare === 'patient' && me.wars.length) return null;
@@ -958,4 +977,4 @@ module.exports = { HARNESS, BOT, ARCHETYPES, TEMPERAMENTS, SEATS, SPEC_GAPS,
   makeBoard, runMatch, runTournament, mulberry32, yieldReach, realmValue,
   pickTarget, peacePrimary, doRecruit, poolBleed, servingBodies, regenGarrisons,
   realmIncome, intensity, combatFromBorderClass, newWar, warBattle, m9Fill,
-  frontDefense, pickMainDefWar };
+  frontDefense, pickMainDefWar, frontSoftness };

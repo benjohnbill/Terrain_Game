@@ -86,3 +86,13 @@ test('pickMainDefWar picks the front with the largest deficit (softest, most-pre
   // ATK1 (plains, weak fort) deficit >> ATK2 (pass, fortress) → field army defends ATK1
   assert.strictEqual(T.pickMainDefWar(D, wars, realms).att, 'ATK1');
 });
+
+test('frontSoftness reads public terrain×fort, excludes the field army', () => {
+  const me = { name: 'ME', brain: null };
+  // two candidate defenders, equal garrison facing ME, different terrain/fort
+  const soft = { name: 'S', field: 9999, frontG: { ME: 500 }, fortAt: { ME: 'fieldworks' }, frontClass: { ME: 'open' } };
+  const hard = { name: 'H', field: 9999, frontG: { ME: 500 }, fortAt: { ME: 'fortress' }, frontClass: { ME: 'pass' } };
+  // field army (9999) is IGNORED; only garrison×terrain×fort counts
+  assert.ok(T.frontSoftness(me, soft) < T.frontSoftness(me, hard),
+    'the open/fieldworks front reads softer than the pass/fortress front');
+});

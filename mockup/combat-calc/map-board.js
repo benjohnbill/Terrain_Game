@@ -124,6 +124,7 @@ function makeBoardFromMap(map, binding, gaan = BOARD_GAAN) {
       capitalGarrison: gaan.capitalGarrison,
       interiorGarrison: interior * gaan.interiorGarrison,
       m9Reserve: gaan.m9Reserve ?? false,
+      forceGeo: gaan.startFortByClass ? true : false, // FG-⑦ marker: attacker ranks by frontSoftness
       frontG, frontCap: { ...frontG }, fortAt,
       frontClass, frontDoor,          // border crossing class + door per front
       fortCeil: gaan.startFortByClass
