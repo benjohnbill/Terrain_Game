@@ -85,6 +85,25 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   — user-gated); knobs: shieldRatio, leadership shape, anti-snowball
   exposure-inheritance, consolidation strength. This force-geography Open
   item can close once that grill opens its own thread.
+  **UPDATE 2026-07-08 (hegemony grill opened this thread).** The grill ran:
+  (1) built the **ending-taxonomy panel** to classify the freeze bar-
+  independently — sealed **ET-①** (match-arc RULINGS), committed `c082247` +
+  doc-sync `926e1a9`. First finding: the ~87% timeout is ~56% standoff /
+  **~28% denied-dominant** (dominant realms the check missed — statistically
+  "hegemons the gate missed") / ~11% hegemon, plus a **crown inversion**
+  (center pinned to standoffs, flanks dominate — evidence bearing on TC-②,
+  not a rewrite). (2) Decomposed the fix into a **three-concept sequence**,
+  user-sequenced: **(b) force-geography** (make defense uneven — IN DESIGN,
+  see `.context/handoff-2026-07-08-force-geography-design.md`; skeleton
+  approved: redistribution-not-growth "이불 한 장" principle, 5 units, U3+U5
+  settled, U1/U2/U4 pending) → **(a) offense-dominance gate** (reshape
+  leadership: `proj ≥ R×meanProj`; user's raw `proj≥1.7×meanShield` trips 0%
+  = cross-axis magnitude bug; corrected R=2.0 → ~39% decided/79% wall fixed/
+  7% leakage; SPEC-level, user-gated) → **(c) risk-gate + offense buff**
+  (reward the risk-taker not the free-rider; needs blood to flow). **(a) and
+  (c) are DEBT — each its own brainstorm→spec cycle, after (b).** Force-
+  geography (b)'s harness item (this Open row's item a) is now the active
+  design; it stays Open until (b) ships.
 
 - [ ] **Term lifecycle beyond promotion** (Codex P1): define
   proposed → agreed → promoted → renamed → deprecated states in the
