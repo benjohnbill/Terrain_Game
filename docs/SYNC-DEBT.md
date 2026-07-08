@@ -38,9 +38,13 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   remove garrison free/auto-regen; MAGNITUDE M12 + RULINGS MT-①/⑤ carry
   the deltas, but stamping the accepted ADR 0014 header is a Tier-3
   user-gated action (propose-only) — flag, do not silently edit.
-  (b) **QUICKREF full regeneration** (C-loop table + MT-⑤ + ADR 0027 +
-  블라인드 supersession) — deferred to the force-geography pass's
-  doc-sync (batched to avoid double-regen).
+  (b) **QUICKREF regeneration** (C-loop table + MT-⑤ + ADR 0027 +
+  블라인드 supersession) — batched into the force-geography doc-sync
+  **2026-07-09**: added the Force-geography term section + C-loop row +
+  블라인드-supersession note + header date/addendum. Residual (a
+  full row-by-row re-audit of every prior batch against canon) is NOT
+  claimed done — QUICKREF is a convenience surface that may lag; treat
+  this as targeted-current-through-2026-07-09, not a from-scratch regen.
 
 - [ ] **A-3 magnitude pass must ingest the L2 freeze evidence**
   (registered 2026-07-07, sheet-15 session): cap-growth-alone does not
@@ -112,6 +116,30 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   (c) are DEBT — each its own brainstorm→spec cycle, after (b).** Force-
   geography (b)'s harness item (this Open row's item a) is now the active
   design; it stays Open until (b) ships.
+  **UPDATE 2026-07-09 (force-geography (b) design grill — v1 SEALED).**
+  The (b) design ran the brainstorming flow; v1 **(최소)** design sealed in
+  the new feature birthplace `docs/features/force-geography/` (INDEX +
+  RULINGS **FG-①…⑨**). Key seals: **U1** = adopt the measured fort-by-class
+  mapping (FG-②, L2 +33% — the "ceiling vs cost" question was re-litigation
+  of an already-measured, dormant mapping); weak fronts come from
+  **scarcity + value, NOT a defensibility-concentration policy** (FG-③,
+  corrects the skeleton — a rational defender equalizes defense *power*,
+  more bodies on weak terrain; and the bot RE-EQUALIZES, so differentiation
+  alone is not durable, scarcity is); the **reactive mobile reserve is
+  in-scope** (FG-④ — passive-defender measurement can only falsify not
+  confirm, and that falsifier is exhausted) — reactive, first-blow vs raw
+  defense, sealed **M9** wired into the (passive-today) defender,
+  destination `deficit × value` reusing ADR 0019 (G8), whole-realm value
+  for v1 with per-front (a) deferred (FG-⑤/⑥); attacker info = the sealed
+  fog **estimate-range band** (derived, not chosen), band-weighting OPEN →
+  U4 (FG-⑦); **commit-scarcity kept OFF** (FG-⑧, dormant `siege 8/field 14`
+  = a third latent scarcity axis, off for scope); **sequencing** v1=(최소) /
+  (정교) static standing-redistribution = deferred delta detailed after
+  (최소) L2 data, measure minimal→sophisticated (FG-⑨). U3/U5 settled.
+  **STILL OPEN**: U4 band-weighting (own brainstorm), (정교) detail (after
+  (최소) L2 data), then the harness build (wire M9 reserve + FG-② mapping +
+  stop re-equalization). (a)/(c) remain DEBT. Row stays Open until (b)
+  ships.
 
 - [ ] **Term lifecycle beyond promotion** (Codex P1): define
   proposed → agreed → promoted → renamed → deprecated states in the
