@@ -515,6 +515,72 @@ SPEC implication: the victory condition is SPEC-level ("one judgment"
 decisive victory) — any change goes through the user-approved SPEC
 proposal (documentation law). Feeds the next grill (hegemony ADR).
 
+## Ending-taxonomy measurement panel — BUILT + first finding (2026-07-08, grill)
+
+The hegemony grill (Q1-Q4, user) reframed the freeze: before touching any
+victory-condition knob, MEASURE how each match ends, because the ~87%
+`timeout` blob is one label hiding opposite realities. Design sealed and
+built this session (TDD, `tests/match-panel.test.js`, full suite 148 green):
+
+- **Q1** measure before redefining the SPEC terminal (the no-hegemon ending
+  is a SPEC-5 gap, user-gated later). **Q2** ruler B — bar-INDEPENDENT
+  concentration (measuring vs the suspect bar is circular). **Q3** 8-metric
+  panel: forceShare / controlShare / HHI + shieldShare (수비, 방패 질량 ⑨) /
+  reversibilityIndex (불가침 as a continuous scalar) / vassalShare (복속
+  proxy) / bloodAxis (worldBlood, 소진). **Q4** vassals fold FULL into the
+  overlord side (mirrors the gate's `candProj = self + Σ vassal`; the vassal
+  is strategically the overlord's instrument — 부마국), vassalShare reports
+  the fragile proxy portion separately. Thresholds PROVISIONAL (가안),
+  calibrated post-measurement; tier cutoffs borrow Stellaris relative-power
+  (1.5× superior / 2.5× overwhelming). Buckets: hegemon / denied-dominant
+  (a dominant realm the check missed) / standoff / bipolar-lock / contested.
+- Internal doc survey + external subagent (EU4/Stellaris/HOI4/Civ/CK3/TW/
+  Diplomacy) CONVERGED: the offense/defense split (투사 vs 방패 ⑨), subject-
+  weighting (~½ external convention vs our full-gate), and coalition-pressure
+  scalar are all things our sealed vocabulary already half-holds. Diplomacy
+  Sum-of-Squares (leader² / Σ²) banked as a candidate no-hegemon score.
+- Wired: `match.js matchPanel` (pure share arithmetic) · `tournament.js
+  finish()` extracts proj (via the gate's own view) / shield / bodies and
+  records `record.panel` (+ `record.bodiesStart`) · `plan-battery.js
+  aggregate` emits the bucket distribution + leader-seat × bucket crown
+  crosstab + exhaustedPct.
+
+**FIRST FINDING (authored cradle map, 1680 matches, reps 8 × 7 bindings,
+provisional thresholds).** Bucket means validate a real bimodal split, NOT
+threshold noise:
+
+| bucket | n | % | meanForceShare | meanReversibility |
+|---|---|---|---|---|
+| hegemon | 190 | 11.3 | 0.68 | 0.28 |
+| **denied-dominant** | 467 | **27.8** | **0.58** | **0.39** |
+| standoff | 934 | 55.6 | 0.26 | 1.87 |
+| contested | 59 | 3.5 | 0.44 | 0.72 |
+| bipolar-lock | 30 | 1.8 | 0.46 | 0.58 |
+
+- **The wall is real and ~28%.** denied-dominant (0.58 / 0.39) sits right
+  next to the hegemons (0.68 / 0.28) and far from standoff (0.26 / 1.87) —
+  statistically "hegemons the victory check missed." So the ~87% is NOT
+  mostly-standoff: ~56% genuine multipolar balance, but ~28pp are dominant
+  realms denied a win. The freeze is BOTH an anti-snowball success (the
+  standoff half) AND a victory-condition wall (the denied-dominant half).
+- **Crown INVERTED (bears on TC-②).** Leader-seat × bucket: center (중원)
+  leads 798 matches but is dominant in only ~78 (~10%) — 709 are standoffs;
+  flanks lead 882 and are dominant in ~579 (~66%). The center is pinned to
+  standoff (its exposure is anti-snowball working, arguably too hard); the
+  seats that break through are the flanks. TC-② expected a center
+  hegemony-PREMIUM when digested stably — the measurement shows an inversion.
+  Recorded as evidence bearing on TC-②, NOT a rewrite (TC-② is a user seal).
+- exhausted% ≈ 0 — the world never runs out of blood under current dials
+  (consistent with the blinds-inert / treasury-grows finding); bloodAxis is a
+  null signal today but cheap and future-proof.
+
+Reframes the hegemony grill from one blob into two measured problems: **the
+wall** (denied-dominant → hegemony-bar shape, SPEC-adjacent) and **the crown
+inversion** (center can't convert → anti-snowball strength / map balance).
+Next: calibrate thresholds against the distribution, then grill which problem
+to act on. Smoke run on the abstract board (600 matches) showed the same
+shape (denied-dominant 23%, same inversion), so it is not a cradle artifact.
+
 # 2026-07-05 night run — sheet 13 (thin economy, A-3)
 
 Question: the minimum economy that makes M13 prices and 정산 codable —

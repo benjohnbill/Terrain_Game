@@ -29,6 +29,11 @@ function aggregate(records) {
   const decided = records.filter((r) => r.winner);
   const undecided = records.filter((r) => !r.winner);
   const shapes = {}; const planHist = {};
+  // ending-taxonomy distribution (grill 2026-07-08): the bar-independent read
+  // of how each match ended, plus the leader-seat × bucket crown crosstab
+  // (TC-② needle b — does the center actually lead when it holds).
+  const buckets = {}; const bucketByLeaderSeat = {};
+  let exhausted = 0, paneled = 0;
   let elim = 0, vassal = 0, brained = 0, forced = 0, misjudged = 0;
   for (const r of records) {
     shapes[r.endingShape] = (shapes[r.endingShape] || 0) + 1;
@@ -36,6 +41,15 @@ function aggregate(records) {
     const ps = r.planStats || { picks: {}, brained: 0, forced: 0, misjudged: 0 };
     brained += ps.brained; forced += ps.forced; misjudged += ps.misjudged;
     for (const [p, n] of Object.entries(ps.picks)) planHist[p] = (planHist[p] || 0) + n;
+    if (r.panel) {
+      paneled++;
+      buckets[r.panel.bucket] = (buckets[r.panel.bucket] || 0) + 1;
+      if (r.panel.exhausted) exhausted++;
+      const side = (r.panel.sides || []).find((s) => s.name === r.panel.leader);
+      const seat = side ? side.seat : 'unknown';
+      const row = bucketByLeaderSeat[seat] || (bucketByLeaderSeat[seat] = {});
+      row[r.panel.bucket] = (row[r.panel.bucket] || 0) + 1;
+    }
   }
   const shortfalls = undecided
     .map((r) => r.finalCheck && r.finalCheck.leadershipShortfall)
@@ -46,6 +60,8 @@ function aggregate(records) {
     meanShortfall: shortfalls.length
       ? shortfalls.reduce((s, v) => s + v, 0) / shortfalls.length : null,
     eliminations: elim, vassalDeals: vassal, shapes, planHist,
+    buckets, bucketByLeaderSeat,
+    exhaustedPct: paneled ? (exhausted / records.length) * 100 : null,
     brained,
     forcedPct: brained ? (forced / brained) * 100 : null,
     misjudgedPct: brained ? (misjudged / brained) * 100 : null,

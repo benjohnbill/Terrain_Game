@@ -30,7 +30,7 @@
 
 const { DIALS, resolve } = require('./engine');
 const ECON = require('./econ.js');
-const { MATCH_DIALS, hegemonyCheck, presetBundle,
+const { MATCH_DIALS, hegemonyCheck, projectable, matchPanel, presetBundle,
   expectedContinuedLoss, accepts } = require('./match');
 
 // ---------------------------------------------------------------- dials
@@ -149,6 +149,11 @@ const realmValue = (r, H) => r.interior * (r.sectorYield ?? H.sectorValue) + H.c
 const yieldReach = (r, H) => Math.round(r.interior * (r.sectorYield ?? H.sectorValue) * r.usable * 10) / 10;
 const totalGarrisons = (r) => Object.values(r.frontG).reduce((s, g) => s + g, 0)
   + r.interior * 300 + r.capitalGarrison;
+// total living bodies: serving (field + garrisons) + reserve (pool). Blood is
+// permanent — only death shrinks it — so this is the exhaustion denominator.
+const bodiesOf = (r) => r.field + totalGarrisons(r) + r.pool;
+// direction-free defensive mass for the ending panel's shieldShare.
+const shieldOf = (r) => r.field + Object.values(r.frontG).reduce((s, g) => s + g, 0);
 
 // adapt a realm to match.js's hegemonyCheck shape
 function checkView(realms) {
@@ -716,6 +721,8 @@ function runMatch(assignment, opts = {}) {
   const record = {
     assignment, seed: opts.seed ?? 1,
     winner: null, endingShape: 'timeout', tripTurn: null,
+    // total living bodies at match start — the worldBlood exhaustion denominator
+    bodiesStart: realms.reduce((s, r) => s + bodiesOf(r), 0),
     settlements: [], presetOffers: [], vassalOffers: 0, vassalDeals: 0,
     eliminations: 0, raids: 0, warsStarted: 0,
     planStats: { picks: {}, brained: 0, forced: 0, misjudged: 0 },
@@ -848,6 +855,19 @@ function finish(record, realms) {
     name: r.name, seat: r.seatType, archetype: r.archetype, temperament: r.temperament,
     alive: r.alive, vassalOf: r.vassalOf, field: r.field, pool: r.pool, interior: r.interior,
   }));
+
+  // bar-independent ending panel (grill 2026-07-08): classifies how the match
+  // ended without consulting the hegemony bar. projectable reuses the same view
+  // the gate reads; shield/ctrl/bodies come straight off the realm.
+  const perRealm = realms.map((r, i) => ({
+    name: r.name, seat: r.seatType, alive: r.alive, vassalOf: r.vassalOf,
+    proj: r.alive ? projectable(view[i]) : 0,
+    shield: shieldOf(r), ctrl: r.interior,
+    bodies: r.alive ? bodiesOf(r) : 0,
+  }));
+  record.panel = matchPanel(perRealm, { bodiesStart: record.bodiesStart });
+  if (record.winner) record.panel.bucket = 'hegemon'; // a tripped match, not a timeout class
+
   if (record.winner) {
     const w = record.finalRealms.find((r) => r.name === record.winner);
     record.winnerSeat = w.seat; record.winnerArchetype = w.archetype; record.winnerTemperament = w.temperament;

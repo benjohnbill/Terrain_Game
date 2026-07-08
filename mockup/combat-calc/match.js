@@ -191,6 +191,105 @@ function accepts(bundleValue, expectedLossTotal, coeff) {
   return bundleValue <= expectedLossTotal * coeff;
 }
 
-const _api = { MATCH_DIALS, projectable, shieldMass, hegemonyCheck, presetBundle, expectedContinuedLoss, accepts };
+// ---------------------------------------------------------------- ending panel
+// A bar-INDEPENDENT read of a finished match (ending-taxonomy grill 2026-07-08).
+// It never consults the hegemony bar, so the ~87% timeout blob splits into a
+// legitimate multipolar standoff vs a dominant realm the victory check failed
+// to register. Input is one plain object per realm — {name, seat, alive,
+// vassalOf, proj, shield, ctrl, bodies} — extracted by the harness (finish())
+// where the live realms and projectable/shieldMass live; this function does the
+// pure share arithmetic only, so it is fixture-testable in isolation.
+//
+// Vassals fold FULL into the overlord SIDE (grill Q4 — mirrors the gate's
+// candProj = self + Σ vassal; the vassal is strategically the overlord's
+// instrument), while vassalShare reports the fragile proxy portion separately
+// (it evaporates on chain-collapse). Thresholds are PROVISIONAL (가안),
+// calibrated against the measured distribution, never before it (L2 discipline);
+// tier cutoffs borrow Stellaris relative-power (1.5× superior / 2.5×
+// overwhelming).
+const PANEL_DIALS = {
+  tierSuperior: 1.5,      // leader ÷ strongest rival ≥ this → 'superior'
+  tierOverwhelming: 2.5,  // ≥ this → 'overwhelming'
+  reversibleAt: 1.0,      // coalition offense ÷ leader shield ≥ this → overturnable
+  exhaustedBelow: 0.6,    // worldBlood under this → the world is bled out
+  dominantForceShare: 0.5,
+};
+
+function matchPanel(perRealm, opts = {}) {
+  const D = opts.D || MATCH_DIALS;
+  const P = opts.panel || PANEL_DIALS;
+  const alive = perRealm.filter((r) => r.alive);
+  const byName = new Map(alive.map((r) => [r.name, r]));
+
+  // fold each vassal into its overlord's side (full weight, Q4)
+  const sides = [];
+  for (const r of alive) {
+    if (r.vassalOf && byName.has(r.vassalOf)) continue; // counted under overlord
+    const vassals = alive.filter((v) => v.vassalOf === r.name);
+    const sum = (key) => r[key] + vassals.reduce((s, v) => s + v[key], 0);
+    sides.push({
+      name: r.name, seat: r.seat,
+      proj: sum('proj'), shield: sum('shield'), ctrl: sum('ctrl'),
+      vassalProj: vassals.reduce((s, v) => s + v.proj, 0),
+    });
+  }
+
+  const sum = (key) => sides.reduce((s, x) => s + x[key], 0);
+  const sumProj = sum('proj') || 1;
+  const sumShield = sum('shield') || 1;
+  const sumCtrl = sum('ctrl') || 1;
+  for (const x of sides) x.forceShare = x.proj / sumProj;
+
+  const leader = sides.reduce((a, b) => (b.proj > a.proj ? b : a), sides[0]);
+  const rivals = sides.filter((x) => x !== leader);
+  const maxRival = rivals.reduce((a, b) => (!a || b.proj > a.proj ? b : a), null);
+
+  const forceShare = leader.proj / sumProj;
+  const controlShare = leader.ctrl / sumCtrl;
+  const shieldShare = leader.shield / sumShield;
+  const hhi = sides.reduce((s, x) => s + x.forceShare * x.forceShare, 0);
+  const sos = hhi ? (forceShare * forceShare) / hhi : 0;
+  const vassalShare = leader.proj ? leader.vassalProj / leader.proj : 0;
+
+  // reversibility: in-balance rivals' offense vs the leader's defensive wall
+  // (the hermit clause of the gate — proj ≤ floor cannot form a coalition)
+  const coalitionProj = rivals
+    .filter((x) => x.proj > D.projectionFloor)
+    .reduce((s, x) => s + x.proj, 0);
+  const reversibilityIndex = leader.shield ? coalitionProj / leader.shield : Infinity;
+
+  const bodiesNow = alive.reduce((s, r) => s + (r.bodies || 0), 0);
+  const worldBlood = opts.bodiesStart ? bodiesNow / opts.bodiesStart : null;
+  const exhausted = worldBlood != null && worldBlood < P.exhaustedBelow;
+
+  const ratio = maxRival ? leader.proj / (maxRival.proj || 1) : Infinity;
+  const tier = ratio >= P.tierOverwhelming ? 'overwhelming'
+    : ratio >= P.tierSuperior ? 'superior' : 'equivalent';
+
+  // bucket (PROVISIONAL). A tripped match is labelled 'hegemon' by the caller;
+  // this classifies the no-trip endings only.
+  const ranked = [...sides].sort((a, b) => b.forceShare - a.forceShare);
+  const bipolar = ranked.length >= 3
+    && (ranked[0].forceShare + ranked[1].forceShare) >= 0.66
+    && ranked[2].forceShare < 0.15;
+  const unassailable = reversibilityIndex < P.reversibleAt;
+  let bucket;
+  if ((tier === 'overwhelming' || forceShare >= P.dominantForceShare) && unassailable) {
+    bucket = 'denied-dominant';       // a dominant realm the victory check missed
+  } else if (bipolar) {
+    bucket = 'bipolar-lock';          // two blocs, neither able to break the other
+  } else if (tier === 'equivalent') {
+    bucket = 'standoff';              // genuine multipolar balance
+  } else {
+    bucket = 'contested';            // a leader ahead but the field can still overturn
+  }
+
+  return {
+    leader: leader.name, forceShare, controlShare, shieldShare, hhi, sos,
+    reversibilityIndex, vassalShare, worldBlood, exhausted, tier, bucket, sides,
+  };
+}
+
+const _api = { MATCH_DIALS, PANEL_DIALS, projectable, shieldMass, hegemonyCheck, matchPanel, presetBundle, expectedContinuedLoss, accepts };
 if (typeof module !== 'undefined' && module.exports) module.exports = _api;
 else (window.TC = window.TC || {}).match = _api;
