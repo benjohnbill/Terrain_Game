@@ -124,6 +124,10 @@ function makeBoardFromMap(map, binding, gaan = BOARD_GAAN) {
       capitalGarrison: gaan.capitalGarrison,
       frontG, frontCap: { ...frontG }, fortAt,
       frontClass, frontDoor,          // border crossing class + door per front
+      fortCeil: gaan.startFortByClass
+        ? Object.fromEntries(Object.entries(frontClass).map(
+            ([n, cls]) => [n, gaan.startFortByClass[cls] ?? gaan.startFort]))
+        : Object.fromEntries(Object.keys(frontG).map((n) => [n, 'fortress'])),
       exits, staging: false,
       usable: 1.0,
       yieldBase,

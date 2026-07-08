@@ -618,8 +618,9 @@ function peacePrimary(me, realms, rng, record, H = HARNESS) {
     if (act === 'fort') {
       // hermit buy-back first: staging doubles the strait door (ruling ⑩)
       if (me.seatType === 'hermit' && !me.staging) { me.staging = true; return 'staging'; }
+      const ceilOf = (n) => (me.fortCeil && me.fortCeil[n]) || 'fortress';
       const front = Object.entries(me.fortAt)
-        .filter(([, f]) => BOT.fortLadder.indexOf(f) < BOT.fortLadder.indexOf('fortress'))
+        .filter(([n, f]) => BOT.fortLadder.indexOf(f) < BOT.fortLadder.indexOf(ceilOf(n)))
         .sort(([a], [b]) => (me.frontG[a] ?? 0) - (me.frontG[b] ?? 0))[0];
       if (front) { me.fortAt[front[0]] = BOT.fortLadder[BOT.fortLadder.indexOf(front[1]) + 1]; return 'fort'; }
     }

@@ -27,3 +27,25 @@ test('the default board stays uniform walls (sealed start-state untouched)', () 
   for (const r of realms)
     for (const f of Object.values(r.fortAt)) assert.strictEqual(f, 'walls');
 });
+
+test('FG board sets fortCeil = the terrain-class fort tier per front', () => {
+  const realms = makeBoardFromMap(CRADLE_MAP, CRADLE_BINDING, FG_BOARD_GAAN);
+  for (const r of realms)
+    for (const [nbr, cls] of Object.entries(r.frontClass))
+      assert.strictEqual(r.fortCeil[nbr], FG_FORT_BY_CLASS[cls] ?? 'walls');
+});
+
+test('peacePrimary does not upgrade fort above the terrain ceiling', () => {
+  // an open front (ceiling fieldworks) already at its ceiling stays there
+  const T = require('../mockup/combat-calc/tournament.js');
+  const me = {
+    archetype: 'shield-first', _turn: 5, seatType: 'flank',
+    frontG: { X: 100, Y: 900 }, frontCap: { X: 900, Y: 900 },
+    fortAt: { X: 'fieldworks', Y: 'walls' }, fortCeil: { X: 'fieldworks', Y: 'fortress' },
+    capitalGarrison: 1500, pool: 5000, field: 0, fieldCap: 5000,
+    treasury: 1e9, usable: 1, truce: {}, staging: false, wars: [],
+  };
+  const record = { presetOffers: [], regens: 0, raids: 0 };
+  T.peacePrimary(me, [me], null, record);
+  assert.strictEqual(me.fortAt.X, 'fieldworks', 'open front NOT pushed past fieldworks');
+});
