@@ -423,6 +423,29 @@ function m9Fill(D, front) {
   return reserveAwaken(others + (D.interiorGarrison ?? 0), BOT.reservePoints);
 }
 
+// FG-⑤ standing-defense power of a front (garrison × terrain × fort), used
+// to score deficits. No commit/reserve/erosion — the raw first-blow wall.
+function frontDefense(D, front) {
+  const cls = (D.frontClass && D.frontClass[front]) || 'hills';
+  const terr = DIALS.terrain[combatFromBorderClass(cls).terrain] ?? 1;
+  const fort = DIALS.fort[(D.fortAt && D.fortAt[front]) || 'walls'];
+  return (D.frontG[front] ?? 0) * terr * fort;
+}
+
+// FG-⑥ field-army destination: the one mobile army serves the defensive war
+// whose front has the largest deficit (attacker field − standing defense).
+// Whole-realm value ⇒ deficit alone decides (fight-or-fold is elsewhere).
+function pickMainDefWar(realm, wars, realms) {
+  let best = null, bestDef = -Infinity;
+  for (const w of wars) {
+    const att = realms.find((r) => r.name === w.att);
+    const front = realm.frontG[w.att] !== undefined ? w.att : Object.keys(realm.frontG)[0];
+    const deficit = (att ? att.field : 0) - frontDefense(realm, front);
+    if (deficit > bestDef) { bestDef = deficit; best = w; }
+  }
+  return best;
+}
+
 // ---------------------------------------------------------------- settlement
 // Winner proposes down a concession ladder (preferred → more lenient);
 // vassalage demand first if the policy calls for it and the capital is
@@ -771,11 +794,7 @@ function runMatch(assignment, opts = {}) {
     const mainDefWar = {};
     for (const r of alive) {
       const defs = r.wars.filter((w) => w.def === r.name && w.stage !== 'over');
-      if (defs.length) mainDefWar[r.name] = defs.sort((a, b) => {
-        const fa = realms.find((x) => x.name === a.att).field;
-        const fb = realms.find((x) => x.name === b.att).field;
-        return fb - fa;
-      })[0];
+      if (defs.length) mainDefWar[r.name] = pickMainDefWar(r, defs, realms);
     }
     const activeWars = [...new Set(alive.flatMap((r) => r.wars))].filter((w) => w.stage !== 'over');
     for (const war of activeWars) {
@@ -938,4 +957,5 @@ const SPEC_GAPS = [
 module.exports = { HARNESS, BOT, ARCHETYPES, TEMPERAMENTS, SEATS, SPEC_GAPS,
   makeBoard, runMatch, runTournament, mulberry32, yieldReach, realmValue,
   pickTarget, peacePrimary, doRecruit, poolBleed, servingBodies, regenGarrisons,
-  realmIncome, intensity, combatFromBorderClass, newWar, warBattle, m9Fill };
+  realmIncome, intensity, combatFromBorderClass, newWar, warBattle, m9Fill,
+  frontDefense, pickMainDefWar };

@@ -4,6 +4,7 @@ const assert = require('node:assert');
 const { CRADLE_MAP, CRADLE_BINDING } = require('../mockup/combat-calc/map-gen.js');
 const { makeBoardFromMap, FG_BOARD_GAAN, FG_FORT_BY_CLASS } = require('../mockup/combat-calc/map-board.js');
 const T = require('../mockup/combat-calc/tournament.js');
+const { DIALS } = require('../mockup/combat-calc/engine.js');
 
 test('FG_FORT_BY_CLASS is the sealed FG-② mapping', () => {
   assert.deepStrictEqual(FG_FORT_BY_CLASS, {
@@ -64,4 +65,24 @@ test('m9Fill pulls from other fronts + interior at the reserve rate, off when di
   // provinceStock for front A = other fronts (800+600) + interior (300) = 1700
   assert.strictEqual(T.m9Fill(D, 'A'), Math.floor(1700 * 0.5));
   assert.strictEqual(T.m9Fill({ ...D, m9Reserve: false }, 'A'), 0);
+});
+
+test('frontDefense = garrison × terrain × fort', () => {
+  const D = { frontG: { P: 1000 }, fortAt: { P: 'fortress' }, frontClass: { P: 'pass' } };
+  // pass terrain 2.0 × fortress 2.4 × 1000 = 4800
+  assert.strictEqual(T.frontDefense(D, 'P'), 1000 * DIALS.terrain.pass * DIALS.fort.fortress);
+});
+
+test('pickMainDefWar picks the front with the largest deficit (softest, most-pressed)', () => {
+  const plains = { name: 'ATK1', field: 3000 };
+  const passer = { name: 'ATK2', field: 3000 };
+  const D = {
+    name: 'DEF', frontG: { ATK1: 500, ATK2: 500 },
+    fortAt: { ATK1: 'fieldworks', ATK2: 'fortress' },
+    frontClass: { ATK1: 'open', ATK2: 'pass' },
+  };
+  const realms = [plains, passer, D];
+  const wars = [{ att: 'ATK1', def: 'DEF', stage: 'field' }, { att: 'ATK2', def: 'DEF', stage: 'field' }];
+  // ATK1 (plains, weak fort) deficit >> ATK2 (pass, fortress) → field army defends ATK1
+  assert.strictEqual(T.pickMainDefWar(D, wars, realms).att, 'ATK1');
 });
