@@ -41,6 +41,15 @@ const BOARD_GAAN = {
                                 // devices land. null → legacy ×1.5 sizing.
 };
 
+// Force-geography v1 (최소) — U1 terrain envelope (FG-②, L2-measured +33%).
+// HARNESS 가안, opt-in: the sealed uniform-walls BOARD_GAAN is untouched.
+const FG_FORT_BY_CLASS = {
+  open: 'fieldworks',
+  forest: 'walls', hills: 'walls', river: 'walls',
+  pass: 'fortress', strait: 'fortress',
+};
+const FG_BOARD_GAAN = { ...BOARD_GAAN, startFortByClass: FG_FORT_BY_CLASS };
+
 // reachable-weakest-link: an attacker assaults through the softest crossing on
 // a front, so a seat-front spanning several region borders takes the most-open
 // one. Defensibility order: open < forest/hills < river < pass < strait. This
@@ -207,6 +216,6 @@ function pairFlags(records) {
   return out;
 }
 
-const _api = { makeBoardFromMap, BOARD_GAAN, runCradleTournament, watchFlags, pairFlags, weakestCrossing };
+const _api = { makeBoardFromMap, BOARD_GAAN, FG_BOARD_GAAN, FG_FORT_BY_CLASS, runCradleTournament, watchFlags, pairFlags, weakestCrossing };
 if (typeof module !== 'undefined' && module.exports) module.exports = _api;
 else (window.TC = window.TC || {}).board = _api;
