@@ -73,6 +73,19 @@ function aggregate(records) {
   // two central turns; the unique median for an odd count.
   const medianTripTurn = sortedTrips.length ? sortedTrips[Math.floor(sortedTrips.length / 2)] : null;
   const envelopeCount = tripTurns.filter((t) => t >= 15 && t <= 25).length;
+  // core-target ruler (spec 2026-07-09 hegemony-decision-timing-target-design
+  // §4): 18-22 tight-core share + mean/std/per-turn histogram, additive on
+  // top of the envelope/median/bins ruler above — same decided-only
+  // tripTurns source, so a reader can score the SPEC 18-22 target AND judge
+  // whether the distribution shape reads as roughly normal.
+  const core1822Count = tripTurns.filter((t) => t >= 18 && t <= 22).length;
+  const meanTripTurn = tripTurns.length
+    ? tripTurns.reduce((s, v) => s + v, 0) / tripTurns.length : null;
+  const stdTripTurn = tripTurns.length
+    ? Math.sqrt(tripTurns.reduce((s, v) => s + (v - meanTripTurn) ** 2, 0) / tripTurns.length)
+    : null;
+  const tripTurnHist = {};
+  for (const t of tripTurns) tripTurnHist[t] = (tripTurnHist[t] || 0) + 1;
   return {
     matches: records.length,
     decidedPct: (decided.length / records.length) * 100,
@@ -83,6 +96,10 @@ function aggregate(records) {
     envelopePct: (envelopeCount / records.length) * 100,
     medianTripTurn,
     tripTurnBins,
+    core1822Pct: (core1822Count / records.length) * 100,
+    meanTripTurn,
+    stdTripTurn,
+    tripTurnHist,
     exhaustedPct: paneled ? (exhausted / records.length) * 100 : null,
     brained,
     forcedPct: brained ? (forced / brained) * 100 : null,
@@ -204,6 +221,7 @@ function main() {
       console.log(`[${id}] decided ${pct(agg.decidedPct)} · envelope(15-25) ${pct(agg.envelopePct)} · median trip ${agg.medianTripTurn === null ? '—' : agg.medianTripTurn}`);
       console.log(`  tripTurn bins ${JSON.stringify(agg.tripTurnBins)}`);
       console.log(`  buckets ${JSON.stringify(agg.buckets)} · meanWithinRealmVariance ${agg.meanWithinRealmVariance === null ? '—' : agg.meanWithinRealmVariance.toFixed(1)} · meanBoostedShieldShare ${agg.meanBoostedShieldShare === null ? '—' : agg.meanBoostedShieldShare.toFixed(3)}`);
+      console.log(`  core(18-22) ${pct(agg.core1822Pct)} · mean ${agg.meanTripTurn === null ? '—' : agg.meanTripTurn} ± ${agg.stdTripTurn === null ? '—' : agg.stdTripTurn.toFixed(1)} · hist ${JSON.stringify(agg.tripTurnHist)}`);
     }
     return;
   }

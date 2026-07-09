@@ -65,3 +65,34 @@ test('aggregate timing ruler handles an all-timeout batch', () => {
     '1-8': 0, '9-14': 0, '15-20': 0, '21-25': 0, '26-32': 0,
   });
 });
+
+test('aggregate reports 18-22 tight-core%, mean/std, and per-turn histogram (hand-computed)', () => {
+  const records = [
+    rec({ winner: 'A', tripTurn: 16 }), // outside core
+    rec({ winner: 'B', tripTurn: 18 }), // core
+    rec({ winner: 'C', tripTurn: 20 }), // core
+    rec({ winner: 'D', tripTurn: 22 }), // core (inclusive upper)
+    rec({ winner: 'E', tripTurn: 24 }), // outside core
+    rec(),                              // timeout
+    rec(),                              // timeout
+  ];
+  const a = aggregate(records);
+  assert.equal(a.matches, 7);
+  // 3 of 7 matches (18, 20, 22) trip inside the 18-22 core; denominator is
+  // ALL matches, same convention as envelopePct.
+  assert.ok(Math.abs(a.core1822Pct - (3 / 7) * 100) < 1e-9);
+  // decided trips [16,18,20,22,24] sum to 100 / 5 = 20 exactly.
+  assert.equal(a.meanTripTurn, 20);
+  // deviations from mean 20: [-4,-2,0,2,4] → squares [16,4,0,4,16] → sum 40
+  // → population variance 40/5 = 8 → std = sqrt(8) = 2*sqrt(2).
+  assert.ok(Math.abs(a.stdTripTurn - Math.sqrt(8)) < 1e-9);
+  assert.deepEqual(a.tripTurnHist, { 16: 1, 18: 1, 20: 1, 22: 1, 24: 1 });
+});
+
+test('aggregate 18-22 core/mean/std/hist all-timeout edge case', () => {
+  const a = aggregate([rec(), rec()]);
+  assert.equal(a.core1822Pct, 0);
+  assert.equal(a.meanTripTurn, null);
+  assert.equal(a.stdTripTurn, null);
+  assert.deepEqual(a.tripTurnHist, {});
+});
