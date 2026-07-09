@@ -129,6 +129,7 @@ function makeBoard() {
       usable: 1.0,                    // economy usable fraction (raids burn it)
       pool: 0,                        // set below: ×1.5 initial military (M13)
       recruitBonus: 0,                // indemnity credit, men
+      capPending: 0, capRipeFlow: 0,  // §5 growth: ceiling not yet integrated
       alive: true, vassalOf: null,
       truce: {},                      // name -> turn until which war is barred
       wars: [],                       // war objects this realm participates in
@@ -553,8 +554,9 @@ function applySettlement(kind, preset, war, A, D, H, realms) {
   const poolShare = Math.round(D.pool * (ceded / Math.max(1, D.interior + ceded + 2)));
   D.pool -= poolShare; A.pool += poolShare;
   // A-3 probe: does conquered land raise the national cap? (0 in canon)
-  A.fieldCap += ceded * H.capPerSector;
+  applyCapGain(A, ceded * H.capPerSector, H); // §5: winner's ceiling ripens in
   D.fieldCap = Math.max(2000, D.fieldCap - ceded * H.capPerSector);
+  if (D.capPending > D.fieldCap) D.capPending = D.fieldCap; // loss is immediate
   // returned occupation beyond the ceded claim
   D.interior += Math.max(0, war.occupied - ceded);
   // indemnity: one-time recruit credit (부대 = 0.5 yield)
@@ -594,12 +596,12 @@ function endWar(war, A, D, H) {
   A.lastWarEnd = D.lastWarEnd = war.endTurn ?? 0;
 }
 
-function eliminate(D, A, realms, H) {
+function eliminate(D, A, realms, H, war) {
   D.alive = false;
   inheritFronts(A, D, realms);
   releaseVassalsOf(D, realms);
   A.interior += D.interior; A.pool += Math.round(D.pool * 0.5);
-  A.fieldCap += D.interior * (H?.capPerSector ?? 0);
+  applyCapGain(A, (war && war.occupied) ? war.occupied * (H?.capPerSector ?? 0) : 0, H ?? HARNESS); // §5 ripen
   D.interior = 0; D.field = 0;
   for (const w of [...D.wars]) { w.stage = 'over'; }
   D.wars = [];
@@ -852,7 +854,7 @@ function runMatch(assignment, opts = {}) {
       war.endTurn = t;
 
       if (war.stage === 'fallen') {
-        eliminate(D, A, realms, H);
+        eliminate(D, A, realms, H, war);
         record.eliminations++;
         endWar(war, A, D, H);
         continue;
@@ -888,6 +890,7 @@ function runMatch(assignment, opts = {}) {
     // healing), not a force-shaping act (M12-5 standing floor).
     for (const r of alive) {
       r.usable = Math.min(1, r.usable + H.usableRecovery);
+      ripenCap(r);                                        // §5: integrate conquered ceiling
       r.treasury = (r.treasury ?? 0) + realmIncome(r);  // Option B income accrual
     }
 

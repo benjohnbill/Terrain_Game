@@ -50,3 +50,44 @@ test('ripenCap: last step never overshoots full (min(pending, flow))', () => {
   assert.equal(r.capPending, 0);
   assert.equal(r.capRipeFlow, 0);
 });
+
+// A fixed all-'표준' assignment so runMatch is deterministic under a seed.
+const ASSIGN = Object.fromEntries(
+  ['중원', '서령', '동평', '남곡', '북하'].map(
+    (n) => [n, { archetype: 'shield-first', temperament: '표준' }]));
+
+test('new realm fields are initialized on the board', () => {
+  const board = T.makeBoard();
+  for (const r of board) {
+    assert.equal(r.capPending, 0);
+    assert.equal(r.capRipeFlow, 0);
+  }
+});
+
+test('ripenCap is invoked in the per-turn loop (a pre-set pending drains)', () => {
+  const board = T.makeBoard();
+  board[0].capPending = 1000;   // 중원 carries a pending ceiling
+  board[0].capRipeFlow = 100;
+  const startCap = board[0].fieldCap;
+  T.runMatch(ASSIGN, { seed: 42, board, harness: { maxTurns: 3 } });
+  // 중원 survives the opening turns; 3 loop passes ripen 3 x 100 = 300.
+  assert.ok(board[0].capPending <= 700, `pending should drain, got ${board[0].capPending}`);
+  assert.ok(board[0].fieldCap >= startCap, 'ripened ceiling never drops below start');
+});
+
+test('capPerSector > 0 makes conquest change the ceiling trajectory (wiring live)', () => {
+  const off = T.runMatch(ASSIGN, { seed: 7, board: T.makeBoard(), harness: { capPerSector: 0 } });
+  const on  = T.runMatch(ASSIGN, { seed: 7, board: T.makeBoard(), harness: { capPerSector: 3000 } });
+  // Precondition: the growth engine can only fire if a conquest happened (a
+  // settlement cession or an elimination). If this seed produces neither,
+  // switch to a seed that does — the test is otherwise vacuous.
+  assert.ok(on.settlements.length > 0 || on.eliminations > 0,
+    `seed 7 produced no conquest to test; pick a seed with a settlement/elimination`);
+  // Same seed/assignment: with growth on, at least the winner or trip turn or a
+  // settlement-bearing field must diverge from the zero-growth control.
+  const diverged = off.winner !== on.winner
+    || off.tripTurn !== on.tripTurn
+    || off.settlements.length !== on.settlements.length
+    || off.eliminations !== on.eliminations;
+  assert.ok(diverged, 'growth engine must change outcomes vs the capPerSector:0 control');
+});
