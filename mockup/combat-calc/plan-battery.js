@@ -221,7 +221,7 @@ function main() {
       console.log(`[${id}] decided ${pct(agg.decidedPct)} · envelope(15-25) ${pct(agg.envelopePct)} · median trip ${agg.medianTripTurn === null ? '—' : agg.medianTripTurn}`);
       console.log(`  tripTurn bins ${JSON.stringify(agg.tripTurnBins)}`);
       console.log(`  buckets ${JSON.stringify(agg.buckets)} · meanWithinRealmVariance ${agg.meanWithinRealmVariance === null ? '—' : agg.meanWithinRealmVariance.toFixed(1)} · meanBoostedShieldShare ${agg.meanBoostedShieldShare === null ? '—' : agg.meanBoostedShieldShare.toFixed(3)}`);
-      console.log(`  core(18-22) ${pct(agg.core1822Pct)} · mean ${agg.meanTripTurn === null ? '—' : agg.meanTripTurn} ± ${agg.stdTripTurn === null ? '—' : agg.stdTripTurn.toFixed(1)} · hist ${JSON.stringify(agg.tripTurnHist)}`);
+      console.log(`  core(18-22) ${pct(agg.core1822Pct)} · mean ${agg.meanTripTurn === null ? '—' : agg.meanTripTurn.toFixed(1)} ± ${agg.stdTripTurn === null ? '—' : agg.stdTripTurn.toFixed(1)} · hist ${JSON.stringify(agg.tripTurnHist)}`);
     }
     return;
   }
