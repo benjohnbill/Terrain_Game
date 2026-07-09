@@ -557,6 +557,13 @@ function applySettlement(kind, preset, war, A, D, H, realms) {
   applyCapGain(A, ceded * H.capPerSector, H); // §5: winner's ceiling ripens in
   D.fieldCap = Math.max(2000, D.fieldCap - ceded * H.capPerSector);
   if (D.capPending > D.fieldCap) D.capPending = D.fieldCap; // loss is immediate
+  // §5 Position 1: fresh conquest also lags the economy — drag usable down in
+  // proportion to the new-land fraction; the existing usableRecovery pulse
+  // ripens it back. Default 0 (off) — an isolated measurement lever.
+  if (H.conquestUsableDrag > 0 && ceded > 0) {
+    const freshFrac = ceded / Math.max(1, A.interior); // A.interior already includes ceded
+    A.usable = Math.max(0.3, A.usable - H.conquestUsableDrag * freshFrac);
+  }
   // returned occupation beyond the ceded claim
   D.interior += Math.max(0, war.occupied - ceded);
   // indemnity: one-time recruit credit (부대 = 0.5 yield)
