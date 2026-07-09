@@ -44,8 +44,11 @@ the headline from bucket share to **decision timing** — RULINGS **DT-①** sea
 envelope%(15-25) + median tripTurn as the success read; the ET-① buckets are
 demoted to descriptive. Findings: no stomp (0% before turn 8), the disease is
 timeout (~50% even at the best arm), the center is already right (fgM9off
-median 19). Lever decisions: **§6 domination victory APPROVED** to implement
-(the check-fix — absorbs the `denied-dominant` wall, ~31% of fgM9off timeouts);
+median 19). Lever decisions: **§6 domination victory — arithmetic SEALED (RULINGS DT-③, Combo 2)**: trip =
+(leadership OR dominance) AND unassailable, where dominance = forceShare ≥ 0.5
+or 2.5× the top rival and unassailability REUSES the existing gate's 1.7×+6-turn
+clause (so persistence needs no separate counter); absorbs the `denied-dominant`
+wall (~31% of fgM9off timeouts). Implementation (check-fix) is the next lever;
 **§5 forced-resolution reframed → RULINGS DT-②** (shape SEALED 2026-07-09):
 balanced boards resolve *emergently* via a positive-sum growth engine (two
 paths — safe-slow development vs risky-fast conquest whose reward is immediate

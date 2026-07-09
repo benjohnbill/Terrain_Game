@@ -588,3 +588,50 @@ neutralizes exposure-fear. Not built preemptively.
 
 **Open (verify with the numbers):** whether "peaceful development" is a real
 growth path in the model today or must be built.
+
+### DT-③ Domination victory — the second hegemony terminal (Combo 2) — SEALED 2026-07-09 (user) · L1 (L2 validation on build)
+
+§6's domination victory is added by **relaxing the existing gate's offensive
+condition, not by adding a new machine.** The decision point (결정점) trips when:
+
+> **`trip = (leadership OR dominance) AND unassailable`**
+
+- **leadership** — UNCHANGED (candProj ≥ `shieldRatio` 1.7 × each in-balance
+  rival's facing shield).
+- **dominance (NEW)** — candProj-based, no per-rival shield bar: **forceShare ≥
+  0.5** (candidate side's projectable ≥ half of all in-balance projectable)
+  **OR** candProj ≥ **2.5×** the strongest single in-balance rival's projectable
+  (the panel's `overwhelming` tier). This is the wall's escape — a realm that
+  owns the board's offense but cannot clear the strict per-rival leadership bar
+  now qualifies.
+- **unassailable** — UNCHANGED and REUSED: the existing gate clause (in-balance
+  coalition, *including 6 turns of recruiting*, < 1.7 × candShield). Both
+  win-types share ONE irreversibility definition.
+- **persistence (ⓒ) — none needed.** The 6-turn recruit look-ahead inside
+  `unassailable` IS the persistence (anticipatory, not a retrospective counter).
+
+**Why Combo 2 (the strict-1.0-snapshot alternative rejected).** (1) SPEC
+principle #5 — "no coalition CAN reverse" is forward-looking; the window is its
+faithful reading (a snapshot would need a persistence patch). (2) It reuses the
+leadership terminal's exact unassailability → one consistent "irreversible" bar
+across both win-types, and it keeps the panel's 1.0 threshold in its lane (ET-①:
+measurement never becomes the winner rule). (3) Aggression ethos (DT-②) — you
+win by out-fighting (offense dominance the coalition cannot reverse), not by
+erecting a defensive moat as a finish. (4) Timing — the lenient-but-forward bar
+converts the denied-dominant wall earlier and more fully into envelope decisions
+(DT-① target). (5) The dominance↔unassailability linkage is causal: owning ≥half
+the offense structurally caps the coalition, so the forward unassailability
+self-sustains.
+
+**Dials (confirmed):** dominance `forceShare ≥ 0.5`; dominance ratio `2.5×`;
+unassailability `1.7×` + regen window `W = 6` (reused, ruling ⑪). Exact
+forceShare denominator (all-alive vs in-balance) pinned at implementation;
+in-balance is the intended scope (hermits, proj ≤ 1000 floor, excluded).
+
+**Effect (L1 estimate, L2 to verify).** Converts the denied-dominant timeout
+blob (~31% of fgM9off) into decisions; a domination-trip is labelled `hegemon`
+(decided), not `denied-dominant`. Sits beside §5's emergent growth engine
+(DT-②): §6 closes the already-won wall, the growth loop resolves the genuine
+standoff — both feed the DT-① timing target, re-measured via the timing ruler
+after the build. Implementation is the first lever in spec §7's order
+(check-fix → re-measure → §5 tuning).

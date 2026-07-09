@@ -132,6 +132,18 @@ proposal** ("the ending is the detection of irreversibility"), user-sealed.
 
 ## 6. Terminal redefinition — Domination Victory (SPEC-5 proposal)
 
+> **ARITHMETIC SEALED 2026-07-09 (user) → match-arc RULINGS DT-③ (Combo 2).**
+> The decision point trips when `(leadership OR dominance) AND unassailable`:
+> dominance = `forceShare ≥ 0.5` OR `2.5×` the top in-balance rival (no per-rival
+> shield bar), and unassailability REUSES the existing gate's `1.7× + 6-turn
+> window` clause — so the persistence guard needs no separate counter (the
+> look-ahead IS the persistence). The strict-1.0-snapshot alternative was
+> rejected (principle #5 "CAN reverse" is forward-looking; one shared
+> irreversibility definition; aggression ethos; earlier envelope conversion).
+> DT-③ is authoritative; the text below is the prior proposal. Remaining Tier-3:
+> a SPEC.md declaration of the domination win-type, to land with the check-fix
+> implementation.
+
 Today the hegemony gate trips only on **leadership** (candidate `projectableMass`
 ≥ 1.7 × every in-balance rival's facing `shieldMass`) **and** **unassailability**
 (no in-balance coalition reaches 1.7 × candidate shield within the regen window).

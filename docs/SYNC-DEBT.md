@@ -30,8 +30,12 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   resolves balanced boards emergently, so the §5 "no-draws" SPEC amendment is
   retired-as-unnecessary; mechanism numbers deferred to post-§6 tuning against
   the timing ruler, ice-breaker is a measurement-gated contingency (Zhou seed
-  parked). §6 domination check-fix approved but not yet built. Open: whether
-  "peaceful development" is a real growth path in the model or must be built.
+  parked). §6 domination victory arithmetic now SEALED
+  (RULINGS **DT-③**, Combo 2 — trip = (leadership OR dominance) AND unassailable,
+  reusing the gate's 1.7×+W6 clause); the check-fix IMPLEMENTATION is the next
+  lever (spec §7), and its landing owes a SPEC.md Direction amendment declaring
+  the domination win-type (Tier-3, fold into the build's doc close-out). Open:
+  whether "peaceful development" is a real growth path in the model or must be built.
 
 - [ ] **Derived-asymmetry machine-check** (registered 2026-07-08, seal
   TC-⑭): population parity (Σpop==6.0 per region) and the economy ladder
