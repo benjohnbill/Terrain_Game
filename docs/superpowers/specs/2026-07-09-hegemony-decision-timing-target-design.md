@@ -106,6 +106,17 @@ re-checked after each lever lands (§7).
 
 ## 5. Design principle — Forced Resolution (SPEC-5 proposal)
 
+> **SUPERSEDED 2026-07-09 by match-arc RULINGS DT-② (user-agreed).** This
+> section's "no-draws + forced escalation ramp" framing was RETIRED. Balanced
+> boards resolve *emergently* via a positive-sum growth-divergence engine
+> (safe-slow development vs risky-fast conquest; aggression is the +EV default,
+> turtling niche) — so no draw needs banning and no clock/ramp is imposed; draws
+> just become vanishingly rare and principle #5's detector catches the emergent
+> irreversibility. The §5 SPEC-5 amendment below is therefore UNNECESSARY.
+> Ice-breaker deferred as a measurement-gated contingency (Zhou seed parked).
+> The text below is kept only as the prior brainstorm record. §6 (domination
+> victory) is unaffected and remains approved.
+
 A match produces a winner; it does not draw. A genuinely balanced board is
 broken by a **gentle escalation ramp** that rises from roughly turn 15-18, not
 by a turn-32 cliff (a cliff produces an ugly spike at 30-31 instead of a thin

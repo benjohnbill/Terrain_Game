@@ -533,3 +533,58 @@ post-measurement, persistence guard required). **§5 Forced Resolution /
 escalation ramp — PARKED** (user holding: it reads as a game-feel policy more
 than a war-sim realism one; deliberation open, possible Codex spec-consult).
 Timing re-measurement APPROVED, gated on the instrument enhancement above.
+
+### DT-② Positive-sum resolution engine (growth divergence) — shape SEALED 2026-07-09 (user) · L1 (numbers deferred)
+
+Balanced boards resolve **emergently through positive-sum growth divergence**,
+not through a forced-draw clock. Two growth paths, asymmetric by risk:
+
+- **Peaceful development** — slow, safe, always-available growth of one's own
+  strength.
+- **Conquest** — fast, risky growth; the reward is front-loaded as **immediate
+  strategic position** (reach / pressure / opening the enemy's held doors) with
+  the **economic fruit lagging** (respects the "conquest is not an instant
+  full-value transfer" guardrail, AGENTS.md § Design Guardrails).
+
+Because a good-read conquest's expected growth beats development's, **aggression
+is the +EV default and turtling is the niche safe-slow play** — the
+risk=reward identity applied to the growth loop. A successful aggressor's
+immediate positional gain lets them press again → the lead compounds → the
+board tips into genuine irreversibility, which the 결정점 detector (SPEC
+principle #5) catches. No wall clock (respects principle #2), no forced
+game-over.
+
+**Consequence — the §5 "forced resolution" SPEC-5 amendment is UNNECESSARY
+(user-agreed 2026-07-09).** Draws are not banned; the growth engine makes
+genuine permanent standoffs vanishingly rare (the thin ≤1-2% timeout tail).
+§5 shifts from "an amendment that contradicts principle #5" to "tuning that
+REALIZES principle #5." What remains: §6 domination victory (approved) +
+tuning this loop.
+
+**The resolution dial (numbers deferred, tuned post-§6 against the timing
+ruler):** the split between the immediate strategic payoff and the lagged
+economic payoff of conquest. Too slow (all lag) → today's freeze; too fast
+(instant full transfer) → early stomp + guardrail breach. Target: decisions
+land 18-22 (DT-①). This is the dial the now-built timing ruler (envelope% /
+core1822% / median / normality) exists to tune.
+
+**Contestability (user-agreed).** The leader's expansion opens new fronts (FG
+unevenness + the economic lag = cannot instantly consolidate conquered land)
+→ windows for counter-attack keep appearing → sustained contestable fighting,
+not a turn-12 coronation. Keeps the ~0% early-stomp floor (DT-①).
+
+**Ice-breaker — DEFERRED, measurement-gated (user doubt 2026-07-09, resolved
+to "do not design in").** The engine may already break the ice on its own
+(conquest is +EV by construction) and force-geography (built) already
+guarantees a profitable opening exists at a symmetric start — so a dedicated
+ice-breaker device is a YAGNI risk. The one residual empirical risk is
+**multiplayer first-mover exposure** (fear of being counter-ganged while
+committed on offense can freeze a symmetric start even when local attacks are
++EV). Whether that materializes is an EMPIRICAL question the timing ruler
+answers post-§6 (does the START still freeze?). IF it does, the parked **Zhou
+seed-power** (memory `terrain-game-zhou-seed-power-idea` — a weak, high-value,
+passive target bitten risk-free) is the targeted fix, because it specifically
+neutralizes exposure-fear. Not built preemptively.
+
+**Open (verify with the numbers):** whether "peaceful development" is a real
+growth path in the model today or must be built.

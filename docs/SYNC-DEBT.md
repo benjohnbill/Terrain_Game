@@ -25,9 +25,13 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   The **instrument enhancement** for the re-measurement is now BUILT (main
   @f8655ad): `core1822Pct` (18-22 tight-core share, spec §4) + `meanTripTurn` /
   `stdTripTurn` (population) / `tripTurnHist` for a distribution-shape (normality)
-  read, plus a `--fg` core line. Related parked decision: **§5 forced-resolution
-  / escalation ramp** (game-feel vs realism, user deliberating — not a debt, a
-  held design fork; §6 domination check-fix approved but not yet built).
+  read, plus a `--fg` core line. §5 forced-resolution is now
+  SHAPED (RULINGS **DT-②**, 2026-07-09): a positive-sum growth-divergence engine
+  resolves balanced boards emergently, so the §5 "no-draws" SPEC amendment is
+  retired-as-unnecessary; mechanism numbers deferred to post-§6 tuning against
+  the timing ruler, ice-breaker is a measurement-gated contingency (Zhou seed
+  parked). §6 domination check-fix approved but not yet built. Open: whether
+  "peaceful development" is a real growth path in the model or must be built.
 
 - [ ] **Derived-asymmetry machine-check** (registered 2026-07-08, seal
   TC-⑭): population parity (Σpop==6.0 per region) and the economy ladder

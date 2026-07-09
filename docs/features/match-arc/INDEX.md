@@ -46,9 +46,15 @@ demoted to descriptive. Findings: no stomp (0% before turn 8), the disease is
 timeout (~50% even at the best arm), the center is already right (fgM9off
 median 19). Lever decisions: **§6 domination victory APPROVED** to implement
 (the check-fix — absorbs the `denied-dominant` wall, ~31% of fgM9off timeouts);
-**§5 forced-resolution / escalation ramp PARKED** (game-feel vs war-sim realism,
-user deliberating). Instrument landed main @54b47f0 (timing ruler in
-`plan-battery.js aggregate`). Detail: RULINGS DT-① + spec
+**§5 forced-resolution reframed → RULINGS DT-②** (shape SEALED 2026-07-09):
+balanced boards resolve *emergently* via a positive-sum growth engine (two
+paths — safe-slow development vs risky-fast conquest whose reward is immediate
+strategic position + lagged economy; aggression is the +EV default, turtling
+niche), so the §5 "no-draws" SPEC amendment is UNNECESSARY (draws dissolve, not
+banned). Numbers deferred to post-§6 tuning against the timing ruler; the
+ice-breaker is a measurement-gated contingency (Zhou seed-power parked), not a
+designed-in device. Instrument landed main @54b47f0/@f8655ad. Detail: RULINGS
+DT-①/DT-② + spec
 `docs/superpowers/specs/2026-07-09-hegemony-decision-timing-target-design.md`.
 
 Status: **core SEALED** (2026-07-03 → 07-05). Structure and first

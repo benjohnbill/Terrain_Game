@@ -7,6 +7,14 @@
 > yet). One line per term: pair, short gloss, where the definition
 > lives. Last regenerated: 2026-07-09 (targeted through this date; not a
 > from-scratch row-by-row re-audit — convenience surface, may lag canon).
+> Addendum 2026-07-09 (decision-timing pass — DT-②, §5 mechanism shape): balanced
+> boards resolve EMERGENTLY via a positive-sum growth engine (safe-slow development
+> vs risky-fast conquest; conquest reward = immediate strategic position + lagged
+> economy per the AGENTS.md guardrail; aggression = +EV default, turtling niche =
+> the risk=reward principle). Draws dissolve → §5 "no-draws" SPEC amendment
+> UNNECESSARY. Resolution dial = immediate-vs-lagged conquest payoff, tuned
+> post-§6 against the timing ruler. Ice-breaker = measurement-gated contingency
+> (Zhou seed parked). Numbers deferred. match-arc RULINGS DT-②.
 > Addendum 2026-07-09 (decision-timing pass — DT-①): headline metric reframed
 > from ET-① bucket share to DECISION TIMING (envelope%(15-25) + median tripTurn);
 > buckets demoted to descriptive. 94.5k-match L2 evidence: no stomp (0% <turn 8),
@@ -210,6 +218,7 @@ values from M5/ADR-0015) live in the birthplace only.
 | L2 residual-freeze autopsy (2026-07-08, UNSEALED evidence → next grill) | tactical AI absorbed only +0.8pp; residual = victory condition unreachable — leadership 1.7×-over-max-rival acts like last-man-standing, consolidation plateaus ~1.28, elim ~0. Feeds hegemony ADR grill (SPEC-level) | NOTES autopsy · freeze-autopsy.js |
 | "어떻게 게임이 종료됐는지 측정할 기준부터" (2026-07-08 hegemony grill, ending taxonomy SEALED ET-①) | bar-독립 8지표 패널(forceShare/controlShare/HHI + shieldShare/reversibilityIndex/vassalShare/bloodAxis, 속국 full 접기)이 ~87% 타임아웃을 ~56% standoff / **~28% denied-dominant(놓친 패권=벽)** / ~11% hegemon로 분해; 왕관 역전(중앙은 standoff 붙박이, 측면이 지배 — TC-② 증거). 측정≠승자규칙; 임계값 가안(측정 후 보정) | match-arc RULINGS ET-① / GLOSSARY 종료 분류 · NOTES §Ending-taxonomy |
 | "15-25턴 안(핵심 18-22)에 정규분포 형태로 결판나야 — 어부지리 타임아웃 말고" (2026-07-09 decision-timing pass, DT-① SEALED · L2) | 성공 지표 = **결정 타이밍**: envelope%(전체 중 15-25턴 트립 비율) + median tripTurn; ET-① bucket은 서술용 강등. 과녁(가안 L0/L1): envelope% ≥~78-80%(현 34.6%) · median 18-22(현 19✓) · stomp 바닥 ≤~8-10%(현 ~6%✓) · timeout ≤~1-2%. 레버: **§6 지배 승리 승인**(체크픽스, denied-dominant 벽 흡수) · **§5 강제 종결 램프 보류**(게임성 vs 현실성 숙고 중). 계측기 보강 owed(18-22 core bin + 정규성 읽기) | match-arc RULINGS DT-① / spec 2026-07-09 hegemony-decision-timing-target |
+| "가만있으면 뒤처지니 문 걸어잠그기보다 공격을 택하게 — 리스크 지면 보상, positive-sum" (2026-07-09, DT-② shape SEALED · L1, 숫자 유예) | §5 해소 = **창발적 성장 발산 엔진**: 두 성장 경로(발전 안전·느림 / 정복 위험·빠름, 정복 보상 = 전략적 위치 즉시 + 경제 지연[AGENTS.md 가드레일]) → 공격 = +EV 기본값, 존버 = niche = "리스크=보상" 원칙의 성장-루프 표현. 무승부는 저절로 희귀 → **§5 "무승부 금지" SPEC 개정 불필요**(#5 실현). 결판 다이얼 = 정복의 즉시-vs-지연 배분(§6 뒤 timing ruler로 튜닝). 얼음깨기 = 측정-게이트 컨틴전시(주나라-seed 파킹, 선제 미설계). 경합성 = 리더 확장이 새 전선 노출. 미검증: "평화 발전"이 기존 경로인지 | match-arc RULINGS DT-② / spec 2026-07-09 §5 |
 | "경제력의 지배 변수는 노출도와 투사" (ladder v2 structure APPROVED w/ holds) | econ index = 0.55 + 0.45 × (inbound flow ÷ world avg) + projection-shortfall credit; **HELD by user: core(심장부) debit, fiction band** — depth value unmeasured, constants 0.55/0.45 need their own grilling later | L1 formula now; L2/L3 validate |
 | (baked 2026-07-07, map-gen parity v5) | all regions Σpop 6.0 / cap 3,600; Σecon = index × 6.0 (중원 7.5 crown … 서역 4.8 · 동남해 4.6); 초원 = first pop-econ separation case (pop spread, econ capital-spiked) | B1/B2 PASS, viable 7/7 re-verified |
 | L2 watch flags (2026-07-07, user-agreed) | ① 중원 crown needles ×2 ② develop-greedy opening ③ 강남 quiet winner (two river shields + full projection) ④ 촉-seat overperformance (nerf deferred — door dial if needed, not econ) ⑤ region-abandonment meta ⑥ 동남해 fertility funding (parked with fiction band) ⑦ 관중 gate-city seat performance | L2 tournament adapter |
