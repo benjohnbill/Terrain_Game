@@ -13,7 +13,7 @@
 - This is instrumentation only (spec §10). It does NOT change match outcomes, the hegemony gate, or any dial. `aggregate()` is a pure read over records.
 - The timing ruler is additive: all existing `aggregate()` return fields and the existing `--fg` bucket/mean output stay exactly as they are. The demoted `meanWithinRealmVariance` / `meanBoostedShieldShare` remain in the output (descriptive per the 2026-07-09 metric amendment).
 - Bins are fixed and match the scratch driver the user already reviewed: `1-8`, `9-14`, `15-20`, `21-25`, `26-32`. The SPEC envelope is turns 15–25; `envelopePct` counts trips in `[15, 25]` inclusive.
-- `medianTripTurn` uses the lower-median convention: `sorted[Math.floor(n/2)]` over decided trip turns; `null` when there are no decided matches.
+- `medianTripTurn` uses the upper-median (median_high) convention: `sorted[Math.floor(n/2)]` over decided trip turns — the higher of the two central turns for an even count — `null` when there are no decided matches.
 - Tests run with `npm test` (`node --test tests/*.test.js`). Follow the existing fixture pattern in `tests/plan-battery.test.js` (the `rec(over)` helper).
 - Commit style: `feat(match-arc): ...` / `test(match-arc): ...`, present-tense, and end the commit body with the repo's Co-Authored-By trailer.
 
@@ -31,7 +31,7 @@ Add `envelopePct`, `medianTripTurn`, and `tripTurnBins` to the object returned b
 - Consumes: each record's `winner` (truthy on decided) and `tripTurn` (integer turn on decided, `null`/absent on timeout). These are set by `tournament.js` (`record.winner = r.name; record.tripTurn = t;` on trip; initialized `winner: null, tripTurn: null`).
 - Produces (new fields on the existing `aggregate()` return object; all other fields unchanged):
   - `envelopePct: number` — `(count of records with 15 ≤ tripTurn ≤ 25) / matches * 100`
-  - `medianTripTurn: number | null` — lower-median of decided `tripTurn`s, `null` if none decided
+  - `medianTripTurn: number | null` — upper-median (median_high) of decided `tripTurn`s, `null` if none decided
   - `tripTurnBins: { '1-8': number, '9-14': number, '15-20': number, '21-25': number, '26-32': number }` — counts of decided matches per bin
 
 - [ ] **Step 1: Write the failing test**
@@ -54,7 +54,7 @@ test('aggregate reports decision-timing ruler (envelope%, median, bins)', () => 
   assert.equal(a.matches, 8);
   // 3 of 8 matches tripped inside 15-25
   assert.ok(Math.abs(a.envelopePct - (3 / 8) * 100) < 1e-9);
-  // decided trip turns sorted: [6,12,18,22,25,30] → lower-median = index 3 = 22
+  // decided trip turns sorted: [6,12,18,22,25,30] → upper median (median_high, floor(n/2)) = index 3 = 22
   assert.equal(a.medianTripTurn, 22);
   assert.deepEqual(a.tripTurnBins, {
     '1-8': 1, '9-14': 1, '15-20': 1, '21-25': 2, '26-32': 1,

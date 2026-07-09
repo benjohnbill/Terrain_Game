@@ -36,6 +36,9 @@ function aggregate(records) {
   let exhausted = 0, paneled = 0;
   let elim = 0, vassal = 0, brained = 0, forced = 0, misjudged = 0;
   let varSum = 0, boostSum = 0;
+  // decision-timing ruler (spec 2026-07-09 hegemony-decision-timing-target
+  // §10): per-match tripTurn read for the SPEC 15-25 turn envelope. Decided
+  // matches only; timeouts carry tripTurn null and are excluded here.
   const tripTurnBins = { '1-8': 0, '9-14': 0, '15-20': 0, '21-25': 0, '26-32': 0 };
   const tripTurns = [];
   for (const r of records) {
@@ -66,6 +69,8 @@ function aggregate(records) {
     .map((r) => r.finalCheck && r.finalCheck.leadershipShortfall)
     .filter((v) => typeof v === 'number');
   const sortedTrips = [...tripTurns].sort((a, b) => a - b);
+  // upper median (median_high): for an even count this is the higher of the
+  // two central turns; the unique median for an odd count.
   const medianTripTurn = sortedTrips.length ? sortedTrips[Math.floor(sortedTrips.length / 2)] : null;
   const envelopeCount = tripTurns.filter((t) => t >= 15 && t <= 25).length;
   return {

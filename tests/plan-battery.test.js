@@ -50,7 +50,7 @@ test('aggregate reports decision-timing ruler (envelope%, median, bins)', () => 
   assert.equal(a.matches, 8);
   // 3 of 8 matches tripped inside 15-25
   assert.ok(Math.abs(a.envelopePct - (3 / 8) * 100) < 1e-9);
-  // decided trip turns sorted: [6,12,18,22,25,30] → lower-median = index 3 = 22
+  // decided trip turns sorted: [6,12,18,22,25,30] → upper median (median_high, floor(n/2)) = index 3 = 22
   assert.equal(a.medianTripTurn, 22);
   assert.deepEqual(a.tripTurnBins, {
     '1-8': 1, '9-14': 1, '15-20': 1, '21-25': 2, '26-32': 1,
