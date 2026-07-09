@@ -3,6 +3,12 @@
 Date: 2026-06-29
 
 Status: Accepted
+Amended by: ADR 0028 (2026-07-10) — Layer 2 is split into UI-shell framework
+vs map renderer; the L3 playtest build-out is forecast as the Stage 1
+trigger point; Unity-of-Command-class 2D map presentation is confirmed
+in-stack (browser 2D sprite rendering — Canvas 2D or a WebGL sprite
+library), not a native-engine trigger; the logic layer's Node/browser
+isomorphism becomes a binding obligation (see § Decision).
 
 ## Context
 

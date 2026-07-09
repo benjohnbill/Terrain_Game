@@ -46,7 +46,7 @@ a target; ← is amended/superseded by a later ADR.
 | 0013 | Map-First Situation UX | 2026-06-29 | Accepted | — |
 | 0014 | Local Garrison Sustainment From Province Economy | 2026-06-29 | Accepted | ← Amended by 0022 (front-sector garrison scope) |
 | 0015 | Strait Crossing Penalty And Deferred Naval System | 2026-06-29 | Accepted | Self-amended 2026-07-03 (magnitude pass — penalty values) |
-| 0016 | Web Technology Stack With Trigger-Based Migration Path | 2026-06-29 | Accepted | — |
+| 0016 | Web Technology Stack With Trigger-Based Migration Path | 2026-06-29 | Accepted | ← Amended by 0028 (UI-shell/renderer axis split, L3 = Stage 1 trigger forecast) |
 | 0017 | Positioning — Civ-Depth World, LoL-Shaped Interaction | 2026-07-01 | Accepted | — |
 | 0018 | Phase 1 MVP — Core Fun First, Defer Capacity/Overclock | 2026-07-01 | Accepted | ← Amended by 0020 (single divisible pool → core) |
 | 0019 | Situation Judgment as a Structured, Posture-Lensed Reading | 2026-07-01 | Accepted | Self-amended 2026-07-06 (v5 front-sector — lens/leak-through, no overview recommendation) |
@@ -58,3 +58,4 @@ a target; ← is amended/superseded by a later ADR.
 | 0025 | Turn-Based Core with the Uncertainty Duel | 2026-07-02 | Accepted | — |
 | 0026 | One-Shot Plan Effects, Persistent State, Standing Rules | 2026-07-02 | Accepted | — |
 | 0027 | Free Commit Allocation — Main/Surplus as Magnitude Labels | 2026-07-07 | Accepted | → Amends 0020 |
+| 0028 | L3 Build-Out Stack Direction — UI-Shell/Renderer Axis Split | 2026-07-10 | Accepted | → Amends 0016 |
