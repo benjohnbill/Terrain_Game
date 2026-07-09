@@ -76,6 +76,10 @@ test('ripenCap is invoked in the per-turn loop (a pre-set pending drains)', () =
 });
 
 test('capPerSector > 0 makes conquest change the ceiling trajectory (wiring live)', () => {
+  // capPerSector: 3000, not the plan's 600 — 600 is too small a perturbation
+  // relative to realm ceilings (5000-9000) to change any outcome under the
+  // ripening dials (verified: no divergence across seeds 1-10000 at 600).
+  // 3000 flips tripTurn 17→20 on seed 7, proving the wiring is live.
   const off = T.runMatch(ASSIGN, { seed: 7, board: T.makeBoard(), harness: { capPerSector: 0 } });
   const on  = T.runMatch(ASSIGN, { seed: 7, board: T.makeBoard(), harness: { capPerSector: 3000 } });
   // Precondition: the growth engine can only fire if a conquest happened (a

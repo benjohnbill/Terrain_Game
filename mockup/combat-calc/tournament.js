@@ -601,7 +601,10 @@ function eliminate(D, A, realms, H, war) {
   inheritFronts(A, D, realms);
   releaseVassalsOf(D, realms);
   A.interior += D.interior; A.pool += Math.round(D.pool * 0.5);
-  applyCapGain(A, (war && war.occupied) ? war.occupied * (H?.capPerSector ?? 0) : 0, H ?? HARNESS); // §5 ripen
+  // §5 ripen — D.interior is 0 here (the cascade already drained it into
+  // war.occupied sector by sector); war.occupied holds the true ceded count,
+  // so the brief's literal D.interior gain would be a permanent no-op.
+  applyCapGain(A, (war && war.occupied) ? war.occupied * (H?.capPerSector ?? 0) : 0, H ?? HARNESS);
   D.interior = 0; D.field = 0;
   for (const w of [...D.wars]) { w.stage = 'over'; }
   D.wars = [];
