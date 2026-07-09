@@ -30,12 +30,20 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   resolves balanced boards emergently, so the §5 "no-draws" SPEC amendment is
   retired-as-unnecessary; mechanism numbers deferred to post-§6 tuning against
   the timing ruler, ice-breaker is a measurement-gated contingency (Zhou seed
-  parked). §6 domination victory arithmetic now SEALED
-  (RULINGS **DT-③**, Combo 2 — trip = (leadership OR dominance) AND unassailable,
-  reusing the gate's 1.7×+W6 clause); the check-fix IMPLEMENTATION is the next
-  lever (spec §7), and its landing owes a SPEC.md Direction amendment declaring
-  the domination win-type (Tier-3, fold into the build's doc close-out). Open:
-  whether "peaceful development" is a real growth path in the model or must be built.
+  parked). §6 domination victory arithmetic SEALED and now IMPLEMENTED +
+  MEASURED (RULINGS **DT-③**, Combo 2 — trip = (leadership OR dominance) AND
+  unassailable, reusing the gate's 1.7×+W6 clause; commit a29eb0a, 167/167
+  green, task review + whole-branch review both Approved with zero
+  Critical/Important). Same-N re-measurement (pre/post §6, reps=20 × 7
+  bindings, seed 42) confirms the predicted `denied-dominant` wall absorption
+  (ctrl 27.6%→1.7%, fgM9off 30.1%→2.6%) and a decided%/envelope/core rise
+  across all three arms; fgM9off's median tripTurn moved from dead-center 19
+  to 17 (now slightly ahead of the 18-22 core) — flagged as a §5 tuning
+  watch-item, not a defect. STILL OWED: a SPEC.md Direction amendment
+  declaring the domination win-type (Tier-3, drafted, awaiting user wording
+  approval — birthplace DT-③ stays authoritative, SPEC gets a summary +
+  pointer only). Open: whether "peaceful development" is a real growth path
+  in the model or must be built.
 
 - [ ] **Derived-asymmetry machine-check** (registered 2026-07-08, seal
   TC-⑭): population parity (Σpop==6.0 per region) and the economy ladder

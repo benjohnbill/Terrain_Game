@@ -8,12 +8,16 @@
 > lives. Last regenerated: 2026-07-09 (targeted through this date; not a
 > from-scratch row-by-row re-audit — convenience surface, may lag canon).
 > Addendum 2026-07-09 (decision-timing pass — DT-③, §6 decision-point arithmetic
-> SEALED): domination victory = **trip when (leadership OR dominance) AND
-> unassailable** (Combo 2). dominance = forceShare ≥ 0.5 OR 2.5× top rival (no
-> per-rival shield bar); unassailability REUSES the gate's 1.7×+6-turn clause →
-> persistence needs no separate counter. Wins by out-fighting, not walling;
-> converts the denied-dominant wall (~31%) to decisions. Implementation (check-
-> fix) is spec §7's first lever. match-arc RULINGS DT-③.
+> SEALED, then IMPLEMENTED + MEASURED same day, commit a29eb0a): domination
+> victory = **trip when (leadership OR dominance) AND unassailable** (Combo 2).
+> dominance = forceShare ≥ 0.5 OR 2.5× top rival (no per-rival shield bar);
+> unassailability REUSES the gate's 1.7×+6-turn clause → persistence needs no
+> separate counter. Wins by out-fighting, not walling; same-N re-measurement
+> confirms it converts the denied-dominant wall (~28-30%→~2%) to decisions and
+> lifts decided%/envelope/core across all arms (watch-item: fgM9off median
+> tripTurn 19→17, now slightly ahead of the 18-22 core). SPEC.md win-type
+> amendment still owed (Tier-3, drafted, awaiting user approval). match-arc
+> RULINGS DT-③.
 > Addendum 2026-07-09 (decision-timing pass — DT-②, §5 mechanism shape): balanced
 > boards resolve EMERGENTLY via a positive-sum growth engine (safe-slow development
 > vs risky-fast conquest; conquest reward = immediate strategic position + lagged

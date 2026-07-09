@@ -44,12 +44,21 @@ the headline from bucket share to **decision timing** — RULINGS **DT-①** sea
 envelope%(15-25) + median tripTurn as the success read; the ET-① buckets are
 demoted to descriptive. Findings: no stomp (0% before turn 8), the disease is
 timeout (~50% even at the best arm), the center is already right (fgM9off
-median 19). Lever decisions: **§6 domination victory — arithmetic SEALED (RULINGS DT-③, Combo 2)**: trip =
-(leadership OR dominance) AND unassailable, where dominance = forceShare ≥ 0.5
-or 2.5× the top rival and unassailability REUSES the existing gate's 1.7×+6-turn
-clause (so persistence needs no separate counter); absorbs the `denied-dominant`
-wall (~31% of fgM9off timeouts). Implementation (check-fix) is the next lever;
-**§5 forced-resolution reframed → RULINGS DT-②** (shape SEALED 2026-07-09):
+median 19). Lever decisions: **§6 domination victory — IMPLEMENTED + MEASURED (RULINGS
+DT-③, Combo 2, commit a29eb0a)**: trip = (leadership OR dominance) AND
+unassailable, where dominance = forceShare ≥ 0.5 or 2.5× the top rival and
+unassailability REUSES the existing gate's 1.7×+6-turn clause (so persistence
+needs no separate counter). Same-N before/after re-measurement (reps=20 × 7
+bindings, seed 42; pre-§6 commit cac1e3c vs post-§6 a29eb0a) confirms the
+predicted `denied-dominant` wall absorption (ctrl 27.6%→1.7%, fgM9off
+30.1%→2.6%) and a decided%/envelope(15-25)/core(18-22) rise across all three
+arms (decided% ctrl 13.2→43.9, fgM9on 31.0→63.6, fgM9off 50.3→85.2). Watch-item
+for the §5 tuning pass: fgM9off's median tripTurn moved from the prior
+dead-center 19 to 17 — now slightly ahead of the 18-22 core, not a defect but
+worth checking as the resolution dial is tuned. A SPEC.md Direction amendment
+declaring the domination win-type is drafted and awaiting user wording
+approval (Tier-3); **§5 forced-resolution reframed → RULINGS DT-②** (shape
+SEALED 2026-07-09):
 balanced boards resolve *emergently* via a positive-sum growth engine (two
 paths — safe-slow development vs risky-fast conquest whose reward is immediate
 strategic position + lagged economy; aggression is the +EV default, turtling
