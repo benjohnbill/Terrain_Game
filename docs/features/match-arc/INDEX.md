@@ -38,6 +38,19 @@ shieldRatio / leadership shape, SPEC-adjacent) and **the crown
 inversion** (anti-snowball strength / map balance). Detail: RULINGS ET-①
 + NOTES §Ending-taxonomy. Next: grill the wall.
 
+**Decision-timing pass (2026-07-09)**: ET-①'s Q1 deferral ("measure before
+redefining the terminal") resolved. Two L2 runs (94.5k matches each) reframed
+the headline from bucket share to **decision timing** — RULINGS **DT-①** seals
+envelope%(15-25) + median tripTurn as the success read; the ET-① buckets are
+demoted to descriptive. Findings: no stomp (0% before turn 8), the disease is
+timeout (~50% even at the best arm), the center is already right (fgM9off
+median 19). Lever decisions: **§6 domination victory APPROVED** to implement
+(the check-fix — absorbs the `denied-dominant` wall, ~31% of fgM9off timeouts);
+**§5 forced-resolution / escalation ramp PARKED** (game-feel vs war-sim realism,
+user deliberating). Instrument landed main @54b47f0 (timing ruler in
+`plan-battery.js aggregate`). Detail: RULINGS DT-① + spec
+`docs/superpowers/specs/2026-07-09-hegemony-decision-timing-target-design.md`.
+
 Status: **core SEALED** (2026-07-03 → 07-05). Structure and first
 values user-confirmed through the A-1 grill (rulings ①–⑧), the A-2
 battery pass (rulings ⑨–⑭), and the sheet-12 L2 tournament (rulings

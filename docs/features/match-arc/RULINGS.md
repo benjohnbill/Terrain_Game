@@ -482,3 +482,54 @@ problems: **the wall** (denied-dominant → shieldRatio / leadership shape,
 SPEC-adjacent) and **the crown inversion** (center can't convert →
 anti-snowball strength / map balance). Next: calibrate thresholds, then grill
 the wall.
+
+## Decision-Timing Pass (2026-07-09)
+
+Opened on ET-①'s deferred axis (Q1: "measure before redefining the terminal").
+The instrument is now in-repo and the measurement is in — two L2 runs, 94,500
+matches each. Verdict source: user seal (2026-07-09) + the target design spec
+`docs/superpowers/specs/2026-07-09-hegemony-decision-timing-target-design.md`.
+
+### DT-① Decision-timing ruler is the headline; buckets are descriptive — SEALED 2026-07-09 (user) · L2
+
+Success is a **timing** criterion (the SPEC match envelope resolves within
+~turns 15-25), so the headline metric is the `tripTurn` distribution —
+**envelope%** (fraction of ALL matches tripping within turns 15-25) and
+**median tripTurn** — NOT ending-taxonomy bucket share. The five ET-① buckets
+are a snapshot of the board at the turn-32 timeout (four of five ARE timeouts);
+bucket share cannot see WHEN a match decided, so it read the wrong axis. The
+buckets are **demoted to descriptive** (how a not-yet-resolved board looked, per
+ET-①) — they remain evidence, never the winner rule and no longer the success
+score.
+
+- **Evidence (L2, 94.5k matches/run × 2; reps=30 × 5 seeds × 3 arms;
+  between-seed ±0.2–0.5pp — not seed-luck).** decided% ctrl 13.3 / fgM9on 32.4 /
+  fgM9off 49.6; envelope 15-25% ctrl 6.8 / fgM9on 18.1 / fgM9off 34.6; median
+  tripTurn ctrl 25 / fgM9on 20 / fgM9off 19 (p25 16 / p75 25).
+- **Three findings that set the target.** (1) No stomp: 0% trip before turn 8 in
+  any arm — the envelope floor is intact, the whole problem is late + timeout.
+  (2) The disease is timeout: even fgM9off leaves ~50% undecided. (3) The center
+  is already right — fgM9off median 19 is dead-center; the fix is variance
+  reduction + timeout collapse, not a mean shift. Refutes the earlier "fgM9off
+  runaway" worry (it decides IN the envelope, not by early stomp).
+- **Target profile (PROVISIONAL, L0/L1 aim points — not verified outcomes).**
+  Unimodal, peaked 18-22, thin tails (≈ normal, σ ≈ 3.5; NOT a strict Gaussian
+  to force-fit). Headline envelope% ≥ ~78-80% final / ≥ ~50% first checkpoint
+  (34.6% today). stomp floor (trip ≤ ~10) ≤ ~8-10% guardrail (~6% today).
+  timeout ≤ ~1-2% final. Numbers re-checked after each lever lands.
+- **Instrument.** `plan-battery.js aggregate()` (`envelopePct` / `medianTripTurn`
+  / `tripTurnBins`) + the `--fg` sweep headline; landed main @54b47f0.
+- **Known instrument gap (next enhancement, user-requested 2026-07-09).** The
+  current 5 bins (1-8/9-14/15-20/21-25/26-32) read the 15-25 envelope and median,
+  but do NOT isolate the 18-22 tight core (spec §4, ~45% target) nor assess
+  distribution shape (normality). The re-measurement lever needs finer bins + a
+  shape read before it can score the 18-22 / normal-distribution target.
+
+**Lever decisions (2026-07-09, user).** Of the two SPEC-5 amendment proposals
+the spec carries: **§6 Domination Victory — APPROVED to implement** (the
+check-fix pass; converts the `denied-dominant` timeout blob — the single largest
+fgM9off timeout component, 31.1% — into decisions; dials deferred to
+post-measurement, persistence guard required). **§5 Forced Resolution /
+escalation ramp — PARKED** (user holding: it reads as a game-feel policy more
+than a war-sim realism one; deliberation open, possible Codex spec-consult).
+Timing re-measurement APPROVED, gated on the instrument enhancement above.

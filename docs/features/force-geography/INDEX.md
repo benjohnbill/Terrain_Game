@@ -3,10 +3,12 @@
 **Status**: L2 (최소) HARNESS LANDED — RULINGS **FG-①…⑩** built via SDD
 (main @ `0e8dc52`, 2026-07-09, 159/159, whole-branch reviewed). Opt-in
 `FG_BOARD_GAAN`; engine/`BOARD_GAAN` untouched, non-FG byte-identical.
-Next = **high-reps measurement run** (headline = decided% + bucket deltas
-across ctrl/fgM9on/fgM9off; variance/boostedShieldShare are descriptive,
-metric amendment 2026-07-09) → Projection sync (owed, `docs/SYNC-DEBT.md`).
-Concept **(b)** of the hegemony-freeze three-concept sequence.
+High-reps run DONE (94.5k matches × 2, 2026-07-09). Headline is now **decision
+timing** — envelope%(15-25) + median tripTurn — per match-arc **DT-①** (that
+ruling is the metric's home; buckets + variance/shield are descriptive). FG
+verdict: `fgM9off` best (envelope 34.6%, median 19 — dead-center, no stomp).
+Next = §6 domination check-fix + instrument enhancement (18-22 core + normality)
+→ re-measure. Concept **(b)** of the hegemony-freeze three-concept sequence.
 
 ## What this is
 
@@ -43,7 +45,7 @@ shipping game code (`js/`) is behind.
 | **U2** defense investment (DYNAMIC) | conserved budget → where defense concentrates | ✅ SEALED FG-⑤/⑥/⑩ — v1 = reactive reserve (field army + M9, M9 swept) does it |
 | **U3** resolution | the sealed 4-layer formula reads non-uniform inputs | ✅ SETTLED (unchanged; RULINGS §Settled) |
 | **U4** weak-front finding (attacker AI) | attacker targets the softest FRONT | ✅ SEALED FG-⑦ — reuse disposition dial; pickTarget scores first-blow defense |
-| **U5** measurement | re-run the panel + duel metric | ✅ BUILT (`matchPanel`/`aggregate`/`runFgSweep`); headline read AMENDED 2026-07-09 → decided% + buckets (variance/boostedShieldShare descriptive) |
+| **U5** measurement | re-run the panel + duel metric | ✅ RUN (94.5k × 2, 2026-07-09); headline = decision timing (envelope%/median tripTurn) per match-arc **DT-①**; buckets + variance/shield descriptive |
 
 **U2 is the heart of this pass.** The session reframed it: weak fronts do
 NOT come from a defender "concentrate on good terrain" policy (that is

@@ -7,6 +7,12 @@
 > yet). One line per term: pair, short gloss, where the definition
 > lives. Last regenerated: 2026-07-09 (targeted through this date; not a
 > from-scratch row-by-row re-audit — convenience surface, may lag canon).
+> Addendum 2026-07-09 (decision-timing pass — DT-①): headline metric reframed
+> from ET-① bucket share to DECISION TIMING (envelope%(15-25) + median tripTurn);
+> buckets demoted to descriptive. 94.5k-match L2 evidence: no stomp (0% <turn 8),
+> disease is timeout, center already right (fgM9off median 19). Levers: §6
+> domination victory APPROVED (check-fix), §5 escalation ramp PARKED. Instrument
+> in `plan-battery.js aggregate` (main @54b47f0). match-arc RULINGS DT-①.
 > Addendum 2026-07-09 (force-geography (b) design grill): new feature
 > birthplace `docs/features/force-geography/` (RULINGS FG-①…⑨) — v1 (최소)
 > sealed: adopt measured fort-by-class mapping (+33% L2); weak fronts from
@@ -203,6 +209,7 @@ values from M5/ADR-0015) live in the birthplace only.
 | "우리 지형 정보에 맞는 방어 강도로 L2가 측정되게" (2026-07-08 APPROVED, TC-⑬) | L2 combat now reads the border class → terrain/water/choke (was hardcoded hills + uniform walls); strait grammar fires on class (bug fixed). Fort held at baseline; force-geography fort-by-class is a dormant balance opt-in | freeze re-measured un-flattened map ~12.6%; verdict held |
 | L2 residual-freeze autopsy (2026-07-08, UNSEALED evidence → next grill) | tactical AI absorbed only +0.8pp; residual = victory condition unreachable — leadership 1.7×-over-max-rival acts like last-man-standing, consolidation plateaus ~1.28, elim ~0. Feeds hegemony ADR grill (SPEC-level) | NOTES autopsy · freeze-autopsy.js |
 | "어떻게 게임이 종료됐는지 측정할 기준부터" (2026-07-08 hegemony grill, ending taxonomy SEALED ET-①) | bar-독립 8지표 패널(forceShare/controlShare/HHI + shieldShare/reversibilityIndex/vassalShare/bloodAxis, 속국 full 접기)이 ~87% 타임아웃을 ~56% standoff / **~28% denied-dominant(놓친 패권=벽)** / ~11% hegemon로 분해; 왕관 역전(중앙은 standoff 붙박이, 측면이 지배 — TC-② 증거). 측정≠승자규칙; 임계값 가안(측정 후 보정) | match-arc RULINGS ET-① / GLOSSARY 종료 분류 · NOTES §Ending-taxonomy |
+| "15-25턴 안(핵심 18-22)에 정규분포 형태로 결판나야 — 어부지리 타임아웃 말고" (2026-07-09 decision-timing pass, DT-① SEALED · L2) | 성공 지표 = **결정 타이밍**: envelope%(전체 중 15-25턴 트립 비율) + median tripTurn; ET-① bucket은 서술용 강등. 과녁(가안 L0/L1): envelope% ≥~78-80%(현 34.6%) · median 18-22(현 19✓) · stomp 바닥 ≤~8-10%(현 ~6%✓) · timeout ≤~1-2%. 레버: **§6 지배 승리 승인**(체크픽스, denied-dominant 벽 흡수) · **§5 강제 종결 램프 보류**(게임성 vs 현실성 숙고 중). 계측기 보강 owed(18-22 core bin + 정규성 읽기) | match-arc RULINGS DT-① / spec 2026-07-09 hegemony-decision-timing-target |
 | "경제력의 지배 변수는 노출도와 투사" (ladder v2 structure APPROVED w/ holds) | econ index = 0.55 + 0.45 × (inbound flow ÷ world avg) + projection-shortfall credit; **HELD by user: core(심장부) debit, fiction band** — depth value unmeasured, constants 0.55/0.45 need their own grilling later | L1 formula now; L2/L3 validate |
 | (baked 2026-07-07, map-gen parity v5) | all regions Σpop 6.0 / cap 3,600; Σecon = index × 6.0 (중원 7.5 crown … 서역 4.8 · 동남해 4.6); 초원 = first pop-econ separation case (pop spread, econ capital-spiked) | B1/B2 PASS, viable 7/7 re-verified |
 | L2 watch flags (2026-07-07, user-agreed) | ① 중원 crown needles ×2 ② develop-greedy opening ③ 강남 quiet winner (two river shields + full projection) ④ 촉-seat overperformance (nerf deferred — door dial if needed, not econ) ⑤ region-abandonment meta ⑥ 동남해 fertility funding (parked with fiction band) ⑦ 관중 gate-city seat performance | L2 tournament adapter |

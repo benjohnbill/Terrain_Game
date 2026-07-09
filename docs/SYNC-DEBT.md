@@ -11,20 +11,22 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
 
 ## Open
 
-- [ ] **Timing-ruler metric reframe — Projection/INDEX sync** (registered
-  2026-07-09; instrument landed main @54b47f0). The decision-timing ruler
-  (`envelopePct` / `medianTripTurn` / `tripTurnBins`) is now built into
-  `plan-battery.js aggregate()` and printed as the `--fg` sweep headline
-  (instrumentation-only pass, spec §10). NOT yet synced, because the metric
-  *reframe* it serves is UNSEALED: the spec
-  `docs/superpowers/specs/2026-07-09-hegemony-decision-timing-target-design.md`
-  proposes making the SPEC 15-25 turn envelope the primary success read plus
-  two SPEC-5 amendments — all user-gated (Tier-3, propose-only). Until the
-  user seals that reframe: (a) do NOT re-cut the force-geography INDEX U5
-  headline row (SEALED 2026-07-09 = decided% + buckets) or the "Next =
-  high-reps run" line to make timing the headline; (b) no DOMAIN_MAP/DESIGN
-  Projection entry for the envelope-target metric. Instrument is available
-  now; the seal + doc-sync is the gated follow-on.
+- [ ] **Timing-ruler reframe — DOMAIN_MAP/DESIGN promotion scan** (registered
+  2026-07-09; metric reframe SEALED same day as match-arc **DT-①**). The
+  reframe (headline = decision timing, `envelopePct` / `medianTripTurn`;
+  ET-① buckets demoted to descriptive) is sealed at its match-arc birthplace
+  and the feature INDEXes are synced (force-geography U5 + "Next" line,
+  match-arc INDEX) — those parts are PAID. RESIDUAL: two feature surfaces now
+  consume the reading (match-arc DT-① defines it; force-geography `--fg`
+  references it), which is the Tier-1→Tier-0 promotion trigger — but spec §13
+  leaves "promote to DOMAIN_MAP/DESIGN vs stay a match-arc ruling" an OPEN
+  doc-sync question. Held as a CHECKED non-promotion for now (match-arc-native
+  reading); revisit at the next doc-sync batch or when a root doc needs it.
+  Also owed before the re-measurement lever: an **instrument enhancement** —
+  finer bins to isolate the 18-22 tight core + a distribution-shape (normality)
+  read (user-requested 2026-07-09; current 5 bins cannot score spec §4's 18-22
+  target). Related parked decision: **§5 forced-resolution / escalation ramp**
+  (game-feel vs realism, user deliberating — not a debt, a held design fork).
 
 - [ ] **Derived-asymmetry machine-check** (registered 2026-07-08, seal
   TC-⑭): population parity (Σpop==6.0 per region) and the economy ladder
