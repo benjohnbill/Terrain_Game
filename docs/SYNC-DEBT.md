@@ -22,11 +22,12 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   leaves "promote to DOMAIN_MAP/DESIGN vs stay a match-arc ruling" an OPEN
   doc-sync question. Held as a CHECKED non-promotion for now (match-arc-native
   reading); revisit at the next doc-sync batch or when a root doc needs it.
-  Also owed before the re-measurement lever: an **instrument enhancement** —
-  finer bins to isolate the 18-22 tight core + a distribution-shape (normality)
-  read (user-requested 2026-07-09; current 5 bins cannot score spec §4's 18-22
-  target). Related parked decision: **§5 forced-resolution / escalation ramp**
-  (game-feel vs realism, user deliberating — not a debt, a held design fork).
+  The **instrument enhancement** for the re-measurement is now BUILT (main
+  @f8655ad): `core1822Pct` (18-22 tight-core share, spec §4) + `meanTripTurn` /
+  `stdTripTurn` (population) / `tripTurnHist` for a distribution-shape (normality)
+  read, plus a `--fg` core line. Related parked decision: **§5 forced-resolution
+  / escalation ramp** (game-feel vs realism, user deliberating — not a debt, a
+  held design fork; §6 domination check-fix approved but not yet built).
 
 - [ ] **Derived-asymmetry machine-check** (registered 2026-07-08, seal
   TC-⑭): population parity (Σpop==6.0 per region) and the economy ladder
