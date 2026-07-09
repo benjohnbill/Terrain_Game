@@ -202,6 +202,32 @@ function runFgSweep(bindings, reps = 20, seed = 42) {
   };
 }
 
+// §5 growth sweep (DT-②, ADR 0022 ripening, close-out 2026-07-10): conquest
+// cap-growth magnitudes vs the capPerSector:0 control, on the same three
+// FG-⑩ board arms and the same instrument (reps/seed/bindings) as
+// runFgSweep, so the §6 post-measure is the direct before-baseline.
+// dragCap (optional): adds one cap-lag + economy-lag arm at that magnitude
+// (conquestUsableDrag 0.5) — pointed at the best cap AFTER reading cap-only.
+function runGrowthSweep(bindings, reps = 20, seed = 42, caps = [300, 600, 1000], dragCap = null) {
+  const growthArms = { ctrl: {} };
+  for (const c of caps) growthArms[`cap${c}`] = { capPerSector: c };
+  if (dragCap) growthArms[`cap${dragCap}drag`] = { capPerSector: dragCap, conquestUsableDrag: 0.5 };
+  const boardArms = {
+    ctrl:    BOARD_GAAN,
+    fgM9on:  FG_BOARD_GAAN,
+    fgM9off: { ...FG_BOARD_GAAN, m9Reserve: false },
+  };
+  const out = {};
+  for (const [gid, harness] of Object.entries(growthArms)) {
+    out[gid] = {};
+    for (const [bid, gaan] of Object.entries(boardArms)) {
+      out[gid][bid] = aggregate(runCradleTournament({
+        map: CRADLE_MAP, bindings, reps, seed, boardGaan: gaan, harness }));
+    }
+  }
+  return out;
+}
+
 // ---------------------------------------------------------------- report
 function pct(v) { return v === null ? '—' : `${v.toFixed(1)}%`; }
 
@@ -209,9 +235,28 @@ function main() {
   const quick = process.argv.includes('--quick');
   const skipD = process.argv.includes('--skip-d');
   const fg = process.argv.includes('--fg');
+  const growth = process.argv.includes('--growth');
+  const dragArg = process.argv.find((a) => a.startsWith('--drag-cap='));
   const reps = quick ? 2 : 20;
   const comboStep = quick ? 27 : 1;
   const bindings = viableBindings(CRADLE_MAP, 5).viable;
+
+  if (growth) {
+    const dragCap = dragArg ? Number(dragArg.split('=')[1]) : null;
+    console.log(`§5 growth sweep — bindings ${bindings.length}, reps ${reps}${quick ? ' (QUICK)' : ''}${dragCap ? `, drag arm @ cap ${dragCap}` : ''}`);
+    console.log('rows = HARNESS growth arms (capPerSector; ripening capStartFrac 0.60 / +10pp per turn) · cols = FG-⑩ board arms\n');
+    const sweep = runGrowthSweep(bindings, reps, 42, [300, 600, 1000], dragCap);
+    for (const [gid, boards] of Object.entries(sweep)) {
+      console.log(`[${gid}]`);
+      for (const [bid, agg] of Object.entries(boards)) {
+        const stomp = agg.tripTurnBins ? agg.tripTurnBins['1-8'] : 0;
+        const stompPct = agg.matches ? ((stomp / agg.matches) * 100).toFixed(1) : '—';
+        console.log(`  ${bid.padEnd(7)} decided ${pct(agg.decidedPct)} · envelope(15-25) ${pct(agg.envelopePct)} · core(18-22) ${pct(agg.core1822Pct)} · median ${agg.medianTripTurn === null ? '—' : agg.medianTripTurn} · mean ${agg.meanTripTurn === null ? '—' : agg.meanTripTurn.toFixed(1)} ± ${agg.stdTripTurn === null ? '—' : agg.stdTripTurn.toFixed(1)} · stomp(≤8) ${stompPct}%`);
+        console.log(`    hist ${JSON.stringify(agg.tripTurnHist)}`);
+      }
+    }
+    return;
+  }
 
   if (fg) {
     console.log(`FG-⑩ sweep — bindings ${bindings.length}, reps ${reps}${quick ? ' (QUICK)' : ''}`);
@@ -273,5 +318,5 @@ function main() {
   }
 }
 
-module.exports = { aggregate, runArm, runDArm, runFgSweep, dispositionMarginals, dispositionCombos, ARMS, SEEDS };
+module.exports = { aggregate, runArm, runDArm, runFgSweep, runGrowthSweep, dispositionMarginals, dispositionCombos, ARMS, SEEDS };
 if (require.main === module) main();
