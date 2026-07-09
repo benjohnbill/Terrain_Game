@@ -36,6 +36,8 @@ function aggregate(records) {
   let exhausted = 0, paneled = 0;
   let elim = 0, vassal = 0, brained = 0, forced = 0, misjudged = 0;
   let varSum = 0, boostSum = 0;
+  const tripTurnBins = { '1-8': 0, '9-14': 0, '15-20': 0, '21-25': 0, '26-32': 0 };
+  const tripTurns = [];
   for (const r of records) {
     shapes[r.endingShape] = (shapes[r.endingShape] || 0) + 1;
     elim += r.eliminations; vassal += r.vassalDeals;
@@ -53,10 +55,19 @@ function aggregate(records) {
       const row = bucketByLeaderSeat[seat] || (bucketByLeaderSeat[seat] = {});
       row[r.panel.bucket] = (row[r.panel.bucket] || 0) + 1;
     }
+    if (r.winner && typeof r.tripTurn === 'number') {
+      tripTurns.push(r.tripTurn);
+      const t = r.tripTurn;
+      const bin = t <= 8 ? '1-8' : t <= 14 ? '9-14' : t <= 20 ? '15-20' : t <= 25 ? '21-25' : '26-32';
+      tripTurnBins[bin] += 1;
+    }
   }
   const shortfalls = undecided
     .map((r) => r.finalCheck && r.finalCheck.leadershipShortfall)
     .filter((v) => typeof v === 'number');
+  const sortedTrips = [...tripTurns].sort((a, b) => a - b);
+  const medianTripTurn = sortedTrips.length ? sortedTrips[Math.floor(sortedTrips.length / 2)] : null;
+  const envelopeCount = tripTurns.filter((t) => t >= 15 && t <= 25).length;
   return {
     matches: records.length,
     decidedPct: (decided.length / records.length) * 100,
@@ -64,6 +75,9 @@ function aggregate(records) {
       ? shortfalls.reduce((s, v) => s + v, 0) / shortfalls.length : null,
     eliminations: elim, vassalDeals: vassal, shapes, planHist,
     buckets, bucketByLeaderSeat,
+    envelopePct: (envelopeCount / records.length) * 100,
+    medianTripTurn,
+    tripTurnBins,
     exhaustedPct: paneled ? (exhausted / records.length) * 100 : null,
     brained,
     forcedPct: brained ? (forced / brained) * 100 : null,

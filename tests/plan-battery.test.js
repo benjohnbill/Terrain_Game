@@ -34,3 +34,34 @@ test('aggregate reports decided%, shortfall, shapes, and plan telemetry', () => 
   assert.ok(Math.abs(a.forcedPct - 50) < 1e-9);   // 3 forced / 6 brained
   assert.ok(Math.abs(a.misjudgedPct - 100 / 6) < 1e-9);
 });
+
+test('aggregate reports decision-timing ruler (envelope%, median, bins)', () => {
+  const records = [
+    rec({ winner: 'A', tripTurn: 6 }),   // 1-8 bin, pre-envelope
+    rec({ winner: 'B', tripTurn: 12 }),  // 9-14 bin, pre-envelope
+    rec({ winner: 'C', tripTurn: 18 }),  // 15-20 bin, ENVELOPE
+    rec({ winner: 'D', tripTurn: 22 }),  // 21-25 bin, ENVELOPE
+    rec({ winner: 'E', tripTurn: 25 }),  // 21-25 bin, ENVELOPE (inclusive upper)
+    rec({ winner: 'F', tripTurn: 30 }),  // 26-32 bin, post-envelope
+    rec(),                               // timeout (winner null, no tripTurn)
+    rec(),                               // timeout
+  ];
+  const a = aggregate(records);
+  assert.equal(a.matches, 8);
+  // 3 of 8 matches tripped inside 15-25
+  assert.ok(Math.abs(a.envelopePct - (3 / 8) * 100) < 1e-9);
+  // decided trip turns sorted: [6,12,18,22,25,30] → lower-median = index 3 = 22
+  assert.equal(a.medianTripTurn, 22);
+  assert.deepEqual(a.tripTurnBins, {
+    '1-8': 1, '9-14': 1, '15-20': 1, '21-25': 2, '26-32': 1,
+  });
+});
+
+test('aggregate timing ruler handles an all-timeout batch', () => {
+  const a = aggregate([rec(), rec()]);
+  assert.equal(a.envelopePct, 0);
+  assert.equal(a.medianTripTurn, null);
+  assert.deepEqual(a.tripTurnBins, {
+    '1-8': 0, '9-14': 0, '15-20': 0, '21-25': 0, '26-32': 0,
+  });
+});
