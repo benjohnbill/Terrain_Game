@@ -28,6 +28,11 @@ const MATCH_DIALS = {
                            // realms are hermits (1,000) with a staging buy-back (2,000)
   recruitPerTurn: 0.10,    // of field cap per recruitment primary (M13, sealed)
 
+  // -- domination victory (§6, RULINGS DT-③, Combo 2 — a WINNER-rule dial,
+  //    intentionally NOT the PANEL_DIALS measurement copy) --
+  dominantForceShare: 0.5, // candProj ≥ half of all in-balance projectable → dominant
+  dominationRatio: 2.5,    // OR candProj ≥ 2.5× the strongest in-balance rival's projectable
+
   // -- settlement (GLOSSARY 정산 / 수락 산술) --
   presets: {
     관대: { claimRate: 0.50, fill: 'indemnityFirst' },  // A-1 ruling ⑧ 가안
@@ -143,12 +148,23 @@ function hegemonyCheck(realms, candName, D = MATCH_DIALS) {
   const coalitionNeed = D.shieldRatio * candShield;
   const unassailable = coalition < coalitionNeed;
 
+  // dominance (§6 domination terminal, RULINGS DT-③): owns the board's offense
+  // — ≥ half of all in-balance projectable, OR ≥ dominationRatio× the top rival.
+  // No per-rival shield bar (that is leadership); this is the wall's escape.
+  const rivalProjSum = inBalance.reduce((s, x) => s + x.proj, 0);
+  const totalInBalanceProj = candProj + rivalProjSum;
+  const forceShare = totalInBalanceProj > 0 ? candProj / totalInBalanceProj : 0;
+  const maxRivalProj = inBalance.length ? Math.max(...inBalance.map((x) => x.proj)) : 0;
+  const dominance = forceShare >= D.dominantForceShare
+    || (maxRivalProj > 0 ? candProj >= D.dominationRatio * maxRivalProj : true);
+
   return {
     candProj, candShield, leadership, leadershipRows,
     coalition, coalitionNeed, unassailable,
+    dominance, forceShare,
     inBalance: inBalance.map((x) => x.realm.name),
     outOfBalance: outOfBalance.map((x) => `${x.realm.name}(투사 ${x.proj})`),
-    trips: leadership && unassailable,
+    trips: (leadership || dominance) && unassailable,
   };
 }
 
