@@ -196,8 +196,9 @@ function main() {
     console.log('ctrl = uniform walls (BOARD_GAAN) · fgM9on = force-geography, M9 reserve ON · fgM9off = force-geography, M9 reserve OFF\n');
     const sweep = runFgSweep(bindings, reps);
     for (const [id, agg] of Object.entries(sweep)) {
-      console.log(`[${id}] decided ${pct(agg.decidedPct)} · meanWithinRealmVariance ${agg.meanWithinRealmVariance === null ? '—' : agg.meanWithinRealmVariance.toFixed(1)} · meanBoostedShieldShare ${agg.meanBoostedShieldShare === null ? '—' : agg.meanBoostedShieldShare.toFixed(3)}`);
-      console.log(`  buckets ${JSON.stringify(agg.buckets)}`);
+      console.log(`[${id}] decided ${pct(agg.decidedPct)} · envelope(15-25) ${pct(agg.envelopePct)} · median trip ${agg.medianTripTurn === null ? '—' : agg.medianTripTurn}`);
+      console.log(`  tripTurn bins ${JSON.stringify(agg.tripTurnBins)}`);
+      console.log(`  buckets ${JSON.stringify(agg.buckets)} · meanWithinRealmVariance ${agg.meanWithinRealmVariance === null ? '—' : agg.meanWithinRealmVariance.toFixed(1)} · meanBoostedShieldShare ${agg.meanBoostedShieldShare === null ? '—' : agg.meanBoostedShieldShare.toFixed(3)}`);
     }
     return;
   }
