@@ -15,9 +15,8 @@
 > separate counter. Wins by out-fighting, not walling; same-N re-measurement
 > confirms it converts the denied-dominant wall (~28-30%→~2%) to decisions and
 > lifts decided%/envelope/core across all arms (watch-item: fgM9off median
-> tripTurn 19→17, now slightly ahead of the 18-22 core). SPEC.md win-type
-> amendment still owed (Tier-3, drafted, awaiting user approval). match-arc
-> RULINGS DT-③.
+> tripTurn 19→17, now slightly ahead of the 18-22 core). SPEC.md now declares
+> the domination win-type (user-approved 2026-07-09). match-arc RULINGS DT-③.
 > Addendum 2026-07-09 (decision-timing pass — DT-②, §5 mechanism shape): balanced
 > boards resolve EMERGENTLY via a positive-sum growth engine (safe-slow development
 > vs risky-fast conquest; conquest reward = immediate strategic position + lagged

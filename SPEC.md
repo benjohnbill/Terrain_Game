@@ -183,6 +183,15 @@ mechanism (anti-safe-play pressure), showdown staging (the read-vs-reality
 reveal), and the loser-side experience between "decided" and "settled." Deferred
 clock/event pressure stays parked (ADR 0025).
 
+**Domination victory — second win-type (2026-07-09).** The decision point
+(결정점, principle #5) can now trip through either of two paths: the original
+per-rival **leadership** bar, or **domination** — controlling the board's
+offense outright even without individually clearing every rival's shield.
+Both share one irreversibility gate (unassailability); only the offensive
+qualifying condition differs. Mechanism, dials, and rationale are
+authoritative at match-arc `RULINGS.md` DT-③ (birthplace); this is a summary
+pointer only, per the single-definition rule.
+
 ## Phase Roadmap
 
 ### Phase 1: Terrain, Regions, and Combat

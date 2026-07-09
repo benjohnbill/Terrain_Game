@@ -55,9 +55,9 @@ predicted `denied-dominant` wall absorption (ctrl 27.6%→1.7%, fgM9off
 arms (decided% ctrl 13.2→43.9, fgM9on 31.0→63.6, fgM9off 50.3→85.2). Watch-item
 for the §5 tuning pass: fgM9off's median tripTurn moved from the prior
 dead-center 19 to 17 — now slightly ahead of the 18-22 core, not a defect but
-worth checking as the resolution dial is tuned. A SPEC.md Direction amendment
-declaring the domination win-type is drafted and awaiting user wording
-approval (Tier-3); **§5 forced-resolution reframed → RULINGS DT-②** (shape
+worth checking as the resolution dial is tuned. SPEC.md now declares the
+domination win-type (Direction amendment, user-approved 2026-07-09, pointer
+to DT-③); **§5 forced-resolution reframed → RULINGS DT-②** (shape
 SEALED 2026-07-09):
 balanced boards resolve *emergently* via a positive-sum growth engine (two
 paths — safe-slow development vs risky-fast conquest whose reward is immediate

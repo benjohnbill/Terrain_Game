@@ -39,11 +39,13 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   (ctrl 27.6%→1.7%, fgM9off 30.1%→2.6%) and a decided%/envelope/core rise
   across all three arms; fgM9off's median tripTurn moved from dead-center 19
   to 17 (now slightly ahead of the 18-22 core) — flagged as a §5 tuning
-  watch-item, not a defect. STILL OWED: a SPEC.md Direction amendment
-  declaring the domination win-type (Tier-3, drafted, awaiting user wording
-  approval — birthplace DT-③ stays authoritative, SPEC gets a summary +
-  pointer only). Open: whether "peaceful development" is a real growth path
-  in the model or must be built.
+  watch-item, not a defect. The SPEC.md Direction amendment declaring the
+  domination win-type is PAID (see Paid below). Open: whether "peaceful
+  development" is a real growth path in the model or must be built; and
+  whether the DT-① envelope target (≥78-80% final) is reachable purely
+  through DT-②'s emergent growth engine without any clock-like device — the
+  question the §5 tuning pass (next) will test empirically before it is
+  revisited.
 
 - [ ] **Derived-asymmetry machine-check** (registered 2026-07-08, seal
   TC-⑭): population parity (Σpop==6.0 per region) and the economy ladder
@@ -231,6 +233,12 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
 
 ## Paid
 
+- [x] 2026-07-09 — **§6 domination victory — SPEC.md Direction amendment**
+  — the win-type declaration owed by DT-③'s implementation landing, written
+  to `SPEC.md` (new paragraph after the "Resolved (match-arc pass,
+  2026-07-04)" block, principle #5 anchor): a summary + pointer to match-arc
+  `RULINGS.md` DT-③ (birthplace stays authoritative; no arithmetic restated
+  in SPEC per the single-definition rule). User-approved wording, 2026-07-09.
 - [x] 2026-07-08 — **Ending-taxonomy pass → Production sync (ET-①)** —
   the hegemony grill's measurement-taxonomy design (grill Q1–Q4,
   user-sealed) written to its authoritative homes: match-arc RULINGS
