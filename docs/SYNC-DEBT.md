@@ -11,6 +11,21 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
 
 ## Open
 
+- [ ] **Timing-ruler metric reframe — Projection/INDEX sync** (registered
+  2026-07-09; instrument landed main @54b47f0). The decision-timing ruler
+  (`envelopePct` / `medianTripTurn` / `tripTurnBins`) is now built into
+  `plan-battery.js aggregate()` and printed as the `--fg` sweep headline
+  (instrumentation-only pass, spec §10). NOT yet synced, because the metric
+  *reframe* it serves is UNSEALED: the spec
+  `docs/superpowers/specs/2026-07-09-hegemony-decision-timing-target-design.md`
+  proposes making the SPEC 15-25 turn envelope the primary success read plus
+  two SPEC-5 amendments — all user-gated (Tier-3, propose-only). Until the
+  user seals that reframe: (a) do NOT re-cut the force-geography INDEX U5
+  headline row (SEALED 2026-07-09 = decided% + buckets) or the "Next =
+  high-reps run" line to make timing the headline; (b) no DOMAIN_MAP/DESIGN
+  Projection entry for the envelope-target metric. Instrument is available
+  now; the seal + doc-sync is the gated follow-on.
+
 - [ ] **Derived-asymmetry machine-check** (registered 2026-07-08, seal
   TC-⑭): population parity (Σpop==6.0 per region) and the economy ladder
   are authored as literals in `map-gen.js sectorSpec`, not recomputed from
