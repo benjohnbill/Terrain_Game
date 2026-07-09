@@ -105,32 +105,42 @@ test('conquestUsableDrag: off (0) leaves the usable trajectory identical', () =>
   assert.equal(off.tripTurn, off2.tripTurn);
 });
 
-test('conquestUsableDrag: on (>0) lowers the conqueror usable on a settlement', () => {
-  // Direct mechanism test: applySettlement applies the drag when ceded > 0.
-  // The fixture board/ASSIGN naturally produces eliminations, not settlements,
-  // so we test the drag formula in isolation via a realm object, replicating
-  // what applySettlement does when a settlement gains land.
-  // Setup: a realm with interior=100 (so A.interior after ceding would be 110)
-  // and usable=1.0 (fresh). Conquering 10 sectors with drag=0.5 should lower
-  // usable by 0.5 × (10 / 110) ≈ 0.045, stopping at 0.3 floor.
-  const A = { interior: 100, usable: 1.0 };
-  const ceded = 10;
-  A.interior += ceded; // 110
-  const H = { conquestUsableDrag: 0.5 };
-  if (H.conquestUsableDrag > 0 && ceded > 0) {
-    const freshFrac = ceded / Math.max(1, A.interior);
-    A.usable = Math.max(0.3, A.usable - H.conquestUsableDrag * freshFrac);
-  }
-  // usable = max(0.3, 1.0 - 0.5 * (10/110)) = max(0.3, 0.954...) = 0.954...
-  assert.ok(A.usable < 1.0, 'drag must lower usable when ceded > 0');
-  assert.ok(A.usable >= 0.3, 'usable never drops below 0.3 floor');
-  // Verify drag floors at 0.3 (matching raid floor)
-  const B = { interior: 100, usable: 0.4 };
-  B.interior += 100; // very large cession
-  const HHigh = { conquestUsableDrag: 1.0 };
-  if (HHigh.conquestUsableDrag > 0 && 100 > 0) {
-    const freshFrac = 100 / Math.max(1, B.interior);
-    B.usable = Math.max(0.3, B.usable - HHigh.conquestUsableDrag * freshFrac);
-  }
-  assert.equal(B.usable, 0.3, 'drag floors at 0.3');
+// Minimal winner/loser realm pair + war for a REAL applySettlement call.
+// Preset '최대' (claimRate 1.0, cessionFirst) makes ceded === war.occupied
+// exactly, so the drag input is fully controlled. Empty frontG keeps
+// inheritFronts a no-op; the war object satisfies endWar's bookkeeping.
+function settlementFixture(over = {}) {
+  const war = { att: 'A', def: 'D', occupied: 2, stage: 'cascade',
+    margin: 'marginal', endTurn: 5 };
+  const A = { name: 'A', interior: 8, usable: 1.0, pool: 0, recruitBonus: 0,
+    fieldCap: 6000, capPending: 0, capRipeFlow: 0, wars: [war], truce: {},
+    frontG: {}, frontCap: {}, fortAt: {}, ...over };
+  const D = { name: 'D', interior: 4, usable: 1.0, pool: 1000, field: 500,
+    fieldCap: 6000, capPending: 0, capRipeFlow: 0, wars: [war], truce: {},
+    frontG: {}, frontCap: {}, fortAt: {} };
+  return { war, A, D, realms: [A, D] };
+}
+
+test('conquestUsableDrag: a REAL applySettlement call drags the winner usable (0 leaves it)', () => {
+  // ceded = 2, A.interior 8→10: freshFrac 0.2, drag 0.5 → usable 1.0 - 0.1 = 0.9.
+  const on = settlementFixture();
+  T.applySettlement('preset', '최대', on.war, on.A, on.D,
+    { ...HARNESS, conquestUsableDrag: 0.5 }, on.realms);
+  assert.equal(on.A.interior, 10, 'fixture sanity: the settlement ceded 2 sectors');
+  assert.ok(on.A.usable < 1.0, `drag 0.5 must lower the winner's usable, got ${on.A.usable}`);
+  assert.ok(Math.abs(on.A.usable - 0.9) < 1e-9, `expected 0.9, got ${on.A.usable}`);
+  // dial 0 (default): the same settlement leaves usable untouched
+  const off = settlementFixture();
+  T.applySettlement('preset', '최대', off.war, off.A, off.D,
+    { ...HARNESS, conquestUsableDrag: 0 }, off.realms);
+  assert.equal(off.A.interior, 10, 'same settlement shape under dial 0');
+  assert.equal(off.A.usable, 1.0, 'dial 0 must not touch the winner usable');
+});
+
+test('conquestUsableDrag: the drag floors at 0.3 (raid floor)', () => {
+  // winner already worn to 0.35: 0.35 - 0.5×0.2 = 0.25 → clamped to 0.3
+  const f = settlementFixture({ usable: 0.35 });
+  T.applySettlement('preset', '최대', f.war, f.A, f.D,
+    { ...HARNESS, conquestUsableDrag: 0.5 }, f.realms);
+  assert.equal(f.A.usable, 0.3, `usable must floor at 0.3, got ${f.A.usable}`);
 });

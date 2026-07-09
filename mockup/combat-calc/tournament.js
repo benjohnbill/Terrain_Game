@@ -1019,4 +1019,5 @@ module.exports = { HARNESS, BOT, ARCHETYPES, TEMPERAMENTS, SEATS, SPEC_GAPS,
   makeBoard, runMatch, runTournament, mulberry32, yieldReach, realmValue,
   pickTarget, peacePrimary, doRecruit, poolBleed, servingBodies, regenGarrisons,
   realmIncome, intensity, combatFromBorderClass, newWar, warBattle, m9Fill,
-  frontDefense, pickMainDefWar, frontSoftness, applyCapGain, ripenCap };
+  frontDefense, pickMainDefWar, frontSoftness, applyCapGain, ripenCap,
+  applySettlement };
