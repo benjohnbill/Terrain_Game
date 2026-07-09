@@ -50,6 +50,13 @@ const HARNESS = {
   capPerSector: 0,          // A-3 probe: fieldCap gained/lost per ceded sector.
                             // 0 = current canon (conquest raises pool+yield but
                             // NOT the cap — cap growth is A-3's undesigned seat)
+  // -- §5 conquest growth engine (DT-②, ADR 0022 ripening). HARNESS gaan
+  //    (bound proof power, not seal candidates). A conquest's ceiling gain
+  //    enters at capStartFrac and ripens +capRipenPpPerTurn per turn → full
+  //    in 4 turns. Active only when capPerSector > 0. --
+  capStartFrac: 0.60,        // population-usable start (ADR 0022): 60% immediate
+  capRipenPpPerTurn: 0.10,   // +10pp per stable turn (ADR 0022)
+  conquestUsableDrag: 0,     // Position-1 economy-lag lever (default off; Task 3)
 };
 
 const BOT = {
@@ -156,6 +163,28 @@ const totalGarrisons = (r) => Object.values(r.frontG).reduce((s, g) => s + g, 0)
 const bodiesOf = (r) => r.field + totalGarrisons(r) + r.pool;
 // direction-free defensive mass for the ending panel's shieldShare.
 const shieldOf = (r) => r.field + Object.values(r.frontG).reduce((s, g) => s + g, 0);
+
+// §5 conquest growth (DT-②, ADR 0022): a conquest's ceiling gain is not
+// fully usable at once. capStartFrac lands immediately; the remainder waits
+// in capPending and ripens capRipeFlow per stable turn (10% of the gain →
+// full in 4 turns). This transient is the contestability window. gainCap <= 0
+// (the capPerSector:0 control) is a no-op, so non-growth runs are unchanged.
+function applyCapGain(realm, gainCap, H = HARNESS) {
+  if (gainCap <= 0) return;
+  const imm = Math.round(H.capStartFrac * gainCap);
+  realm.fieldCap += imm;
+  realm.capPending += gainCap - imm;
+  realm.capRipeFlow += Math.round(H.capRipenPpPerTurn * gainCap);
+}
+
+// move one stable turn's worth of pending ceiling into usable fieldCap.
+function ripenCap(realm) {
+  if (realm.capPending <= 0) return;
+  const step = Math.min(realm.capPending, realm.capRipeFlow);
+  realm.fieldCap += step;
+  realm.capPending -= step;
+  if (realm.capPending <= 0) { realm.capPending = 0; realm.capRipeFlow = 0; }
+}
 
 // adapt a realm to match.js's hegemonyCheck shape
 function checkView(realms) {
@@ -977,4 +1006,4 @@ module.exports = { HARNESS, BOT, ARCHETYPES, TEMPERAMENTS, SEATS, SPEC_GAPS,
   makeBoard, runMatch, runTournament, mulberry32, yieldReach, realmValue,
   pickTarget, peacePrimary, doRecruit, poolBleed, servingBodies, regenGarrisons,
   realmIncome, intensity, combatFromBorderClass, newWar, warBattle, m9Fill,
-  frontDefense, pickMainDefWar, frontSoftness };
+  frontDefense, pickMainDefWar, frontSoftness, applyCapGain, ripenCap };
