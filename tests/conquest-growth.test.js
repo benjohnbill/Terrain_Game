@@ -70,8 +70,10 @@ test('ripenCap is invoked in the per-turn loop (a pre-set pending drains)', () =
   board[0].capRipeFlow = 100;
   const startCap = board[0].fieldCap;
   T.runMatch(ASSIGN, { seed: 42, board, harness: { maxTurns: 3 } });
-  // 중원 survives the opening turns; 3 loop passes ripen 3 x 100 = 300.
-  assert.ok(board[0].capPending <= 700, `pending should drain, got ${board[0].capPending}`);
+  // capPerSector defaults to 0 (no conquest gains fire), so this run is
+  // deterministic: 3 loop passes drain exactly 3 x 100 = 300, leaving 700.
+  // Exact equality catches a double-ripen-per-turn regression.
+  assert.equal(board[0].capPending, 700, `pending should drain to exactly 700, got ${board[0].capPending}`);
   assert.ok(board[0].fieldCap >= startCap, 'ripened ceiling never drops below start');
 });
 

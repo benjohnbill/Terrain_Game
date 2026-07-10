@@ -170,17 +170,27 @@ const shieldOf = (r) => r.field + Object.values(r.frontG).reduce((s, g) => s + g
 // in capPending and ripens capRipeFlow per stable turn (10% of the gain →
 // full in 4 turns). This transient is the contestability window. gainCap <= 0
 // (the capPerSector:0 control) is a no-op, so non-growth runs are unchanged.
+// Concurrent gains POOL into the same capPending/capRipeFlow accumulator
+// rather than tracking separate ripening schedules per gain — a second gain
+// arriving mid-ripen speeds up the remainder (e.g. a gain 2 turns after the
+// first drains the rest in 3 turns, not 4). Deliberate harness simplification
+// of ADR 0022, not a bug.
 function applyCapGain(realm, gainCap, H = HARNESS) {
   if (gainCap <= 0) return;
   const imm = Math.round(H.capStartFrac * gainCap);
   realm.fieldCap += imm;
-  realm.capPending += gainCap - imm;
-  realm.capRipeFlow += Math.round(H.capRipenPpPerTurn * gainCap);
+  // ?? 0: field-missing-safe accumulation (see ripenCap guard note below).
+  realm.capPending = (realm.capPending ?? 0) + (gainCap - imm);
+  realm.capRipeFlow = (realm.capRipeFlow ?? 0) + Math.round(H.capRipenPpPerTurn * gainCap);
 }
 
 // move one stable turn's worth of pending ceiling into usable fieldCap.
+// Guard is deliberately NaN/undefined-safe (inverted truthy check, not
+// `<= 0`): a realm missing capPending would make `<= 0` false and fall
+// through to Math.min(undefined, undefined) = NaN, poisoning fieldCap. This
+// failure class already fired once via map-board realms lacking the field.
 function ripenCap(realm) {
-  if (realm.capPending <= 0) return;
+  if (!(realm.capPending > 0)) return;
   const step = Math.min(realm.capPending, realm.capRipeFlow);
   realm.fieldCap += step;
   realm.capPending -= step;
@@ -611,6 +621,11 @@ function eliminate(D, A, realms, H, war) {
   // §5 ripen — D.interior is 0 here (the cascade already drained it into
   // war.occupied sector by sector); war.occupied holds the true ceded count,
   // so the brief's literal D.interior gain would be a permanent no-op.
+  // Cap-without-land asymmetry: on elimination the winner's ceiling grows by
+  // war.occupied * capPerSector, but A.interior gains nothing here (D.interior
+  // is already 0 and the occupied sectors evaporate via the pre-existing
+  // elimination land-sink above). Unlike settlement, elimination cap gain has
+  // no land basis — measurement reads of this path must carry that rider.
   applyCapGain(A, (war && war.occupied) ? war.occupied * (H?.capPerSector ?? 0) : 0, H ?? HARNESS);
   D.interior = 0; D.field = 0;
   for (const w of [...D.wars]) { w.stage = 'over'; }
