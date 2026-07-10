@@ -640,7 +640,11 @@ function applySettlement(kind, preset, war, A, D, H, realms) {
     D.vassalOf = A.name;
     releaseVassalsOf(D, realms); // a falling overlord releases its own chain
   }
-  if (ceded >= 2 || D.interior <= 0) inheritFronts(A, D, realms);
+  // hollow gate matches trySettle's deepEnough: in sector mode "punched
+  // through" means no land left, not interior 0 (hex-derived borders make
+  // small realms start near interior 0 while fully landed).
+  const hollow = sectorMode(D) ? D.holds.size === 0 : D.interior <= 0;
+  if (ceded >= 2 || hollow) inheritFronts(A, D, realms);
   endWar(war, A, D, H);
   return { ceded, indemnity: b.indemnity };
 }

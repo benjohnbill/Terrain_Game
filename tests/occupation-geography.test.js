@@ -341,6 +341,29 @@ test('limbo: an occupied (untransferred) sector pays income to neither side', ()
   assert.ok(incomeAfter < incomeBefore, 'world income drops while contested');
 });
 
+test('front inheritance: sector mode requires landless, not interior 0', () => {
+  // close-out fix: the applySettlement hollow gate read the legacy
+  // D.interior <= 0 even in sector mode — hex-derived borders make small
+  // realms sit near interior 0 while fully landed, opening fronts early.
+  const b = mapBoard();
+  const { A, D, war } = warBetween(b);
+  T.captureSector(war, A, D);
+  // hollow D's interior only: keep just its seat-border holds
+  for (const id of [...D.holds]) if (!D.world.borderIds.has(id)) D.holds.delete(id);
+  T.syncCounts(D);
+  assert.equal(D.interior, 0, 'premise: legacy gate would fire');
+  assert.ok(D.holds.size > 0, 'premise: D still holds land');
+  const dNeighbors = Object.keys(D.frontSectorIds);
+  assert.ok(dNeighbors.some((n) => n !== A.name && A.frontG[n] === undefined),
+    'premise: D has a neighbor A does not front (inheritance would be visible)');
+  const frontsBefore = Object.keys(A.frontG).sort();
+  war.stage = 'cascade'; war.margin = 'decisive'; war.endTurn = 5;
+  const res = T.applySettlement('preset', '표준', war, A, D, T.HARNESS, b);
+  assert.ok(res.ceded <= 1, 'premise: ceded < 2 leg cannot fire');
+  assert.deepEqual(Object.keys(A.frontG).sort(), frontsBefore,
+    'no front inheritance while D still holds land');
+});
+
 // ---- Task 5: control invariance after retirement ----
 test('capLandFrac 0 control: two identical runs are deterministic and growth-free', () => {
   const run = () => {
