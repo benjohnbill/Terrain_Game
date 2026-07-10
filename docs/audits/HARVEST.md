@@ -1,13 +1,26 @@
 # Audit Baseline Regeneration Procedure
 
-The two JSON files in this directory are **regenerable derived artifacts**,
-never hand-maintained. Truth lives at the birthplaces (feature GLOSSARYs,
-documentation-law); these files are machine-readable indexes of it. When they
-drift from the sources, regenerate — do not patch by hand.
+The two JSON files in this directory are **derived artifacts**. Truth lives at
+the birthplaces (feature GLOSSARYs, documentation-law); these files are
+machine-readable indexes of it, never a definition surface.
 
-Versioning: fixed paths, regenerated in place. Git history is the change log.
-Commit each regeneration with a summary message, e.g.
-`audit: regenerate term inventory (+3 terms, 1 rename, 223 total)`.
+Maintenance model (amended 2026-07-10 after cold review — the original
+"regenerated only, never hand-maintained" claim was fiction without committed
+tooling):
+
+- **Incremental (between audits)**: a session that seals a NEW term, renames
+  one, or changes a term's status MUST add/patch the corresponding inventory
+  row in the same doc-sync batch — one row, index fields only. This is the
+  regeneration trigger for mid-session seals; without it the inventory lags
+  and the lint false-positives on every newly sealed term.
+- **Full re-harvest (at audit runs)**: each /doc-audit run re-executes the
+  harvest procedure below from the sources and reconciles drift, carrying
+  verdicts forward by canonical name. The full re-harvest is the authority;
+  incremental patches are provisional until the next run confirms them.
+
+Versioning: fixed paths, updated in place. Git history is the change log.
+Commit with a summary message, e.g.
+`audit: inventory +3 terms, 1 rename (223 total)`.
 
 ## term-inventory.json
 
@@ -49,7 +62,11 @@ allowed/forbidden content — all derived from
 Flow is one-way: **law → registry → lint**. When the law is amended,
 regenerate the registry; never edit the registry to disagree with the law.
 
-Generator for both files (audit run #1): a synthesis script harvesting the
-sources above; the reference copy used on 2026-07-10 is preserved in the
-session scratchpad and its logic is documented here. Future runs may re-script
-it; matching this procedure matters, matching the old script does not.
+No committed generator script exists yet (run #1 used session-scoped
+tooling, now gone). This PROCEDURE document is the generator: a future run
+re-executes it and may re-script the mechanical parts. Matching this
+procedure matters; matching any old script does not. Known weak rows from
+run #1: three terms are ADR-born (birthplace = ADR 0019, a tension with the
+law's "ADRs never define" rule) and `Estimate band` has no clean birthplace
+(provisionally homed at fog-of-war RULINGS) — both are registration-gap
+evidence, not clean data.
