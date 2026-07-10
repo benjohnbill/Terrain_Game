@@ -108,13 +108,25 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   (c) **hook promotion** (PostToolUse write-lint + UserPromptSubmit alias
   inject) — gate: lint check-set validated; design constraints recorded in
   the plan (exploration-exemption conflict, birthplace-구칭 exclusions,
-  common-word alias scoping). (d) **audit run #2** — regenerate baselines
-  per `docs/audits/HARVEST.md`, carrying verdicts forward; also drop
-  ruling-statement rows and map-lore proper nouns per run-#1 report.
-  (e) smaller residues: gold→treasury prose leak (SPEC:264, ADR 0013:33);
-  code-identifier drift actionCapacity↔`capacity`, computeProvinceStatus↔
-  `classifyHex` (fold into the owed js/situation.js rework); `Estimate
-  band` weak birthplace now homed at fog GLOSSARY (created 2026-07-10).
+  common-word alias scoping). (d) ~~audit run #2~~ — **DONE 2026-07-10**
+  (`docs/audits/2026-07-10-audit-run-2.md`): baselines regenerated
+  (222→221 terms, 107→118 registry rows), 1 genuine ruling-statement row
+  dropped (2 of run #1's 3 "undetermined" rows were misclassified — they
+  are real DOMAIN_MAP Tier-0 terms, restored with verdict null; the
+  self-correction is recorded in the report), map-lore exemption narrowed
+  to Ring-B-judging-only (not an inventory drop) with `HARVEST.md` amended
+  to say so, 7 missing province-archetype-region aliases added, extended
+  Ring A sweep of RULINGS/model docs/QUICKREF found no ghost-term drift,
+  doc-registry reconciled (+11 rows for files created since run #1). Lint
+  clean, suite 207/207. This session's edits are themselves the natural
+  session-close `lint:docs` run gate (b)/(c) were waiting on.
+  (e) smaller residues: ~~gold→treasury prose leak (SPEC:264)~~ — **fixed
+  2026-07-10**, rewritten to "treasury yield"; ADR 0013:33 checked and is a
+  false positive (`gold` names a map-legend color, not the resource — no
+  change). Remaining residues: code-identifier drift actionCapacity↔
+  `capacity`, computeProvinceStatus↔`classifyHex` (fold into the owed
+  js/situation.js rework); `Estimate band` weak birthplace now homed at fog
+  GLOSSARY (created 2026-07-10).
 
 - [ ] **A-3 magnitude pass must ingest the L2 freeze evidence**
   (registered 2026-07-07, sheet-15 session): cap-growth-alone does not

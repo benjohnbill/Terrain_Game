@@ -14,7 +14,8 @@
 > registrations: **information confidence** + **estimate band** (fog-of-war
 > GLOSSARY, created), **force role** (DOMAIN_MAP). Blinds row: SUPERSEDED
 > status now reflected in DOMAIN_MAP. Machine inventory of all terms:
-> `docs/audits/term-inventory.json` (222 terms, audit run #1).
+> `docs/audits/term-inventory.json` (221 terms, audit run #2 — see
+> `docs/audits/2026-07-10-audit-run-2.md`).
 > Addendum 2026-07-09 (decision-timing pass — DT-③, §6 decision-point arithmetic
 > SEALED, then IMPLEMENTED + MEASURED same day, commit a29eb0a): domination
 > victory = **trip when (leadership OR dominance) AND unassailable** (Combo 2).

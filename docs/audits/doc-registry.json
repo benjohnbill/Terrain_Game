@@ -1289,6 +1289,112 @@
    "ownerFeature": null,
    "allowedContent": [],
    "forbiddenContent": []
+  },
+  {
+   "path": "docs/adr/0030-victory-conditions-hegemony-and-domination.md",
+   "layer": "record",
+   "role": "promoted decision record; append-only + supersession header protocol",
+   "ownerFeature": null,
+   "allowedContent": [
+    "decision",
+    "context",
+    "supersession-stamps"
+   ],
+   "forbiddenContent": [
+    "silent-edits-to-decision"
+   ]
+  },
+  {
+   "path": "docs/adr/0031-force-geography-defense-model.md",
+   "layer": "record",
+   "role": "promoted decision record; append-only + supersession header protocol",
+   "ownerFeature": null,
+   "allowedContent": [
+    "decision",
+    "context",
+    "supersession-stamps"
+   ],
+   "forbiddenContent": [
+    "silent-edits-to-decision"
+   ]
+  },
+  {
+   "path": "docs/audits/2026-07-10-structure-forensics.md",
+   "layer": "working",
+   "role": "audit evidence document (structure/registry forensics); reports, not legislation",
+   "ownerFeature": null,
+   "allowedContent": [],
+   "forbiddenContent": []
+  },
+  {
+   "path": "docs/audits/2026-07-10-terminology-audit.md",
+   "layer": "working",
+   "role": "audit evidence document (terminology run); reports, not legislation",
+   "ownerFeature": null,
+   "allowedContent": [],
+   "forbiddenContent": []
+  },
+  {
+   "path": "docs/audits/HARVEST.md",
+   "layer": "working",
+   "role": "baseline regeneration procedure; the generator this registry and the inventory are derived from",
+   "ownerFeature": null,
+   "allowedContent": [],
+   "forbiddenContent": []
+  },
+  {
+   "path": "docs/features/fog-of-war-discovery/GLOSSARY.md",
+   "layer": "production",
+   "role": "tier-1 vocabulary birthplace: definition + sealed value + seal stamp",
+   "ownerFeature": "fog-of-war-discovery",
+   "allowedContent": [
+    "definition",
+    "sealed-value",
+    "seal-stamp"
+   ],
+   "forbiddenContent": [
+    "ruling-history"
+   ]
+  },
+  {
+   "path": "docs/superpowers/plans/2026-07-10-doc-governance-p3-p1-implementation.md",
+   "layer": "working",
+   "role": "time-stamped spec/plan record; consult for context, not current truth",
+   "ownerFeature": null,
+   "allowedContent": [],
+   "forbiddenContent": []
+  },
+  {
+   "path": "docs/teach/assets/lesson.css",
+   "layer": "sanctuary",
+   "role": "user's own space; agents do not touch",
+   "ownerFeature": null,
+   "allowedContent": [],
+   "forbiddenContent": []
+  },
+  {
+   "path": "docs/teach/assets/quiz.js",
+   "layer": "sanctuary",
+   "role": "user's own space; agents do not touch",
+   "ownerFeature": null,
+   "allowedContent": [],
+   "forbiddenContent": []
+  },
+  {
+   "path": "docs/teach/lessons/0001-four-layer-stack-model.html",
+   "layer": "sanctuary",
+   "role": "user's own space; agents do not touch",
+   "ownerFeature": null,
+   "allowedContent": [],
+   "forbiddenContent": []
+  },
+  {
+   "path": "docs/audits/2026-07-10-audit-run-2.md",
+   "layer": "working",
+   "role": "audit evidence document (run #2: baseline regeneration + reconciliation); reports, not legislation",
+   "ownerFeature": null,
+   "allowedContent": [],
+   "forbiddenContent": []
   }
  ]
 }

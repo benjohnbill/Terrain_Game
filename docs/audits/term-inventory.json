@@ -1,6 +1,6 @@
 {
  "regenerated": "2026-07-10",
- "auditRun": 1,
+ "auditRun": 2,
  "terms": [
   {
    "canonical": "Land-derived state",
@@ -516,7 +516,14 @@
     "Guanzhong Passes",
     "Jiangnan Grain Belt",
     "Steppe Frontier",
-    "Northern India Route"
+    "Northern India Route",
+    "Hebei and Northern Plains",
+    "Northeastern Frontier",
+    "Han/Jing River Corridor",
+    "Southwestern Basin",
+    "Southeastern Coast and Straits",
+    "Northwestern Oasis and Desert Corridor",
+    "Southern Mountain and Forest Frontier"
    ],
    "birthplace": "DOMAIN_MAP.md",
    "tier": 0,
@@ -2754,19 +2761,6 @@
    "verdictRef": "2026-07-10-terminology-audit.md"
   },
   {
-   "canonical": "Full adjacency, no neutral zones",
-   "korean": null,
-   "aliases": [],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "meta",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "undetermined",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
    "canonical": "Realm count 4–6",
    "korean": null,
    "aliases": [
@@ -2807,19 +2801,6 @@
    "codeIdentifier": null,
    "codeRefs": [],
    "verdict": "synonym-exists",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Mature-state start",
-   "korean": null,
-   "aliases": [],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "PROPOSED",
-   "kind": "meta",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "undetermined",
    "verdictRef": "2026-07-10-terminology-audit.md"
   },
   {
@@ -2921,19 +2902,6 @@
    "codeIdentifier": null,
    "codeRefs": [],
    "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Wall grade is public information",
-   "korean": null,
-   "aliases": [],
-   "birthplace": "docs/features/fog-of-war-discovery/RULINGS.md",
-   "tier": 1,
-   "status": "SEALED",
-   "kind": "meta",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "undetermined",
    "verdictRef": "2026-07-10-terminology-audit.md"
   },
   {
@@ -3172,6 +3140,32 @@
    "codeRefs": [],
    "verdict": "standard-match",
    "verdictRef": "2026-07-10-terminology-audit.md"
+  },
+  {
+   "canonical": "Full adjacency, no neutral zones",
+   "korean": null,
+   "aliases": [],
+   "birthplace": "docs/features/match-arc/GLOSSARY.md",
+   "tier": 1,
+   "status": "AGREED",
+   "kind": "meta",
+   "codeIdentifier": null,
+   "codeRefs": [],
+   "verdict": null,
+   "verdictRef": null
+  },
+  {
+   "canonical": "Mature-state start",
+   "korean": null,
+   "aliases": [],
+   "birthplace": "docs/features/match-arc/GLOSSARY.md",
+   "tier": 1,
+   "status": "PROPOSED",
+   "kind": "meta",
+   "codeIdentifier": null,
+   "codeRefs": [],
+   "verdict": null,
+   "verdictRef": null
   }
  ]
 }

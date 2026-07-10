@@ -261,7 +261,7 @@ game readability and balance.
 - Increasing military strength also increases defense, making strong states too
   hard to defeat everywhere at once.
 - Conquest can become self-fueling because new territories immediately support
-  more gold and military recovery.
+  more treasury yield and military recovery.
 - Technology and economy are not yet strong strategic alternatives to military
   investment.
 - AI diplomacy and attack behavior can be strategically naive.

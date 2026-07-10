@@ -38,8 +38,18 @@ Harvest procedure (what audit run #1 did; repeat to regenerate):
 2. A term = a named game concept, mechanic, dial, resource, phase, or design
    construct with a definition, seal row, or coinage tag. Not prose words,
    not section headings, not ruling *statements* (see run #1 report — three
-   ruling-statements were harvested and marked `undetermined`; exclude their
-   kind at the next regeneration).
+   ruling-statements were harvested and marked `undetermined`; excluded at
+   run #2 — dropped from the inventory since they were never real GLOSSARY
+   table/header rows, so removal does not false-positive checkHeaderDiff).
+   Map-lore proper nouns (Great range, Hexi corridor, Western Ring, Taishan…)
+   are a different case: they ARE real GLOSSARY table rows (terrain-cradle),
+   so they **keep their inventory row** — dropping it would make
+   checkHeaderDiff flag them right back as unregistered-definition. What
+   run #1's report meant by "exclude from future audit runs" is narrower:
+   skip them in the dual-dictionary verdict-judging pass (Ring B) — they are
+   place names, not mechanic names, so genre/theory-dictionary routing does
+   not apply. Corrected at run #2 after the literal reading nearly caused a
+   self-inflicted lint regression.
 3. Deduplicate: one row per concept. Birthplace priority: feature GLOSSARY >
    DOMAIN_MAP > model doc > RULINGS. tier 0 only when DOMAIN_MAP is the
    birthplace.
