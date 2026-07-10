@@ -97,6 +97,40 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   L2 conclusion that leans on a simplified mechanic as L1-grade for that
   mechanic (test-trust ladder, match-arc TEST-LADDER.md).
 
+- [ ] **Occupation-geography pass — deferred doc-sync batch** (registered
+  2026-07-11, occupation-geography design session; order (a) — docs AFTER
+  the re-measurement, per the sealed §5 precedent). Owed once the plan
+  (`docs/superpowers/plans/2026-07-10-occupation-geography.md`) lands and
+  measures: (1) match-arc RULINGS entries for the session's sealed
+  occupation model (geography-set/judgment-choice principle L0; frontier ×
+  value÷resistance capture, cession value+connectivity, possessor-keeps
+  elimination L0–L1; per-sector ripening migration + accumulator
+  supersession) + the measured `capLandFrac` read (L2 stamp); (2) **ADR
+  0029** ("arrives alive" → "undamaged", uniform integration lag) — user
+  approved the DIRECTION verbally 2026-07-10, WORDING seal still owed
+  before the `DOMAIN_MAP.md` Settlement-line edit lands (+ ADR 0022 header
+  stamp per supersession protocol; draft preserved at
+  `/tmp/adr-0029-draft-2026-07-10.md`, regenerate from design spec §6/§11
+  if lost); (3) SPEC Core Design Principles promotion proposal ("geography
+  defines the set; judgment chooses within it" — Tier-3, user decision);
+  (4) match-arc INDEX §5 refresh + GLOSSARY-QUICKREF regen +
+  term-inventory patches; (5) development-lever reconsideration with the
+  new read. Truth meanwhile: design spec
+  `docs/superpowers/specs/2026-07-10-occupation-geography-design.md` +
+  `docs/features/capital/` (CP-①).
+
+- [ ] **Unsealed surge/economy 가안 — post-measurement reconsideration**
+  (registered 2026-07-11, user ruling [conversation 2026-07-10]: keep 가안,
+  re-examine only after an L2 measurement makes them bite). Four dials:
+  `warMult 2` / `fullMult 12` (surge-curve multipliers — currently provably
+  inert: treasury runs surplus all match, blinds autopsy 2026-07-07),
+  surge SIZE exchange rate `+1%p/point` (axis unmodeled — commit economy,
+  see the L2 fidelity-boundary grill row), `treasuryStartTurns 3`.
+  Trigger to reopen: any measurement where the price curve or treasury
+  actually binds (an economy-tightening pass, or commit-economy modeling).
+  Do not tune before then — unverifiable numbers are decoration, not
+  control. Owner: magnitude session.
+
 - [ ] **Doc-governance promotion chain** (registered 2026-07-10, doc-audit
   session; sealed package, cold-review rider — gates must be owned rows, not
   a deferred-forever plan): (a) ~~P1 lint prototype~~ — **BUILT 2026-07-10**
