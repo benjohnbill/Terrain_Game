@@ -1,0 +1,1294 @@
+{
+ "regenerated": "2026-07-10",
+ "derivedFrom": ".claude/rules/documentation-law.md",
+ "files": [
+  {
+   "path": "SPEC.md",
+   "layer": "direction",
+   "role": "product direction; changes only by explicit user decision (proposal, never drift)",
+   "ownerFeature": null,
+   "allowedContent": [
+    "direction",
+    "principles",
+    "scope"
+   ],
+   "forbiddenContent": [
+    "dial-values",
+    "feature-definitions"
+   ]
+  },
+  {
+   "path": "DESIGN.md",
+   "layer": "projection",
+   "role": "stable architecture summary; updated only in doc-sync batches",
+   "ownerFeature": null,
+   "allowedContent": [
+    "summary",
+    "pointer"
+   ],
+   "forbiddenContent": [
+    "first-authored-truth"
+   ]
+  },
+  {
+   "path": "DOMAIN_MAP.md",
+   "layer": "projection",
+   "role": "tier-0 canon; promoted entries are summary + pointer",
+   "ownerFeature": null,
+   "allowedContent": [
+    "summary",
+    "pointer",
+    "status-marks"
+   ],
+   "forbiddenContent": [
+    "definition-body",
+    "value-restatement"
+   ]
+  },
+  {
+   "path": "AGENTS.md",
+   "layer": "law",
+   "role": "agent guide; points to documentation-law",
+   "ownerFeature": null,
+   "allowedContent": [],
+   "forbiddenContent": []
+  },
+  {
+   "path": "CLAUDE.md",
+   "layer": "law",
+   "role": "Claude Code entry; imports AGENTS.md + documentation-law",
+   "ownerFeature": null,
+   "allowedContent": [],
+   "forbiddenContent": []
+  },
+  {
+   "path": ".claude/rules/documentation-law.md",
+   "layer": "law",
+   "role": "the documentation & terminology law (single source)",
+   "ownerFeature": null,
+   "allowedContent": [],
+   "forbiddenContent": []
+  },
+  {
+   "path": "docs/adr/0001-terrain-first-east-asia-inspired-world.md",
+   "layer": "record",
+   "role": "promoted decision record; append-only + supersession header protocol",
+   "ownerFeature": null,
+   "allowedContent": [
+    "decision",
+    "context",
+    "supersession-stamps"
+   ],
+   "forbiddenContent": [
+    "silent-edits-to-decision"
+   ]
+  },
+  {
+   "path": "docs/adr/0002-hex-first-province-compatible-map-units.md",
+   "layer": "record",
+   "role": "promoted decision record; append-only + supersession header protocol",
+   "ownerFeature": null,
+   "allowedContent": [
+    "decision",
+    "context",
+    "supersession-stamps"
+   ],
+   "forbiddenContent": [
+    "silent-edits-to-decision"
+   ]
+  },
+  {
+   "path": "docs/adr/0003-large-world-active-region-simulation.md",
+   "layer": "record",
+   "role": "promoted decision record; append-only + supersession header protocol",
+   "ownerFeature": null,
+   "allowedContent": [
+    "decision",
+    "context",
+    "supersession-stamps"
+   ],
+   "forbiddenContent": [
+    "silent-edits-to-decision"
+   ]
+  },
+  {
+   "path": "docs/adr/0004-named-provinces-over-terrain-layers.md",
+   "layer": "record",
+   "role": "promoted decision record; append-only + supersession header protocol",
+   "ownerFeature": null,
+   "allowedContent": [
+    "decision",
+    "context",
+    "supersession-stamps"
+   ],
+   "forbiddenContent": [
+    "silent-edits-to-decision"
+   ]
+  },
+  {
+   "path": "docs/adr/0005-hybrid-historical-fictional-place-names.md",
+   "layer": "record",
+   "role": "promoted decision record; append-only + supersession header protocol",
+   "ownerFeature": null,
+   "allowedContent": [
+    "decision",
+    "context",
+    "supersession-stamps"
+   ],
+   "forbiddenContent": [
+    "silent-edits-to-decision"
+   ]
+  },
+  {
+   "path": "docs/adr/0006-province-archetype-regions-use-terrain-layers.md",
+   "layer": "record",
+   "role": "promoted decision record; append-only + supersession header protocol",
+   "ownerFeature": null,
+   "allowedContent": [
+    "decision",
+    "context",
+    "supersession-stamps"
+   ],
+   "forbiddenContent": [
+    "silent-edits-to-decision"
+   ]
+  },
+  {
+   "path": "docs/adr/0007-settlement-function-layer.md",
+   "layer": "record",
+   "role": "promoted decision record; append-only + supersession header protocol",
+   "ownerFeature": null,
+   "allowedContent": [
+    "decision",
+    "context",
+    "supersession-stamps"
+   ],
+   "forbiddenContent": [
+    "silent-edits-to-decision"
+   ]
+  },
+  {
+   "path": "docs/adr/0008-phase-1-combat-economy-stat-scope.md",
+   "layer": "record",
+   "role": "promoted decision record; append-only + supersession header protocol",
+   "ownerFeature": null,
+   "allowedContent": [
+    "decision",
+    "context",
+    "supersession-stamps"
+   ],
+   "forbiddenContent": [
+    "silent-edits-to-decision"
+   ]
+  },
+  {
+   "path": "docs/adr/0009-force-roles-and-mobilization-risks.md",
+   "layer": "record",
+   "role": "promoted decision record; append-only + supersession header protocol",
+   "ownerFeature": null,
+   "allowedContent": [
+    "decision",
+    "context",
+    "supersession-stamps"
+   ],
+   "forbiddenContent": [
+    "silent-edits-to-decision"
+   ]
+  },
+  {
+   "path": "docs/adr/0010-high-complexity-low-micromanagement.md",
+   "layer": "record",
+   "role": "promoted decision record; append-only + supersession header protocol",
+   "ownerFeature": null,
+   "allowedContent": [
+    "decision",
+    "context",
+    "supersession-stamps"
+   ],
+   "forbiddenContent": [
+    "silent-edits-to-decision"
+   ]
+  },
+  {
+   "path": "docs/adr/0011-strategic-posture-guidance.md",
+   "layer": "record",
+   "role": "promoted decision record; append-only + supersession header protocol",
+   "ownerFeature": null,
+   "allowedContent": [
+    "decision",
+    "context",
+    "supersession-stamps"
+   ],
+   "forbiddenContent": [
+    "silent-edits-to-decision"
+   ]
+  },
+  {
+   "path": "docs/adr/0012-action-capacity-carryover-and-overclock.md",
+   "layer": "record",
+   "role": "promoted decision record; append-only + supersession header protocol",
+   "ownerFeature": null,
+   "allowedContent": [
+    "decision",
+    "context",
+    "supersession-stamps"
+   ],
+   "forbiddenContent": [
+    "silent-edits-to-decision"
+   ]
+  },
+  {
+   "path": "docs/adr/0013-map-first-situation-ux.md",
+   "layer": "record",
+   "role": "promoted decision record; append-only + supersession header protocol",
+   "ownerFeature": null,
+   "allowedContent": [
+    "decision",
+    "context",
+    "supersession-stamps"
+   ],
+   "forbiddenContent": [
+    "silent-edits-to-decision"
+   ]
+  },
+  {
+   "path": "docs/adr/0014-local-garrison-sustainment.md",
+   "layer": "record",
+   "role": "promoted decision record; append-only + supersession header protocol",
+   "ownerFeature": null,
+   "allowedContent": [
+    "decision",
+    "context",
+    "supersession-stamps"
+   ],
+   "forbiddenContent": [
+    "silent-edits-to-decision"
+   ]
+  },
+  {
+   "path": "docs/adr/0015-strait-crossing-and-deferred-naval.md",
+   "layer": "record",
+   "role": "promoted decision record; append-only + supersession header protocol",
+   "ownerFeature": null,
+   "allowedContent": [
+    "decision",
+    "context",
+    "supersession-stamps"
+   ],
+   "forbiddenContent": [
+    "silent-edits-to-decision"
+   ]
+  },
+  {
+   "path": "docs/adr/0016-web-stack-with-trigger-based-migration.md",
+   "layer": "record",
+   "role": "promoted decision record; append-only + supersession header protocol",
+   "ownerFeature": null,
+   "allowedContent": [
+    "decision",
+    "context",
+    "supersession-stamps"
+   ],
+   "forbiddenContent": [
+    "silent-edits-to-decision"
+   ]
+  },
+  {
+   "path": "docs/adr/0017-positioning-civ-depth-lol-shaped-interaction.md",
+   "layer": "record",
+   "role": "promoted decision record; append-only + supersession header protocol",
+   "ownerFeature": null,
+   "allowedContent": [
+    "decision",
+    "context",
+    "supersession-stamps"
+   ],
+   "forbiddenContent": [
+    "silent-edits-to-decision"
+   ]
+  },
+  {
+   "path": "docs/adr/0018-phase-1-mvp-core-fun-first.md",
+   "layer": "record",
+   "role": "promoted decision record; append-only + supersession header protocol",
+   "ownerFeature": null,
+   "allowedContent": [
+    "decision",
+    "context",
+    "supersession-stamps"
+   ],
+   "forbiddenContent": [
+    "silent-edits-to-decision"
+   ]
+  },
+  {
+   "path": "docs/adr/0019-situation-judgment-structured-province-reading.md",
+   "layer": "record",
+   "role": "promoted decision record; append-only + supersession header protocol",
+   "ownerFeature": null,
+   "allowedContent": [
+    "decision",
+    "context",
+    "supersession-stamps"
+   ],
+   "forbiddenContent": [
+    "silent-edits-to-decision"
+   ]
+  },
+  {
+   "path": "docs/adr/0020-minimal-action-capacity-divisibility-core.md",
+   "layer": "record",
+   "role": "promoted decision record; append-only + supersession header protocol",
+   "ownerFeature": null,
+   "allowedContent": [
+    "decision",
+    "context",
+    "supersession-stamps"
+   ],
+   "forbiddenContent": [
+    "silent-edits-to-decision"
+   ]
+  },
+  {
+   "path": "docs/adr/0021-undercommit-failure-causes-front-sector-loss.md",
+   "layer": "record",
+   "role": "promoted decision record; append-only + supersession header protocol",
+   "ownerFeature": null,
+   "allowedContent": [
+    "decision",
+    "context",
+    "supersession-stamps"
+   ],
+   "forbiddenContent": [
+    "silent-edits-to-decision"
+   ]
+  },
+  {
+   "path": "docs/adr/0022-front-sector-operational-layer.md",
+   "layer": "record",
+   "role": "promoted decision record; append-only + supersession header protocol",
+   "ownerFeature": null,
+   "allowedContent": [
+    "decision",
+    "context",
+    "supersession-stamps"
+   ],
+   "forbiddenContent": [
+    "silent-edits-to-decision"
+   ]
+  },
+  {
+   "path": "docs/adr/0023-province-status-and-control-summary.md",
+   "layer": "record",
+   "role": "promoted decision record; append-only + supersession header protocol",
+   "ownerFeature": null,
+   "allowedContent": [
+    "decision",
+    "context",
+    "supersession-stamps"
+   ],
+   "forbiddenContent": [
+    "silent-edits-to-decision"
+   ]
+  },
+  {
+   "path": "docs/adr/0024-operation-plan-presets-for-core-commands.md",
+   "layer": "record",
+   "role": "promoted decision record; append-only + supersession header protocol",
+   "ownerFeature": null,
+   "allowedContent": [
+    "decision",
+    "context",
+    "supersession-stamps"
+   ],
+   "forbiddenContent": [
+    "silent-edits-to-decision"
+   ]
+  },
+  {
+   "path": "docs/adr/0025-turn-based-core-and-uncertainty-duel.md",
+   "layer": "record",
+   "role": "promoted decision record; append-only + supersession header protocol",
+   "ownerFeature": null,
+   "allowedContent": [
+    "decision",
+    "context",
+    "supersession-stamps"
+   ],
+   "forbiddenContent": [
+    "silent-edits-to-decision"
+   ]
+  },
+  {
+   "path": "docs/adr/0026-one-shot-effects-persistent-state-standing-rules.md",
+   "layer": "record",
+   "role": "promoted decision record; append-only + supersession header protocol",
+   "ownerFeature": null,
+   "allowedContent": [
+    "decision",
+    "context",
+    "supersession-stamps"
+   ],
+   "forbiddenContent": [
+    "silent-edits-to-decision"
+   ]
+  },
+  {
+   "path": "docs/adr/0027-free-commit-allocation-main-surplus-labels.md",
+   "layer": "record",
+   "role": "promoted decision record; append-only + supersession header protocol",
+   "ownerFeature": null,
+   "allowedContent": [
+    "decision",
+    "context",
+    "supersession-stamps"
+   ],
+   "forbiddenContent": [
+    "silent-edits-to-decision"
+   ]
+  },
+  {
+   "path": "docs/adr/0028-l3-buildout-stack-direction.md",
+   "layer": "record",
+   "role": "promoted decision record; append-only + supersession header protocol",
+   "ownerFeature": null,
+   "allowedContent": [
+    "decision",
+    "context",
+    "supersession-stamps"
+   ],
+   "forbiddenContent": [
+    "silent-edits-to-decision"
+   ]
+  },
+  {
+   "path": "docs/adr/README.md",
+   "layer": "record",
+   "role": "ADR index; must list every accepted ADR",
+   "ownerFeature": null,
+   "allowedContent": [],
+   "forbiddenContent": []
+  },
+  {
+   "path": "docs/features/combat-formula/FORMULA.md",
+   "layer": "production",
+   "role": "model document; single owning home for its dials (FORMULA)",
+   "ownerFeature": "combat-formula",
+   "allowedContent": [
+    "dials",
+    "models",
+    "seal-stamps"
+   ],
+   "forbiddenContent": [
+    "restating-other-docs-dials"
+   ]
+  },
+  {
+   "path": "docs/features/combat-formula/GLOSSARY.md",
+   "layer": "production",
+   "role": "tier-1 vocabulary birthplace: definition + sealed value + seal stamp",
+   "ownerFeature": "combat-formula",
+   "allowedContent": [
+    "definition",
+    "sealed-value",
+    "seal-stamp"
+   ],
+   "forbiddenContent": [
+    "ruling-history"
+   ]
+  },
+  {
+   "path": "docs/features/combat-formula/INDEX.md",
+   "layer": "production",
+   "role": "feature front door: status, scope, pointers, open questions",
+   "ownerFeature": "combat-formula",
+   "allowedContent": [
+    "status",
+    "pointer",
+    "open-questions"
+   ],
+   "forbiddenContent": [
+    "definitions",
+    "dial-values"
+   ]
+  },
+  {
+   "path": "docs/features/combat-formula/MAGNITUDE.md",
+   "layer": "production",
+   "role": "model document; single owning home for its dials (MAGNITUDE)",
+   "ownerFeature": "combat-formula",
+   "allowedContent": [
+    "dials",
+    "models",
+    "seal-stamps"
+   ],
+   "forbiddenContent": [
+    "restating-other-docs-dials"
+   ]
+  },
+  {
+   "path": "docs/features/combat-formula/MATCHUP.md",
+   "layer": "production",
+   "role": "model document; single owning home for its dials (MATCHUP)",
+   "ownerFeature": "combat-formula",
+   "allowedContent": [
+    "dials",
+    "models",
+    "seal-stamps"
+   ],
+   "forbiddenContent": [
+    "restating-other-docs-dials"
+   ]
+  },
+  {
+   "path": "docs/features/combat-formula/RESEARCH.md",
+   "layer": "production",
+   "role": "evidence layer: surveys/audits; input to seals, never normative",
+   "ownerFeature": "combat-formula",
+   "allowedContent": [
+    "evidence",
+    "survey"
+   ],
+   "forbiddenContent": [
+    "normative-definitions",
+    "seals"
+   ]
+  },
+  {
+   "path": "docs/features/fog-of-war-discovery/INDEX.md",
+   "layer": "production",
+   "role": "feature front door: status, scope, pointers, open questions",
+   "ownerFeature": "fog-of-war-discovery",
+   "allowedContent": [
+    "status",
+    "pointer",
+    "open-questions"
+   ],
+   "forbiddenContent": [
+    "definitions",
+    "dial-values"
+   ]
+  },
+  {
+   "path": "docs/features/fog-of-war-discovery/RULINGS.md",
+   "layer": "record",
+   "role": "feature-local decision record (Record-layer birthplace tier); promotes to ADR when architecture-grade",
+   "ownerFeature": "fog-of-war-discovery",
+   "allowedContent": [
+    "ruling-history",
+    "evidence",
+    "riders"
+   ],
+   "forbiddenContent": []
+  },
+  {
+   "path": "docs/features/force-geography/INDEX.md",
+   "layer": "production",
+   "role": "feature front door: status, scope, pointers, open questions",
+   "ownerFeature": "force-geography",
+   "allowedContent": [
+    "status",
+    "pointer",
+    "open-questions"
+   ],
+   "forbiddenContent": [
+    "definitions",
+    "dial-values"
+   ]
+  },
+  {
+   "path": "docs/features/force-geography/RULINGS.md",
+   "layer": "record",
+   "role": "feature-local decision record (Record-layer birthplace tier); promotes to ADR when architecture-grade",
+   "ownerFeature": "force-geography",
+   "allowedContent": [
+    "ruling-history",
+    "evidence",
+    "riders"
+   ],
+   "forbiddenContent": []
+  },
+  {
+   "path": "docs/features/match-arc/GLOSSARY.md",
+   "layer": "production",
+   "role": "tier-1 vocabulary birthplace: definition + sealed value + seal stamp",
+   "ownerFeature": "match-arc",
+   "allowedContent": [
+    "definition",
+    "sealed-value",
+    "seal-stamp"
+   ],
+   "forbiddenContent": [
+    "ruling-history"
+   ]
+  },
+  {
+   "path": "docs/features/match-arc/INDEX.md",
+   "layer": "production",
+   "role": "feature front door: status, scope, pointers, open questions",
+   "ownerFeature": "match-arc",
+   "allowedContent": [
+    "status",
+    "pointer",
+    "open-questions"
+   ],
+   "forbiddenContent": [
+    "definitions",
+    "dial-values"
+   ]
+  },
+  {
+   "path": "docs/features/match-arc/RULINGS.md",
+   "layer": "record",
+   "role": "feature-local decision record (Record-layer birthplace tier); promotes to ADR when architecture-grade",
+   "ownerFeature": "match-arc",
+   "allowedContent": [
+    "ruling-history",
+    "evidence",
+    "riders"
+   ],
+   "forbiddenContent": []
+  },
+  {
+   "path": "docs/features/match-arc/STRATEGY-SPACE.md",
+   "layer": "production",
+   "role": "model document; single owning home for its dials (STRATEGY-SPACE)",
+   "ownerFeature": "match-arc",
+   "allowedContent": [
+    "dials",
+    "models",
+    "seal-stamps"
+   ],
+   "forbiddenContent": [
+    "restating-other-docs-dials"
+   ]
+  },
+  {
+   "path": "docs/features/match-arc/TEST-LADDER.md",
+   "layer": "production",
+   "role": "model document; single owning home for its dials (TEST-LADDER)",
+   "ownerFeature": "match-arc",
+   "allowedContent": [
+    "dials",
+    "models",
+    "seal-stamps"
+   ],
+   "forbiddenContent": [
+    "restating-other-docs-dials"
+   ]
+  },
+  {
+   "path": "docs/features/operation-plan-catalog/CATALOG.md",
+   "layer": "production",
+   "role": "model document; single owning home for its dials (CATALOG)",
+   "ownerFeature": "operation-plan-catalog",
+   "allowedContent": [
+    "dials",
+    "models",
+    "seal-stamps"
+   ],
+   "forbiddenContent": [
+    "restating-other-docs-dials"
+   ]
+  },
+  {
+   "path": "docs/features/operation-plan-catalog/INDEX.md",
+   "layer": "production",
+   "role": "feature front door: status, scope, pointers, open questions",
+   "ownerFeature": "operation-plan-catalog",
+   "allowedContent": [
+    "status",
+    "pointer",
+    "open-questions"
+   ],
+   "forbiddenContent": [
+    "definitions",
+    "dial-values"
+   ]
+  },
+  {
+   "path": "docs/features/operation-plan-catalog/RESEARCH.md",
+   "layer": "production",
+   "role": "evidence layer: surveys/audits; input to seals, never normative",
+   "ownerFeature": "operation-plan-catalog",
+   "allowedContent": [
+    "evidence",
+    "survey"
+   ],
+   "forbiddenContent": [
+    "normative-definitions",
+    "seals"
+   ]
+  },
+  {
+   "path": "docs/features/phase-1-fun-core/INDEX.md",
+   "layer": "production",
+   "role": "feature front door: status, scope, pointers, open questions",
+   "ownerFeature": "phase-1-fun-core",
+   "allowedContent": [
+    "status",
+    "pointer",
+    "open-questions"
+   ],
+   "forbiddenContent": [
+    "definitions",
+    "dial-values"
+   ]
+  },
+  {
+   "path": "docs/features/phase-1-terrain-combat/INDEX.md",
+   "layer": "production",
+   "role": "feature front door: status, scope, pointers, open questions",
+   "ownerFeature": "phase-1-terrain-combat",
+   "allowedContent": [
+    "status",
+    "pointer",
+    "open-questions"
+   ],
+   "forbiddenContent": [
+    "definitions",
+    "dial-values"
+   ]
+  },
+  {
+   "path": "docs/features/phase-1-terrain-combat/RESEARCH.md",
+   "layer": "production",
+   "role": "evidence layer: surveys/audits; input to seals, never normative",
+   "ownerFeature": "phase-1-terrain-combat",
+   "allowedContent": [
+    "evidence",
+    "survey"
+   ],
+   "forbiddenContent": [
+    "normative-definitions",
+    "seals"
+   ]
+  },
+  {
+   "path": "docs/features/tactical-plan-ai/BATTERY.md",
+   "layer": "production",
+   "role": "model document; single owning home for its dials (BATTERY)",
+   "ownerFeature": "tactical-plan-ai",
+   "allowedContent": [
+    "dials",
+    "models",
+    "seal-stamps"
+   ],
+   "forbiddenContent": [
+    "restating-other-docs-dials"
+   ]
+  },
+  {
+   "path": "docs/features/tactical-plan-ai/GLOSSARY.md",
+   "layer": "production",
+   "role": "tier-1 vocabulary birthplace: definition + sealed value + seal stamp",
+   "ownerFeature": "tactical-plan-ai",
+   "allowedContent": [
+    "definition",
+    "sealed-value",
+    "seal-stamp"
+   ],
+   "forbiddenContent": [
+    "ruling-history"
+   ]
+  },
+  {
+   "path": "docs/features/tactical-plan-ai/INDEX.md",
+   "layer": "production",
+   "role": "feature front door: status, scope, pointers, open questions",
+   "ownerFeature": "tactical-plan-ai",
+   "allowedContent": [
+    "status",
+    "pointer",
+    "open-questions"
+   ],
+   "forbiddenContent": [
+    "definitions",
+    "dial-values"
+   ]
+  },
+  {
+   "path": "docs/features/tactical-plan-ai/RULINGS.md",
+   "layer": "record",
+   "role": "feature-local decision record (Record-layer birthplace tier); promotes to ADR when architecture-grade",
+   "ownerFeature": "tactical-plan-ai",
+   "allowedContent": [
+    "ruling-history",
+    "evidence",
+    "riders"
+   ],
+   "forbiddenContent": []
+  },
+  {
+   "path": "docs/features/terrain-cradle/GLOSSARY.md",
+   "layer": "production",
+   "role": "tier-1 vocabulary birthplace: definition + sealed value + seal stamp",
+   "ownerFeature": "terrain-cradle",
+   "allowedContent": [
+    "definition",
+    "sealed-value",
+    "seal-stamp"
+   ],
+   "forbiddenContent": [
+    "ruling-history"
+   ]
+  },
+  {
+   "path": "docs/features/terrain-cradle/INDEX.md",
+   "layer": "production",
+   "role": "feature front door: status, scope, pointers, open questions",
+   "ownerFeature": "terrain-cradle",
+   "allowedContent": [
+    "status",
+    "pointer",
+    "open-questions"
+   ],
+   "forbiddenContent": [
+    "definitions",
+    "dial-values"
+   ]
+  },
+  {
+   "path": "docs/features/terrain-cradle/RULINGS.md",
+   "layer": "record",
+   "role": "feature-local decision record (Record-layer birthplace tier); promotes to ADR when architecture-grade",
+   "ownerFeature": "terrain-cradle",
+   "allowedContent": [
+    "ruling-history",
+    "evidence",
+    "riders"
+   ],
+   "forbiddenContent": []
+  },
+  {
+   "path": "docs/features/combat-formula/research/dial-set-audit-2026-07-03.md",
+   "layer": "production",
+   "role": "evidence layer: surveys/audits; input to seals, never normative",
+   "ownerFeature": "combat-formula",
+   "allowedContent": [
+    "evidence",
+    "survey"
+   ],
+   "forbiddenContent": [
+    "normative-definitions",
+    "seals"
+   ]
+  },
+  {
+   "path": "docs/features/combat-formula/research/first-strike-and-mobilization-visibility.md",
+   "layer": "production",
+   "role": "evidence layer: surveys/audits; input to seals, never normative",
+   "ownerFeature": "combat-formula",
+   "allowedContent": [
+    "evidence",
+    "survey"
+   ],
+   "forbiddenContent": [
+    "normative-definitions",
+    "seals"
+   ]
+  },
+  {
+   "path": "docs/features/combat-formula/research/real-war-multipliers.md",
+   "layer": "production",
+   "role": "evidence layer: surveys/audits; input to seals, never normative",
+   "ownerFeature": "combat-formula",
+   "allowedContent": [
+    "evidence",
+    "survey"
+   ],
+   "forbiddenContent": [
+    "normative-definitions",
+    "seals"
+   ]
+  },
+  {
+   "path": "docs/features/combat-formula/research/terrain-fort-ladder-validation.md",
+   "layer": "production",
+   "role": "evidence layer: surveys/audits; input to seals, never normative",
+   "ownerFeature": "combat-formula",
+   "allowedContent": [
+    "evidence",
+    "survey"
+   ],
+   "forbiddenContent": [
+    "normative-definitions",
+    "seals"
+   ]
+  },
+  {
+   "path": "docs/features/combat-formula/research/wargame-multiplier-conventions.md",
+   "layer": "production",
+   "role": "evidence layer: surveys/audits; input to seals, never normative",
+   "ownerFeature": "combat-formula",
+   "allowedContent": [
+    "evidence",
+    "survey"
+   ],
+   "forbiddenContent": [
+    "normative-definitions",
+    "seals"
+   ]
+  },
+  {
+   "path": "docs/features/match-arc/research/garrison-field-ratio-and-armed-peace.md",
+   "layer": "production",
+   "role": "evidence layer: surveys/audits; input to seals, never normative",
+   "ownerFeature": "match-arc",
+   "allowedContent": [
+    "evidence",
+    "survey"
+   ],
+   "forbiddenContent": [
+    "normative-definitions",
+    "seals"
+   ]
+  },
+  {
+   "path": "docs/features/match-arc/research/manpower-pool-game-conventions.md",
+   "layer": "production",
+   "role": "evidence layer: surveys/audits; input to seals, never normative",
+   "ownerFeature": "match-arc",
+   "allowedContent": [
+    "evidence",
+    "survey"
+   ],
+   "forbiddenContent": [
+    "normative-definitions",
+    "seals"
+   ]
+  },
+  {
+   "path": "docs/features/match-arc/research/mobilization-historical-dynamics.md",
+   "layer": "production",
+   "role": "evidence layer: surveys/audits; input to seals, never normative",
+   "ownerFeature": "match-arc",
+   "allowedContent": [
+    "evidence",
+    "survey"
+   ],
+   "forbiddenContent": [
+    "normative-definitions",
+    "seals"
+   ]
+  },
+  {
+   "path": "docs/features/operation-plan-catalog/research/doctrine-survey.md",
+   "layer": "production",
+   "role": "evidence layer: surveys/audits; input to seals, never normative",
+   "ownerFeature": "operation-plan-catalog",
+   "allowedContent": [
+    "evidence",
+    "survey"
+   ],
+   "forbiddenContent": [
+    "normative-definitions",
+    "seals"
+   ]
+  },
+  {
+   "path": "docs/features/operation-plan-catalog/research/grand-strategy-survey.md",
+   "layer": "production",
+   "role": "evidence layer: surveys/audits; input to seals, never normative",
+   "ownerFeature": "operation-plan-catalog",
+   "allowedContent": [
+    "evidence",
+    "survey"
+   ],
+   "forbiddenContent": [
+    "normative-definitions",
+    "seals"
+   ]
+  },
+  {
+   "path": "docs/features/operation-plan-catalog/research/wargame-uoc-survey.md",
+   "layer": "production",
+   "role": "evidence layer: surveys/audits; input to seals, never normative",
+   "ownerFeature": "operation-plan-catalog",
+   "allowedContent": [
+    "evidence",
+    "survey"
+   ],
+   "forbiddenContent": [
+    "normative-definitions",
+    "seals"
+   ]
+  },
+  {
+   "path": "docs/features/tactical-plan-ai/research/battery-run-2026-07-08.md",
+   "layer": "production",
+   "role": "evidence layer: surveys/audits; input to seals, never normative",
+   "ownerFeature": "tactical-plan-ai",
+   "allowedContent": [
+    "evidence",
+    "survey"
+   ],
+   "forbiddenContent": [
+    "normative-definitions",
+    "seals"
+   ]
+  },
+  {
+   "path": "docs/SYNC-DEBT.md",
+   "layer": "working",
+   "role": "doc-sync debt ledger; register only, one row per unpaid debt",
+   "ownerFeature": null,
+   "allowedContent": [],
+   "forbiddenContent": [
+    "normative-definitions"
+   ]
+  },
+  {
+   "path": "docs/DISPLAY-DEBT.md",
+   "layer": "working",
+   "role": "UI-design debt ledger; register only",
+   "ownerFeature": null,
+   "allowedContent": [],
+   "forbiddenContent": [
+    "normative-definitions"
+   ]
+  },
+  {
+   "path": "docs/DESIGN-RISKS.md",
+   "layer": "working",
+   "role": "working notes: design risks",
+   "ownerFeature": null,
+   "allowedContent": [],
+   "forbiddenContent": []
+  },
+  {
+   "path": "docs/GLOSSARY-QUICKREF.md",
+   "layer": "working",
+   "role": "generated convenience digest; pointers only, never citable as definition; may lag canon",
+   "ownerFeature": null,
+   "allowedContent": [],
+   "forbiddenContent": [
+    "normative-definitions"
+   ]
+  },
+  {
+   "path": "docs/superpowers/plans/2026-06-29-phase-1-ai-target-evaluation-slice.md",
+   "layer": "working",
+   "role": "time-stamped spec/plan record; consult for context, not current truth",
+   "ownerFeature": null,
+   "allowedContent": [],
+   "forbiddenContent": []
+  },
+  {
+   "path": "docs/superpowers/plans/2026-06-29-phase-1-combat-core-slice.md",
+   "layer": "working",
+   "role": "time-stamped spec/plan record; consult for context, not current truth",
+   "ownerFeature": null,
+   "allowedContent": [],
+   "forbiddenContent": []
+  },
+  {
+   "path": "docs/superpowers/plans/2026-06-29-phase-1-command-preview-mobilization-ui-slice.md",
+   "layer": "working",
+   "role": "time-stamped spec/plan record; consult for context, not current truth",
+   "ownerFeature": null,
+   "allowedContent": [],
+   "forbiddenContent": []
+  },
+  {
+   "path": "docs/superpowers/plans/2026-06-29-phase-1-map-command-slice.md",
+   "layer": "working",
+   "role": "time-stamped spec/plan record; consult for context, not current truth",
+   "ownerFeature": null,
+   "allowedContent": [],
+   "forbiddenContent": []
+  },
+  {
+   "path": "docs/superpowers/plans/2026-06-29-phase-1-scouting-information-slice.md",
+   "layer": "working",
+   "role": "time-stamped spec/plan record; consult for context, not current truth",
+   "ownerFeature": null,
+   "allowedContent": [],
+   "forbiddenContent": []
+  },
+  {
+   "path": "docs/superpowers/plans/2026-07-01-fog-estimate-range-model.md",
+   "layer": "working",
+   "role": "time-stamped spec/plan record; consult for context, not current truth",
+   "ownerFeature": null,
+   "allowedContent": [],
+   "forbiddenContent": []
+  },
+  {
+   "path": "docs/superpowers/plans/2026-07-02-situation-map-v5-map-only.md",
+   "layer": "working",
+   "role": "time-stamped spec/plan record; consult for context, not current truth",
+   "ownerFeature": null,
+   "allowedContent": [],
+   "forbiddenContent": []
+  },
+  {
+   "path": "docs/superpowers/plans/2026-07-06-terrain-cradle-map-validation-harness.md",
+   "layer": "working",
+   "role": "time-stamped spec/plan record; consult for context, not current truth",
+   "ownerFeature": null,
+   "allowedContent": [],
+   "forbiddenContent": []
+  },
+  {
+   "path": "docs/superpowers/plans/2026-07-09-domination-victory-check-fix.md",
+   "layer": "working",
+   "role": "time-stamped spec/plan record; consult for context, not current truth",
+   "ownerFeature": null,
+   "allowedContent": [],
+   "forbiddenContent": []
+  },
+  {
+   "path": "docs/superpowers/plans/2026-07-09-force-geography-minimal.md",
+   "layer": "working",
+   "role": "time-stamped spec/plan record; consult for context, not current truth",
+   "ownerFeature": null,
+   "allowedContent": [],
+   "forbiddenContent": []
+  },
+  {
+   "path": "docs/superpowers/plans/2026-07-09-timing-ruler-instrumentation.md",
+   "layer": "working",
+   "role": "time-stamped spec/plan record; consult for context, not current truth",
+   "ownerFeature": null,
+   "allowedContent": [],
+   "forbiddenContent": []
+  },
+  {
+   "path": "docs/superpowers/plans/2026-07-10-conquest-growth-engine.md",
+   "layer": "working",
+   "role": "time-stamped spec/plan record; consult for context, not current truth",
+   "ownerFeature": null,
+   "allowedContent": [],
+   "forbiddenContent": []
+  },
+  {
+   "path": "docs/superpowers/specs/2026-06-29-phase-1-terrain-combat-design.md",
+   "layer": "working",
+   "role": "time-stamped spec/plan record; consult for context, not current truth",
+   "ownerFeature": null,
+   "allowedContent": [],
+   "forbiddenContent": []
+  },
+  {
+   "path": "docs/superpowers/specs/2026-07-01-fog-of-war-discovery-design.md",
+   "layer": "working",
+   "role": "time-stamped spec/plan record; consult for context, not current truth",
+   "ownerFeature": null,
+   "allowedContent": [],
+   "forbiddenContent": []
+  },
+  {
+   "path": "docs/superpowers/specs/2026-07-01-phase-1-mvp-payoff-loop-design.md",
+   "layer": "working",
+   "role": "time-stamped spec/plan record; consult for context, not current truth",
+   "ownerFeature": null,
+   "allowedContent": [],
+   "forbiddenContent": []
+  },
+  {
+   "path": "docs/superpowers/specs/2026-07-02-stage2-command-skill-edge-design.md",
+   "layer": "working",
+   "role": "time-stamped spec/plan record; consult for context, not current truth",
+   "ownerFeature": null,
+   "allowedContent": [],
+   "forbiddenContent": []
+  },
+  {
+   "path": "docs/superpowers/specs/2026-07-06-terrain-cradle-map-design.md",
+   "layer": "working",
+   "role": "time-stamped spec/plan record; consult for context, not current truth",
+   "ownerFeature": null,
+   "allowedContent": [],
+   "forbiddenContent": []
+  },
+  {
+   "path": "docs/superpowers/specs/2026-07-09-hegemony-decision-timing-target-design.md",
+   "layer": "working",
+   "role": "time-stamped spec/plan record; consult for context, not current truth",
+   "ownerFeature": null,
+   "allowedContent": [],
+   "forbiddenContent": []
+  },
+  {
+   "path": "docs/superpowers/specs/2026-07-10-conquest-growth-engine-design.md",
+   "layer": "working",
+   "role": "time-stamped spec/plan record; consult for context, not current truth",
+   "ownerFeature": null,
+   "allowedContent": [],
+   "forbiddenContent": []
+  },
+  {
+   "path": "docs/superpowers/specs/2026-07-10-doc-audit-and-forensics.md",
+   "layer": "working",
+   "role": "time-stamped spec/plan record; consult for context, not current truth",
+   "ownerFeature": null,
+   "allowedContent": [],
+   "forbiddenContent": []
+  },
+  {
+   "path": "mockup/combat-calc/NOTES.md",
+   "layer": "working",
+   "role": "staging area for verdicts; must sync to Production in same session's doc-sync",
+   "ownerFeature": null,
+   "allowedContent": [],
+   "forbiddenContent": []
+  },
+  {
+   "path": "docs/teach/2026-06-29-game-dev-stack-literacy.md",
+   "layer": "sanctuary",
+   "role": "user's own space; agents do not touch",
+   "ownerFeature": null,
+   "allowedContent": [],
+   "forbiddenContent": []
+  },
+  {
+   "path": "docs/teach/MISSION.md",
+   "layer": "sanctuary",
+   "role": "user's own space; agents do not touch",
+   "ownerFeature": null,
+   "allowedContent": [],
+   "forbiddenContent": []
+  },
+  {
+   "path": "docs/teach/NOTES.md",
+   "layer": "sanctuary",
+   "role": "user's own space; agents do not touch",
+   "ownerFeature": null,
+   "allowedContent": [],
+   "forbiddenContent": []
+  },
+  {
+   "path": "docs/teach/RESOURCES.md",
+   "layer": "sanctuary",
+   "role": "user's own space; agents do not touch",
+   "ownerFeature": null,
+   "allowedContent": [],
+   "forbiddenContent": []
+  },
+  {
+   "path": "docs/teach/learning-records/0001-baseline-stack-literacy.md",
+   "layer": "sanctuary",
+   "role": "user's own space; agents do not touch",
+   "ownerFeature": null,
+   "allowedContent": [],
+   "forbiddenContent": []
+  },
+  {
+   "path": "docs/audits/term-inventory.json",
+   "layer": "working",
+   "role": "living baseline: registered-term index (regenerable; no definitions)",
+   "ownerFeature": null,
+   "allowedContent": [],
+   "forbiddenContent": []
+  },
+  {
+   "path": "docs/audits/doc-registry.json",
+   "layer": "working",
+   "role": "living baseline: doc roles per documentation-law (regenerable; law -> registry -> lint, one-way)",
+   "ownerFeature": null,
+   "allowedContent": [],
+   "forbiddenContent": []
+  }
+ ]
+}
