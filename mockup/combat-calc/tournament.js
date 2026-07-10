@@ -911,7 +911,9 @@ function servingBodies(r) {
 const civilians = (r) => Math.max(0, r.pool - servingBodies(r));
 
 // Option B treasury: income/turn = land yield × usable (econ.income shape).
-const realmIncome = (r) => r.yieldBase * r.usable;
+const realmIncome = (r) => sectorMode(r)
+  ? heldSectors(r).reduce((s, x) => s + x.economyValue * x.usableEconomy, 0) * r.usable
+  : r.yieldBase * r.usable;   // legacy fixture path — keep NaN semantics verbatim
 // mobilization intensity (serving ÷ register) — the surge-curve x-axis.
 const intensity = (r) => (r.pool > 0 ? servingBodies(r) / r.pool : 1);
 
@@ -1071,7 +1073,20 @@ function runMatch(assignment, opts = {}) {
     // healing), not a force-shaping act (M12-5 standing floor).
     for (const r of alive) {
       r.usable = Math.min(1, r.usable + H.usableRecovery);
-      ripenCap(r);                                        // §5: integrate conquered ceiling
+      if (sectorMode(r)) {
+        // per-sector integration ripening (ADR 0022 verbatim; each sector
+        // on its own clock — the pooled-flow approximation is retired)
+        for (const s of heldSectors(r)) {
+          if (s.usableEconomy < 1) s.usableEconomy = Math.min(1, s.usableEconomy + H.sectorRipenPerTurn);
+          if (s.usablePop < 1) s.usablePop = Math.min(1, s.usablePop + H.sectorRipenPerTurn);
+        }
+        // land-ceiling coupling blend (capLandFrac 0 = frozen control)
+        if (H.capLandFrac > 0)
+          r.fieldCap = Math.round((1 - H.capLandFrac) * r.fieldCap0
+            + H.capLandFrac * ECON.nationalCap(heldSectors(r)));
+      } else {
+        ripenCap(r);   // legacy accumulator (retires in Task 5)
+      }
       r.treasury = (r.treasury ?? 0) + realmIncome(r);  // Option B income accrual
     }
 

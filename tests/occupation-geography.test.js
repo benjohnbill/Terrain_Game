@@ -9,6 +9,7 @@ const MB = require('../mockup/combat-calc/map-board.js');
 const T = require('../mockup/combat-calc/tournament.js');
 
 const BINDING = viableBindings(CRADLE_MAP, 5).viable[0];
+const ECON = require('../mockup/combat-calc/econ.js');
 
 test('buildSectorWorld: all 56 cradle sectors present with live copies', () => {
   const w = MB.buildSectorWorld(CRADLE_MAP, BINDING);
@@ -274,4 +275,53 @@ test('elimination: dead third-party attacker folds its bite back through the eli
     const owners = b.filter((r) => r.holds && r.holds.has(id));
     assert.equal(owners.length, 1, `${id} held by exactly one realm after elimination`);
   }
+});
+
+// ---- Task 4: derivations + ripening pulse ----
+test('realmIncome derives from held sectors x sector usable x realm usable', () => {
+  const b = mapBoard();
+  const r = b[0];
+  const expect = [...r.holds].map((id) => r.world.sectors.get(id))
+    .reduce((s, x) => s + x.economyValue * x.usableEconomy, 0) * r.usable;
+  assert.ok(Math.abs(T.realmIncome(r) - expect) < 1e-9);
+  // at start (all usable 1.0) this equals the legacy yieldBase * usable
+  assert.ok(Math.abs(expect - r.yieldBase * r.usable) < 1e-9);
+});
+
+test('capLandFrac 0: ceiling static through land loss; 1.0: tracks holdings', () => {
+  const b = mapBoard();
+  const { A, D, war } = warBetween(b);
+  const d0 = D.fieldCap;
+  T.captureSector(war, A, D); // D loses a sector into limbo
+  // no full match needed — pin the blend formula the pulse must use
+  const blend = (r, f) => Math.round((1 - f) * r.fieldCap0 + f * ECON.nationalCap(
+    [...r.holds].map((id) => r.world.sectors.get(id))));
+  assert.equal(blend(D, 0), d0, 'frac 0 is the frozen control');
+  assert.ok(blend(D, 1) < d0, 'frac 1 feels the loss immediately');
+});
+
+test('acquired sector ripens +0.10/turn to 1.0 through the pulse', () => {
+  const b = mapBoard();
+  const { A, D, war } = warBetween(b);
+  T.captureSector(war, A, D);
+  const id = war.occupiedIds[0];
+  T.acquireSector(A, id, T.HARNESS);
+  war.occupiedIds = []; war.occupied = 0;
+  const s = A.world.sectors.get(id);
+  assert.equal(s.usablePop, 0.6);
+  // run a short match on this board: the pulse must ripen the sector
+  const assign = Object.fromEntries(b.map((r) =>
+    [r.name, { archetype: 'shield-first', temperament: '표준' }]));
+  T.runMatch(assign, { seed: 3, board: b, harness: { maxTurns: 4 } });
+  assert.ok(s.usablePop > 0.6, `ripened, got ${s.usablePop}`);
+  assert.ok(s.usablePop <= 1.0 + 1e-9);
+});
+
+test('limbo: an occupied (untransferred) sector pays income to neither side', () => {
+  const b = mapBoard();
+  const { A, D, war } = warBetween(b);
+  const incomeBefore = T.realmIncome(A) + T.realmIncome(D);
+  T.captureSector(war, A, D);
+  const incomeAfter = T.realmIncome(A) + T.realmIncome(D);
+  assert.ok(incomeAfter < incomeBefore, 'world income drops while contested');
 });
