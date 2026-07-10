@@ -100,7 +100,12 @@ test('aggregate 18-22 core/mean/std/hist all-timeout edge case', () => {
 test('aggregate: deep diagnostics — denied-dominant count + overhang mean', () => {
   const recs = [
     { winner: 'A', tripTurn: 20, eliminations: 1, vassalDeals: 0,
-      panel: { bucket: 'hegemon', sides: [] } },
+      panel: { bucket: 'hegemon', sides: [] },
+      // decided record carries its own finalCheck (with a wildly different
+      // coalitionOverhang, 99999) so this test would FAIL if aggregate ever
+      // averaged over all records instead of undecided-only — a decided
+      // record with no finalCheck at all can't distinguish the two scopings.
+      finalCheck: { coalitionOverhang: 99999, leadershipShortfall: 0, candProj: 1 } },
     { winner: null, eliminations: 0, vassalDeals: 1,
       panel: { bucket: 'denied-dominant', sides: [] },
       finalCheck: { coalitionOverhang: 4000, leadershipShortfall: 100, candProj: 1 } },

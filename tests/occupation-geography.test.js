@@ -187,6 +187,7 @@ test('returnOccupied: sectors go back to the defender at pre-war usable', () => 
   assert.ok(D.holds.has(id));
   assert.deepEqual(war.occupiedIds, []);
   assert.equal(D.world.sectors.get(id).usableEconomy, 1, 'no damage on return');
+  assert.equal(D.world.sectors.get(id).usablePop, 1, 'no damage on return');
 });
 
 test('cession picks by value desc with connectivity to winner territory', () => {
@@ -195,11 +196,25 @@ test('cession picks by value desc with connectivity to winner territory', () => 
   for (let i = 0; i < 4; i++) T.captureSector(war, A, D);
   const ids = [...war.occupiedIds];
   const w = D.world;
+  // necessary condition for value-descending pick: snapshot A's territory
+  // BEFORE settlement, then compute the single highest-value occupied id
+  // that already borders it — the ranked-desc + connectivity-greedy pick
+  // algorithm must select this one first, so it must land in gained.
+  const aHoldsBefore = new Set(A.holds);
+  const val = (id) => { const s = w.sectors.get(id);
+    return s.populationValue + s.economyValue; };
+  const connectedToA = ids.filter((id) =>
+    [...w.adj.get(id)].some((n) => aHoldsBefore.has(n)));
+  assert.ok(connectedToA.length > 0, 'premise: some occupied sector borders A pre-settlement');
+  const bestConnected = [...connectedToA]
+    .sort((x, y) => val(y) - val(x) || (x < y ? -1 : 1))[0];
   war.stage = 'cascade'; war.margin = 'decisive'; war.endTurn = 5;
   const res = T.applySettlement('preset', '표준', war, A, D, T.HARNESS, b);
   assert.ok(res.ceded >= 1 && res.ceded <= 4);
   const gained = ids.filter((id) => A.holds.has(id));
   assert.equal(gained.length, res.ceded);
+  assert.ok(gained.includes(bestConnected),
+    `${bestConnected} (highest-value id connected to A pre-settlement) missing from gained [${gained}]`);
   // every gained sector connects to (A territory ∪ other gained sectors)
   for (const id of gained) {
     const ok = [...w.adj.get(id)].some((n) => A.holds.has(n));
@@ -341,4 +356,50 @@ test('capLandFrac 0 control: two identical runs are deterministic and growth-fre
   // frozen control: every ceiling still equals its build value
   const fresh = mapBoard();
   assert.deepEqual(a.caps, fresh.map((r) => r.fieldCap0));
+});
+
+// capLandFrac's blend must be provably LIVE inside a real T.runMatch (not
+// just algebraically true, as the Task-4 test above establishes) — and the
+// frac-0 control must stay frozen even while real land actually changes
+// hands, not merely because nothing happened at all (as the control just
+// above this one turns out to be: at seed 11 / maxTurns 12 / uniform
+// shield-first, NO war ever starts on this board — see below).
+//
+// Seed/maxTurns hunting alone cannot fix that: pickTarget takes no rng
+// argument, so which wars start is 100% deterministic given the archetype
+// assignment, and viable[0]'s five seats are population-symmetric (every
+// seat totals populationValue 12 → fieldCap 7200 exactly, verified
+// directly). Measuring every adjacent pair's field/shield ratio turn-by-
+// turn under ANY uniform archetype tops out around 1.12 — below both the
+// 1.25 idle-aggression bar and every archetype's 1.6+ direct-declare bar —
+// so a uniform assignment never starts a war on this board, at any seed,
+// verified up to 200+ turns across every archetype. A light archetype
+// asymmetry breaks the tie instead: 'shield-first' spends its first few
+// turns on fort upgrades before it ever recruits (peace order
+// ['fort','recruit']), so a recruit-first neighbor ('interior-lines',
+// peace order ['recruit','fort']) opens a real, natural early-game gap.
+// seed 1 / maxTurns 16 with seat2 = interior-lines (others shield-first)
+// reliably produces a real siege→capture→transfer (stable across maxTurns
+// 13-20+, not a knife-edge single point — verified directly).
+test('capLandFrac 1 (real match): ceiling tracks a genuine land transfer; frac 0 twin stays frozen', () => {
+  const seed = 1, maxTurns = 16;
+  const assign = Object.fromEntries(Object.keys(BINDING).map((name) =>
+    [name, { archetype: name === 'seat2' ? 'interior-lines' : 'shield-first', temperament: '표준' }]));
+
+  const fresh = mapBoard();
+  const startSizes = new Map(fresh.map((r) => [r.name, r.holds.size]));
+
+  const board0 = mapBoard();
+  T.runMatch(assign, { seed, board: board0, harness: { maxTurns } });
+  for (const r of board0.filter((r) => r.alive))
+    assert.equal(r.fieldCap, r.fieldCap0, `${r.name} ceiling drifted at capLandFrac 0 (frozen control)`);
+
+  const board1 = mapBoard();
+  T.runMatch(assign, { seed, board: board1, harness: { maxTurns, capLandFrac: 1 } });
+  // premise: land actually changed hands — else the drift assertion below
+  // would pass or fail on an untested claim, not the blend
+  const moved = board1.some((r) => r.holds.size !== startSizes.get(r.name));
+  assert.ok(moved, 'premise broken: no holdings changed by maxTurns 16 at seed 1 — pick another seed/maxTurns/archetype mix');
+  const drifted = board1.filter((r) => r.alive).some((r) => r.fieldCap !== r.fieldCap0);
+  assert.ok(drifted, "capLandFrac 1 should move at least one alive realm's ceiling off its build value");
 });
