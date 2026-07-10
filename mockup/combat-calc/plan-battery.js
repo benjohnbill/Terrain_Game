@@ -33,7 +33,7 @@ function aggregate(records) {
   // of how each match ended, plus the leader-seat × bucket crown crosstab
   // (TC-② needle b — does the center actually lead when it holds).
   const buckets = {}; const bucketByLeaderSeat = {};
-  let exhausted = 0, paneled = 0;
+  let exhausted = 0, paneled = 0, deniedDominant = 0;
   let elim = 0, vassal = 0, brained = 0, forced = 0, misjudged = 0;
   let varSum = 0, boostSum = 0;
   // decision-timing ruler (spec 2026-07-09 hegemony-decision-timing-target
@@ -50,6 +50,7 @@ function aggregate(records) {
     if (r.panel) {
       paneled++;
       buckets[r.panel.bucket] = (buckets[r.panel.bucket] || 0) + 1;
+      if (r.panel.bucket === 'denied-dominant') deniedDominant++;
       if (r.panel.exhausted) exhausted++;
       varSum += r.panel.meanWithinRealmVariance || 0;
       boostSum += r.panel.boostedShieldShare || 0;
@@ -67,6 +68,9 @@ function aggregate(records) {
   }
   const shortfalls = undecided
     .map((r) => r.finalCheck && r.finalCheck.leadershipShortfall)
+    .filter((v) => typeof v === 'number');
+  const overhangs = undecided
+    .map((r) => r.finalCheck && r.finalCheck.coalitionOverhang)
     .filter((v) => typeof v === 'number');
   const sortedTrips = [...tripTurns].sort((a, b) => a - b);
   // upper median (median_high): for an even count this is the higher of the
@@ -93,6 +97,9 @@ function aggregate(records) {
       ? shortfalls.reduce((s, v) => s + v, 0) / shortfalls.length : null,
     eliminations: elim, vassalDeals: vassal, shapes, planHist,
     buckets, bucketByLeaderSeat,
+    deniedDominantCount: deniedDominant,
+    coalitionOverhangMean: overhangs.length
+      ? overhangs.reduce((s, v) => s + v, 0) / overhangs.length : null,
     envelopePct: (envelopeCount / records.length) * 100,
     medianTripTurn,
     tripTurnBins,
@@ -202,28 +209,23 @@ function runFgSweep(bindings, reps = 20, seed = 42) {
   };
 }
 
-// §5 growth sweep (DT-②, ADR 0022 ripening, close-out 2026-07-10): conquest
-// cap-growth magnitudes vs the capPerSector:0 control, on the same three
-// FG-⑩ board arms and the same instrument (reps/seed/bindings) as
-// runFgSweep, so the §6 post-measure is the direct before-baseline.
-// dragCap (optional): adds one cap-lag + economy-lag arm at that magnitude
-// (conquestUsableDrag 0.5) — pointed at the best cap AFTER reading cap-only.
-function runGrowthSweep(bindings, reps = 20, seed = 42, caps = [300, 600, 1000], dragCap = null) {
-  const growthArms = { ctrl: {} };
-  for (const c of caps) growthArms[`cap${c}`] = { capPerSector: c };
-  if (dragCap) growthArms[`cap${dragCap}drag`] = { capPerSector: dragCap, conquestUsableDrag: 0.5 };
+// §5 re-measurement (occupation-geography stage ①): land-ceiling coupling
+// strength (capLandFrac) vs the frozen control, same instrument as before.
+// The frac-0 row IS the re-baseline vs the 2026-07-10 pre-upgrade control
+// (decided 43.9 / 63.6 / 85.2) — compare before reading the sweep.
+function runGrowthSweep(bindings, reps = 20, seed = 42, fracs = [0, 0.25, 0.5, 1.0]) {
   const boardArms = {
     ctrl:    BOARD_GAAN,
     fgM9on:  FG_BOARD_GAAN,
     fgM9off: { ...FG_BOARD_GAAN, m9Reserve: false },
   };
   const out = {};
-  for (const [gid, harness] of Object.entries(growthArms)) {
-    out[gid] = {};
-    for (const [bid, gaan] of Object.entries(boardArms)) {
-      out[gid][bid] = aggregate(runCradleTournament({
-        map: CRADLE_MAP, bindings, reps, seed, boardGaan: gaan, harness }));
-    }
+  for (const f of fracs) {
+    out[`frac${f}`] = {};
+    for (const [bid, gaan] of Object.entries(boardArms))
+      out[`frac${f}`][bid] = aggregate(runCradleTournament({
+        map: CRADLE_MAP, bindings, reps, seed, boardGaan: gaan,
+        harness: { capLandFrac: f } }));
   }
   return out;
 }
@@ -236,16 +238,14 @@ function main() {
   const skipD = process.argv.includes('--skip-d');
   const fg = process.argv.includes('--fg');
   const growth = process.argv.includes('--growth');
-  const dragArg = process.argv.find((a) => a.startsWith('--drag-cap='));
   const reps = quick ? 2 : 20;
   const comboStep = quick ? 27 : 1;
   const bindings = viableBindings(CRADLE_MAP, 5).viable;
 
   if (growth) {
-    const dragCap = dragArg ? Number(dragArg.split('=')[1]) : null;
-    console.log(`§5 growth sweep — bindings ${bindings.length}, reps ${reps}${quick ? ' (QUICK)' : ''}${dragCap ? `, drag arm @ cap ${dragCap}` : ''}`);
-    console.log('rows = HARNESS growth arms (capPerSector; ripening capStartFrac 0.60 / +10pp per turn) · cols = FG-⑩ board arms\n');
-    const sweep = runGrowthSweep(bindings, reps, 42, [300, 600, 1000], dragCap);
+    console.log(`§5 growth sweep — bindings ${bindings.length}, reps ${reps}${quick ? ' (QUICK)' : ''}`);
+    console.log('rows = HARNESS land-ceiling coupling (capLandFrac) · cols = FG-⑩ board arms\n');
+    const sweep = runGrowthSweep(bindings, reps, 42, [0, 0.25, 0.5, 1.0]);
     for (const [gid, boards] of Object.entries(sweep)) {
       console.log(`[${gid}]`);
       for (const [bid, agg] of Object.entries(boards)) {
@@ -253,6 +253,7 @@ function main() {
         const stompPct = agg.matches ? ((stomp / agg.matches) * 100).toFixed(1) : '—';
         console.log(`  ${bid.padEnd(7)} decided ${pct(agg.decidedPct)} · envelope(15-25) ${pct(agg.envelopePct)} · core(18-22) ${pct(agg.core1822Pct)} · median ${agg.medianTripTurn === null ? '—' : agg.medianTripTurn} · mean ${agg.meanTripTurn === null ? '—' : agg.meanTripTurn.toFixed(1)} ± ${agg.stdTripTurn === null ? '—' : agg.stdTripTurn.toFixed(1)} · stomp(≤8) ${stompPct}%`);
         console.log(`    hist ${JSON.stringify(agg.tripTurnHist)}`);
+        console.log(`    dd ${agg.deniedDominantCount} · overhang ${agg.coalitionOverhangMean === null ? '—' : Math.round(agg.coalitionOverhangMean)} · elim ${agg.eliminations} · vassal ${agg.vassalDeals}`);
       }
     }
     return;
