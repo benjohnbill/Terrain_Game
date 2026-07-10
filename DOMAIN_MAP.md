@@ -339,9 +339,10 @@ naming, promotion, the generated Quick Reference) lives in
     summoned work surface. Hard constraints: (a) coverage — every
     non-empty axis keeps a surfaced highlight; (b) legibility — collapsed
     counts always shown ("정비 자세 · 위협 3건 접힘"); (c) leak-through
-    (succeeds the old dissonance signal) — a suppressed-axis tension above
-    LEAK_RATIO 1.5 × the strongest active-lens tension stays bright with a
-    red pulse, so an urgent fact cannot be hidden by the lens. Authoritative
+    (succeeds the old dissonance signal) — a suppressed-axis tension that
+    exceeds the sealed LEAK_RATIO threshold relative to the strongest
+    active-lens tension stays bright with a red pulse, so an urgent fact
+    cannot be hidden by the lens (dial value: ADR 0019 amendment). Authoritative
     definition + history: ADR 0019 + its 2026-07-06 amendment.
   - ✅ Variety contract with fog: 형세판단 is a lens — it transmits and amplifies
     input variety, it does not generate it. Cross-playthrough content variety is
@@ -688,7 +689,7 @@ rule)._
   sums and the leadership denominator. Derived per turn (a hermit can buy back in
   via choke-removal paths). Out-of-balance realms are acknowledged at settlement
   (tributary/hermit narrative), never forced to capitulate — the match ends
-  without requiring 100% of the map. A projecting-but-unbreakable realm stays in
+  without requiring the whole map. A projecting-but-unbreakable realm stays in
   and legitimately blocks the decision point (Parthia pattern).
 - ✅ `Settlement` (정산): the procedure converting a decided war into gains
   *without* occupation grinding — annexation arrives through settlement, not
@@ -735,7 +736,7 @@ rule)._
   floor-setter rider + history → match-arc GLOSSARY 복속 row / RULINGS ⑭⑯.
 - ✅ `Recruitment` (모병): the single MVP economy→mass conversion — a primary
   action moving bodies from the register into serving toward the cap, paid from
-  treasury yield, fighting at 100% (single troop quality). **Priced by the Surge
+  treasury yield, fighting at full strength (single troop quality). **Priced by the Surge
   Draft Model (2026-07-07): a continuous cost curve over 동원 강도 plus an
   optional commit-point surge — not a flat rate.** The temporary-levy track
   (공세 동원, ADR 0009 role 3) stays a reserved seat. Force-adjustment stack:

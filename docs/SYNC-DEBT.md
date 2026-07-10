@@ -124,7 +124,14 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   the frozen-world autopsy in `mockup/combat-calc/NOTES.md`
   (2026-07-07 entry), alongside the blinds design outcome.
 
-- [ ] **Force-geography pass — the next spine** (registered 2026-07-08,
+- [x] **Force-geography pass — the next spine — PAID 2026-07-10** (lint
+  run #1 flagged this row as overtaken; verified): (a) harness = FG-①…⑩
+  landed on main @0e8dc52 with terrain-bound defense + reactive reserve;
+  (b) the "may need a large ADR" question = ADR 0031 (backfilled
+  2026-07-10) + the hegemony-bar answer measured via DT-③/fgM9off.
+  Live residuals continue in their own rows (§5 tuning watch-item, DT-①
+  envelope target). Original row kept below for history:
+  (registered 2026-07-08,
   match-tilting close; source RULINGS MT-⑤ + `mockup/combat-calc/NOTES.md`
   §L2 fidelity audit). L2 diagnosed the frozen world as NON-economic; the
   next design pass is force-geography. Two things owed there, not now:
