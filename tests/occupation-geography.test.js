@@ -132,6 +132,29 @@ test('captures never exceed holdings; defender can be eaten to empty', () => {
   assert.equal(D.interior, 0, 'mirror synced');
 });
 
+test('occupationFrontier: attacker-adjacency fallback for an inherited front (no authored border ids)', () => {
+  const b = mapBoard();
+  const { A, D } = warBetween(b);
+  // Simulate what a war over an inheritFronts()-created front looks like:
+  // the front exists (frontG entry, checked by warBetween) but carries no
+  // authored frontSectorIds — this is the gap the finding pins. Deleting
+  // the authored entry forces occupationFrontier past its first two
+  // sources into the attacker-adjacency fallback (not the all-holds one).
+  delete D.frontSectorIds[A.name];
+  const war = T.newWar(A, D, 1);
+  const frontier = T.occupationFrontier(war, A, D);
+  assert.ok(frontier.size > 0, 'fallback frontier is non-empty');
+  for (const id of frontier) {
+    assert.ok(D.holds.has(id), 'frontier sector is D-held');
+    const adjToA = [...D.world.adj.get(id)].some((n) => A.holds.has(n));
+    assert.ok(adjToA, `${id} not adjacent to an A-held sector (all-holds fallback, not attacker-adjacency)`);
+  }
+  T.captureSector(war, A, D);
+  assert.equal(war.occupiedIds.length, 1, 'one sector captured');
+  assert.ok(!D.holds.has(war.occupiedIds[0]), 'captured sector left defender holds');
+  assert.equal(war.occupied, 1, 'count mirror');
+});
+
 test('fixture board: captureSector counts anonymously (legacy path)', () => {
   const b = T.makeBoard();
   const A = b[0], D = b[1];
