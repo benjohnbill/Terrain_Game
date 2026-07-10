@@ -66,10 +66,40 @@ function weakestCrossing(borders) {
   return best ? { cls: best.cls, door: best.door } : null;
 }
 
+// ---- sector world (occupation geography stage ①, design 2026-07-10) ----
+// Live sector copies + hex-derived adjacency + static seat-border set.
+// borderIds is fixed at build (start-seat boundaries): the resistance
+// proxy's border/interior split — a 가안 ordering heuristic, not combat.
+const NB = [[1, 0], [1, -1], [0, -1], [-1, 0], [-1, 1], [0, 1]]; // = map-gen NB
+function buildSectorWorld(map, binding) {
+  const sectors = new Map(); const hexOwner = new Map(); const seatOf = {};
+  for (const [seat, rids] of Object.entries(binding))
+    for (const rid of rids)
+      for (const s of deps.LOADER.sectorsOf(map, rid)) {
+        sectors.set(s.id, { ...s });     // live copy: usable state mutates in-match
+        seatOf[s.id] = seat;
+        for (const u of s.mapUnits) hexOwner.set(`${u.q},${u.r}`, s.id);
+      }
+  const adj = new Map([...sectors.keys()].map((id) => [id, new Set()]));
+  for (const s of sectors.values())
+    for (const u of s.mapUnits)
+      for (const [dq, dr] of NB) {
+        const o = hexOwner.get(`${u.q + dq},${u.r + dr}`);
+        if (o && o !== s.id) { adj.get(s.id).add(o); adj.get(o).add(s.id); }
+      }
+  const borderIds = new Set();
+  for (const [id, ns] of adj)
+    for (const n of ns)
+      if (seatOf[n] !== seatOf[id]) { borderIds.add(id); break; }
+  return { sectors, adj, borderIds };
+}
+
 function makeBoardFromMap(map, binding, gaan = BOARD_GAAN) {
   const regionToSeat = {};
   for (const [seat, rids] of Object.entries(binding))
     for (const rid of rids) regionToSeat[rid] = seat;
+
+  const world = buildSectorWorld(map, binding);
 
   return Object.entries(binding).map(([name, regionIds]) => {
     const secs = regionIds.flatMap((rid) => deps.LOADER.sectorsOf(map, rid));
@@ -109,7 +139,7 @@ function makeBoardFromMap(map, binding, gaan = BOARD_GAAN) {
         : gaan.startFort;
     }
 
-    const interior = secs.length - borderSectors.size;
+    const interior = secs.filter((s) => !world.borderIds.has(s.id)).length;
     const yieldBase = secs.reduce((t, s) => t + s.economyValue, 0);
     const popTotal = secs.reduce((t, s) => t + s.populationValue, 0);
     const field = Math.round(fieldCap * gaan.startFieldFrac);
@@ -141,6 +171,11 @@ function makeBoardFromMap(map, binding, gaan = BOARD_GAAN) {
         : Math.round((field + garrisonTotal) * 1.5),   // legacy sizing (구칭)
       recruitBonus: 0,
       capPending: 0, capRipeFlow: 0,  // §5 growth: ceiling not yet integrated
+      world,                                  // shared sector world
+      holds: new Set(secs.map((s) => s.id)),  // held sector ids (live ownership)
+      fieldCap0: fieldCap,                    // frozen build ceiling (capLandFrac blend base)
+      frontSectorIds: Object.fromEntries(
+        Object.entries(frontSectors).map(([n, set]) => [n, [...set]])),
       alive: true, vassalOf: null,
       truce: {}, wars: [],
     };
@@ -224,6 +259,6 @@ function pairFlags(records) {
   return out;
 }
 
-const _api = { makeBoardFromMap, BOARD_GAAN, FG_BOARD_GAAN, FG_FORT_BY_CLASS, runCradleTournament, watchFlags, pairFlags, weakestCrossing };
+const _api = { makeBoardFromMap, BOARD_GAAN, FG_BOARD_GAAN, FG_FORT_BY_CLASS, runCradleTournament, watchFlags, pairFlags, weakestCrossing, buildSectorWorld };
 if (typeof module !== 'undefined' && module.exports) module.exports = _api;
 else (window.TC = window.TC || {}).board = _api;
