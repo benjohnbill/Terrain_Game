@@ -16,7 +16,7 @@ naming, promotion, the generated Quick Reference) lives in
 - ✅ `Land-derived state` (모든 것은 땅에서 파생된다) — **user-confirmed
   2026-07-05 (A-3 session)**: substance is never stored where it can be
   derived from the land the realm holds. Income = Σ sector economy ×
-  usable; national cap = capPerPop × Σ sector population × usable;
+  usable; force limit = capPerPop × Σ sector population × usable;
   projectable mass = min(field, Σ door width × flow); shield mass =
   facing-front garrisons from adjacency; reserve awakening = the
   province's route-connected stock (march-worn on arrival); the
@@ -35,18 +35,14 @@ naming, promotion, the generated Quick Reference) lives in
   the province-level grammar (M9 awakening + march effect) is the
   extension point if muster location ever needs to matter.
 
-- ✅ `Aging constitution` (노화 헌법) — **user-sealed 2026-07-07
-  (match-tilting pass)**: how a match accrues irreversibility so the
-  decision point can arrive (the fix for the L2-observed frozen world).
-  **P1 dual billing** — replenishing men (recruit + garrison regen)
-  costs both blood (the permanent register) and yield (flow); no free
-  healing. **P2 flow never ages** — economy sets healing speed only,
-  never permanently damaged except by identity acts (초토화). **P3
-  snapshot information** — contact reveals the immutable layer forever,
-  the mutable layer decays. Extends land-derived state to the full
-  population/blood system; the register is the world's aging ledger.
-  Definition + rulings + parked items: match-arc GLOSSARY 노화 헌법 /
-  RULINGS MT-①.
+- ✅ `Aging constitution` (노화 헌법 · alias anti-stalemate ratchet) —
+  **user-sealed 2026-07-07 (match-tilting pass)**: how a match accrues
+  irreversibility so the decision point can arrive (the fix for the
+  L2-observed frozen world) — three principles: dual billing, flow
+  never ages, snapshot information. Extends land-derived state to the
+  population/blood system. Authoritative definition + rulings + parked
+  items: match-arc GLOSSARY 노화 헌법 / RULINGS MT-①. _(Re-slimmed to
+  summary+pointer 2026-07-10, forensics F-04.)_
 
 ## Core Terms
 
@@ -55,6 +51,12 @@ naming, promotion, the generated Quick Reference) lives in
 - ✅ `Terrain-first`: Geography determines combat, economy, population, and
   movement before political control is applied.
 - ✅ `Faction`: A political actor controlling map units.
+- ✅ `Force role` (군사 역할): the functional classification of military
+  strength — standing forces, local garrison, offensive mobilization, local
+  defense — the umbrella term for the ADR 0009 split. Roles, risks, and the
+  mobilization grammar: ADR 0009 (+ 0015/0018 usage). _(Registered
+  2026-07-10 — terminology audit ghost finding; the members were registered,
+  the grouping term was not.)_
 - ✅ `Region value`: The combined economic, population, military, and strategic
   value of a map unit.
 - ✅ `Named province`: A medium-sized region composed of one or more map units
@@ -86,21 +88,18 @@ naming, promotion, the generated Quick Reference) lives in
   political, symbolic, governance, unrest, or event values without changing the
   sector layer.
 - ✅ `Usable value`: The currently usable portion of a controlled front sector's
-  economy or population value. As an MVP placeholder, newly captured sectors
-  start at 50% usable economy and 60% usable population, recovering by 10
-  percentage points per stable turn while not contested. A `stable turn` means
-  the sector ends the turn under the same faction, was not contested during that
-  turn, and was not the target of active attack/defense resolution. These values
-  are playtest-tunable and should not be treated as a full governance or
-  occupation model.
-- ✅ `Yield` (생산): the economy's base unit — the **기본 생산량**: one ordinary
-  front sector at full usable produces 생산 1 per turn. The common measure of
-  cost and asset across the whole game (1 부대 = 생산 0.5; walls = 생산 6 +
-  2 primaries; raid loot ≈ 생산 1.5). Income = Σ economyValue × usableEconomy;
-  national cap = 600 × Σ populationValue × usablePop (land-derived state
-  principle). Dials and prices: MAGNITUDE M14. Namespace note: the
-  documentation law's Production (생산) layer is docs-governance — in game
-  docs 생산 means only this unit. **AGREED (2026-07-05, A-3 rulings ⑱–㉑)**
+  economy or population value — newly captured sectors start reduced and
+  recover per stable turn (a turn ending uncontested under the same faction).
+  An MVP placeholder, not a governance model. Placeholder recovery values and
+  the stable-turn definition: ADR 0022; conquest-side ripening: match-arc
+  RULINGS DT-②. _(Re-slimmed 2026-07-10, forensics; value restatement removed.)_
+- ✅ `Yield` (생산): the economy's base unit — the **기본 생산량**; the common
+  measure of cost and asset across the whole game. All prices, the income
+  formula, and the force-limit (구칭 national cap) derivation live in
+  MAGNITUDE M14 (owning doc). Namespace note: the documentation law's
+  Production (생산) layer is docs-governance — in game docs 생산 means only
+  this unit. **AGREED (2026-07-05, A-3 rulings ⑱–㉑)** _(Re-slimmed
+  2026-07-10, forensics F-03; price table removed.)_
 - ✅ `Treasury` (국고): realm-level stock of unspent yield — the thin economy's
   only stored state; indemnities land here as cash, spent through normal
   prices. Values: MAGNITUDE M14. **AGREED (2026-07-05)**
@@ -449,16 +448,18 @@ This section summarizes qualitatively; sealed values and ruling history
 live in the feature docs, and on any divergence the Production seal is
 truth (documentation-law conflict rule)._
 
-- ✅ `Void terrain` (공백 지형): sea expressed as land — non-sector hexes no
-  one owns; movement, ownership, and vision identical to sea. Exactly one
-  kind of "cannot cross" exists in the world, drawn two ways. (TC-⑧)
+- ✅ `Impassable terrain` (공백 지형 · 구칭 void terrain): sea expressed as
+  land — non-sector hexes no one owns; movement, ownership, and vision
+  identical to sea. Exactly one kind of "cannot cross" exists in the world,
+  drawn two ways. (TC-⑧)
 - ✅ `Parity start` (동일 시작 인구): every region starts with an equal total
   population — an equal lifetime blood budget; divergence comes only from
   play. Historicity lives in geography, not demographics. (TC-①)
-- ✅ `Derived asymmetry` (파생 비대칭): all playable state (population,
-  fortification, garrison, investment) starts uniform across realms; a
-  playable value may begin unequal only when that inequality is derived
-  from the authored map (geometry + fog) — never baked per-realm.
+- ✅ `Emergent asymmetry` (파생 비대칭 · 구칭 derived asymmetry): all
+  playable state (population, fortification, garrison, investment) starts
+  uniform across realms; a playable value may begin unequal only when that
+  inequality is derived from the authored map (geometry + fog) — never
+  baked per-realm.
   Generalizes parity start beyond population. (SPEC Core Principle #8;
   terrain-cradle TC-⑭; economy's terrain-fed inequality TC-③.)
 - ✅ `Battle-summoning placement` (전장 소환 배치): the city placement
@@ -623,7 +624,7 @@ rule)._
   verification condition on how many viable cradles the active region holds, not
   an imposed cut.
 - ✅ `Viability parity, geometry/economy asymmetry`: what is balanced is
-  survivability AND starting population (parity start / derived asymmetry,
+  survivability AND starting population (parity start / emergent asymmetry,
   terrain-cradle TC-①/TC-⑭, SPEC Core Principle #8); asymmetry lives in
   geometry and economy. A multipolar
   Warring-States / Three-Kingdoms shape with one multi-front 중원 center
@@ -682,8 +683,8 @@ rule)._
   march out. Sealed formula + flow value + history → match-arc GLOSSARY
   투사 가능 질량 row / RULINGS ⑩.
 - ✅ `In/out of the balance — hermit clause` (판세 안/밖 · 은둔국 조항): a realm
-  whose projectable mass falls below the floor (1,000 — reuses the raid
-  visibility threshold; confirmed 2026-07-05) is *outside the balance* — excluded from coalition
+  whose projectable mass falls below the sealed floor (value + rationale:
+  match-arc GLOSSARY hermit row) is *outside the balance* — excluded from coalition
   sums and the leadership denominator. Derived per turn (a hermit can buy back in
   via choke-removal paths). Out-of-balance realms are acknowledged at settlement
   (tributary/hermit narrative), never forced to capitulate — the match ends
@@ -744,18 +745,19 @@ rule)._
   + history: match-arc GLOSSARY 모병 / RULINGS MT-①③; rates → M13.
 - ✅ `Conscription register` (징집 명부 · 구칭 인력 풀 / manpower pool): "군사력이
   될 수 있는 모든 신체 인구" — the total living draftable bodies a realm holds,
-  **land-derived** (registerPerPop 1,800 × Σ populationValue) and finite within
-  a match. Total-bodies accounting: the starting army is drawn from it,
-  recruitment moves bodies civilian→serving, only death shrinks it (the dead
-  never return — blood is a permanent currency). Land transfer moves it;
-  development grows it. capPerPop 600 = the derived sustain fraction ⅓.
-  Definition + value + history: match-arc GLOSSARY 징집 명부 / RULINGS MT-② /
-  MAGNITUDE M13.
-- ❓ `Blinds` (블라인드): the escalation device that makes safe, passive play
-  progressively more expensive as the match ages — the anti-safe-play pressure
-  ADR 0025 parked into this thread. Mechanism undecided; design duty confirmed
-  load-bearing by the L2 tournament (a perfect-information board freezes into
-  deterrence equilibrium — acceptance test in match-arc `TEST-LADDER.md`).
+  **land-derived** and finite within a match. Total-bodies accounting: the
+  starting army is drawn from it, recruitment moves bodies civilian→serving,
+  only death shrinks it (the dead never return — blood is a permanent
+  currency). Land transfer moves it; development grows it. The sustain
+  fraction and all dial values: MAGNITUDE M13 (owning doc). Definition +
+  history: match-arc GLOSSARY 징집 명부 / RULINGS MT-②. _(Re-slimmed
+  2026-07-10, forensics F-02; dial restatement removed.)_
+- ✅ `Blinds` (블라인드): the anti-safe-play escalation thread ADR 0025 parked
+  here — **SUPERSEDED as a standalone mechanism (2026-07-08 MT-⑤)**: the
+  escalation duty is carried as an economic device through force-geography +
+  the hegemony bar, not a separate blinds mechanic. Authoritative status +
+  history: match-arc GLOSSARY 블라인드 row / RULINGS MT-⑤. _(Status
+  corrected 2026-07-10, forensics F-01 — this row had lagged its birthplace.)_
 - ✅ `Test-trust ladder` (검증 신뢰 사다리): the four-rung verification
   epistemology — L0 hand reasoning / L1 decision grids / L2 match tournament /
   L3 human playtest — with asymmetric proof power (found-at-L2 is real;

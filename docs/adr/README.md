@@ -38,13 +38,13 @@ a target; ← is amended/superseded by a later ADR.
 | 0005 | Hybrid Historical-Fictional Place Names | 2026-06-29 | Accepted | — |
 | 0006 | Province Archetype Regions Use Terrain Layers | 2026-06-29 | Accepted | — |
 | 0007 | Settlement and Function Layer | 2026-06-29 | Accepted | — |
-| 0008 | Phase 1 Combat and Economy Stat Scope | 2026-06-29 | Accepted | — |
+| 0008 | Phase 1 Combat and Economy Stat Scope | 2026-06-29 | Accepted | ← Amended by 0031 (force-geography defense model) |
 | 0009 | Force Roles and Mobilization Risks | 2026-06-29 | Accepted | — |
 | 0010 | High Complexity, Low Micromanagement | 2026-06-29 | Accepted | — |
 | 0011 | Strategic Posture as Guidance | 2026-06-29 | Accepted | — |
 | 0012 | Action Capacity Carryover and Overclock | 2026-06-29 | Accepted | — |
 | 0013 | Map-First Situation UX | 2026-06-29 | Accepted | — |
-| 0014 | Local Garrison Sustainment From Province Economy | 2026-06-29 | Accepted | ← Amended by 0022 (front-sector garrison scope) |
+| 0014 | Local Garrison Sustainment From Province Economy | 2026-06-29 | Accepted | ← Amended by 0022 (front-sector garrison scope) · ← Amended by match-arc MT-① (P1 dual billing) · ← Amended by 0031 (facing-shield garrisons) |
 | 0015 | Strait Crossing Penalty And Deferred Naval System | 2026-06-29 | Accepted | Self-amended 2026-07-03 (magnitude pass — penalty values) |
 | 0016 | Web Technology Stack With Trigger-Based Migration Path | 2026-06-29 | Accepted | ← Amended by 0028 (UI-shell/renderer axis split, L3 = Stage 1 trigger forecast) |
 | 0017 | Positioning — Civ-Depth World, LoL-Shaped Interaction | 2026-07-01 | Accepted | — |
@@ -59,3 +59,5 @@ a target; ← is amended/superseded by a later ADR.
 | 0026 | One-Shot Plan Effects, Persistent State, Standing Rules | 2026-07-02 | Accepted | — |
 | 0027 | Free Commit Allocation — Main/Surplus as Magnitude Labels | 2026-07-07 | Accepted | → Amends 0020 |
 | 0028 | L3 Build-Out Stack Direction — UI-Shell/Renderer Axis Split | 2026-07-10 | Accepted | → Amends 0016 |
+| 0030 | Victory Conditions — Hegemony Decision Point and Domination Victory | 2026-07-10 | Accepted | Backfill (forensics F-06/07); definitions live at match-arc birthplaces |
+| 0031 | Force-Geography Defense Model — Terrain-Bound Defense and Reactive Reserve | 2026-07-10 | Accepted | → Amends 0008, 0014 · Backfill (forensics F-08) |

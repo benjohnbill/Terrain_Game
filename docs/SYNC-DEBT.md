@@ -25,12 +25,15 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   The **instrument enhancement** for the re-measurement is now BUILT (main
   @f8655ad): `core1822Pct` (18-22 tight-core share, spec §4) + `meanTripTurn` /
   `stdTripTurn` (population) / `tripTurnHist` for a distribution-shape (normality)
-  read, plus a `--fg` core line. §5 forced-resolution is now
-  SHAPED (RULINGS **DT-②**, 2026-07-09): a positive-sum growth-divergence engine
-  resolves balanced boards emergently, so the §5 "no-draws" SPEC amendment is
-  retired-as-unnecessary; mechanism numbers deferred to post-§6 tuning against
-  the timing ruler, ice-breaker is a measurement-gated contingency (Zhou seed
-  parked). §6 domination victory arithmetic SEALED and now IMPLEMENTED +
+  read, plus a `--fg` core line. §5 forced-resolution was SHAPED (RULINGS
+  **DT-②**, 2026-07-09) and is now **IMPLEMENTED in the L2 harness
+  (2026-07-10**, commits ceea2dc/cbe3b9a/b32a630/e7df309 — conquest-growth
+  ripening wired into transfers + turn loop + `--growth` sweep driver;
+  status corrected 2026-07-10 by the structure forensics, case F-10): a
+  positive-sum growth-divergence engine resolves balanced boards emergently,
+  so the §5 "no-draws" SPEC amendment is retired-as-unnecessary; mechanism
+  NUMBERS remain deferred to the tuning pass against the timing ruler,
+  ice-breaker is a measurement-gated contingency (Zhou seed parked). §6 domination victory arithmetic SEALED and now IMPLEMENTED +
   MEASURED (RULINGS **DT-③**, Combo 2 — trip = (leadership OR dominance) AND
   unassailable, reusing the gate's 1.7×+W6 clause; commit a29eb0a, 167/167
   green, task review + whole-branch review both Approved with zero
@@ -56,12 +59,11 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   flagged by the 2026-07-08 independent audit.
 
 - [ ] **Match-tilting pass — residual sync** (birthplace sync PAID
-  2026-07-07, see Paid below; these items remain): (a) **ADR 0014
-  header amendment stamp** — P1 removes garrison free self-heal; the
-  MAGNITUDE M12 + match-arc RULINGS MT-① amendments are recorded, but
-  stamping the accepted ADR 0014 header is a user-gated architecture
-  action (agent model Tier 3, propose-only) — flag for the user, do
-  not silently edit. (b) **Surge Draft Model curve numbers** — knees,
+  2026-07-07, see Paid below; these items remain): (a) ~~ADR 0014
+  header amendment stamp~~ — **PAID 2026-07-10** (user-sealed doc-
+  governance package; header stamped under the new seal-amends-ADR duty,
+  duplicate of the recovery-dial row's item (a) — ledger hygiene case
+  F-11, single stamp paid both rows). (b) **Surge Draft Model curve numbers** — knees,
   band multipliers, surge exchange rate (+1%p/pt 가안), zone names —
   deferred to the magnitude session (structure sealed, numbers 가안).
   (c) Riders: **sheet-7 tempo revalidation** under f₀ 0.5 (was 0.7),
@@ -69,12 +71,9 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   **L2 re-verify registerPerPop** after tilting devices land.
 
 - [ ] **Recovery-dial grill — residual sync** (doc-sync batch PAID
-  2026-07-08, see Paid below; these remain): (a) **ADR 0014 header
-  amendment stamp** — P1 dual billing + now MT-⑤ commit-gating both
-  remove garrison free/auto-regen; MAGNITUDE M12 + RULINGS MT-①/⑤ carry
-  the deltas, but stamping the accepted ADR 0014 header is a Tier-3
-  user-gated action (propose-only) — flag, do not silently edit.
-  (b) **QUICKREF regeneration** (C-loop table + MT-⑤ + ADR 0027 +
+  2026-07-08, see Paid below; these remain): (a) ~~ADR 0014 header
+  amendment stamp~~ — **PAID 2026-07-10** (see match-tilting row (a);
+  one stamp, both rows). (b) **QUICKREF regeneration** (C-loop table + MT-⑤ + ADR 0027 +
   블라인드 supersession) — batched into the force-geography doc-sync
   **2026-07-09**: added the Force-geography term section + C-loop row +
   블라인드-supersession note + header date/addendum. Residual (a
@@ -97,6 +96,23 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   L2 fidelity debt with its own row/owner). Until that audit, treat any
   L2 conclusion that leans on a simplified mechanic as L1-grade for that
   mechanic (test-trust ladder, match-arc TEST-LADDER.md).
+
+- [ ] **Doc-governance promotion chain** (registered 2026-07-10, doc-audit
+  session; sealed package, cold-review rider — gates must be owned rows, not
+  a deferred-forever plan): (a) **P1 lint prototype** — 8-check spec in
+  `docs/superpowers/plans/2026-07-10-doc-governance-p3-p1-implementation.md`
+  Phase B; owner: next doc-governance session, TDD. (b) **/doc-audit skill
+  codification** — gate: P1 lint validated on one session-close run.
+  (c) **hook promotion** (PostToolUse write-lint + UserPromptSubmit alias
+  inject) — gate: lint check-set validated; design constraints recorded in
+  the plan (exploration-exemption conflict, birthplace-구칭 exclusions,
+  common-word alias scoping). (d) **audit run #2** — regenerate baselines
+  per `docs/audits/HARVEST.md`, carrying verdicts forward; also drop
+  ruling-statement rows and map-lore proper nouns per run-#1 report.
+  (e) smaller residues: gold→treasury prose leak (SPEC:264, ADR 0013:33);
+  code-identifier drift actionCapacity↔`capacity`, computeProvinceStatus↔
+  `classifyHex` (fold into the owed js/situation.js rework); `Estimate
+  band` weak birthplace now homed at fog GLOSSARY (created 2026-07-10).
 
 - [ ] **A-3 magnitude pass must ingest the L2 freeze evidence**
   (registered 2026-07-07, sheet-15 session): cap-growth-alone does not

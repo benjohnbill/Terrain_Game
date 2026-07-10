@@ -50,7 +50,7 @@ sometimes correct, never mandatory (free-riding is a legitimate line).
 ## Honest gaps (registered 2026-07-04)
 
 1. ~~Economy→mass conversion undesigned~~ — resolved 2026-07-04 at MVP
-   scope: single-track 모병 (+10% of national cap/turn, 100%
+   scope: single-track 모병 (+10% of force limit/turn, 100%
    effectiveness, pool-drawn) + finite manpower pool; 동원 is a
    reserved seat (MAGNITUDE.md M13). Dial values → battery sheet 9.
 2. ~~Vassal permanence in the MVP~~ — resolved 2026-07-05: no

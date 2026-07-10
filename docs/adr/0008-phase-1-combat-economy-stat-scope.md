@@ -3,6 +3,7 @@
 Date: 2026-06-29
 
 Status: Accepted
+Amended by: ADR 0031 (2026-07-10) — the uniform defense reading of the Phase 1 stat scope is replaced by the force-geography model (terrain-bound defense + reactive reserve).
 
 ## Context
 

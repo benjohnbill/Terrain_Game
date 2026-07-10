@@ -4,6 +4,8 @@ Date: 2026-06-29
 
 Status: Accepted
 Amended by: ADR 0022 (2026-07-01) — local-garrison sustainment is now scoped to the front-sector operational layer; province economy becomes an aggregate/readout over its sectors (see § Consequences).
+Amended by: match-arc RULINGS MT-① (2026-07-07, P1 dual billing) — garrison regeneration is no longer free self-heal from province economy; it bills the conscription register + treasury (stamp added 2026-07-10 under the seal-amends-ADR duty).
+Amended by: ADR 0031 (2026-07-10) — garrisons participate in a terrain-shaped facing shield (force-geography defense model), not a flat per-province sum.
 
 ## Context
 

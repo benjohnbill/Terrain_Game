@@ -5,9 +5,10 @@ contiguous hex map exists as a deterministic generator, passes both
 static gates under every seating, and carries the user's hand-authored
 sector layout. Next tier of truth is L2 (tournament adapter).
 
-Projection sync (2026-07-07 doc-sync batch): void terrain / parity
-start / battle-summoning placement promoted to DOMAIN_MAP (summary +
-pointer; definitions stay here); DESIGN carries the authored-map
+Projection sync (2026-07-07 doc-sync batch): impassable terrain (구칭
+void terrain) / parity start / battle-summoning placement promoted to
+DOMAIN_MAP (summary + pointer; definitions stay here); DESIGN carries
+the authored-map
 pipeline subsection. SPEC 중원-crown amendment (TC-②) applied
 2026-07-07, user-approved — the Projection/Direction sync debt from the
 C-loop close is fully paid (`docs/SYNC-DEBT.md`).
@@ -24,9 +25,10 @@ cities/capitals, and the void mountain system. Born from the C-loop
 - `RULINGS.md` — TC-①…⑭, the decision record (this feature's
   authoritative history; ⑬–⑭ added 2026-07-08: border-class combat
   binding, derived-asymmetry seal).
-- `GLOSSARY.md` — Tier-1 vocabulary (void, 대산맥/하서회랑/대환/태산,
-  parity start, derived asymmetry, economy ladder, city grammar, carve
-  principle).
+- `GLOSSARY.md` — Tier-1 vocabulary (impassable terrain,
+  대산맥/하서회랑/대환/태산, parity start, emergent asymmetry, economy
+  ladder, city grammar, carve principle; renames 2026-07-10:
+  void→impassable, derived→emergent).
 - Executable map source: `mockup/combat-calc/map-gen.js` (deterministic
   seed→map; USER_SWAPS + fixed seats = the sealed layout; header
   carries the grid-form principle).

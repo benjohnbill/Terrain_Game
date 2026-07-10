@@ -51,6 +51,12 @@ subtle warning signals before total blindness.
   public (classified with terrain, not magnitude). See `RULINGS.md` ①; first
   consumer is the tactical-plan-ai bot information model.
 
+## Files
+
+- `GLOSSARY.md` — Tier-1 vocabulary (created 2026-07-10, terminology-audit
+  ghost registration): information confidence, estimate band.
+- `RULINGS.md` — decision record (① wall-grade visibility).
+
 ## Related
 
 - `SPEC.md` - "Positioning and Fun Pillars" (skill is fitting the situation) and

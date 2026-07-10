@@ -83,7 +83,7 @@ authoritative — this spec declares, it does not restate).
    something that does not refill within the match. (match-arc GLOSSARY 징집 명부;
    combat MAGNITUDE M13.)
 
-8. **Derived asymmetry.** The world's asymmetries are authored into the
+8. **Emergent asymmetry.** The world's asymmetries are authored into the
    land — its geometry (terrain, borders, position, adjacency) and the fog
    over it — never into playable state. Every *playable* quantity
    (population, fortification, garrison, investment) starts uniform across

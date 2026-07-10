@@ -838,7 +838,8 @@ question; keep re-running L2 as values move).
 - **Income** = Σ sector economyValue × usableEconomy (생산/turn).
   Authored anchors: ordinary sector econ 1.0; center-seat rich sector
   1.5 (가안, B authoring).
-- **National cap** (ruling ⑱): cap = **capPerPop 600** × Σ sector
+- **Force limit** (구칭 national cap — renamed 2026-07-10 terminology
+  audit, genre-standard; ruling ⑱): cap = **capPerPop 600** × Σ sector
   populationValue × usablePop — one fully-usable ordinary sector
   sustains 600 men. Re-derives the sealed M13 anchors as derived
   values: mid realm (template: 10 ordinary sectors) = 6,000 ✓; center

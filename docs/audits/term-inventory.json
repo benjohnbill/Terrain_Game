@@ -20,7 +20,9 @@
   {
    "canonical": "Aging constitution",
    "korean": "노화 헌법",
-   "aliases": [],
+   "aliases": [
+    "anti-stalemate ratchet"
+   ],
    "birthplace": "docs/features/match-arc/GLOSSARY.md",
    "tier": 1,
    "status": "AGREED",
@@ -328,9 +330,10 @@
    "verdictRef": "2026-07-10-terminology-audit.md"
   },
   {
-   "canonical": "National cap",
+   "canonical": "Force limit",
    "korean": null,
    "aliases": [
+    "National cap",
     "national cap growth"
    ],
    "birthplace": "docs/features/combat-formula/MAGNITUDE.md",
@@ -339,7 +342,7 @@
    "kind": "mechanism",
    "codeIdentifier": "capPerPop",
    "codeRefs": [],
-   "verdict": "synonym-exists",
+   "verdict": "standard-match",
    "verdictRef": "2026-07-10-terminology-audit.md"
   },
   {
@@ -814,7 +817,9 @@
   {
    "canonical": "Position as product",
    "korean": null,
-   "aliases": [],
+   "aliases": [
+    "path-dependent position"
+   ],
    "birthplace": "DOMAIN_MAP.md",
    "tier": 0,
    "status": "AGREED",
@@ -890,7 +895,10 @@
   {
    "canonical": "Latent mobilizable population",
    "korean": null,
-   "aliases": [],
+   "aliases": [
+    "manpower",
+    "manpower pool"
+   ],
    "birthplace": "DOMAIN_MAP.md",
    "tier": 0,
    "status": "AGREED",
@@ -1239,16 +1247,18 @@
    "verdictRef": "2026-07-10-terminology-audit.md"
   },
   {
-   "canonical": "Void terrain",
+   "canonical": "Impassable terrain",
    "korean": "공백 지형",
-   "aliases": [],
+   "aliases": [
+    "Void terrain"
+   ],
    "birthplace": "docs/features/terrain-cradle/GLOSSARY.md",
    "tier": 1,
    "status": "AGREED",
    "kind": "mechanism",
    "codeIdentifier": null,
    "codeRefs": [],
-   "verdict": "synonym-exists",
+   "verdict": "standard-match",
    "verdictRef": "2026-07-10-terminology-audit.md"
   },
   {
@@ -1265,9 +1275,10 @@
    "verdictRef": "2026-07-10-terminology-audit.md"
   },
   {
-   "canonical": "Derived asymmetry",
+   "canonical": "Emergent asymmetry",
    "korean": "파생 비대칭",
    "aliases": [
+    "Derived asymmetry",
     "SPEC Core Principle #8"
    ],
    "birthplace": "docs/features/terrain-cradle/GLOSSARY.md",
@@ -1276,13 +1287,16 @@
    "kind": "meta",
    "codeIdentifier": null,
    "codeRefs": [],
-   "verdict": "synonym-exists",
+   "verdict": "standard-match",
    "verdictRef": "2026-07-10-terminology-audit.md"
   },
   {
    "canonical": "Battle-summoning placement",
    "korean": "전장 소환 배치",
-   "aliases": [],
+   "aliases": [
+    "conflict-anchor placement",
+    "flashpoint placement"
+   ],
    "birthplace": "docs/features/terrain-cradle/GLOSSARY.md",
    "tier": 1,
    "status": "AGREED",
@@ -2686,6 +2700,7 @@
    "canonical": "Denied-dominant (the wall)",
    "korean": null,
    "aliases": [
+    "anti-leader coalition",
     "the wall",
     "벽"
    ],
@@ -2896,9 +2911,9 @@
   },
   {
    "canonical": "Estimate band",
-   "korean": null,
+   "korean": "추정 구간",
    "aliases": [],
-   "birthplace": "docs/features/fog-of-war-discovery/RULINGS.md",
+   "birthplace": "docs/features/fog-of-war-discovery/GLOSSARY.md",
    "tier": 1,
    "status": "AGREED",
    "kind": "mechanism",
@@ -2923,7 +2938,10 @@
   {
    "canonical": "Force geography",
    "korean": null,
-   "aliases": [],
+   "aliases": [
+    "force distribution",
+    "military geography"
+   ],
    "birthplace": "docs/features/force-geography/RULINGS.md",
    "tier": 1,
    "status": "SEALED",
@@ -3114,6 +3132,41 @@
    "tier": 1,
    "status": "AGREED",
    "kind": "meta",
+   "codeIdentifier": null,
+   "codeRefs": [],
+   "verdict": "standard-match",
+   "verdictRef": "2026-07-10-terminology-audit.md"
+  },
+  {
+   "canonical": "Information confidence",
+   "korean": "정보 신뢰도",
+   "aliases": [],
+   "birthplace": "docs/features/fog-of-war-discovery/GLOSSARY.md",
+   "tier": 1,
+   "status": "AGREED",
+   "kind": "mechanism",
+   "codeIdentifier": "informationConfidence",
+   "codeRefs": [
+    "js/intel.js",
+    "js/game.js",
+    "js/map.js",
+    "js/situation.js",
+    "js/actions.js",
+    "js/command-preview.js"
+   ],
+   "verdict": "standard-match",
+   "verdictRef": "2026-07-10-terminology-audit.md"
+  },
+  {
+   "canonical": "Force role",
+   "korean": "군사 역할",
+   "aliases": [
+    "force-role"
+   ],
+   "birthplace": "DOMAIN_MAP.md",
+   "tier": 0,
+   "status": "AGREED",
+   "kind": "mechanism",
    "codeIdentifier": null,
    "codeRefs": [],
    "verdict": "standard-match",
