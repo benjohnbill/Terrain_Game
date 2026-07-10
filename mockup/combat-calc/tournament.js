@@ -727,17 +727,60 @@ function eliminate(D, A, realms, H, war) {
   if (sectorMode(D)) {
     // possessor keeps: every war's bites go to that war's attacker;
     // the unoccupied remainder (incl. the capital's land) to the eliminator.
+    // D can appear on either side of a war it's party to, so each war is
+    // handled on whichever side D sits: as defender (its bites belong to
+    // that war's attacker), or as attacker (D's own bites into someone
+    // else's territory — D's death forces a white peace on those).
     for (const wv of D.wars) {
-      if (wv.def !== D.name || !(wv.occupiedIds ?? []).length) continue;
-      const att = realms.find((r) => r.name === wv.att);
-      if (att && att.alive) for (const id of wv.occupiedIds) acquireSector(att, id, H);
-      wv.occupiedIds = []; wv.occupied = 0;
+      if (wv.def === D.name && (wv.occupiedIds ?? []).length) {
+        const att = realms.find((r) => r.name === wv.att);
+        if (att && att.alive) {
+          for (const id of wv.occupiedIds) acquireSector(att, id, H);
+        } else {
+          // dead/missing third-party attacker: its bite has nowhere to sit —
+          // fold it back into D's own holds so it flows to the eliminator
+          // via the remainder sweep below, instead of being discarded.
+          for (const id of wv.occupiedIds) D.holds.add(id);
+          syncCounts(D);
+        }
+        wv.occupiedIds = []; wv.occupied = 0;
+      } else if (wv.att === D.name && (wv.occupiedIds ?? []).length) {
+        const defender = realms.find((r) => r.name === wv.def);
+        if (defender && defender.alive) {
+          // forced white peace: D's death ends its own wars too — return
+          // the bites it took, id-exact, no damage (returnOccupied already
+          // encodes that semantics for stall/white-peace returns).
+          returnOccupied(wv, defender);
+        } else {
+          // defender missing/dead shouldn't normally happen here (its own
+          // elimination would already have emptied these ids) — fold into
+          // D.holds rather than silently discard; flows to A below.
+          for (const id of wv.occupiedIds) D.holds.add(id);
+          wv.occupiedIds = []; wv.occupied = 0;
+          syncCounts(D);
+        }
+      }
     }
     for (const id of [...D.holds]) acquireSector(A, id, H);
     D.holds.clear(); syncCounts(D);
     A.pool += Math.round(D.pool * 0.5);
+    // No applyCapGain here: in sector mode the legacy branch's
+    // cap-without-land asymmetry dissolves, because land travels with the
+    // ceiling basis (each acquireSector reset IS the land transfer, unlike
+    // the legacy path where the land already evaporated before this point).
+    // §5 cap growth is deliberately not wired for sector-mode elimination —
+    // the ceiling derivation for this path arrives with the Task-4
+    // capLandFrac blend, not here.
   } else {
     A.interior += D.interior; A.pool += Math.round(D.pool * 0.5);
+    // §5 ripen — D.interior is 0 here (the cascade already drained it into
+    // war.occupied sector by sector); war.occupied holds the true ceded count,
+    // so the brief's literal D.interior gain would be a permanent no-op.
+    // Cap-without-land asymmetry: on elimination the winner's ceiling grows by
+    // war.occupied * capPerSector, but A.interior gains nothing here (D.interior
+    // is already 0 and the occupied sectors evaporate via the pre-existing
+    // elimination land-sink above). Unlike settlement, elimination cap gain has
+    // no land basis — measurement reads of this path must carry that rider.
     applyCapGain(A, (war && war.occupied) ? war.occupied * (H?.capPerSector ?? 0) : 0, H ?? HARNESS);
   }
   D.interior = 0; D.field = 0;

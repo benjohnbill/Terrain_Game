@@ -228,3 +228,50 @@ test('elimination: possessor keeps — third-party bites survive, remainder to e
   assert.equal(D.holds.size, 0);
   assert.equal(D.alive, false);
 });
+
+test('elimination: D-as-attacker bites return to their defender (forced white peace)', () => {
+  const b = mapBoard();
+  const { A, D, war: warAD } = warBetween(b);
+  // find a third realm E that D can attack (same technique warBetween uses,
+  // with D on the attacker side)
+  let E, warDE;
+  for (const cand of b) {
+    if (cand === A || cand === D) continue;
+    if (D.frontG[cand.name] !== undefined && (cand.frontSectorIds[D.name] || []).length) {
+      E = cand;
+      warDE = T.newWar(D, E, 1);
+      break;
+    }
+  }
+  assert.ok(E, 'binding has a realm D can attack');
+  D.wars.push(warAD, warDE); A.wars.push(warAD); E.wars.push(warDE);
+  T.captureSector(warDE, D, E);          // D bites one sector from E
+  const dBite = warDE.occupiedIds[0];
+  for (let i = 0; i < 2; i++) T.captureSector(warAD, A, D); // A bites D
+  T.eliminate(D, A, b, T.HARNESS, warAD);
+  assert.ok(E.holds.has(dBite), 'E gets its sector back');
+  assert.deepEqual(warDE.occupiedIds, []);
+  assert.equal(E.world.sectors.get(dBite).usableEconomy, 1, 'no damage from forced white peace');
+});
+
+test('elimination: dead third-party attacker folds its bite back through the eliminator (conservation)', () => {
+  const b = mapBoard();
+  const { A, D, war } = warBetween(b);
+  const everHeld = new Set(D.holds); // every sector D ever held, before any war action
+  const C = b.find((r) => r !== A && r !== D
+    && (D.frontSectorIds[r.name] || []).some((id) => D.holds.has(id)));
+  assert.ok(C, 'binding has a third neighbor of D');
+  const warC = T.newWar(C, D, 1);
+  D.wars.push(war, warC); A.wars.push(war); C.wars.push(warC);
+  T.captureSector(warC, C, D);           // C bites one sector
+  const cBite = warC.occupiedIds[0];
+  for (let i = 0; i < 3; i++) T.captureSector(war, A, D); // A bites three
+  C.alive = false;                       // C dies before D's elimination
+  T.eliminate(D, A, b, T.HARNESS, war);
+  assert.ok(A.holds.has(cBite), "dead third party's bite reaches the eliminator");
+  assert.ok(!C.holds.has(cBite), 'never lands with the dead third party');
+  for (const id of everHeld) {
+    const owners = b.filter((r) => r.holds && r.holds.has(id));
+    assert.equal(owners.length, 1, `${id} held by exactly one realm after elimination`);
+  }
+});
