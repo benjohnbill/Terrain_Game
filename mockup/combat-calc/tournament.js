@@ -625,7 +625,8 @@ function applySettlement(kind, preset, war, A, D, H, realms) {
     D.pool -= poolShare; A.pool += poolShare;
     ceded = chosen.length;
   } else {
-    // legacy fixture path (verbatim; growth lines inert at default dials)
+    // legacy fixture path (verbatim; §5 growth lines retired in occupation
+    // geography Task 5 — only the original interior/pool arithmetic remains)
     ceded = Math.min(war.occupied, Math.round(b.cession / H.sectorValue));
     A.interior += ceded;
     D.interior = Math.max(0, D.interior);
@@ -714,13 +715,12 @@ function eliminate(D, A, realms, H, war) {
     for (const id of [...D.holds]) acquireSector(A, id, H);
     D.holds.clear(); syncCounts(D);
     A.pool += Math.round(D.pool * 0.5);
-    // No applyCapGain here: in sector mode the legacy branch's
-    // cap-without-land asymmetry dissolves, because land travels with the
+    // No cap grant here: the retired §5 accumulator's cap-without-land
+    // asymmetry dissolves in sector mode, because land travels with the
     // ceiling basis (each acquireSector reset IS the land transfer, unlike
     // the legacy path where the land already evaporated before this point).
-    // §5 cap growth is deliberately not wired for sector-mode elimination —
-    // the ceiling derivation for this path arrives with the Task-4
-    // capLandFrac blend, not here.
+    // The ceiling derivation for this path is the pulse's capLandFrac
+    // blend, not an elimination-time grant.
   } else {
     A.interior += D.interior; A.pool += Math.round(D.pool * 0.5);
   }

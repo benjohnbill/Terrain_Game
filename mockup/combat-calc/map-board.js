@@ -106,7 +106,6 @@ function makeBoardFromMap(map, binding, gaan = BOARD_GAAN) {
     const fieldCap = deps.ECON.nationalCap(secs);
 
     // cross-seat fronts: border-sector count + door caps per neighbor seat
-    const borderSectors = new Set();
     const frontSectors = {};   // neighbor seat -> Set of own border sectors
     const frontBorders = {};   // neighbor seat -> [{cls, door}] crossing borders
     const exits = [];
@@ -119,10 +118,7 @@ function makeBoardFromMap(map, binding, gaan = BOARD_GAAN) {
         exits.push({ cap: door });
         (frontSectors[nbrSeat] ??= new Set());
         (frontBorders[nbrSeat] ??= []).push({ cls: info.borderClass, door });
-        for (const sid of info.borderSectorIds) {
-          frontSectors[nbrSeat].add(sid);
-          borderSectors.add(sid);
-        }
+        for (const sid of info.borderSectorIds) frontSectors[nbrSeat].add(sid);
       }
     }
     if (exits.length === 0) exits.push({ cap: Infinity });
