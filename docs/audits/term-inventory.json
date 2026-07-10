@@ -1507,6 +1507,7 @@
    "canonical": "Troop stock / substance",
    "korean": "병력",
    "aliases": [
+    "Troop stock",
     "substance"
    ],
    "birthplace": "docs/features/combat-formula/GLOSSARY.md",

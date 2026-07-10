@@ -99,9 +99,11 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
 
 - [ ] **Doc-governance promotion chain** (registered 2026-07-10, doc-audit
   session; sealed package, cold-review rider — gates must be owned rows, not
-  a deferred-forever plan): (a) **P1 lint prototype** — 8-check spec in
-  `docs/superpowers/plans/2026-07-10-doc-governance-p3-p1-implementation.md`
-  Phase B; owner: next doc-governance session, TDD. (b) **/doc-audit skill
+  a deferred-forever plan): (a) ~~P1 lint prototype~~ — **BUILT 2026-07-10**
+  (TDD, 29 tests; `scripts/audit-lint.js`, `npm run lint:docs`; acceptance
+  run on the live repo: 5 findings, all legitimate reports — 1 uncontrolled
+  status word `candidate` @ Strike at half-crossing, 3 borderline numeric
+  restatements for human ruling, 1 ledger-currency watch). (b) **/doc-audit skill
   codification** — gate: P1 lint validated on one session-close run.
   (c) **hook promotion** (PostToolUse write-lint + UserPromptSubmit alias
   inject) — gate: lint check-set validated; design constraints recorded in
