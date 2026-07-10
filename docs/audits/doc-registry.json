@@ -1395,6 +1395,14 @@
    "ownerFeature": null,
    "allowedContent": [],
    "forbiddenContent": []
+  },
+  {
+   "path": ".claude/skills/doc-audit/SKILL.md",
+   "layer": "working",
+   "role": "S9 skill codification: escalation ladder (lint script -> targeted judgment/re-harvest -> history) wrapping npm run lint:docs + HARVEST.md",
+   "ownerFeature": null,
+   "allowedContent": [],
+   "forbiddenContent": []
   }
  ]
 }

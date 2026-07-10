@@ -103,8 +103,14 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   (TDD, 29 tests; `scripts/audit-lint.js`, `npm run lint:docs`; acceptance
   run on the live repo: 5 findings, all legitimate reports — 1 uncontrolled
   status word `candidate` @ Strike at half-crossing, 3 borderline numeric
-  restatements for human ruling, 1 ledger-currency watch). (b) **/doc-audit skill
-  codification** — gate: P1 lint validated on one session-close run.
+  restatements for human ruling, 1 ledger-currency watch). (b) ~~/doc-audit
+  skill codification~~ — **DONE 2026-07-10** (`.claude/skills/doc-audit/
+  SKILL.md`, registered in doc-registry.json): codifies the S8 escalation
+  ladder (Layer 0 `npm run lint:docs` script → Layer 1 targeted judgment
+  or full HARVEST.md re-harvest, with the run-#2 cross-check-all-surfaces
+  lesson folded in as an explicit step → Layer 2 git/claude-mem history)
+  and ritual duty 7. Findings stay reports-only (S13) — no auto-rename/
+  auto-register.
   (c) **hook promotion** (PostToolUse write-lint + UserPromptSubmit alias
   inject) — gate: lint check-set validated; design constraints recorded in
   the plan (exploration-exemption conflict, birthplace-구칭 exclusions,
