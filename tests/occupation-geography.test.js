@@ -163,3 +163,68 @@ test('fixture board: captureSector counts anonymously (legacy path)', () => {
   assert.equal(war.occupied, 1);
   assert.deepEqual(war.occupiedIds, []);
 });
+
+// ---- Task 3: transfer channels ----
+test('acquireSector: resets usable to the ADR 0022 floor and joins holds', () => {
+  const b = mapBoard();
+  const { A, D, war } = warBetween(b);
+  T.captureSector(war, A, D);
+  const id = war.occupiedIds[0];
+  T.acquireSector(A, id, T.HARNESS);
+  const s = A.world.sectors.get(id);
+  assert.ok(A.holds.has(id));
+  assert.equal(s.usableEconomy, 0.5);
+  assert.equal(s.usablePop, 0.6);
+});
+
+test('returnOccupied: sectors go back to the defender at pre-war usable', () => {
+  const b = mapBoard();
+  const { A, D, war } = warBetween(b);
+  T.captureSector(war, A, D);
+  const id = war.occupiedIds[0];
+  T.returnOccupied(war, D);
+  assert.ok(D.holds.has(id));
+  assert.deepEqual(war.occupiedIds, []);
+  assert.equal(D.world.sectors.get(id).usableEconomy, 1, 'no damage on return');
+});
+
+test('cession picks by value desc with connectivity to winner territory', () => {
+  const b = mapBoard();
+  const { A, D, war } = warBetween(b);
+  for (let i = 0; i < 4; i++) T.captureSector(war, A, D);
+  const ids = [...war.occupiedIds];
+  const w = D.world;
+  war.stage = 'cascade'; war.margin = 'decisive'; war.endTurn = 5;
+  const res = T.applySettlement('preset', '표준', war, A, D, T.HARNESS, b);
+  assert.ok(res.ceded >= 1 && res.ceded <= 4);
+  const gained = ids.filter((id) => A.holds.has(id));
+  assert.equal(gained.length, res.ceded);
+  // every gained sector connects to (A territory ∪ other gained sectors)
+  for (const id of gained) {
+    const ok = [...w.adj.get(id)].some((n) => A.holds.has(n));
+    assert.ok(ok, `${id} is an enclave`);
+  }
+  // remainder returned to D
+  for (const id of ids) if (!gained.includes(id)) assert.ok(D.holds.has(id));
+  assert.deepEqual(war.occupiedIds, []);
+});
+
+test('elimination: possessor keeps — third-party bites survive, remainder to eliminator', () => {
+  const b = mapBoard();
+  const { A, D, war } = warBetween(b);
+  // find a third realm C also adjacent to D
+  const C = b.find((r) => r !== A && r !== D
+    && (D.frontSectorIds[r.name] || []).some((id) => D.holds.has(id)));
+  assert.ok(C, 'binding has a third neighbor of D');
+  const warC = T.newWar(C, D, 1);
+  D.wars.push(war, warC); A.wars.push(war); C.wars.push(warC);
+  T.captureSector(warC, C, D);           // C bites one sector
+  const cBite = warC.occupiedIds[0];
+  for (let i = 0; i < 3; i++) T.captureSector(war, A, D); // A bites three
+  const remainder = [...D.holds];
+  T.eliminate(D, A, b, T.HARNESS, war);
+  assert.ok(C.holds.has(cBite), 'third-party keeps its bite');
+  for (const id of remainder) assert.ok(A.holds.has(id), 'remainder to eliminator');
+  assert.equal(D.holds.size, 0);
+  assert.equal(D.alive, false);
+});

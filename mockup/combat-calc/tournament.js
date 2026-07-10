@@ -57,6 +57,12 @@ const HARNESS = {
   capStartFrac: 0.60,        // population-usable start (ADR 0022): 60% immediate
   capRipenPpPerTurn: 0.10,   // +10pp per stable turn (ADR 0022)
   conquestUsableDrag: 0,     // Position-1 economy-lag lever (default off; Task 3)
+  // -- occupation geography (stage ①, design 2026-07-10). ADR 0022 usable
+  //    placeholders (HARNESS 가안) + land-ceiling coupling strength. --
+  usableEconomyStart: 0.5,   // acquired sector: economy usable start
+  usablePopStart: 0.6,       // acquired sector: population usable start
+  sectorRipenPerTurn: 0.10,  // +10pp per stable turn, per sector
+  capLandFrac: 0,            // ceiling = (1-f)*fieldCap0 + f*derived (0 = control)
 };
 
 const BOT = {
@@ -212,6 +218,25 @@ function captureSector(war, A, D) {
   D.holds.delete(id);
   (war.occupiedIds ??= []).push(id);
   war.occupied = war.occupiedIds.length;
+  syncCounts(D);
+}
+
+// any acquired sector integrates from the ADR 0022 usable floor — uniform
+// across channels (cession, elimination share): undamaged, but lagged.
+function acquireSector(r, id, H = HARNESS) {
+  const s = r.world.sectors.get(id);
+  s.usableEconomy = Math.min(s.usableEconomy, H.usableEconomyStart);
+  s.usablePop = Math.min(s.usablePop, H.usablePopStart);
+  r.holds.add(id);
+  syncCounts(r);
+}
+
+// stall / white peace: occupied sectors return to the defender unchanged.
+function returnOccupied(war, D) {
+  if (!sectorMode(D)) { D.interior += war.occupied; return; }
+  for (const id of war.occupiedIds) D.holds.add(id);
+  war.occupiedIds = [];
+  war.occupied = 0;
   syncCounts(D);
 }
 
@@ -615,25 +640,49 @@ function trySettle(war, A, D, H, record) {
 function applySettlement(kind, preset, war, A, D, H, realms) {
   const st = warEndState(war, D, H);
   const b = presetBundle(preset, st, MATCH_DIALS);
-  // cession: occupied sectors transfer (value + pool travel with land)
-  const ceded = Math.min(war.occupied, Math.round(b.cession / H.sectorValue));
-  A.interior += ceded;
-  D.interior = Math.max(0, D.interior); // already decremented during cascade
-  const poolShare = Math.round(D.pool * (ceded / Math.max(1, D.interior + ceded + 2)));
-  D.pool -= poolShare; A.pool += poolShare;
-  // A-3 probe: does conquered land raise the national cap? (0 in canon)
-  applyCapGain(A, ceded * H.capPerSector, H); // §5: winner's ceiling ripens in
-  D.fieldCap = Math.max(2000, D.fieldCap - ceded * H.capPerSector);
-  if (D.capPending > D.fieldCap) D.capPending = D.fieldCap; // loss is immediate
-  // §5 Position 1: fresh conquest also lags the economy — drag usable down in
-  // proportion to the new-land fraction; the existing usableRecovery pulse
-  // ripens it back. Default 0 (off) — an isolated measurement lever.
-  if (H.conquestUsableDrag > 0 && ceded > 0) {
-    const freshFrac = ceded / Math.max(1, A.interior); // A.interior already includes ceded
-    A.usable = Math.max(0.3, A.usable - H.conquestUsableDrag * freshFrac);
+  let ceded;
+  if (sectorMode(D)) {
+    // cession at sector identity: value desc + connectivity to winner land.
+    const ids = war.occupiedIds ?? [];
+    const cededN = Math.min(ids.length, Math.round(b.cession / H.sectorValue));
+    const w = D.world;
+    const val = (id) => { const s = w.sectors.get(id);
+      return s.populationValue + s.economyValue; };
+    const ranked = [...ids].sort((x, y) => val(y) - val(x) || (x < y ? -1 : 1));
+    const chosen = [];
+    while (chosen.length < cededN) {
+      const next = ranked.find((id) => !chosen.includes(id)
+          && [...w.adj.get(id)].some((n) => A.holds.has(n) || chosen.includes(n)))
+        ?? ranked.find((id) => !chosen.includes(id)); // fallback keeps the count honest
+      if (!next) break;
+      chosen.push(next);
+    }
+    const transferredPop = chosen.reduce((s, id) => s + w.sectors.get(id).populationValue, 0);
+    for (const id of chosen) acquireSector(A, id, H);
+    for (const id of ids) if (!chosen.includes(id)) D.holds.add(id); // return remainder
+    war.occupiedIds = []; war.occupied = 0;
+    syncCounts(A); syncCounts(D);
+    // register travels with the actually-transferred population share
+    const dPop = heldSectors(D).reduce((s, x) => s + x.populationValue, 0);
+    const poolShare = Math.round(D.pool * (transferredPop / Math.max(1, dPop + transferredPop)));
+    D.pool -= poolShare; A.pool += poolShare;
+    ceded = chosen.length;
+  } else {
+    // legacy fixture path (verbatim; growth lines inert at default dials)
+    ceded = Math.min(war.occupied, Math.round(b.cession / H.sectorValue));
+    A.interior += ceded;
+    D.interior = Math.max(0, D.interior);
+    const poolShare = Math.round(D.pool * (ceded / Math.max(1, D.interior + ceded + 2)));
+    D.pool -= poolShare; A.pool += poolShare;
+    applyCapGain(A, ceded * H.capPerSector, H);
+    D.fieldCap = Math.max(2000, D.fieldCap - ceded * H.capPerSector);
+    if (D.capPending > D.fieldCap) D.capPending = D.fieldCap;
+    if (H.conquestUsableDrag > 0 && ceded > 0) {
+      const freshFrac = ceded / Math.max(1, A.interior);
+      A.usable = Math.max(0.3, A.usable - H.conquestUsableDrag * freshFrac);
+    }
+    D.interior += Math.max(0, war.occupied - ceded);
   }
-  // returned occupation beyond the ceded claim
-  D.interior += Math.max(0, war.occupied - ceded);
   // indemnity: one-time recruit credit (부대 = 0.5 yield)
   A.recruitBonus += Math.round(b.indemnity * H.indemnityMenPerYield);
   if (kind === 'vassalage') {
@@ -675,16 +724,22 @@ function eliminate(D, A, realms, H, war) {
   D.alive = false;
   inheritFronts(A, D, realms);
   releaseVassalsOf(D, realms);
-  A.interior += D.interior; A.pool += Math.round(D.pool * 0.5);
-  // §5 ripen — D.interior is 0 here (the cascade already drained it into
-  // war.occupied sector by sector); war.occupied holds the true ceded count,
-  // so the brief's literal D.interior gain would be a permanent no-op.
-  // Cap-without-land asymmetry: on elimination the winner's ceiling grows by
-  // war.occupied * capPerSector, but A.interior gains nothing here (D.interior
-  // is already 0 and the occupied sectors evaporate via the pre-existing
-  // elimination land-sink above). Unlike settlement, elimination cap gain has
-  // no land basis — measurement reads of this path must carry that rider.
-  applyCapGain(A, (war && war.occupied) ? war.occupied * (H?.capPerSector ?? 0) : 0, H ?? HARNESS);
+  if (sectorMode(D)) {
+    // possessor keeps: every war's bites go to that war's attacker;
+    // the unoccupied remainder (incl. the capital's land) to the eliminator.
+    for (const wv of D.wars) {
+      if (wv.def !== D.name || !(wv.occupiedIds ?? []).length) continue;
+      const att = realms.find((r) => r.name === wv.att);
+      if (att && att.alive) for (const id of wv.occupiedIds) acquireSector(att, id, H);
+      wv.occupiedIds = []; wv.occupied = 0;
+    }
+    for (const id of [...D.holds]) acquireSector(A, id, H);
+    D.holds.clear(); syncCounts(D);
+    A.pool += Math.round(D.pool * 0.5);
+  } else {
+    A.interior += D.interior; A.pool += Math.round(D.pool * 0.5);
+    applyCapGain(A, (war && war.occupied) ? war.occupied * (H?.capPerSector ?? 0) : 0, H ?? HARNESS);
+  }
   D.interior = 0; D.field = 0;
   for (const w of [...D.wars]) { w.stage = 'over'; }
   D.wars = [];
@@ -944,7 +999,7 @@ function runMatch(assignment, opts = {}) {
       }
       // stall → status-quo peace (occupied sectors return)
       if (war.stalled >= H.stallPatience) {
-        D.interior += war.occupied;
+        returnOccupied(war, D);
         endWar(war, A, D, H);
         continue;
       }
@@ -961,7 +1016,7 @@ function runMatch(assignment, opts = {}) {
       } else if (!BOT.archetypes[A.archetype].pushCapital
         && (war.stage === 'cascade' || war.stage === 'capital') && war.proposalStep >= 3) {
         // lenient refused and the policy won't storm thrones: white peace
-        D.interior += war.occupied;
+        returnOccupied(war, D);
         endWar(war, A, D, H);
       }
     }
@@ -1093,4 +1148,5 @@ module.exports = { HARNESS, BOT, ARCHETYPES, TEMPERAMENTS, SEATS, SPEC_GAPS,
   pickTarget, peacePrimary, doRecruit, poolBleed, servingBodies, regenGarrisons,
   realmIncome, intensity, combatFromBorderClass, newWar, warBattle, m9Fill,
   frontDefense, pickMainDefWar, frontSoftness, applyCapGain, ripenCap,
-  applySettlement, sectorMode, syncCounts, occupationFrontier, captureSector, heldSectors };
+  applySettlement, sectorMode, syncCounts, occupationFrontier, captureSector, heldSectors,
+  acquireSector, returnOccupied, eliminate };
