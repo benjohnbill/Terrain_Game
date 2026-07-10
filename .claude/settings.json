@@ -1,0 +1,29 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node scripts/hooks/write-lint.js",
+            "timeout": 30,
+            "statusMessage": "doc-audit: linting governed docs"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node scripts/hooks/alias-inject.js",
+            "timeout": 10,
+            "statusMessage": "doc-audit: checking term alignment"
+          }
+        ]
+      }
+    ]
+  }
+}

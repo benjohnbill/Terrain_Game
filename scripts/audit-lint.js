@@ -399,5 +399,6 @@ module.exports = {
   checkHeaderDiff, checkCodeContract, checkStatusMarkers,
   checkNumericRestatement, checkAdrStampDuty,
   checkLedgerCurrency, checkFreshness, checkBaselineSelf,
-  parseSurfaceHeaders, splitDomainMapRows, runAll
+  parseSurfaceHeaders, splitDomainMapRows, runAll,
+  normalizeName, nameSet, buildNameIndex, lookup
 };

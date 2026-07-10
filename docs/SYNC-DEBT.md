@@ -111,10 +111,23 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   lesson folded in as an explicit step → Layer 2 git/claude-mem history)
   and ritual duty 7. Findings stay reports-only (S13) — no auto-rename/
   auto-register.
-  (c) **hook promotion** (PostToolUse write-lint + UserPromptSubmit alias
-  inject) — gate: lint check-set validated; design constraints recorded in
-  the plan (exploration-exemption conflict, birthplace-구칭 exclusions,
-  common-word alias scoping). (d) ~~audit run #2~~ — **DONE 2026-07-10**
+  (c) ~~hook promotion~~ — **DONE 2026-07-10** (`.claude/settings.json`,
+  `scripts/hooks/write-lint.js` + `alias-inject.js`, `tests/hooks.test.js`
+  15 tests, both hooks live-fire-tested via sentinel proof, not just piped):
+  PostToolUse write-lint runs `npm run lint:docs` after Write/Edit on a
+  governed doc path and injects findings as additionalContext, never
+  blocking. UserPromptSubmit alias-inject flags an exact registered
+  alias/구칭 match and injects a canonical-name note, also never blocking.
+  Constraint resolutions: (a) exploration-exemption — both hooks are
+  advisory-only, the fire/ignore judgment stays with the agent, never
+  encoded as hook logic; (b) birthplace-구칭 exclusion — already satisfied
+  structurally (checkHeaderDiff only scans DOMAIN_MAP+GLOSSARY, never
+  docs/adr/* or RULINGS.md, so a correctly-historical old name never trips
+  a finding) — no new code needed; (c) common-word scoping — exact,
+  word-boundary matching only against the registered alias list (MIN_LEN
+  guard + reuses `normalizeName` from audit-lint.js), verified "gold"
+  never fires since it isn't a registered alias.
+  (d) ~~audit run #2~~ — **DONE 2026-07-10**
   (`docs/audits/2026-07-10-audit-run-2.md`): baselines regenerated
   (222→221 terms, 107→118 registry rows), 1 genuine ruling-statement row
   dropped (2 of run #1's 3 "undetermined" rows were misclassified — they
