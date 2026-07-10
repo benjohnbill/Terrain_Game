@@ -165,6 +165,56 @@ const bodiesOf = (r) => r.field + totalGarrisons(r) + r.pool;
 // direction-free defensive mass for the ending panel's shieldShare.
 const shieldOf = (r) => r.field + Object.values(r.frontG).reduce((s, g) => s + g, 0);
 
+// ---- occupation geography (stage ①, design 2026-07-10) ----
+// Governing principle: geography defines the set of what is possible;
+// judgment chooses within it. The frontier (adjacency) is the invariant
+// set; the score picks inside it. All bots share this rule (world rule).
+const sectorMode = (r) => !!(r.world && r.holds);
+const heldSectors = (r) => [...r.holds].map((id) => r.world.sectors.get(id));
+
+// interior mirror: held sectors that are not start-seat border sectors.
+function syncCounts(r) {
+  if (!sectorMode(r)) return;
+  r.interior = [...r.holds].filter((id) => !r.world.borderIds.has(id)).length;
+}
+
+// frontier = defender-held sectors adjacent to (this war's occupied set ∪
+// the front's border sectors). Fallbacks (inherited fronts with no authored
+// border ids): any D-held sector adjacent to an A-held one; then all holds.
+function occupationFrontier(war, A, D) {
+  const w = D.world; const out = new Set();
+  const frontIds = (D.frontSectorIds && D.frontSectorIds[war.att]) || [];
+  for (const id of frontIds) if (D.holds.has(id)) out.add(id);
+  for (const id of war.occupiedIds ?? [])
+    for (const n of w.adj.get(id) ?? []) if (D.holds.has(n)) out.add(n);
+  if (!out.size && sectorMode(A))
+    for (const id of D.holds)
+      if ([...w.adj.get(id)].some((n) => A.holds.has(n))) out.add(id);
+  if (!out.size) for (const id of D.holds) out.add(id);
+  return out;
+}
+
+// score = value ÷ resistance. Resistance 3 (border) : 1 (interior) is a 가안
+// ordering proxy mirroring the garrison start-state (900:300) — it never
+// enters resolve(); combat difficulty is carried by real stocks elsewhere.
+// Hook: replace with real per-sector defense when sector garrisons/forts
+// land. Hook: attacker's read of value/resistance is truth for now — fog
+// estimate consumption is a reserved seat.
+function captureSector(war, A, D) {
+  if (!sectorMode(D)) { war.occupied += 1; return; } // legacy fixture path
+  const w = D.world;
+  const cand = [...occupationFrontier(war, A, D)];
+  if (!cand.length) return;
+  const score = (id) => { const s = w.sectors.get(id);
+    return (s.populationValue + s.economyValue) / (w.borderIds.has(id) ? 3 : 1); };
+  cand.sort((a, b) => score(b) - score(a) || (a < b ? -1 : 1));
+  const id = cand[0];
+  D.holds.delete(id);
+  (war.occupiedIds ??= []).push(id);
+  war.occupied = war.occupiedIds.length;
+  syncCounts(D);
+}
+
 // §5 conquest growth (DT-②, ADR 0022): a conquest's ceiling gain is not
 // fully usable at once. capStartFrac lands immediately; the remainder waits
 // in capPending and ripens capRipeFlow per stable turn (10% of the gain →
@@ -215,7 +265,8 @@ function newWar(att, def, turn) {
   return {
     att: att.name, def: def.name, start: turn,
     stage: 'siege', stamps: 0, starve: 0,
-    occupied: 0, raided: 0,        // sectors taken / loot extracted (yield)
+    occupied: 0, occupiedIds: [],  // sectors taken (count mirror + identities)
+    raided: 0,                     // loot extracted (yield)
     stalled: 0, margin: null,      // decisive | grinding | marginal
     proposalStep: 0,               // winner's concession ladder position
     log: [],
@@ -335,7 +386,7 @@ function warBattle(war, A, D, opts = {}) {
       logPlan(war, 'siege', pick, r, opts.planStats);
       applyBlood(A, D, r, front);
       if (r.success && advanceOnSuccess(war, r, pick.plan)) {
-        war.stage = 'field'; war.occupied += 1; D.interior = Math.max(0, D.interior);
+        war.stage = 'field'; captureSector(war, A, D); D.interior = Math.max(0, D.interior);
       } else if (!r.success && r.R < 1.1) war.stalled++;
       if (r.routed === 'defender') war.stage = 'field'; // garrison routs out of the works
       return r;
@@ -344,7 +395,7 @@ function warBattle(war, A, D, opts = {}) {
       const r = resolve({ plan: 'Swift', attacker: { stock: A.field, commit: BOT.siegeCommit },
         defender: { stock: g, commit: BOT.siegeCommit, reserveStock: m9Fill(D, front) }, ...site });
       applyBlood(A, D, r, front);
-      if (r.success) { war.stage = 'field'; war.occupied += 1; D.interior = Math.max(0, D.interior); }
+      if (r.success) { war.stage = 'field'; captureSector(war, A, D); D.interior = Math.max(0, D.interior); }
       else if (r.R < 1.1) war.stalled++;
       return r;
     }
@@ -392,7 +443,8 @@ function warBattle(war, A, D, opts = {}) {
   }
 
   if (war.stage === 'cascade') {
-    if (D.interior <= 0) { war.stage = 'capital'; return null; }
+    const landGone = sectorMode(D) ? D.holds.size === 0 : D.interior <= 0;
+    if (landGone) { war.stage = 'capital'; return null; }
     if (A.brain) {
       const spec = { attacker: { stock: A.field, commit: BOT.siegeCommit },
         defender: { stock: 500, commit: 0 }, terrain: 'plains',
@@ -401,13 +453,19 @@ function warBattle(war, A, D, opts = {}) {
       const r = resolve({ ...spec, plan: pick.plan });
       logPlan(war, 'cascade', pick, r, opts.planStats);
       A.field = Math.max(0, r.stockAfterA); poolBleed(A, r.lossA);
-      if (r.success && advanceOnSuccess(war, r, pick.plan)) { war.occupied += 1; D.interior -= 1; }
+      if (r.success && advanceOnSuccess(war, r, pick.plan)) {
+        captureSector(war, A, D);
+        if (!sectorMode(D)) D.interior = Math.max(0, D.interior - 1);
+      }
       return r;
     }
     const r = resolve({ plan: 'Swift', attacker: { stock: A.field, commit: BOT.siegeCommit },
       defender: { stock: 500, commit: 0 }, terrain: 'plains' });
     A.field = Math.max(0, r.stockAfterA); poolBleed(A, r.lossA);
-    if (r.success) { war.occupied += 1; D.interior -= 1; }
+    if (r.success) {
+      captureSector(war, A, D);
+      if (!sectorMode(D)) D.interior = Math.max(0, D.interior - 1);
+    }
     return r;
   }
 
@@ -520,7 +578,7 @@ function trySettle(war, A, D, H, record) {
   // occupied ground (or the loser has nothing left / the capital is under
   // the sword) — the claim rate multiplies only what the sword reached.
   const deepEnough = war.occupied >= (BOT.goalOccupied[pol.preset] ?? 3)
-    || D.interior <= 0 || war.stage === 'capital' || war.stage === 'fallen';
+    || (sectorMode(D) ? D.holds.size === 0 : D.interior <= 0) || war.stage === 'capital' || war.stage === 'fallen';
   if (!deepEnough) return null;
   const st = warEndState(war, D, H);
   const L = expectedContinuedLoss(st, MATCH_DIALS);
@@ -1035,4 +1093,4 @@ module.exports = { HARNESS, BOT, ARCHETYPES, TEMPERAMENTS, SEATS, SPEC_GAPS,
   pickTarget, peacePrimary, doRecruit, poolBleed, servingBodies, regenGarrisons,
   realmIncome, intensity, combatFromBorderClass, newWar, warBattle, m9Fill,
   frontDefense, pickMainDefWar, frontSoftness, applyCapGain, ripenCap,
-  applySettlement };
+  applySettlement, sectorMode, syncCounts, occupationFrontier, captureSector, heldSectors };

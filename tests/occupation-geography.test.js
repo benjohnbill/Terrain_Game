@@ -76,3 +76,67 @@ test('fixture board (tournament makeBoard) has NO sector world', () => {
     assert.equal(r.holds, undefined);
   }
 });
+
+// ---- Task 2: named capture ----
+function mapBoard() { return MB.makeBoardFromMap(CRADLE_MAP, BINDING); }
+function warBetween(board) {
+  // find two realms that share a front (frontSectorIds on both sides)
+  for (const A of board) for (const D of board) {
+    if (A === D) continue;
+    if (A.frontG[D.name] !== undefined && (D.frontSectorIds[A.name] || []).length)
+      return { A, D, war: T.newWar(A, D, 1) };
+  }
+  throw new Error('no adjacent pair');
+}
+
+test('newWar carries occupiedIds', () => {
+  const b = mapBoard();
+  const { war } = warBetween(b);
+  assert.deepEqual(war.occupiedIds, []);
+});
+
+test('first capture takes a front border sector, by score, deterministically', () => {
+  const b = mapBoard();
+  const { A, D, war } = warBetween(b);
+  const frontIds = D.frontSectorIds[A.name].filter((id) => D.holds.has(id));
+  const w = D.world;
+  const score = (id) => { const s = w.sectors.get(id);
+    return (s.populationValue + s.economyValue) / (w.borderIds.has(id) ? 3 : 1); };
+  const expected = [...frontIds].sort((x, y) => score(y) - score(x) || (x < y ? -1 : 1))[0];
+  T.captureSector(war, A, D);
+  assert.deepEqual(war.occupiedIds, [expected]);
+  assert.ok(!D.holds.has(expected), 'captured sector left defender holds');
+  assert.equal(war.occupied, 1, 'count mirror');
+});
+
+test('frontier grows by adjacency from the occupied set', () => {
+  const b = mapBoard();
+  const { A, D, war } = warBetween(b);
+  T.captureSector(war, A, D);
+  const frontier = T.occupationFrontier(war, A, D);
+  for (const id of frontier) {
+    assert.ok(D.holds.has(id), 'frontier is defender-held');
+    const seeds = new Set([...war.occupiedIds, ...D.frontSectorIds[A.name]]);
+    const touches = [...D.world.adj.get(id)].some((n) => seeds.has(n)) || seeds.has(id);
+    assert.ok(touches, `${id} not reachable from occupied/front border`);
+  }
+});
+
+test('captures never exceed holdings; defender can be eaten to empty', () => {
+  const b = mapBoard();
+  const { A, D, war } = warBetween(b);
+  const start = D.holds.size;
+  for (let i = 0; i < start + 5; i++) T.captureSector(war, A, D);
+  assert.equal(war.occupiedIds.length, start);
+  assert.equal(D.holds.size, 0);
+  assert.equal(D.interior, 0, 'mirror synced');
+});
+
+test('fixture board: captureSector counts anonymously (legacy path)', () => {
+  const b = T.makeBoard();
+  const A = b[0], D = b[1];
+  const war = T.newWar(A, D, 1);
+  T.captureSector(war, A, D);
+  assert.equal(war.occupied, 1);
+  assert.deepEqual(war.occupiedIds, []);
+});
