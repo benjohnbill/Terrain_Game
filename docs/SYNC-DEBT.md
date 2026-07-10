@@ -82,6 +82,22 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   claimed done — QUICKREF is a convenience surface that may lag; treat
   this as targeted-current-through-2026-07-09, not a from-scratch regen.
 
+- [ ] **L2 fidelity-boundary grill session** (registered 2026-07-10, §5
+  conquest-growth measurement pass; user-requested). Standing principle
+  (user, 2026-07-10): L2 implements EVERYTHING except the fun only a
+  human can verify — mechanical, deterministic, document-specified
+  behavior is never legitimately abstracted away. Trigger case: the L2
+  board flattens sector transfer to a count while DOMAIN_MAP's cession
+  currency is defined as "named sectors" with per-sector cap value
+  varying 360–1,200 (3.3×) by region geography — the flat `capPerSector`
+  dial both erased terrain from the growth engine and contaminated the
+  2026-07-10 growth sweep. Owed: a dedicated grilling session producing
+  the two lists — (1) "human-verify-only" items (stay out of L2) vs
+  (2) "document-specified but currently simplified in L2" items (each an
+  L2 fidelity debt with its own row/owner). Until that audit, treat any
+  L2 conclusion that leans on a simplified mechanic as L1-grade for that
+  mechanic (test-trust ladder, match-arc TEST-LADDER.md).
+
 - [ ] **A-3 magnitude pass must ingest the L2 freeze evidence**
   (registered 2026-07-07, sheet-15 session): cap-growth-alone does not
   unfreeze the parity map (22→24% decided; on the asymmetric fixture
