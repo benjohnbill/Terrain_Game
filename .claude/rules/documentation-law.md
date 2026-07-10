@@ -14,7 +14,7 @@ restate this law elsewhere. Auto-load carries LAW only; canon CONTENT
 | Projection (투영) | `DESIGN.md`, `DOMAIN_MAP.md` | Stable summaries of sealed truth (architecture / language). Updated only in doc-sync batches; truth is never authored here first. |
 | Record (기록) | `docs/adr/` (promoted) · feature `RULINGS.md` (birthplace) | Why decisions were made. ADR = architecture-grade / cross-feature; RULINGS = feature-local rulings that promote up when they outgrow the feature. Append-only + supersession protocol below. |
 | Production (생산) | `docs/features/<slug>/` | The workshop where truth is minted (with user seal). File roles below. |
-| Working (작업) | `mockup/*/NOTES.md`, `docs/superpowers/`, `docs/DESIGN-RISKS.md`, `docs/GLOSSARY-QUICKREF.md` (generated), tracked debt ledgers (`docs/SYNC-DEBT.md` doc-sync debts, `docs/DISPLAY-DEBT.md` UI-design debts), `.context/` (untracked handoffs) | Time-stamped records and idea banks — consult for context and parked/deferred ideas; CURRENT truth lives in the seal chain, not here. NOTES verdicts are a staging area: they must sync to Production/Projection in the same session's doc-sync batch. Debt ledgers are registers only — a row points to the mechanic's birthplace, never redefines it. |
+| Working (작업) | `mockup/*/NOTES.md`, `docs/superpowers/`, `docs/DESIGN-RISKS.md`, `docs/GLOSSARY-QUICKREF.md` (generated), tracked debt ledgers (`docs/SYNC-DEBT.md` doc-sync debts, `docs/DISPLAY-DEBT.md` UI-design debts), `docs/audits/` (audit baselines + dated reports), `.context/` (untracked handoffs) | Time-stamped records and idea banks — consult for context and parked/deferred ideas; CURRENT truth lives in the seal chain, not here. NOTES verdicts are a staging area: they must sync to Production/Projection in the same session's doc-sync batch. Debt ledgers are registers only — a row points to the mechanic's birthplace, never redefines it. `docs/audits/` baselines (term inventory, doc registry) are machine-readable indexes maintained per `docs/audits/HARVEST.md` (two-mode model); audit-lint findings are reports, never legislation. |
 | Sanctuary (성역) | `docs/teach/` | The user's own space. Agents do not touch it. |
 
 ### Production file roles (`docs/features/<slug>/`)
@@ -79,6 +79,18 @@ Dates alone are not protection: a stale ADR read in isolation must
 announce its own staleness. Never silently edit an accepted ADR's
 Decision section.
 
+**Seal-amends-ADR duty (adopted 2026-07-10, forensics F-09):** a
+Production seal (RULINGS/GLOSSARY) that amends or contradicts an
+accepted ADR triggers the same duty as a superseding ADR — the same
+session's doc-sync batch MUST stamp the old ADR's header
+(`Amended by <ruling ref> (date)`) with a one-line delta.
+
+**Mandatory ADR trigger (adopted 2026-07-10, forensics F-06/07/08):**
+a decision that changes a win condition, a cross-feature model, or
+SPEC direction MUST land with an ADR in the same batch. "SPEC-level"
+is not an exemption from the Record layer — it is the strongest
+reason to enter it.
+
 ## Vocabulary Law
 
 - **Definition tiers**: Tier 0 = `DOMAIN_MAP.md` (project canon,
@@ -97,7 +109,10 @@ Decision section.
   Every non-birthplace surface (a promoted term's DOMAIN_MAP entry,
   `INDEX.md`, the QUICKREF, any Tier-2 file) holds a pointer/summary,
   never a normative copy — paraphrasing an authoritative definition as
-  if normative is drift.
+  if normative is drift. The summary+pointer discipline applies to
+  EVERY DOMAIN_MAP entry, including the Core Terms and Design
+  Principle sections — not only promoted feature terms (adopted
+  2026-07-10, forensics F-04).
 - **Naming**: canonical identifier = industry-standard English,
   matching code identifiers (`projectable mass` ↔ `projectableMass`);
   header format `English canonical (한국어 표시어)`. Prefer standard
@@ -112,6 +127,16 @@ Decision section.
   tag and is registered into Tier 1 (or discarded) within the same
   exchange. In conversation use the standard English term directly;
   abbreviations allowed after one parenthesized full form.
+- **Conversational term alignment (adopted 2026-07-10 — agent duties,
+  not user duties)**: (a) when the user's phrasing maps to a
+  registered term, echo the canonical name once and continue with it;
+  (b) before treating a user-described concept as NEW, check
+  `docs/audits/term-inventory.json` for an existing term and surface
+  any match; (c) exploration exemption — loose language is free
+  during brainstorming/grilling; alignment fires when a statement
+  heads to a seal. The mechanizable slice (exact alias/구칭 matching)
+  is promoted to hooks only after the audit lint validates it
+  (tracked in `docs/SYNC-DEBT.md`).
 - **Status dictionary**: DOMAIN_MAP `✅/❓/⛔` ≡ GLOSSARY
   `AGREED/PROPOSED/rejected-recorded`.
 - **Promotion**: a Tier-1 term is a promotion candidate once a second
@@ -146,7 +171,17 @@ these):
    (user statement → dial → checking scale), the user-audit surface;
    가안 rows marked UNSEALED, always pointers: convenience surface
    only, never cited as definition; header must carry "last
-   regenerated" date.
-5. Stamp superseded/amended ADRs per the protocol above.
+   regenerated" date. Regeneration MUST include the batch's own seals
+   (same-session freshness, adopted 2026-07-10 — forensics M-07):
+   "may lag canon" covers only content older than the current session,
+   and the "last regenerated" date is the lint's freshness target.
+5. Stamp superseded/amended ADRs per the protocol above — including
+   the seal-amends-ADR duty.
 6. Record any duty left unpaid (and any Projection/Production
    divergence noticed) in `docs/SYNC-DEBT.md`.
+7. Maintain the audit baselines (adopted 2026-07-10): a session that
+   sealed, renamed, or re-statused a term patches its
+   `docs/audits/term-inventory.json` row in the same doc-sync batch
+   (index fields only, per `docs/audits/HARVEST.md`); run the audit
+   lint once it lands (P1 prototype — tracked in `docs/SYNC-DEBT.md`).
+   Lint findings are reports, never legislation.
