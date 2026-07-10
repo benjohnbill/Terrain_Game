@@ -325,3 +325,20 @@ test('limbo: an occupied (untransferred) sector pays income to neither side', ()
   const incomeAfter = T.realmIncome(A) + T.realmIncome(D);
   assert.ok(incomeAfter < incomeBefore, 'world income drops while contested');
 });
+
+// ---- Task 5: control invariance after retirement ----
+test('capLandFrac 0 control: two identical runs are deterministic and growth-free', () => {
+  const run = () => {
+    const board = mapBoard();
+    const assign = Object.fromEntries(board.map((r) =>
+      [r.name, { archetype: 'shield-first', temperament: '표준' }]));
+    const rec = T.runMatch(assign, { seed: 11, board, harness: { maxTurns: 12 } });
+    return { rec, caps: board.map((r) => r.fieldCap) };
+  };
+  const a = run(), b2 = run();
+  assert.equal(a.rec.winner, b2.rec.winner);
+  assert.deepEqual(a.caps, b2.caps);
+  // frozen control: every ceiling still equals its build value
+  const fresh = mapBoard();
+  assert.deepEqual(a.caps, fresh.map((r) => r.fieldCap0));
+});

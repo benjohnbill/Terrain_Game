@@ -47,16 +47,6 @@ const HARNESS = {
   truceTurns: 4,
   stallPatience: 2,         // stalled war turns before white peace
   vassalPremium: 0.25,      // ruling ⑭ 가안 — THE value under test (swept)
-  capPerSector: 0,          // A-3 probe: fieldCap gained/lost per ceded sector.
-                            // 0 = current canon (conquest raises pool+yield but
-                            // NOT the cap — cap growth is A-3's undesigned seat)
-  // -- §5 conquest growth engine (DT-②, ADR 0022 ripening). HARNESS gaan
-  //    (bound proof power, not seal candidates). A conquest's ceiling gain
-  //    enters at capStartFrac and ripens +capRipenPpPerTurn per turn → full
-  //    in 4 turns. Active only when capPerSector > 0. --
-  capStartFrac: 0.60,        // population-usable start (ADR 0022): 60% immediate
-  capRipenPpPerTurn: 0.10,   // +10pp per stable turn (ADR 0022)
-  conquestUsableDrag: 0,     // Position-1 economy-lag lever (default off; Task 3)
   // -- occupation geography (stage ①, design 2026-07-10). ADR 0022 usable
   //    placeholders (HARNESS 가안) + land-ceiling coupling strength. --
   usableEconomyStart: 0.5,   // acquired sector: economy usable start
@@ -135,7 +125,6 @@ function makeBoard() {
       usable: 1.0,                    // economy usable fraction (raids burn it)
       pool: 0,                        // set below: ×1.5 initial military (M13)
       recruitBonus: 0,                // indemnity credit, men
-      capPending: 0, capRipeFlow: 0,  // §5 growth: ceiling not yet integrated
       alive: true, vassalOf: null,
       truce: {},                      // name -> turn until which war is barred
       wars: [],                       // war objects this realm participates in
@@ -238,38 +227,6 @@ function returnOccupied(war, D) {
   war.occupiedIds = [];
   war.occupied = 0;
   syncCounts(D);
-}
-
-// §5 conquest growth (DT-②, ADR 0022): a conquest's ceiling gain is not
-// fully usable at once. capStartFrac lands immediately; the remainder waits
-// in capPending and ripens capRipeFlow per stable turn (10% of the gain →
-// full in 4 turns). This transient is the contestability window. gainCap <= 0
-// (the capPerSector:0 control) is a no-op, so non-growth runs are unchanged.
-// Concurrent gains POOL into the same capPending/capRipeFlow accumulator
-// rather than tracking separate ripening schedules per gain — a second gain
-// arriving mid-ripen speeds up the remainder (e.g. a gain 2 turns after the
-// first drains the rest in 3 turns, not 4). Deliberate harness simplification
-// of ADR 0022, not a bug.
-function applyCapGain(realm, gainCap, H = HARNESS) {
-  if (gainCap <= 0) return;
-  const imm = Math.round(H.capStartFrac * gainCap);
-  realm.fieldCap += imm;
-  // ?? 0: field-missing-safe accumulation (see ripenCap guard note below).
-  realm.capPending = (realm.capPending ?? 0) + (gainCap - imm);
-  realm.capRipeFlow = (realm.capRipeFlow ?? 0) + Math.round(H.capRipenPpPerTurn * gainCap);
-}
-
-// move one stable turn's worth of pending ceiling into usable fieldCap.
-// Guard is deliberately NaN/undefined-safe (inverted truthy check, not
-// `<= 0`): a realm missing capPending would make `<= 0` false and fall
-// through to Math.min(undefined, undefined) = NaN, poisoning fieldCap. This
-// failure class already fired once via map-board realms lacking the field.
-function ripenCap(realm) {
-  if (!(realm.capPending > 0)) return;
-  const step = Math.min(realm.capPending, realm.capRipeFlow);
-  realm.fieldCap += step;
-  realm.capPending -= step;
-  if (realm.capPending <= 0) { realm.capPending = 0; realm.capRipeFlow = 0; }
 }
 
 // adapt a realm to match.js's hegemonyCheck shape
@@ -674,13 +631,6 @@ function applySettlement(kind, preset, war, A, D, H, realms) {
     D.interior = Math.max(0, D.interior);
     const poolShare = Math.round(D.pool * (ceded / Math.max(1, D.interior + ceded + 2)));
     D.pool -= poolShare; A.pool += poolShare;
-    applyCapGain(A, ceded * H.capPerSector, H);
-    D.fieldCap = Math.max(2000, D.fieldCap - ceded * H.capPerSector);
-    if (D.capPending > D.fieldCap) D.capPending = D.fieldCap;
-    if (H.conquestUsableDrag > 0 && ceded > 0) {
-      const freshFrac = ceded / Math.max(1, A.interior);
-      A.usable = Math.max(0.3, A.usable - H.conquestUsableDrag * freshFrac);
-    }
     D.interior += Math.max(0, war.occupied - ceded);
   }
   // indemnity: one-time recruit credit (부대 = 0.5 yield)
@@ -773,15 +723,6 @@ function eliminate(D, A, realms, H, war) {
     // capLandFrac blend, not here.
   } else {
     A.interior += D.interior; A.pool += Math.round(D.pool * 0.5);
-    // §5 ripen — D.interior is 0 here (the cascade already drained it into
-    // war.occupied sector by sector); war.occupied holds the true ceded count,
-    // so the brief's literal D.interior gain would be a permanent no-op.
-    // Cap-without-land asymmetry: on elimination the winner's ceiling grows by
-    // war.occupied * capPerSector, but A.interior gains nothing here (D.interior
-    // is already 0 and the occupied sectors evaporate via the pre-existing
-    // elimination land-sink above). Unlike settlement, elimination cap gain has
-    // no land basis — measurement reads of this path must carry that rider.
-    applyCapGain(A, (war && war.occupied) ? war.occupied * (H?.capPerSector ?? 0) : 0, H ?? HARNESS);
   }
   D.interior = 0; D.field = 0;
   for (const w of [...D.wars]) { w.stage = 'over'; }
@@ -1084,8 +1025,6 @@ function runMatch(assignment, opts = {}) {
         if (H.capLandFrac > 0)
           r.fieldCap = Math.round((1 - H.capLandFrac) * r.fieldCap0
             + H.capLandFrac * ECON.nationalCap(heldSectors(r)));
-      } else {
-        ripenCap(r);   // legacy accumulator (retires in Task 5)
       }
       r.treasury = (r.treasury ?? 0) + realmIncome(r);  // Option B income accrual
     }
@@ -1205,6 +1144,6 @@ module.exports = { HARNESS, BOT, ARCHETYPES, TEMPERAMENTS, SEATS, SPEC_GAPS,
   makeBoard, runMatch, runTournament, mulberry32, yieldReach, realmValue,
   pickTarget, peacePrimary, doRecruit, poolBleed, servingBodies, regenGarrisons,
   realmIncome, intensity, combatFromBorderClass, newWar, warBattle, m9Fill,
-  frontDefense, pickMainDefWar, frontSoftness, applyCapGain, ripenCap,
+  frontDefense, pickMainDefWar, frontSoftness,
   applySettlement, sectorMode, syncCounts, occupationFrontier, captureSector, heldSectors,
   acquireSector, returnOccupied, eliminate };

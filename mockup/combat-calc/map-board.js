@@ -170,7 +170,6 @@ function makeBoardFromMap(map, binding, gaan = BOARD_GAAN) {
         ? Math.round(popTotal * gaan.registerPerPop)   // land-derived (Q0-5)
         : Math.round((field + garrisonTotal) * 1.5),   // legacy sizing (구칭)
       recruitBonus: 0,
-      capPending: 0, capRipeFlow: 0,  // §5 growth: ceiling not yet integrated
       world,                                  // shared sector world
       holds: new Set(secs.map((s) => s.id)),  // held sector ids (live ownership)
       fieldCap0: fieldCap,                    // frozen build ceiling (capLandFrac blend base)
