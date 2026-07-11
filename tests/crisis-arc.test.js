@@ -28,3 +28,36 @@ test('addScar accumulates and terrainOf reads the sector terrain layer', () => {
 test('terrainOf defaults to plains when no map units', () => {
   assert.strictEqual(T.terrainOf({}), 'plains');
 });
+
+test('sectorFuel is scar × intensity; unscarred stays zero', () => {
+  assert.strictEqual(T.sectorFuel({ scar: 2 }, 0.5), 1);
+  assert.strictEqual(T.sectorFuel({ scar: 0 }, 0.9), 0);
+  assert.strictEqual(T.sectorFuel({}, 0.9), 0); // no scar field → 0
+});
+
+test('growRebels grows a scarred, mobilized sector and respects the register cap', () => {
+  const C = { ...T.HARNESS.crisis, enabled: true, rate0: 0.5, rateStep: 0 };
+  const H = { ...T.HARNESS, crisis: C };
+  // one realm, two held sectors; realm-level intensity via serving/pool.
+  const sA = { id: 'a', populationValue: 1, scar: 4, mapUnits: [{ terrainLayer: 'plains' }] };
+  const sB = { id: 'b', populationValue: 1, scar: 0, mapUnits: [{ terrainLayer: 'plains' }] };
+  const world = { sectors: new Map([['a', sA], ['b', sB]]), borderIds: new Set() };
+  const r = { name: 'R', world, holds: new Set(['a', 'b']),
+    pool: 1000, field: 300, frontG: {}, capitalGarrison: 0 };
+  // intensity = serving/pool = 300/1000 = 0.3; sectorA fuel = 4×0.3 = 1.2
+  // growth = rate(25)=0.5 × 1.2 = 0.6 × (register share). share_a = 1000×(1/2)=500.
+  T.growRebels(r, 25, H);
+  assert.ok(sA.rebelStack > 0, 'scarred sector rises');
+  assert.strictEqual(sB.rebelStack ?? 0, 0, 'unscarred sector stays quiet');
+  assert.ok(sA.rebelStack <= 500 + 1e-9, 'capped at register share');
+});
+
+test('growRebels never exceeds the register cap even at extreme rate', () => {
+  const C = { ...T.HARNESS.crisis, enabled: true, rate0: 1000, rateStep: 0 };
+  const H = { ...T.HARNESS, crisis: C };
+  const s = { id: 'a', populationValue: 1, scar: 10, mapUnits: [{ terrainLayer: 'plains' }] };
+  const world = { sectors: new Map([['a', s]]), borderIds: new Set() };
+  const r = { name: 'R', world, holds: new Set(['a']), pool: 600, field: 300, frontG: {}, capitalGarrison: 0 };
+  T.growRebels(r, 30, H);
+  assert.ok(s.rebelStack <= 600 + 1e-9);
+});

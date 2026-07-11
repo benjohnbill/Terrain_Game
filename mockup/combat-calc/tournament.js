@@ -217,6 +217,36 @@ function syncCounts(r) {
   r.interior = [...r.holds].filter((id) => !r.world.borderIds.has(id)).length;
 }
 
+// CE-⑭.1 fuel: a sector's uprising fuel = its scar × the owner's mobilization
+// intensity (realm-level intensity spread uniformly over held sectors — the
+// sealed L2 approximation, CE-③). A land neither damaged nor mobilized never
+// rises; resting inherited scarred land keeps it quiet (demobilize = cooling).
+function sectorFuel(sector, intensityVal) { return (sector.scar ?? 0) * intensityVal; }
+
+// CE-⑭.2 rebel cap = the sector's register share = realm register × (sector
+// pop ÷ realm held pop). The whole populace can rise at 3× the density a
+// state sustains as standing forces (rebels pay no maintenance).
+function sectorRegisterShare(sector, realm, popTotal) {
+  return popTotal > 0 ? realm.pool * (sector.populationValue / popTotal) : 0;
+}
+
+// CE-④/⑧ soil-and-crop growth: each crisis turn, every held sector's rebel
+// stack grows by rate(t) × fuel, capped at its register share. Deterministic.
+function growRebels(realm, t, H) {
+  if (!sectorMode(realm)) return;
+  const C = H.crisis;
+  const iv = intensity(realm);
+  const rate = crisisRate(t, C);
+  const secs = heldSectors(realm);
+  const popTotal = secs.reduce((s, x) => s + x.populationValue, 0);
+  for (const s of secs) {
+    const grow = rate * sectorFuel(s, iv);
+    if (grow <= 0) continue;
+    const cap = sectorRegisterShare(s, realm, popTotal);
+    s.rebelStack = Math.min((s.rebelStack ?? 0) + grow, cap);
+  }
+}
+
 // frontier = defender-held sectors adjacent to (this war's occupied set ∪
 // the front's border sectors). Fallbacks (inherited fronts with no authored
 // border ids): any D-held sector adjacent to an A-held one; then all holds.
@@ -1211,4 +1241,5 @@ module.exports = { HARNESS, BOT, ARCHETYPES, TEMPERAMENTS, SEATS, SPEC_GAPS,
   realmIncome, intensity, combatFromBorderClass, newWar, warBattle, m9Fill,
   frontDefense, pickMainDefWar, frontSoftness,
   applySettlement, sectorMode, syncCounts, occupationFrontier, captureSector, heldSectors,
-  acquireSector, returnOccupied, eliminate, checkView, crisisRate, addScar, terrainOf };
+  acquireSector, returnOccupied, eliminate, checkView, crisisRate, addScar, terrainOf,
+  sectorFuel, sectorRegisterShare, growRebels };
