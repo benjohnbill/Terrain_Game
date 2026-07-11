@@ -236,6 +236,10 @@ function checkView(realms) {
     field: r.field, fieldCap: r.fieldCap,
     garrisons: totalGarrisons(r),
     fronts: r.frontG,
+    // affordability bound inputs (grill 2026-07-11): finite on map boards
+    // (Option B treasury/income); NaN/undefined on fixtures → legacy path.
+    treasury: r.treasury, income: realmIncome(r),
+    pool: r.pool, serving: servingBodies(r),
     exits: r.staging ? r.exits.map((e) => ({ cap: e.cap === Infinity ? Infinity : e.cap * 2 })) : r.exits,
   }));
 }
@@ -1068,6 +1072,7 @@ function finish(record, realms) {
       leadershipShortfall: Math.max(0, maxNeed - c.candProj),
       coalitionOverhang: c.coalition - c.coalitionNeed,
       candProj: c.candProj,
+      affordabilityBound: c.affordabilityBound,
     };
     if (!best || cand.leadershipShortfall < best.leadershipShortfall
       || (cand.leadershipShortfall === best.leadershipShortfall
@@ -1150,4 +1155,4 @@ module.exports = { HARNESS, BOT, ARCHETYPES, TEMPERAMENTS, SEATS, SPEC_GAPS,
   realmIncome, intensity, combatFromBorderClass, newWar, warBattle, m9Fill,
   frontDefense, pickMainDefWar, frontSoftness,
   applySettlement, sectorMode, syncCounts, occupationFrontier, captureSector, heldSectors,
-  acquireSector, returnOccupied, eliminate };
+  acquireSector, returnOccupied, eliminate, checkView };
