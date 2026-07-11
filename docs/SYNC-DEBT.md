@@ -11,6 +11,31 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
 
 ## Open
 
+- [ ] **Record-world harness default flip** (registered 2026-07-11,
+  affordability & M9-promotion pass — match-arc RULINGS AB-②). The world
+  of record is now FG board + M9 on + capLandFrac 1, but
+  `mockup/combat-calc/tournament.js` harness defaults still carry
+  capLandFrac 0 + FG opt-in — the record world is opt-in until the
+  defaults flip. This is a CODE change requiring test adjudication (the
+  suite's non-FG/frac-0 byte-identity pins and fixture expectations must
+  be re-adjudicated, not silently updated) — deliberately NOT done in the
+  2026-07-11 doc batch. Owner: the next harness session (natural pairing:
+  the crisis-ending L2 prototype).
+
+- [ ] **freeze-autopsy.js hand-rolled checkView replica** (registered
+  2026-07-11, affordability-bound final review — opportunistic cleanup).
+  `mockup/combat-calc/freeze-autopsy.js` replicates checkView minimally
+  ("start-state parity reference") instead of importing the real export;
+  now that checkView carries affordability fields, the replica can drift
+  silently. Import the real export whenever the file is next touched.
+
+- [ ] **Crisis-ending SPEC amendment proposal** (registered 2026-07-11,
+  ADR 0034 — direction sealed, SPEC untouched by design). The match-end
+  declaration (turn-32 sudden-death crisis + scorecard fallback) is a
+  SPEC-level change; the proposal RIDES the dedicated crisis-ending
+  design pass (match-arc INDEX open q.1), never lands from a doc batch.
+  SPEC stays as-is until the user approves that pass's proposal.
+
 - [ ] **Timing-ruler reframe — DOMAIN_MAP/DESIGN promotion scan** (registered
   2026-07-09; metric reframe SEALED same day as match-arc **DT-①**). The
   reframe (headline = decision timing, `envelopePct` / `medianTripTurn`;
