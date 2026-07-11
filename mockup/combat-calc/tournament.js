@@ -193,6 +193,17 @@ function crisisRate(t, C) {
   return C.rate0 + C.rateStep * Math.max(0, t - C.onset);
 }
 
+// CE-⑭.1 scar ledger: per-sector cumulative usable damage. Never decays
+// ("the land remembers"); persists on the sector object, so it is inherited
+// on conquest for free (CE-④/CE-⑮). Written only during a crisis-enabled
+// match; a no-op ledger read (?? 0) everywhere else.
+function addScar(sector, amount) { sector.scar = (sector.scar ?? 0) + amount; }
+
+// A sector's terrain layer (uniform per sector; sectorSpec assigns one
+// terr to all its map units). Fallback plains.
+function terrainOf(sector) { return sector.mapUnits && sector.mapUnits[0]
+  ? sector.mapUnits[0].terrainLayer : 'plains'; }
+
 // ---- occupation geography (stage ①, design 2026-07-10) ----
 // Governing principle: geography defines the set of what is possible;
 // judgment chooses within it. The frontier (adjacency) is the invariant
@@ -228,7 +239,7 @@ function occupationFrontier(war, A, D) {
 // Hook: replace with real per-sector defense when sector garrisons/forts
 // land. Hook: attacker's read of value/resistance is truth for now — fog
 // estimate consumption is a reserved seat.
-function captureSector(war, A, D) {
+function captureSector(war, A, D, H) {
   if (!sectorMode(D)) { war.occupied += 1; return; } // legacy fixture path
   const w = D.world;
   const cand = [...occupationFrontier(war, A, D)];
@@ -241,6 +252,7 @@ function captureSector(war, A, D) {
   (war.occupiedIds ??= []).push(id);
   war.occupied = war.occupiedIds.length;
   syncCounts(D);
+  if (H && H.crisis && H.crisis.enabled) addScar(D.world.sectors.get(id), H.crisis.scarPerOccupation);
 }
 
 // any acquired sector integrates from the ADR 0022 usable floor — uniform
@@ -371,6 +383,7 @@ function advanceOnSuccess(war, r, plan) {
 }
 
 function warBattle(war, A, D, opts = {}) {
+  const H = opts.H ?? HARNESS;
   // Defender field availability: the field army serves ONE war — the
   // defensive war with the biggest enemy (interior lines); other fronts
   // get a screening detachment (spec gap: two-front army allocation is
@@ -405,7 +418,7 @@ function warBattle(war, A, D, opts = {}) {
       logPlan(war, 'siege', pick, r, opts.planStats);
       applyBlood(A, D, r, front);
       if (r.success && advanceOnSuccess(war, r, pick.plan)) {
-        war.stage = 'field'; captureSector(war, A, D); D.interior = Math.max(0, D.interior);
+        war.stage = 'field'; captureSector(war, A, D, H); D.interior = Math.max(0, D.interior);
       } else if (!r.success && r.R < 1.1) war.stalled++;
       if (r.routed === 'defender') war.stage = 'field'; // garrison routs out of the works
       return r;
@@ -414,7 +427,7 @@ function warBattle(war, A, D, opts = {}) {
       const r = resolve({ plan: 'Swift', attacker: { stock: A.field, commit: BOT.siegeCommit },
         defender: { stock: g, commit: BOT.siegeCommit, reserveStock: m9Fill(D, front) }, ...site });
       applyBlood(A, D, r, front);
-      if (r.success) { war.stage = 'field'; captureSector(war, A, D); D.interior = Math.max(0, D.interior); }
+      if (r.success) { war.stage = 'field'; captureSector(war, A, D, H); D.interior = Math.max(0, D.interior); }
       else if (r.R < 1.1) war.stalled++;
       return r;
     }
@@ -473,7 +486,7 @@ function warBattle(war, A, D, opts = {}) {
       logPlan(war, 'cascade', pick, r, opts.planStats);
       A.field = Math.max(0, r.stockAfterA); poolBleed(A, r.lossA);
       if (r.success && advanceOnSuccess(war, r, pick.plan)) {
-        captureSector(war, A, D);
+        captureSector(war, A, D, H);
         if (!sectorMode(D)) D.interior = Math.max(0, D.interior - 1);
       }
       return r;
@@ -482,7 +495,7 @@ function warBattle(war, A, D, opts = {}) {
       defender: { stock: 500, commit: 0 }, terrain: 'plains' });
     A.field = Math.max(0, r.stockAfterA); poolBleed(A, r.lossA);
     if (r.success) {
-      captureSector(war, A, D);
+      captureSector(war, A, D, H);
       if (!sectorMode(D)) D.interior = Math.max(0, D.interior - 1);
     }
     return r;
@@ -859,6 +872,14 @@ function peacePrimary(me, realms, rng, record, H = HARNESS) {
       if (cands.length) {
         const t = cands.sort((a, b) => (b.field + totalGarrisons(b)) - (a.field + totalGarrisons(a)))[0];
         t.usable = Math.max(0.3, t.usable - HARNESS.raidBurnPp);
+        if (H.crisis && H.crisis.enabled && sectorMode(t)) {
+          const secs = heldSectors(t);
+          if (secs.length) {
+            const top = secs.reduce((a, b) =>
+              (b.populationValue + b.economyValue) > (a.populationValue + a.economyValue) ? b : a);
+            addScar(top, H.crisis.scarPerRaid);
+          }
+        }
         me.recruitBonus += Math.round(HARNESS.raidLoot * HARNESS.indemnityMenPerYield * DIALS.raidBurn.lootShare);
         record.raids++;
         return 'raid';
@@ -1016,7 +1037,7 @@ function runMatch(assignment, opts = {}) {
       const A = realms.find((r) => r.name === war.att);
       const D = realms.find((r) => r.name === war.def);
       if (!A.alive || !D.alive) { war.stage = 'over'; continue; }
-      warBattle(war, A, D, { screen: mainDefWar[D.name] !== war, rng, planStats: record.planStats });
+      warBattle(war, A, D, { screen: mainDefWar[D.name] !== war, rng, planStats: record.planStats, H });
       war.endTurn = t;
 
       if (war.stage === 'fallen') {
@@ -1190,4 +1211,4 @@ module.exports = { HARNESS, BOT, ARCHETYPES, TEMPERAMENTS, SEATS, SPEC_GAPS,
   realmIncome, intensity, combatFromBorderClass, newWar, warBattle, m9Fill,
   frontDefense, pickMainDefWar, frontSoftness,
   applySettlement, sectorMode, syncCounts, occupationFrontier, captureSector, heldSectors,
-  acquireSector, returnOccupied, eliminate, checkView, crisisRate };
+  acquireSector, returnOccupied, eliminate, checkView, crisisRate, addScar, terrainOf };
