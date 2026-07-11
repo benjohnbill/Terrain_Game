@@ -114,3 +114,30 @@ test('crisisTurn: with no suppression budget, sectors are refused (burn + counte
   const sA = r.world.sectors.get('Ra');
   assert.strictEqual(sA._refusedThisTurn, true, 'unsuppressed scarred sector is refused');
 });
+
+test('a persistently refused sector secedes after secessionN turns', () => {
+  const C = { ...T.HARNESS.crisis, enabled: true, rate0: 0.5, rateStep: 0,
+    suppressBudgetFrac: 0, secessionN: 2, secessionFrac: 1 };
+  const H = { ...T.HARNESS, crisis: C };
+  const r = tinyCrisisRealm('R');
+  r.world.seceded = new Map();
+  const record = { crisis: {} };
+  T.crisisTurn([r], 26, H, record); // refuse #1
+  assert.ok(r.holds.has('Ra'), 'still held after one refusal');
+  T.crisisTurn([r], 27, H, record); // refuse #2 → secede
+  assert.ok(!r.holds.has('Ra'), 'seceded sector leaves holds');
+  assert.ok(r.world.seceded.has('Ra'), 'seceded sector recorded on the world');
+  assert.ok(r.world.seceded.get('Ra') > 0, 'seceded with a standing stack');
+});
+
+test('suppressing a sector resets its neglect counter (no secession)', () => {
+  const C = { ...T.HARNESS.crisis, enabled: true, rate0: 0.5, rateStep: 0,
+    suppressBudgetFrac: 1, secessionN: 2 };
+  const H = { ...T.HARNESS, crisis: C };
+  const r = tinyCrisisRealm('R');
+  r.world.seceded = new Map();
+  const record = { crisis: {} };
+  T.crisisTurn([r], 26, H, record);
+  T.crisisTurn([r], 27, H, record);
+  assert.ok(r.holds.has('Ra'), 'suppressed sector does not secede');
+});

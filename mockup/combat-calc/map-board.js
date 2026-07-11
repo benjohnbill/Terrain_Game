@@ -93,7 +93,7 @@ function buildSectorWorld(map, binding) {
   for (const [id, ns] of adj)
     for (const n of ns)
       if (seatOf[n] !== seatOf[id]) { borderIds.add(id); break; }
-  return { sectors, adj, borderIds };
+  return { sectors, adj, borderIds, seceded: new Map() };
 }
 
 function makeBoardFromMap(map, binding, gaan = FG_BOARD_GAAN) {

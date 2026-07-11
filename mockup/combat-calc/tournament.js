@@ -276,16 +276,18 @@ function suppressionBudget(realm, C) {
   return shield * C.suppressBudgetFrac;
 }
 
-// CE-⑥/⑬/⑭ one crisis turn for one realm: grow stacks, then spend the
+// CE-⑥/⑬/⑭/⑮ one crisis turn for one realm: grow stacks, then spend the
 // suppression budget cheapest-first (lowest terrain shelter = best exchange),
-// resolving attrition per sector; unsuppressed scarred sectors are REFUSED
-// (burn + secession counter, applied in Task 6). Rebel deaths erase the
-// register permanently. Deterministic (sectors ordered by id on ties).
+// resolving attrition per sector; unsuppressed scarred sectors are REFUSED —
+// they burn (usable loss + scar) and accrue neglect, seceding at neglect ≥ N
+// (full rise, leaves holds, freezes on r.world.seceded). Rebel deaths erase
+// the register permanently. Deterministic (sectors ordered by id on ties).
 function crisisTurn(realms, t, H, record) {
   const C = H.crisis;
   record.crisis ??= {};
   const acc = record.crisis;
   acc.rebelDead ??= 0; acc.suppressorDead ??= 0; acc.suppressCostByTerrain ??= {};
+  acc.secessions ??= 0;
   for (const r of realms) {
     if (!r.alive || !sectorMode(r)) continue;
     growRebels(r, t, H);
@@ -296,23 +298,44 @@ function crisisTurn(realms, t, H, record) {
       .sort((a, b) => (C.terrainDef[terrainOf(a)] ?? 1) - (C.terrainDef[terrainOf(b)] ?? 1)
         || (a.id < b.id ? -1 : 1));
     for (const s of contested) {
-      s._refusedThisTurn = false;
-      const tMult = C.terrainDef[terrainOf(s)] ?? 1;
+      const terr = terrainOf(s);
+      const tMult = C.terrainDef[terr] ?? 1;
       // allocate a proportional slice of the remaining budget to this sector's
       // fight; if nothing is allocated, the sector is refused.
       const power = Math.min(budget, s.rebelStack * C.rebelEffectiveness * tMult * MATCH_DIALS.shieldRatio);
       if (power <= 0) { s._refusedThisTurn = true; continue; }
+      s._refusedThisTurn = false;
       budget -= power;
       const { rebelDead, suppressorDead } = suppressAttrition(power, s.rebelStack, tMult, C);
       s.rebelStack -= rebelDead;
       poolBleed(r, rebelDead);                 // CE-⑭.3 permanent register erasure
       if (C.suppressScar > 0) addScar(s, C.suppressScar); // CE-⑧ σ (0 by default)
       acc.rebelDead += rebelDead; acc.suppressorDead += suppressorDead;
-      const terr = terrainOf(s);
       acc.suppressCostByTerrain[terr] = (acc.suppressCostByTerrain[terr] ?? 0) + suppressorDead;
     }
-    // any scarred-but-unreached contested sector left with a stack is refused
-    for (const s of contested) if ((s.rebelStack ?? 0) > 0 && s._refusedThisTurn === undefined) s._refusedThisTurn = true;
+    // CE-⑥/⑮ refusal + secession: any contested sector not suppressed this
+    // turn burns (usable loss + scar) and advances its neglect counter; a
+    // suppressed sector resets it. At neglect ≥ N the sector secedes: full
+    // rise to (frac × register share), leaves holds, freezes on the world.
+    const popTotal = heldSectors(r).reduce((s, x) => s + x.populationValue, 0);
+    for (const s of heldSectors(r)) {
+      if ((s.rebelStack ?? 0) <= 0) continue;
+      if (s._refusedThisTurn) {
+        s.usableEconomy = Math.max(0, (s.usableEconomy ?? 1) - C.refusalBurnPp);
+        addScar(s, C.refusalBurnPp);
+        s.neglect = (s.neglect ?? 0) + 1;
+        if (s.neglect >= C.secessionN) {
+          const share = sectorRegisterShare(s, r, popTotal);
+          s.rebelStack = C.secessionFrac * share;
+          r.holds.delete(s.id);
+          syncCounts(r);
+          (r.world.seceded ??= new Map()).set(s.id, s.rebelStack);
+          acc.secessions += 1;
+        }
+      } else {
+        s.neglect = 0; // suppressed this turn
+      }
+    }
   }
 }
 // Note: suppressorDead is a measurement accumulator (per-terrain cost, the
