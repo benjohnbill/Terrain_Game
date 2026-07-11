@@ -332,6 +332,14 @@ function crisisTurn(realms, t, H, record) {
       const tMult = C.terrainDef[terr] ?? 1;
       // allocate a proportional slice of the remaining budget to this sector's
       // fight; if nothing is allocated, the sector is refused.
+      // NOTE (fix 5): whenever budget doesn't bind, this pins the exchange
+      // ratio R = suppressPower/rebelDef at exactly shieldRatio regardless of
+      // tMult — terrain does NOT reduce the rebel kill-rate inside the
+      // attrition curve itself. Terrain shelter (CE-⑯) shows up as
+      // allocation priority (cheapest-terrain-first ordering above) and
+      // higher suppressor cost per rebel killed, not as rebel survival odds
+      // in this formula. Do not misread a flat R here as terrain having no
+      // effect — see suppressCostByTerrain for where the effect actually is.
       const power = Math.min(budget, s.rebelStack * C.rebelEffectiveness * tMult * MATCH_DIALS.shieldRatio);
       if (power <= 0) { s._refusedThisTurn = true; continue; }
       s._refusedThisTurn = false;
@@ -1174,6 +1182,13 @@ function regenGarrisons(r, H) {
 // ---------------------------------------------------------------- match
 function runMatch(assignment, opts = {}) {
   const H = { ...HARNESS, ...opts.harness };
+  // fix 4: opts.harness.crisis is a nested object — a shallow spread lets a
+  // PARTIAL override (e.g. { crisis: { denialCoeff: 2 } }, exactly what a
+  // dial-tuning sweep passes) silently replace the whole crisis block,
+  // dropping onset/hardEnd/enabled (→ lastTurn undefined, zero-turn loop).
+  // Deep-merge just the crisis sub-object so partial overrides layer onto
+  // the HARNESS crisis defaults instead of replacing them.
+  if (opts.harness && opts.harness.crisis) H.crisis = { ...HARNESS.crisis, ...opts.harness.crisis };
   const rng = mulberry32(opts.seed ?? 1);
   const realms = opts.board ?? makeBoard();
   for (const r of realms) {
@@ -1186,6 +1201,11 @@ function runMatch(assignment, opts = {}) {
     winner: null, endingShape: 'timeout', tripTurn: null,
     // total living bodies at match start — the worldBlood exhaustion denominator
     bodiesStart: realms.reduce((s, r) => s + bodiesOf(r), 0),
+    // reserve-register-only start total — the correct denominator for
+    // registerExhaustionRate (fix 1: bodiesStart is field+garrison+pool,
+    // but the gate's end-side sum is pool-only; mixing dimensions
+    // reported large exhaustion even with zero deaths).
+    poolStart: realms.reduce((s, r) => s + r.pool, 0),
     settlements: [], presetOffers: [], vassalOffers: 0, vassalDeals: 0,
     eliminations: 0, raids: 0, warsStarted: 0, warsByTurn: {},
     planStats: { picks: {}, brained: 0, forced: 0, misjudged: 0 },
@@ -1333,6 +1353,23 @@ function finish(record, realms, H) {
     name: r.name, seat: r.seatType, archetype: r.archetype, temperament: r.temperament,
     alive: r.alive, vassalOf: r.vassalOf, field: r.field, pool: r.pool, interior: r.interior,
   }));
+
+  // fix 3: per-realm scar total at match end — the actual input the CE-⑫(d)
+  // gate needs (scar-inflation DIFFERENTIATION across realms), which no
+  // existing record field carried. Gated behind crisis.enabled: scar is
+  // always 0 when crisis is off, so this is a no-op there anyway, but
+  // skipping the sum keeps the crisis-off hot path untouched. Note: a
+  // seceded sector leaves r.holds (crisisTurn), so its scar drops out of
+  // its former owner's total from that turn on — a known 가안 simplification,
+  // not a bug: this is the realm's CURRENT-land scar burden, not a lifetime
+  // ledger.
+  if (H && H.crisis && H.crisis.enabled) {
+    record.scarByRealm = {};
+    for (const r of realms) {
+      record.scarByRealm[r.name] = sectorMode(r)
+        ? heldSectors(r).reduce((s, x) => s + (x.scar ?? 0), 0) : 0;
+    }
+  }
 
   // bar-independent ending panel (grill 2026-07-08): classifies how the match
   // ended without consulting the hegemony bar. projectable reuses the same view

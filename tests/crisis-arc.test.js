@@ -266,6 +266,11 @@ test('crisis-on cradle run produces draws and a CE-⑫ gate report', () => {
   assert.ok('warDensity2535' in report && 'warDensity1525' in report);
   assert.ok('registerExhaustionRate' in report);
   assert.ok(report.suppressCostByTerrain && typeof report.suppressCostByTerrain === 'object');
+  // fix 3: the gate (d) key is now a real per-realm scar spread, not a
+  // rebel-death total.
+  assert.ok('scarSpreadMeanPerMatch' in report);
+  assert.strictEqual(typeof report.scarSpreadMeanPerMatch, 'number');
+  assert.ok(!('rebelDeadMeanPerMatch' in report), 'the misleading key is gone');
 });
 
 test('crisis-on is seed-deterministic (no dice)', () => {
@@ -275,4 +280,81 @@ test('crisis-on is seed-deterministic (no dice)', () => {
     harness: { crisis: { ...T.HARNESS.crisis, enabled: true } },
   }).map((r) => `${r.seat}:${r.focal}:${r.winner}:${r.endingShape}`);
   assert.deepStrictEqual(run(), run());
+});
+
+// --- fix wave (final whole-branch review, 2026-07-12): measurement-
+// instrument corrections, not mechanics changes ---
+
+test('fix 1: runMatch record carries poolStart (reserve-register-only denominator)', () => {
+  const assignment = {};
+  for (const s of T.SEATS) assignment[s] = { archetype: 'shield-first', temperament: '실리' };
+  const rec = T.runMatch(assignment, { seed: 7 });
+  assert.strictEqual(typeof rec.poolStart, 'number');
+  assert.ok(rec.poolStart > 0);
+  // bodiesStart (field+garrison+pool) must stay untouched — the panel still
+  // reads it (fix 1 only changes the gate-report denominator, not this field).
+  assert.ok(rec.bodiesStart >= rec.poolStart);
+});
+
+test('fix 1: crisisGateReport registerExhaustionRate is 0 when no register died', () => {
+  const records = [
+    { warsByTurn: {}, poolStart: 500, finalRealms: [{ pool: 300 }, { pool: 200 }] },
+  ];
+  const report = MB.crisisGateReport(records);
+  assert.strictEqual(report.registerExhaustionRate, 0);
+});
+
+test('fix 1: crisisGateReport registerExhaustionRate reflects real loss and stays in [0,1]', () => {
+  const records = [
+    { warsByTurn: {}, poolStart: 500, finalRealms: [{ pool: 100 }, { pool: 50 }] }, // 150/500 remain
+  ];
+  const report = MB.crisisGateReport(records);
+  assert.ok(report.registerExhaustionRate > 0 && report.registerExhaustionRate <= 1);
+  assert.ok(Math.abs(report.registerExhaustionRate - (1 - 150 / 500)) < 1e-9);
+});
+
+test('fix 2: war-density windows are disjoint — turn 25 (onset) counts once, into 25-35 only', () => {
+  const records = [{ warsByTurn: { 24: 1, 25: 1, 35: 1 } }];
+  const report = MB.crisisGateReport(records);
+  assert.strictEqual(report.warDensity1525, 1); // only turn 24
+  assert.strictEqual(report.warDensity2535, 2); // turns 25 and 35
+});
+
+test('fix 3: crisisGateReport scarSpreadMeanPerMatch reflects per-realm differentiation', () => {
+  const records = [
+    { warsByTurn: {}, scarByRealm: { A: 10, B: 2, C: 6 } }, // spread 8
+    { warsByTurn: {}, scarByRealm: { A: 5, B: 5 } },        // spread 0
+  ];
+  const report = MB.crisisGateReport(records);
+  assert.ok(Math.abs(report.scarSpreadMeanPerMatch - 4) < 1e-9); // mean(8, 0)
+});
+
+test('fix 3: crisisGateReport is 0/undefined-safe on empty or crisis-less records', () => {
+  assert.doesNotThrow(() => MB.crisisGateReport([]));
+  const empty = MB.crisisGateReport([]);
+  assert.strictEqual(empty.scarSpreadMeanPerMatch, 0);
+  assert.strictEqual(empty.registerExhaustionRate, 0);
+  const noCrisis = MB.crisisGateReport([{ warsByTurn: {}, endingShape: 'trip-solo' }]);
+  assert.strictEqual(noCrisis.scarSpreadMeanPerMatch, 0);
+  assert.strictEqual(noCrisis.registerExhaustionRate, 0);
+});
+
+test('fix 3: finish() writes scarByRealm only when crisis is enabled (crisis-off stays untouched)', () => {
+  const assignment = {};
+  for (const s of T.SEATS) assignment[s] = { archetype: 'shield-first', temperament: '실리' };
+  const off = T.runMatch(assignment, { seed: 7 });
+  assert.strictEqual(off.scarByRealm, undefined);
+});
+
+test('fix 4: runMatch deep-merges a PARTIAL crisis harness override onto the defaults', () => {
+  const binding = viableBindings(CRADLE_MAP, 5).viable.slice(0, 1);
+  // a dial-tuning sweep touches ONE crisis dial without restating
+  // onset/hardEnd — a shallow merge would drop them (lastTurn -> undefined
+  // -> the turn loop runs zero times -> an immediate no-war draw).
+  const on = MB.runCradleTournament({
+    map: CRADLE_MAP, bindings: binding, reps: 1, seed: 7,
+    harness: { crisis: { enabled: true, denialCoeff: 2 } },
+  });
+  const rec = on[0];
+  assert.ok(rec.warsStarted > 0, 'turns were actually played under the merged crisis defaults');
 });
