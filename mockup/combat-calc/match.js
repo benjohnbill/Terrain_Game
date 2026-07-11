@@ -150,8 +150,9 @@ function hegemonyCheck(realms, candName, D = MATCH_DIALS) {
   // + what W turns of recruitment can add (model choice: candidate shield
   // held at its current, war-worn value — the window IS the weak period).
   // recruitment futures — the referee counts only what the world sells
-  // (affordability grill 2026-07-11): the same four bounds doRecruit
-  // enforces on real drafts. headroom & rate are the legacy pair; money =
+  // (affordability grill 2026-07-11): the money/body bounds mirror
+  // doRecruit; headroom & rate are the sealed legacy pair (the engine's
+  // real rate additionally scales by usable + recruit bonus). money =
   // treasury + W turns of income priced along the surge curve (draftBill,
   // intensity rise included); bodies = the civilian register. Money/body
   // inputs absent or non-finite (fixture boards' NaN treasury, prototype
@@ -179,6 +180,7 @@ function hegemonyCheck(realms, candName, D = MATCH_DIALS) {
     }
     const futures = Math.min(legacy, money, bodies);
     if (money < legacy && futures === money) boundMoney++;
+    // exact money===bodies ties attribute to money (rate exact; only the split skews)
     else if (bodies < legacy && futures === bodies) boundBodies++;
     return futures;
   };
