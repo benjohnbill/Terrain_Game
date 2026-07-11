@@ -3,6 +3,7 @@
 const { test } = require('node:test');
 const assert = require('node:assert');
 const T = require('../mockup/combat-calc/tournament.js');
+const M = require('../mockup/combat-calc/match.js');
 
 test('crisis dial block exists and is OFF by default', () => {
   assert.strictEqual(T.HARNESS.crisis.enabled, false);
@@ -183,4 +184,39 @@ test('a sector suppressed to exactly zero stack still resets its neglect counter
   } finally {
     match.MATCH_DIALS.shieldRatio = savedShieldRatio;
   }
+});
+
+test('boardRebelMass sums held + seceded raw stacks across realms', () => {
+  const sA = { id: 'a', rebelStack: 100 };
+  const sB = { id: 'b', rebelStack: 0 };
+  const seceded = new Map([['z', 250]]);
+  const world = { sectors: new Map([['a', sA], ['b', sB]]), borderIds: new Set(), seceded };
+  const r = { name: 'R', world, holds: new Set(['a', 'b']), alive: true };
+  assert.strictEqual(T.boardRebelMass([r]), 350);
+});
+
+test('checkView stamps zero denial when crisis is off, positive when on', () => {
+  const sA = { id: 'a', rebelStack: 300, populationValue: 1, economyValue: 1, usableEconomy: 1 };
+  const world = { sectors: new Map([['a', sA]]), borderIds: new Set(), seceded: new Map() };
+  const r = { name: 'R', world, holds: new Set(['a']), alive: true, vassalOf: null,
+    field: 400, fieldCap: 800, frontG: {}, capitalGarrison: 200, pool: 1000, exits: [{ cap: Infinity }] };
+  const off = T.checkView([r]);
+  assert.strictEqual(off[0].rebelDenial ?? 0, 0);
+  const H = { ...T.HARNESS, crisis: { ...T.HARNESS.crisis, enabled: true, denialCoeff: 1 } };
+  const on = T.checkView([r], H);
+  assert.strictEqual(on[0].rebelDenial, 300);
+});
+
+test('rebel denial raises the coalition, making unassailability harder', () => {
+  // two realms; candidate strong. Without rebels it is unassailable; a big
+  // rebel denial term pushes coalition over the need.
+  const mk = (name, field) => ({ name, alive: true, vassalOf: null, field, fieldCap: field,
+    garrisons: 500, fronts: {}, treasury: 0, income: 0, pool: 3000, serving: field + 500,
+    exits: [{ cap: Infinity }] });
+  const strong = { ...mk('A', 6000) };
+  const weak = { ...mk('B', 1500) };
+  const clean = M.hegemonyCheck([strong, weak], 'A');
+  const flamed = M.hegemonyCheck([{ ...strong, rebelDenial: 99999 }, { ...weak, rebelDenial: 99999 }], 'A');
+  assert.ok(clean.unassailable, 'unassailable with no rebels');
+  assert.ok(!flamed.unassailable, 'a continent in flames denies the crown');
 });

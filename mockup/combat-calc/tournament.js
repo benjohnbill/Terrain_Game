@@ -410,8 +410,28 @@ function returnOccupied(war, D) {
   syncCounts(D);
 }
 
+// CE-⑦/⑭.5 board-global standing rebel mass (RAW headcount — political
+// denial). Held-sector stacks + seceded (ownerless) stacks. Nobody is
+// unassailable over a continent in flames; this term denies EVERY candidate.
+function boardRebelMass(realms) {
+  let total = 0;
+  for (const r of realms) {
+    if (!r.alive || !sectorMode(r)) continue;
+    for (const s of heldSectors(r)) total += s.rebelStack ?? 0;
+  }
+  // seceded stacks live on the shared world; count each world once
+  const worlds = new Set();
+  for (const r of realms) if (r.world && !worlds.has(r.world)) {
+    worlds.add(r.world);
+    for (const v of (r.world.seceded ?? new Map()).values()) total += v;
+  }
+  return total;
+}
+
 // adapt a realm to match.js's hegemonyCheck shape
-function checkView(realms) {
+function checkView(realms, H) {
+  const on = H && H.crisis && H.crisis.enabled;
+  const rebelDenial = on ? H.crisis.denialCoeff * boardRebelMass(realms) : 0;
   return realms.map((r) => ({
     name: r.name, alive: r.alive, vassalOf: r.vassalOf,
     field: r.field, fieldCap: r.fieldCap,
@@ -422,6 +442,7 @@ function checkView(realms) {
     treasury: r.treasury, income: realmIncome(r),
     pool: r.pool, serving: servingBodies(r),
     exits: r.staging ? r.exits.map((e) => ({ cap: e.cap === Infinity ? Infinity : e.cap * 2 })) : r.exits,
+    rebelDenial,
   }));
 }
 
@@ -1232,7 +1253,7 @@ function runMatch(assignment, opts = {}) {
     if (H.crisis && H.crisis.enabled && t >= H.crisis.onset) crisisTurn(alive, t, H, record);
 
     // --- hegemony check: every alive non-vassal candidate
-    const view = checkView(realms);
+    const view = checkView(realms, H);
     for (const r of alive) {
       if (r.vassalOf || !r.alive) continue;
       const c = hegemonyCheck(view, r.name, MATCH_DIALS);
@@ -1242,19 +1263,19 @@ function runMatch(assignment, opts = {}) {
         const vassals = realms.filter((x) => x.alive && x.vassalOf === r.name).length;
         record.endingShape = vassals >= 1 ? 'trip-chain' : 'trip-solo';
         record.check = { candProj: c.candProj, inBalance: c.inBalance, outOfBalance: c.outOfBalance };
-        return finish(record, realms);
+        return finish(record, realms, H);
       }
     }
   }
   if (H.crisis && H.crisis.enabled && !record.winner) record.endingShape = 'draw-westphalian';
-  return finish(record, realms);
+  return finish(record, realms, H);
 }
 
-function finish(record, realms) {
+function finish(record, realms, H) {
   // how far from the decision point did this world end? (timeout autopsy:
   // per candidate, leadership shortfall = worst-rival need − own projection;
   // coalition overhang = coalition mass − unassailability need. trip ⇔ 0 / ≤0)
-  const view = checkView(realms);
+  const view = checkView(realms, H);
   let best = null;
   for (const r of realms) {
     if (!r.alive || r.vassalOf) continue;
@@ -1352,4 +1373,4 @@ module.exports = { HARNESS, BOT, ARCHETYPES, TEMPERAMENTS, SEATS, SPEC_GAPS,
   applySettlement, sectorMode, syncCounts, occupationFrontier, captureSector, heldSectors,
   acquireSector, returnOccupied, eliminate, checkView, crisisRate, addScar, terrainOf,
   sectorFuel, sectorRegisterShare, growRebels, suppressAttrition,
-  suppressionBudget, crisisTurn };
+  suppressionBudget, crisisTurn, boardRebelMass };

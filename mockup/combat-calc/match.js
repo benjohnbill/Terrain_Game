@@ -186,7 +186,11 @@ function hegemonyCheck(realms, candName, D = MATCH_DIALS) {
   };
   const coalition = inBalance.reduce((s, x) => s + x.proj + futuresOf(x.realm), 0);
   const coalitionNeed = D.shieldRatio * candShield;
-  const unassailable = coalition < coalitionNeed;
+  // CE-⑦/⑭.5 standing rebellion denies every candidate: raw rebel mass
+  // (pre-scaled by the crisis coefficient in checkView) adds to the coalition
+  // arrayed against the candidate. Absent (fixtures/crisis-off) → 0.
+  const rebelDenial = cand.rebelDenial ?? 0;
+  const unassailable = (coalition + rebelDenial) < coalitionNeed;
 
   // dominance (§6 domination terminal, RULINGS DT-③): owns the board's offense
   // — ≥ half of all in-balance projectable, OR ≥ dominationRatio× the top rival.
