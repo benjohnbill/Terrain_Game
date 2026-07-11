@@ -290,8 +290,22 @@ function crisisGateReport(records) {
     // with zero deaths. poolStart (record.poolStart) is the matching
     // register-only denominator.
     if (r.finalRealms) {
-      const endPool = r.finalRealms.reduce((s, x) => s + (x.pool ?? 0), 0);
+      // fix A (re-review wave 2): eliminate() (tournament.js) credits the
+      // winner with round(D.pool * 0.5) but never zeros D.pool itself, so a
+      // dead realm's finalRealms entry still carries its full, stale,
+      // un-reduced pool. Summing over ALL realms (dead + alive) double-books
+      // that register — once (halved) on the winner, once (whole) on the
+      // corpse — which can push endPool above poolStart and drive
+      // registerExhaustionRate negative. Only living realms hold a pool that
+      // is still part of the match's reserve register at match end.
+      const endPool = r.finalRealms
+        .filter((x) => x.alive !== false)
+        .reduce((s, x) => s + (x.pool ?? 0), 0);
       endPoolTotal += endPool;
+      // fix C: the `?? endPool` fallback is defensive for synthetic/legacy
+      // test records missing poolStart only — every real runMatch record
+      // carries poolStart unconditionally (fix 1), so this never fires
+      // there.
       poolStartTotal += r.poolStart ?? endPool;
     }
     if (r.scarByRealm) {

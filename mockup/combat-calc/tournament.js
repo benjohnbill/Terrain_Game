@@ -1362,7 +1362,13 @@ function finish(record, realms, H) {
   // seceded sector leaves r.holds (crisisTurn), so its scar drops out of
   // its former owner's total from that turn on — a known 가안 simplification,
   // not a bug: this is the realm's CURRENT-land scar burden, not a lifetime
-  // ledger.
+  // ledger. Widened (re-review wave 2): the same caveat applies, more
+  // sharply, to an ELIMINATED realm — heldSectors(r) reads r.holds, and
+  // eliminate() clears D.holds entirely, so a dead realm's scarByRealm entry
+  // reads 0 regardless of how much scar its land accrued before it fell.
+  // scarSpreadMeanPerMatch is therefore reading current-land scar at match
+  // end, not a lifetime ledger, for BOTH the seceded-sector case and the
+  // eliminated-realm case — a documented 가안 approximation, not a bug.
   if (H && H.crisis && H.crisis.enabled) {
     record.scarByRealm = {};
     for (const r of realms) {

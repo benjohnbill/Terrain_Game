@@ -358,3 +358,46 @@ test('fix 4: runMatch deep-merges a PARTIAL crisis harness override onto the def
   const rec = on[0];
   assert.ok(rec.warsStarted > 0, 'turns were actually played under the merged crisis defaults');
 });
+
+// --- fix wave 2 (re-review): eliminated realms carry a stale, un-zeroed
+// pool into crisisGateReport's endPool sum ---
+
+test('fix A: crisisGateReport excludes an eliminated realm\'s stale leftover pool from endPool', () => {
+  // eliminate() (tournament.js ~line 969/977) credits the winner with
+  // round(D.pool * 0.5) but never zeros D.pool itself — record.finalRealms
+  // (~line 1352) then carries D at alive:false with its FULL, un-reduced
+  // pool. Naively summing r.pool over every finalRealms entry (dead + alive)
+  // therefore double-books that register: once (halved) on the winner and
+  // once (whole) on the corpse. A winner who absorbed a well-stocked loser
+  // late in the match can push the naive endPool ABOVE poolStart, which
+  // drives registerExhaustionRate negative — a value the field's own
+  // contract ([0,1]) says can never happen.
+  const records = [
+    {
+      warsByTurn: {},
+      poolStart: 500,
+      finalRealms: [
+        { name: 'A', alive: true, pool: 450 },  // winner, grew via recruitment + D's inherited half
+        { name: 'D', alive: false, pool: 200 }, // eliminated — stale pool eliminate() never zeroed
+      ],
+    },
+  ];
+  const report = MB.crisisGateReport(records);
+  // sane range: the pre-fix naive sum (450+200=650 endPool over a
+  // poolStart of 500) drives this to -0.3 — out of bounds.
+  assert.ok(report.registerExhaustionRate >= 0 && report.registerExhaustionRate <= 1,
+    `registerExhaustionRate must stay in [0,1], got ${report.registerExhaustionRate}`);
+  // exact value: only the alive realm's pool (450) counts, so
+  // 1 - 450/500 = 0.1 — the dead realm's 200 is excluded entirely, not
+  // merely discounted.
+  assert.ok(Math.abs(report.registerExhaustionRate - 0.1) < 1e-9,
+    `expected 0.1 (dead pool excluded), got ${report.registerExhaustionRate}`);
+});
+
+test('fix A: crisisGateReport still sums normally when nobody was eliminated', () => {
+  const records = [
+    { warsByTurn: {}, poolStart: 500, finalRealms: [{ alive: true, pool: 300 }, { alive: true, pool: 100 }] },
+  ];
+  const report = MB.crisisGateReport(records);
+  assert.ok(Math.abs(report.registerExhaustionRate - (1 - 400 / 500)) < 1e-9);
+});
