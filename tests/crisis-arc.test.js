@@ -141,3 +141,46 @@ test('suppressing a sector resets its neglect counter (no secession)', () => {
   T.crisisTurn([r], 27, H, record);
   assert.ok(r.holds.has('Ra'), 'suppressed sector does not secede');
 });
+
+// CE-⑮ edge case: a sector suppressed to EXACTLY zero stack must still reset
+// its neglect counter (the reviewer's finding on Task 6 — a zero-stack guard
+// evaluated at the top of the refusal/secession scan can "continue" past the
+// reset branch entirely). Note on constructing R >= the full-kill threshold:
+// under the sealed MATCH_DIALS.shieldRatio (1.7), suppressAttrition's R is
+// pinned at exactly shieldRatio whenever the suppression budget does not
+// bind (rebelEffectiveness/terrain cancel identically between the per-sector
+// power cap and rebelDef — no HARNESS.crisis dial can move it), capping the
+// kill fraction at ~25%/turn — never enough to zero a stack in one pass. A
+// temporarily inflated shieldRatio is the only deterministic way to drive
+// full annihilation and exercise the exact-zero edge case.
+test('a sector suppressed to exactly zero stack still resets its neglect counter (CE-⑮ edge case)', () => {
+  const match = require('../mockup/combat-calc/match.js');
+  const savedShieldRatio = match.MATCH_DIALS.shieldRatio;
+  try {
+    match.MATCH_DIALS.shieldRatio = 100; // force R past the full-kill threshold
+    const Crefuse = { ...T.HARNESS.crisis, enabled: true, rate0: 0.5, rateStep: 0,
+      suppressBudgetFrac: 0, secessionN: 2 };
+    const Hrefuse = { ...T.HARNESS, crisis: Crefuse };
+    const Hsuppress = { ...T.HARNESS, crisis: { ...Crefuse, suppressBudgetFrac: 1 } };
+
+    const r = tinyCrisisRealm('R');
+    r.world.seceded = new Map();
+    const record = { crisis: {} };
+    const sA = r.world.sectors.get('Ra');
+
+    T.crisisTurn([r], 26, Hrefuse, record); // turn 1: zero budget -> refused
+    assert.strictEqual(sA.neglect, 1, 'refused turn bumps neglect to 1');
+    assert.ok(sA.rebelStack > 0, 'stack still standing going into the suppression turn');
+
+    T.crisisTurn([r], 27, Hsuppress, record); // turn 2: full budget -> driven to exactly 0
+    assert.strictEqual(sA.rebelStack, 0, 'suppression fully annihilated the stack this turn');
+    assert.strictEqual(sA._refusedThisTurn, false, 'sector was suppressed (not refused) this turn');
+    assert.strictEqual(sA.neglect, 0, 'CE-⑮: suppressed sector resets neglect even at zero stack');
+
+    T.crisisTurn([r], 28, Hrefuse, record); // turn 3: refuse once more (secessionN-1 = 1 turn)
+    assert.strictEqual(sA.neglect, 1, 'neglect restarted from the mid-sequence reset, not from turn 1');
+    assert.ok(r.holds.has('Ra'), 'mid-sequence suppression reset means it must NOT secede on the old schedule');
+  } finally {
+    match.MATCH_DIALS.shieldRatio = savedShieldRatio;
+  }
+});

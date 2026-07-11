@@ -313,13 +313,20 @@ function crisisTurn(realms, t, H, record) {
       acc.rebelDead += rebelDead; acc.suppressorDead += suppressorDead;
       acc.suppressCostByTerrain[terr] = (acc.suppressCostByTerrain[terr] ?? 0) + suppressorDead;
     }
-    // CE-⑥/⑮ refusal + secession: any contested sector not suppressed this
-    // turn burns (usable loss + scar) and advances its neglect counter; a
-    // suppressed sector resets it. At neglect ≥ N the sector secedes: full
-    // rise to (frac × register share), leaves holds, freezes on the world.
+    // CE-⑥/⑮ refusal + secession: any sector that was contested this turn
+    // and not suppressed burns (usable loss + scar) and advances its neglect
+    // counter; a suppressed one resets it — ALWAYS, even when the suppression
+    // fully annihilated the stack down to exactly 0 this turn (routine at
+    // high R). Iterating the `contested` snapshot built above (rather than
+    // re-scanning heldSectors with a live `rebelStack > 0` guard) is what
+    // makes this safe: every element already carries a definite
+    // `_refusedThisTurn`, decided BEFORE the attrition pass mutated the
+    // stack, so a suppressed-to-zero sector still resets cleanly instead of
+    // hitting a stale post-hoc "no stack, skip" guard and leaking neglect.
+    // Deleting from r.holds mid-loop is safe here — we iterate the
+    // `contested` array snapshot, never r.holds itself.
     const popTotal = heldSectors(r).reduce((s, x) => s + x.populationValue, 0);
-    for (const s of heldSectors(r)) {
-      if ((s.rebelStack ?? 0) <= 0) continue;
+    for (const s of contested) {
       if (s._refusedThisTurn) {
         s.usableEconomy = Math.max(0, (s.usableEconomy ?? 1) - C.refusalBurnPp);
         addScar(s, C.refusalBurnPp);
@@ -333,7 +340,7 @@ function crisisTurn(realms, t, H, record) {
           acc.secessions += 1;
         }
       } else {
-        s.neglect = 0; // suppressed this turn
+        s.neglect = 0; // suppressed this turn — resets even at zero stack
       }
     }
   }
