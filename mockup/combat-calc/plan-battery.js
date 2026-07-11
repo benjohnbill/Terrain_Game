@@ -72,6 +72,11 @@ function aggregate(records) {
   const overhangs = undecided
     .map((r) => r.finalCheck && r.finalCheck.coalitionOverhang)
     .filter((v) => typeof v === 'number');
+  const abRows = undecided
+    .map((r) => r.finalCheck && r.finalCheck.affordabilityBound)
+    .filter((v) => v && v.rivals > 0);
+  const abBound = abRows.reduce((s, v) => s + v.money + v.bodies, 0);
+  const abRivals = abRows.reduce((s, v) => s + v.rivals, 0);
   const sortedTrips = [...tripTurns].sort((a, b) => a - b);
   // upper median (median_high): for an even count this is the higher of the
   // two central turns; the unique median for an odd count.
@@ -100,6 +105,7 @@ function aggregate(records) {
     deniedDominantCount: deniedDominant,
     coalitionOverhangMean: overhangs.length
       ? overhangs.reduce((s, v) => s + v, 0) / overhangs.length : null,
+    affordBindRate: abRivals ? abBound / abRivals : null,
     envelopePct: (envelopeCount / records.length) * 100,
     medianTripTurn,
     tripTurnBins,
@@ -253,7 +259,7 @@ function main() {
         const stompPct = agg.matches ? ((stomp / agg.matches) * 100).toFixed(1) : '—';
         console.log(`  ${bid.padEnd(7)} decided ${pct(agg.decidedPct)} · envelope(15-25) ${pct(agg.envelopePct)} · core(18-22) ${pct(agg.core1822Pct)} · median ${agg.medianTripTurn === null ? '—' : agg.medianTripTurn} · mean ${agg.meanTripTurn === null ? '—' : agg.meanTripTurn.toFixed(1)} ± ${agg.stdTripTurn === null ? '—' : agg.stdTripTurn.toFixed(1)} · stomp(≤8) ${stompPct}%`);
         console.log(`    hist ${JSON.stringify(agg.tripTurnHist)}`);
-        console.log(`    dd ${agg.deniedDominantCount} · overhang ${agg.coalitionOverhangMean === null ? '—' : Math.round(agg.coalitionOverhangMean)} · elim ${agg.eliminations} · vassal ${agg.vassalDeals}`);
+        console.log(`    dd ${agg.deniedDominantCount} · overhang ${agg.coalitionOverhangMean === null ? '—' : Math.round(agg.coalitionOverhangMean)} · afford ${agg.affordBindRate === null ? '—' : (agg.affordBindRate * 100).toFixed(1) + '%'} · elim ${agg.eliminations} · vassal ${agg.vassalDeals}`);
       }
     }
     return;

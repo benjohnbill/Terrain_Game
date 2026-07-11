@@ -108,14 +108,16 @@ test('aggregate: deep diagnostics — denied-dominant count + overhang mean', ()
       finalCheck: { coalitionOverhang: 99999, leadershipShortfall: 0, candProj: 1 } },
     { winner: null, eliminations: 0, vassalDeals: 1,
       panel: { bucket: 'denied-dominant', sides: [] },
-      finalCheck: { coalitionOverhang: 4000, leadershipShortfall: 100, candProj: 1 } },
+      finalCheck: { coalitionOverhang: 4000, leadershipShortfall: 100, candProj: 1, affordabilityBound: { money: 2, bodies: 1, rivals: 4 } } },
     { winner: null, eliminations: 0, vassalDeals: 0,
       panel: { bucket: 'denied-dominant', sides: [] },
-      finalCheck: { coalitionOverhang: 2000, leadershipShortfall: 200, candProj: 1 } },
+      finalCheck: { coalitionOverhang: 2000, leadershipShortfall: 200, candProj: 1, affordabilityBound: { money: 0, bodies: 1, rivals: 4 } } },
   ];
   const agg = aggregate(recs);
   assert.equal(agg.deniedDominantCount, 2);
   assert.equal(agg.coalitionOverhangMean, 3000);
   assert.equal(agg.eliminations, 1);
   assert.equal(agg.vassalDeals, 1);
+  // afford-bind rate over undecided finals: (2+1+0+1) / (4+4) = 0.5
+  assert.equal(agg.affordBindRate, 0.5);
 });
