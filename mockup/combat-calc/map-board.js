@@ -42,7 +42,9 @@ const BOARD_GAAN = {
 };
 
 // Force-geography v1 (최소) — U1 terrain envelope (FG-②, L2-measured +33%).
-// HARNESS 가안, opt-in: the sealed uniform-walls BOARD_GAAN is untouched.
+// The DEFAULT board since the world-of-record seal (AB-② 2026-07-11:
+// FG + M9 + capLandFrac 1); the uniform-walls BOARD_GAAN survives as the
+// explicit opt-in control world.
 const FG_FORT_BY_CLASS = {
   open: 'fieldworks',
   forest: 'walls', hills: 'walls', river: 'walls',
@@ -54,8 +56,8 @@ const FG_BOARD_GAAN = { ...BOARD_GAAN, startFortByClass: FG_FORT_BY_CLASS, m9Res
 // a front, so a seat-front spanning several region borders takes the most-open
 // one. Defensibility order: open < forest/hills < river < pass < strait. This
 // single chosen crossing drives combat terrain (fidelity, seal 2026-07-08) and,
-// if opted in via gaan.startFortByClass, the start fort (balance layer, dormant
-// on the default board so the sealed start-state and its tests are untouched).
+// via gaan.startFortByClass, the start fort (balance layer — live on the FG
+// default board since AB-②; dormant only under the explicit BOARD_GAAN control).
 const CLASS_DEFENSE_RANK = { open: 0, forest: 1, hills: 1, river: 2, pass: 3, strait: 4 };
 function weakestCrossing(borders) {
   let best = null;
@@ -94,7 +96,7 @@ function buildSectorWorld(map, binding) {
   return { sectors, adj, borderIds };
 }
 
-function makeBoardFromMap(map, binding, gaan = BOARD_GAAN) {
+function makeBoardFromMap(map, binding, gaan = FG_BOARD_GAAN) {
   const regionToSeat = {};
   for (const [seat, rids] of Object.entries(binding))
     for (const rid of rids) regionToSeat[rid] = seat;
@@ -205,7 +207,7 @@ function runCradleTournament({ map, bindings, reps = 1, seed = 1, harness, board
             bindingIndex, binding, focal, seat,
             ...TOURNEY.runMatch(assignment, {
               seed: Math.floor(rng() * 1e9),
-              board: makeBoardFromMap(map, binding, boardGaan ?? BOARD_GAAN),
+              board: makeBoardFromMap(map, binding, boardGaan),  // undefined → factory default (record world)
               harness, brain,
             }),
           });

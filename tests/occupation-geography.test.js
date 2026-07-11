@@ -370,7 +370,8 @@ test('capLandFrac 0 control: two identical runs are deterministic and growth-fre
     const board = mapBoard();
     const assign = Object.fromEntries(board.map((r) =>
       [r.name, { archetype: 'shield-first', temperament: '표준' }]));
-    const rec = T.runMatch(assign, { seed: 11, board, harness: { maxTurns: 12 } });
+    const rec = T.runMatch(assign, { seed: 11, board,
+      harness: { maxTurns: 12, capLandFrac: 0 } }); // explicit frozen control (harness default is record-world 1)
     return { rec, caps: board.map((r) => r.fieldCap) };
   };
   const a = run(), b2 = run();
@@ -413,7 +414,7 @@ test('capLandFrac 1 (real match): ceiling tracks a genuine land transfer; frac 0
   const startSizes = new Map(fresh.map((r) => [r.name, r.holds.size]));
 
   const board0 = mapBoard();
-  T.runMatch(assign, { seed, board: board0, harness: { maxTurns } });
+  T.runMatch(assign, { seed, board: board0, harness: { maxTurns, capLandFrac: 0 } });
   for (const r of board0.filter((r) => r.alive))
     assert.equal(r.fieldCap, r.fieldCap0, `${r.name} ceiling drifted at capLandFrac 0 (frozen control)`);
 

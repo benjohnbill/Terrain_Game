@@ -9,9 +9,22 @@ const assert = require('node:assert');
 
 const { CRADLE_MAP, CRADLE_BINDING } = require('../mockup/combat-calc/map-gen.js');
 const { loadMap } = require('../mockup/combat-calc/map-loader.js');
-const { makeBoardFromMap, BOARD_GAAN } = require('../mockup/combat-calc/map-board.js');
+const { makeBoardFromMap, BOARD_GAAN, FG_FORT_BY_CLASS } = require('../mockup/combat-calc/map-board.js');
 
 const board = () => makeBoardFromMap(CRADLE_MAP, CRADLE_BINDING);
+
+test('record world is the factory default (AB-② seal): FG forts + M9 + capLandFrac 1', () => {
+  const { HARNESS } = require('../mockup/combat-calc/tournament.js');
+  assert.strictEqual(HARNESS.capLandFrac, 1,
+    'land-ceiling coupling defaults to the record world (frac 0 stays the explicit control)');
+  const tiers = new Set();
+  for (const r of board()) {
+    assert.strictEqual(r.forceGeo, true, `${r.name} defaults to the FG board`);
+    assert.strictEqual(r.m9Reserve, true, `${r.name} defaults to M9 reserve on`);
+    for (const f of Object.values(r.fortAt)) tiers.add(f);
+  }
+  assert.ok(tiers.size >= 2, `record-world forts vary by crossing class, got ${[...tiers]}`);
+});
 
 test('builds one realm per seat, alive, no vassals', () => {
   const realms = board();
@@ -90,7 +103,9 @@ test('carries every field the war machine reads', () => {
     assert.ok(r.interior > 0);
     assert.deepStrictEqual(r.truce, {});
     assert.deepStrictEqual(r.wars, []);
-    assert.ok(Object.values(r.fortAt).every((f) => f === BOARD_GAAN.startFort));
+    for (const [n, f] of Object.entries(r.fortAt))
+      assert.strictEqual(f, FG_FORT_BY_CLASS[r.frontClass[n]] ?? BOARD_GAAN.startFort,
+        `${r.name}→${n} default fort follows the FG crossing-class mapping`);
     const pop = Object.values(CRADLE_MAP.sectors)
       .filter((s) => r.regionIds.includes(s.regionId))
       .reduce((t, s) => t + s.populationValue, 0);

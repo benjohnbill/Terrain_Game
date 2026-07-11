@@ -10,6 +10,7 @@ const { CRADLE_MAP } = require('./map-gen.js');
 const { viableBindings } = require('./map-gate.js');
 const { runCradleTournament, makeBoardFromMap } = require('./map-board.js');
 const { MATCH_DIALS, hegemonyCheck } = require('./match.js');
+const { checkView } = require('./tournament.js');
 
 const SEEDS = [42, 7, 99];
 const BRAIN = { kind: 'ladder', confidence: 0.90, disposition: 0 };
@@ -17,15 +18,9 @@ const RATIO = MATCH_DIALS.shieldRatio;                 // trip needs candProj >=
 const reps = process.argv.includes('--quick') ? 3 : 20;
 const bindings = viableBindings(CRADLE_MAP, 5).viable;
 
-// ---- start-state parity reference (checkView replicated minimally) ----------
-function checkView(realms) {
-  return realms.map((r) => ({
-    name: r.name, alive: r.alive, vassalOf: r.vassalOf,
-    field: r.field, fieldCap: r.fieldCap,
-    garrisons: Object.values(r.frontG).reduce((s, g) => s + g, 0) + r.interior * 300 + r.capitalGarrison,
-    fronts: r.frontG, exits: r.exits,
-  }));
-}
+// ---- start-state parity reference (real checkView export — SYNC-DEBT paid
+// 2026-07-11: the hand-rolled replica drifted once checkView grew the
+// affordability fields, so the gate now reads the production view) ----------
 function bestAtStart(binding) {
   const view = checkView(makeBoardFromMap(CRADLE_MAP, binding));
   let best = null;

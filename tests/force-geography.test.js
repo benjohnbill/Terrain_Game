@@ -25,9 +25,16 @@ test('FG board differentiates fort by front crossing class', () => {
   assert.ok(tiers.size >= 2, `varied fort tiers, got ${[...tiers]}`);
 });
 
-test('the default board stays uniform walls (sealed start-state untouched)', () => {
-  const realms = makeBoardFromMap(CRADLE_MAP, CRADLE_BINDING); // BOARD_GAAN default
-  for (const r of realms)
+test('the default board is the FG record world; explicit BOARD_GAAN keeps the uniform-walls control', () => {
+  // AB-② (2026-07-11) flipped the world of record to FG + M9; the sealed
+  // uniform-walls start-state survives as the explicit opt-in control.
+  const { BOARD_GAAN } = require('../mockup/combat-calc/map-board.js');
+  const dflt = makeBoardFromMap(CRADLE_MAP, CRADLE_BINDING);
+  for (const r of dflt)
+    for (const [nbr, cls] of Object.entries(r.frontClass))
+      assert.strictEqual(r.fortAt[nbr], FG_FORT_BY_CLASS[cls] ?? 'walls');
+  const ctrl = makeBoardFromMap(CRADLE_MAP, CRADLE_BINDING, BOARD_GAAN);
+  for (const r of ctrl)
     for (const f of Object.values(r.fortAt)) assert.strictEqual(f, 'walls');
 });
 

@@ -71,7 +71,10 @@ test('record.finalCheck reports the closest hegemony candidate at match end', ()
   assert.strictEqual(typeof fc.unassailable, 'boolean');
   if (record.winner) {
     assert.strictEqual(fc.name, record.winner);
-    assert.strictEqual(fc.leadership && fc.unassailable, true);
+    // trip = (leadership || dominance) && unassailable (ADR 0030): only the
+    // AND-side gate is guaranteed for a winner — on the record world (AB-②)
+    // this seed trips through the dominance arm, so leadership may be false.
+    assert.strictEqual(fc.unassailable, true);
   }
 });
 

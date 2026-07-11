@@ -52,7 +52,9 @@ const HARNESS = {
   usableEconomyStart: 0.5,   // acquired sector: economy usable start
   usablePopStart: 0.6,       // acquired sector: population usable start
   sectorRipenPerTurn: 0.10,  // +10pp per stable turn, per sector
-  capLandFrac: 0,            // ceiling = (1-f)*fieldCap0 + f*derived (0 = control)
+  capLandFrac: 1,            // ceiling = (1-f)*fieldCap0 + f*derived — record
+                             // world default (AB-② seal 2026-07-11); 0 = the
+                             // explicit frozen control
 };
 
 const BOT = {
