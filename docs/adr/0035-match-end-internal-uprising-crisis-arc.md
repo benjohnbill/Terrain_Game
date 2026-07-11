@@ -4,6 +4,9 @@ Date: 2026-07-11
 
 Status: Accepted (design skeleton; rebellion-body mechanics, dial
 values, and the measurement read are deferred — see Consequences)
+Extended by ADR 0036 (2026-07-12): the rebellion-body deferral is
+paid (suppression resolution, rebellion five points, seceded-sector
+behavior — CE-⑬…⑳) and gate 5 is resolved; dial values remain 가안.
 Amends: ADR 0034 on three points — (1) crisis source family: barbarian
 invasion (이민족 침입) → **internal uprising** (봉기, karma-driven);
 (2) fallback: judged scorecard → **Westphalian draw** (no second judge

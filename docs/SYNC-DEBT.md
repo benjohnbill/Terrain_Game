@@ -11,18 +11,17 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
 
 ## Open
 
-- [ ] **Rebellion-body grill branch** (registered 2026-07-11, crisis
-  pass CE-⑫ rider). The crisis skeleton is sealed but the rebellion's
-  BODY is not: suppression resolution mechanics, seceded-sector
-  behavior, gate-5 terrain resonance under the internal source,
-  peaceful-cession scar. Pointer: match-arc INDEX open q.1. Owner: the
-  next crisis grill session.
-
-- [ ] **Crisis dial table** (registered 2026-07-11, crisis pass). Rate
-  staircase, scar increments, overlay stage table, denial conversion
-  coefficient, secession N, suppression-scar magnitude — all 가안,
-  owed to the implementation plan and adjudicated by sweep against the
-  CE-⑫ gates. Owner: the crisis implementation session.
+- [ ] **Crisis dial table** (registered 2026-07-11, crisis pass;
+  re-cut 2026-07-12 by the rebellion-body pass — the table SHRANK:
+  scar-increment dials eliminated per CE-⑭ scar concretization,
+  suppression-scar σ demoted to a 0-candidate sweep item). Remaining:
+  denial conversion coefficient (sweep dial #1), secession N, rate
+  staircase, stage-table turn boundaries (CE-⑳), truce length (CE-⑱)
+  — all 가안, owed to the implementation plan and adjudicated by sweep
+  against the CE-⑫ gates + two new watch items (register-exhaustion
+  rate; per-terrain-class suppression cost differential). Prerequisite
+  task registered: truce-lock formalization (CE-⑱) precedes the stage
+  table's implementation. Owner: the crisis implementation session.
 
 - [ ] **L3 scar-intel fog layer** (registered 2026-07-11, CE-③). The
   fog-spec read of others' uprising fuel is design-sealed but L3-only;
@@ -364,6 +363,15 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
 
 ## Paid
 
+- [x] 2026-07-12 — **Rebellion-body grill branch — PAID** (registered
+  2026-07-11, CE-⑫ rider). The pass ran 2026-07-11/12 night and sealed
+  the full body: suppression resolution (CE-⑬), rebellion five points
+  (CE-⑭), seceded-sector behavior (CE-⑮), gate-5 terrain resonance
+  resolved by structure (CE-⑯), peaceful-cession scar dissolved as a
+  corollary (CE-⑰) — plus the unplanned canonization the grill forced:
+  truce lock (CE-⑱), white peace as the ladder's 0% rung (CE-⑲), and
+  the total-war stage-table shape (CE-⑳). ADR 0036; SPEC_GAPS ⑤/⑦
+  stamped RESOLVED. Same-session doc-sync batch (this commit).
 - [x] 2026-07-11 — **Crisis-ending SPEC amendment — user-sealed and
   applied** (registered under ADR 0034, drafted by the crisis-ending
   pass as `SPEC-AMENDMENT-DRAFT-crisis-ending.md`). User decision

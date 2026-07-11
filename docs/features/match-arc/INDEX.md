@@ -123,6 +123,24 @@ scar-inflation, raid-attrition strength, draw-coalition degeneracy,
 leader-agency. SPEC amendment user-SEALED 2026-07-11 and applied
 verbatim to `SPEC.md` § "How a match ends (crisis arc)".
 
+**Rebellion-body & peacetime-institutions pass (2026-07-11/12 night) —
+body SEALED**: the deferred rebellion body ran as the follow-up grill
+(RULINGS **CE-⑬…⑳**, **ADR 0036** extends 0035). Suppression resolves
+through the existing combat arithmetic (defense-axis composition vs
+stack × terrain, attrition only — CE-⑬); rebellion five points — scar
+= cumulative usable damage, fuel × the sealed 동원 강도
+(demobilize-cooling), cap = register, deaths erase the register
+(emergent demographic spiral), ⅓ rebel constant, raw-mass denial
+(CE-⑭); seceded sectors rise fully and freeze, no contagion (CE-⑮);
+gate-5 satisfied by structure (CE-⑯); peaceful cession scar-free by
+corollary (CE-⑰); **truce lock and white peace canonized** (CE-⑱/⑲ —
+SPEC_GAPS ⑤/⑦ resolved); total-war stage table sealed as shape —
+truce shortens then dies, the ladder breaks bottom-up, 최대 + 복속
+survive (CE-⑳). Crisis design is COMPLETE through the body; next =
+implementation plan + dial table, then the sweep vs the CE-⑫ gates
+plus two new watch items (register-exhaustion rate; terrain-class
+suppression differential).
+
 Status: **core SEALED** (2026-07-03 → 07-05). Structure and first
 values user-confirmed through the A-1 grill (rulings ①–⑧), the A-2
 battery pass (rulings ⑨–⑭), and the sheet-12 L2 tournament (rulings
@@ -142,7 +160,7 @@ vassalage), and the economy→mass conversion it needs (M13).
 - `GLOSSARY.md` — Tier-1 vocabulary, sealed terms with dates. THE
   reference for this feature (definition + current value + seal stamp).
 - `RULINGS.md` — ruling history (⑧–⑰, MT-①…⑤, ET-①, DT-①…③, OG-①…⑤,
-  AB-①…④, CE-①…⑫): evidence, rejected alternatives, riders. Glossary
+  AB-①…④, CE-①…⑳): evidence, rejected alternatives, riders. Glossary
   rows cite ruling numbers here.
 - `SPEC-AMENDMENT-DRAFT-crisis-ending.md` — drafting record of the
   match-end declaration, user-SEALED 2026-07-11 and applied to
@@ -192,18 +210,21 @@ L-level seal stamp adopted.
 Current open questions (post affordability & M9-promotion pass,
 2026-07-11):
 
-1. **Rebellion-body grill** (next crisis session): suppression
-   resolution mechanics (reuse combat arithmetic — garrison × terrain ×
-   fort vs rebel mass — or a simpler pacification read?); seceded-sector
-   behavior (inert? spreads?); gate-5 terrain resonance under the
-   internal-uprising source; peaceful-cession scar question.
-2. **Crisis dial table** — rides the implementation plan (rate
-   staircase, scar increments, overlay stage table, denial conversion
-   coefficient, secession N, suppression-scar magnitude); all 가안,
-   sweep-adjudicated.
+1. ~~**Rebellion-body grill**~~ — RESOLVED 2026-07-12 (CE-⑬…⑳, ADR
+   0036): suppression resolution, rebellion five points, seceded-sector
+   behavior, gate-5, peaceful-cession scar, plus truce/white-peace
+   canonization and the stage-table shape.
+2. **Crisis dial table** — rides the implementation plan; SHRANK
+   2026-07-12 (scar-increment dials eliminated, σ → 0-candidate).
+   Remaining: denial conversion coefficient (sweep #1), secession N,
+   rate staircase, stage-table turn boundaries, truce length; all 가안,
+   sweep-adjudicated. Prerequisite task: truce-lock formalization
+   (CE-⑱).
 3. **Crisis measurement-gate read** — after implementation, against
    CE-⑫ (draw ≤ 0.1%; war density 25–35 ≥ 15–25; gate-4 watch;
-   scar-inflation; raid-attrition; draw-coalition; leader-agency).
+   scar-inflation; raid-attrition; draw-coalition; leader-agency) plus
+   the CE-⑭/⑯ watch items (register-exhaustion rate; per-terrain-class
+   suppression cost differential + per-seat crisis burden).
 4. ~~**SPEC amendment seal**~~ — RESOLVED 2026-07-11: user sealed the
    draft verbatim; applied to `SPEC.md` § "How a match ends (crisis
    arc)".

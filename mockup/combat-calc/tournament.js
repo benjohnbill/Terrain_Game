@@ -1145,9 +1145,9 @@ const SPEC_GAPS = [
   'Two-front army allocation: which war does a realm\'s field army serve when attacked while attacking? (harness: field defends the biggest defensive war, other fronts get a 20% screen; garrisons hold sieges alone) — ADR 0025 thinness.',
   'Attacking a vassal: does the overlord\'s army defend, and does war-on-vassal mean war-on-overlord? (harness: vassals cannot be attacked at all).',
   'Settlement initiative: canon defines acceptance arithmetic but not WHO proposes or the concession tempo (harness: winner proposes one step down the preset ladder per turn).',
-  'Stalled-war exit: no white-peace / status-quo rule exists in canon (harness: 2 stalled turns → occupied sectors return, truce 4).',
+  'Stalled-war exit: RESOLVED 2026-07-12 (match-arc CE-⑲) — white peace canonized as the settlement ladder 0% rung; the auto-trigger here (2 stalled turns → occupied sectors return) stays BOT POLICY, an L2-exercised 가안 that never binds a human player.',
   'Indemnity spend: 배상 arrives as yield but nothing defines its conversion to force (harness: recruit credit at 부대=0.5 yield inside the same recruit primary).',
-  'Truce/redeclaration: nothing bars an instant re-war after settlement (harness: 4-turn truce).',
+  'Truce/redeclaration: RESOLVED 2026-07-12 (match-arc CE-⑱) — truce lock canonized as world law (mutual, pairwise, every war end); the 4-turn value here is the L2-exercised 가안 the record-world baseline was measured under.',
   'Front redraw after cession: ruling ⑨ derives fronts from adjacency, but ceded interior sectors here do not move the border graph (harness: static adjacency — needs B\'s map).',
 ];
 

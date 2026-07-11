@@ -3559,6 +3559,38 @@
    "codeRefs": [],
    "verdict": null,
    "verdictRef": null
+  },
+  {
+   "canonical": "Truce lock",
+   "korean": "휴전 잠금",
+   "aliases": [
+    "truce",
+    "휴전"
+   ],
+   "birthplace": "docs/features/match-arc/GLOSSARY.md",
+   "tier": 1,
+   "status": "AGREED",
+   "kind": "mechanism",
+   "codeIdentifier": "truceTurns",
+   "codeRefs": [],
+   "verdict": null,
+   "verdictRef": null
+  },
+  {
+   "canonical": "White peace",
+   "korean": "백지평화",
+   "aliases": [
+    "status-quo peace",
+    "stalled-war exit"
+   ],
+   "birthplace": "docs/features/match-arc/GLOSSARY.md",
+   "tier": 1,
+   "status": "AGREED",
+   "kind": "mechanism",
+   "codeIdentifier": "stallPatience",
+   "codeRefs": [],
+   "verdict": null,
+   "verdictRef": null
   }
  ]
 }

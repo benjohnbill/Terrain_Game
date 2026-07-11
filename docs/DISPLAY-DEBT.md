@@ -84,6 +84,13 @@ and the A-3 economy rider.
   sector; a former owner keeps 100% confidence only in what it
   witnessed. Mechanic sealed at match-arc RULINGS CE-③ (2026-07-11);
   L2 measures true values, this view is the L3 layer.
+- [ ] **Peacetime-institution status read** — the player must be able
+  to read which promises still hold: active truce locks (with whom,
+  until when) and which settlement-ladder rungs are still alive under
+  the total-war overlay's public calendar (백지/관대/표준 broken in
+  stages; 최대 + 복속 survive). Pairs with the soil-and-crop crisis
+  surface's public calendar. Mechanics sealed at match-arc RULINGS
+  CE-⑱/⑲/⑳ (2026-07-12).
 
 ## Resolved
 

@@ -151,7 +151,10 @@ AI-behavior, force-allocation, and map-topology questions that are
 playtest- and B-map-shaped; authoring paper rules now would over-fit
 ahead of the slice. Each gap therefore routes to (owning feature,
 design phase, harness candidate, recommended lean); all seven **defer
-to B** (the playable slice / terrain-cradle map). Indemnity spend —
+to B** (the playable slice / terrain-cradle map). *(Update 2026-07-12:
+gaps ⑤ and ⑦ were later RESOLVED by the rebellion-body pass — CE-⑲
+and CE-⑱ below — see their in-row stamps; five still defer to B.)*
+Indemnity spend —
 the eighth `§SPEC_GAPS` entry — was PAID separately by M14 treasury
 (배상 lands as cash at normal prices) and is not carried here.
 
@@ -202,11 +205,16 @@ Match-arc-owned (match flow + AI + settlement):
   status-quo exit is structurally required; the thresholds are
   B-tuning. (The board-level bipolar stalemate is already owned by
   blinds, queue 5; white-peace is its war-level analog.)
+  **RESOLVED 2026-07-12 (CE-⑲):** white peace canonized as the
+  settlement ladder's 0% rung; the automatic 2-mark trigger stays bot
+  policy (L2-exercised 가안), never binds a human player.
 - **⑦ Truce / redeclaration** → match flow, deferred to B, pairs with
   gap ⑤. Nothing bars an instant re-war after settlement, which would
   make settlement meaningless. Harness candidate: 4-turn truce lock.
   **Lean:** a truce lock is structurally required; the duration is
   B-tuning.
+  **RESOLVED 2026-07-12 (CE-⑱):** truce lock canonized as world law —
+  mutual, pairwise, every war end; 4 turns L2-exercised 가안.
 
 Combat-formula / map-owned (force allocation + topology):
 
@@ -1073,3 +1081,197 @@ INDEX open questions: rebellion-body pass (suppression resolution,
 seceded-sector behavior, gate-5 terrain resonance under the internal
 source, peaceful-cession scar); the dial table rides the implementation
 plan.
+
+## Rebellion-Body & Peacetime-Institutions Pass (2026-07-11/12 night)
+
+The rebellion-body grill CE-⑫ deferred, plus the total-war stage table
+CE-⑨ left as dials, run as one grill session immediately after the
+crisis-ending SPEC amendment sealed (SPEC.md § "How a match ends").
+Verdict source: rebellion-body grill, **user-sealed 2026-07-12**
+(question-by-question seals in the session transcript; three
+load-bearing user pushbacks are recorded per ruling below). Evidence
+layer: an L0 demographic-spiral probe (six-scenario scratch simulation,
+session transcript) and the tournament harness source
+(`mockup/combat-calc/tournament.js` — truce/stall implementation read).
+Output = the rebellion BODY + the canonization of the peacetime
+institutions the overlay cuts. All numeric values remain 가안; the
+truce/stall values carry an **L2-exercised** note (the sealed
+record-world baseline was measured under them).
+
+### CE-⑬ Suppression resolution = the existing combat arithmetic; the whole defense axis feeds it — SEALED 2026-07-12 (grill Q1, user unification) · L0
+
+Suppression resolves through the **existing deterministic battle
+formula, auto-resolved per sector each crisis turn** — no player
+staging, no plan cards. The suppressor side is the **defense-axis
+composition as a whole**: everything defense-directed contributes
+indirectly — paid bodies + reserves (substance), defense commitment
+(lever), fortification (multiplier). This is the user's unification
+(replacing the agent's slot-by-slot fork — the fort-slot question
+dissolved into it); it gives CE-⑩'s "defensive infrastructure gains
+double value" axis-level substance. The rebel side = stack mass ×
+**terrain** (the invariant multiplier defends the guerrilla — the
+mountain that shielded the realm now shields its rebels), lever 1 (no
+court), no fortification (rebels hold fields, not walls). Two sealed
+deviations from vanilla battle grammar: (1) **no threshold, no
+stamps** — suppression is pure attrition; R sets only the exchange
+rate (success/failure verdicts would be a false binary on attrition
+work); (2) the rebel lever is fixed at 1. The exact composition curve
+and the anti-rebel R formula are deferred to the dial/implementation
+pass. Provenance: the user's commitment probe ("does suppression have
+a direct keyword, or is defense only indirect?") overturned the
+agent's original both-levers-fixed-at-1 wiring.
+
+### CE-⑭ Rebellion body — five points — SEALED 2026-07-12 (grill, user construction; two agent recommendations overturned) · L0
+
+1. **Uprising fuel = scar × mobilization intensity, both concretized.**
+   Scar = the sector's **cumulative usable damage ever taken** (raid,
+   armed occupation, refusal burns — any event that cuts usable; the
+   abstract per-event increment dials of CE-③ are ELIMINATED, derived
+   from the existing usable-damage ledger). Intensity = the SEALED
+   동원 강도 definition (serving ÷ current register, MT-③ — unchanged;
+   crisis fuel is its second consumer). Corollary: **demobilizing
+   cools fuel** — standing armies press the land; sending them home is
+   a pacification verb. Multiplicative form: a land neither damaged
+   nor mobilized never rises; resting inherited scarred land keeps it
+   quiet (the governance lever over inherited fire).
+2. **Rebel cap = the sector's conscription register** (resonates with
+   the sustain fraction ⅓: the whole people can rise at three times
+   the density a state can sustain as standing forces — rebels pay no
+   maintenance).
+3. **Rebel deaths erase the register permanently.** The demographic
+   spiral is EMERGENT: kills shrink the intensity denominator, raising
+   fuel with no further mobilization (L0 probe: acceleration is real,
+   back-loaded — hyperbolic only near depletion — and self-extinguishing
+   at register exhaustion; steepness is rate-dial-governed). New sweep
+   watch item: **register-exhaustion rate**. The spiral is also the
+   emergent replacement for CE-⑧'s suppression-scar increment — **σ = 0
+   is now the leading candidate** (causality, not a penalty dial;
+   CE-⑧'s diligent-suppression-punished inversion trap dissolves).
+4. **Rebel combat effectiveness ⅓ — a rebel CONSTANT, not a quality
+   tier.** The value lives on the rebellion phenomenon (like a terrain
+   multiplier), is never player-selectable, and therefore leaves the
+   quality=1 seal (모병 row) untouched. Full-stack symmetry: a fully
+   risen sector (cap = register = 3× field cap) fights like one full
+   field army. Revisit only if a troop-quality system ever lands
+   (user rider).
+5. **Denial scale reads RAW rebel mass** (political denial). The gate's
+   two-layer structure — **qualification by force, confirmation by
+   acceptance** — is CE-⑦'s reason for existing: a risen land denies
+   the crown at full headcount regardless of how badly it would lose a
+   battle (the Yellow Turbans never beat the Han army; the Han still
+   died). Rebels fight at ⅓ and refuse at 1 — each sentence true in
+   its own domain. The conversion coefficient stays sweep dial #1
+   (mathematically the raw-vs-effective choice is a factor-3 rescaling
+   of that dial; the seal fixes the LEGIBLE base). Provenance: the
+   user's reframe ("is the hegemon decided purely by force?")
+   overturned the agent's effective-mass recommendation.
+
+### CE-⑮ Seceded-sector behavior — no contagion; full rise, then freeze — SEALED 2026-07-12 (grill Q2, user) · L0
+
+A sector that secedes (CE-⑥ neglect threshold) **completes its rise
+and freezes**: its stack jumps to the remaining register (the whole
+village goes over), then stands as denial mass — no growth bookkeeping
+for ownerless land, no marching, **no adjacency contagion**. The
+spread narrative needs no contagion channel: the rate(t) calendar
+already erupts every scarred sector simultaneously (the Yellow-Turban
+model — 36 방 rose at once; rebellion did not travel sector to
+sector). Contagion is recorded as a NOT-TAKEN lever (re-openable if
+the sweep shows secession toothless). Retaking a seceded sector = a
+normal armed occupation against the stack defending at terrain × ⅓ —
+and the occupation's usable damage automatically writes new scar
+("swallow burnt land, swallow its fire" — CE-④ inheritance priced for
+free). Land-derived consequence (confirmation, not a new rule): the
+seceded sector's economy/register/population derivations leave the
+realm with the land. Buffer variant (secede at half the remaining
+register) recorded as a dial-table option against gate-f draw-drag.
+
+### CE-⑯ Gate-5 terrain resonance — satisfied by structure — SEALED 2026-07-12 (user-delegated closure) · L0
+
+ADR 0034's gate 5 ("periphery rear-stab inverts 중원 exposure"),
+retranslated for the internal source, is **already satisfied by the
+CE-⑬ + CE-⑭ overlap with zero new multipliers**: the center's
+multi-front wars accumulate the most scar and mobilization (hottest
+fuel) but its plains make suppression per body cheapest — a large,
+cheap fire; the periphery's mountains shelter whatever fuel it does
+accrue behind the terrain multiplier — a small, expensive fire. The
+shield inverts into an internal liability; exposure inverts into
+pacification efficiency. A growth-side terrain term (mountains breed
+rebels faster) was REJECTED as double-counting: the defense-side
+multiplier already makes mountain fires long-lived. New sweep read
+added to the CE-⑫ list: per-terrain-class suppression cost
+differential + per-seat crisis burden distribution (must differentiate
+without breaking the TC-② center-premium hypothesis).
+
+### CE-⑰ Peaceful cession is scar-free — a corollary, not a dial — SEALED 2026-07-12 (grill Q4, confirmation) · L0
+
+CE-③'s open question ("does peaceful cession arrive scar-free?")
+dissolved when CE-⑭ concretized scar as cumulative usable damage:
+**a transfer that damages nothing scars nothing.** Settlement-acquired
+land arrives undamaged (sealed at 정산) → scar-free; the war that
+forced the settlement already paid its scar where it burned.
+Consequences recorded: settlement is the clean-hands expansion path
+(the karma system backs the sealed war grammar — decide in the field,
+convert by settlement, never grind); a defender may spitefully refuse
+settlement to force conquest damage onto land it will lose anyway —
+priced by its own continued-war costs. Pairs with the register-intact
+transfer rule (징집 명부 row): peaceful transfer preserves both bodies
+and hearts.
+
+### CE-⑱ Truce lock canonized — SEALED 2026-07-12 (grill, user; layer question user-raised) · L0, values L2-exercised 가안
+
+The harness's 4-turn truce is promoted from SPEC_GAPS placeholder to
+**canon world law**: every war end (settlement or white peace) starts
+a **mutual, pairwise** declaration bar between the two belligerents —
+third parties unaffected — lasting truceTurns (**4**, 가안,
+L2-exercised: the sealed record-world baseline was measured under it;
+reference coordinate: shorter than the 6-turn regeneration window —
+the promise expires before the wounds finish healing). Grounds: (1)
+the acceptance arithmetic prices peace against continued war — the
+peace must be real or the lenient preset's product (acceptance
+certainty) is a lie; (2) the total-war overlay must cut a PUBLIC world
+law on a calendar (CE-⑨'s determinism) — a bot's private habit cannot
+be publicly repealed; (3) the player needs a legible answer to "can I
+be re-attacked next turn?". Resolves SPEC_GAPS ⑦ (stamped in that
+section). Provenance: the user's canon-vs-harness layer question
+("is this an L2 가안 or a real gameplay principle?") forced the
+promotion decision this pass had been legislating over.
+
+### CE-⑲ White peace = the settlement ladder's 0% rung; the auto-trigger stays bot policy — SEALED 2026-07-12 (grill, user) · L0
+
+**White peace (백지평화)** is canonized as the **0% rung of the
+existing preset claim-rate ladder** (백지 0 / 관대 50 / 표준 75 /
+최대 100): claim nothing, occupied sectors return id-exact (reusing
+the sealed OG-③ rule), mutual truce lock follows. No new law — the
+existing settlement grammar's floor made explicit. The harness's
+automatic exit (2 cumulative stall marks per war, a stall mark = an
+offensive repulsed at R < 1.1) is **DEMOTED to bot policy** — an L2
+approximation of "when would a rational court take the zero rung" —
+and never binds a human player: a war is never force-closed over the
+player's head (agency preserved; sieges may legitimately wait).
+Values (patience 2, near-miss 1.1) stay harness dials, L2-exercised.
+Resolves SPEC_GAPS ⑤ (stamped in that section).
+
+### CE-⑳ Total-war overlay stage table — two dials descending a calendar — SEALED 2026-07-12 (grill, user) · L0, turn boundaries 가안
+
+The stage table CE-⑨ deferred is sealed as SHAPE: **"the truce
+shortens then dies; the settlement ladder breaks from the bottom
+rung up; only 최대 and 복속 survive to the end."** Concretely (turn
+boundaries 가안 → dial table): S1 (~onset) truce halves; S2 (~mid-arc)
+truce void + 백지/관대 broken (quiet exits and cheap peace die — wars
+end big or not at all); S3 (~late) 표준 broken — the only settlement
+left is the maximal claim (the annihilation endgame written in our own
+grammar: Qin did not stop negotiating, it demanded the whole 사직).
+**Full settlement void was REJECTED**: with no conversion channel,
+occupied land sits in limbo (pays neither side) and the gate risks
+freezing against the ≤0.1% draw target. **Vassalage survives to the
+end**: its no-defection term is hard-coded (the one promise the
+machine itself still enforces when the enforcer dies), and endgame
+mass-capitulation is both historical (Sekigahara → Osaka) and a
+decision accelerant (vassal mass folds to the overlord's side of the
+gate). A calendar decay on the sovereignty premium ("kneel now,
+cheaper") was recorded as NOT taken — a new curve, not a cut. The
+패권 정산 (hegemony settlement) is structurally EXEMPT — it is the
+decision point's own conclusion event, not an interstate promise; the
+overlay never saws off the branch the match ends on. Implementation
+dependency registered: the truce-lock formalization (CE-⑱) is a
+prerequisite task — the stage table legislates over it.
