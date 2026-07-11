@@ -1,9 +1,9 @@
 # SPEC Amendment DRAFT — Match-End Declaration (Crisis Arc)
 
-**Status: PROPOSED — awaiting user seal. NOT applied to `SPEC.md`.**
-Drafted 2026-07-11 by the crisis-ending design pass (RULINGS CE-①…⑫,
-ADR 0035). SPEC is Direction-layer: this text lands in `SPEC.md` only by
-explicit user decision, verbatim or user-amended.
+**Status: SEALED — applied to `SPEC.md` 2026-07-11 (user decision,
+verbatim).** Lives in `SPEC.md` § "How a match ends (crisis arc)";
+this file remains as the drafting record only. Drafted 2026-07-11 by
+the crisis-ending design pass (RULINGS CE-①…⑫, ADR 0035).
 
 ## Proposed SPEC text (match-end declaration)
 

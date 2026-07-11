@@ -198,6 +198,30 @@ qualifying condition differs. Mechanism, dials, and rationale are
 authoritative at match-arc `RULINGS.md` DT-③ (birthplace); this is a summary
 pointer only, per the single-definition rule.
 
+**How a match ends (crisis arc, sealed 2026-07-11).** A match ends in exactly
+one of three ways:
+
+1. **Hegemony decision point** — at any turn, the sole rule that ever
+   names a winner (leadership or domination, plus unassailability).
+2. **Under the crisis arc** — from turn 25, an internal uprising era
+   (fueled by each realm's own accumulated conduct — the land
+   remembers violence and over-mobilization) escalates turn by turn:
+   suppression drains shields, peacetime guarantees die in stages,
+   and standing rebellion joins the balance against every would-be
+   hegemon. The crown then requires conquest **and** pacification —
+   the winner is still declared only by the decision point in (1);
+   the crisis opens the door, the winner's own sword walks through it.
+3. **Westphalian draw** — if turn 35 arrives with no decision, the
+   match is a draw: multiple survivors, no judged winner. This is a
+   designed rarity (target well under 1% of matches), and its threat
+   is part of the pressure that makes late matches decide.
+
+There is no judged scorecard. Nothing but the decision point ever
+names a winner. (Mechanism, dials, and rationale are authoritative at
+match-arc `RULINGS.md` CE-①…⑫ and ADR 0035; this declaration carries
+only the arc anchors and the draw-rarity target, per the
+single-definition rule.)
+
 ## Phase Roadmap
 
 ### Phase 1: Terrain, Regions, and Combat

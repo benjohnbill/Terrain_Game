@@ -90,7 +90,8 @@ The match-end mechanism is an **internal-uprising crisis arc**:
 
 - **SPEC amendment proposal** drafted at
   `docs/features/match-arc/SPEC-AMENDMENT-DRAFT-crisis-ending.md` —
-  PROPOSED, awaiting user seal; SPEC.md untouched.
+  SEALED 2026-07-11 (user decision): applied verbatim to `SPEC.md`
+  § "How a match ends (crisis arc)".
 - **Deferred to a rebellion-body grill**: suppression resolution
   mechanics (combat arithmetic vs pacification read), seceded-sector
   behavior, gate-5 terrain resonance under the internal source,

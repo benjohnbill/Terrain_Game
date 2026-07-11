@@ -120,8 +120,8 @@ suppression, **Westphalian draw** at turn 35 (< 0.1% target — the judged
 scorecard is GONE; one judge only). Acceptance gates sealed (CE-⑫):
 draw ≤ 0.1%, war density 25–35 ≥ 15–25 (chore-prevention), gate-4 watch,
 scar-inflation, raid-attrition strength, draw-coalition degeneracy,
-leader-agency. SPEC amendment DRAFT written
-(`SPEC-AMENDMENT-DRAFT-crisis-ending.md`) — awaiting user seal.
+leader-agency. SPEC amendment user-SEALED 2026-07-11 and applied
+verbatim to `SPEC.md` § "How a match ends (crisis arc)".
 
 Status: **core SEALED** (2026-07-03 → 07-05). Structure and first
 values user-confirmed through the A-1 grill (rulings ①–⑧), the A-2
@@ -144,8 +144,9 @@ vassalage), and the economy→mass conversion it needs (M13).
 - `RULINGS.md` — ruling history (⑧–⑰, MT-①…⑤, ET-①, DT-①…③, OG-①…⑤,
   AB-①…④, CE-①…⑫): evidence, rejected alternatives, riders. Glossary
   rows cite ruling numbers here.
-- `SPEC-AMENDMENT-DRAFT-crisis-ending.md` — PROPOSED match-end
-  declaration awaiting user seal (never normative until sealed).
+- `SPEC-AMENDMENT-DRAFT-crisis-ending.md` — drafting record of the
+  match-end declaration, user-SEALED 2026-07-11 and applied to
+  `SPEC.md` § "How a match ends (crisis arc)" (SPEC is normative).
 - `STRATEGY-SPACE.md` — six winning archetypes; the standing dial
   checklist ("which archetype does this value kill?").
 - `TEST-LADDER.md` — verification epistemology: the L0–L3 test-trust
@@ -203,8 +204,9 @@ Current open questions (post affordability & M9-promotion pass,
 3. **Crisis measurement-gate read** — after implementation, against
    CE-⑫ (draw ≤ 0.1%; war density 25–35 ≥ 15–25; gate-4 watch;
    scar-inflation; raid-attrition; draw-coalition; leader-agency).
-4. **SPEC amendment seal** — user decision on
-   `SPEC-AMENDMENT-DRAFT-crisis-ending.md`.
+4. ~~**SPEC amendment seal**~~ — RESOLVED 2026-07-11: user sealed the
+   draft verbatim; applied to `SPEC.md` § "How a match ends (crisis
+   arc)".
 5. **Dominance-gate recalibration grill** — data ready (wall re-erection
    survives the affordability bound; fgM9on absorbs — AB-①). Three
    candidate levers recorded by the M9-promotion grill: a

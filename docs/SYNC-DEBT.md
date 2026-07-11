@@ -11,13 +11,6 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
 
 ## Open
 
-- [ ] **Crisis-ending SPEC amendment — awaiting user seal** (updated
-  2026-07-11 evening; originally registered under ADR 0034). The design
-  pass ran and the proposal now EXISTS as a draft:
-  `docs/features/match-arc/SPEC-AMENDMENT-DRAFT-crisis-ending.md`
-  (RULINGS CE-series, ADR 0035 — crisis arc 25→35, Westphalian draw).
-  SPEC.md stays untouched until the user seals the draft (Tier-3).
-
 - [ ] **Rebellion-body grill branch** (registered 2026-07-11, crisis
   pass CE-⑫ rider). The crisis skeleton is sealed but the rebellion's
   BODY is not: suppression resolution mechanics, seceded-sector
@@ -371,6 +364,13 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
 
 ## Paid
 
+- [x] 2026-07-11 — **Crisis-ending SPEC amendment — user-sealed and
+  applied** (registered under ADR 0034, drafted by the crisis-ending
+  pass as `SPEC-AMENDMENT-DRAFT-crisis-ending.md`). User decision
+  2026-07-11 (verbatim seal): the match-end declaration (decision point
+  / crisis arc 25→35 / Westphalian draw <0.1%, no judged scorecard)
+  applied to `SPEC.md` § "How a match ends (crisis arc)". Draft file
+  restamped SEALED (drafting record); ADR 0035 Consequences updated.
 - [x] 2026-07-11 — **Record-world harness default flip** (registered
   2026-07-11, AB-②) — `tournament.js` HARNESS.capLandFrac 0→1;
   `map-board.js` factory + cradle-tournament default gaan →
