@@ -8,6 +8,13 @@
 // Every value marked GAAN is a proposal this battery run must price —
 // number rulings go to the user; only structure closes here.
 
+// econ.js provides draftBill (surge-curve integral pricing) for the
+// affordability bound. Node: require; browser (map-mockup.html): TC.econ,
+// loaded one script ahead of this file.
+const ECON = (typeof module !== 'undefined' && module.exports)
+  ? require('./econ.js')
+  : window.TC.econ;
+
 const MATCH_DIALS = {
   // -- hegemony check (GLOSSARY 패권 결정점) --
   shieldRatio: 1.7,        // war-deciding mass ratio (observed sheet 7: 2.0 wins, 1.5 stalls)
@@ -142,9 +149,40 @@ function hegemonyCheck(realms, candName, D = MATCH_DIALS) {
   // shield within the regeneration window. Coalition mass = Σ projectable
   // + what W turns of recruitment can add (model choice: candidate shield
   // held at its current, war-worn value — the window IS the weak period).
-  const coalition = inBalance.reduce((s, x) =>
-    s + x.proj + Math.min(Math.max(0, x.realm.fieldCap - x.realm.field),
-      Math.round(x.realm.fieldCap * D.recruitPerTurn) * D.regenWindow), 0);
+  // recruitment futures — the referee counts only what the world sells
+  // (affordability grill 2026-07-11): the same four bounds doRecruit
+  // enforces on real drafts. headroom & rate are the legacy pair; money =
+  // treasury + W turns of income priced along the surge curve (draftBill,
+  // intensity rise included); bodies = the civilian register. Money/body
+  // inputs absent or non-finite (fixture boards' NaN treasury, prototype
+  // fixtures) → legacy min(headroom, rate) exactly.
+  let boundMoney = 0; let boundBodies = 0;
+  const futuresOf = (r) => {
+    const headroom = Math.max(0, r.fieldCap - r.field);
+    const rate = Math.round(r.fieldCap * D.recruitPerTurn) * D.regenWindow;
+    const legacy = Math.min(headroom, rate);
+    if (!Number.isFinite(r.treasury) || !Number.isFinite(r.income)
+      || !Number.isFinite(r.pool) || !Number.isFinite(r.serving)
+      || r.pool <= 0 || legacy === 0) return legacy;
+    const bodies = Math.max(0, r.pool - r.serving);   // civilians
+    const budget = r.treasury + D.regenWindow * r.income;
+    const billFor = (men) =>
+      ECON.draftBill(r.pool, r.serving / r.pool, (r.serving + men) / r.pool);
+    let money = legacy;
+    if (billFor(legacy) > budget) {                   // money binds below legacy
+      let lo = 0; let hi = legacy;                    // draftBill monotonic in men
+      while (lo < hi) {
+        const mid = Math.ceil((lo + hi) / 2);
+        if (billFor(mid) <= budget) lo = mid; else hi = mid - 1;
+      }
+      money = lo;
+    }
+    const futures = Math.min(legacy, money, bodies);
+    if (money < legacy && futures === money) boundMoney++;
+    else if (bodies < legacy && futures === bodies) boundBodies++;
+    return futures;
+  };
+  const coalition = inBalance.reduce((s, x) => s + x.proj + futuresOf(x.realm), 0);
   const coalitionNeed = D.shieldRatio * candShield;
   const unassailable = coalition < coalitionNeed;
 
@@ -161,6 +199,7 @@ function hegemonyCheck(realms, candName, D = MATCH_DIALS) {
   return {
     candProj, candShield, leadership, leadershipRows,
     coalition, coalitionNeed, unassailable,
+    affordabilityBound: { money: boundMoney, bodies: boundBodies, rivals: inBalance.length },
     dominance, forceShare,
     inBalance: inBalance.map((x) => x.realm.name),
     outOfBalance: outOfBalance.map((x) => `${x.realm.name}(투사 ${x.proj})`),
