@@ -247,6 +247,26 @@ function growRebels(realm, t, H) {
   }
 }
 
+// CE-⑬ suppression = pure attrition through the shared casualty curve (D11),
+// NO threshold and NO stamps (success/repulse would be a false binary on
+// attrition work). R = suppressor power ÷ rebel defense, where rebel defense =
+// stack × ⅓ (rebel combat constant, CE-⑭.4) × terrain (the invariant
+// multiplier that shelters the guerrilla, CE-⑬). Both sides bleed off the
+// same curve; rebel deaths are permanent register loss (applied by the caller,
+// CE-⑭.3). Deterministic.
+function suppressAttrition(suppressPower, rebelStack, terrainMult, C) {
+  if (rebelStack <= 0 || suppressPower <= 0) return { rebelDead: 0, suppressorDead: 0 };
+  const rebelDef = rebelStack * C.rebelEffectiveness * terrainMult;
+  const R = suppressPower / Math.max(1, rebelDef);
+  const base = DIALS.casualtyBase, exp = DIALS.casualtyExp;
+  const fracRebel = Math.min(1, base * Math.pow(R, exp));      // rebels lose more as R grows
+  const fracSupp = Math.min(1, base / Math.pow(R, exp));       // suppressor loses more near parity
+  return {
+    rebelDead: Math.min(rebelStack, rebelStack * fracRebel),
+    suppressorDead: suppressPower * fracSupp,
+  };
+}
+
 // frontier = defender-held sectors adjacent to (this war's occupied set ∪
 // the front's border sectors). Fallbacks (inherited fronts with no authored
 // border ids): any D-held sector adjacent to an A-held one; then all holds.
@@ -1242,4 +1262,4 @@ module.exports = { HARNESS, BOT, ARCHETYPES, TEMPERAMENTS, SEATS, SPEC_GAPS,
   frontDefense, pickMainDefWar, frontSoftness,
   applySettlement, sectorMode, syncCounts, occupationFrontier, captureSector, heldSectors,
   acquireSector, returnOccupied, eliminate, checkView, crisisRate, addScar, terrainOf,
-  sectorFuel, sectorRegisterShare, growRebels };
+  sectorFuel, sectorRegisterShare, growRebels, suppressAttrition };

@@ -61,3 +61,25 @@ test('growRebels never exceeds the register cap even at extreme rate', () => {
   T.growRebels(r, 30, H);
   assert.ok(s.rebelStack <= 600 + 1e-9);
 });
+
+test('suppressAttrition: stronger suppressor kills more rebels, bleeds less', () => {
+  const C = T.HARNESS.crisis;
+  const strong = T.suppressAttrition(3000, 900, 1.0, C); // R high
+  const weak = T.suppressAttrition(600, 900, 1.0, C);    // R low
+  assert.ok(strong.rebelDead > weak.rebelDead, 'more rebels die at high R');
+  assert.ok(strong.suppressorDead < weak.suppressorDead, 'suppressor bleeds less at high R');
+  assert.ok(strong.rebelDead <= 900 + 1e-9, 'cannot kill more rebels than exist');
+});
+
+test('suppressAttrition: terrain shelters rebels (mountain lowers R, fewer die)', () => {
+  const C = T.HARNESS.crisis;
+  const plain = T.suppressAttrition(1500, 900, C.terrainDef.plains, C);
+  const mtn = T.suppressAttrition(1500, 900, C.terrainDef.mountain, C);
+  assert.ok(mtn.rebelDead < plain.rebelDead, 'mountains shelter the guerrilla');
+});
+
+test('suppressAttrition: zero rebels is a no-op', () => {
+  const r = T.suppressAttrition(1000, 0, 1.0, T.HARNESS.crisis);
+  assert.strictEqual(r.rebelDead, 0);
+  assert.strictEqual(r.suppressorDead, 0);
+});
