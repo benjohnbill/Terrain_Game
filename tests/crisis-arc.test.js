@@ -220,3 +220,31 @@ test('rebel denial raises the coalition, making unassailability harder', () => {
   assert.ok(clean.unassailable, 'unassailable with no rebels');
   assert.ok(!flamed.unassailable, 'a continent in flames denies the crown');
 });
+
+test('백지 (white peace) is the 0% rung of the settlement ladder', () => {
+  assert.ok(M.MATCH_DIALS.presets['백지']);
+  assert.strictEqual(M.MATCH_DIALS.presets['백지'].claimRate, 0);
+  const b = M.presetBundle('백지', { occValue: 10, raidLoot: 4 });
+  assert.strictEqual(b.value, 0, 'claims nothing');
+});
+
+test('overlay breaks the ladder from the bottom up; 최대 always survives', () => {
+  const C = { ...T.HARNESS.crisis, enabled: true, onset: 25, stage: { s1: 25, s2: 28, s3: 31 } };
+  const H = { ...T.HARNESS, crisis: C };
+  assert.deepStrictEqual(T.availablePresets(24, H), ['백지', '관대', '표준', '최대']); // pre-onset: full
+  assert.deepStrictEqual(T.availablePresets(28, H), ['표준', '최대']);   // S2: 백지+관대 gone
+  assert.deepStrictEqual(T.availablePresets(31, H), ['최대']);            // S3: only 최대
+});
+
+test('overlay shortens then voids the truce on the calendar', () => {
+  const C = { ...T.HARNESS.crisis, enabled: true, onset: 25, stage: { s1: 25, s2: 28, s3: 31 } };
+  const H = { ...T.HARNESS, crisis: C, truceTurns: 4 };
+  assert.strictEqual(T.truceLength(10, H), 4);  // pre-crisis: full
+  assert.strictEqual(T.truceLength(26, H), 2);  // S1: halved
+  assert.strictEqual(T.truceLength(29, H), 0);  // S2+: void
+});
+
+test('overlay is inert when crisis is off', () => {
+  assert.deepStrictEqual(T.availablePresets(30, T.HARNESS), ['백지', '관대', '표준', '최대']);
+  assert.strictEqual(T.truceLength(30, T.HARNESS), T.HARNESS.truceTurns);
+});

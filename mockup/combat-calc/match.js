@@ -42,6 +42,7 @@ const MATCH_DIALS = {
 
   // -- settlement (GLOSSARY 정산 / 수락 산술) --
   presets: {
+    백지: { claimRate: 0.00, fill: 'cessionFirst' },  // CE-⑲ white peace: claim nothing (id-exact return)
     관대: { claimRate: 0.50, fill: 'indemnityFirst' },  // A-1 ruling ⑧ 가안
     표준: { claimRate: 0.75, fill: 'cessionFirst' },
     최대: { claimRate: 1.00, fill: 'cessionFirst' },

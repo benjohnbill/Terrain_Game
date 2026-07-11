@@ -193,6 +193,36 @@ function crisisRate(t, C) {
   return C.rate0 + C.rateStep * Math.max(0, t - C.onset);
 }
 
+// CE-⑳ total-war overlay stage on the public calendar. 0 = pre-crisis / off.
+function overlayStage(t, C) {
+  if (t >= C.stage.s3) return 3;
+  if (t >= C.stage.s2) return 2;
+  if (t >= C.stage.s1) return 1;
+  return 0;
+}
+
+// CE-⑳ settlement ladder under the overlay: the floor rises from the bottom
+// (백지→관대→표준 break in order); 최대 always survives (annihilation endgame
+// in our own grammar). Vassalage + 패권 정산 are exempt (handled elsewhere).
+function availablePresets(t, H) {
+  const full = ['백지', '관대', '표준', '최대'];
+  if (!(H.crisis && H.crisis.enabled)) return full;
+  const stage = overlayStage(t, H.crisis);
+  if (stage >= 3) return ['최대'];
+  if (stage >= 2) return ['표준', '최대'];
+  return full; // stage 0/1: ladder intact (S1 cuts truce, not the ladder)
+}
+
+// CE-⑱/⑳ truce length under the overlay: full pre-onset, halved at S1,
+// void at S2+. Off/pre-crisis → the plain H.truceTurns.
+function truceLength(t, H) {
+  if (!(H.crisis && H.crisis.enabled)) return H.truceTurns;
+  const stage = overlayStage(t, H.crisis);
+  if (stage >= 2) return 0;
+  if (stage >= 1) return Math.floor(H.truceTurns / 2);
+  return H.truceTurns;
+}
+
 // CE-⑭.1 scar ledger: per-sector cumulative usable damage. Never decays
 // ("the land remembers"); persists on the sector object, so it is inherited
 // on conquest for free (CE-④/CE-⑮). Written only during a crisis-enabled
@@ -782,7 +812,10 @@ function trySettle(war, A, D, H, record) {
     if (pol.holdOut) return null; // no material consolation — press the throne
   }
   // 2) preset ladder from preferred downward, one concession per turn
-  const ladder = ['최대', '표준', '관대'];
+  // CE-⑳ overlay: the leniency floor rises during the crisis (백지/관대/표준
+  // break bottom-up; 최대 always survives). Preferred → most lenient still open.
+  const open = availablePresets(A._turn ?? 0, H); // ['백지'..'최대'] minus broken rungs
+  const ladder = ['최대', '표준', '관대'].filter((p) => open.includes(p));
   const from = Math.max(ladder.indexOf(pol.preset), 0) + war.proposalStep;
   for (let i = from; i < ladder.length; i++) {
     const b = presetBundle(ladder[i], st, MATCH_DIALS);
@@ -878,7 +911,7 @@ function endWar(war, A, D, H) {
   war.stage = 'over';
   A.wars = A.wars.filter((w) => w !== war);
   D.wars = D.wars.filter((w) => w !== war);
-  A.truce[D.name] = D.truce[A.name] = (war.endTurn ?? 0) + H.truceTurns;
+  A.truce[D.name] = D.truce[A.name] = (war.endTurn ?? 0) + truceLength(war.endTurn ?? 0, H);
   A.lastWarEnd = D.lastWarEnd = war.endTurn ?? 0;
 }
 
@@ -1373,4 +1406,5 @@ module.exports = { HARNESS, BOT, ARCHETYPES, TEMPERAMENTS, SEATS, SPEC_GAPS,
   applySettlement, sectorMode, syncCounts, occupationFrontier, captureSector, heldSectors,
   acquireSector, returnOccupied, eliminate, checkView, crisisRate, addScar, terrainOf,
   sectorFuel, sectorRegisterShare, growRebels, suppressAttrition,
-  suppressionBudget, crisisTurn, boardRebelMass };
+  suppressionBudget, crisisTurn, boardRebelMass,
+  overlayStage, availablePresets, truceLength };
