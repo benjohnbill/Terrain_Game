@@ -11,12 +11,30 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
 
 ## Open
 
-- [ ] **Crisis-ending SPEC amendment proposal** (registered 2026-07-11,
-  ADR 0034 — direction sealed, SPEC untouched by design). The match-end
-  declaration (turn-32 sudden-death crisis + scorecard fallback) is a
-  SPEC-level change; the proposal RIDES the dedicated crisis-ending
-  design pass (match-arc INDEX open q.1), never lands from a doc batch.
-  SPEC stays as-is until the user approves that pass's proposal.
+- [ ] **Crisis-ending SPEC amendment — awaiting user seal** (updated
+  2026-07-11 evening; originally registered under ADR 0034). The design
+  pass ran and the proposal now EXISTS as a draft:
+  `docs/features/match-arc/SPEC-AMENDMENT-DRAFT-crisis-ending.md`
+  (RULINGS CE-series, ADR 0035 — crisis arc 25→35, Westphalian draw).
+  SPEC.md stays untouched until the user seals the draft (Tier-3).
+
+- [ ] **Rebellion-body grill branch** (registered 2026-07-11, crisis
+  pass CE-⑫ rider). The crisis skeleton is sealed but the rebellion's
+  BODY is not: suppression resolution mechanics, seceded-sector
+  behavior, gate-5 terrain resonance under the internal source,
+  peaceful-cession scar. Pointer: match-arc INDEX open q.1. Owner: the
+  next crisis grill session.
+
+- [ ] **Crisis dial table** (registered 2026-07-11, crisis pass). Rate
+  staircase, scar increments, overlay stage table, denial conversion
+  coefficient, secession N, suppression-scar magnitude — all 가안,
+  owed to the implementation plan and adjudicated by sweep against the
+  CE-⑫ gates. Owner: the crisis implementation session.
+
+- [ ] **L3 scar-intel fog layer** (registered 2026-07-11, CE-③). The
+  fog-spec read of others' uprising fuel is design-sealed but L3-only;
+  L2 measures true values. Pointer: `docs/DISPLAY-DEBT.md` (scar/
+  mobilization fog intel view row).
 
 - [ ] **Timing-ruler reframe — DOMAIN_MAP/DESIGN promotion scan** (registered
   2026-07-09; metric reframe SEALED same day as match-arc **DT-①**). The

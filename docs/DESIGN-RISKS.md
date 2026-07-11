@@ -26,6 +26,7 @@ Status legend: 🔴 open · 🟡 partly addressed · ✅ resolved
 | R8 | Time pressure is double-edged (skill-testing vs merely stressful) | 🟡 | SPEC "To validate" | Prototype an opt-in timed mode and judge |
 | R9 | Live-state drift; concurrent sessions editing the same files | 🟡 | process | Keep isolating on branch/worktree; re-confirm HEAD |
 | R12 | L3 immersion charter — the one-judgment bet pays only if unverified at L2: (a) situation-reading surface rewards depth (else analyst/clicker collapse into "press recommended"), (b) standoff turns carry real decisions (standing rules, surge economy, recon posture) rather than click-through, (c) no dominant preset plan emerges (matchup sparsity holds at play) | 🔴 | M9-promotion grill 2026-07-11; ADR 0019; ADR 0025/0026; matchup 21-cell | First playtest measures all three; also calibrates per-turn wall-clock (SPEC's untested 1.5–2 min variable, analyst-track ruling 2026-07-11) |
+| R13 | Crisis-decade genre-shift / chore risk — turns 25–35 could read as fire-fighting admin instead of the most war-dense phase; and a high-karma leader must never reach a mathematically hopeless state (by ~turn 33) it could not have prevented | 🟡 | crisis-ending pass 2026-07-11; match-arc RULINGS CE-⑩/⑫; ADR 0035 | Shield-natured suppression sealed (CE-⑩); sweep must pass the chore-prevention gate (war density 25–35 ≥ 15–25) + leader-agency check (CE-⑫) |
 
 ### Next actions (open)
 

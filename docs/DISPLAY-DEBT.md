@@ -73,6 +73,17 @@ and the A-3 economy rider.
   deliberately deferred to the next seed re-authoring, where a
   composition pass (NW mass reduction / camera framing) pays this row.
   Born: user UX observation, C-loop sector grill (2026-07-07).
+- [ ] **Soil-and-crop crisis surface** — the crisis arc must read on
+  the MAP, never as a bill ledger: per-sector standing-rebel stacks,
+  scar readability, burning/seceding sector states, the public crisis
+  calendar (onset/stages/turn-35). R12-adjacent: this surface is the
+  difference between "난세" and "tax audit." Mechanic sealed at
+  match-arc RULINGS CE-⑧ (2026-07-11).
+- [ ] **Scar/mobilization fog intel view** — other realms' uprising
+  fuel read through the fog spec: estimate band + confidence per
+  sector; a former owner keeps 100% confidence only in what it
+  witnessed. Mechanic sealed at match-arc RULINGS CE-③ (2026-07-11);
+  L2 measures true values, this view is the L3 layer.
 
 ## Resolved
 

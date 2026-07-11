@@ -2,9 +2,14 @@
 
 Date: 2026-07-11
 
-Status: Accepted (direction-level; the detailed design is a separate
-dedicated pass — the SPEC amendment proposal rides that pass, SPEC is
-untouched today)
+Status: Accepted — Amended by ADR-0035 (2026-07-11): the design pass it
+mandated ran the same evening and amended three parameters — crisis
+source 이민족 침입 → internal uprising (봉기, karma-driven), fallback
+judged scorecard → Westphalian draw, timeline turn-32 bell + ~3-turn
+encroachment → crisis arc turn 25→35 (rolling assessment). The five
+gates + three riders remain binding. (Original status: direction-level;
+the detailed design is a separate dedicated pass — the SPEC amendment
+proposal rides that pass, SPEC is untouched today)
 Amends: ADR 0030 (the hegemony gate remains the sole winner rule for
 DECIDED matches; this ADR gives the never-tripped tail a structural end
 instead of a `winner: null` timeout). Together with match-arc ruling AB-②

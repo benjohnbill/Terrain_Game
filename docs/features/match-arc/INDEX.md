@@ -103,8 +103,25 @@ preparable, scorecard demoted to fallback; 5 design gates + 3 riders;
 decided% reframed as KO-rate); the envelope ruler is read on the
 **analyst-track clock** (**AB-④** — SPEC 1.5–2 min/turn 가안 kept,
 wall-clock calibration = L3 debt, DESIGN-RISKS R12). Harness default flip
-to the record world = registered SYNC-DEBT (record world is opt-in until
-paid). Detail: RULINGS AB block.
+to the record world = PAID 2026-07-11 evening (commit aa87323; SYNC-DEBT
+Paid). Detail: RULINGS AB block.
+
+**Crisis-ending design pass (2026-07-11 evening) — skeleton SEALED**:
+the dedicated pass ADR 0034 mandated ran as a single grill (RULINGS
+**CE-①…⑫**, **ADR 0035** — amends 0034 on source/fallback/timeline;
+evidence: `research/2026-07-11-crisis-endgame-historical-precedents.md`,
+Codex survey). The match end is an **internal-uprising crisis arc**:
+karma fuel (cumulative scar × mobilization, land-bound, inherited),
+crisis arc turn 25→35 with rolling assessment (linear bills), pay/refuse
+grammar + secession by neglect, standing rebels in the decision point's
+denial term (crown = conquest + pacification), soil-and-crop map
+embodiment, calendar-staged total-war overlay, shield-natured
+suppression, **Westphalian draw** at turn 35 (< 0.1% target — the judged
+scorecard is GONE; one judge only). Acceptance gates sealed (CE-⑫):
+draw ≤ 0.1%, war density 25–35 ≥ 15–25 (chore-prevention), gate-4 watch,
+scar-inflation, raid-attrition strength, draw-coalition degeneracy,
+leader-agency. SPEC amendment DRAFT written
+(`SPEC-AMENDMENT-DRAFT-crisis-ending.md`) — awaiting user seal.
 
 Status: **core SEALED** (2026-07-03 → 07-05). Structure and first
 values user-confirmed through the A-1 grill (rulings ①–⑧), the A-2
@@ -125,8 +142,10 @@ vassalage), and the economy→mass conversion it needs (M13).
 - `GLOSSARY.md` — Tier-1 vocabulary, sealed terms with dates. THE
   reference for this feature (definition + current value + seal stamp).
 - `RULINGS.md` — ruling history (⑧–⑰, MT-①…⑤, ET-①, DT-①…③, OG-①…⑤,
-  AB-①…④): evidence, rejected alternatives, riders. Glossary rows cite
-  ruling numbers here.
+  AB-①…④, CE-①…⑫): evidence, rejected alternatives, riders. Glossary
+  rows cite ruling numbers here.
+- `SPEC-AMENDMENT-DRAFT-crisis-ending.md` — PROPOSED match-end
+  declaration awaiting user seal (never normative until sealed).
 - `STRATEGY-SPACE.md` — six winning archetypes; the standing dial
   checklist ("which archetype does this value kill?").
 - `TEST-LADDER.md` — verification epistemology: the L0–L3 test-trust
@@ -172,25 +191,31 @@ L-level seal stamp adopted.
 Current open questions (post affordability & M9-promotion pass,
 2026-07-11):
 
-1. **Crisis-ending design pass** — the dedicated pass ADR 0034 mandates:
-   design the sudden-death crisis (이민족 침입 family) under the 5 gates +
-   3 gate-4 riders recorded in RULINGS AB-③ / ADR 0034; L2 harness
-   prototype is measurable; the SPEC amendment proposal (match-end
-   declaration) rides this pass. The pre-crisis baseline is the
-   measurement anchor.
-2. **Dominance-gate recalibration grill** — data ready (wall re-erection
+1. **Rebellion-body grill** (next crisis session): suppression
+   resolution mechanics (reuse combat arithmetic — garrison × terrain ×
+   fort vs rebel mass — or a simpler pacification read?); seceded-sector
+   behavior (inert? spreads?); gate-5 terrain resonance under the
+   internal-uprising source; peaceful-cession scar question.
+2. **Crisis dial table** — rides the implementation plan (rate
+   staircase, scar increments, overlay stage table, denial conversion
+   coefficient, secession N, suppression-scar magnitude); all 가안,
+   sweep-adjudicated.
+3. **Crisis measurement-gate read** — after implementation, against
+   CE-⑫ (draw ≤ 0.1%; war density 25–35 ≥ 15–25; gate-4 watch;
+   scar-inflation; raid-attrition; draw-coalition; leader-agency).
+4. **SPEC amendment seal** — user decision on
+   `SPEC-AMENDMENT-DRAFT-crisis-ending.md`.
+5. **Dominance-gate recalibration grill** — data ready (wall re-erection
    survives the affordability bound; fgM9on absorbs — AB-①). Three
    candidate levers recorded by the M9-promotion grill: a
    political-feasibility filter on the coalition; endurance dominance
    (hold crown K consecutive turns); an assembly-time discount on
-   futures. Its own future session.
-3. **Record-world harness default flip** — tournament.js dials
-   (capLandFrac 0→1 + FG defaults); code change with test adjudication —
-   tracked in `docs/SYNC-DEBT.md`.
-4. **Capital stage ②** — concept sealed, no L2 wiring
+   futures. Reads POST-crisis data (dd semantics change under the arc).
+   Its own future session.
+6. **Capital stage ②** — concept sealed, no L2 wiring
    (`docs/features/capital/`); lands as its own measured pass.
-5. **js/situation.js rework** — unchanged debt (ADR 0019 v5 amendment;
+7. **js/situation.js rework** — unchanged debt (ADR 0019 v5 amendment;
    carried since A-4).
-6. **L3 build-out signal** — the user's React/L3 build intent
+8. **L3 build-out signal** — the user's React/L3 build intent
    (2026-07-11) reinforces ADR 0028's Stage-1 trigger forecast (noted,
    no action this pass).

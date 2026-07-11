@@ -864,3 +864,212 @@ one-hour mark — the bell is a real position). The clicker track
 (~30s/turn) is always-shorter and always allowed. Both tracks' wall-clock
 calibration is an **L3 debt** — registered with the L3 immersion charter
 as DESIGN-RISKS **R12**.
+
+## Crisis-Ending Design Pass (2026-07-11 evening)
+
+The dedicated design pass ADR 0034 mandated, run as a single grill
+session the same day the direction sealed. Verdict source: crisis-ending
+grill, **user-sealed 2026-07-11** (question-by-question seals in the
+session transcript). Evidence layer:
+`research/2026-07-11-crisis-endgame-historical-precedents.md` (Codex
+historical survey, commissioned mid-grill). ADR: **0035** (amends 0034).
+Output = the design SKELETON (mechanism family + action grammar +
+acceptance gates); the rebellion-body mechanics, dial values, and the
+measurement read are explicitly deferred (CE-⑫ rider).
+
+### CE-① Crisis = bellows, never judge — SEALED 2026-07-11 (grill Q1, user) · L0
+
+The crisis does not select winners. The **hegemony decision point
+remains the sole winner rule** at every turn of the match, including the
+crisis arc; the crisis erodes the two-layer deadlock that keeps the gate
+from tripping (armed-peace shield order + balance-of-power coalition
+glue) and forces the world toward the existing gate. Rejected: crisis as
+its own victory judge ("survive the invasion" — a second judge, ADR 0030
+conflict, one-judgment identity violation); hybrid crisis-specific win
+conditions. Rider: the judged fallback's invocation rate becomes a
+measured target (~0.1%, CE-⑪).
+
+### CE-② Crisis source = internal uprising — SEALED 2026-07-11 (grill Q3–Q4, user) · L0 — amends AB-③ / ADR 0034 wording
+
+The crisis is an **internal, karma-driven uprising** (봉기 — Yellow
+Turbans / Taiping family), NOT an external barbarian invasion. No
+third-party AI actor marches on the map. Grounds: (1) geographic entry
+carries positional 억까 (periphery seats punished for map position they
+never chose); (2) an internal source keys pressure to each realm's own
+conduct — fully legible causality (억까-legibility rider passes by
+structure, not by formula); (3) hermit-kingdom preparation becomes
+governance itself (gate 2 strengthened); (4) Warring-States-era
+narrative fit. Historical grounding (Codex survey): the Yellow-Turban
+model — rebellion did not kill the Han directly; suppressing it
+destroyed the central authority that enforced interstate promises, and
+the consolidator (Cao Cao) conquered THROUGH that opening. Rejected:
+external 이민족 침입 (the ADR 0034 wording — positional 억까); rebels as
+a growing third power with its own AI (right feel, wrong timescale — a
+mid-game event, not an ending device; parked). Supersedes the "이민족
+침입 family" clause of AB-③ (stamp above at AB-③ is NOT needed — the
+amendment is carried by ADR 0035's stamp on ADR 0034; this entry is the
+ruling-level record).
+
+### CE-③ Uprising fuel = cumulative scar × mobilization — SEALED 2026-07-11 (grill, user; v2 wording user-corrected) · L0
+
+Per-sector **uprising fuel** = f(**cumulative scar ledger**, mobilization
+intensity). The scar ledger accrues on violence events (raid, armed
+occupation; per-event increments = open dials, including whether
+peaceful cession arrives scar-free) and **never decays** — "the land
+remembers" (user correction of the draft's healing version: usable
+recovery restores economy, never grievance). Scars are **land-bound and
+inherited on conquest** — taking scorched land means owning its fire;
+raiding gains permanent late-game value (salting the earth). Visibility
+follows the fog spec: own sectors 100%, others via scouting confidence,
+a former owner keeps 100% confidence only in what it witnessed. L2
+measures with true values (bots see truth today); the fog intel layer is
+L3 (DISPLAY-DEBT row). L2 approximation: sector-level mobilization
+intensity does not exist yet — realm-level intensity is spread uniformly
+over held sectors; a true per-sector draft ledger is an L3+ debt.
+
+### CE-④ Crisis arc turn 25→35 + rolling assessment — SEALED 2026-07-11 (grill Q12, user-proposed arc) · L0 — supersedes the turn-32 bell + ~3-turn encroachment (AB-③/ADR 0034)
+
+The crisis is a **long arc**: onset turn 25, escalating staircase
+rate(t), **hard end turn 35** (Westphalian draw, CE-⑪). Not a 3-turn
+hammer — a known transformation moment the whole match plans around
+(Baron-timer psychology); onset aligns with the envelope's right edge
+(15–25): *decide within the envelope, or the age of rebellion decides
+with you*. Turn scale sanity: one turn ≈ months–a year, so a 10-turn
+collapse matches the historical endgames (Qin 230–221 BCE; Sekigahara →
+Osaka). **Rolling assessment** replaces the bell-snapshot draft: each
+crisis turn, bill = rate(t) × CURRENT fuel; conquest during the crisis
+inherits the fire, priced by the remaining rate curve. Grounds for
+killing the snapshot: freezing the ledger at onset would make ten turns
+of conquest/mobilization karma-free (deliberate post-onset swallowing
+becomes optimal); rolling is also more legible (one sentence, computable
+any turn) and cheaper (no frozen schedule state). Envelope numbers and
+the fallback-rate target are unchanged.
+
+### CE-⑤ Linear bill curve — SEALED 2026-07-11 (grill Q9, user) · L0
+
+The suppression bill is **linear** in fuel (single unit rate; a tax, not
+a punishment). Grounds: (1) in the record world (capLandFrac 1) the
+leader's military ceiling also scales with conquered population, so a
+linear bill decelerates the leader without executing it (gate 4); (2)
+maximal legibility (one price per scar unit); (3) minimal dials.
+Progressive pricing is reserved as a **measured fallback** — bend the
+curve only if the sweep shows a pathology (affordability-pass
+discipline: never invent a dial ahead of measurement).
+
+### CE-⑥ Crisis-turn grammar = pay / refuse + secession by neglect — SEALED 2026-07-11 (grill Q10–Q11, user) · L0
+
+Each crisis turn a realm **chooses per its bill**: **pay** (bodies move
+to suppression) or **refuse** (unpaid sectors burn: economy loss + scar
+growth + that sector's next bill escalates — the forcing staircase
+derives from the refusal penalty for free). **Secession by neglect**: a
+sector left unpaid N consecutive turns (가안 N=2) defects to the rebels
+— abandonment is a CONSEQUENCE, not an action. Deterministic throughout
+(same choices → same outcomes; no dice). Rejected: automatic forced
+levy (crisis becomes a spectator disaster — violates one-judgment
+agency); a third explicit "abandon" action (user-caught redundancy: its
+entire value collapses into sustained refusal, and the action-space/bot
+policy space halves without it). The refusal path carries the designed
+gamble: **burn-and-rush** — the leader deliberately lets home burn to
+race the gate with an intact sword.
+
+### CE-⑦ Pacification condition — standing rebels enter the denial term — SEALED 2026-07-11 (grill Q11, user) · L0
+
+Unsuppressed rebel mass (conversion coefficient = dial) **counts into
+the unassailable check's denial side** — own rebels and others' alike.
+Nobody is unassailable over a continent in flames: the crown requires
+**conquest + pacification (평정)**. This resolves the recurring
+"barely-survived winner" legitimacy question (the user returned to it
+three times; this is its mechanical answer — the winner must clear the
+gate over rivals AND standing rebellion, the Cao Cao path: absorb and
+pacify, then consolidate). It also self-prices burn-and-rush: rushing
+with your house on fire raises the bar you must clear, so the leader's
+real crisis problem is ALLOCATION (pacify vs conquer), not a binary.
+Scale warning (recorded): denial mass delays decisions; the conversion
+coefficient fights the 0.1% draw target — the forcing/delaying balance
+is the design's core dial and sweep measurement item #1.
+
+### CE-⑧ Soil-and-crop model + suppression scar — SEALED 2026-07-11 (grill Q13, user-proposed) · L0
+
+The fuel/bill accounting is embodied on the map, not in a ledger UI:
+**karma scar = soil fertility** (permanent, CE-③); **standing rebels =
+the crop** — a per-sector rebel stack that grows each crisis turn by
+rate(t) × karma, shrinks under suppression, secedes past the threshold
+(CE-⑥), and stands as denial mass (CE-⑦). Rebels are map-visible
+standing forces, never marching AI. This is the fun-side answer to
+"bills read as a tax audit": the same math, embodied as a world event.
+**Suppression scar**: suppressing adds a small karma increment ("the
+sword scars wherever it swings" — harsh crackdowns radicalize; a soft
+clock on suppress-forever strategies). SHAPE sealed; magnitude is a dial
+INCLUDING 0 — the sweep decides (recorded trap: if the increment is too
+large, diligent suppression is punished — the inversion is the test).
+
+### CE-⑨ Total-war overlay = the enforcer's death, calendar-staged — SEALED 2026-07-11 (grill Q7 + Q13, user) · L0
+
+During the arc, peacetime restraints break because **no authority can
+guarantee promises any longer** (the Codex survey's causal mechanism:
+internal crisis → the credible treaty enforcer dies → alliance horizons
+shorten → pre-emptive betrayal becomes rational → annihilation endgame).
+Same war machine, same arithmetic, no new verbs: the cuts are staged on
+the **public calendar** (e.g. truce shortening → void; settlement ladder
+narrowing → void; stage table = dials). Calendar staging preferred over
+world-fire-threshold triggers: determinism + the Baron-timer property
+(everyone reads the same calendar). Rejected: a separate finale plan
+catalog / changed combat arithmetic (URF mode — "a different game";
+one-judgment identity + the 30-turn skill investment must stay the
+game); fire-threshold overlay triggers (feedback loop hurts
+predictability). The peacetime plan catalog is unusable as an ending
+device on tempo grounds (user: 20-turn grammar cannot play a 3-turn
+finale) — the overlay fixes TEMPO by removing restraints, not by adding
+mechanics. Westphalia recorded as the deliberate counter-example: war
+exhaustion historically also ends in comprehensive negotiation — that
+path is the draw (CE-⑪), not a design failure.
+
+### CE-⑩ Suppression is shield-natured — SEALED 2026-07-11 (grill Q14, user) · L0
+
+Suppression is paid from the **shield**: garrisons, reserves, register
+draws — internal order is garrison work. Field-army diversion is allowed
+but always optional, never forced. Consequence: during the arc,
+everyone's walls hollow out from within while swords stay whole — the
+crisis decade is designed to be the most war-dense phase of the match,
+not a fire-fighting chore (this dial setting is what preserves the
+conquest experience; the alternative — suppression taxing field armies —
+was identified as the chore-decade failure mode). Defensive
+infrastructure gains double value as crisis preparation (garrison
+build-up and forts serve suppression — hermit prep unifies "walls" and
+"restraint"). Open branch (next grill): the suppression RESOLUTION
+mechanics — whether rebel-vs-garrison resolves through the combat
+arithmetic (garrison × terrain × fort vs rebel mass) or a simpler
+pacification read.
+
+### CE-⑪ Westphalian draw — SEALED 2026-07-11 (grill Q8, user-proposed) · L0 — supersedes the judged-scorecard fallback (AB-③/ADR 0034)
+
+The turn-35 hard end is a **DRAW** (베스트팔렌 무승부 — multiple
+survivors, no single loser), replacing the judged scorecard entirely.
+The game now contains exactly ONE rule that ever names a winner: the
+hegemony decision point. Grounds (user chain, recorded verbatim in
+spirit): a judged winner inside a no-winner ending is incoherent; the
+draw's THREAT is itself a design lever (draw-avoidance drives late
+aggression through the open window); target invocation < 0.1% (a
+thousand-match rarity). Strategy rider: weak-but-clean realms may
+deliberately drag toward the draw ("cling to the leader's trouser legs")
+— this is the betrayal-politics rider made concrete, since only clean
+realms keep coalition mass alive to sustain denial (CE-⑦ + bill-derived
+coalition erosion). L3 debt: the draw screen's emotional design (an
+hour of play ending 1:1 must land as Westphalia, not anticlimax).
+
+### CE-⑫ Measurement gates — the pass's acceptance criteria — SEALED 2026-07-11 (grill, user) · L0 (gates; read = post-implementation)
+
+The implementation's sweep must be read against: **(a)** draw rate ≤
+0.1%; **(b) chore-prevention gate** — war/battle density in turns 25–35
+≥ density in 15–25, else "total war" is a false name (re-cut dials;
+direction re-examined if uncurable); **(c)** gate-4 watch —
+leader-execution AND vulture-dominance; **(d)** scar-inflation
+differentiation (32 turns of war must not flatten everyone's bills
+together); **(e)** raid-attrition archetype strength (raids gained
+permanent value); **(f)** draw-coalition / mass-refusal degeneracy;
+**(g)** leader-agency — no mathematically hopeless state by turn 33 that
+the player could not have prevented. Deferred branches recorded at
+INDEX open questions: rebellion-body pass (suppression resolution,
+seceded-sector behavior, gate-5 terrain resonance under the internal
+source, peaceful-cession scar); the dial table rides the implementation
+plan.
