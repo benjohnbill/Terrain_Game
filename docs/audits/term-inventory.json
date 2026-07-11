@@ -3192,6 +3192,129 @@
       "codeRefs": [],
       "verdict": "standard-term",
       "verdictRef": "docs/features/capital/RULINGS.md#CP-1"
+    },
+    {
+      "canonical": "Sector world",
+      "korean": "섹터 세계",
+      "aliases": [],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": null,
+      "verdictRef": null
+    },
+    {
+      "canonical": "Holdings",
+      "korean": "보유 섹터",
+      "aliases": [
+        "holds"
+      ],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "holds",
+      "codeRefs": [],
+      "verdict": null,
+      "verdictRef": null
+    },
+    {
+      "canonical": "Named capture",
+      "korean": "실명 점령",
+      "aliases": [
+        "occupiedIds"
+      ],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "occupiedIds",
+      "codeRefs": [],
+      "verdict": null,
+      "verdictRef": null
+    },
+    {
+      "canonical": "Occupation frontier",
+      "korean": "점령 경계",
+      "aliases": [],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": null,
+      "verdictRef": null
+    },
+    {
+      "canonical": "Resistance proxy",
+      "korean": "저항 근사",
+      "aliases": [],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED-structure",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": null,
+      "verdictRef": null
+    },
+    {
+      "canonical": "Limbo",
+      "korean": "점령 무귀속",
+      "aliases": [
+        "occupied-untransferred"
+      ],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": null,
+      "verdictRef": null
+    },
+    {
+      "canonical": "Possessor-keeps",
+      "korean": "점유자 보존",
+      "aliases": [],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": null,
+      "verdictRef": null
+    },
+    {
+      "canonical": "capLandFrac",
+      "korean": "땅-상한 결합 다이얼",
+      "aliases": [],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "capLandFrac",
+      "codeRefs": [],
+      "verdict": null,
+      "verdictRef": null
+    },
+    {
+      "canonical": "Per-sector ripening",
+      "korean": "섹터별 숙성",
+      "aliases": [],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": null,
+      "verdictRef": null
     }
   ]
 }

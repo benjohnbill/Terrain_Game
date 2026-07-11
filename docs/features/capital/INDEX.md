@@ -3,7 +3,8 @@
 - **Status:** CONCEPT SEALED (2026-07-10, user, occupation-geography brainstorm)
   — stage-② feature; NO L2 wiring yet. Wiring lands as its own pass with its
   own measurement, deliberately separated from the occupation-geography /
-  growth re-measurement (stage ①) so the two effects never entangle.
+  growth re-measurement (stage ① — landed 2026-07-11, see match-arc RULINGS
+  OG-①…⑤ / ADR 0032) so the two effects never entangle.
 - **What it is:** a political designation on one of a realm's main city
   sectors. The capital is where the land layer (sectors) meets the polity
   layer (regime): land transfer moves economic/military substance sector by

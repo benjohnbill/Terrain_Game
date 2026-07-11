@@ -69,6 +69,23 @@ designed-in device. Instrument landed main @54b47f0/@f8655ad. Detail: RULINGS
 DT-①/DT-② + spec
 `docs/superpowers/specs/2026-07-09-hegemony-decision-timing-target-design.md`.
 
+**Occupation-geography pass (2026-07-10/11) — stage ① LANDED + MEASURED**:
+the L2 world gained sector resolution (RULINGS **OG-①…⑤**, **ADR 0032**;
+design spec `docs/superpowers/specs/2026-07-10-occupation-geography-design.md`,
+plan `docs/superpowers/plans/2026-07-10-occupation-geography.md`; main
+2a9d8f3..9a64561, 238/238). Land transfer moves real sector ids (named
+captures, cession value-desc + connectivity, possessor-keeps elimination
+with both-ways conservation); income + ceiling derive from holdings (limbo
+pays neither side); ADR 0022 ripening runs per-sector, uniform across
+channels per **ADR 0029** (sealed 2026-07-11, "alive"→"undamaged"); the
+2026-07-10 realm accumulator is retired (DT-② intent stands). Interior was
+redefined to hex-derived borders (OG-④, Q5(b) — pre-upgrade records not
+directly comparable; frac-0 re-baseline is the new base). Measured (v2 seal
+run): **capLandFrac 0 sealed as the world of record** — the coupling
+re-erects the denied-dominant wall monotonically (clean causal read), while
+the fgM9on reserve arm absorbs it (recorded for the gate grill). Detail:
+RULINGS OG block.
+
 Status: **core SEALED** (2026-07-03 → 07-05). Structure and first
 values user-confirmed through the A-1 grill (rulings ①–⑧), the A-2
 battery pass (rulings ⑨–⑭), and the sheet-12 L2 tournament (rulings
@@ -87,8 +104,9 @@ vassalage), and the economy→mass conversion it needs (M13).
 
 - `GLOSSARY.md` — Tier-1 vocabulary, sealed terms with dates. THE
   reference for this feature (definition + current value + seal stamp).
-- `RULINGS.md` — ruling history (⑧–⑰, MT-①…⑤, ET-①): evidence,
-  rejected alternatives, riders. Glossary rows cite ruling numbers here.
+- `RULINGS.md` — ruling history (⑧–⑰, MT-①…⑤, ET-①, DT-①…③, OG-①…⑤):
+  evidence, rejected alternatives, riders. Glossary rows cite ruling
+  numbers here.
 - `STRATEGY-SPACE.md` — six winning archetypes; the standing dial
   checklist ("which archetype does this value kill?").
 - `TEST-LADDER.md` — verification epistemology: the L0–L3 test-trust
@@ -129,4 +147,17 @@ sheet-12 re-run closed 27% at derived caps). **A-4 doc close-out
 COMPLETE 2026-07-06 (B1–B6):** spec gaps disposed (`RULINGS.md`
 §SPEC_GAPS — all defer to B), ADR headers normalized + 0019 amended for
 v5 front-sector, display-debt register created (`docs/DISPLAY-DEBT.md`),
-L-level seal stamp adopted. Next: B — terrain-cradle map authoring.
+L-level seal stamp adopted.
+
+Current open questions (post occupation-geography stage ①, 2026-07-11):
+
+1. **Dominance-gate recalibration grill** — data ready (OG-⑤: the
+   denied-dominant wall re-erects monotonically with capLandFrac in the
+   sector-faithful world, while the fgM9on reserve arm absorbs it — paper
+   defense vs live intervention stock). Its own future session; explicitly
+   out of stage ①.
+2. **Capital stage ②** — concept sealed, no L2 wiring
+   (`docs/features/capital/`, untouched by stage ①); lands as its own
+   measured pass.
+3. **js/situation.js rework** — unchanged debt (ADR 0019 v5 amendment;
+   carried since A-4).

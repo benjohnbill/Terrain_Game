@@ -589,6 +589,134 @@ neutralizes exposure-fear. Not built preemptively.
 **Open (verify with the numbers):** whether "peaceful development" is a real
 growth path in the model today or must be built.
 
+## Occupation-Geography Pass (2026-07-10/11)
+
+Stage ① of the occupation-geography design (spec
+`docs/superpowers/specs/2026-07-10-occupation-geography-design.md`, 12
+sections user-approved 2026-07-10; plan
+`docs/superpowers/plans/2026-07-10-occupation-geography.md`): the L2 world
+gains sector resolution — landed on main 2a9d8f3..9a64561 (11 commits,
+238/238 green), sealed as **ADR 0032** (cross-feature model). Session
+rulings R1–R4 user-sealed 2026-07-11. Verdict sources: the design spec, the
+2026-07-11 session rulings, and the v2 seal run (post-R3, reps 20 × 7
+bindings, seed 42; full output preserved in the session scratchpad
+`growth-sweep-occgeo-full-v2.txt`; deniedDominantCount /
+coalitionOverhangMean are now standing instruments in `plan-battery.js`).
+
+### OG-① Sector-resolution land transfer as fidelity prerequisite — SEALED 2026-07-10 (design spec approval) · L1
+
+The L2 tournament's land layer moves from counts to identities: map boards
+build a shared **sector world** (live sector copies, hex-derived adjacency,
+static seat-border set); realms carry **holdings** (`holds`) from which
+income and the military ceiling derive; ADR 0022 ripening (uniform per ADR
+0029) runs as **per-sector usable state**. Grounds: the flat `capPerSector`
+dial was monotonically negative on the timing ruler AND unfaithful to the
+map (per-sector cap value spans 3.3×, sector economy 9× — a count both
+erases terrain and contaminates measurement); DOMAIN_MAP already defines
+cession as "named sectors". Supersedes the 2026-07-10 realm-level
+accumulator implementation (applyCapGain/ripenCap/capPending/capRipeFlow,
+conquestUsableDrag, flat capPerSector — retired with their 11 tests,
+replaced by sector-ripening tests) — the DT-② **intent** (positive-sum
+growth divergence) stands unchanged. Rejected alternative: keeping the
+count-based transfer (violates the standing L2 fidelity principle,
+SYNC-DEBT 2026-07-10).
+
+### OG-② Occupation model — frontier × score, all-bots world rule — SEALED 2026-07-10 (design spec §4) · L0/L1
+
+Captures are named (`war.occupiedIds`). Geography fixes the candidate set
+(invariant): **occupation frontier** = defender-held sectors adjacent to
+(this war's occupied set ∪ the front's border sectors). Judgment picks
+within it: score = value ÷ resistance, value = populationValue +
+economyValue, **resistance = 3 (border sector) : 1 (interior) — a NEW 가안
+ordering proxy**, historically directed (hard shell / soft interior) but
+never user-sealed as a number; it NEVER enters `resolve()` (actual combat
+difficulty is carried by real stocks). Ties break by sector id
+(deterministic, SPEC #4). **All bots use the same rule** — a world rule,
+not brain judgment, for clean measurement comparability. Hooks reserved:
+real per-sector defense when sector garrisons/forts land; fog estimates for
+the attacker's read. Emergent: authored gate-cities draw invasions with no
+special rule.
+
+### OG-③ Transfer channels, possessor-keeps, conservation both ways — SEALED 2026-07-10/11 (design spec §5 + ruling R2) · L1
+
+Transfer channels move real sector ids: **cession** = value-descending
+under a connectivity/no-enclave constraint (each pick adjacent to winner
+territory ∪ already chosen), ceiling = this war's occupiedIds; **stall /
+white-peace** return the same ids to the original owner at pre-war usable;
+**limbo** (occupied-untransferred) counts toward NEITHER side's derived
+quantities; **elimination is possessor-keeps** (user-sealed) — each war's
+occupiedIds go to that war's attacker, unoccupied remainder to the
+eliminator. **R2 rider (2026-07-11, commit 7055367): conservation fixed
+both ways** — an eliminated realm's own bites (wars it was attacking)
+return to their defenders id-exact (attacker death = forced white peace),
+and a dead third-party attacker's bites fold into the victim's holds and
+flow to the eliminator. Never silently discarded. Note: legacy count mode
+orphaned the same counts — sector mode is a deliberate fidelity improvement
+over legacy, not a behavior-preserving port.
+
+### OG-④ Interior redefinition — SEALED 2026-07-11 (ruling R1) · L1
+
+`interior` = holds minus hex-derived `world.borderIds` (was: curated
+per-region border count). Changes garrison sizing, shield stocks, and bot
+value reads on ALL map boards (all 7 bindings differ; e.g. one seat's
+interiorGarrison 1200→300). Covered by design Q5(b): byte-identity with the
+pre-upgrade world is NOT preserved; the frac-0 re-baseline (OG-⑤)
+quantifies the drift bundle (interior redefinition + in-match interior
+trajectories + income-through-cession + population-share pool split).
+Companion R3 (gate alignment, rider below) kept the settlement
+front-inheritance hollow gate consistent with this definition.
+
+### OG-⑤ Measured read — capLandFrac 0 sealed as the world of record — SEALED 2026-07-11 (ruling R4, growth disposition) · L2
+
+Verdict source: v2 seal run (post-R3, reps 20 × 7 bindings, seed 42).
+
+- **frac-0 re-baseline vs the 2026-07-10 pre-upgrade control** (decided
+  43.9/63.6/85.2, envelope 29.0/34.8/55.7 for ctrl/fgM9on/fgM9off):
+  decided 42.2/66.2/81.6, envelope 29.0/38.0/52.2, fgM9off core(18-22)
+  24.2, median 17, stomp ≤2.2% — modest mixed-direction drift; **the
+  timing ruler survives the fidelity upgrade**. This is the new comparison
+  base; pre-upgrade records are no longer directly comparable.
+- **Sweep vs the new control** (frac 0→0.25→0.5→1): decided ctrl
+  42.2→36.8, fgM9off 81.6→74.9 — monotone negative, echoing §5. **The
+  denied-dominant wall RE-ERECTS**: dd ctrl 89→113→160→239, fgM9off
+  145→182→217→375, coalition-overhang mean rises — the §5
+  unassailability-wall mechanism survives the fidelity upgrade, now as a
+  CLEAN causal read (flat-dial contamination gone).
+- **EXCEPTION — fgM9on absorbs the wall**: with the M9 reserve on, dd
+  FALLS 135→118→117→109 with decided flat ~66% — the reserve grammar
+  appears to absorb the coalition-wall effect (paper defense vs live
+  intervention stock). Recorded as a finding for the future gate grill.
+- **Ruling R4**: `capLandFrac` **0 is sealed as the world of record**
+  (frozen starting ceiling); the land-ceiling coupling is NOT adopted at
+  any magnitude. Guardrails at the sealed value: stomp ≤2.2% (floor
+  intact), fgM9off median 17 (slightly ahead of the 18-22 core — the
+  standing DT-① watch-item, unchanged). **Dominance-gate recalibration is
+  deferred to its own future grill session** (data ready: the wall
+  re-erection + the fgM9on exception above).
+
+### Riders (travel with this pass)
+
+- **Gate recalibration deferred**: the dominance-gate conversation is its
+  own future grill; this pass only supplies the measured evidence (OG-⑤).
+- **R3 gate alignment (commit 9a64561)**: the settlement front-inheritance
+  hollow gate reads sector mode — `sectorMode(D) ? D.holds.size === 0 :
+  D.interior <= 0` (the legacy interior read misfired under hex-derived
+  borders, where small realms sit near interior 0 while fully landed).
+- **Uniform-archetype deadlock (harness constraint, discovered
+  2026-07-11)**: on the symmetric viable[0] binding (all seats fieldCap
+  7200), a uniform-archetype assignment (all shield-first/표준) can never
+  declare war (max field/shield ratio ~1.12 < every declare threshold, any
+  seed, verified to 320 turns). Test fixtures needing live wars must mix
+  archetypes.
+- **FG-sweep fidelity drift**: force-geography sweep outputs now carry the
+  same drift — any future `--fg` comparison vs pre-upgrade records must
+  note it (re-baseline in OG-⑤).
+- **Bundle-pricing simplification stands**: `warEndState` prices occValue
+  by count × sectorValue — a recorded simplification, not a seal.
+- **Resistance 3:1 and the ripening floors (0.5 econ / 0.6 pop, +10pp/turn
+  — ADR 0022 values) remain HARNESS 가안**; reconsider triggers unchanged
+  (per-sector garrisons/forts landing; fog-consuming occupation reads).
+
 ### DT-③ Domination victory — the second hegemony terminal (Combo 2) — SEALED 2026-07-09 (user) · L1 (L2 validation on build)
 
 §6's domination victory is added by **relaxing the existing gate's offensive

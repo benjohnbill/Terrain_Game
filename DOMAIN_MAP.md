@@ -91,8 +91,10 @@ naming, promotion, the generated Quick Reference) lives in
   economy or population value — newly captured sectors start reduced and
   recover per stable turn (a turn ending uncontested under the same faction).
   An MVP placeholder, not a governance model. Placeholder recovery values and
-  the stable-turn definition: ADR 0022; conquest-side ripening: match-arc
-  RULINGS DT-②. _(Re-slimmed 2026-07-10, forensics; value restatement removed.)_
+  the stable-turn definition: ADR 0022 (made uniform across acquisition
+  channels by ADR 0029); carried as per-sector state in the L2 world since
+  occupation-geography stage ① (ADR 0032; match-arc RULINGS OG-①).
+  _(Re-slimmed 2026-07-10, forensics; value restatement removed.)_
 - ✅ `Yield` (생산): the economy's base unit — the **기본 생산량**; the common
   measure of cost and asset across the whole game. All prices, the income
   formula, and the force-limit (구칭 national cap) derivation live in
@@ -694,8 +696,9 @@ rule)._
 - ✅ `Settlement` (정산): the procedure converting a decided war into gains
   *without* occupation grinding — annexation arrives through settlement, not
   sector-by-sector conquest. Two levels: 전쟁 정산 (ends one war) and 패권 정산
-  (concludes the match). Settlement territory arrives *alive* (undamaged usable
-  value, vs conquest damage + M6 inheritance cost); the saved friction is the
+  (concludes the match). Settlement territory arrives *undamaged* (no scorch or
+  conquest damage, vs conquest damage + M6 inheritance cost) but integrates on
+  the same usable-ripening lag as all acquired land; the saved friction is the
   trade surplus, split naturally (no discount dial). MVP: no free negotiation —
   2–3 auto-priced preset bundles (관대/표준/최대); bluffing and free terms → Phase
   2 diplomacy.

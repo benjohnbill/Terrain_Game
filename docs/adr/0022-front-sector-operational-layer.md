@@ -3,6 +3,7 @@
 Date: 2026-07-01
 
 Status: Accepted
+Amended by: ADR 0029 (2026-07-11) — integration lag explicitly uniform across settlement cession too (the usable-value ripening here applies to ALL acquired land; settlement's "arrives alive" exception is narrowed to "undamaged").
 
 ## Context
 

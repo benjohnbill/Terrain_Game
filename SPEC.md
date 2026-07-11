@@ -96,6 +96,12 @@ authoritative — this spec declares, it does not restate).
    pattern, not an exception. Birthplace: terrain-cradle Parity start / TC-①,
    generalized beyond population and sealed for all playable state in TC-⑭.)
 
+9. **Geography defines the set of what is possible; judgment chooses within
+   it.** Levers, commits, board reading, and information confidence all act on
+   the *choosing*; the set itself changes only through world rules
+   (consequences of action). (ADR 0032; occupation-geography design spec §2,
+   promoted 2026-07-11.)
+
 *Candidate, deferred to post-L3 playtest:* balancing is governed by war
 arithmetic rather than politics — checking a runaway leader is available and
 sometimes correct but never mandatory (free-riding is a legitimate line). Held

@@ -52,12 +52,14 @@ a target; ← is amended/superseded by a later ADR.
 | 0019 | Situation Judgment as a Structured, Posture-Lensed Reading | 2026-07-01 | Accepted | Self-amended 2026-07-06 (v5 front-sector — lens/leak-through, no overview recommendation) |
 | 0020 | Minimal Action-Capacity Divisibility is Core | 2026-07-01 | Accepted | → Amends 0018 · ← Amended by 0027 (main/surplus = magnitude labels, no hard cap) |
 | 0021 | Under-Commitment Failure Causes Front-Sector Loss | 2026-07-01 | Accepted | — |
-| 0022 | Front Sectors as the One-Turn Operational Layer | 2026-07-01 | Accepted | → Amends 0014 |
+| 0022 | Front Sectors as the One-Turn Operational Layer | 2026-07-01 | Accepted | → Amends 0014 · ← Amended by 0029 (uniform integration lag) |
 | 0023 | Province Status and Control Summary From Front Sectors | 2026-07-01 | Accepted | — |
 | 0024 | Operation Plan Presets for Core Commands | 2026-07-01 | Accepted | — |
 | 0025 | Turn-Based Core with the Uncertainty Duel | 2026-07-02 | Accepted | — |
 | 0026 | One-Shot Plan Effects, Persistent State, Standing Rules | 2026-07-02 | Accepted | — |
 | 0027 | Free Commit Allocation — Main/Surplus as Magnitude Labels | 2026-07-07 | Accepted | → Amends 0020 |
 | 0028 | L3 Build-Out Stack Direction — UI-Shell/Renderer Axis Split | 2026-07-10 | Accepted | → Amends 0016 |
+| 0029 | Uniform Integration Lag on Acquired Land | 2026-07-10 (sealed 2026-07-11) | Accepted | → Amends 0022 |
 | 0030 | Victory Conditions — Hegemony Decision Point and Domination Victory | 2026-07-10 | Accepted | Backfill (forensics F-06/07); definitions live at match-arc birthplaces |
 | 0031 | Force-Geography Defense Model — Terrain-Bound Defense and Reactive Reserve | 2026-07-10 | Accepted | → Amends 0008, 0014 · Backfill (forensics F-08) |
+| 0032 | Sector-Resolution Occupation Geography — The L2 World Model | 2026-07-11 | Accepted | → Supersedes (in part) the 2026-07-10 realm-accumulator implementation (DT-② intent stands); carries the SPEC #9 principle promotion |
