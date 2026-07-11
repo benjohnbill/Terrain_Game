@@ -256,6 +256,47 @@ function pairFlags(records) {
   return out;
 }
 
-const _api = { makeBoardFromMap, BOARD_GAAN, FG_BOARD_GAAN, FG_FORT_BY_CLASS, runCradleTournament, watchFlags, pairFlags, weakestCrossing, buildSectorWorld };
+// CE-⑫ acceptance-gate report for a crisis-on sweep. Reads the record
+// fields runMatch emits; every metric maps to a sealed gate or the two new
+// watch items (register-exhaustion rate; per-terrain suppression cost).
+function crisisGateReport(records) {
+  const total = records.length || 1;
+  const draws = records.filter((r) => r.endingShape === 'draw-westphalian').length;
+  const sum = (obj, k) => Object.entries(obj || {})
+    .reduce((s, [turn, n]) => (+turn >= k[0] && +turn <= k[1] ? s + n : s), 0);
+  let d2535 = 0, d1525 = 0;
+  let regStart = 0, regEnd = 0;
+  const suppressCostByTerrain = {};
+  let scarValues = [];
+  for (const r of records) {
+    d2535 += sum(r.warsByTurn, [25, 35]);
+    d1525 += sum(r.warsByTurn, [15, 25]);
+    if (r.crisis) {
+      for (const [terr, c] of Object.entries(r.crisis.suppressCostByTerrain || {}))
+        suppressCostByTerrain[terr] = (suppressCostByTerrain[terr] ?? 0) + c;
+    }
+    // register-exhaustion: fraction of starting register still alive at end
+    if (r.finalRealms) {
+      const endPool = r.finalRealms.reduce((s, x) => s + (x.pool ?? 0), 0);
+      regEnd += endPool;
+      // bodiesStart is the exhaustion denominator captured at match start
+      regStart += r.bodiesStart ?? endPool;
+    }
+    // scar differentiation (gate d): per-match spread of realm scar totals
+    if (r.crisis && typeof r.crisis.rebelDead === 'number') scarValues.push(r.crisis.rebelDead);
+  }
+  return {
+    total,
+    drawRate: draws / total,                                   // CE-⑫(a) target ≤ 0.001
+    warDensity2535: d2535 / total,                             // CE-⑫(b) chore-prevention…
+    warDensity1525: d1525 / total,                             // …must be ≥ this
+    registerExhaustionRate: regStart > 0 ? 1 - regEnd / regStart : 0, // new watch item
+    suppressCostByTerrain,                                     // CE-⑯ per-terrain differential
+    rebelDeadMeanPerMatch: scarValues.length
+      ? scarValues.reduce((s, x) => s + x, 0) / scarValues.length : 0,
+  };
+}
+
+const _api = { makeBoardFromMap, BOARD_GAAN, FG_BOARD_GAAN, FG_FORT_BY_CLASS, runCradleTournament, watchFlags, pairFlags, weakestCrossing, buildSectorWorld, crisisGateReport };
 if (typeof module !== 'undefined' && module.exports) module.exports = _api;
 else (window.TC = window.TC || {}).board = _api;

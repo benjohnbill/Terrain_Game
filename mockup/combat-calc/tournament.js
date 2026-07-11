@@ -1187,7 +1187,7 @@ function runMatch(assignment, opts = {}) {
     // total living bodies at match start — the worldBlood exhaustion denominator
     bodiesStart: realms.reduce((s, r) => s + bodiesOf(r), 0),
     settlements: [], presetOffers: [], vassalOffers: 0, vassalDeals: 0,
-    eliminations: 0, raids: 0, warsStarted: 0,
+    eliminations: 0, raids: 0, warsStarted: 0, warsByTurn: {},
     planStats: { picks: {}, brained: 0, forced: 0, misjudged: 0 },
   };
 
@@ -1212,6 +1212,7 @@ function runMatch(assignment, opts = {}) {
       war.bandSeed = Math.floor(rng() * 4294967296); // per-war fog band identity
       r.wars.push(war); target.wars.push(war);
       record.warsStarted++;
+      record.warsByTurn[t] = (record.warsByTurn[t] ?? 0) + 1;
     }
 
     // --- prosecute wars (attacker-side battle per war per turn); each

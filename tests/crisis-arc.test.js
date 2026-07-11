@@ -248,3 +248,31 @@ test('overlay is inert when crisis is off', () => {
   assert.deepStrictEqual(T.availablePresets(30, T.HARNESS), ['백지', '관대', '표준', '최대']);
   assert.strictEqual(T.truceLength(30, T.HARNESS), T.HARNESS.truceTurns);
 });
+
+// --- sweep driver + CE-⑫ gate report (crisis-on vs off) ---
+const MB = require('../mockup/combat-calc/map-board.js');
+const { CRADLE_MAP } = require('../mockup/combat-calc/map-gen.js');
+const { viableBindings } = require('../mockup/combat-calc/map-gate.js');
+
+test('crisis-on cradle run produces draws and a CE-⑫ gate report', () => {
+  const binding = viableBindings(CRADLE_MAP, 5).viable.slice(0, 1);
+  const on = MB.runCradleTournament({
+    map: CRADLE_MAP, bindings: binding, reps: 1, seed: 7,
+    harness: { crisis: { ...T.HARNESS.crisis, enabled: true } },
+  });
+  const report = MB.crisisGateReport(on);
+  assert.ok(report.total > 0);
+  assert.ok('drawRate' in report);
+  assert.ok('warDensity2535' in report && 'warDensity1525' in report);
+  assert.ok('registerExhaustionRate' in report);
+  assert.ok(report.suppressCostByTerrain && typeof report.suppressCostByTerrain === 'object');
+});
+
+test('crisis-on is seed-deterministic (no dice)', () => {
+  const binding = viableBindings(CRADLE_MAP, 5).viable.slice(0, 1);
+  const run = () => MB.runCradleTournament({
+    map: CRADLE_MAP, bindings: binding, reps: 1, seed: 4,
+    harness: { crisis: { ...T.HARNESS.crisis, enabled: true } },
+  }).map((r) => `${r.seat}:${r.focal}:${r.winner}:${r.endingShape}`);
+  assert.deepStrictEqual(run(), run());
+});
