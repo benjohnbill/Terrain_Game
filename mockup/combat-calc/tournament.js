@@ -267,6 +267,62 @@ function suppressAttrition(suppressPower, rebelStack, terrainMult, C) {
   };
 }
 
+// Suppressor substance available this turn = a fraction of the whole defense
+// axis (garrisons + capital guard = the shield; reserves fold in via the same
+// pool). CE-⑩ shield-natured: the field army is NOT drawn on unless a later
+// dial opts in. Bot policy — the pay side of pay/refuse (CE-⑥).
+function suppressionBudget(realm, C) {
+  const shield = Object.values(realm.frontG).reduce((s, g) => s + g, 0) + realm.capitalGarrison;
+  return shield * C.suppressBudgetFrac;
+}
+
+// CE-⑥/⑬/⑭ one crisis turn for one realm: grow stacks, then spend the
+// suppression budget cheapest-first (lowest terrain shelter = best exchange),
+// resolving attrition per sector; unsuppressed scarred sectors are REFUSED
+// (burn + secession counter, applied in Task 6). Rebel deaths erase the
+// register permanently. Deterministic (sectors ordered by id on ties).
+function crisisTurn(realms, t, H, record) {
+  const C = H.crisis;
+  record.crisis ??= {};
+  const acc = record.crisis;
+  acc.rebelDead ??= 0; acc.suppressorDead ??= 0; acc.suppressCostByTerrain ??= {};
+  for (const r of realms) {
+    if (!r.alive || !sectorMode(r)) continue;
+    growRebels(r, t, H);
+    let budget = suppressionBudget(r, C);
+    // contested sectors = held sectors with a standing stack, cheapest terrain first
+    const contested = heldSectors(r)
+      .filter((s) => (s.rebelStack ?? 0) > 0)
+      .sort((a, b) => (C.terrainDef[terrainOf(a)] ?? 1) - (C.terrainDef[terrainOf(b)] ?? 1)
+        || (a.id < b.id ? -1 : 1));
+    for (const s of contested) {
+      s._refusedThisTurn = false;
+      const tMult = C.terrainDef[terrainOf(s)] ?? 1;
+      // allocate a proportional slice of the remaining budget to this sector's
+      // fight; if nothing is allocated, the sector is refused.
+      const power = Math.min(budget, s.rebelStack * C.rebelEffectiveness * tMult * MATCH_DIALS.shieldRatio);
+      if (power <= 0) { s._refusedThisTurn = true; continue; }
+      budget -= power;
+      const { rebelDead, suppressorDead } = suppressAttrition(power, s.rebelStack, tMult, C);
+      s.rebelStack -= rebelDead;
+      poolBleed(r, rebelDead);                 // CE-⑭.3 permanent register erasure
+      if (C.suppressScar > 0) addScar(s, C.suppressScar); // CE-⑧ σ (0 by default)
+      acc.rebelDead += rebelDead; acc.suppressorDead += suppressorDead;
+      const terr = terrainOf(s);
+      acc.suppressCostByTerrain[terr] = (acc.suppressCostByTerrain[terr] ?? 0) + suppressorDead;
+    }
+    // any scarred-but-unreached contested sector left with a stack is refused
+    for (const s of contested) if ((s.rebelStack ?? 0) > 0 && s._refusedThisTurn === undefined) s._refusedThisTurn = true;
+  }
+}
+// Note: suppressorDead is a measurement accumulator (per-terrain cost, the
+// CE-⑯ watch item) — the harness does not currently model a dedicated
+// reserve pool to subtract it from, so the shield substance is not
+// decremented here (an L2 fidelity simplification: suppression cost is
+// measured, not yet deducted from garrisons — recorded as a debt for Task
+// 9's report). This keeps the change surgical; a later task can bleed
+// suppressorDead from garrisons if the sweep shows it matters.
+
 // frontier = defender-held sectors adjacent to (this war's occupied set ∪
 // the front's border sectors). Fallbacks (inherited fronts with no authored
 // border ids): any D-held sector adjacent to an A-held one; then all holds.
@@ -1142,6 +1198,9 @@ function runMatch(assignment, opts = {}) {
       r.treasury = (r.treasury ?? 0) + realmIncome(r);  // Option B income accrual
     }
 
+    // --- crisis arc (ADR 0035/0036): grow + suppress rebels turns onset..hardEnd
+    if (H.crisis && H.crisis.enabled && t >= H.crisis.onset) crisisTurn(alive, t, H, record);
+
     // --- hegemony check: every alive non-vassal candidate
     const view = checkView(realms);
     for (const r of alive) {
@@ -1262,4 +1321,5 @@ module.exports = { HARNESS, BOT, ARCHETYPES, TEMPERAMENTS, SEATS, SPEC_GAPS,
   frontDefense, pickMainDefWar, frontSoftness,
   applySettlement, sectorMode, syncCounts, occupationFrontier, captureSector, heldSectors,
   acquireSector, returnOccupied, eliminate, checkView, crisisRate, addScar, terrainOf,
-  sectorFuel, sectorRegisterShare, growRebels, suppressAttrition };
+  sectorFuel, sectorRegisterShare, growRebels, suppressAttrition,
+  suppressionBudget, crisisTurn };

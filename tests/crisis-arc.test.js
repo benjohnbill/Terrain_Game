@@ -83,3 +83,34 @@ test('suppressAttrition: zero rebels is a no-op', () => {
   assert.strictEqual(r.rebelDead, 0);
   assert.strictEqual(r.suppressorDead, 0);
 });
+
+function tinyCrisisRealm(name, { pool = 1200, field = 400, scarA = 6 } = {}) {
+  const sA = { id: name + 'a', populationValue: 1, economyValue: 1, usableEconomy: 1,
+    scar: scarA, mapUnits: [{ terrainLayer: 'plains' }] };
+  const sB = { id: name + 'b', populationValue: 1, economyValue: 1, usableEconomy: 1,
+    scar: 0, mapUnits: [{ terrainLayer: 'plains' }] };
+  const world = { sectors: new Map([[sA.id, sA], [sB.id, sB]]), borderIds: new Set(), seceded: new Map() };
+  return { name, world, holds: new Set([sA.id, sB.id]), pool, field,
+    frontG: { X: 600 }, frontCap: { X: 600 }, capitalGarrison: 600, usable: 1, alive: true };
+}
+
+test('crisisTurn grows then suppresses, erasing the register by rebel deaths', () => {
+  const C = { ...T.HARNESS.crisis, enabled: true, rate0: 0.5, rateStep: 0, suppressBudgetFrac: 1 };
+  const H = { ...T.HARNESS, crisis: C };
+  const r = tinyCrisisRealm('R');
+  const poolBefore = r.pool;
+  const record = { crisis: {} };
+  T.crisisTurn([r], 26, H, record);
+  assert.ok(record.crisis.rebelDead > 0, 'suppression killed rebels this turn');
+  assert.ok(r.pool < poolBefore, 'rebel deaths shrank the register permanently');
+});
+
+test('crisisTurn: with no suppression budget, sectors are refused (burn + counter)', () => {
+  const C = { ...T.HARNESS.crisis, enabled: true, rate0: 0.5, rateStep: 0, suppressBudgetFrac: 0 };
+  const H = { ...T.HARNESS, crisis: C };
+  const r = tinyCrisisRealm('R');
+  const record = { crisis: {} };
+  T.crisisTurn([r], 26, H, record);
+  const sA = r.world.sectors.get('Ra');
+  assert.strictEqual(sA._refusedThisTurn, true, 'unsuppressed scarred sector is refused');
+});
