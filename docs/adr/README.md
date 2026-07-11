@@ -60,6 +60,8 @@ a target; ← is amended/superseded by a later ADR.
 | 0027 | Free Commit Allocation — Main/Surplus as Magnitude Labels | 2026-07-07 | Accepted | → Amends 0020 |
 | 0028 | L3 Build-Out Stack Direction — UI-Shell/Renderer Axis Split | 2026-07-10 | Accepted | → Amends 0016 |
 | 0029 | Uniform Integration Lag on Acquired Land | 2026-07-10 (sealed 2026-07-11) | Accepted | → Amends 0022 |
-| 0030 | Victory Conditions — Hegemony Decision Point and Domination Victory | 2026-07-10 | Accepted | Backfill (forensics F-06/07); definitions live at match-arc birthplaces |
+| 0030 | Victory Conditions — Hegemony Decision Point and Domination Victory | 2026-07-10 | Accepted | Backfill (forensics F-06/07); definitions live at match-arc birthplaces · ← Amended by 0034 (structural crisis end for the never-tripped tail) |
 | 0031 | Force-Geography Defense Model — Terrain-Bound Defense and Reactive Reserve | 2026-07-10 | Accepted | → Amends 0008, 0014 · Backfill (forensics F-08) |
-| 0032 | Sector-Resolution Occupation Geography — The L2 World Model | 2026-07-11 | Accepted | → Supersedes (in part) the 2026-07-10 realm-accumulator implementation (DT-② intent stands); carries the SPEC #9 principle promotion |
+| 0032 | Sector-Resolution Occupation Geography — The L2 World Model | 2026-07-11 | Accepted | → Supersedes (in part) the 2026-07-10 realm-accumulator implementation (DT-② intent stands); carries the SPEC #9 principle promotion · ← Amended by 0034 + match-arc AB-② (world of record → FG+M9+frac 1) |
+| 0033 | Unassailability Affordability Bound | 2026-07-11 | Accepted | → Amends match-arc ruling ⑪ (futures affordability-bounded; refinement, not reversal) |
+| 0034 | Match End — Sudden-Death Crisis Ending (Direction) | 2026-07-11 | Accepted | → Amends 0030 (structural end for the undecided tail) · → Amends 0032 with match-arc AB-② (record world) · SPEC amendment rides the design pass |

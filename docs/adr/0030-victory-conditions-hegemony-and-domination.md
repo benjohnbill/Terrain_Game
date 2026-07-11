@@ -3,6 +3,9 @@
 Date: 2026-07-10
 
 Status: Accepted
+Amended by: ADR-0034 (2026-07-11) — matches that never trip the gate now
+end structurally via the sudden-death crisis ending (direction); the gate
+here remains the sole winner rule for decided matches.
 Decision source: match-arc RULINGS ⑨⑪⑮⑰ (sealed 2026-07-04/05) and DT-③
 (sealed 2026-07-09, user); implemented commit a29eb0a; SPEC win-type
 amendment commit 2629181.

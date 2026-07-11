@@ -1,7 +1,7 @@
 ---
 tags: [terrain-game, design, risks, dashboard]
 status: living
-updated: 2026-07-01
+updated: 2026-07-11
 ---
 
 # Design Risk Dashboard
@@ -25,6 +25,7 @@ Status legend: 🔴 open · 🟡 partly addressed · ✅ resolved
 | R7 | Immersion (historical flavor) vs readability unresolved on conflict | 🟡 | SPEC World Model; ADR 0001/0005 | Apply "balance > fidelity" during province authoring |
 | R8 | Time pressure is double-edged (skill-testing vs merely stressful) | 🟡 | SPEC "To validate" | Prototype an opt-in timed mode and judge |
 | R9 | Live-state drift; concurrent sessions editing the same files | 🟡 | process | Keep isolating on branch/worktree; re-confirm HEAD |
+| R12 | L3 immersion charter — the one-judgment bet pays only if unverified at L2: (a) situation-reading surface rewards depth (else analyst/clicker collapse into "press recommended"), (b) standoff turns carry real decisions (standing rules, surge economy, recon posture) rather than click-through, (c) no dominant preset plan emerges (matchup sparsity holds at play) | 🔴 | M9-promotion grill 2026-07-11; ADR 0019; ADR 0025/0026; matchup 21-cell | First playtest measures all three; also calibrates per-turn wall-clock (SPEC's untested 1.5–2 min variable, analyst-track ruling 2026-07-11) |
 
 ### Next actions (open)
 

@@ -1,14 +1,18 @@
 # Force Geography
 
-**Status**: L2 (최소) HARNESS LANDED — RULINGS **FG-①…⑩** built via SDD
-(main @ `0e8dc52`, 2026-07-09, 159/159, whole-branch reviewed). Opt-in
-`FG_BOARD_GAAN`; engine/`BOARD_GAAN` untouched, non-FG byte-identical.
-High-reps run DONE (94.5k matches × 2, 2026-07-09). Headline is now **decision
-timing** — envelope%(15-25) + median tripTurn — per match-arc **DT-①** (that
-ruling is the metric's home; buckets + variance/shield are descriptive). FG
-verdict: `fgM9off` best (envelope 34.6%, median 19 — dead-center, no stomp).
-Next = §6 domination check-fix + instrument enhancement (18-22 core + normality)
-→ re-measure. Concept **(b)** of the hegemony-freeze three-concept sequence.
+**Status**: **PROMOTED TO WORLD OF RECORD (2026-07-11)** — the **fgM9on
+arm** (FG board + M9 reserve, as measured) is the record configuration
+alongside capLandFrac 1, per the M9-promotion grill (authoritative seal:
+match-arc RULINGS **AB-②**; pointer note in this feature's RULINGS).
+Configuration sealed; dial values stay HARNESS 가안. Harness default flip
+= SYNC-DEBT (record world is opt-in until paid). Under the affordability
+bound (ADR 0033) fgM9on decides ~70% with the lowest denied-dominant
+level (the reserve absorbs the coalition wall); the ~30% undecided tail
+is owned by the crisis-ending direction (ADR 0034). History: L2 (최소)
+harness landed via SDD (main @ `0e8dc52`, 2026-07-09, 159/159); high-reps
+run 94.5k × 2; headline = decision timing per match-arc **DT-①** (the
+earlier `fgM9off`-best read predates the affordability bound + KO-rate
+reframe). Concept **(b)** of the hegemony-freeze three-concept sequence.
 
 ## What this is
 

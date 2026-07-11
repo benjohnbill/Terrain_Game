@@ -3,6 +3,9 @@
 Date: 2026-07-11
 
 Status: Accepted
+Amended by: ADR-0034 + match-arc ruling AB-② (2026-07-11) — the world of
+record moves from capLandFrac 0 to **FG board + M9 on + capLandFrac 1**
+(configuration sealed; dial values stay 가안).
 Supersedes (in part): the 2026-07-10 conquest-growth engine implementation
 (realm-level accumulator — applyCapGain/ripenCap/capPending/capRipeFlow,
 conquestUsableDrag, flat capPerSector). The implementation is retired; the

@@ -3315,6 +3315,67 @@
       "codeRefs": [],
       "verdict": null,
       "verdictRef": null
+    },
+    {
+      "canonical": "Affordability bound",
+      "korean": "지불능력 상한",
+      "aliases": [
+        "affordability bound"
+      ],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "affordabilityBound",
+      "codeRefs": [],
+      "verdict": null,
+      "verdictRef": null
+    },
+    {
+      "canonical": "Affordability-bind rate",
+      "korean": null,
+      "aliases": [
+        "affordBindRate"
+      ],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "meta",
+      "codeIdentifier": "affordBindRate",
+      "codeRefs": [],
+      "verdict": null,
+      "verdictRef": null
+    },
+    {
+      "canonical": "World of record",
+      "korean": "기록 세계",
+      "aliases": [
+        "record world",
+        "world-of-record"
+      ],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "meta",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": null,
+      "verdictRef": null
+    },
+    {
+      "canonical": "Sudden-death crisis ending",
+      "korean": "위기 종결",
+      "aliases": [
+        "crisis ending"
+      ],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "PROPOSED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": null,
+      "verdictRef": null
     }
   ]
 }

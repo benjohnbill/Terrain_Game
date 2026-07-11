@@ -49,6 +49,12 @@ door → 2,000 = the 임진왜란 move).
 
 ## ⑪ Regeneration window W = 6 (A-2, sheet 10, 2026-07-05)
 
+**Amended by AB-① (2026-07-11)**: the coalition side's recruitment
+futures are now affordability-bounded — futures = min(headroom, rate,
+money, bodies), not min(headroom, rate). A refinement, not a reversal:
+futures stay rival-side only; W = 6 and present-punch leadership are
+unchanged (ADR 0033).
+
 Sealed: W = 6 turns as the time depth of "irreversible" — the
 coalition side counts current projection + 6 turns of recruitment
 (reuses the M12/M13 recovery anchors); leadership takes no W, present
@@ -668,6 +674,12 @@ front-inheritance hollow gate consistent with this definition.
 
 ### OG-⑤ Measured read — capLandFrac 0 sealed as the world of record — SEALED 2026-07-11 (ruling R4, growth disposition) · L2
 
+**Amended by AB-② (2026-07-11, same day)**: the world of record moved to
+**FG board + M9 on + capLandFrac 1** after the affordability bound
+(AB-①/ADR 0033) and the crisis-ending direction (AB-③/ADR 0034) changed
+the read. The evidence below stands as recorded; the frac-0 seal is
+superseded.
+
 Verdict source: v2 seal run (post-R3, reps 20 × 7 bindings, seed 42).
 
 - **frac-0 re-baseline vs the 2026-07-10 pre-upgrade control** (decided
@@ -763,3 +775,92 @@ blob (~31% of fgM9off) into decisions; a domination-trip is labelled `hegemon`
 standoff — both feed the DT-① timing target, re-measured via the timing ruler
 after the build. Implementation is the first lever in spec §7's order
 (check-fix → re-measure → §5 tuning).
+
+## Affordability & M9-Promotion Pass (2026-07-11)
+
+Two sealed units of the same day, one causal chain: the dominance-gate
+grill's affordability bound was implemented and measured (AB-①), the
+measurement's headline (base lowered, frac-coupled re-erection survives,
+fgM9on absorbs) fed the **M9-promotion grill** live the same afternoon,
+which sealed the record world (AB-②), the crisis-ending direction (AB-③),
+and the match-clock reading (AB-④). Verdict sources: design spec
+`docs/superpowers/specs/2026-07-11-unassailability-affordability-design.md`
+(AB-①) and the M9-promotion grill session, user-sealed 2026-07-11
+(AB-②…④; G1–G7 in `.superpowers/sdd/progress.md`). ADRs: 0033 (AB-①),
+0034 (AB-③, direction).
+
+### AB-① Affordability bound — implemented + measured — SEALED 2026-07-11 (design spec + full sweep) · L2
+
+The unassailability recruitment-futures credit is now **min(headroom,
+rate, money, bodies)** — the referee counts only what the world sells
+(ADR 0033; refines ruling ⑪, stamp above). money = treasury +
+regenWindow(6) × income priced along the surge curve (same `draftBill` +
+binary search as `doRecruit`); bodies = civilian register (pool −
+serving); non-finite inputs → legacy min(headroom, rate) exactly (fixture
+boards byte-identical). Zero new dials. Instrument: `hegemonyCheck`
+returns `affordabilityBound {money, bodies, rivals}`; `finish()` copies it
+into `finalCheck`; plan-battery `aggregate()` exposes **affordBindRate**;
+the `--growth` deep line prints it. Code: e0ca722 / 5c75c0b / c7dbfd8,
+247/247, final review clean.
+
+**Measurement of record** (full sweep, reps 20 × 7 bindings; artifact:
+`research/2026-07-11-record-world-baseline.txt`), against the design §5
+criteria: (1) dd non-monotone in frac — **FAIL** on ctrl (78→104→151→233)
+and fgM9off (124→162→204→371), partial on fgM9on (69→66→75→98); (2)
+fgM9off decided% non-decreasing — **FAIL** (82.4→75.1); (3) guardrails —
+**PASS** (stomp ≤2.2%, fgM9off median 17); (4) affordBindRate > 0 —
+**PASS**, arm-conditional (frac0: ctrl 4.1% · fgM9on 23.5% · fgM9off
+12.7%; falls with frac on fgM9off — as ceilings rise, fewer rivals are
+wallet-bound relative to the bigger paper futures). HEADLINE: the bound is
+real and lowers the wall's BASE (fgM9on dd 135→69 vs the v2 seal run) but
+frac-coupled re-erection survives — money/bodies were not the load-bearing
+member at high frac. Rejected routes B (candidate-side futures) and C
+(window/discount shrink) recorded in ADR 0033.
+
+### AB-② Record world = FG board + M9 on + capLandFrac 1 — SEALED 2026-07-11 (M9-promotion grill, user) · L2 configuration (dial values 가안) — amends OG-⑤
+
+- **Promotion unit (G1)**: the FG board package WITH M9 — the fgM9on arm
+  as measured — not an M9-alone graft onto the control board.
+- **frac adoption (G6)**: **capLandFrac 1 sealed** — the build ceiling
+  follows conquered-population reality (nationalCap via usablePop: 60%
+  start, +10pp/turn ripen — mechanics already live; those VALUES stay
+  HARNESS 가안). Intermediate fracs rejected as world-meaningless blends;
+  land-derived identity argument. Amends the OG-⑤ frac-0 seal (stamp
+  above).
+- **Seal split**: the CONFIGURATION is sealed (which layers are on);
+  individual dial values stay 가안 (M9 ×0.5 already sealed at MAGNITUDE
+  M9 — untouched).
+- **Official snapshot**: today's full sweep, labelled **pre-crisis
+  baseline** (`research/2026-07-11-record-world-baseline.txt`) — the
+  crisis-ending design will move endgame numbers later.
+- **Cost accepted**: dd 69→98 in the M9 world; drained by the crisis
+  ending (AB-③) plus the deferred gate-recalibration levers
+  (political-feasibility filter on the coalition / endurance dominance —
+  hold crown K consecutive turns / assembly-time discount on futures —
+  recorded as that grill's candidates, INDEX open questions).
+- **Code rider**: the harness default flip (tournament.js capLandFrac
+  0→1 + FG defaults) is NOT done — registered in `docs/SYNC-DEBT.md`
+  (test adjudication needed). Until then the record world is opt-in.
+
+### AB-③ Match end = sudden-death crisis ending (direction) — SEALED 2026-07-11 (M9-promotion grill, user) · L0
+
+The turn-32 ending is a **sudden-death CRISIS** (이민족 침입 family):
+rule-driven (no dice), preparable (hermit-kingdom strategy must be real),
+escalating encroachment forcing an end within ~3 turns. The judged
+scorecard is **DEMOTED to last-resort fallback** (~turn-35 pathology). A
+plain judged verdict was REJECTED — endgame score-sitting is an identity
+violation. Reframe: with the bell, decided% = **KO-rate**; the M9 world's
+~30% undecided are crisis finales, not ruler failures. Five design gates +
+three gate-4 riders (crown-holder advantage / betrayal-politics layer /
+억까-legibility) bind the coming **dedicated design pass**; the SPEC
+amendment proposal rides that pass. Full record: **ADR 0034**
+(mandatory-ADR trigger — win-condition change).
+
+### AB-④ Analyst-track match clock — SEALED 2026-07-11 (M9-promotion grill, user) · L0
+
+The envelope ruler (15–25 turn band, turn-32 bell) is read on the
+**ANALYST track**: SPEC's 1.5–2 min/turn 가안 is KEPT (turn 32 ≈ the
+one-hour mark — the bell is a real position). The clicker track
+(~30s/turn) is always-shorter and always allowed. Both tracks' wall-clock
+calibration is an **L3 debt** — registered with the L3 immersion charter
+as DESIGN-RISKS **R12**.

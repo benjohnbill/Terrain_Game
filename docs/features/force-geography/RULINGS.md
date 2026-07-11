@@ -289,6 +289,16 @@ non-force-geography behavior is byte-identical branch-wide, all binding
 constraints held, 159/159 tests. Reserve/attacker/measurement dials are
 HARNESS 가안 (sweepable, non-sealable), not seal candidates.
 
+**Promotion to world of record — 2026-07-11 (M9-promotion grill, user).**
+The FG-⑩ **fgM9on arm** (FG board package WITH the M9 reserve, as measured)
+is promoted to the L2 **world of record** alongside capLandFrac 1. The
+CONFIGURATION is sealed; the reserve/attacker dial values here remain
+HARNESS 가안 (M9 ×0.5 stays sealed at combat-formula MAGNITUDE M9).
+Authoritative seal + evidence: match-arc `RULINGS.md` **AB-②** (single-
+definition rule — this note is a pointer, not a second seal). Harness
+default flip is a registered SYNC-DEBT; until paid, the record world is
+opt-in.
+
 **Metric amendment (user ruling 2026-07-09)** — AMENDS the "U5 measurement"
 success list above. The reps=2 plumbing smoke run exposed that
 **within-realm variance and boosted-defense shieldShare do NOT isolate the
