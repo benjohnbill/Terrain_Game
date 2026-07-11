@@ -55,6 +55,31 @@ const HARNESS = {
   capLandFrac: 1,            // ceiling = (1-f)*fieldCap0 + f*derived — record
                              // world default (AB-② seal 2026-07-11); 0 = the
                              // explicit frozen control
+  // -- sudden-death crisis arc (ADR 0035/0036, RULINGS CE-①…⑳). OFF by
+  //    default: crisis-off === the sealed pre-crisis record world
+  //    (byte-identical). Flip the default only after the CE-⑫ sweep seals
+  //    (a future SYNC-DEBT flip, mirroring AB-②). ALL VALUES 가안. Every
+  //    dial lives here and nowhere else (single-definition rule). --
+  crisis: {
+    enabled: false,
+    onset: 25,               // CE-④ arc onset (envelope right edge)
+    hardEnd: 35,             // CE-④/CE-⑪ Westphalian draw turn
+    rate0: 0.05,             // CE-④ base growth: stack += rate(t) × fuel
+    rateStep: 0.01,          // CE-④ linear staircase increment / crisis turn
+    scarPerOccupation: 0.5,  // CE-⑭.1 usable-damage scar written on capture
+    scarPerRaid: 0.15,       // CE-⑭.1 usable-damage scar written on a raid
+    refusalBurnPp: 0.10,     // CE-⑥ refused-sector usable loss + scar increment
+    rebelEffectiveness: 1 / 3, // CE-⑭.4 rebel combat constant (NOT a quality tier)
+    denialCoeff: 1.0,        // CE-⑦/⑭.5 raw rebel mass → gate denial (sweep dial #1)
+    secessionN: 2,           // CE-⑥/⑮ consecutive neglected turns → secession
+    secessionFrac: 1.0,      // CE-⑮ full rise on secession (buffer variant 0.5)
+    suppressScar: 0,         // CE-⑧/⑭.3 σ — leading candidate 0 (spiral replaces it)
+    suppressBudgetFrac: 0.5, // bot policy: shield fraction spent on suppression/turn
+    // CE-⑬/⑯ per-sector suppression terrain multiplier (가안; mirrors engine
+    // D6 terrain family, keyed by sector terrainLayer values)
+    terrainDef: { plains: 1.0, mountain: 1.5, river: 1.15, coast: 1.1, steppe: 1.0, desert: 1.2 },
+    stage: { s1: 25, s2: 28, s3: 31 }, // CE-⑳ overlay calendar (turn boundaries 가안)
+  },
 };
 
 const BOT = {
@@ -161,6 +186,12 @@ const totalGarrisons = (r) => Object.values(r.frontG).reduce((s, g) => s + g, 0)
 const bodiesOf = (r) => r.field + totalGarrisons(r) + r.pool;
 // direction-free defensive mass for the ending panel's shieldShare.
 const shieldOf = (r) => r.field + Object.values(r.frontG).reduce((s, g) => s + g, 0);
+
+// ---------------------------------------------------------------- crisis
+// CE-④ linear staircase: growth rate per crisis turn = rate0 + step×(t−onset).
+function crisisRate(t, C) {
+  return C.rate0 + C.rateStep * Math.max(0, t - C.onset);
+}
 
 // ---- occupation geography (stage ①, design 2026-07-10) ----
 // Governing principle: geography defines the set of what is possible;
@@ -949,7 +980,8 @@ function runMatch(assignment, opts = {}) {
     planStats: { picks: {}, brained: 0, forced: 0, misjudged: 0 },
   };
 
-  for (let t = 1; t <= H.maxTurns; t++) {
+  const lastTurn = (H.crisis && H.crisis.enabled) ? H.crisis.hardEnd : H.maxTurns;
+  for (let t = 1; t <= lastTurn; t++) {
     const alive = realms.filter((r) => r.alive);
     for (const r of alive) r._turn = t;
 
@@ -1054,6 +1086,7 @@ function runMatch(assignment, opts = {}) {
       }
     }
   }
+  if (H.crisis && H.crisis.enabled && !record.winner) record.endingShape = 'draw-westphalian';
   return finish(record, realms);
 }
 
@@ -1157,4 +1190,4 @@ module.exports = { HARNESS, BOT, ARCHETYPES, TEMPERAMENTS, SEATS, SPEC_GAPS,
   realmIncome, intensity, combatFromBorderClass, newWar, warBattle, m9Fill,
   frontDefense, pickMainDefWar, frontSoftness,
   applySettlement, sectorMode, syncCounts, occupationFrontier, captureSector, heldSectors,
-  acquireSector, returnOccupied, eliminate, checkView };
+  acquireSector, returnOccupied, eliminate, checkView, crisisRate };
