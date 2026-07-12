@@ -1,7 +1,7 @@
 ---
 tags: [terrain-game, design, risks, dashboard]
 status: living
-updated: 2026-07-11
+updated: 2026-07-13
 ---
 
 # Design Risk Dashboard
@@ -26,7 +26,8 @@ Status legend: 🔴 open · 🟡 partly addressed · ✅ resolved
 | R8 | Time pressure is double-edged (skill-testing vs merely stressful) | 🟡 | SPEC "To validate" | Prototype an opt-in timed mode and judge |
 | R9 | Live-state drift; concurrent sessions editing the same files | 🟡 | process | Keep isolating on branch/worktree; re-confirm HEAD |
 | R12 | L3 immersion charter — the one-judgment bet pays only if unverified at L2: (a) situation-reading surface rewards depth (else analyst/clicker collapse into "press recommended"), (b) standoff turns carry real decisions (standing rules, surge economy, recon posture) rather than click-through, (c) no dominant preset plan emerges (matchup sparsity holds at play) | 🔴 | M9-promotion grill 2026-07-11; ADR 0019; ADR 0025/0026; matchup 21-cell | First playtest measures all three; also calibrates per-turn wall-clock (SPEC's untested 1.5–2 min variable, analyst-track ruling 2026-07-11) |
-| R13 | Crisis-decade genre-shift / chore risk — turns 25–35 could read as fire-fighting admin instead of the most war-dense phase; and a high-karma leader must never reach a mathematically hopeless state (by ~turn 33) it could not have prevented | 🟡 | crisis-ending pass 2026-07-11; match-arc RULINGS CE-⑩/⑫; ADR 0035 | Shield-natured suppression sealed (CE-⑩); sweep must pass the chore-prevention gate (war density 25–35 ≥ 15–25) + leader-agency check (CE-⑫) |
+| R13 | Crisis-decade genre-shift / chore risk — turns 25–35 could read as fire-fighting admin instead of the most war-dense phase; and a high-karma leader must never reach a mathematically hopeless state (by ~turn 33) it could not have prevented | 🟡 | crisis-ending pass 2026-07-11; crisis co-analysis 2026-07-13; match-arc RULINGS CE-⑩/⑫; ADR 0035 | Shield-natured suppression sealed (CE-⑩); the 2026-07-13 co-analysis found the crisis is a termination *backstop*, not the war-dense spectacle it was hoped to be — the spectacle deficit is upstream (R14). Chore-prevention gate (war density 25–35 ≥ 15–25) still unmet at 가안 dials |
+| R14 | **War-system produces no decisive climax — the SPEC madmovie does not occur.** Crisis-OFF main-arc measurement (2026-07-13, L2 cradle, seed 42): **ZERO annihilations/match**, ~77% of wars end by stall→white-peace fizzle, decided% 0.656 is hegemony-gate trip (force ratios) not conquest climax. The SPEC-promised "shield-break → decisive battle → cascade" deciding war essentially never fires — crisis or not. This is why the draw/timing problem could not be fixed from inside the crisis: the missing dopamine is in the war machine, not the ending. **Bot caveat:** L2 bots stall/settle where a skilled player might force annihilation, so this proves the *default* is fizzle, not that decisive war is unreachable by skill. | 🔴 | crisis co-analysis 2026-07-13; SPEC "Match structure" (deciding war); match-arc RULINGS (war machine); warEnds instrument (tournament.js) | A war-decisiveness pass: grill whether the stall→white-peace exit + bot war-appetite should be reshaped so decisive wars are the default outcome, not a rarity a player must force; then re-measure elim/cascade share. Decide if it is a bot-policy fix or a war-machine design gap |
 
 ### Next actions (open)
 
@@ -34,6 +35,7 @@ Status legend: 🔴 open · 🟡 partly addressed · ✅ resolved
 - [ ] R3 — open a macro-progression (victory / arc / pacing / comeback) design thread
 - [ ] R4 — AI competence pass; decide the AI information model (especially under fog)
 - [ ] R6 — in the fog session, lock the skill-piercable guardrail (every loss traces to a decision)
+- [ ] R14 — war-decisiveness pass: measure elim/cascade share, grill the stall→white-peace fizzle + bot war-appetite (is the flat default a bot-policy fix or a war-machine gap?)
 
 ## Resolved
 

@@ -145,15 +145,34 @@ sealed record world), built via SDD across commits `e5d5c58..25192cb`
 on main (plan
 `docs/superpowers/plans/2026-07-12-crisis-ending-implementation.md`;
 282/282; whole-branch review no-Critical). All crisis dials ship as
-가안 placeholders. First-read smoke via `crisisGateReport` sits far
-from the CE-⑫ gates BY DESIGN (draw 0.242 vs ≤0.001; war density 25-35
-2.51 < 15-25 4.30; register-exhaustion 0.260; scar-spread 4.17) — the
-harness was built to MEASURE, not to pass. Next = the **co-analysis
-dial sweep** (SYNC-DEBT "Crisis dial table") tuning denialCoeff (sweep
-dial #1) + the rate staircase against the gates, then a Tier-3 default
-flip. Two implementation debts registered in SYNC-DEBT: `eliminate()`
-register non-conservation (pre-existing, Tier-3) and suppression-cost
-not deducted from garrisons (L2 fidelity gap, CE-⑩).
+가안 placeholders.
+
+**Crisis co-analysis pass (2026-07-13) — PARKED, war-system debt
+surfaced (commit `d64d48c`, 294/294)**: the data-driven grill of the
+first-read (draw 0.242, war density 25-35 2.51 < 15-25) turned into a
+mechanism redesign, then a pivot. Landed (crisis-gated, off-path
+byte-identical): (1) **growth RESHAPE** (CE-④/⑭) — rebellion grows as a
+fraction of register share (`grow = (unrestBase0 + unrestStep·(t−onset)
++ scarGain·scar) × registerShare`), fixing the "whisper" (growth was
+usable-scale, cap population-scale — it never approached the ceiling);
+additive baseline = universal cataclysm, scar = amplifier not seed;
+retires rate0/rateStep/crisisRate/sectorFuel + the intensity factor.
+(2) **self-denial** (CE-⑦ reframe, `selfDenialFrac`) — crown-denial is a
+realm's OWN revolt, not the board-global mass (which made suppression a
+public good → draws); the ONE lever that moved the needle: **draw
+0.369 → 0.200**, homework-not-punishment. Kept but measured INERT at
+seed dials: CE-㉑ conquest-pacification, CE-⑳ stall-lock, CE-㉒
+siege-drag + crisis-aware targeting (rebellion concentrates on the
+strong early expander, corr 0.585, while bots attack the weak — they
+never meet). CE-⑩ shield-drain BUILT then REVERTED (symmetric →
+paralysed all defence). **Pivotal finding → R14 (DESIGN-RISKS):** the
+draw/timing problem is UPSTREAM in the war system — crisis-OFF the main
+arc yields ZERO annihilations, ~77% of wars fizzle via stall→white-peace,
+and the SPEC madmovie (shield-break → decisive battle → cascade) never
+fires (bot caveat). The crisis is a termination *backstop*, not the
+spectacle. Crisis dials stay 가안; the pass is PARKED pending the
+war-decisiveness pass. Full seal-sync (reshape/self-denial RULINGS
+amend, GLOSSARY, QUICKREF, ADR stamps) DEFERRED — SYNC-DEBT.
 
 Status: **core SEALED** (2026-07-03 → 07-05). Structure and first
 values user-confirmed through the A-1 grill (rulings ①–⑧), the A-2
@@ -228,21 +247,25 @@ Current open questions (post affordability & M9-promotion pass,
    0036): suppression resolution, rebellion five points, seceded-sector
    behavior, gate-5, peaceful-cession scar, plus truce/white-peace
    canonization and the stage-table shape.
-2. **Crisis dial table** — harness IMPLEMENTED 2026-07-12
-   (`e5d5c58..25192cb`); the CODE is done, the dial VALUES are the open
-   work. All 가안: denial conversion coefficient (sweep #1), secession
-   N, rate staircase, stage-table turn boundaries, truce length,
-   suppression-scar σ (0-candidate). Truce-lock formalization landed
-   with the build (CE-⑱). Owner: the co-analysis sweep (SYNC-DEBT).
-3. **Crisis measurement-gate read** — first-read smoke CAPTURED
-   2026-07-12 via `crisisGateReport` (far from the gates by design at
-   가안 dials: draw 0.242 vs ≤0.001; war density 25-35 2.51 < 15-25
-   4.30; register-exhaustion 0.260; scar-spread 4.17). The sweep reads
-   against CE-⑫ (draw ≤ 0.1%; war density 25–35 ≥ 15–25; gate-4 watch;
-   scar-inflation; raid-attrition; draw-coalition; leader-agency) plus
-   the CE-⑭/⑯ watch items (register-exhaustion rate; per-terrain-class
-   suppression cost differential + per-seat crisis burden). Next = the
-   user+agent co-analysis session.
+2. **Crisis dial table** — the co-analysis pass (2026-07-13, commit
+   `d64d48c`) ran the sweep as a grill and **PARKED** it. The growth
+   formula was reshaped (register-anchored) and self-denial (CE-⑦
+   reframe) cut draws 0.369 → 0.200 — but every other crisis dial is a
+   *brake* (cranking denial converts late-trips to draws, never to
+   faster resolution; elim stays flat), and the sweep found the crisis
+   is causally confined to turns ≥26 so it cannot touch the 18-22
+   sweet-spot. Dials stay 가안. Owner: the war-decisiveness pass first
+   (R14) — the crisis is a backstop, not the resolution engine.
+3. **Crisis measurement-gate read** — the 2026-07-13 co-analysis is the
+   read. Self-denial cut draw to 0.200 (from 0.242 first-read / 0.369 at
+   army-scale rebellion), but the CE-⑫ gates remain far: war density
+   25-35 still < 15-25, and **ZERO decisive endings** (elim flat 3-5
+   throughout). Root cause is R14 (the main-arc war system yields no
+   annihilations — 77% stall→white-peace, crisis or not), not a crisis
+   dial. Next = **R14 war-decisiveness pass** (DESIGN-RISKS), then
+   revisit the crisis as a backstop. The tripTurn curve shape (18-22
+   peak, thin tail — DT-①) is likewise a pre-crisis / war-system lever,
+   not reachable from turns ≥26.
 4. ~~**SPEC amendment seal**~~ — RESOLVED 2026-07-11: user sealed the
    draft verbatim; applied to `SPEC.md` § "How a match ends (crisis
    arc)".

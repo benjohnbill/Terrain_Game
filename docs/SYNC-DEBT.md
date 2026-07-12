@@ -11,26 +11,37 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
 
 ## Open
 
-- [ ] **Crisis dial table — sweep + co-analysis** (registered
-  2026-07-11; re-cut 2026-07-12 rebellion-body pass; **implementation
-  LANDED 2026-07-12**, commits `e5d5c58..25192cb` on main — the L2
-  harness now carries the full crisis arc opt-in behind
-  `HARNESS.crisis.enabled` (default off, byte-identical), plan
-  `docs/superpowers/plans/2026-07-12-crisis-ending-implementation.md`,
-  282/282). What remains is NOT the code but the **dial values**: all
-  crisis dials ship as 가안 placeholders (denial conversion coefficient
-  = sweep dial #1, rate staircase rate0/rateStep, secession N,
-  stage-table turn boundaries, truce length, suppression-scar σ
-  0-candidate). The first-read smoke (3 bindings × 4 reps, seed 42,
-  `crisisGateReport`) sits far from the CE-⑫ gates BY DESIGN — draw
-  0.242 (target ≤0.001), war density 25-35 2.51 < 15-25 4.30
-  (chore-prevention miss), register-exhaustion 0.260, scar-spread 4.17.
-  Owner: the crisis co-analysis session (user + agent read the sweep,
-  tune, then a Tier-3 default flip re-seals like AB-②). The gate report
-  is the sweep instrument; new watch items (register-exhaustion rate;
-  per-terrain suppression cost differential) are wired. NOTE for the
-  `docs:check` lint: this row is NOT paid by the implementation commits
-  — the dial VALUES are the open work, not the harness.
+- [ ] **Crisis dial table — sweep + co-analysis: RAN, PARKED
+  2026-07-13** (registered 2026-07-11; LANDED 2026-07-12
+  `e5d5c58..25192cb`; co-analysis pass 2026-07-13 commit `d64d48c`,
+  294/294). The co-analysis grill ran the sweep and **parked** the
+  crisis: the growth formula was reshaped (register-anchored; retires
+  rate0/rateStep/crisisRate/sectorFuel + intensity factor), and
+  **self-denial** (CE-⑦ reframe, `selfDenialFrac`) cut draws 0.369 →
+  0.200 — but the sweep found (a) every remaining crisis dial is a
+  *brake* (cranking denial converts late-trips to draws, not to faster
+  resolution; elim flat 3-5 throughout), and (b) the crisis is causally
+  confined to turns ≥26, so it cannot fill the 18-22 tripTurn
+  sweet-spot nor create decisive endings. **Root cause moved to R14**
+  (DESIGN-RISKS): the main arc yields ZERO annihilations (77%
+  stall→white-peace, crisis-OFF), so the draw/spectacle problem is the
+  war system, not the crisis. Crisis stays 가안 + PARKED as a backstop;
+  the next lever is the war-decisiveness pass (R14), not more crisis
+  dials. No Tier-3 default flip (crisis stays opt-in OFF).
+
+- [ ] **Crisis co-analysis seal-sync — DEFERRED** (2026-07-13, commit
+  `d64d48c`). The pass landed code that AMENDS sealed rulings but the
+  full Production/Projection seal-sync is deferred (pass is PARKED, dials
+  stay 가안, so premature to final-seal): (a) RULINGS amend CE-④/⑭
+  (growth reshape — register-anchored, additive baseline + scar
+  amplifier, intensity factor retired) and CE-⑦ (denial self↔board
+  reframe, `selfDenialFrac`); (b) record CE-㉑/⑳/㉒ as measured-INERT +
+  CE-⑩ shield-drain BUILT-then-REVERTED; (c) GLOSSARY rows
+  (unrestBase0/unrestStep/scarGain, selfDenialFrac, conquestPacifyFrac,
+  noStallPeaceStage, rebelSiegeDrag); (d) QUICKREF regen; (e) ADR
+  0035/0036 amend stamps (growth + denial reshape); (f) term-inventory
+  patch. Recorded now, paid when the crisis un-parks (after R14) or in a
+  dedicated doc batch.
 
 - [ ] **`eliminate()` register non-conservation — pre-existing, Tier-3**
   (found 2026-07-12 during the crisis whole-branch review). In
