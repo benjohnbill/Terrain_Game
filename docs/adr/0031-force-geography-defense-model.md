@@ -6,6 +6,9 @@ Status: Accepted
 Amends: ADR 0008 (Phase 1 stat scope) and ADR 0014 (garrison sustainment) —
 the uniform-shield defense reading those ADRs assumed is replaced by a
 terrain- and choice-shaped distribution.
+Advanced by: ADR 0037 (2026-07-13) — the terrain-bound defense + reactive
+reserve moves from L2-harness-only (FG_BOARD_GAAN) to the build's per-sector
+implementation.
 Decision source: force-geography RULINGS FG-①…⑩ (built via SDD, main
 @ 0e8dc52, 2026-07-09; high-reps L2 measurement 94.5k matches × 2).
 

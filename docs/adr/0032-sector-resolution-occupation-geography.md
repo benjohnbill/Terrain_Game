@@ -10,6 +10,10 @@ Supersedes (in part): the 2026-07-10 conquest-growth engine implementation
 (realm-level accumulator — applyCapGain/ripenCap/capPending/capRipeFlow,
 conquestUsableDrag, flat capPerSector). The implementation is retired; the
 DT-② intent (positive-sum growth divergence) stands unchanged.
+Retired (L2 harness) by: ADR 0037 (2026-07-13) — the war model moves to the
+build; only the L2 tournament-harness implementation is retired. This ADR's
+sector-identity occupation model (named captures, occupation frontier,
+transfer channels) STANDS as the build target.
 Decision source: occupation-geography design spec
 `docs/superpowers/specs/2026-07-10-occupation-geography-design.md` (12
 sections, user-approved section-by-section 2026-07-10) + match-arc RULINGS

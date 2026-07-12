@@ -26,8 +26,13 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   (DESIGN-RISKS): the main arc yields ZERO annihilations (77%
   stall→white-peace, crisis-OFF), so the draw/spectacle problem is the
   war system, not the crisis. Crisis stays 가안 + PARKED as a backstop;
-  the next lever is the war-decisiveness pass (R14), not more crisis
-  dials. No Tier-3 default flip (crisis stays opt-in OFF).
+  the next lever is the war-decisiveness pass (R14). **R14 RAN 2026-07-13
+  → ADR 0037**: the four-survey synthesis found the answer is a war-machine
+  *implementation* gap (per-front uniform defense / non-atomic siege conveyor /
+  static declare gate + bot stall-exit) — build the sealed model
+  (`docs/features/war-model-build/`), don't tune L2 further; crisis un-parks in
+  the build context.
+  No Tier-3 default flip (crisis stays opt-in OFF).
 
 - [ ] **Crisis co-analysis seal-sync — DEFERRED** (2026-07-13, commit
   `d64d48c`). The pass landed code that AMENDS sealed rulings but the
@@ -160,6 +165,13 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   L2 fidelity debt with its own row/owner). Until that audit, treat any
   L2 conclusion that leans on a simplified mechanic as L1-grade for that
   mechanic (test-trust ladder, match-arc TEST-LADDER.md).
+  **War-model half PAID 2026-07-13** (R14 four-survey synthesis →
+  `docs/features/war-model-build/REQUIREMENTS.md`): list (2) "document-specified
+  but simplified in L2" is enumerated for the war model — per-front uniform
+  defense (sealed = per-sector 4-layer), non-atomic siege conveyor (contradicts
+  ADR 0026), static declare gate + bot stall-exit — each a fidelity gap vs a
+  sealed doc; ADR 0037 decides to build the sealed model rather than abstract
+  it. The general two-list audit for NON-war subsystems remains owed.
 
 - [x] **Occupation-geography pass — deferred doc-sync batch — PAID
   2026-07-11 (stage-① doc-sync batch)**. Stage ① landed on main

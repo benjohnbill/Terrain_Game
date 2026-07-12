@@ -171,8 +171,14 @@ arc yields ZERO annihilations, ~77% of wars fizzle via stall→white-peace,
 and the SPEC madmovie (shield-break → decisive battle → cascade) never
 fires (bot caveat). The crisis is a termination *backstop*, not the
 spectacle. Crisis dials stay 가안; the pass is PARKED pending the
-war-decisiveness pass. Full seal-sync (reshape/self-denial RULINGS
-amend, GLOSSARY, QUICKREF, ADR stamps) DEFERRED — SYNC-DEBT.
+war-decisiveness pass. **R14 RAN 2026-07-13 → ADR 0037 /
+`docs/features/war-model-build/`:** the four-survey synthesis found the
+fizzle is a war-machine *implementation* artifact (per-front uniform
+defense, non-atomic siege conveyor, static declare gate + bot
+stall-exit), not a sealed-war property; the fix is to BUILD the sealed
+model, and the crisis un-parks in that build context. Full seal-sync
+(reshape/self-denial RULINGS amend, GLOSSARY, QUICKREF, ADR stamps)
+DEFERRED — SYNC-DEBT.
 
 Status: **core SEALED** (2026-07-03 → 07-05). Structure and first
 values user-confirmed through the A-1 grill (rulings ①–⑧), the A-2
@@ -262,10 +268,11 @@ Current open questions (post affordability & M9-promotion pass,
    25-35 still < 15-25, and **ZERO decisive endings** (elim flat 3-5
    throughout). Root cause is R14 (the main-arc war system yields no
    annihilations — 77% stall→white-peace, crisis or not), not a crisis
-   dial. Next = **R14 war-decisiveness pass** (DESIGN-RISKS), then
-   revisit the crisis as a backstop. The tripTurn curve shape (18-22
-   peak, thin tail — DT-①) is likewise a pre-crisis / war-system lever,
-   not reachable from turns ≥26.
+   dial. **R14 RAN 2026-07-13 → ADR 0037**: the fizzle is a war-machine
+   *implementation* artifact; the fix is to BUILD the sealed model
+   (`docs/features/war-model-build/`), then revisit the crisis as a lean
+   backstop. The tripTurn curve shape (18-22 peak, thin tail — DT-①) is
+   likewise a pre-crisis / war-system lever, not reachable from turns ≥26.
 4. ~~**SPEC amendment seal**~~ — RESOLVED 2026-07-11: user sealed the
    draft verbatim; applied to `SPEC.md` § "How a match ends (crisis
    arc)".
