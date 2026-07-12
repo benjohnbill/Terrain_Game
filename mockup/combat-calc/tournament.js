@@ -64,17 +64,29 @@ const HARNESS = {
     enabled: false,
     onset: 25,               // CE-④ arc onset (envelope right edge)
     hardEnd: 35,             // CE-④/CE-⑪ Westphalian draw turn
-    rate0: 0.05,             // CE-④ base growth: stack += rate(t) × fuel
-    rateStep: 0.01,          // CE-④ linear staircase increment / crisis turn
+    // CE-④/⑭ rebellion growth (reshaped 2026-07-12): each crisis turn a
+    // sector rebels by riseFrac × registerShare, where riseFrac = the
+    // scar-independent cataclysm baseline (unrestBase0 + unrestStep×(t−onset))
+    // + scarGain × scar. Anchoring to register share is the scale-bridge that
+    // lifts the rising from a whisper to army scale. All 가안 (seed values,
+    // tuned by the co-analysis sweep against CE-⑫).
+    unrestBase0: 0.01,       // baseline fraction of register that rises at onset (scar-independent — the cataclysm is universal)
+    unrestStep: 0.003,       // linear per-turn increase of the baseline over the arc
+    scarGain: 0.01,          // scar amplifier: aggression debt — the most-scarred land burns hardest
     scarPerOccupation: 0.5,  // CE-⑭.1 usable-damage scar written on capture
     scarPerRaid: 0.15,       // CE-⑭.1 usable-damage scar written on a raid
     refusalBurnPp: 0.10,     // CE-⑥ refused-sector usable loss + scar increment
     rebelEffectiveness: 1 / 3, // CE-⑭.4 rebel combat constant (NOT a quality tier)
     denialCoeff: 1.0,        // CE-⑦/⑭.5 raw rebel mass → gate denial (sweep dial #1)
+    selfDenialFrac: 1.0,     // CE-⑦ reframe (2026-07-13): denial blend self↔board. 1.0 = own revolt denies own crown (homework, not public good); 0 = old board-global term. 가안.
     secessionN: 2,           // CE-⑥/⑮ consecutive neglected turns → secession
     secessionFrac: 1.0,      // CE-⑮ full rise on secession (buffer variant 0.5)
     suppressScar: 0,         // CE-⑧/⑭.3 σ — leading candidate 0 (spiral replaces it)
     suppressBudgetFrac: 0.5, // bot policy: shield fraction spent on suppression/turn
+    conquestPacifyFrac: 1.0, // CE-㉑ standing-uprising fraction dispersed on definitive acquisition (가안; 1.0 = full so거. scar/fuel inherited → re-mobilizes under new owner's intensity)
+    noStallPeaceStage: 2,    // CE-⑳ overlay stage at which stall→white-peace closes (가안; ties to the truce-void stage — total war = no calling it off, wars grind to shield-break)
+    rebelSiegeDragK: 0.5,    // CE-㉒ how hard a realm's OWN revolt pins its border shield (가안; drag = k × ownRebelMass / ownGarrisons)
+    rebelSiegeDragCap: 0.7,  // CE-㉒ max fraction of front garrison pinned by internal revolt (가안)
     // CE-⑬/⑯ per-sector suppression terrain multiplier (가안; mirrors engine
     // D6 terrain family, keyed by sector terrainLayer values)
     terrainDef: { plains: 1.0, mountain: 1.5, river: 1.15, coast: 1.1, steppe: 1.0, desert: 1.2 },
@@ -188,9 +200,12 @@ const bodiesOf = (r) => r.field + totalGarrisons(r) + r.pool;
 const shieldOf = (r) => r.field + Object.values(r.frontG).reduce((s, g) => s + g, 0);
 
 // ---------------------------------------------------------------- crisis
-// CE-④ linear staircase: growth rate per crisis turn = rate0 + step×(t−onset).
-function crisisRate(t, C) {
-  return C.rate0 + C.rateStep * Math.max(0, t - C.onset);
+// CE-④ cataclysm baseline: the scar-INDEPENDENT rise fraction per crisis turn,
+// a linear staircase = unrestBase0 + unrestStep×(t−onset). This is the universal
+// shock — every held sector rises by at least this fraction of its register
+// share, damaged or not (the general-crisis floor). Scar adds ON TOP (growRebels).
+function unrestRise(t, C) {
+  return C.unrestBase0 + C.unrestStep * Math.max(0, t - C.onset);
 }
 
 // CE-⑳ total-war overlay stage on the public calendar. 0 = pre-crisis / off.
@@ -247,32 +262,37 @@ function syncCounts(r) {
   r.interior = [...r.holds].filter((id) => !r.world.borderIds.has(id)).length;
 }
 
-// CE-⑭.1 fuel: a sector's uprising fuel = its scar × the owner's mobilization
-// intensity (realm-level intensity spread uniformly over held sectors — the
-// sealed L2 approximation, CE-③). A land neither damaged nor mobilized never
-// rises; resting inherited scarred land keeps it quiet (demobilize = cooling).
-function sectorFuel(sector, intensityVal) { return (sector.scar ?? 0) * intensityVal; }
-
 // CE-⑭.2 rebel cap = the sector's register share = realm register × (sector
 // pop ÷ realm held pop). The whole populace can rise at 3× the density a
-// state sustains as standing forces (rebels pay no maintenance).
+// state sustains as standing forces (rebels pay no maintenance). It is ALSO
+// the anchor of growth (below): a rising is a fraction of what CAN rise.
 function sectorRegisterShare(sector, realm, popTotal) {
   return popTotal > 0 ? realm.pool * (sector.populationValue / popTotal) : 0;
 }
 
-// CE-④/⑧ soil-and-crop growth: each crisis turn, every held sector's rebel
-// stack grows by rate(t) × fuel, capped at its register share. Deterministic.
+// CE-④/⑭ soil-and-crop growth (reshaped 2026-07-12): each crisis turn every
+// held sector rebels by riseFrac × registerShare, capped at registerShare.
+//   riseFrac = unrestRise(t)          — the scar-INDEPENDENT cataclysm baseline
+//            + scarGain × scar(sector) — the aggression-debt AMPLIFIER
+// Anchoring the rise to the register share (population-scale) is the fix for
+// the pre-reshape whisper: growth used to be a usable-scale absolute that could
+// never approach its population-scale ceiling. Now an undamaged sector still
+// rises (baseline > 0 → the cataclysm is universal), while the most-scarred
+// land rises fastest. Deterministic. NOTE: mobilization intensity is no longer
+// a growth factor (the CE-③ approximation is retired here); if a "mobilized
+// realms burn harder" modulator is wanted it multiplies riseFrac — a reserved
+// seat, deliberately empty until the sweep says it is needed.
 function growRebels(realm, t, H) {
   if (!sectorMode(realm)) return;
   const C = H.crisis;
-  const iv = intensity(realm);
-  const rate = crisisRate(t, C);
+  const rise = unrestRise(t, C);
   const secs = heldSectors(realm);
   const popTotal = secs.reduce((s, x) => s + x.populationValue, 0);
   for (const s of secs) {
-    const grow = rate * sectorFuel(s, iv);
-    if (grow <= 0) continue;
     const cap = sectorRegisterShare(s, realm, popTotal);
+    const riseFrac = rise + C.scarGain * (s.scar ?? 0);
+    const grow = riseFrac * cap;
+    if (grow <= 0) continue;
     s.rebelStack = Math.min((s.rebelStack ?? 0) + grow, cap);
   }
 }
@@ -435,6 +455,14 @@ function acquireSector(r, id, H = HARNESS) {
   const s = r.world.sectors.get(id);
   s.usableEconomy = Math.min(s.usableEconomy, H.usableEconomyStart);
   s.usablePop = Math.min(s.usablePop, H.usablePopStart);
+  // CE-㉑ conquest-pacification: a definitive acquisition (settlement cession /
+  // elimination) disperses the sector's STANDING uprising — the rebellion's
+  // target regime is gone — scaled by the 가안 pacify fraction. The scar ledger
+  // (land memory) and the usable floor above are inherited UNTOUCHED, so the
+  // sector re-mobilizes under the new owner's own intensity (the deferred bill).
+  // Gated on crisis.enabled: crisis-off is byte-identical (stack inherited whole).
+  if (H.crisis && H.crisis.enabled && (s.rebelStack ?? 0) > 0)
+    s.rebelStack *= (1 - H.crisis.conquestPacifyFrac);
   r.holds.add(id);
   syncCounts(r);
 }
@@ -466,10 +494,45 @@ function boardRebelMass(realms) {
   return total;
 }
 
+// CE-㉒ a single realm's OWN standing rebel mass across its held sectors
+// (seceded stacks have left r.holds, so they are excluded — a realm is not
+// dragged by land it no longer governs).
+function rebelMassOf(r) {
+  if (!sectorMode(r)) return 0;
+  let t = 0;
+  for (const s of heldSectors(r)) t += s.rebelStack ?? 0;
+  return t;
+}
+
+// CE-㉒ asymmetric siege-drag: the fraction of a realm's border shield pinned
+// down by its own internal revolt. Scales with own rebel mass relative to own
+// SHIELD SUBSTANCE (front garrisons + capital guard — the same shield the
+// suppression budget draws on, CE-⑩; NOT the interior×300 virtual garrison,
+// which is an abstraction, not real bodies rebels can tie down). Capped. A calm
+// realm has drag 0 → full shield; the realm carrying the heaviest rebellion
+// (measured: usually the early expander) defends sieges at a fraction of its
+// wall. Field armies are NOT dragged (CE-⑩ — swords stay free for conquest).
+function rebelSiegeDrag(D, C) {
+  const shield = Object.values(D.frontG).reduce((s, g) => s + g, 0) + (D.capitalGarrison ?? 0);
+  if (shield <= 0) return 0;
+  return Math.min(C.rebelSiegeDragCap, C.rebelSiegeDragK * rebelMassOf(D) / shield);
+}
+
+// CE-⑦ crown-denial for one candidate: a blend of its OWN standing rebellion
+// (self-denial — your fire blocks your crown, suppressible) and the board-global
+// mass (the "continent in flames" term). selfDenialFrac 1.0 = pure self (the
+// 2026-07-13 reframe: board-global made suppression a public good nobody paid
+// for); 0 = the original board-global term. Pre-scaled by denialCoeff, added to
+// the coalition arrayed against the candidate in hegemonyCheck.
+function rebelDenialFor(realm, realms, C) {
+  const self = rebelMassOf(realm);
+  const board = boardRebelMass(realms);
+  return C.denialCoeff * (C.selfDenialFrac * self + (1 - C.selfDenialFrac) * board);
+}
+
 // adapt a realm to match.js's hegemonyCheck shape
 function checkView(realms, H) {
   const on = H && H.crisis && H.crisis.enabled;
-  const rebelDenial = on ? H.crisis.denialCoeff * boardRebelMass(realms) : 0;
   return realms.map((r) => ({
     name: r.name, alive: r.alive, vassalOf: r.vassalOf,
     field: r.field, fieldCap: r.fieldCap,
@@ -480,7 +543,7 @@ function checkView(realms, H) {
     treasury: r.treasury, income: realmIncome(r),
     pool: r.pool, serving: servingBodies(r),
     exits: r.staging ? r.exits.map((e) => ({ cap: e.cap === Infinity ? Infinity : e.cap * 2 })) : r.exits,
-    rebelDenial,
+    rebelDenial: on ? rebelDenialFor(r, realms, H.crisis) : 0,
   }));
 }
 
@@ -586,6 +649,13 @@ function warBattle(war, A, D, opts = {}) {
   const front = D.frontG[A.name] !== undefined ? A.name : Object.keys(D.frontG)[0];
   const defField = opts.screen ? Math.round(D.field * 0.2) : D.field;
 
+  // CE-㉒ asymmetric siege-drag: the defender's OWN revolt pins its border
+  // shield, so a rebellion-heavy realm defends sieges at a fraction of its
+  // wall. Crisis-off (or no dial) → drag 0 → byte-identical to the sealed
+  // world. Field defence is untouched (CE-⑩ — swords stay free).
+  const _C = (H && H.crisis && H.crisis.enabled) ? H.crisis : null;
+  const siegeDrag = _C ? rebelSiegeDrag(D, _C) : 0;
+
   // strait wars (either side a hermit seat): 명량 grammar — opposed-water
   // penalty + choke on the engaged body until the invader is ashore
   const strait = (A.seatType === 'hermit' || D.seatType === 'hermit');
@@ -596,7 +666,7 @@ function warBattle(war, A, D, opts = {}) {
     const fort = D.fortAt[front] ?? 'walls';
     const fortBase = DIALS.fort[fort];
     const fortNow = Math.max(1, fortBase - war.stamps * DIALS.erosionStep);
-    const g = D.frontG[front];
+    const g = D.frontG[front] * (1 - siegeDrag); // CE-㉒ own-revolt shield pin (0 when crisis-off)
     // fidelity: read the front's authored crossing class (terrain/water/choke);
     // legacy fixture boards without frontClass keep the hardcoded hills + hermit
     // strait crossing.
@@ -1010,7 +1080,14 @@ function pickTarget(me, realms, rng, H = HARNESS) {
   // (garrison×terrain×fort, field army excluded) instead of the raw shield
   // read. Non-FG boards (me.forceGeo falsy) collapse `soft` to the exact
   // `shield` expression — byte-identical ranking, untouched by this change.
-  const soft = (t) => me.forceGeo ? frontSoftness(me, t) : shield(t);
+  const softBase = (t) => me.forceGeo ? frontSoftness(me, t) : shield(t);
+  // CE-㉒ crisis-aware targeting: a neighbor whose own revolt pins its shield
+  // (rebelSiegeDrag) defends sieges at a fraction of its wall — read that
+  // softened wall, so the bot preys on the rebellion-heavy realm (the early
+  // expander) the way a player would. Crisis-off → drag 0 → softBase exactly
+  // (byte-identical ranking). Bot-policy 가안, never a game rule.
+  const _cC = (H.crisis && H.crisis.enabled) ? H.crisis : null;
+  const soft = (t) => softBase(t) * (1 - (_cC ? rebelSiegeDrag(t, _cC) : 0));
   // pile-on probe (HARNESS 가안, sheet-15 freeze autopsy follow-up):
   // a strengthened opportunism read — a neighbor below woundedFrac of
   // cap is a WINDOW (strike before healing closes it), window targets
@@ -1207,7 +1284,7 @@ function runMatch(assignment, opts = {}) {
     // reported large exhaustion even with zero deaths).
     poolStart: realms.reduce((s, r) => s + r.pool, 0),
     settlements: [], presetOffers: [], vassalOffers: 0, vassalDeals: 0,
-    eliminations: 0, raids: 0, warsStarted: 0, warsByTurn: {},
+    eliminations: 0, raids: 0, warsStarted: 0, warsByTurn: {}, warEnds: [],
     planStats: { picks: {}, brained: 0, forced: 0, misjudged: 0 },
   };
 
@@ -1254,12 +1331,21 @@ function runMatch(assignment, opts = {}) {
       if (war.stage === 'fallen') {
         eliminate(D, A, realms, H, war);
         record.eliminations++;
+        record.warEnds.push({ turn: t, cause: 'eliminate' });
         endWar(war, A, D, H);
         continue;
       }
-      // stall → status-quo peace (occupied sectors return)
-      if (war.stalled >= H.stallPatience) {
+      // stall → status-quo peace (occupied sectors return). CE-⑳: under the
+      // total-war overlay (stage ≥ noStallPeaceStage, where truce already
+      // voids) there is no calling it off — a stalled war keeps grinding while
+      // shields hollow (CE-⑩), so the deciding war can reach shield-break
+      // instead of fizzling to status quo. Gated on crisis.enabled → off-path
+      // byte-identical.
+      const totalWarLock = H.crisis && H.crisis.enabled
+        && overlayStage(t, H.crisis) >= H.crisis.noStallPeaceStage;
+      if (war.stalled >= H.stallPatience && !totalWarLock) {
         returnOccupied(war, D);
+        record.warEnds.push({ turn: t, cause: 'stallPeace' });
         endWar(war, A, D, H);
         continue;
       }
@@ -1273,10 +1359,12 @@ function runMatch(assignment, opts = {}) {
           capital: deal.st.capitalInReach, ...res,
         });
         if (deal.kind === 'vassalage') record.vassalDeals++;
+        record.warEnds.push({ turn: t, cause: 'settle', preset: deal.preset });
       } else if (!BOT.archetypes[A.archetype].pushCapital
         && (war.stage === 'cascade' || war.stage === 'capital') && war.proposalStep >= 3) {
         // lenient refused and the policy won't storm thrones: white peace
         returnOccupied(war, D);
+        record.warEnds.push({ turn: t, cause: 'refusePeace' });
         endWar(war, A, D, H);
       }
     }
@@ -1448,7 +1536,7 @@ module.exports = { HARNESS, BOT, ARCHETYPES, TEMPERAMENTS, SEATS, SPEC_GAPS,
   realmIncome, intensity, combatFromBorderClass, newWar, warBattle, m9Fill,
   frontDefense, pickMainDefWar, frontSoftness,
   applySettlement, sectorMode, syncCounts, occupationFrontier, captureSector, heldSectors,
-  acquireSector, returnOccupied, eliminate, checkView, crisisRate, addScar, terrainOf,
-  sectorFuel, sectorRegisterShare, growRebels, suppressAttrition,
-  suppressionBudget, crisisTurn, boardRebelMass,
+  acquireSector, returnOccupied, eliminate, checkView, unrestRise, addScar, terrainOf,
+  sectorRegisterShare, growRebels, suppressAttrition,
+  suppressionBudget, crisisTurn, boardRebelMass, rebelSiegeDrag, rebelDenialFor,
   overlayStage, availablePresets, truceLength };

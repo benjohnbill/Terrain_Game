@@ -11,12 +11,7 @@ test('crisis dial block exists and is OFF by default', () => {
   assert.strictEqual(T.HARNESS.crisis.hardEnd, 35);
 });
 
-test('crisisRate is a linear staircase from onset', () => {
-  const C = T.HARNESS.crisis;
-  assert.strictEqual(T.crisisRate(C.onset, C), C.rate0);
-  assert.strictEqual(T.crisisRate(C.onset + 1, C), C.rate0 + C.rateStep);
-  assert.ok(T.crisisRate(C.hardEnd, C) > T.crisisRate(C.onset, C));
-});
+// (crisisRate → unrestRise: covered by the RESHAPE staircase test below.)
 
 test('addScar accumulates and terrainOf reads the sector terrain layer', () => {
   const s = { mapUnits: [{ terrainLayer: 'mountain' }] };
@@ -30,38 +25,9 @@ test('terrainOf defaults to plains when no map units', () => {
   assert.strictEqual(T.terrainOf({}), 'plains');
 });
 
-test('sectorFuel is scar × intensity; unscarred stays zero', () => {
-  assert.strictEqual(T.sectorFuel({ scar: 2 }, 0.5), 1);
-  assert.strictEqual(T.sectorFuel({ scar: 0 }, 0.9), 0);
-  assert.strictEqual(T.sectorFuel({}, 0.9), 0); // no scar field → 0
-});
-
-test('growRebels grows a scarred, mobilized sector and respects the register cap', () => {
-  const C = { ...T.HARNESS.crisis, enabled: true, rate0: 0.5, rateStep: 0 };
-  const H = { ...T.HARNESS, crisis: C };
-  // one realm, two held sectors; realm-level intensity via serving/pool.
-  const sA = { id: 'a', populationValue: 1, scar: 4, mapUnits: [{ terrainLayer: 'plains' }] };
-  const sB = { id: 'b', populationValue: 1, scar: 0, mapUnits: [{ terrainLayer: 'plains' }] };
-  const world = { sectors: new Map([['a', sA], ['b', sB]]), borderIds: new Set() };
-  const r = { name: 'R', world, holds: new Set(['a', 'b']),
-    pool: 1000, field: 300, frontG: {}, capitalGarrison: 0 };
-  // intensity = serving/pool = 300/1000 = 0.3; sectorA fuel = 4×0.3 = 1.2
-  // growth = rate(25)=0.5 × 1.2 = 0.6 × (register share). share_a = 1000×(1/2)=500.
-  T.growRebels(r, 25, H);
-  assert.ok(sA.rebelStack > 0, 'scarred sector rises');
-  assert.strictEqual(sB.rebelStack ?? 0, 0, 'unscarred sector stays quiet');
-  assert.ok(sA.rebelStack <= 500 + 1e-9, 'capped at register share');
-});
-
-test('growRebels never exceeds the register cap even at extreme rate', () => {
-  const C = { ...T.HARNESS.crisis, enabled: true, rate0: 1000, rateStep: 0 };
-  const H = { ...T.HARNESS, crisis: C };
-  const s = { id: 'a', populationValue: 1, scar: 10, mapUnits: [{ terrainLayer: 'plains' }] };
-  const world = { sectors: new Map([['a', s]]), borderIds: new Set() };
-  const r = { name: 'R', world, holds: new Set(['a']), pool: 600, field: 300, frontG: {}, capitalGarrison: 0 };
-  T.growRebels(r, 30, H);
-  assert.ok(s.rebelStack <= 600 + 1e-9);
-});
+// (sectorFuel removed in the CE-④/⑭ reshape — growth no longer factors a
+// separate fuel term; the RESHAPE additive-baseline / scar-amplifier / cap
+// tests below cover growRebels in its new form.)
 
 test('suppressAttrition: stronger suppressor kills more rebels, bleeds less', () => {
   const C = T.HARNESS.crisis;
@@ -400,4 +366,226 @@ test('fix A: crisisGateReport still sums normally when nobody was eliminated', (
   ];
   const report = MB.crisisGateReport(records);
   assert.ok(Math.abs(report.registerExhaustionRate - (1 - 400 / 500)) < 1e-9);
+});
+
+// CE-㉑ conquest-pacification: a definitive acquisition (settlement cession /
+// elimination) disperses the sector's STANDING uprising — the rebellion's
+// target regime is gone. The scar ledger (land memory) and usable floor are
+// inherited unchanged, so the sector re-mobilizes under the conqueror's own
+// intensity (the deferred bill / honeymoon). Direction sealed 2026-07-12
+// (subtraction model, not scar-reset); values 가안, validated by measurement.
+test('CE-㉑ crisis-on acquisition disperses the sector uprising (pacifyFrac 1.0); scar inherited', () => {
+  const C = { ...T.HARNESS.crisis, enabled: true, conquestPacifyFrac: 1.0 };
+  const H = { ...T.HARNESS, crisis: C };
+  const s = { id: 'x', populationValue: 1, economyValue: 1, scar: 3, rebelStack: 42,
+    usableEconomy: 1, usablePop: 1, mapUnits: [{ terrainLayer: 'plains' }] };
+  const world = { sectors: new Map([['x', s]]), borderIds: new Set() };
+  const r = { name: 'A', world, holds: new Set() };
+  T.acquireSector(r, 'x', H);
+  assert.strictEqual(s.rebelStack, 0, 'standing uprising dispersed on definitive acquisition');
+  assert.strictEqual(s.scar, 3, 'land memory (scar) inherited, not reset');
+  assert.ok(r.holds.has('x'), 'sector is now held');
+});
+
+test('CE-㉑ crisis-OFF acquisition inherits the rebel stack unchanged (byte-identity guard)', () => {
+  const H = { ...T.HARNESS }; // crisis disabled by default → pre-CE-㉑ behavior
+  const s = { id: 'y', populationValue: 1, economyValue: 1, scar: 3, rebelStack: 42,
+    usableEconomy: 1, usablePop: 1, mapUnits: [{ terrainLayer: 'plains' }] };
+  const world = { sectors: new Map([['y', s]]), borderIds: new Set() };
+  const r = { name: 'A', world, holds: new Set() };
+  T.acquireSector(r, 'y', H);
+  assert.strictEqual(s.rebelStack, 42, 'crisis-off: standing stack inherited whole, as before');
+});
+
+test('CE-㉑ acquisition drops board rebel mass by the dispersed sector stack', () => {
+  const C = { ...T.HARNESS.crisis, enabled: true, conquestPacifyFrac: 1.0 };
+  const H = { ...T.HARNESS, crisis: C };
+  const s = { id: 'z', populationValue: 1, economyValue: 1, scar: 3, rebelStack: 50,
+    usableEconomy: 1, usablePop: 1, mapUnits: [{ terrainLayer: 'plains' }] };
+  const world = { sectors: new Map([['z', s]]), borderIds: new Set(), seceded: new Map() };
+  const conqueror = { name: 'A', alive: true, world, holds: new Set(['z']) };
+  assert.strictEqual(T.boardRebelMass([conqueror]), 50, 'standing before pacification');
+  // simulate a fresh conquest: sector leaves limbo into the conqueror's holds
+  conqueror.holds.delete('z');
+  T.acquireSector(conqueror, 'z', H);
+  assert.strictEqual(T.boardRebelMass([conqueror]), 0, 'denial relieved by the dispersed uprising');
+});
+
+// CE-⑳ total-war overlay closes the stall→white-peace exit: once the overlay
+// voids truce (stage ≥ noStallPeaceStage), a stalled war can no longer fizzle
+// back to status quo — it keeps grinding while shields hollow (CE-⑩) so the
+// deciding war can reach shield-break rather than resetting. Direction sealed
+// 2026-07-12; the stage threshold is 가안, validated by measurement.
+test('CE-⑳ overlay closes stall→white-peace once total war reaches stage 2 (truce-void)', () => {
+  const MB = require('../mockup/combat-calc/map-board.js');
+  const { CRADLE_MAP } = require('../mockup/combat-calc/map-gen.js');
+  const { viableBindings } = require('../mockup/combat-calc/map-gate.js');
+  const b = viableBindings(CRADLE_MAP, 5).viable.slice(0, 3);
+  const on = MB.runCradleTournament({ map: CRADLE_MAP, bindings: b, reps: 2, seed: 42,
+    harness: { crisis: { ...T.HARNESS.crisis, enabled: true } } });
+  const s2 = T.HARNESS.crisis.stage.s2;
+  let lateStall = 0;
+  for (const r of on) for (const e of (r.warEnds || []))
+    if (e.cause === 'stallPeace' && e.turn >= s2) lateStall++;
+  assert.strictEqual(lateStall, 0,
+    'a stalled war must not fizzle to status-quo peace once the overlay hits stage 2');
+});
+
+// (CE-⑩ shield-drain reverted 2026-07-12: deducting suppressorDead from
+// garrisons was symmetric — it paralysed every realm's defence at once instead
+// of opening a decisive war, and it punished defensive investment against the
+// CE-⑩ "defensive infrastructure gains double value" intent. suppressorDead
+// stays a measurement-only accumulator; the crisis pressure is being
+// re-routed to an asymmetric-opening axis instead.)
+
+// ── CE-㉒ asymmetric siege-drag (form-lock, 2026-07-13) ──────────────────
+// A realm's OWN standing rebellion pins its border shield: internal order ties
+// down garrisons, so the more a realm is aflame the weaker its siege defence.
+// This is the ASYMMETRIC replacement for shield-drain — it hits only the
+// realm carrying the revolt (measured: the most-scarred realm is the early
+// expander 77% of the time), turning the expander's deferred aggression debt
+// into a real military opening. drag = min(cap, k × ownRebelMass / ownGarrisons).
+// Field armies are untouched (CE-⑩ — swords stay free). Values 가안.
+test('CE-㉒ rebelSiegeDrag: zero with no revolt, rises with rebel mass, saturates at the cap', () => {
+  const C = { ...T.HARNESS.crisis, enabled: true, rebelSiegeDragK: 0.5, rebelSiegeDragCap: 0.7 };
+  const mk = (rebel) => {
+    const s = { id: 'a', rebelStack: rebel };
+    const world = { sectors: new Map([['a', s]]) };
+    return { name: 'D', world, holds: new Set(['a']), frontG: { n: 600 }, capitalGarrison: 400 };
+  };
+  assert.strictEqual(T.rebelSiegeDrag(mk(0), C), 0, 'a calm realm keeps its full shield');
+  const d1 = T.rebelSiegeDrag(mk(500), C);   // 0.5 × 500/1000 = 0.25
+  const d2 = T.rebelSiegeDrag(mk(1000), C);  // 0.5 × 1000/1000 = 0.5
+  assert.ok(Math.abs(d1 - 0.25) < 1e-9, `expected 0.25, got ${d1}`);
+  assert.ok(d2 > d1, 'more revolt pins more shield (monotone)');
+  assert.ok(Math.abs(T.rebelSiegeDrag(mk(100000), C) - 0.7) < 1e-9, 'saturates at the cap');
+});
+
+test('CE-㉒ rebelSiegeDrag: no garrison → no drag (guard, no divide-by-zero)', () => {
+  const C = { ...T.HARNESS.crisis, enabled: true, rebelSiegeDragK: 0.5, rebelSiegeDragCap: 0.7 };
+  const s = { id: 'a', rebelStack: 500 };
+  const world = { sectors: new Map([['a', s]]) };
+  const bare = { name: 'D', world, holds: new Set(['a']), frontG: {}, capitalGarrison: 0 };
+  assert.strictEqual(T.rebelSiegeDrag(bare, C), 0, 'no shield to pin → drag 0');
+});
+
+// ── CE-⑦ self-denial (form-lock, 2026-07-13) ────────────────────────────
+// A realm's crown-denial is its OWN standing rebellion, not the board-global
+// mass. Board-global made suppression a public good (everyone shared the
+// reduction → nobody acted → draws). Self-denial: your own fire blocks your
+// own crown, and suppressing it (a judgment with its own cost, CE-⑩/⑭.3)
+// restores your claim — the risk-vs-reward lens as layered judgment, homework
+// not punishment. selfDenialFrac blends self↔board (가안 1.0 = pure self;
+// 0 = the old board-global term, kept for A/B measurement).
+function mkRealm(name, stacks) {
+  const sectors = new Map(Object.entries(stacks).map(([id, v]) => [id, { id, rebelStack: v }]));
+  return { name, alive: true, world: { sectors, seceded: new Map() }, holds: new Set(sectors.keys()) };
+}
+
+test('CE-⑦ self-denial: a calm realm is NOT denied by its neighbor\'s fire (selfDenialFrac 1.0)', () => {
+  const C = { ...T.HARNESS.crisis, enabled: true, denialCoeff: 1.0, selfDenialFrac: 1.0 };
+  const calm = mkRealm('A', { a: 0 });
+  const burning = mkRealm('B', { b: 500 });
+  const realms = [calm, burning];
+  assert.strictEqual(T.rebelDenialFor(calm, realms, C), 0, 'calm realm: own fire 0 → crown reachable');
+  assert.strictEqual(T.rebelDenialFor(burning, realms, C), 500, 'burning realm: denied by its OWN 500');
+});
+
+test('CE-⑦ self-denial blends to the old board-global term at selfDenialFrac 0', () => {
+  const C = { ...T.HARNESS.crisis, enabled: true, denialCoeff: 1.0, selfDenialFrac: 0 };
+  const calm = mkRealm('A', { a: 0 });
+  const burning = mkRealm('B', { b: 500 });
+  const realms = [calm, burning];
+  // board mass = 500; both realms carry the full board term (public good, pre-reframe)
+  assert.strictEqual(T.rebelDenialFor(calm, realms, C), 500);
+  assert.strictEqual(T.rebelDenialFor(burning, realms, C), 500);
+});
+
+test('CE-⑦ self-denial is monotone in own rebel mass (frac 1.0) and scales with denialCoeff', () => {
+  const C = { ...T.HARNESS.crisis, enabled: true, denialCoeff: 2.0, selfDenialFrac: 1.0 };
+  const lo = mkRealm('A', { a: 100 });
+  const hi = mkRealm('B', { b: 800 });
+  const realms = [lo, hi];
+  assert.ok(T.rebelDenialFor(hi, realms, C) > T.rebelDenialFor(lo, realms, C), 'more own revolt → more denial');
+  assert.strictEqual(T.rebelDenialFor(lo, realms, C), 200, 'denialCoeff 2 × own 100 = 200');
+});
+
+// ── CE-④/⑭ rebellion-growth RESHAPE (form-lock, 2026-07-12) ──────────────
+// The cataclysm rises as a fraction of what CAN rise (register share), so it
+// reaches army scale instead of whisper. riseFrac(t,s) = unrestBase0 +
+// unrestStep×(t−onset)  [the scar-independent cataclysm baseline, a time
+// staircase]  +  scarGain × scar(s)  [the aggression-debt amplifier].
+//   grow = riseFrac × registerShare ,  capped at registerShare.
+// Values below are FIXTURES exercising the SHAPE; seed 가안 tuned by the sweep.
+
+test('unrestRise is a linear cataclysm staircase from onset (scar-independent baseline)', () => {
+  const C = { ...T.HARNESS.crisis, unrestBase0: 0.02, unrestStep: 0.005 };
+  assert.ok(Math.abs(T.unrestRise(C.onset, C) - 0.02) < 1e-12, 'starts at unrestBase0');
+  assert.ok(Math.abs(T.unrestRise(C.onset + 1, C) - 0.025) < 1e-12, 'climbs by unrestStep');
+  assert.ok(T.unrestRise(C.hardEnd, C) > T.unrestRise(C.onset, C), 'later is worse');
+  assert.ok(Math.abs(T.unrestRise(C.onset - 3, C) - 0.02) < 1e-12, 'clamped pre-onset');
+});
+
+// helper: one held sector, one realm, register share = pool (single sector)
+function oneSectorRealm({ scar = 0, pool = 1000, pop = 1 } = {}) {
+  const s = { id: 'a', populationValue: pop, economyValue: 1, scar,
+    mapUnits: [{ terrainLayer: 'plains' }] };
+  const world = { sectors: new Map([['a', s]]), borderIds: new Set() };
+  const r = { name: 'R', world, holds: new Set(['a']), pool, field: 300,
+    frontG: {}, capitalGarrison: 0 };
+  return { r, s };
+}
+
+test('RESHAPE additive baseline: undamaged land STILL rises under the cataclysm (scar 0, base > 0)', () => {
+  const C = { ...T.HARNESS.crisis, enabled: true, unrestBase0: 0.1, unrestStep: 0, scarGain: 0.05 };
+  const H = { ...T.HARNESS, crisis: C };
+  const { r, s } = oneSectorRealm({ scar: 0, pool: 1000 });
+  T.growRebels(r, 25, H);
+  // riseFrac = 0.1 + 0.05×0 = 0.1 ; share = 1000 ; grow = 100 — army scale, not whisper
+  assert.ok(s.rebelStack > 50, `baseline alone must raise army-scale rebels, got ${s.rebelStack}`);
+});
+
+test('RESHAPE scar is a pure amplifier: with zero baseline, scarred land still rises', () => {
+  const C = { ...T.HARNESS.crisis, enabled: true, unrestBase0: 0, unrestStep: 0, scarGain: 0.05 };
+  const H = { ...T.HARNESS, crisis: C };
+  const { r, s } = oneSectorRealm({ scar: 4, pool: 1000 });
+  T.growRebels(r, 25, H);
+  assert.ok(s.rebelStack > 0, 'scar alone (no baseline) still seeds a rising');
+});
+
+test('RESHAPE dead when both dials are off (base 0, scarGain 0) — even with scar', () => {
+  const C = { ...T.HARNESS.crisis, enabled: true, unrestBase0: 0, unrestStep: 0, scarGain: 0 };
+  const H = { ...T.HARNESS, crisis: C };
+  const { r, s } = oneSectorRealm({ scar: 9, pool: 1000 });
+  T.growRebels(r, 30, H);
+  assert.strictEqual(s.rebelStack ?? 0, 0, 'no baseline and no amplifier → no rebellion');
+});
+
+test('RESHAPE scar amplifies monotonically: more scar → more growth (same baseline)', () => {
+  const C = { ...T.HARNESS.crisis, enabled: true, unrestBase0: 0.02, unrestStep: 0, scarGain: 0.05 };
+  const H = { ...T.HARNESS, crisis: C };
+  const lo = oneSectorRealm({ scar: 1, pool: 1000 });
+  const hi = oneSectorRealm({ scar: 8, pool: 1000 });
+  T.growRebels(lo.r, 25, H);
+  T.growRebels(hi.r, 25, H);
+  assert.ok(hi.s.rebelStack > lo.s.rebelStack, 'the more-scarred sector burns harder');
+});
+
+test('RESHAPE scale-bridge: growth scales with register share (double the pool → double the rise)', () => {
+  const C = { ...T.HARNESS.crisis, enabled: true, unrestBase0: 0.1, unrestStep: 0, scarGain: 0 };
+  const H = { ...T.HARNESS, crisis: C };
+  const small = oneSectorRealm({ scar: 0, pool: 1000 });
+  const big = oneSectorRealm({ scar: 0, pool: 2000 });
+  T.growRebels(small.r, 25, H);
+  T.growRebels(big.r, 25, H);
+  assert.ok(Math.abs(big.s.rebelStack - 2 * small.s.rebelStack) < 1e-6,
+    'rise is anchored to what CAN rise (register share), not a free-floating absolute');
+});
+
+test('RESHAPE cap: rebelStack never exceeds the register share, even at extreme dials', () => {
+  const C = { ...T.HARNESS.crisis, enabled: true, unrestBase0: 1000, unrestStep: 0, scarGain: 0 };
+  const H = { ...T.HARNESS, crisis: C };
+  const { r, s } = oneSectorRealm({ scar: 0, pool: 600 });
+  T.growRebels(r, 30, H);
+  assert.ok(s.rebelStack <= 600 + 1e-9, 'capped at register share');
 });
