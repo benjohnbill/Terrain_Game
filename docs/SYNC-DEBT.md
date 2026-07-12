@@ -11,17 +11,53 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
 
 ## Open
 
-- [ ] **Crisis dial table** (registered 2026-07-11, crisis pass;
-  re-cut 2026-07-12 by the rebellion-body pass — the table SHRANK:
-  scar-increment dials eliminated per CE-⑭ scar concretization,
-  suppression-scar σ demoted to a 0-candidate sweep item). Remaining:
-  denial conversion coefficient (sweep dial #1), secession N, rate
-  staircase, stage-table turn boundaries (CE-⑳), truce length (CE-⑱)
-  — all 가안, owed to the implementation plan and adjudicated by sweep
-  against the CE-⑫ gates + two new watch items (register-exhaustion
-  rate; per-terrain-class suppression cost differential). Prerequisite
-  task registered: truce-lock formalization (CE-⑱) precedes the stage
-  table's implementation. Owner: the crisis implementation session.
+- [ ] **Crisis dial table — sweep + co-analysis** (registered
+  2026-07-11; re-cut 2026-07-12 rebellion-body pass; **implementation
+  LANDED 2026-07-12**, commits `e5d5c58..25192cb` on main — the L2
+  harness now carries the full crisis arc opt-in behind
+  `HARNESS.crisis.enabled` (default off, byte-identical), plan
+  `docs/superpowers/plans/2026-07-12-crisis-ending-implementation.md`,
+  282/282). What remains is NOT the code but the **dial values**: all
+  crisis dials ship as 가안 placeholders (denial conversion coefficient
+  = sweep dial #1, rate staircase rate0/rateStep, secession N,
+  stage-table turn boundaries, truce length, suppression-scar σ
+  0-candidate). The first-read smoke (3 bindings × 4 reps, seed 42,
+  `crisisGateReport`) sits far from the CE-⑫ gates BY DESIGN — draw
+  0.242 (target ≤0.001), war density 25-35 2.51 < 15-25 4.30
+  (chore-prevention miss), register-exhaustion 0.260, scar-spread 4.17.
+  Owner: the crisis co-analysis session (user + agent read the sweep,
+  tune, then a Tier-3 default flip re-seals like AB-②). The gate report
+  is the sweep instrument; new watch items (register-exhaustion rate;
+  per-terrain suppression cost differential) are wired. NOTE for the
+  `docs:check` lint: this row is NOT paid by the implementation commits
+  — the dial VALUES are the open work, not the harness.
+
+- [ ] **`eliminate()` register non-conservation — pre-existing, Tier-3**
+  (found 2026-07-12 during the crisis whole-branch review). In
+  `mockup/combat-calc/tournament.js` `eliminate()`, the winner is
+  credited `round(D.pool × 0.5)` but the defeated realm's `D.pool` is
+  never zeroed (unlike `D.field`/`D.interior`), so the world reserve
+  register can GROW on an elimination — a conservation break. The
+  winner's inflated (alive) pool feeds the sealed affordability
+  arithmetic and the cradle world-register-bounded test, so it is baked
+  into the sealed record-world baseline; root-fixing it means
+  **re-sealing that baseline (Tier-3, user decision)**. The crisis
+  measurement (`crisisGateReport`) works around it by excluding
+  `alive === false` realms from its register-exhaustion denominator
+  (commit `25192cb`); no crisis metric depends on the bug. Owner: user
+  — decide whether to root-fix + re-seal.
+
+- [ ] **Suppression cost not deducted from garrisons — L2 fidelity gap**
+  (registered 2026-07-12, crisis Task 5). `crisisTurn` MEASURES
+  suppressor casualties per terrain (`record.crisis.suppressCostByTerrain`,
+  the CE-⑯ watch item) but does not SUBTRACT them from `frontG`/
+  `capitalGarrison`, so suppression budget stays constant turn-over-turn
+  regardless of accumulated losses — a partial gap vs CE-⑩ ("walls
+  hollow from within"). The harness has no dedicated reserve pool to
+  deduct from cleanly; deferred as a measure-first simplification.
+  Revisit if the co-analysis sweep shows it materially changes the
+  chore-prevention / war-density read. Owner: the crisis co-analysis
+  session.
 
 - [ ] **L3 scar-intel fog layer** (registered 2026-07-11, CE-③). The
   fog-spec read of others' uprising fuel is design-sealed but L3-only;

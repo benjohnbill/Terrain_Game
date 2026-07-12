@@ -136,10 +136,24 @@ gate-5 satisfied by structure (CE-⑯); peaceful cession scar-free by
 corollary (CE-⑰); **truce lock and white peace canonized** (CE-⑱/⑲ —
 SPEC_GAPS ⑤/⑦ resolved); total-war stage table sealed as shape —
 truce shortens then dies, the ladder breaks bottom-up, 최대 + 복속
-survive (CE-⑳). Crisis design is COMPLETE through the body; next =
-implementation plan + dial table, then the sweep vs the CE-⑫ gates
-plus two new watch items (register-exhaustion rate; terrain-class
-suppression differential).
+survive (CE-⑳). Crisis design is COMPLETE through the body.
+
+**Crisis implementation LANDED (2026-07-12)** — the L2 harness now
+carries the full arc (CE-⑬…⑳) as an opt-in mechanism behind
+`HARNESS.crisis.enabled` (default OFF, crisis-off byte-identical to the
+sealed record world), built via SDD across commits `e5d5c58..25192cb`
+on main (plan
+`docs/superpowers/plans/2026-07-12-crisis-ending-implementation.md`;
+282/282; whole-branch review no-Critical). All crisis dials ship as
+가안 placeholders. First-read smoke via `crisisGateReport` sits far
+from the CE-⑫ gates BY DESIGN (draw 0.242 vs ≤0.001; war density 25-35
+2.51 < 15-25 4.30; register-exhaustion 0.260; scar-spread 4.17) — the
+harness was built to MEASURE, not to pass. Next = the **co-analysis
+dial sweep** (SYNC-DEBT "Crisis dial table") tuning denialCoeff (sweep
+dial #1) + the rate staircase against the gates, then a Tier-3 default
+flip. Two implementation debts registered in SYNC-DEBT: `eliminate()`
+register non-conservation (pre-existing, Tier-3) and suppression-cost
+not deducted from garrisons (L2 fidelity gap, CE-⑩).
 
 Status: **core SEALED** (2026-07-03 → 07-05). Structure and first
 values user-confirmed through the A-1 grill (rulings ①–⑧), the A-2
@@ -214,17 +228,21 @@ Current open questions (post affordability & M9-promotion pass,
    0036): suppression resolution, rebellion five points, seceded-sector
    behavior, gate-5, peaceful-cession scar, plus truce/white-peace
    canonization and the stage-table shape.
-2. **Crisis dial table** — rides the implementation plan; SHRANK
-   2026-07-12 (scar-increment dials eliminated, σ → 0-candidate).
-   Remaining: denial conversion coefficient (sweep #1), secession N,
-   rate staircase, stage-table turn boundaries, truce length; all 가안,
-   sweep-adjudicated. Prerequisite task: truce-lock formalization
-   (CE-⑱).
-3. **Crisis measurement-gate read** — after implementation, against
-   CE-⑫ (draw ≤ 0.1%; war density 25–35 ≥ 15–25; gate-4 watch;
+2. **Crisis dial table** — harness IMPLEMENTED 2026-07-12
+   (`e5d5c58..25192cb`); the CODE is done, the dial VALUES are the open
+   work. All 가안: denial conversion coefficient (sweep #1), secession
+   N, rate staircase, stage-table turn boundaries, truce length,
+   suppression-scar σ (0-candidate). Truce-lock formalization landed
+   with the build (CE-⑱). Owner: the co-analysis sweep (SYNC-DEBT).
+3. **Crisis measurement-gate read** — first-read smoke CAPTURED
+   2026-07-12 via `crisisGateReport` (far from the gates by design at
+   가안 dials: draw 0.242 vs ≤0.001; war density 25-35 2.51 < 15-25
+   4.30; register-exhaustion 0.260; scar-spread 4.17). The sweep reads
+   against CE-⑫ (draw ≤ 0.1%; war density 25–35 ≥ 15–25; gate-4 watch;
    scar-inflation; raid-attrition; draw-coalition; leader-agency) plus
    the CE-⑭/⑯ watch items (register-exhaustion rate; per-terrain-class
-   suppression cost differential + per-seat crisis burden).
+   suppression cost differential + per-seat crisis burden). Next = the
+   user+agent co-analysis session.
 4. ~~**SPEC amendment seal**~~ — RESOLVED 2026-07-11: user sealed the
    draft verbatim; applied to `SPEC.md` § "How a match ends (crisis
    arc)".
