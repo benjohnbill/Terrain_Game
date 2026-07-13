@@ -11,8 +11,16 @@ const FIELD_ARMY_MARCH_WORN = 0.75;   // user 2026-07-13
 const ROUT_FRAC = 0.30;               // M4 rout cliff
 const ROUT_OPEN_REMAINDER_LOSS = 0.5; // M4 escape OPEN — 50% of the remainder falls in the pursuit
 
-function terrainMultiplier(terrain) { return TERRAIN[terrain]; }
-function fortMultiplier(fort) { return FORT[fort]; }
+function terrainMultiplier(terrain) {
+  const m = TERRAIN[terrain];
+  if (m === undefined) throw new Error('unknown terrain: ' + terrain);
+  return m;
+}
+function fortMultiplier(fort) {
+  const m = FORT[fort];
+  if (m === undefined) throw new Error('unknown fortification: ' + fort);
+  return m;
+}
 
 function commitLever(points) {
   const p = Math.max(0, Math.min(20, points));

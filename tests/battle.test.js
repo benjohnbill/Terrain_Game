@@ -33,6 +33,11 @@ test('casualty fractions are symmetric on the M4 curve; rout onset ≈ 30% at R 
   assert.equal(B.casualtyFractions(20).defender, 1); // clamped — blood never exceeds the body
 });
 
+test('terrain/fort multipliers throw on unknown keys instead of propagating NaN', () => {
+  assert.throws(() => B.terrainMultiplier('mountain'), /unknown terrain: mountain/);
+  assert.throws(() => B.fortMultiplier('castle'), /unknown fortification: castle/);
+});
+
 test('branch REPULSED when first-blow R is below the shield-break threshold', () => {
   const o = B.resolveEngagement({
     attacker: { size: 1000, commit: 8 },                        // attack 1000 × 1.5 = 1500
