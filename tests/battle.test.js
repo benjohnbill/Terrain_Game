@@ -32,3 +32,23 @@ test('casualty fractions are symmetric on the M4 curve; rout onset ≈ 30% at R 
   assert.ok(r.attacker < r.defender);             // winner bleeds less
   assert.equal(B.casualtyFractions(20).defender, 1); // clamped — blood never exceeds the body
 });
+
+test('branch REPULSED when first-blow R is below the shield-break threshold', () => {
+  const o = B.resolveEngagement({
+    attacker: { size: 1000, commit: 8 },                        // attack 1000 × 1.5 = 1500
+    front: { garrison: 1000, terrain: 'pass', fortification: 'walls' }, // shield 3600
+    fieldArmy: { reaches: true, size: 800 }, escape: 'OPEN',
+  });
+  assert.equal(o.branch, 'REPULSED');          // R1 = 1500/3600 = 0.417 < 1.5
+  assert.equal(o.shieldBreak, false);
+});
+
+test('branch FALL when the shield breaks but the field army cannot reach', () => {
+  const o = B.resolveEngagement({
+    attacker: { size: 6000, commit: 8 },                        // attack 9000
+    front: { garrison: 500, terrain: 'plains', fortification: 'none' }, // shield 500
+    fieldArmy: { reaches: false, size: 2000 }, escape: 'OPEN',
+  });
+  assert.equal(o.branch, 'FALL');              // R1 = 9000/500 = 18 ≥ 1.5, no reach
+  assert.equal(o.shieldBreak, true);
+});
