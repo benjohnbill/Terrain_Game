@@ -42,7 +42,7 @@
 **Interfaces:**
 - Produces: `terrainMultiplier(terrain: string) → number`, `fortMultiplier(fort: string) → number`, `commitLever(points: number) → number`.
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```js
 // tests/battle.test.js
@@ -66,12 +66,12 @@ test('commit lever interpolates linearly between M2 anchors', () => {
 });
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `node --test tests/battle.test.js`
 Expected: FAIL — `Cannot find module '../js/battle.js'`.
 
-- [ ] **Step 3: Write minimal implementation**
+- [x] **Step 3: Write minimal implementation**
 
 ```js
 // js/battle.js
@@ -100,12 +100,12 @@ if (typeof module !== 'undefined' && module.exports) module.exports = _api;
 else (window.Battle = window.Battle || {}), Object.assign(window.Battle, _api);
 ```
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 Run: `node --test tests/battle.test.js`
 Expected: PASS (2 tests).
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add js/battle.js tests/battle.test.js
@@ -124,7 +124,7 @@ git commit -m "feat(battle): M5 multiplier tables and M2 commit lever"
 - Consumes: `terrainMultiplier`, `fortMultiplier` (Task 1).
 - Produces: `shieldPower({garrison, terrain, fortification}) → number`; `casualtyFractions(R: number) → {attacker: number, defender: number}` where `attacker = CASUALTY_BASE / R^CASUALTY_EXP` and `defender = CASUALTY_BASE * R^CASUALTY_EXP` (symmetric — the loser is whichever side R disfavors).
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```js
 // append to tests/battle.test.js
@@ -144,12 +144,12 @@ test('casualty fractions are symmetric on the M4 curve; rout onset ≈ 30% at R 
 });
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `node --test tests/battle.test.js`
 Expected: FAIL — `B.shieldPower is not a function`.
 
-- [ ] **Step 3: Write minimal implementation**
+- [x] **Step 3: Write minimal implementation**
 
 ```js
 // js/battle.js — add near the dials
@@ -170,12 +170,12 @@ function casualtyFractions(R) {
 
 Add both to `_api`: `const _api = { terrainMultiplier, fortMultiplier, commitLever, shieldPower, casualtyFractions };`
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 Run: `node --test tests/battle.test.js`
 Expected: PASS (4 tests).
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add js/battle.js tests/battle.test.js
@@ -196,7 +196,7 @@ git commit -m "feat(battle): shield power and the M4 casualty curve"
   - `input = { attacker:{size, commit}, front:{garrison, terrain, fortification}, fieldArmy:{reaches, size}, escape:'OPEN'|'BLOCKED' }`
   - `outcome = { branch:'REPULSED'|'FALL'|'DECISIVE', shieldBreak:bool, firstBlowR:number, casualties:{attacker, defenderShield} }`
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```js
 // append to tests/battle.test.js
@@ -221,12 +221,12 @@ test('branch FALL when the shield breaks but the field army cannot reach', () =>
 });
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `node --test tests/battle.test.js`
 Expected: FAIL — `B.resolveEngagement is not a function`.
 
-- [ ] **Step 3: Write minimal implementation**
+- [x] **Step 3: Write minimal implementation**
 
 ```js
 // js/battle.js — add near the dials
@@ -256,12 +256,12 @@ function resolveEngagement(input) {
 
 Add `resolveEngagement` to `_api`. (The `_attackerAfter` carry-field is consumed by Task 4 and removed there.)
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 Run: `node --test tests/battle.test.js`
 Expected: PASS (6 tests).
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add js/battle.js tests/battle.test.js
@@ -280,7 +280,7 @@ git commit -m "feat(battle): first-blow resolution with REPULSED and FALL branch
 - Consumes: `commitLever`, `casualtyFractions`, and the `_attackerAfter` carry-field from Task 3.
 - Produces: the completed DECISIVE outcome, adding `decisiveBattle: { R2, attackerWins:bool, routed:bool, escape, annihilated:bool, loserTotalLoss:number }`. `loserTotalLoss` is the loser's total loss fraction: `L` (battle loss) below the cliff; at rout, the M4 conversion (OPEN → `L + ROUT_OPEN_REMAINDER_LOSS × (1 − L)`, BLOCKED → 1). The temporary `_attackerAfter` field is removed from the returned object.
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```js
 // append to tests/battle.test.js
@@ -326,12 +326,12 @@ test('DECISIVE: an OPEN rout converts on the M4 scale — deeper defeat costs mo
 });
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `node --test tests/battle.test.js`
 Expected: FAIL — `o.decisiveBattle` is `undefined`.
 
-- [ ] **Step 3: Write minimal implementation**
+- [x] **Step 3: Write minimal implementation**
 
 ```js
 // js/battle.js — add near the dials
@@ -359,12 +359,12 @@ const ROUT_OPEN_REMAINDER_LOSS = 0.5; // M4 escape OPEN — 50% of the remainder
 
 (Delete the Task-3 placeholder `return { branch:'DECISIVE', ..., _attackerAfter }` line; `attackerAfter` is already in scope from the first-blow computation.)
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 Run: `node --test tests/battle.test.js`
 Expected: PASS (9 tests).
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add js/battle.js tests/battle.test.js
@@ -383,7 +383,7 @@ git commit -m "feat(battle): DECISIVE branch — 결전 with rout cliff and esca
 - Consumes: `resolveEngagement` (Tasks 3-4).
 - Produces: `runBattery(scenarios: input[]) → { branchCounts:{REPULSED, FALL, DECISIVE}, routCount, annihilationCount, terrainFlips }`. `terrainFlips` counts scenarios that are REPULSED as authored but would shield-break with terrain set to `plains`/`none` — the Myeongnyang-class "terrain flipped the battle" metric (§7.3).
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```js
 // tests/battle-battery.test.js
@@ -413,12 +413,12 @@ test('battery aggregates branch counts, routs, and terrain flips', () => {
 });
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `node --test tests/battle-battery.test.js`
 Expected: FAIL — `Cannot find module '../mockup/decisive-battle/battery.js'`.
 
-- [ ] **Step 3: Write minimal implementation**
+- [x] **Step 3: Write minimal implementation**
 
 ```js
 // mockup/decisive-battle/battery.js
@@ -453,12 +453,12 @@ if (require.main === module) {
 module.exports = { runBattery };
 ```
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 Run: `node --test tests/battle-battery.test.js`
 Expected: PASS (1 test).
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add mockup/decisive-battle/battery.js tests/battle-battery.test.js

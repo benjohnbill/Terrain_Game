@@ -1,8 +1,10 @@
 # War Model Build — Feature Index
 
-**Status:** OPENED 2026-07-13 (R14 war-decisiveness co-analysis). Spec
-skeleton sealed; design not yet started. L2 combat simulation slated for
-retirement.
+**Status:** OPENED 2026-07-13 (R14 war-decisiveness co-analysis). **Slice 1
+— decisive-battle spine calculator — LANDED 2026-07-13**: `js/battle.js` +
+`mockup/decisive-battle/battery.js` merged to main (6 commits, suite 305/305,
+whole-branch review clean). Measurement pass not yet run. L2 combat
+simulation retired (ADR 0037).
 
 **One-line.** The front door for building Terrain Game's war model in real
 game code (`js/`) — implementing the sealed sector-resolution combat the L2
@@ -50,20 +52,48 @@ This feature is that build.
 - **ADR 0028** — L3 build-out stack direction (the "which stack" input for
   the build design session).
 - **SYNC-DEBT** — "L2 fidelity-boundary grill session" row (this synthesis is
-  its war-model half); crisis PARKED row.
+  its war-model half); crisis PARKED row; "Decisive-battle spine — vocabulary
+  seal DEFERRED" row.
+- Slice 1: `docs/superpowers/specs/2026-07-13-decisive-battle-spine-design.md`
+  (design spec, user-confirmed decisions) +
+  `docs/superpowers/plans/2026-07-13-decisive-battle-spine.md` (executed TDD
+  plan) → `js/battle.js` (pure isomorphic calculator) +
+  `mockup/decisive-battle/battery.js` (measurement battery).
 
-## Open questions (for the build design sessions)
+## Slice ladder / next steps (2026-07-13, slice 1 landed)
 
-1. **What first, and on which stack?** (ADR 0028 — UI-shell/renderer axis;
-   sequencing the P1 rows A1/A2/B2/C1/D7 into a first buildable slice.)
-2. **The opportunism read (C1)** — how a bot reads a pinned rival's exposed
-   front and commits; the load-bearing undesigned piece.
-3. **Atomic resolution vs the war spine (A2 × B2)** — how "shield-break →
-   decisive battle → cascade" expresses inside ADR 0026's one-turn atomic
-   resolution (emergent chain, not a scripted multi-turn machine); grill the
-   ❓PROPOSED vocabulary to AGREED.
-4. **Per-sector defense (A1/D7)** — porting force-geography's terrain-bound
-   defense + reactive reserve from `FG_BOARD_GAAN` into the real map's
-   per-sector four-layer stack.
-5. **Where the crisis re-enters** — as a lean turn-30 backstop (AB-③
+1. **Measurement pass** (next): author the scenario matrix and run the
+   battery over it. FIRST commit extends `runBattery`'s summary with an
+   `attackerWins` count + a per-side rout/annihilation split (spec §7
+   metric 5, the attacker-over-favor watch — user decision 2026-07-13);
+   in the same pass, split or rename `terrainFlips` (it currently counts
+   fortification flips too, while §7.3 defines the Myeongnyang-class metric
+   as "purely via 지형배수").
+2. **Slice 2 — opportunism bot (C1 / SPEC_GAP ①)**: the bot reads
+   field-army reach/pinning off the board; the defender-choice wiring
+   (catalog Defense plan family) enters here.
+3. **Slice 3 — settlement (B3)**: territory/indemnity/vassalage conversion.
+   When this touches the outcome contract, add winner-side 결전 casualties /
+   a survivors block (spec §6 "casualties both sides" — user decision
+   2026-07-13) and settle the absolute-bodies vs fraction unit convention
+   in the same stroke.
+4. **Slice 4 — per-sector defense 4-layer (A1/D7)** — porting
+   force-geography's terrain-bound defense + reactive reserve from
+   `FG_BOARD_GAAN` into the real map's per-sector stack.
+5. **Vocabulary seal** (방패 깨기/결전 → AGREED, 캐스케이드 → 연쇄 붕괴
+   rename, 야전군 registration + term-inventory patch) stays DEFERRED to the
+   slice-seal doc-sync — see the SYNC-DEBT row; until then the slice-1 spec
+   is truth for these terms.
+
+## Open questions (remaining)
+
+1. **The opportunism read (C1)** — how a bot reads a pinned rival's exposed
+   front and commits; the load-bearing undesigned piece (slice 2's design
+   session).
+2. **Where the crisis re-enters** — as a lean turn-30 backstop (AB-③
    sudden-death framing) once decisive war is the default.
+
+_Resolved 2026-07-13 (slice 1): "what first, on which stack" → this slice
+ladder, plain isomorphic js (ADR 0028, `map-gen.js` precedent); "A2 × B2
+atomic-vs-spine" → expressed as `resolveEngagement`'s one-turn emergent
+chain (slice-1 spec §4); vocabulary grill → deferred per SYNC-DEBT._
