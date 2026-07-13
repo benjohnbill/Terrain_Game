@@ -86,7 +86,16 @@ This feature is that build.
    ×0.75 rider) — generalizes ADR 0015's attack-side water tax to land
    approach; must check double taxation against the supply system (M7
    principle) and design against the real map geometry (terrain-cradle
-   mockup exists).
+   mockup exists). **Parity-surface question (user co-analysis
+   2026-07-13):** the wear-curve shape decides the equal-mass 결전
+   grammar — landed rules give the attacker the parity win (lever ×
+   defender-only wear ≈ ×1.9 effective); symmetric distance wear +
+   defender commit flips parity deterministically to the defender
+   (a bloody repulse ~13–19% loss, far under the M4 rout cliff — not a
+   massacre), pricing frontal parity invasion out and making mismatch
+   engineering (pinning, striking far from the field army) the
+   attacker's game. Ex-ante uncertainty stays on the information axis
+   (fog / FG-⑦ estimate bands / M10), per D1 determinism.
 3. **Slice 3 — settlement (B3)**: territory/indemnity/vassalage conversion.
    When this touches the outcome contract, add winner-side 결전 casualties /
    a survivors block (spec §6 "casualties both sides" — user decision
