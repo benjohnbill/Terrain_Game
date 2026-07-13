@@ -62,16 +62,31 @@ This feature is that build.
 
 ## Slice ladder / next steps (2026-07-13, slice 1 landed)
 
-1. **Measurement pass** (next): author the scenario matrix and run the
-   battery over it. FIRST commit extends `runBattery`'s summary with an
-   `attackerWins` count + a per-side rout/annihilation split (spec §7
-   metric 5, the attacker-over-favor watch — user decision 2026-07-13);
-   in the same pass, split or rename `terrainFlips` (it currently counts
-   fortification flips too, while §7.3 defines the Myeongnyang-class metric
-   as "purely via 지형배수").
+1. **Measurement pass** — RAN 2026-07-13 (battery metric-5 extension +
+   2,880-scenario grid + defense-layer restoration probe,
+   `mockup/decisive-battle/probe-defense-layers.js`). §7 metrics 1–4 PASS
+   (field-army destruction 82.7% of decisive battles vs L2's zero; all
+   three branches; Myeongnyang-class terrain flips; pinned fronts fall).
+   Metric 5 first read: the 결전 is strongly attacker-favored
+   (98.5% conditional win), BUT the co-analysis decomposed this into
+   (a) grid under-manning (a manned shield repels — garrison 2000 at
+   pass+walls holds the grid's maximum attack), (b) two sealed defense
+   layers deliberately stubbed in slice 1 (M9 fill — FG-⑩ calls
+   field-army-only a strawman; defender commit — ADR 0021 fourth layer,
+   FG-⑧ stub). With all layers restored the picture normalizes to
+   repulse 71.9% / decisive-win 80.9% / field-army rout 39.5%: the
+   balance surface is the SHIELD GATE, not the 결전 — an attacker only
+   reaches the 결전 by pre-assembling ≥1.5× local superiority
+   (selection, not formula favoritism). Verdict pending user seal.
 2. **Slice 2 — opportunism bot (C1 / SPEC_GAP ①)**: the bot reads
    field-army reach/pinning off the board; the defender-choice wiring
-   (catalog Defense plan family) enters here.
+   (catalog Defense plan family) enters here. **Grill agenda (registered
+   2026-07-13, user):** distance-proportional march wear for BOTH sides
+   (hex-distance-scaled combat-power decay, replacing/subsuming the flat
+   ×0.75 rider) — generalizes ADR 0015's attack-side water tax to land
+   approach; must check double taxation against the supply system (M7
+   principle) and design against the real map geometry (terrain-cradle
+   mockup exists).
 3. **Slice 3 — settlement (B3)**: territory/indemnity/vassalage conversion.
    When this touches the outcome contract, add winner-side 결전 casualties /
    a survivors block (spec §6 "casualties both sides" — user decision
