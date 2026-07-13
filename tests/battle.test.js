@@ -52,3 +52,44 @@ test('branch FALL when the shield breaks but the field army cannot reach', () =>
   assert.equal(o.branch, 'FALL');              // R1 = 9000/500 = 18 ≥ 1.5, no reach
   assert.equal(o.shieldBreak, true);
 });
+
+test('DECISIVE: attacker overwhelms the arriving field army → defender routed, BLOCKED = 섬멸', () => {
+  const o = B.resolveEngagement({
+    attacker: { size: 6000, commit: 8 },                        // R1 = 9000/500 = 18, shield breaks
+    front: { garrison: 500, terrain: 'plains', fortification: 'none' },
+    fieldArmy: { reaches: true, size: 1000 }, escape: 'BLOCKED',
+  });
+  // attackerAfter ≈ 5987; attackPower2 ≈ 8981; defense2 = 1000 × 0.75 = 750; R2 ≈ 11.97 ≥ 1
+  assert.equal(o.branch, 'DECISIVE');
+  assert.equal(o.decisiveBattle.attackerWins, true);
+  assert.equal(o.decisiveBattle.routed, true);        // defender battle-loss ≥ 0.30
+  assert.equal(o.decisiveBattle.annihilated, true);   // BLOCKED rout = 섬멸
+  assert.equal(o.decisiveBattle.loserTotalLoss, 1);   // annihilation leaves nothing
+  assert.equal(o._attackerAfter, undefined);          // carry-field cleaned up
+});
+
+test('DECISIVE: a strong field army beats the worn attacker → attacker loses, not routed', () => {
+  const o = B.resolveEngagement({
+    attacker: { size: 1200, commit: 8 },                        // R1 = 1800/600 = 3, shield breaks
+    front: { garrison: 600, terrain: 'plains', fortification: 'none' },
+    fieldArmy: { reaches: true, size: 4000 }, escape: 'OPEN',
+  });
+  // attackerAfter ≈ 1169; attackPower2 ≈ 1753; defense2 = 3000; R2 ≈ 0.584 < 1
+  // attacker (loser) battle-loss = 0.12 / 0.584^1.4 ≈ 0.255 < 0.30 → not routed
+  assert.equal(o.decisiveBattle.attackerWins, false);
+  assert.equal(o.decisiveBattle.routed, false);
+  assert.ok(Math.abs(o.decisiveBattle.loserTotalLoss - 0.255) < 0.005); // below the cliff: total = battle loss
+});
+
+test('DECISIVE: an OPEN rout converts on the M4 scale — deeper defeat costs more than the cliff edge', () => {
+  const o = B.resolveEngagement({
+    attacker: { size: 2000, commit: 8 },                        // R1 = 3000/500 = 6, shield breaks
+    front: { garrison: 500, terrain: 'plains', fortification: 'none' },
+    fieldArmy: { reaches: true, size: 1600 }, escape: 'OPEN',
+  });
+  // attackerAfter ≈ 1980; attackPower2 ≈ 2971; defense2 = 1200; R2 ≈ 2.48
+  // loser battle-loss L ≈ 0.427 ≥ 0.30 → routed; OPEN total = L + 0.5×(1−L) ≈ 0.71 (a flat 0.65 would be wrong here)
+  assert.equal(o.decisiveBattle.routed, true);
+  assert.equal(o.decisiveBattle.annihilated, false);
+  assert.ok(o.decisiveBattle.loserTotalLoss > 0.65 && o.decisiveBattle.loserTotalLoss < 1);
+});

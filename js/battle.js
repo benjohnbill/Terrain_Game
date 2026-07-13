@@ -7,6 +7,9 @@ const LEVER_ANCHORS = [[0, 1.0], [4, 1.25], [8, 1.5], [14, 1.75], [20, 2.0]];   
 const CASUALTY_BASE = 0.12; // M4
 const CASUALTY_EXP  = 1.4;  // M4
 const SHIELD_BREAK_THRESHOLD = 1.5; // M7 Swift Seizure
+const FIELD_ARMY_MARCH_WORN = 0.75;   // user 2026-07-13
+const ROUT_FRAC = 0.30;               // M4 rout cliff
+const ROUT_OPEN_REMAINDER_LOSS = 0.5; // M4 escape OPEN — 50% of the remainder falls in the pursuit
 
 function terrainMultiplier(terrain) { return TERRAIN[terrain]; }
 function fortMultiplier(fort) { return FORT[fort]; }
@@ -49,8 +52,22 @@ function resolveEngagement(input) {
   if (R1 < SHIELD_BREAK_THRESHOLD) return { branch: 'REPULSED', shieldBreak: false, ...base };
   if (!fieldArmy.reaches)          return { branch: 'FALL',     shieldBreak: true,  ...base };
 
-  // DECISIVE branch — completed in Task 4
-  return { branch: 'DECISIVE', shieldBreak: true, ...base, _attackerAfter: attackerAfter };
+  // DECISIVE branch — attacker vs field army
+  const attackPower2  = attackerAfter * commitLever(attacker.commit);
+  const defensePower2 = fieldArmy.size * FIELD_ARMY_MARCH_WORN; // open field: no terrain/fort
+  const R2 = attackPower2 / defensePower2;
+  const c2 = casualtyFractions(R2);
+  const attackerWins = R2 >= 1;
+  const loserBattleLoss = attackerWins ? c2.defender : c2.attacker;
+  const routed = loserBattleLoss >= ROUT_FRAC;
+  const annihilated = routed && escape === 'BLOCKED';
+  const loserTotalLoss = !routed ? loserBattleLoss
+    : annihilated ? 1
+    : Math.min(1, loserBattleLoss + ROUT_OPEN_REMAINDER_LOSS * (1 - loserBattleLoss));
+  return {
+    branch: 'DECISIVE', shieldBreak: true, ...base,
+    decisiveBattle: { R2, attackerWins, routed, escape, annihilated, loserTotalLoss },
+  };
 }
 
 const _api = { terrainMultiplier, fortMultiplier, commitLever, shieldPower, casualtyFractions, resolveEngagement };
