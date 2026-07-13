@@ -11,20 +11,6 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
 
 ## Open
 
-- [ ] **Decisive-battle spine — vocabulary seal DEFERRED** (2026-07-13).
-  The war-model-build slice-1 design
-  (`docs/superpowers/specs/2026-07-13-decisive-battle-spine-design.md` §3;
-  plan `docs/superpowers/plans/2026-07-13-decisive-battle-spine.md`) DECIDED
-  the war-decision vocabulary (user-signed: adopt the sealed **방패** shield
-  system, NOT a new 요새선): **방패 깨기 / 결전** ❓PROPOSED→AGREED,
-  **캐스케이드→연쇄 붕괴** rename (구칭 alias), **야전군** new registration —
-  birthplace `docs/features/match-arc/GLOSSARY.md` + term-inventory patch.
-  Deferred until the slice is built & sealed (spec §3 plan; premature to
-  final-seal a name whose mechanic is unbuilt). **Meanwhile the spec is the
-  truth; match-arc GLOSSARY still shows 캐스케이드 / PROPOSED and does NOT yet
-  carry 야전군 — do not read the stale GLOSSARY as canonical for this slice.**
-  Pay in the slice-seal doc-sync.
-
 - [ ] **Crisis dial table — sweep + co-analysis: RAN, PARKED
   2026-07-13** (registered 2026-07-11; LANDED 2026-07-12
   `e5d5c58..25192cb`; co-analysis pass 2026-07-13 commit `d64d48c`,
@@ -436,6 +422,13 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
 
 ## Paid
 
+- [x] 2026-07-13 — **Decisive-battle spine vocabulary seal — PAID**
+  (registered 2026-07-13, deferred until the slice was built & sealed).
+  Slice 1 sealed at war-model-build `RULINGS.md` WM-① (same-session
+  doc-sync batch, this commit): 방패 깨기 / 결전 ❓PROPOSED→AGREED,
+  캐스케이드→연쇄 붕괴 rename (구칭 alias), 야전군 registered AGREED —
+  birthplace match-arc GLOSSARY + term-inventory patch + QUICKREF
+  regeneration.
 - [x] 2026-07-12 — **Rebellion-body grill branch — PAID** (registered
   2026-07-11, CE-⑫ rider). The pass ran 2026-07-11/12 night and sealed
   the full body: suppression resolution (CE-⑬), rebellion five points

@@ -1,10 +1,12 @@
 # War Model Build — Feature Index
 
 **Status:** OPENED 2026-07-13 (R14 war-decisiveness co-analysis). **Slice 1
-— decisive-battle spine calculator — LANDED 2026-07-13**: `js/battle.js` +
-`mockup/decisive-battle/battery.js` merged to main (6 commits, suite 305/305,
-whole-branch review clean). Measurement pass not yet run. L2 combat
-simulation retired (ADR 0037).
+— decisive-battle spine calculator — SEALED 2026-07-13 (`RULINGS.md`
+WM-①)**: `js/battle.js` + `mockup/decisive-battle/battery.js` merged to
+main (suite green); measurement pass ran (§7 metrics 1–4 pass, metric-5
+resolved by decomposition — see WM-①). Next = slice 2 design
+(opportunism bot + distance-wear/parity grill). L2 combat simulation
+retired (ADR 0037).
 
 **One-line.** The front door for building Terrain Game's war model in real
 game code (`js/`) — implementing the sealed sector-resolution combat the L2
@@ -46,6 +48,8 @@ This feature is that build.
 - `REQUIREMENTS.md` — the requirement checklist (A combat / B decision /
   C bots / D support), each row with birthplace + L2-gap + fizzle-contamination
   + build priority. **The spec skeleton.**
+- `RULINGS.md` — feature-local decision record (WM-① slice-1 seal:
+  verdicts, measurement first read, carried-open items).
 - **ADR 0037** — the decision to retire the L2 stage-machine and build the
   sealed war model; R14 re-diagnosis.
 - **DESIGN-RISKS R14** — the risk this feature closes.
@@ -77,7 +81,7 @@ This feature is that build.
    repulse 71.9% / decisive-win 80.9% / field-army rout 39.5%: the
    balance surface is the SHIELD GATE, not the 결전 — an attacker only
    reaches the 결전 by pre-assembling ≥1.5× local superiority
-   (selection, not formula favoritism). Verdict pending user seal.
+   (selection, not formula favoritism). **Sealed 2026-07-13 (WM-①).**
 2. **Slice 2 — opportunism bot (C1 / SPEC_GAP ①)**: the bot reads
    field-army reach/pinning off the board; the defender-choice wiring
    (catalog Defense plan family) enters here. **Grill agenda (registered

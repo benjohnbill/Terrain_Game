@@ -39,7 +39,7 @@ faithfully, carry it over.
 | # | Sealed requirement | Birthplace | L2 today | fizzle? | Build |
 |---|---|---|---|---|---|
 | A1 | **Defense is per-front-sector, four layers** composed as `garrison(substance) × defenseCommitment(lever) × terrain(mult) × fortification(mult)` | ADR 0022/0031; DOMAIN_MAP Sector defense layers; combat-formula FORMULA D6 | **per-front** aggregate `frontG = sectors×900` — flagged "ABSTRACTION to be replaced" | **YES** (uniformity is the measured freeze driver, +33% decided) | **P1** |
-| A2 | **Combat resolves atomically in its turn** — no operation-in-progress spans turns; long campaigns are emergent chains | ADR 0026 | multi-turn siege→field→cascade→capital conveyor accumulating `war.stalled` — **not sealed anywhere; contradicts ADR 0026** | **YES** (2-turn stall exit fires before the decisive battle) | **P1** |
+| A2 | **Combat resolves atomically in its turn** — no operation-in-progress spans turns; long campaigns are emergent chains | ADR 0026 | multi-turn siege→field→cascade→capital conveyor accumulating `war.stalled` — **not sealed anywhere; contradicts ADR 0026** | **YES** (2-turn stall exit fires before the decisive battle) | **P1 — slice 1 SEALED 2026-07-13** (atomic `resolveEngagement` chain, WM-①; map/front wiring slice 2+) |
 | A3 | Deterministic ratio core `R = attack ÷ defense`, no dice; all uncertainty is fog | combat-formula FORMULA D1/D5 | implemented (`resolve()`) | no | reuse |
 | A4 | **Categorical plan-vs-plan (roshambo) layer** required in the combat formula | ADR 0025 (must-eventually-exist) | plan *selection* exists; no categorical interaction layer | maybe | P2 |
 | A5 | Under-commit to a contested defense → **immediate front-sector loss** (deliberate sacrifice legitimate) | ADR 0021 | partial | maybe | P2 |
@@ -49,7 +49,7 @@ faithfully, carry it over.
 | # | Sealed requirement | Birthplace | L2 today | fizzle? | Build |
 |---|---|---|---|---|---|
 | B1 | **Match ends at the hegemony decision point** `trip = (leadership OR dominance) AND unassailable` (shield 1.7× + W=6, affordability-bounded) | ADR 0030/0033; match-arc DT-③, ⑨⑪ | faithfully implemented | **NO — works as sealed** | reuse |
-| B2 | **A war is decided by field-army destruction** — shield-break (crack fort line → expose field army) → decisive battle → cascade (victory lap) | SPEC:147; DOMAIN_MAP:657 (vocab ❓PROPOSED) | siege-first: the fort wall gates the field battle, so decisive battle rarely fires | YES (bound to A1/A2) | **P1** (+ grill the ❓PROPOSED wording) |
+| B2 | **A war is decided by field-army destruction** — shield-break (crack fort line → expose field army) → decisive battle → cascade (victory lap) | SPEC:147; DOMAIN_MAP:657 (vocab sealed 2026-07-13) | siege-first: the fort wall gates the field battle, so decisive battle rarely fires | YES (bound to A1/A2) | **P1 — slice 1 SEALED 2026-07-13** (three-branch spine, WM-①; vocab 방패 깨기/결전 AGREED, 캐스케이드→연쇄 붕괴, 야전군 등록) |
 | B3 | **Territory transfers by settlement acceptance arithmetic**, not sector grind (ladder 백지0/관대50/표준75/최대100; ×0.6 continued-war discount; sovereignty premium 0.25) | match-arc ⑧⑫⑬⑭⑯; DOMAIN_MAP Settlement | implemented, but rarely triggers (2.4/match) because wars don't decide upstream | downstream of B2 | reuse (unblocks when B2 does) |
 | B4 | **Rout cliff → escape state**: rout ≈ R 1.92; escape OPEN loses 50% of remainder, BLOCKED = annihilation | combat-formula FORMULA D10 | implemented | no | reuse |
 

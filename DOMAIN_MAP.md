@@ -656,14 +656,20 @@ rule)._
 - ✅ `Match arc` (매치 아크): the phase curve a match traverses — standoff →
   buildup → first war → realignment → deciding war → decision point →
   settlement.
-- ❓ `Shield-break` (방패 깨기): the opening operation of a war — reducing the
+- ✅ `Shield-break` (방패 깨기): the opening operation of a war — reducing the
   border fortification line that shields a realm's interior (erosion or bypass).
-  The pre-war mass ratio at the shield largely decides the war.
-- ❓ `Decisive battle` (결전): the field engagement that destroys the defender's
-  field army once the shield is open; after it, the interior cascades.
-- ❓ `Cascade` (캐스케이드): the post-decision sweep — ordinary sectors fall in
-  one-turn takes against garrison-only defense. The victory lap that makes
-  winning *felt*; ending grammar must not amputate it.
+  The pre-war mass ratio at the shield largely decides the war. (Sealed
+  2026-07-13, war-model-build WM-①; built in `js/battle.js`.)
+- ✅ `Decisive battle` (결전): the field engagement that destroys the defender's
+  field army once the shield is open; after it, the interior cascades. (Sealed
+  2026-07-13, WM-① — atomic same-turn sub-step, open-field by mode.)
+- ✅ `Field army` (야전군): a realm's one mobile main force, repositioning
+  reactively; its reach/pinning switches 결전 vs a front's fall. (Sealed
+  2026-07-13, WM-①; definition at match-arc GLOSSARY.)
+- ❓ `Cascade` (연쇄 붕괴 · 구칭 캐스케이드): the post-decision sweep — ordinary
+  sectors fall in one-turn takes against garrison-only defense. The victory lap
+  that makes winning *felt*; ending grammar must not amputate it. (Renamed
+  2026-07-13, WM-①; sweep mechanic itself is a later build slice.)
 - ✅ `Decision point` (결정점): the first moment the irreversibility check opens
   *settlement negotiation* — the system detects that no remaining realm or
   coalition can realistically overturn the balance (R arithmetic over remaining

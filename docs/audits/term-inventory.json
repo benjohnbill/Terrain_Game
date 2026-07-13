@@ -2220,10 +2220,12 @@
    "aliases": [],
    "birthplace": "docs/features/match-arc/GLOSSARY.md",
    "tier": 1,
-   "status": "PROPOSED",
+   "status": "AGREED",
    "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
+   "codeIdentifier": "shieldBreak",
+   "codeRefs": [
+    "js/battle.js"
+   ],
    "verdict": "justified-coinage",
    "verdictRef": "2026-07-10-terminology-audit.md"
   },
@@ -2233,17 +2235,36 @@
    "aliases": [],
    "birthplace": "docs/features/match-arc/GLOSSARY.md",
    "tier": 1,
-   "status": "PROPOSED",
+   "status": "AGREED",
    "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
+   "codeIdentifier": "decisiveBattle",
+   "codeRefs": [
+    "js/battle.js"
+   ],
    "verdict": "standard-match",
    "verdictRef": "2026-07-10-terminology-audit.md"
   },
   {
-   "canonical": "Cascade",
-   "korean": "캐스케이드",
+   "canonical": "Field army",
+   "korean": "야전군",
    "aliases": [],
+   "birthplace": "docs/features/match-arc/GLOSSARY.md",
+   "tier": 1,
+   "status": "AGREED",
+   "kind": "mechanism",
+   "codeIdentifier": "fieldArmy",
+   "codeRefs": [
+    "js/battle.js"
+   ],
+   "verdict": null,
+   "verdictRef": null
+  },
+  {
+   "canonical": "Cascade",
+   "korean": "연쇄 붕괴",
+   "aliases": [
+    "캐스케이드"
+   ],
    "birthplace": "docs/features/match-arc/GLOSSARY.md",
    "tier": 1,
    "status": "PROPOSED",

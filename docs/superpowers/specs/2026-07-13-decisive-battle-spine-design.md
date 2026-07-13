@@ -1,8 +1,8 @@
 # Decisive-Battle Spine — Build Slice 1 Design Spec
 
 - **Date:** 2026-07-13
-- **Status:** DRAFT (brainstorming design; awaiting user review → writing-plans)
-- **L-trust:** L0 (design reasoning) — to be measured L2 by the slice's own battery
+- **Status:** EXECUTED & SEALED (2026-07-13 — plan executed, merged to main; slice sealed at war-model-build `RULINGS.md` WM-①)
+- **L-trust:** L2 (2026-07-13 — battery grid + defense-layer restoration probe; first read recorded at WM-①)
 - **Feature:** `docs/features/war-model-build/` (INDEX; REQUIREMENTS A1/A2/B2/D7)
 - **Closes toward:** DESIGN-RISKS R14 (war produces no decisive climax);
   ADR 0037 (retire L2, build the sealed war model in `js/`)
