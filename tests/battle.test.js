@@ -17,3 +17,18 @@ test('commit lever interpolates linearly between M2 anchors', () => {
   assert.ok(Math.abs(B.commitLever(6) - 1.375) < 1e-9); // between 4→1.25 and 8→1.5
   assert.equal(B.commitLever(25), 2.0);                 // clamps at ceiling
 });
+
+test('shield power = garrison × terrain × fort (M5, defense commit baseline 1.0)', () => {
+  const s = B.shieldPower({ garrison: 1000, terrain: 'pass', fortification: 'walls' });
+  assert.ok(Math.abs(s - 3600) < 1e-9); // 1000 × 2.0 × 1.8
+});
+
+test('casualty fractions are symmetric on the M4 curve; rout onset ≈ 30% at R 1.92', () => {
+  const at1 = B.casualtyFractions(1.0);
+  assert.ok(Math.abs(at1.attacker - 0.12) < 1e-9);
+  assert.ok(Math.abs(at1.defender - 0.12) < 1e-9);
+  const r = B.casualtyFractions(1.92);
+  assert.ok(Math.abs(r.defender - 0.30) < 0.005); // 0.12 × 1.92^1.4 ≈ 0.299
+  assert.ok(r.attacker < r.defender);             // winner bleeds less
+  assert.equal(B.casualtyFractions(20).defender, 1); // clamped — blood never exceeds the body
+});
