@@ -109,7 +109,105 @@
     }
   }
 
-  window.IntelSystem = Object.freeze({
+  /* ── Detachment tracking (slice-2 spec §6, intel v2) ──────────────────────
+   * A mobile enemy detachment is a snapshot-then-decay entity (Aging
+   * constitution P3, consumed not re-legislated). Its record carries one
+   * contact clock feeding two derived views: a confidence scalar (drives the
+   * substance/fatigue estimate bands, above) and a raw turns-unobserved count
+   * (drives the reach cone). Contact narrows and resets; each unobserved turn
+   * re-widens and grows. Pure helpers: they return a fresh record, never mutate. */
+
+  // A record's confidence, or undefined when there is no prior contact (so the
+  // band/scout helpers fall back to their floor). One reader for both consumers.
+  function _confidenceOf(record) {
+    return record && typeof record.confidence === 'number' ? record.confidence : undefined;
+  }
+
+  // A sighting: fix the position, raise confidence (narrow the band), reset the
+  // clock. `prev` may be null (first contact) — confidence rises from the floor.
+  function observeDetachment(prev, fixKey) {
+    return { fixKey, confidence: applyScout(_confidenceOf(prev)), turnsUnobserved: 0 };
+  }
+
+  // One unobserved turn: the fix stays, confidence decays (the band re-widens),
+  // the clock advances (the cone grows). A null record stays null (untracked).
+  function ageDetachment(prev) {
+    if (!prev) return prev;
+    return {
+      fixKey: prev.fixKey,
+      confidence: decay(prev.confidence),
+      turnsUnobserved: (prev.turnsUnobserved | 0) + 1,
+    };
+  }
+
+  // A fogged scalar (fatigue or substance) read off a tracked detachment: a
+  // true-containing band whose width follows the record's contact clock. Fatigue
+  // joins substance as a fogged attribute purely by reusing the estimate band.
+  function detachmentBand(record, trueValue, seed) {
+    return estimateRange(trueValue, _confidenceOf(record), seed);
+  }
+
+  // Positional knowledge: the set of hexes the detachment could occupy now —
+  // every node within (turnsUnobserved × speed) graph steps of the last-seen
+  // fix. Graph-agnostic (caller passes a movement-built { nodes, adj }); speed
+  // is the caller's dial (movement owns it). Deterministic bounded BFS; radius
+  // 0 collapses to the fix alone. Sorted output so equal histories compare equal.
+  function reachCone(graph, fixKey, turnsUnobserved, speed) {
+    if (!graph || !graph.nodes.has(fixKey)) return [];
+    const radius = Math.max(0, turnsUnobserved | 0) * Math.max(0, speed | 0);
+    const dist = new Map([[fixKey, 0]]);
+    const queue = [fixKey];
+    for (let i = 0; i < queue.length; i++) {
+      const k = queue[i];
+      const d = dist.get(k);
+      if (d >= radius) continue;
+      for (const nk of graph.adj.get(k)) {
+        if (dist.has(nk)) continue;
+        dist.set(nk, d + 1);
+        queue.push(nk);
+      }
+    }
+    return [...dist.keys()].sort();
+  }
+
+  // Coarse heading from a movement vector; null when the origin is unknown.
+  function _headingOf(from, to) {
+    if (!from || !to) return null;
+    return { dq: Math.sign(to.q - from.q), dr: Math.sign(to.r - from.r) };
+  }
+
+  // Border alarm (봉수형): free, never-missed detection of any force ENTERING
+  // the defender's border zone. Reveals existence + heading only — never scale
+  // or state (deep strikes hide magnitude and posture, never existence). Fires
+  // on the crossing turn (outside → inside); a force appearing inside (no known
+  // origin) still fires, with an unknown heading. `movements` = [{ id, from, to }]
+  // with from/to as { q, r } (from may be null); isBorderZone(coord) → boolean.
+  //
+  // Implementation rulings (flagged OPEN for the wiring/magnitude pass — spec §6):
+  //  - The alarm carries existence + heading ONLY. Spec §6 floats a "~five-step
+  //    threat-ladder" 가안 for bandwidth; it is deliberately NOT built here,
+  //    because a threat magnitude would reveal scale and contradict the
+  //    hide-scale seal ("deep strikes hide scale and state"). Revisit only if a
+  //    coarse non-scale indicator is ever wanted.
+  //  - "Never misses" is a contract on isBorderZone: it must be an INCLUSIVE
+  //    frontier region (your side of the line), not a thin ring. Entry is judged
+  //    at turn endpoints (marchStep exposes the destination, not the path), so a
+  //    ring thinner than one turn's speed could be leapt without a `to` inside
+  //    it. An inclusive region cannot be — any turn ending at or past the
+  //    frontier ends `to`-inside. The tests model the region form (q ≥ threshold).
+  function borderAlarm(movements, isBorderZone) {
+    const alarms = [];
+    for (const m of movements || []) {
+      const entered = !!m.to && isBorderZone(m.to);
+      const wasInside = !!m.from && isBorderZone(m.from);
+      if (entered && !wasInside) {
+        alarms.push({ id: m.id, exists: true, heading: _headingOf(m.from, m.to) });
+      }
+    }
+    return alarms;
+  }
+
+  const IntelSystem = Object.freeze({
     UNCERTAINTY_THRESHOLD,
     RELIABLE_THRESHOLD,
     SCOUT_GAIN,
@@ -124,6 +222,14 @@
     maintainConfidence,
     hexSeed,
     estimateRange,
-    magnitudeBucket
+    magnitudeBucket,
+    observeDetachment,
+    ageDetachment,
+    detachmentBand,
+    reachCone,
+    borderAlarm,
   });
+
+  if (typeof window !== 'undefined') window.IntelSystem = IntelSystem;
+  if (typeof module !== 'undefined' && module.exports) module.exports = IntelSystem;
 })();
