@@ -3612,6 +3612,126 @@
    "codeRefs": [],
    "verdict": null,
    "verdictRef": null
+  },
+  {
+   "canonical": "Fatigue",
+   "korean": "피로도",
+   "aliases": [],
+   "birthplace": "docs/features/war-model-build/GLOSSARY.md",
+   "tier": 1,
+   "status": "AGREED",
+   "kind": "mechanism",
+   "codeIdentifier": null,
+   "codeRefs": [],
+   "verdict": null,
+   "verdictRef": null
+  },
+  {
+   "canonical": "Fatigue ledger",
+   "korean": "원장",
+   "aliases": [],
+   "birthplace": "docs/features/war-model-build/GLOSSARY.md",
+   "tier": 1,
+   "status": "AGREED",
+   "kind": "mechanism",
+   "codeIdentifier": null,
+   "codeRefs": [],
+   "verdict": null,
+   "verdictRef": null
+  },
+  {
+   "canonical": "Forced march",
+   "korean": "강행군",
+   "aliases": [],
+   "birthplace": "docs/features/war-model-build/GLOSSARY.md",
+   "tier": 1,
+   "status": "AGREED",
+   "kind": "mechanism",
+   "codeIdentifier": null,
+   "codeRefs": [],
+   "verdict": null,
+   "verdictRef": null
+  },
+  {
+   "canonical": "Reach cone",
+   "korean": "도달 원뿔",
+   "aliases": [],
+   "birthplace": "docs/features/war-model-build/GLOSSARY.md",
+   "tier": 1,
+   "status": "AGREED",
+   "kind": "mechanism",
+   "codeIdentifier": null,
+   "codeRefs": [],
+   "verdict": null,
+   "verdictRef": null
+  },
+  {
+   "canonical": "Border alarm",
+   "korean": "국경 경보",
+   "aliases": [
+    "봉수형",
+    "봉수"
+   ],
+   "birthplace": "docs/features/war-model-build/GLOSSARY.md",
+   "tier": 1,
+   "status": "AGREED",
+   "kind": "mechanism",
+   "codeIdentifier": null,
+   "codeRefs": [],
+   "verdict": null,
+   "verdictRef": null
+  },
+  {
+   "canonical": "Commit budget",
+   "korean": "커밋 예산",
+   "aliases": [],
+   "birthplace": "docs/features/war-model-build/GLOSSARY.md",
+   "tier": 1,
+   "status": "AGREED",
+   "kind": "mechanism",
+   "codeIdentifier": null,
+   "codeRefs": [],
+   "verdict": null,
+   "verdictRef": null
+  },
+  {
+   "canonical": "Window",
+   "korean": "창",
+   "aliases": [],
+   "birthplace": "docs/features/war-model-build/GLOSSARY.md",
+   "tier": 1,
+   "status": "AGREED",
+   "kind": "mechanism",
+   "codeIdentifier": null,
+   "codeRefs": [],
+   "verdict": null,
+   "verdictRef": null
+  },
+  {
+   "canonical": "Dark market",
+   "korean": "깜깜이 시장",
+   "aliases": [],
+   "birthplace": "docs/features/war-model-build/GLOSSARY.md",
+   "tier": 1,
+   "status": "AGREED",
+   "kind": "meta",
+   "codeIdentifier": null,
+   "codeRefs": [],
+   "verdict": null,
+   "verdictRef": null
+  },
+  {
+   "canonical": "Present / predictive reconnaissance",
+   "korean": "현재적/미래적 정찰",
+   "aliases": [],
+   "birthplace": "docs/features/war-model-build/GLOSSARY.md",
+   "tier": 1,
+   "status": "PROPOSED",
+   "kind": "mechanism",
+   "codeIdentifier": null,
+   "codeRefs": [],
+   "verdict": null,
+   "verdictRef": null
   }
  ]
 }

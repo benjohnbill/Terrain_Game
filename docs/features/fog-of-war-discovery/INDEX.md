@@ -9,7 +9,15 @@ Challenge/terrain-fog work is deferred.
 
 ## Idea
 
-Limit information at game start (Civilization / StarCraft style): players know
+**Superseded 2026-07-14 (user): geography is public from turn 0; only the
+mutable layer (substance, fatigue, army positions, posture) is fogged — see
+slice-2 spec §6
+(`docs/superpowers/specs/2026-07-14-slice2-operational-layer-design.md`).
+The map-discovery half of the idea below is retired; the
+information-gathering stakes survive on the mutable layer.**
+
+*(Original idea, retained for the record)* Limit information at game start
+(Civilization / StarCraft style): players know
 the opponent count and ratio but must reveal the map themselves. Spawn positions
 are not fixed, so opponents' starting locations are unknown. Early uncertainty
 makes information-gathering (scouting) a high-stakes skill and makes terrain

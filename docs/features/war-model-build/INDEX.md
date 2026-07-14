@@ -4,9 +4,14 @@
 — decisive-battle spine calculator — SEALED 2026-07-13 (`RULINGS.md`
 WM-①)**: `js/battle.js` + `mockup/decisive-battle/battery.js` merged to
 main (suite green); measurement pass ran (§7 metrics 1–4 pass, metric-5
-resolved by decomposition — see WM-①). Next = slice 2 design
-(opportunism bot + distance-wear/parity grill). L2 combat simulation
-retired (ADR 0037).
+resolved by decomposition — see WM-①). **Slice 2 — operational-layer
+design — DESIGN SEALED 2026-07-14 (`RULINGS.md` WM-②)**: fatigue system,
+movement contract, field-army free division + commit budget, war-ending
+composite (ADR 0038), information ladder, opportunism read (C1),
+defense-selection wiring, bot exit (C2) — authoritative text:
+`docs/superpowers/specs/2026-07-14-slice2-operational-layer-design.md`.
+Next = slice 2 implementation session (TDD plan first). L2 combat
+simulation retired (ADR 0037).
 
 **One-line.** The front door for building Terrain Game's war model in real
 game code (`js/`) — implementing the sealed sector-resolution combat the L2
@@ -48,8 +53,12 @@ This feature is that build.
 - `REQUIREMENTS.md` — the requirement checklist (A combat / B decision /
   C bots / D support), each row with birthplace + L2-gap + fizzle-contamination
   + build priority. **The spec skeleton.**
-- `RULINGS.md` — feature-local decision record (WM-① slice-1 seal:
-  verdicts, measurement first read, carried-open items).
+- `RULINGS.md` — feature-local decision record (WM-① slice-1 seal;
+  WM-② slice-2 design seal: verdicts, rejected alternatives, carried-open
+  items).
+- `GLOSSARY.md` — Tier-1 vocabulary born in this feature (fatigue, ledgers,
+  forced march, reach cone, border alarm, commit budget, window, dark
+  market, two-recon taxonomy).
 - **ADR 0037** — the decision to retire the L2 stage-machine and build the
   sealed war model; R14 re-diagnosis.
 - **DESIGN-RISKS R14** — the risk this feature closes.
@@ -82,24 +91,16 @@ This feature is that build.
    balance surface is the SHIELD GATE, not the 결전 — an attacker only
    reaches the 결전 by pre-assembling ≥1.5× local superiority
    (selection, not formula favoritism). **Sealed 2026-07-13 (WM-①).**
-2. **Slice 2 — opportunism bot (C1 / SPEC_GAP ①)**: the bot reads
-   field-army reach/pinning off the board; the defender-choice wiring
-   (catalog Defense plan family) enters here. **Grill agenda (registered
-   2026-07-13, user):** distance-proportional march wear for BOTH sides
-   (hex-distance-scaled combat-power decay, replacing/subsuming the flat
-   ×0.75 rider) — generalizes ADR 0015's attack-side water tax to land
-   approach; must check double taxation against the supply system (M7
-   principle) and design against the real map geometry (terrain-cradle
-   mockup exists). **Parity-surface question (user co-analysis
-   2026-07-13):** the wear-curve shape decides the equal-mass 결전
-   grammar — landed rules give the attacker the parity win (lever ×
-   defender-only wear ≈ ×1.9 effective); symmetric distance wear +
-   defender commit flips parity deterministically to the defender
-   (a bloody repulse ~13–19% loss, far under the M4 rout cliff — not a
-   massacre), pricing frontal parity invasion out and making mismatch
-   engineering (pinning, striking far from the field army) the
-   attacker's game. Ex-ante uncertainty stays on the information axis
-   (fog / FG-⑦ estimate bands / M10), per D1 determinism.
+2. **Slice 2 — operational layer (C1/C2 + fatigue/movement/information)**:
+   **DESIGN SEALED 2026-07-14 (WM-②)** — grill session closed all four
+   agenda items plus the emergent decisions (fatigue two-ledger system,
+   movement contract + forced march, field-army free division + commit
+   budget, war-ending composite → ADR 0038, information ladder + channel
+   verdicts, opportunism-read window arithmetic, defense 2+2 wiring,
+   read-driven bot exit). Authoritative:
+   `docs/superpowers/specs/2026-07-14-slice2-operational-layer-design.md`.
+   **Next: implementation session** (TDD plan from the spec; measurement
+   per spec §11 with layer-restoration knobs).
 3. **Slice 3 — settlement (B3)**: territory/indemnity/vassalage conversion.
    When this touches the outcome contract, add winner-side 결전 casualties /
    a survivors block (spec §6 "casualties both sides" — user decision
@@ -115,10 +116,14 @@ This feature is that build.
 
 ## Open questions (remaining)
 
-1. **The opportunism read (C1)** — how a bot reads a pinned rival's exposed
-   front and commits; the load-bearing undesigned piece (slice 2's design
-   session).
-2. **Where the crisis re-enters** — as a lean turn-30 backstop (AB-③
+1. **Slice 2 implementation** — TDD plan authored from the sealed spec,
+   then the build + measurement pass (spec §11).
+2. **Registered follow-up passes** (see SYNC-DEBT): catalog
+   altitude-reclassification grill (incl. present/predictive
+   reconnaissance plan cards); commit-curve grading session; HCLM and
+   three-altitude promotion proposals (Tier-3, user); stationary-recovery
+   HELD dial; SPEC B2 amendment text awaiting user approval.
+3. **Where the crisis re-enters** — as a lean turn-30 backstop (AB-③
    sudden-death framing) once decisive war is the default.
 
 _Resolved 2026-07-13 (slice 1): "what first, on which stack" → this slice

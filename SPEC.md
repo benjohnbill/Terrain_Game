@@ -144,8 +144,10 @@ not a design guarantee: the design does not script a higher 중원 win rate;
 whoever *digests* the center stably earns a hegemony-probability premium
 (terrain-cradle TC-②). A match arcs standoff → buildup → first war → realignment → deciding
 war → decision point → settlement, budgeted so one player's hand fights ~2-3
-wars. A war is decided by field-army destruction (shield-break → decisive battle
-→ cascade) and converted to gains through settlement rather than
+wars. A war is decided when the loser's capacity or will to resist breaks —
+field-army destruction (shield-break → decisive battle → cascade) as the
+dominant path, capital fall (regime event), or settlement acceptance
+(ADR 0038) — and converted to gains through settlement rather than
 sector-by-sector conquest; the match ends when a hegemony settlement is
 concluded, not at 100% map control. The sealed model and vocabulary live in
 `docs/features/match-arc/` and `DOMAIN_MAP.md` (Match Arc and Settlement).

@@ -124,7 +124,11 @@ both via scouting; reactive is v1, anticipatory is the later overlay).
   non-scouting defender," the same discipline as the passive-defender
   limit.
 
-## FG-⑥ Reserve destination = argmax(deficit × value); whole-realm value for v1 — SEALED 2026-07-09, L0; (a) deferred
+## FG-⑥ Reserve destination = argmax(deficit × value); whole-realm value for v1 — SEALED 2026-07-09, L0; (a) deferred; amended by slice-2 spec §4 (2026-07-14)
+
+*Amendment delta (2026-07-14): the field army is freely divisible (WM-②),
+so the destination read applies per detachment, not to one indivisible
+reserve.*
 
 **Ruling**: the reserve goes to the front maximizing **deficit × value**,
 reusing the sealed **ADR 0019** relational-threat aggregation (guardrail
@@ -175,7 +179,12 @@ bare-plains with equal garrison look equally defended) — that is the bug
 U4 fixes. λ/confidence are swept harness params (TP④). A **targeted
 `pickTarget` change, not a rewrite**; archetype target preferences stay.
 
-## FG-⑧ Commit-scarcity axis kept OFF for the pass — SEALED 2026-07-09, L0 (scope)
+## FG-⑧ Commit-scarcity axis kept OFF for the pass — SEALED 2026-07-09, L0 (scope); amended by slice-2 spec §4 (2026-07-14)
+
+*Amendment delta (2026-07-14): the axis is UNLOCKED — the commit-budget
+definition (WM-②) makes commit a per-turn realm budget across all uses;
+the build implements it, and this scope-OFF applies only to the retired
+L2 harness.*
 
 **Ruling**: the **defenseCommitment** court-attention pool (M2/ADR-0022 —
 a scarce 20-pt budget distributed across engagements) is **dormant** in
@@ -213,7 +222,11 @@ result is only interpretable as a **delta off (최소)**. (최소) is also a
 cheap **gate**: if the reactive reserve alone re-freezes, pivot before
 building (정교).
 
-## FG-⑩ Reserve mass — field army (operational) + M9 (tactical fill), both, M9 swept — SEALED 2026-07-09, L0; amends FG-⑤
+## FG-⑩ Reserve mass — field army (operational) + M9 (tactical fill), both, M9 swept — SEALED 2026-07-09, L0; amends FG-⑤; amended by slice-2 spec §2/§4 (2026-07-14)
+
+*Amendment delta (2026-07-14): rider (ii)'s flat ×0.75 forced-march dial
+is retired, subsumed as a midpoint of the fatigue conversion curve
+(WM-②); the field-army layer is per-detachment under free division.*
 
 **Ruling**: the (최소) reactive reserve is TWO layers, both included:
 

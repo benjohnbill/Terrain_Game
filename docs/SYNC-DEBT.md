@@ -11,6 +11,32 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
 
 ## Open
 
+- [ ] **Catalog altitude-reclassification pass — registered** (2026-07-14,
+  WM-②). Dedicated grill: stamp all 12 operation plans with their altitude
+  (contact method / board verb / information·recovery verb), seat contact
+  methods in the calculator's categorical socket (A4), author the
+  present/predictive reconnaissance plan cards, and supersede the old
+  "tactics sequenced = strategy" frame by ADR. Slice 2 performed only the
+  minimal 2+2 defense split (spec §8).
+
+- [ ] **Commit-curve grading session — registered** (2026-07-14, WM-②).
+  M2 slope/max re-cut is out of slice 2 entirely; slice-2 battery carries a
+  descriptive sweep only (spec §11). Decision in its own session, evidence
+  first.
+
+- [ ] **HCLM → SPEC Core Principles promotion — PROPOSED (Tier-3, user)**
+  (2026-07-14). "High Complexity, Low Micromanagement" as the UX corollary
+  of one-judgment (spec §3). User decides at a doc-sync.
+
+- [ ] **Three-altitude reading → DESIGN promotion — PROPOSED (Tier-3,
+  user)** (2026-07-14). Tactics / operational art / strategy as nested time
+  scopes (spec §0). User decides at a doc-sync.
+
+- [ ] **Stationary requirement for fatigue recovery — HELD dial**
+  (2026-07-14, WM-②). Whether recovery requires not moving/fighting that
+  turn, beyond the supply coupling (spec §2). Revisit at the magnitude pass
+  or measurement.
+
 - [ ] **Crisis dial table — sweep + co-analysis: RAN, PARKED
   2026-07-13** (registered 2026-07-11; LANDED 2026-07-12
   `e5d5c58..25192cb`; co-analysis pass 2026-07-13 commit `d64d48c`,
@@ -421,6 +447,11 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   revisit if it occurs (emergence-limit).**
 
 ## Paid
+
+- [x] 2026-07-14 — **SPEC B2 amendment — PAID** (user approved same day).
+  "A war is decided when the loser's capacity or will to resist breaks"
+  composite applied at SPEC:147 with the ADR 0038 pointer; registered and
+  paid within the slice-2 batch.
 
 - [x] 2026-07-13 — **Decisive-battle spine vocabulary seal — PAID**
   (registered 2026-07-13, deferred until the slice was built & sealed).

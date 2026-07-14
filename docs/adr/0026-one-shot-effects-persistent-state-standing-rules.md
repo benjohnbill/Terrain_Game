@@ -2,7 +2,12 @@
 
 Date: 2026-07-02
 
-Status: Accepted
+Status: Accepted — Amended by slice-2 design spec §2 (2026-07-14): the D4
+supply-starvation standing rule's staged severity (holding → attack-incapable
+→ defenseless) is superseded — starvation is realized on the fatigue supply
+ledger as recovery lock + a continuous, convexly accelerating substance-loss
+conversion. Substance only: no capability stages — combat incapacity emerges
+from shrinking substance, and continuation choices stay with the player.
 
 ## Context
 
