@@ -25,6 +25,17 @@ function battleAccrual(ownCasualtyFraction) {
   return BATTLE_FATIGUE_COEF * ownCasualtyFraction;
 }
 
+/* Forced-march wiring (ticket 02): extra hexes beyond speed S wear at the
+   premium rate; normal hexes on the same order stay at marchAccrual. The
+   wallet is the gauge itself — no third resource, no combat penalty. */
+function forcedMarchAccrual(extraHexes) {
+  return MARCH_ACCRUAL_PER_HEX * FORCED_MARCH_PREMIUM * extraHexes;
+}
+
+function forcedMarchExtraHexCap() {
+  return FORCED_MARCH_EXTRA_HEX_CAP;
+}
+
 /* wearLedger = the march/battle ledger (spec §1 "loses by its wear"). */
 function effectiveness(wearLedger) {
   const depth = Math.min(1, Math.max(0, wearLedger) / CONVERSION_TERMINAL_LEDGER);
@@ -70,6 +81,7 @@ function turnUpkeep(state, supplyLevel) {
 
 const _api = {
   marchAccrual, battleAccrual, effectiveness,
+  forcedMarchAccrual, forcedMarchExtraHexCap,
   supplyTick, starvationLossFraction, isStarving,
   recoveryPerTurn, turnUpkeep,
 };
