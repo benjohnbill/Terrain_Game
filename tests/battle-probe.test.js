@@ -5,15 +5,19 @@ const { resolveWith } = require('../mockup/decisive-battle/probe-defense-layers.
 
 test('probe with neutral knobs reproduces resolveEngagement exactly (drift guard)', () => {
   const neutral = { fillFactor: 0, defenderLever: false, marchWorn: 0.75 };
+  // The probe's neutral knob models a march-worn field army (0.75). Since ticket
+  // 03 retired the flat dial and made fatigue a per-side input, pass the same
+  // 0.75 as the field army's fatigue so the calculator and probe compare on
+  // equal footing (the drift guard is exact on R2).
   const scenarios = [
     { attacker: { size: 1000, commit: 8 }, front: { garrison: 1000, terrain: 'pass', fortification: 'none' },
-      fieldArmy: { reaches: true, size: 800 }, escape: 'OPEN' },
+      fieldArmy: { reaches: true, size: 800, fatigue: 0.75 }, escape: 'OPEN' },
     { attacker: { size: 6000, commit: 8 }, front: { garrison: 500, terrain: 'plains', fortification: 'none' },
-      fieldArmy: { reaches: true, size: 1000 }, escape: 'BLOCKED' },
+      fieldArmy: { reaches: true, size: 1000, fatigue: 0.75 }, escape: 'BLOCKED' },
     { attacker: { size: 2000, commit: 8 }, front: { garrison: 500, terrain: 'plains', fortification: 'none' },
-      fieldArmy: { reaches: true, size: 1600 }, escape: 'OPEN' },
+      fieldArmy: { reaches: true, size: 1600, fatigue: 0.75 }, escape: 'OPEN' },
     { attacker: { size: 1200, commit: 14 }, front: { garrison: 600, terrain: 'mountains', fortification: 'walls' },
-      fieldArmy: { reaches: true, size: 4000 }, escape: 'OPEN' },
+      fieldArmy: { reaches: true, size: 4000, fatigue: 0.75 }, escape: 'OPEN' },
   ];
   for (const sc of scenarios) {
     const expected = B.resolveEngagement(sc);

@@ -15,10 +15,10 @@ test('battery aggregates branches, per-side routs, attacker wins, and terrain/fo
       fieldArmy: { reaches: false, size: 2000 }, escape: 'OPEN' },
     // 4) decisive annihilation: overwhelming attacker, BLOCKED escape → field army destroyed
     { attacker: { size: 6000, commit: 8 }, front: { garrison: 500, terrain: 'plains', fortification: 'none' },
-      fieldArmy: { reaches: true, size: 1000 }, escape: 'BLOCKED' },
+      fieldArmy: { reaches: true, size: 1000, fatigue: 0.75 }, escape: 'BLOCKED' },
     // 5) strong field army beats the worn attacker; attacker loss ≈ 0.255 < 0.30 → no rout
     { attacker: { size: 1200, commit: 8 }, front: { garrison: 600, terrain: 'plains', fortification: 'none' },
-      fieldArmy: { reaches: true, size: 4000 }, escape: 'OPEN' },
+      fieldArmy: { reaches: true, size: 4000, fatigue: 0.75 }, escape: 'OPEN' },
   ];
   const s = runBattery(scenarios);
   assert.equal(s.branchCounts.REPULSED, 2);
