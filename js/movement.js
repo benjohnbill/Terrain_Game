@@ -16,7 +16,7 @@ const SPEED_HEXES_PER_TURN = 3;
 /* Axial 6-neighborhood, pointy-top (same NB order as the map generator). */
 const NB = [[1, 0], [1, -1], [0, -1], [-1, 0], [-1, 1], [0, 1]];
 
-const F = (typeof module !== 'undefined' && module.exports)
+const Fatigue = (typeof module !== 'undefined' && module.exports)
   ? require('./fatigue.js')
   : window.Fatigue; // browser: fatigue.js must be loaded first
 
@@ -25,7 +25,8 @@ function hexKey(q, r) {
 }
 
 /* Passable universe from sector map units; adjacency lists sorted (q, then r)
-   so path tie-breaks are canonical, never insertion-order accidents. */
+   so path tie-breaks are spatially canonical — independent of the NB template
+   order, predictable from geometry alone. */
 function buildGraph(cradleMap) {
   const nodes = new Map();
   for (const s of Object.values(cradleMap.sectors)) {
@@ -82,14 +83,14 @@ function marchStep(graph, positionKey, destinationKey, opts = {}) {
   const path = shortestPath(graph, positionKey, destinationKey);
   if (!path) return null;
   const remaining = path.length - 1;
-  const cap = SPEED_HEXES_PER_TURN + (opts.forcedMarch ? F.forcedMarchExtraHexCap() : 0);
+  const cap = SPEED_HEXES_PER_TURN + (opts.forcedMarch ? Fatigue.forcedMarchExtraHexCap() : 0);
   const steps = Math.min(remaining, cap);
   const extraHexes = Math.max(0, steps - SPEED_HEXES_PER_TURN);
   return {
     position: path[steps],
     hexesEntered: steps,
     extraHexes,
-    wearAccrued: F.marchAccrual(steps - extraHexes) + F.forcedMarchAccrual(extraHexes),
+    wearAccrued: Fatigue.marchAccrual(steps - extraHexes) + Fatigue.forcedMarchAccrual(extraHexes),
     arrived: steps === remaining,
   };
 }
@@ -97,10 +98,12 @@ function marchStep(graph, positionKey, destinationKey, opts = {}) {
 /* Route-connectivity predicate: "is this force supplied?" — a path from the
    army to any friendly base through passable, controlled ground, feeding the
    ticket-01 supply pump. isFriendlyHex(key, node) is the caller's control
-   surface (sector control in the real game). Implementation ruling (flagged,
-   open for review): the START hex is exempt from the control test — the army
-   occupies the ground it stands on; every hex it draws THROUGH, the base
-   included, must be friendly. */
+   surface (sector control in the real game). Implementation rulings (flagged
+   OPEN in the ticket file for the magnitude pass / user): the START hex is
+   exempt from the control test for TRANSIT — the army occupies the ground it
+   stands on — but every hex it draws THROUGH must be friendly, and the base
+   is the source, so a base is a base only while friendly-held (standing on a
+   captured base is not supply). An unreachable base returns false. */
 function isSupplied(graph, positionKey, baseKeys, isFriendlyHex) {
   if (!graph.nodes.has(positionKey)) return false;
   const bases = new Set(baseKeys);

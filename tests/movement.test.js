@@ -19,6 +19,16 @@ function miniMap(sectorHexes) {
   return { sectors };
 }
 
+/* Three sectors in a west→east line; the mid corridor is the interdiction
+   target. Callers bring their own control set over {west, mid, east}. */
+function westMidEastGraph() {
+  return M.buildGraph(miniMap({
+    west: [[0, 0], [1, 0]],
+    mid: [[2, 0], [3, 0], [4, 0]],
+    east: [[5, 0], [6, 0]],
+  }));
+}
+
 test('buildGraph: every sector map unit is a node carrying its sector; hexes outside sectors do not exist', () => {
   const g = M.buildGraph(CRADLE_MAP);
   let unitCount = 0;
@@ -111,11 +121,7 @@ test('no new combat penalty anywhere in the forced-march path — arrival fatigu
 });
 
 test('supply predicate: flips when the corridor is cut, restores when reopened, feeds the ticket-01 pump', () => {
-  const g = M.buildGraph(miniMap({
-    west: [[0, 0], [1, 0]],
-    mid: [[2, 0], [3, 0], [4, 0]],
-    east: [[5, 0], [6, 0]],
-  }));
+  const g = westMidEastGraph();
   const army = '6,0', base = '0,0';
   const friendly = new Set(['west', 'mid', 'east']);
   const byControl = (key, node) => friendly.has(node.sectorId);
@@ -136,11 +142,7 @@ test('supply predicate: flips when the corridor is cut, restores when reopened, 
 });
 
 test('supply predicate edges: an army supplies from its own hex regardless of who owns it; any base suffices', () => {
-  const g = M.buildGraph(miniMap({
-    west: [[0, 0], [1, 0]],
-    mid: [[2, 0], [3, 0], [4, 0]],
-    east: [[5, 0], [6, 0]],
-  }));
+  const g = westMidEastGraph();
   const friendly = new Set(['west', 'mid']); // east is enemy ground — the army stands in it, contested
   const byControl = (key, node) => friendly.has(node.sectorId);
   assert.equal(M.isSupplied(g, '5,0', ['0,0'], byControl), true);  // start hex exempt: the army occupies it
@@ -149,6 +151,18 @@ test('supply predicate edges: an army supplies from its own hex regardless of wh
   assert.equal(M.isSupplied(g, '6,0', ['0,0', '5,0'], byControl), false); // an enemy-held base is no base
   friendly.add('east');
   assert.equal(M.isSupplied(g, '6,0', ['0,0', '5,0'], byControl), true);  // nearest reopened base suffices
+});
+
+test('supply predicate corner: the transit exemption does NOT extend to a base — a captured base under you is not supply', () => {
+  const g = westMidEastGraph();
+  // the army stands on its own base hex, but the sector has fallen to the enemy (contested).
+  // ruling (OPEN, ticket file): the exemption frees TRANSIT, never the source — a base
+  // supplies only while friendly-held, even the one the army is standing on.
+  const friendly = new Set(['mid', 'east']); // west (the base sector) is enemy-held
+  const byControl = (key, node) => friendly.has(node.sectorId);
+  assert.equal(M.isSupplied(g, '0,0', ['0,0'], byControl), false); // captured base under the army = no supply
+  friendly.add('west');                                            // retaken
+  assert.equal(M.isSupplied(g, '0,0', ['0,0'], byControl), true);  // now the source is friendly again
 });
 
 test('demo: an army marches across the real map and its gauge falls per the ticket-01 curve', () => {
@@ -174,14 +188,18 @@ test('demo: an army marches across the real map and its gauge falls per the tick
   assert.ok(prevEff < 1.0 && prevEff >= 0.5); // worn on arrival, never through the floor
 });
 
-test('shortestPath: deterministic — equal-length alternatives resolve identically every time', () => {
-  const hexes = [];
-  for (let q = 0; q <= 2; q++) for (let r = 0; r <= 2; r++) hexes.push([q, r]);
-  const g1 = M.buildGraph(miniMap({ a: hexes }));
-  const g2 = M.buildGraph(miniMap({ a: hexes }));
-  const p1 = M.shortestPath(g1, '0,0', '2,2');
-  const p2 = M.shortestPath(g2, '0,0', '2,2');
-  assert.ok(p1 && p1.length === 5); // axial distance 4 → 5 keys
-  assert.deepEqual(p1, p2);         // rebuilt graph, same answer
-  assert.deepEqual(p1, M.shortestPath(g1, '0,0', '2,2')); // repeated call, same answer
+test('shortestPath: deterministic — insertion order cannot change the chosen equal-length route', () => {
+  const forward = [];
+  for (let q = 0; q <= 2; q++) for (let r = 0; r <= 2; r++) forward.push([q, r]);
+  const reversed = [...forward].reverse();
+  // same geometry, OPPOSITE map-unit insertion order. The 3×3 diamond offers
+  // many equal-length routes '0,0'→'2,2'; the route must not depend on which
+  // order sectors and map units were fed in. Guards against a future buildGraph
+  // that constructs adjacency from an insertion-ordered walk.
+  const gF = M.buildGraph(miniMap({ a: forward }));
+  const gR = M.buildGraph(miniMap({ a: reversed }));
+  const pF = M.shortestPath(gF, '0,0', '2,2');
+  assert.ok(pF && pF.length === 5); // axial distance 4 → 5 keys
+  assert.deepEqual(pF, M.shortestPath(gR, '0,0', '2,2')); // insertion-order independent
+  assert.deepEqual(pF, M.shortestPath(gF, '0,0', '2,2')); // repeated call, same answer
 });
