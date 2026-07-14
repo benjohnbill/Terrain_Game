@@ -317,10 +317,6 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
 
 ## Deferred (user-decided 2026-07-06, A-4 B6 — revisit on trigger)
 
-- [ ] **`npm run docs:check` lint** (Codex P2, optional tooling):
-  grep-level checks — "amended" references without ADR stamp, quickref
-  older than newest seal date, duplicate term headers. **User deferred:
-  no generator yet; adopt when a misfile actually slips (YAGNI).**
 - [ ] **Working-layer sublabels** (Codex P2): distinguish staging
   verdicts / generated digests / planning scratch / risk register
   inside the Working layer. **User deferred: no misfiling observed —
@@ -328,6 +324,21 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
 
 ## Paid
 
+- [x] 2026-07-15 — **`npm run docs:check` lint (Codex P2) — SUPERSEDED
+  by audit-lint** (was Deferred 2026-07-06, A-4 B6). Not re-proposed —
+  closed. All three grep-level checks it proposed now ship in
+  `scripts/audit-lint.js` (landed 2026-07-10, `npm run lint:docs`,
+  hook-wired) under other names, verified against the code: "amended
+  references without ADR stamp" → `checkAdrStampDuty` (check 8);
+  "quickref older than newest seal date" → `checkFreshness` (check 6);
+  "duplicate term headers" → `duplicate-canonical` in
+  `checkBaselineSelf` (check 7). One honesty note on the third:
+  `docs:check` framed it as a grep over doc surfaces, while
+  `duplicate-canonical` catches a canonical registered twice in the
+  `term-inventory.json` baseline (law → registry → lint, S11) — same
+  intent, different mechanism, so the supersession holds. The other A-4
+  B6 Codex P2 — Working-layer sublabels — stays Deferred above.
+  (doc-structure map, ticket 05.)
 - [x] 2026-07-14 — **SPEC B2 amendment — PAID** (user approved same day).
   "A war is decided when the loser's capacity or will to resist breaks"
   composite applied at SPEC:147 with the ADR 0038 pointer; registered and
@@ -583,8 +594,10 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   L2 tournament / L3 playtest) codified into
   `.claude/rules/documentation-law.md` § seal mechanics: seals MAY carry
   an L-stamp; applied going forward, retrofit optional, not a fourth
-  mandatory field. The other two Codex P2s (`docs:check` lint,
-  Working-layer sublabels) were user-deferred — see Deferred above.
+  mandatory field. The other two Codex P2s were user-deferred at the
+  time; since then the `docs:check` lint was superseded by audit-lint
+  (see the 2026-07-15 row above), and Working-layer sublabels remain
+  deferred.
 - [x] 2026-07-06 — **Economy-legibility surface relocated (A-4 B6)** —
   moved from a doc-sync debt to `docs/DISPLAY-DEBT.md` (the display-debt
   register), where the whole UI-read family now parks. Design deferred

@@ -14,7 +14,8 @@ restate this law elsewhere. Auto-load carries LAW only; canon CONTENT
 | Projection (투영) | `DESIGN.md`, `DOMAIN_MAP.md` | Stable summaries of sealed truth (architecture / language). Updated only in doc-sync batches; truth is never authored here first. |
 | Record (기록) | `docs/adr/` (promoted) · feature `RULINGS.md` (birthplace) | Why decisions were made. ADR = architecture-grade / cross-feature; RULINGS = feature-local rulings that promote up when they outgrow the feature. Append-only + supersession protocol below. |
 | Production (생산) | `docs/features/<slug>/` | The workshop where truth is minted (with user seal). File roles below. |
-| Working (작업) | `mockup/*/NOTES.md`, `docs/superpowers/`, `docs/DESIGN-RISKS.md`, `docs/GLOSSARY-QUICKREF.md` (generated), tracked debt ledgers (`docs/SYNC-DEBT.md` doc-sync debts, `docs/DISPLAY-DEBT.md` UI-design debts), `docs/audits/` (audit baselines + dated reports), `.context/` (untracked handoffs) | Time-stamped records and idea banks — consult for context and parked/deferred ideas; CURRENT truth lives in the seal chain, not here. NOTES verdicts are a staging area: they must sync to Production/Projection in the same session's doc-sync batch. Debt ledgers are registers only — a row points to the mechanic's birthplace, never redefines it. `docs/audits/` baselines (term inventory, doc registry) are machine-readable indexes maintained per `docs/audits/HARVEST.md` (two-mode model); audit-lint findings are reports, never legislation. |
+| Working (작업) | `mockup/*/NOTES.md`, `docs/superpowers/`, `docs/DESIGN-RISKS.md`, `docs/GLOSSARY-QUICKREF.md` (generated), tracked debt ledgers (`docs/SYNC-DEBT.md` doc-sync debts, `docs/DISPLAY-DEBT.md` UI-design debts), `docs/audits/` (audit baselines + dated reports), `.context/` (untracked handoffs), `docs/agents/` (agent tooling config) | Time-stamped records and idea banks — consult for context and parked/deferred ideas; CURRENT truth lives in the seal chain, not here. NOTES verdicts are a staging area: they must sync to Production/Projection in the same session's doc-sync batch. Debt ledgers are registers only — a row points to the mechanic's birthplace, never redefines it. `docs/audits/` baselines (term inventory, doc registry) are machine-readable indexes maintained per `docs/audits/HARVEST.md` (two-mode model); audit-lint findings are reports, never legislation. `docs/agents/` is agent-tooling config (tracker location, triage vocabulary): it points at this law and never restates it. |
+| Law (법) | `AGENTS.md`, `CLAUDE.md`, `.claude/rules/documentation-law.md` | The rules agents execute. Changes only by explicit user decision. |
 | Sanctuary (성역) | `docs/teach/` | The user's own space. Agents do not touch it. |
 
 ### Production file roles (`docs/features/<slug>/`)
@@ -65,8 +66,9 @@ tournament / battery sheet · **L3** playtest (the test-trust ladder,
 `docs/features/match-arc/TEST-LADDER.md`). Applied going forward;
 retrofitting existing seals is optional, not required. A seal without an
 L-stamp is still a valid seal — the stamp adds legibility, it is not a
-fourth mandatory field. (Codex P2; the `docs:check` lint and
-Working-layer sublabels from the same audit stay deferred — see
+fourth mandatory field. (Codex P2. The `docs:check` lint from the same
+audit is superseded — its checks ship in `scripts/audit-lint.js` under
+other names; only the Working-layer sublabels stay deferred — see
 `docs/SYNC-DEBT.md`.)
 
 ## ADR supersession protocol
@@ -135,8 +137,9 @@ reason to enter it.
   any match; (c) exploration exemption — loose language is free
   during brainstorming/grilling; alignment fires when a statement
   heads to a seal. The mechanizable slice (exact alias/구칭 matching)
-  is promoted to hooks only after the audit lint validates it
-  (tracked in `docs/SYNC-DEBT.md`).
+  is mechanized by the `scripts/hooks/alias-inject.js` UserPromptSubmit
+  hook (live since 2026-07-10; advisory-only, never blocks — the
+  exploration-exemption judgment stays with the agent).
 - **Status dictionary**: DOMAIN_MAP `✅/❓/⛔` ≡ GLOSSARY
   `AGREED/PROPOSED/rejected-recorded`.
 - **Promotion**: a Tier-1 term is a promotion candidate once a second
@@ -183,5 +186,6 @@ these):
    sealed, renamed, or re-statused a term patches its
    `docs/audits/term-inventory.json` row in the same doc-sync batch
    (index fields only, per `docs/audits/HARVEST.md`); run the audit
-   lint once it lands (P1 prototype — tracked in `docs/SYNC-DEBT.md`).
+   lint (`npm run lint:docs` — `scripts/audit-lint.js`, landed
+   2026-07-10, also wired as the `write-lint.js` PostToolUse hook).
    Lint findings are reports, never legislation.
