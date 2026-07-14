@@ -83,6 +83,27 @@ test('conservation of tiredness: ledger × men is invariant across any split/mer
   assert.equal(tiredness(all, 'supply'), supplyBefore);
 });
 
+test('merge conserves tiredness across diverged detachments (up to float round-off)', () => {
+  // The realistic case: detachments that marched different distances (and so
+  // ran fatigue.js's convex curve to different depths) carry DIFFERENT wear, so
+  // the size-weighted average actually round-trips through divide-then-multiply
+  // — unlike the evenly-dividing merge above. Substance stays bit-exact;
+  // tiredness is invariant to within float epsilon (Σ(size × ledger) is
+  // conserved mathematically; the ~1e-12 round-off is not laundering).
+  const a = { size: 637, position: '0,0', fatigue: { wear: 6.7, supply: 2.3 } };
+  const b = { size: 363, position: '0,0', fatigue: { wear: 3.1, supply: 0.9 } };
+  const wearBefore = tiredness([a, b], 'wear');
+  const supplyBefore = tiredness([a, b], 'supply');
+
+  const m = FA.merge([a, b], '0,0');
+
+  assert.equal(m.size, 1000); // substance bit-exact
+  assert.ok(Math.abs(tiredness([m], 'wear') - wearBefore) < 1e-9,
+    `wear drift ${Math.abs(tiredness([m], 'wear') - wearBefore)}`);
+  assert.ok(Math.abs(tiredness([m], 'supply') - supplyBefore) < 1e-9,
+    `supply drift ${Math.abs(tiredness([m], 'supply') - supplyBefore)}`);
+});
+
 test('defeat in detail emerges from the sealed arithmetic — no special-case rule', () => {
   // Fresh & unlevered on both sides, so R reduces to the size ratio
   // (sidePower = substance when commit 0 / quality 1 / fatigue 1).

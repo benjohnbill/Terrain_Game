@@ -35,8 +35,10 @@ function split(army, weights) {
 
 /* Merge into one army at the given rendezvous position. Size adds; every
    fatigue ledger takes the size-weighted average, so Σ(size × ledger) is
-   preserved — a merge cannot launder tiredness. Ledger keys are read from the
-   first army, so this stays correct if the fatigue state grows a third ledger. */
+   conserved — a merge cannot launder tiredness. Substance is bit-exact (see
+   split's remainder piece); tiredness is conserved up to divide-then-multiply
+   float round-off (~1e-12, game-irrelevant, never laundering). Ledger keys come
+   from the first army so the weighted-average line isn't duplicated per key. */
 function merge(armies, position) {
   const size = armies.reduce((s, a) => s + a.size, 0);
   if (!(size > 0)) throw new Error('cannot merge an empty force');

@@ -25,19 +25,19 @@ function pool(perTurn) {
 /* Draw one or more simultaneous allocations from the pool. Returns the new pool
    and the amount spent; throws if the draw exceeds what remains — the budget is
    a hard ceiling, not a debt line. */
-function allocate(pool, amounts) {
+function allocate(state, amounts) {
   const spent = amounts.reduce((s, a) => s + a, 0);
   if (spent < 0) throw new Error('commit allocation cannot be negative');
-  if (spent > pool.remaining) {
-    throw new Error(`commit allocation ${spent} exceeds remaining ${pool.remaining}`);
+  if (spent > state.remaining) {
+    throw new Error(`commit allocation ${spent} exceeds remaining ${state.remaining}`);
   }
-  return { pool: { perTurn: pool.perTurn, remaining: pool.remaining - spent }, spent };
+  return { pool: { perTurn: state.perTurn, remaining: state.remaining - spent }, spent };
 }
 
 /* Start a new turn: the budget regenerates in full and any leftover is
-   discarded (non-bankable). */
-function renew(pool) {
-  return { perTurn: pool.perTurn, remaining: pool.perTurn };
+   discarded (non-bankable) — a fresh full pool. */
+function renew(state) {
+  return pool(state.perTurn);
 }
 
 const _api = { pool, allocate, renew };
