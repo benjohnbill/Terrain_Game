@@ -129,9 +129,17 @@ stepped/banded mapping was REJECTED (value discontinuities at region
 boundaries); **named regions are vocabulary and UI labels only** (the M7
 "toxic band" naming precedent) — the arithmetic never jumps.
 
-**Recovery — a child of supply:** no supply = zero recovery + starvation;
-steady supply **multiplies** recovery per turn (가안 curve). Whether recovery
-additionally requires being stationary is **HELD** (open dial, §12).
+**Recovery — a child of supply and ground:** no supply = zero recovery +
+starvation; steady supply **multiplies** recovery per turn (가안 curve). The
+ground gates recovery as well (slice-2 ticket 06 landing, 2026-07-15):
+scorched (ash) ground denies recovery even when supplied — recovery = supply ×
+ground-recovery factor, ash = 0 (`fatigue.turnUpkeep`'s recoveryFactor,
+`board-verbs.siegeUpkeep`; consonant with ADR 0014 — a burned province economy
+cannot rebuild its garrison). Ash grading is binary today; a partial-burn curve
+is a magnitude candidate (§12 dial sheet). The ground factor gates the
+wear/recovery ledger ONLY — never substance, so the two-ledger firewall holds
+(starvation stays supply-exclusive). Whether recovery additionally requires
+being stationary is **HELD** (open dial, §12).
 
 **Tax map (M7 refined this session): one event, one target, one tax.**
 March taxes approach (length); ADR 0015 crossing penalties tax the crossing

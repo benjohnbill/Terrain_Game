@@ -10,8 +10,16 @@ movement contract, field-army free division + commit budget, war-ending
 composite (ADR 0038), information ladder, opportunism read (C1),
 defense-selection wiring, bot exit (C2) — authoritative text:
 `docs/superpowers/specs/2026-07-14-slice2-operational-layer-design.md`.
-Next = slice 2 implementation session (TDD plan first). L2 combat
-simulation retired (ADR 0037).
+**Slice 2 implementation UNDERWAY (2026-07-15):** the sealed spec issued a
+10-ticket TDD plan (`.scratch/war-model-slice2/`); tickets **01–06 LANDED on
+main** — 01 fatigue core (`js/fatigue.js`), 02 movement + supply
+(`js/movement.js`), 03 engagement v2 (`js/battle.js`), 04 field-army
+division + commit budget (`js/field-army.js`, `js/commit.js`), 05 intel v2
+(`js/intel.js`), 06 board verbs + emergent siege (`js/board-verbs.js`). Each
+passed two-axis review; suite 372/372 green. Next = tickets 07–10
+(measurement grid, window read, bot exit, fizzle re-read); the doc-sync of
+the cross-slice §12 vocab/stamp batch stays deferred to slice close
+(SYNC-DEBT). L2 combat simulation retired (ADR 0037).
 
 **One-line.** The front door for building Terrain Game's war model in real
 game code (`js/`) — implementing the sealed sector-resolution combat the L2
@@ -99,8 +107,11 @@ This feature is that build.
    verdicts, opportunism-read window arithmetic, defense 2+2 wiring,
    read-driven bot exit). Authoritative:
    `docs/superpowers/specs/2026-07-14-slice2-operational-layer-design.md`.
-   **Next: implementation session** (TDD plan from the spec; measurement
-   per spec §11 with layer-restoration knobs).
+   **Implementation UNDERWAY (2026-07-15): tickets 01–06 landed on main**
+   (fatigue, movement+supply, engagement v2, division+commit budget, intel
+   v2, board verbs+emergent siege — each two-axis reviewed, 372/372 green);
+   next tickets 07–10 (measurement grid, window read, bot exit, fizzle
+   re-read; measurement per spec §11 with layer-restoration knobs).
 3. **Slice 3 — settlement (B3)**: territory/indemnity/vassalage conversion.
    When this touches the outcome contract, add winner-side 결전 casualties /
    a survivors block (spec §6 "casualties both sides" — user decision
@@ -116,8 +127,9 @@ This feature is that build.
 
 ## Open questions (remaining)
 
-1. **Slice 2 implementation** — TDD plan authored from the sealed spec,
-   then the build + measurement pass (spec §11).
+1. **Slice 2 implementation** — tickets 01–06 landed on main (2026-07-15);
+   remaining 07–10 (measurement grid, window read, bot exit, fizzle re-read),
+   then the measurement pass (spec §11).
 2. **Registered follow-up passes** (see SYNC-DEBT): catalog
    altitude-reclassification grill (incl. present/predictive
    reconnaissance plan cards); commit-curve grading session; HCLM and

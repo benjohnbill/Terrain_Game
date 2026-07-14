@@ -552,10 +552,13 @@ on any divergence the Production seal is truth (documentation-law conflict rule)
   effect axis` above; ongoing consequences belong to `Standing world rule`, not
   to the stamp re-applying (ADR 0024/0026; magnitudes → M-pass).
 - ✅ `Standing rules` (상비 규칙): the combat-layer name for `Standing world rule`
-  — per-turn world processes that read persistent state: starvation stages
-  (holding → attack-incapable → defenseless), garrison regeneration, recovery.
-  Starvation must outpace an unsupplied 2–3-sector advance (rates → M-pass;
-  ADR 0026).
+  — per-turn world processes that read persistent state: continuous starvation
+  (a supply-ledger pump whose sole output is convex substance loss — no stages,
+  no capability flips; the D4 staged severity holding→attack-incapable→defenseless
+  is superseded, war-model slice-2 §2), garrison regeneration, recovery (gated by
+  supply and ground — scorched ground denies it). Starvation must outpace an
+  unsupplied 2–3-sector advance (rates → M-pass; ADR 0026; the emergent siege is
+  this pump, war-model slice-2 ticket 06).
 - ✅ `Forecast` (예보) / `Recommendation` (추천) / `Preset pin` (프리셋 핀): the
   same computation run on fog. Forecast = R band + expected losses + escape-state
   line on fogged inputs; recommendation = the formula inverted (threshold →
