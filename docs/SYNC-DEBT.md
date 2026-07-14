@@ -11,6 +11,16 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
 
 ## Open
 
+- [ ] **Field-army division-doctrine stamp — registered** (2026-07-15,
+  slice-2 ticket 04 landed division/merge in code — merge 1950b36). Spec §12
+  owed, now actioned by the code landing: amend the match-arc GLOSSARY 야전군
+  row to free division/merge (retire "one at a time" → 구칭 alias) and refresh
+  DOMAIN_MAP L666 ("one mobile main force" → freely divisible). Plus record the
+  merge float-conservation implementation ruling (substance bit-exact;
+  tiredness invariant up to ~1e-12 divide-then-multiply round-off, not
+  laundering) at war-model-build RULINGS. Deferred to next doc-sync batch
+  (user, 2026-07-15).
+
 - [ ] **Catalog altitude-reclassification pass — registered** (2026-07-14,
   WM-②). Dedicated grill: stamp all 12 operation plans with their altitude
   (contact method / board verb / information·recovery verb), seat contact
