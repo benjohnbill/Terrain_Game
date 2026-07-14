@@ -47,6 +47,18 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   turn, beyond the supply coupling (spec §2). Revisit at the magnitude pass
   or measurement.
 
+- [ ] **§2 recovery model — ground/ash gate note — registered** (2026-07-15,
+  slice-2 ticket 06 landed board verbs + emergent siege). Spec §2 states
+  recovery is "a child of supply" only; the code adds a ground factor —
+  ash (scorched ground) denies wear recovery even when supplied
+  (`fatigue.turnUpkeep`'s recoveryFactor, `board-verbs.siegeUpkeep`),
+  authorized by ticket 06 L25 and consonant with ADR 0014 (a burned
+  province economy cannot sustain/rebuild its garrison). The §2 firewall
+  holds — the ground gates the wear ledger ONLY, never substance. Owed: a
+  §2 sync note that recovery = supply × ground-recovery factor, and a dial
+  row for ash-recovery grading (binary 0 today; partial-burn curve is a
+  magnitude candidate). Deferred to next doc-sync batch.
+
 - [ ] **Crisis dial table — sweep + co-analysis: RAN, PARKED
   2026-07-13** (registered 2026-07-11; LANDED 2026-07-12
   `e5d5c58..25192cb`; co-analysis pass 2026-07-13 commit `d64d48c`,
