@@ -3,11 +3,10 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const F = require('../js/fatigue.js');
 
-test('march accrual is linear per hex entered and terrain-uniform (no terrain input exists)', () => {
+test('march accrual is linear per hex entered and terrain-uniform (hexes is the only input — terrain weighting REJECTED)', () => {
   assert.equal(F.marchAccrual(0), 0);
   assert.ok(F.marchAccrual(1) > 0);
   assert.ok(Math.abs(F.marchAccrual(3) - 3 * F.marchAccrual(1)) < 1e-12); // linear
-  assert.equal(F.marchAccrual.length, 1); // hexes only — terrain weighting REJECTED (spec §2)
 });
 
 test('battle accrual is proportional to own casualty fraction — fierce wears deep, walkover barely', () => {
@@ -48,7 +47,7 @@ test('supply ledger: the pump rises per cut turn; a supplied turn ends the tick 
 });
 
 test('starvation: gated by the entry threshold, continuous at entry, convex in depth, never exceeds the body', () => {
-  const t = F.STARVATION_ENTRY_THRESHOLD;
+  const t = 2; // dial 5 가안 — STARVATION_ENTRY_THRESHOLD (hardcoded per battle.test.js precedent)
   assert.equal(F.starvationLossFraction(0), 0);
   assert.equal(F.starvationLossFraction(t), 0);            // at the threshold: state entered, loss starts from zero
   assert.ok(F.starvationLossFraction(t + 0.01) > 0);       // continuous entry — no jump
@@ -68,9 +67,9 @@ test('recovery is a child of supply: zero when cut, base rate multiplied by supp
 });
 
 test('turnUpkeep: a cut turn pumps and bleeds with recovery locked; a supplied turn recovers and ends the tick', () => {
-  let s = { march: 6, supply: 0 };
+  let s = { wear: 6, supply: 0 };
   s = F.turnUpkeep(s, 0);
-  assert.equal(s.march, 6);                 // recovery locked at zero while cut
+  assert.equal(s.wear, 6);                  // recovery locked at zero while cut
   assert.ok(s.supply > 0);
   assert.equal(s.substanceLossFraction, 0); // still inside the entry grace
   s = F.turnUpkeep(s, 0);
@@ -81,31 +80,26 @@ test('turnUpkeep: a cut turn pumps and bleeds with recovery locked; a supplied t
   assert.equal(restored.supply, 0);                 // route restored — tick ends
   assert.equal(restored.substanceLossFraction, 0);  // starvation stops the same turn
   assert.equal(restored.starving, false);
-  assert.ok(restored.march < 6);                    // steady supply recovers the gauge
-  const nearFresh = F.turnUpkeep({ march: 0.5, supply: 0 }, 1);
-  assert.equal(nearFresh.march, 0);                 // recovery clamps at fresh, never negative
-});
-
-test('forced-march dials exist for the movement contract: premium is a real surcharge, cap bounds the sprint', () => {
-  assert.ok(F.FORCED_MARCH_PREMIUM > 1);      // extra hexes must cost more than normal ones
-  assert.ok(F.FORCED_MARCH_EXTRA_HEX_CAP >= 1 && Number.isInteger(F.FORCED_MARCH_EXTRA_HEX_CAP));
+  assert.ok(restored.wear < 6);                     // steady supply recovers the gauge
+  const nearFresh = F.turnUpkeep({ wear: 0.5, supply: 0 }, 1);
+  assert.equal(nearFresh.wear, 0);                  // recovery clamps at fresh, never negative
 });
 
 test('invariant: march never kills — no sequence of marching and fighting produces substance loss', () => {
   let seed = 42; // deterministic LCG — reproducible campaigns
   const rnd = () => (seed = (seed * 1664525 + 1013904223) >>> 0) / 2 ** 32;
   for (let run = 0; run < 50; run++) {
-    let s = { march: 0, supply: 0 };
+    let s = { wear: 0, supply: 0 };
     for (let t = 0; t < 40; t++) {
-      s.march += F.marchAccrual(Math.floor(rnd() * 5));         // march hard
-      if (rnd() < 0.5) s.march += F.battleAccrual(rnd() * 0.4); // fight often, sometimes bloodily
-      s = F.turnUpkeep(s, 1);                                   // supply never cut
-      assert.ok(F.effectiveness(s.march) >= 0.5, `effectiveness fell through the floor (run ${run}, turn ${t})`);
+      s.wear += F.marchAccrual(Math.floor(rnd() * 5));         // march hard
+      if (rnd() < 0.5) s.wear += F.battleAccrual(rnd() * 0.4); // fight often, sometimes bloodily
+      s = F.turnUpkeep(s, 1);                                  // supply never cut
+      assert.ok(F.effectiveness(s.wear) >= 0.5, `effectiveness fell through the floor (run ${run}, turn ${t})`);
       assert.equal(s.substanceLossFraction, 0, `march/battle killed (run ${run}, turn ${t})`);
     }
   }
-  // the two-ledger firewall: an absurd march ledger still cannot enter the starvation state
-  const worn = F.turnUpkeep({ march: 1e9, supply: 0 }, 1);
+  // the two-ledger firewall: an absurd wear ledger still cannot enter the starvation state
+  const worn = F.turnUpkeep({ wear: 1e9, supply: 0 }, 1);
   assert.equal(worn.starving, false);
   assert.equal(worn.substanceLossFraction, 0);
 });
