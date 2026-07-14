@@ -62,7 +62,7 @@ test('DECISIVE: attacker overwhelms the arriving field army → defender routed,
   const o = B.resolveEngagement({
     attacker: { size: 6000, commit: 8 },                        // R1 = 9000/500 = 18, shield breaks
     front: { garrison: 500, terrain: 'plains', fortification: 'none' },
-    fieldArmy: { reaches: true, size: 1000 }, escape: 'BLOCKED',
+    fieldArmy: { reaches: true, size: 1000, fatigue: 0.75 }, escape: 'BLOCKED', // fatigue 0.75 = the retired march-worn stub, now an explicit input
   });
   // attackerAfter ≈ 5987; attackPower2 ≈ 8981; defense2 = 1000 × 0.75 = 750; R2 ≈ 11.97 ≥ 1
   assert.equal(o.branch, 'DECISIVE');
@@ -77,7 +77,7 @@ test('DECISIVE: a strong field army beats the worn attacker → attacker loses, 
   const o = B.resolveEngagement({
     attacker: { size: 1200, commit: 8 },                        // R1 = 1800/600 = 3, shield breaks
     front: { garrison: 600, terrain: 'plains', fortification: 'none' },
-    fieldArmy: { reaches: true, size: 4000 }, escape: 'OPEN',
+    fieldArmy: { reaches: true, size: 4000, fatigue: 0.75 }, escape: 'OPEN', // intercepting army arrives march-worn (was the flat 0.75 dial)
   });
   // attackerAfter ≈ 1169; attackPower2 ≈ 1753; defense2 = 3000; R2 ≈ 0.584 < 1
   // attacker (loser) battle-loss = 0.12 / 0.584^1.4 ≈ 0.255 < 0.30 → not routed
@@ -90,7 +90,7 @@ test('DECISIVE: an OPEN rout converts on the M4 scale — deeper defeat costs mo
   const o = B.resolveEngagement({
     attacker: { size: 2000, commit: 8 },                        // R1 = 3000/500 = 6, shield breaks
     front: { garrison: 500, terrain: 'plains', fortification: 'none' },
-    fieldArmy: { reaches: true, size: 1600 }, escape: 'OPEN',
+    fieldArmy: { reaches: true, size: 1600, fatigue: 0.75 }, escape: 'OPEN', // intercepting army arrives march-worn (was the flat 0.75 dial)
   });
   // attackerAfter ≈ 1980; attackPower2 ≈ 2971; defense2 = 1200; R2 ≈ 2.48
   // loser battle-loss L ≈ 0.427 ≥ 0.30 → routed; OPEN total = L + 0.5×(1−L) ≈ 0.71 (a flat 0.65 would be wrong here)
