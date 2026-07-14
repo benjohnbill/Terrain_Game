@@ -68,11 +68,15 @@ function recoveryPerTurn(supplyLevel) {
 
 /* One turn of upkeep for an army's fatigue state {wear, supply}. Cut turn:
    pump first, then bleed at the new depth (turn N of a siege bleeds at depth
-   N — ordering is an implementation ruling, flagged with the pump reset). */
-function turnUpkeep(state, supplyLevel) {
+   N — ordering is an implementation ruling, flagged with the pump reset).
+   recoveryFactor scales the supply-driven recovery [0,1] — the ground's ability
+   to let a force dig in (default 1 = ordinary ground). Ash denies recovery even
+   when fed (factor 0): the sole ledger the ground gates is wear/recovery, never
+   substance (the §2 firewall — starvation stays supply-exclusive). */
+function turnUpkeep(state, supplyLevel, recoveryFactor = 1) {
   const supply = supplyTick(state.supply, supplyLevel);
   return {
-    wear: Math.max(0, state.wear - recoveryPerTurn(supplyLevel)),
+    wear: Math.max(0, state.wear - recoveryPerTurn(supplyLevel) * recoveryFactor),
     supply,
     substanceLossFraction: starvationLossFraction(supply),
     starving: isStarving(supply),

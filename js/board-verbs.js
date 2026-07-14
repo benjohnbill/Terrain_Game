@@ -62,24 +62,20 @@ function sectorRecoveryFactor(sector) {
 }
 
 /* One turn of siege upkeep for a garrison's fatigue state {wear, supply} on a
-   sector. The board contributes exactly two facts:
+   sector. The board contributes exactly two facts — a cut route and ash — and
+   both feed the sealed fatigue primitive; this function mints no arithmetic and
+   no siege object (ADR 0026):
      - routeConnected: is the force supplied? (movement.isSupplied — the caller
-       runs the real predicate over the current control set)
-     - sector.ash:     does the ground under it permit recovery?
-   A cut route pumps the supply ledger (starvation → substance melt, ticket 01);
-   ash zeroes the recovery multiplier. Both feed the sealed fatigue primitives —
-   no new arithmetic, no siege object. supplyLevel is binary here (connected =
-   1, cut = 0); a partial-trickle model is a later supply-depth dial. */
+       runs the real predicate over the current control set) → the supplyLevel
+       that pumps the supply ledger (starvation → substance melt, ticket 01).
+     - sector.ash:     does the ground permit recovery? → the recovery factor
+       fatigue.turnUpkeep applies to the wear ledger alone (never substance —
+       the §2 firewall holds).
+   supplyLevel is binary here (connected = 1, cut = 0); a partial-trickle model
+   is a later supply-depth dial. */
 function siegeUpkeep(state, board) {
   const supplyLevel = board.routeConnected ? 1 : 0;
-  const supply = Fatigue.supplyTick(state.supply, supplyLevel);
-  const recovery = Fatigue.recoveryPerTurn(supplyLevel) * sectorRecoveryFactor(board.sector);
-  return {
-    wear: Math.max(0, state.wear - recovery),
-    supply,
-    substanceLossFraction: Fatigue.starvationLossFraction(supply),
-    starving: Fatigue.isStarving(supply),
-  };
+  return Fatigue.turnUpkeep(state, supplyLevel, sectorRecoveryFactor(board.sector));
 }
 
 const _api = { abandon, scorchedEarth, sectorRecoveryFactor, siegeUpkeep };
