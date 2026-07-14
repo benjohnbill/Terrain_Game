@@ -104,6 +104,17 @@ test('invariant: march never kills — no sequence of marching and fighting prod
   assert.equal(worn.substanceLossFraction, 0);
 });
 
+test('forced-march seam (ticket 02 wiring): premium accrual on extra hexes only, cap k exposed', () => {
+  assert.equal(F.forcedMarchAccrual(0), 0);
+  // premium: an extra hex wears MORE than a normal hex (the R sacrifice is priced in fatigue)
+  assert.ok(F.forcedMarchAccrual(1) > F.marchAccrual(1));
+  // linear per extra hex, same shape as normal march accrual
+  assert.ok(Math.abs(F.forcedMarchAccrual(3) - 3 * F.forcedMarchAccrual(1)) < 1e-12);
+  // k: the extra-hex allowance is a positive whole number of hexes
+  const k = F.forcedMarchExtraHexCap();
+  assert.ok(Number.isInteger(k) && k > 0);
+});
+
 test('conversion curve is continuous at the floor junction — no banded jumps (stepped mapping REJECTED)', () => {
   // scan for any jump larger than the local step could justify
   const step = 0.01;
