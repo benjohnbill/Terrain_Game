@@ -608,9 +608,9 @@ rule)._
 ### Arc ladder (scale layers)
 
 - ✅ `Engagement` (교전): one click, one turn — the resolution layer above.
-- ❓ `Operation` (작전): a shield-break or siege arc, ~3–6 turns — a scale
-  label over an emergent chain of atomic one-turn resolutions (ADR 0026),
-  never a persistent multi-turn operation object.
+- ❓ `Operation` (작전): a shield-break or siege arc — a scale label over an
+  emergent chain of atomic one-turn resolutions (ADR 0026), never a
+  persistent multi-turn operation object.
 - ❓ `War` (전쟁): declaration → settlement, ~8–12 turns. A war is *decided* by
   field-army destruction (shield-break → decisive battle → cascade), never by
   grinding occupation to completion.

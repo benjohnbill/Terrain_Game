@@ -221,26 +221,6 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   sealed doc; ADR 0037 decides to build the sealed model rather than abstract
   it. The general two-list audit for NON-war subsystems remains owed.
 
-- [x] **Occupation-geography pass — deferred doc-sync batch — PAID
-  2026-07-11 (stage-① doc-sync batch)**. Stage ① landed on main
-  (2a9d8f3..9a64561, 238/238) and the v2 seal run measured; this batch
-  paid: (1) match-arc RULINGS **OG-①…⑤** (occupation model, transfer
-  channels + R2 conservation, interior redefinition R1, per-sector
-  ripening migration + accumulator supersession, measured `capLandFrac`
-  read — **0 sealed as the world of record**, L2) + **ADR 0032**
-  (cross-feature model record); (2) **ADR 0029 sealed AS DRAFTED** (user,
-  2026-07-11) + ADR 0022 header stamp + the DOMAIN_MAP/GLOSSARY
-  Settlement-line reword; (3) SPEC Core Design Principle **#9** promotion
-  (user-approved 2026-07-11, wording = design spec §2, carried by ADR
-  0032); (4) match-arc INDEX refresh + QUICKREF regen + term-inventory
-  patches (+9 rows). What remains OPEN (tracked at its home, not this
-  row): **dominance-gate recalibration grill** (data ready — wall
-  re-erection + fgM9on absorption, match-arc INDEX open q.1); **capital
-  stage ②** (`docs/features/capital/`, untouched); item (5)
-  development-lever reconsideration — folded into that future
-  gate/§5-tuning session. Original registration 2026-07-11,
-  occupation-geography design session.
-
 - [ ] **Unsealed surge/economy 가안 — post-measurement reconsideration**
   (registered 2026-07-11, user ruling [conversation 2026-07-10]: keep 가안,
   re-examine only after an L2 measurement makes them bite). Four dials:
@@ -320,7 +300,99 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   the frozen-world autopsy in `mockup/combat-calc/NOTES.md`
   (2026-07-07 entry), alongside the blinds design outcome.
 
-- [x] **Force-geography pass — the next spine — PAID 2026-07-10** (lint
+- [ ] **Term lifecycle beyond promotion** (Codex P1): define
+  proposed → agreed → promoted → renamed → deprecated states in the
+  Vocabulary Law; renames are the dangerous case for agents. Add an
+  alias field (Korean casual phrases, code identifiers) to glossary
+  schema (Codex P2).
+- [ ] **Model-doc naming unification + promotion ladders to root**
+  (registered 2026-07-05, A-4 B1 discussion): the bespoke per-feature
+  model-doc names (MAGNITUDE / FORMULA / MATCHUP / CATALOG /
+  STRATEGY-SPACE) are one function ("model/dials doc") under five
+  names — a latent proliferation cost. Decide a disciplined convention,
+  then give the model layer an explicit birthplace→root promotion
+  ladder (model docs → DESIGN) symmetric with GLOSSARY→DOMAIN_MAP and
+  RULINGS→ADR, so all three Production tiers connect to root the same
+  way. NOT A-4 B1 scope; a deliberate separate pass (user-flagged).
+
+## Deferred (user-decided 2026-07-06, A-4 B6 — revisit on trigger)
+
+- [ ] **`npm run docs:check` lint** (Codex P2, optional tooling):
+  grep-level checks — "amended" references without ADR stamp, quickref
+  older than newest seal date, duplicate term headers. **User deferred:
+  no generator yet; adopt when a misfile actually slips (YAGNI).**
+- [ ] **Working-layer sublabels** (Codex P2): distinguish staging
+  verdicts / generated digests / planning scratch / risk register
+  inside the Working layer. **User deferred: no misfiling observed —
+  revisit if it occurs (emergence-limit).**
+
+## Paid
+
+- [x] 2026-07-14 — **SPEC B2 amendment — PAID** (user approved same day).
+  "A war is decided when the loser's capacity or will to resist breaks"
+  composite applied at SPEC:147 with the ADR 0038 pointer; registered and
+  paid within the slice-2 batch.
+
+- [x] 2026-07-13 — **Decisive-battle spine vocabulary seal — PAID**
+  (registered 2026-07-13, deferred until the slice was built & sealed).
+  Slice 1 sealed at war-model-build `RULINGS.md` WM-① (same-session
+  doc-sync batch, this commit): 방패 깨기 / 결전 ❓PROPOSED→AGREED,
+  캐스케이드→연쇄 붕괴 rename (구칭 alias), 야전군 registered AGREED —
+  birthplace match-arc GLOSSARY + term-inventory patch + QUICKREF
+  regeneration.
+- [x] 2026-07-12 — **Rebellion-body grill branch — PAID** (registered
+  2026-07-11, CE-⑫ rider). The pass ran 2026-07-11/12 night and sealed
+  the full body: suppression resolution (CE-⑬), rebellion five points
+  (CE-⑭), seceded-sector behavior (CE-⑮), gate-5 terrain resonance
+  resolved by structure (CE-⑯), peaceful-cession scar dissolved as a
+  corollary (CE-⑰) — plus the unplanned canonization the grill forced:
+  truce lock (CE-⑱), white peace as the ladder's 0% rung (CE-⑲), and
+  the total-war stage-table shape (CE-⑳). ADR 0036; SPEC_GAPS ⑤/⑦
+  stamped RESOLVED. Same-session doc-sync batch (this commit).
+- [x] 2026-07-11 — **Crisis-ending SPEC amendment — user-sealed and
+  applied** (registered under ADR 0034, drafted by the crisis-ending
+  pass as `SPEC-AMENDMENT-DRAFT-crisis-ending.md`). User decision
+  2026-07-11 (verbatim seal): the match-end declaration (decision point
+  / crisis arc 25→35 / Westphalian draw <0.1%, no judged scorecard)
+  applied to `SPEC.md` § "How a match ends (crisis arc)". Draft file
+  restamped SEALED (drafting record); ADR 0035 Consequences updated.
+- [x] 2026-07-11 — **Record-world harness default flip** (registered
+  2026-07-11, AB-②) — `tournament.js` HARNESS.capLandFrac 0→1;
+  `map-board.js` factory + cradle-tournament default gaan →
+  FG_BOARD_GAAN (BOARD_GAAN survives as the explicit control world).
+  Test adjudication (TDD, no silent updates): new AB-② seal-pin test;
+  FG "default stays uniform walls" pin inverted; map-board fortAt pin
+  re-cut to the FG crossing-class mapping; occ-geo frac-0 control tests
+  given explicit `capLandFrac: 0`; tournament-board finalCheck pin
+  corrected to the actual trip gate `(leadership || dominance) &&
+  unassailable` (the old `leadership && unassailable` assertion was a
+  world-specific accident — the record world trips seed 7 through the
+  dominance arm). 248/248 green. Verified: a pure-default run (reps 20,
+  seed 42) byte-reproduces the sealed [frac1] fgM9on baseline row
+  (decided 67.8 · dd 98 · afford 20.4 · median 22 · stomp 2.2).
+- [x] 2026-07-11 — **freeze-autopsy.js hand-rolled checkView replica**
+  (registered 2026-07-11) — replica deleted, real `tournament.js`
+  checkView export imported; script smoke-run verified (--quick).
+- [x] 2026-07-11 — **Occupation-geography pass — deferred doc-sync batch —
+  PAID** (stage-① doc-sync batch). Stage ① landed on main
+  (2a9d8f3..9a64561, 238/238) and the v2 seal run measured; this batch
+  paid: (1) match-arc RULINGS **OG-①…⑤** (occupation model, transfer
+  channels + R2 conservation, interior redefinition R1, per-sector
+  ripening migration + accumulator supersession, measured `capLandFrac`
+  read — **0 sealed as the world of record**, L2) + **ADR 0032**
+  (cross-feature model record); (2) **ADR 0029 sealed AS DRAFTED** (user,
+  2026-07-11) + ADR 0022 header stamp + the DOMAIN_MAP/GLOSSARY
+  Settlement-line reword; (3) SPEC Core Design Principle **#9** promotion
+  (user-approved 2026-07-11, wording = design spec §2, carried by ADR
+  0032); (4) match-arc INDEX refresh + QUICKREF regen + term-inventory
+  patches (+9 rows). What remains OPEN (tracked at its home, not this
+  row): **dominance-gate recalibration grill** (data ready — wall
+  re-erection + fgM9on absorption, match-arc INDEX open q.1); **capital
+  stage ②** (`docs/features/capital/`, untouched); item (5)
+  development-lever reconsideration — folded into that future
+  gate/§5-tuning session. Original registration 2026-07-11,
+  occupation-geography design session.
+- [x] 2026-07-10 — **Force-geography pass — the next spine — PAID** (lint
   run #1 flagged this row as overtaken; verified): (a) harness = FG-①…⑩
   landed on main @0e8dc52 with terrain-bound defense + reactive reserve;
   (b) the "may need a large ADR" question = ADR 0031 (backfilled
@@ -441,80 +513,6 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   per FG-⑥), so the existing plan-AI battery on `BOARD_GAAN` is no longer
   directly comparable to pre-branch numbers — record in the DOMAIN_MAP/
   DESIGN sync so the shift isn't misread as noise.
-
-- [ ] **Term lifecycle beyond promotion** (Codex P1): define
-  proposed → agreed → promoted → renamed → deprecated states in the
-  Vocabulary Law; renames are the dangerous case for agents. Add an
-  alias field (Korean casual phrases, code identifiers) to glossary
-  schema (Codex P2).
-- [ ] **Model-doc naming unification + promotion ladders to root**
-  (registered 2026-07-05, A-4 B1 discussion): the bespoke per-feature
-  model-doc names (MAGNITUDE / FORMULA / MATCHUP / CATALOG /
-  STRATEGY-SPACE) are one function ("model/dials doc") under five
-  names — a latent proliferation cost. Decide a disciplined convention,
-  then give the model layer an explicit birthplace→root promotion
-  ladder (model docs → DESIGN) symmetric with GLOSSARY→DOMAIN_MAP and
-  RULINGS→ADR, so all three Production tiers connect to root the same
-  way. NOT A-4 B1 scope; a deliberate separate pass (user-flagged).
-
-## Deferred (user-decided 2026-07-06, A-4 B6 — revisit on trigger)
-
-- [ ] **`npm run docs:check` lint** (Codex P2, optional tooling):
-  grep-level checks — "amended" references without ADR stamp, quickref
-  older than newest seal date, duplicate term headers. **User deferred:
-  no generator yet; adopt when a misfile actually slips (YAGNI).**
-- [ ] **Working-layer sublabels** (Codex P2): distinguish staging
-  verdicts / generated digests / planning scratch / risk register
-  inside the Working layer. **User deferred: no misfiling observed —
-  revisit if it occurs (emergence-limit).**
-
-## Paid
-
-- [x] 2026-07-14 — **SPEC B2 amendment — PAID** (user approved same day).
-  "A war is decided when the loser's capacity or will to resist breaks"
-  composite applied at SPEC:147 with the ADR 0038 pointer; registered and
-  paid within the slice-2 batch.
-
-- [x] 2026-07-13 — **Decisive-battle spine vocabulary seal — PAID**
-  (registered 2026-07-13, deferred until the slice was built & sealed).
-  Slice 1 sealed at war-model-build `RULINGS.md` WM-① (same-session
-  doc-sync batch, this commit): 방패 깨기 / 결전 ❓PROPOSED→AGREED,
-  캐스케이드→연쇄 붕괴 rename (구칭 alias), 야전군 registered AGREED —
-  birthplace match-arc GLOSSARY + term-inventory patch + QUICKREF
-  regeneration.
-- [x] 2026-07-12 — **Rebellion-body grill branch — PAID** (registered
-  2026-07-11, CE-⑫ rider). The pass ran 2026-07-11/12 night and sealed
-  the full body: suppression resolution (CE-⑬), rebellion five points
-  (CE-⑭), seceded-sector behavior (CE-⑮), gate-5 terrain resonance
-  resolved by structure (CE-⑯), peaceful-cession scar dissolved as a
-  corollary (CE-⑰) — plus the unplanned canonization the grill forced:
-  truce lock (CE-⑱), white peace as the ladder's 0% rung (CE-⑲), and
-  the total-war stage-table shape (CE-⑳). ADR 0036; SPEC_GAPS ⑤/⑦
-  stamped RESOLVED. Same-session doc-sync batch (this commit).
-- [x] 2026-07-11 — **Crisis-ending SPEC amendment — user-sealed and
-  applied** (registered under ADR 0034, drafted by the crisis-ending
-  pass as `SPEC-AMENDMENT-DRAFT-crisis-ending.md`). User decision
-  2026-07-11 (verbatim seal): the match-end declaration (decision point
-  / crisis arc 25→35 / Westphalian draw <0.1%, no judged scorecard)
-  applied to `SPEC.md` § "How a match ends (crisis arc)". Draft file
-  restamped SEALED (drafting record); ADR 0035 Consequences updated.
-- [x] 2026-07-11 — **Record-world harness default flip** (registered
-  2026-07-11, AB-②) — `tournament.js` HARNESS.capLandFrac 0→1;
-  `map-board.js` factory + cradle-tournament default gaan →
-  FG_BOARD_GAAN (BOARD_GAAN survives as the explicit control world).
-  Test adjudication (TDD, no silent updates): new AB-② seal-pin test;
-  FG "default stays uniform walls" pin inverted; map-board fortAt pin
-  re-cut to the FG crossing-class mapping; occ-geo frac-0 control tests
-  given explicit `capLandFrac: 0`; tournament-board finalCheck pin
-  corrected to the actual trip gate `(leadership || dominance) &&
-  unassailable` (the old `leadership && unassailable` assertion was a
-  world-specific accident — the record world trips seed 7 through the
-  dominance arm). 248/248 green. Verified: a pure-default run (reps 20,
-  seed 42) byte-reproduces the sealed [frac1] fgM9on baseline row
-  (decided 67.8 · dd 98 · afford 20.4 · median 22 · stomp 2.2).
-- [x] 2026-07-11 — **freeze-autopsy.js hand-rolled checkView replica**
-  (registered 2026-07-11) — replica deleted, real `tournament.js`
-  checkView export imported; script smoke-run verified (--quick).
 - [x] 2026-07-09 — **§6 domination victory — SPEC.md Direction amendment**
   — the win-type declaration owed by DT-③'s implementation landing, written
   to `SPEC.md` (new paragraph after the "Resolved (match-arc pass,
