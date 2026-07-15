@@ -55,18 +55,25 @@
  * ticket that owns both sides of the table.
  */
 
-const W = (typeof module !== 'undefined' && module.exports) ? require('./window-read.js') : window.WindowRead;
+const WindowRead = (typeof module !== 'undefined' && module.exports) ? require('./window-read.js') : window.WindowRead;
 
 /* Sealed settlement dials (ports — birthplace = match-arc 정산 / RULINGS ⑧⑬⑲,
-   mechanized in mockup/combat-calc/match.js MATCH_DIALS). Cited, never re-cut. */
+   mechanized in mockup/combat-calc/match.js MATCH_DIALS). Cited, never re-cut.
+   Identifiers are the registered English canonicals (documentation-law Vocabulary
+   Law: code identifiers are English; the 한국어 표시어 is a display VALUE, never a
+   key) — `Settlement preset ladder` aliases lenient/standard/maximum, `White
+   peace` is its own registered term, `Personality coefficient` aliases
+   hardliner/pragmatic/conciliatory. `label` carries the birthplace's 표시어, which
+   is also the key the mockup harness uses. Frozen per level: a consumer must not
+   re-cut a sealed dial at runtime — re-cuts happen at the birthplace. */
 const PRESETS = Object.freeze({
-  백지: { claimRate: 0.00, fill: 'cessionFirst' },   // CE-⑲ white peace — the ladder's 0% rung
-  관대: { claimRate: 0.50, fill: 'indemnityFirst' },  // ruling ⑧/⑬ — the tempo-peace preset
-  표준: { claimRate: 0.75, fill: 'cessionFirst' },
-  최대: { claimRate: 1.00, fill: 'cessionFirst' },
+  whitePeace: Object.freeze({ claimRate: 0.00, fill: 'cessionFirst', label: '백지' }),   // CE-⑲ — the ladder's 0% rung
+  lenient:    Object.freeze({ claimRate: 0.50, fill: 'indemnityFirst', label: '관대' }), // ruling ⑧/⑬ — the tempo-peace preset
+  standard:   Object.freeze({ claimRate: 0.75, fill: 'cessionFirst', label: '표준' }),
+  maximum:    Object.freeze({ claimRate: 1.00, fill: 'cessionFirst', label: '최대' }),
 });
-const LADDER = Object.freeze(['백지', '관대', '표준', '최대']); // ascending claim rate
-const TEMPERAMENT = Object.freeze({ 완고: 0.8, 실리: 1.0, 유화: 1.2 }); // acceptance coefficients
+const LADDER = Object.freeze(['whitePeace', 'lenient', 'standard', 'maximum']); // ascending claim rate
+const TEMPERAMENT = Object.freeze({ hardliner: 0.8, pragmatic: 1.0, conciliatory: 1.2 }); // 성향 계수 (완고/실리/유화)
 const LOSS_MODEL = Object.freeze({
   occEscalation: Object.freeze({ decisive: 1.5, grinding: 1.15, marginal: 0.85 }),
   capitalRiskFrac: 0.5,
@@ -75,7 +82,14 @@ const LOSS_MODEL = Object.freeze({
 
 /* 가안 dials — slice-2 spec §9 (provisional; ticket 10 measures). */
 const TRAJECTORY_EPSILON = 0.02; // 가안 — relative change below this reads as steady, not degrading
-const OWN_WINDOW_APPETITE = 1.0; // 가안 — a "window of my own" = a front I could actually take (R ≥ 1)
+/* The ratio at which a window counts as a real one — a front someone could
+   actually take (R ≥ 1). It gates BOTH directions of the §9 read (my windows and
+   the enemy's) deliberately: "is there a window here?" is one question asked
+   twice, and a court that judged its own chances by one bar and the enemy's by
+   another would be reading with a handicap (bot doctrine §9). Distinct from
+   window-read's APPETITE_THRESHOLD, which is the peacetime DECLARATION bar
+   ("is this worth starting a war over?") — a higher, appetite question. */
+const WINDOW_APPETITE = 1.0;
 
 function round2(value) {
   return Math.round(value * 100) / 100;
@@ -103,10 +117,15 @@ function presetBundle(presetName, reach) {
 }
 
 /* What continuing the war is expected to cost this court.
-   state = { occValue, raidLoot, capitalInReach, margin }. */
+   state = { occValue, raidLoot, capitalInReach, margin }. An unknown margin
+   throws by name (battle.js convention): silently it would produce NaN, which
+   rejects every rung and would break the never-empty invariant below into a
+   TypeError several frames away. */
 function expectedContinuedLoss(state) {
   const m = LOSS_MODEL;
-  const territorial = state.occValue * m.occEscalation[state.margin];
+  const escalation = m.occEscalation[state.margin];
+  if (escalation === undefined) throw new Error('unknown war margin: ' + state.margin);
+  const territorial = state.occValue * escalation;
   const economic = state.raidLoot;
   const capitalRisk = state.capitalInReach ? (state.occValue + state.raidLoot) * m.capitalRiskFrac : 0;
   return { territorial, economic, capitalRisk, discount: m.resistanceDiscount,
@@ -149,10 +168,10 @@ function trajectory(before, now) {
    directions, exactly as §7 intends). */
 function position(cfg) {
   const { myReads = [], readsAgainstMe = [], before, now } = cfg;
-  const mine = W.bestTarget(myReads);
-  const hasOwnWindow = !!mine && mine.read.ratio >= OWN_WINDOW_APPETITE;
-  const against = W.bestTarget(readsAgainstMe);
-  const windowsAgainst = !!against && against.read.ratio >= OWN_WINDOW_APPETITE;
+  const mine = WindowRead.bestTarget(myReads);
+  const hasOwnWindow = !!mine && mine.read.ratio >= WINDOW_APPETITE;
+  const against = WindowRead.bestTarget(readsAgainstMe);
+  const windowsAgainst = !!against && against.read.ratio >= WINDOW_APPETITE;
   const traj = trajectory(before, now);
   return {
     hasOwnWindow,
@@ -185,26 +204,38 @@ function acceptableRungs(state, temperament) {
     .map((b) => b.preset);
 }
 
-/* THE bot court's exit decision. Returns the rung it accepts, or null to fight
-   on (spec §9: a contested or winning position fights on — the read, never a
-   counter, decides).
+/* THE bot court's exit decision. Returns the court's ACCEPTANCE CEILING — the
+   highest claim it can still afford to concede — or null to fight on (spec §9: a
+   contested or winning position fights on; the read, never a counter, decides).
  *
- * The rung is the HIGHEST claim the court can still afford to concede: its
- * position on the ladder, which is what "the rung appropriate to its position"
- * means. A mild loss signs only the cheap rungs; a court whose capital is under
- * the sword signs 최대 rather than lose the throne — so the exit is emphatically
- * not always white peace.
+ * The ceiling IS "its position on the ladder" (spec §9): a mild loss can afford
+ * only the cheap rungs; a court whose capital is under the sword can afford
+ * `maximum` rather than lose the throne — so the exit is emphatically not always
+ * white peace.
+ *
+ * ── The ceiling is NOT the settled rung ─────────────────────────────────────
+ * A settlement has two sides, and this module reads only the loser's. The sealed
+ * walk (tournament.js trySettle) has the WINNER propose from its archetype's
+ * preferred preset and concede one step per turn (`proposalStep`); ruling ⑧'s
+ * "claim rate = rejection risk" is the winner's trade. The settled rung is
+ * therefore the winner's demand as capped by this ceiling — never the ceiling
+ * alone. Reporting the ceiling AS the settlement would skew high (a court that
+ * can afford everything would read as `maximum` regardless of what the winner
+ * actually wanted), so the field is named `ceiling` and the wiring ticket that
+ * owns both sides of the table resolves the actual rung.
+ *
+ * Ticket 10 note: metric 5's settlement-rung distribution must come from the
+ * resolved rung, not from this ceiling.
  *
  * ── Why there is no "cannot afford any rung" branch ──────────────────────────
- * A beaten bot court can ALWAYS sign at least white peace: 백지's bundle value is
- * 0, and `accepts(0, L, coeff)` is `0 <= L × coeff`, true for every non-negative
- * expected loss. Bot drag is therefore not an acceptance-arithmetic outcome, and
- * a branch for it would be unreachable. This is not a gap in the port — it is
- * why the sealed harness's winner-side walk is ['최대','표준','관대'] with 백지
- * absent (a WINNER never proposes claiming nothing; CE-⑲ canonized 백지 as the
- * ladder's 0% rung, and the stall timer — the thing this module retires — was
- * the only path that ever reached it). This module reads the LOSER's side, where
- * white peace is free by construction.
+ * A beaten bot court can ALWAYS sign at least white peace: whitePeace's bundle
+ * value is 0, and `accepts(0, L, coeff)` is `0 <= L × coeff`, true for every
+ * non-negative expected loss. Bot drag is therefore not an acceptance-arithmetic
+ * outcome, and a branch for it would be unreachable. This is not a gap in the
+ * port — it is why the sealed harness's winner-side walk is ['최대','표준','관대']
+ * with 백지 absent: a WINNER never proposes claiming nothing, so the 0% rung is
+ * only ever reached from the loser's side or by a harness exit. This module reads
+ * the LOSER's side, where white peace is free by construction.
  *
  * Dragging a lost war stays possible where ADR 0038 actually puts it: a human
  * court (the CE-⑲ gate below — never force-closed), and a court that withholds
@@ -218,13 +249,17 @@ function acceptableRungs(state, temperament) {
  * / trajectory 가안 (how early a court calls itself beaten), not the sealed
  * acceptance arithmetic. */
 function decideExit(cfg) {
-  // CE-⑲ — bot policy only. A human court is never force-closed, whatever the
-  // read says. This gate is deliberately FIRST: no code path below it can run.
-  if (cfg.court && cfg.court.isHuman) {
-    return { settle: false, rung: null, reason: 'human-court', position: null };
+  // CE-⑲ — bot policy only: a war is never force-closed over a human player,
+  // whatever the read says. The gate is FIRST (no path below it can run) and
+  // FAIL-CLOSED: only an explicit isHuman === false earns the bot path. A missing
+  // or malformed court reads as human, because the failure that matters here is
+  // asymmetric — wrongly declining to settle a bot war costs a turn, wrongly
+  // force-closing a human's war destroys the agency the seal exists to protect.
+  if (!cfg.court || cfg.court.isHuman !== false) {
+    return { settle: false, ceiling: null, reason: 'human-court', position: null };
   }
   const pos = position(cfg);
-  if (!pos.losing) return { settle: false, rung: null, reason: 'fight-on', position: pos };
+  if (!pos.losing) return { settle: false, ceiling: null, reason: 'fight-on', position: pos };
 
   const signable = acceptableRungs(cfg.state, cfg.court.temperament)
     .map((name) => presetBundle(name, cfg.state));
@@ -232,16 +267,17 @@ function decideExit(cfg) {
   // exactly, so value rises strictly with the rung and the max IS the top rung —
   // except when the sword has reached nothing (composite 0), where every rung is
   // the same empty bundle. There, naming the top rung would report a claim of
-  // nothing as 최대 and poison metric 5's rung distribution; the honest label for
-  // a material transfer is the LEAST-claiming rung that achieves it. LADDER is
-  // ascending, so find() takes exactly that.
+  // nothing as `maximum` and poison metric 5's rung distribution; the honest
+  // label for a material transfer is the LEAST-claiming rung that achieves it.
+  // LADDER is ascending, so find() takes exactly that.
   const top = Math.max(...signable.map((b) => b.value));
   const bundle = signable.find((b) => b.value === top);
-  return { settle: true, rung: bundle.preset, reason: 'read-driven-settlement', position: pos, bundle };
+  return { settle: true, ceiling: bundle.preset, reason: 'read-driven-settlement',
+    position: pos, bundle, signable: signable.map((b) => b.preset) };
 }
 
 const _api = {
-  PRESETS, LADDER, TEMPERAMENT, LOSS_MODEL, TRAJECTORY_EPSILON, OWN_WINDOW_APPETITE,
+  PRESETS, LADDER, TEMPERAMENT, LOSS_MODEL, TRAJECTORY_EPSILON, WINDOW_APPETITE,
   presetBundle, expectedContinuedLoss, accepts,
   trajectory, position, acceptableRungs, decideExit,
 };

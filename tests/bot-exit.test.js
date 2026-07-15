@@ -29,11 +29,17 @@ const LOSING_STATE = { occValue: 100, raidLoot: 40, capitalInReach: false, margi
 
 // ── Port fidelity: the ported arithmetic must equal its birthplace ──────────
 
+/* The port uses the registered English canonicals as identifiers; the birthplace
+   harness keys the same rungs by their 한국어 표시어. PRESETS[rung].label is that
+   표시어 — the seam where the two vocabularies meet, and the only translation the
+   port needs. */
+const sealedKey = (rung) => B.PRESETS[rung].label;
+
 test('port fidelity: presetBundle matches the sealed match.js arithmetic on every rung', () => {
   const reach = { occValue: 120, raidLoot: 55, capitalInReach: true, margin: 'grinding' };
   for (const rung of B.LADDER) {
     const ported = B.presetBundle(rung, reach);
-    const sealed = MATCH.presetBundle(rung, reach);
+    const sealed = MATCH.presetBundle(sealedKey(rung), reach);
     assert.equal(ported.value, sealed.value, `${rung} value`);
     assert.equal(ported.cession, sealed.cession, `${rung} cession`);
     assert.equal(ported.indemnity, sealed.indemnity, `${rung} indemnity`);
@@ -53,13 +59,48 @@ test('port fidelity: expectedContinuedLoss + accepts match the sealed match.js a
 });
 
 test('port fidelity: the ladder and its dials are the sealed ones (백지 0 / 관대 50 / 표준 75 / 최대 100)', () => {
-  assert.deepEqual(B.LADDER, ['백지', '관대', '표준', '최대']);
-  assert.equal(B.PRESETS.백지.claimRate, 0.00); // CE-⑲ white peace = the 0% rung
-  assert.equal(B.PRESETS.관대.claimRate, 0.50);
-  assert.equal(B.PRESETS.표준.claimRate, 0.75);
-  assert.equal(B.PRESETS.최대.claimRate, 1.00);
-  assert.deepEqual(B.TEMPERAMENT, MATCH.MATCH_DIALS.temperament);
+  assert.deepEqual(B.LADDER, ['whitePeace', 'lenient', 'standard', 'maximum']);
+  assert.equal(B.PRESETS.whitePeace.claimRate, 0.00); // CE-⑲ white peace = the 0% rung
+  assert.equal(B.PRESETS.lenient.claimRate, 0.50);
+  assert.equal(B.PRESETS.standard.claimRate, 0.75);
+  assert.equal(B.PRESETS.maximum.claimRate, 1.00);
+  // every ported rung equals its birthplace row, dial for dial
+  for (const rung of B.LADDER) {
+    const sealed = MATCH.MATCH_DIALS.presets[sealedKey(rung)];
+    assert.equal(B.PRESETS[rung].claimRate, sealed.claimRate, `${rung} claimRate`);
+    assert.equal(B.PRESETS[rung].fill, sealed.fill, `${rung} fill`);
+  }
+  // temperament: English identifiers, sealed coefficients (성향 계수 완고/실리/유화)
+  assert.deepEqual(
+    [B.TEMPERAMENT.hardliner, B.TEMPERAMENT.pragmatic, B.TEMPERAMENT.conciliatory],
+    [MATCH.MATCH_DIALS.temperament.완고, MATCH.MATCH_DIALS.temperament.실리, MATCH.MATCH_DIALS.temperament.유화],
+  );
   assert.equal(B.LOSS_MODEL.resistanceDiscount, MATCH.MATCH_DIALS.lossModel.resistanceDiscount);
+  assert.deepEqual(B.LOSS_MODEL.occEscalation, MATCH.MATCH_DIALS.lossModel.occEscalation);
+});
+
+test('the sealed dial tables cannot be re-cut at runtime — re-cuts happen at the birthplace', () => {
+  // Asserted as non-mutation, not as a throw: a frozen write throws only in
+  // strict mode, and a sloppy-mode consumer must be equally unable to re-cut.
+  B.PRESETS.maximum.claimRate = 0.1;
+  B.PRESETS.whitePeace = { claimRate: 9 };
+  B.LOSS_MODEL.occEscalation.decisive = 99;
+  B.TEMPERAMENT.hardliner = 5;
+  assert.equal(B.PRESETS.maximum.claimRate, 1.00);
+  assert.equal(B.PRESETS.whitePeace.claimRate, 0.00);
+  assert.equal(B.LOSS_MODEL.occEscalation.decisive, 1.5);
+  assert.equal(B.TEMPERAMENT.hardliner, 0.8);
+});
+
+test('an unknown enum throws by name rather than silently poisoning the arithmetic', () => {
+  // A silent NaN would reject every rung and break the never-empty invariant
+  // several frames away, as a TypeError in decideExit.
+  assert.throws(() => B.expectedContinuedLoss({ occValue: 1, raidLoot: 1, margin: 'Decisive' }),
+    /unknown war margin: Decisive/);
+  assert.throws(() => B.presetBundle('generous', { occValue: 1, raidLoot: 1 }),
+    /unknown settlement preset: generous/);
+  assert.throws(() => B.acceptableRungs({ occValue: 1, raidLoot: 1, margin: 'decisive' }, 'stoic'),
+    /unknown temperament: stoic/);
 });
 
 // ── Trajectory (spec §9 axis iii) ───────────────────────────────────────────
@@ -129,7 +170,7 @@ test('position: a live counter-punch of my own means I am not losing, however ba
 
 function losingCfg(graph, over = {}) {
   return {
-    court: { isHuman: false, temperament: '실리' },
+    court: { isHuman: false, temperament: 'pragmatic' },
     state: LOSING_STATE,
     myReads: hopelessRead(graph),
     readsAgainstMe: openRead(graph),
@@ -144,8 +185,8 @@ test('a bot in a losing position accepts a rung matched to its position', () => 
   const d = decideOn(g);
   assert.equal(d.settle, true);
   assert.equal(d.reason, 'read-driven-settlement');
-  assert.ok(B.LADDER.includes(d.rung));
-  assert.equal(d.bundle.preset, d.rung);
+  assert.ok(B.LADDER.includes(d.ceiling));
+  assert.equal(d.bundle.preset, d.ceiling);
   function decideOn(graph) { return B.decideExit(losingCfg(graph)); }
 });
 
@@ -162,18 +203,18 @@ test('the rung tracks the position — it is NOT always white peace', () => {
     state: { occValue: 100, raidLoot: 40, capitalInReach: true, margin: 'decisive' },
   }));
   assert.equal(desperate.settle, true);
-  assert.equal(desperate.rung, '최대');                       // not white peace
-  assert.notEqual(desperate.rung, mild.rung);                 // position moves the rung
-  assert.ok(B.LADDER.indexOf(desperate.rung) > B.LADDER.indexOf(mild.rung));
+  assert.equal(desperate.ceiling, 'maximum');                       // not white peace
+  assert.notEqual(desperate.ceiling, mild.ceiling);                 // position moves the rung
+  assert.ok(B.LADDER.indexOf(desperate.ceiling) > B.LADDER.indexOf(mild.ceiling));
 });
 
 test('temperament shifts what a court will sign — 유화 concedes past 완고', () => {
   const g = lineGraph([0, 1, 2, 3, 4, 5]);
   const st = { occValue: 60, raidLoot: 20, capitalInReach: false, margin: 'grinding' };
-  const stubborn = B.acceptableRungs(st, '완고');
-  const yielding = B.acceptableRungs(st, '유화');
+  const stubborn = B.acceptableRungs(st, 'hardliner');
+  const yielding = B.acceptableRungs(st, 'conciliatory');
   assert.ok(yielding.length >= stubborn.length); // a conciliatory court signs at least as much
-  assert.equal(B.acceptableRungs(st, '완고')[0], '백지'); // the 0% rung is always the cheapest
+  assert.equal(B.acceptableRungs(st, 'hardliner')[0], 'whitePeace'); // the 0% rung is always the cheapest
 });
 
 test('a bot in a contested or winning position fights on', () => {
@@ -190,7 +231,7 @@ test('a bot in a contested or winning position fights on', () => {
 test('white peace is always signable — 백지 costs 0, so a beaten bot always has an exit', () => {
   // A property of the SEALED arithmetic, not of the port: accepts(0, L, coeff)
   // is 0 <= L × coeff, true for every non-negative expected loss. This is why
-  // the sealed winner-side walk is ['최대','표준','관대'] with 백지 absent — a
+  // the sealed winner-side walk is ['maximum','standard','lenient'] with 백지 absent — a
   // winner never proposes claiming nothing — and why bot drag is not an
   // acceptance-arithmetic outcome. acceptableRungs is therefore never empty.
   for (const temperament of Object.keys(B.TEMPERAMENT)) {
@@ -202,7 +243,7 @@ test('white peace is always signable — 백지 costs 0, so a beaten bot always 
       ]) {
         const rungs = B.acceptableRungs(st, temperament);
         assert.ok(rungs.length > 0, `${temperament}/${margin} must have an exit`);
-        assert.equal(rungs[0], '백지'); // the free rung is always the first signable
+        assert.equal(rungs[0], 'whitePeace'); // the free rung is always the first signable
       }
     }
   }
@@ -218,7 +259,7 @@ test('a court beaten before the enemy sword reached anything signs the 0% rung',
     state: { occValue: 0, raidLoot: 0, capitalInReach: false, margin: 'marginal' },
   }));
   assert.equal(d.settle, true);
-  assert.equal(d.rung, '백지');
+  assert.equal(d.ceiling, 'whitePeace');
   assert.equal(d.bundle.value, 0); // claim nothing — the ladder's floor
 });
 
@@ -227,16 +268,16 @@ test('rung naming stays honest: an empty transfer is named 백지, never 최대'
   // signable. Naming the top one would report a claim of nothing as a maximal
   // claim and poison metric 5's rung distribution (ticket 10 reads it).
   const empty = { occValue: 0, raidLoot: 0, capitalInReach: false, margin: 'decisive' };
-  assert.deepEqual(B.acceptableRungs(empty, '실리'), B.LADDER); // every rung signable
+  assert.deepEqual(B.acceptableRungs(empty, 'pragmatic'), B.LADDER); // every rung signable
   const g = lineGraph([0, 1, 2, 3, 4, 5]);
-  assert.equal(B.decideExit(losingCfg(g, { state: empty })).rung, '백지');
+  assert.equal(B.decideExit(losingCfg(g, { state: empty })).ceiling, 'whitePeace');
 
   // With a real composite, values rise strictly with the rung, so the tie-break
   // never fires and the top signable rung is named as-is.
   const real = { occValue: 100, raidLoot: 40, capitalInReach: true, margin: 'decisive' };
   const values = B.LADDER.map((r) => B.presetBundle(r, real).value);
   for (let i = 1; i < values.length; i++) assert.ok(values[i] > values[i - 1]);
-  assert.equal(B.decideExit(losingCfg(g, { state: real })).rung, '최대');
+  assert.equal(B.decideExit(losingCfg(g, { state: real })).ceiling, 'maximum');
 });
 
 // ── CE-⑲: never force-close a war over a human ─────────────────────────────
@@ -244,13 +285,41 @@ test('rung naming stays honest: an empty transfer is named 백지, never 최대'
 test('CE-⑲: a human court is never force-closed, however hopeless the read', () => {
   const g = lineGraph([0, 1, 2, 3, 4, 5]);
   const d = B.decideExit(losingCfg(g, {
-    court: { isHuman: true, temperament: '유화' },  // the most conciliatory temperament
+    court: { isHuman: true, temperament: 'conciliatory' },  // the most conciliatory temperament
     state: { occValue: 100, raidLoot: 40, capitalInReach: true, margin: 'decisive' }, // the worst position
   }));
   assert.equal(d.settle, false);
-  assert.equal(d.rung, null);
+  assert.equal(d.ceiling, null);
   assert.equal(d.reason, 'human-court');
   assert.equal(d.position, null); // the gate runs before any read — bot policy only
+});
+
+test('CE-⑲ fails CLOSED: only an explicit isHuman === false earns the bot path', () => {
+  const g = lineGraph([0, 1, 2, 3, 4, 5]);
+  // A malformed or under-specified court must NOT be force-closed. The failure is
+  // asymmetric: wrongly declining to settle a bot war costs a turn; wrongly
+  // force-closing a human's war destroys the agency the seal protects.
+  for (const court of [undefined, null, {}, { temperament: 'pragmatic' }, { isHuman: undefined, temperament: 'pragmatic' }]) {
+    const d = B.decideExit(losingCfg(g, { court }));
+    assert.equal(d.settle, false, `court ${JSON.stringify(court)} must not be force-closed`);
+    assert.equal(d.reason, 'human-court');
+  }
+  // and the explicit bot still settles
+  assert.equal(B.decideExit(losingCfg(g, { court: { isHuman: false, temperament: 'pragmatic' } })).settle, true);
+});
+
+test('the ceiling is the court position, not the settled rung — the winner caps it', () => {
+  const g = lineGraph([0, 1, 2, 3, 4, 5]);
+  // The sealed walk has the WINNER propose from its preferred preset and concede
+  // one step per turn (ruling ⑧: claim rate = rejection risk). This module reads
+  // only the loser's side, so it reports what the court can AFFORD, and exposes
+  // the whole signable set for the wiring ticket to intersect with the demand.
+  const d = B.decideExit(losingCfg(g));
+  assert.ok(Array.isArray(d.signable));
+  assert.equal(d.signable[d.signable.length - 1], d.ceiling); // the ceiling tops the signable set
+  assert.equal(d.signable[0], 'whitePeace');                  // the free rung is always in it
+  for (const rung of d.signable) assert.ok(B.LADDER.includes(rung));
+  assert.equal(d.rung, undefined); // deliberately NOT named "rung" — it is not the settlement
 });
 
 // ── The stall timer is gone by construction ────────────────────────────────
