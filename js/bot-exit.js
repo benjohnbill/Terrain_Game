@@ -53,6 +53,18 @@
  * vassalage is the WINNER's demand when a throne is in reach (trySettle's
  * chain-seeker path), not the losing court's own read. It belongs to the wiring
  * ticket that owns both sides of the table.
+ *
+ * ── KNOWN GAP, owned by ticket 11: this module is overlay-blind ──────────────
+ * CE-⑳ breaks the settlement ladder from the bottom rung up as total war
+ * escalates (the harness's availablePresets: stage >= 2 drops 백지/관대, stage
+ * >= 3 leaves only 최대). acceptableRungs below walks the FULL sealed ladder and
+ * knows nothing of the calendar, so a WIRED bot court would sign whitePeace
+ * during total war — which CE-⑳ forbids. Latent, not live: the module is pure
+ * and unwired, so it binds only at wiring. Ticket 11 gives the walk an open-rungs
+ * input (the caller owns the calendar; this module owns the arithmetic).
+ * Consequence for the never-empty invariant below: once 백지 is broken, white
+ * peace stops being free, the invariant dies, and the drag branch this module
+ * deleted as unreachable becomes REACHABLE. Re-derive it there; do not assume it.
  */
 
 const WindowRead = (typeof module !== 'undefined' && module.exports) ? require('./window-read.js') : window.WindowRead;
