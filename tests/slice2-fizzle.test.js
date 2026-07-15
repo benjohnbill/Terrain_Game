@@ -87,10 +87,27 @@ test('a match is deterministic given (binding, assignment, seed)', () => {
   assert.deepEqual(a.settlements, b.settlements);
 });
 
-test('different seeds are reachable (the seed is actually wired)', () => {
-  const a = sampleMatches(3, 1);
-  const b = sampleMatches(3, 2);
-  assert.notDeepEqual(a.map((r) => r.warEnds.length), b.map((r) => r.warEnds.length));
+test('the seed reaches the fog draw — same world, different seed, different war', () => {
+  // The loop draws no dice (the sealed calculator has none), so the seed's only
+  // job is the fog band. Hold the assignment FIXED so nothing but the seed can
+  // differ: varying the assignment too would let this pass while the seed was
+  // inert, which is exactly how a dead seed hides.
+  const fixed = { map: CRADLE_MAP, binding: BINDING, assignment: assign() };
+  const a = W.runMatch({ ...fixed, seed: 1 });
+  const b = W.runMatch({ ...fixed, seed: 999999 });
+  assert.notDeepEqual(a.warEnds, b.warEnds, 'the seed must reach the outcome');
+  assert.deepEqual(a.warEnds, W.runMatch({ ...fixed, seed: 1 }).warEnds, 'and stay reproducible');
+});
+
+test('a fog band is stable across turns but moves with the seed (no flicker)', () => {
+  // The baseline stamps one bandSeed per war so a court reads the same band all
+  // war long (tournament.js :590-594). Reproduced here from the match seed.
+  const a1 = W.bandSeed(42, 'me', 'you', 'r1_s0');
+  const a2 = W.bandSeed(42, 'me', 'you', 'r1_s0');
+  assert.equal(a1, a2, 'same inputs → same band: a court must not see it flicker');
+  assert.notEqual(a1, W.bandSeed(43, 'me', 'you', 'r1_s0'), 'a new match seed → a new draw');
+  assert.notEqual(a1, W.bandSeed(42, 'me', 'you', 'r1_s1'), 'a different front → its own draw');
+  assert.notEqual(a1, W.bandSeed(42, 'you', 'me', 'r1_s0'), 'each reader draws its own fog');
 });
 
 /* ── World construction ─────────────────────────────────────────────────── */
@@ -151,6 +168,56 @@ test('occupation transfers CONTROL at once but not ownership', () => {
   assert.ok(W.heldHexes(world, a).has(world.sectors.get(bite).hexKey));
 });
 
+test('the response window is the sealed speed dial, not a copied number', () => {
+  const world = W.buildWorld(CRADLE_MAP, BINDING);
+  const S = require('../js/movement.js').SPEED_HEXES_PER_TURN;
+  const start = [...world.hexToSector.keys()][0];
+  // Everything within one turn's march answers; the first hex beyond it does not.
+  const reach = (k) => W.withinResponseWindow(world, start, k);
+  assert.ok(reach(start), 'a force already there is there');
+  const path = [];
+  let seen = new Set([start]); let frontier = [start];
+  for (let d = 1; d <= S + 1; d++) {
+    const next = [];
+    for (const k of frontier) for (const nk of world.graph.adj.get(k) || [])
+      if (!seen.has(nk)) { seen.add(nk); next.push(nk); }
+    path[d] = next[0];
+    frontier = next;
+  }
+  if (path[S]) assert.ok(reach(path[S]), `${S} hexes out is inside one turn's march`);
+  if (path[S + 1]) assert.ok(!reach(path[S + 1]), `${S + 1} hexes out is beyond it`);
+});
+
+test('capitalUnderSword is geographic, not a ported stage flag', () => {
+  const world = W.buildWorld(CRADLE_MAP, BINDING);
+  const realms = W.seatRealms(world, BINDING, assign());
+  const [a, d] = realms;
+  const throne = world.sectors.get(d.capitalId).hexKey;
+  const S = require('../js/movement.js').SPEED_HEXES_PER_TURN;
+
+  // Standing on it: under the sword.
+  a.fieldArmy.position = throne;
+  assert.equal(W.capitalUnderSword(world, a, d), true);
+
+  // Beyond one turn's march: not. Found by walking the graph rather than assumed
+  // — on this map several seats START within one turn of an enemy throne (2-3
+  // hexes), which is a property of the authored seating, not of this rule.
+  let seen = new Set([throne]); let frontier = [throne]; let far = null;
+  for (let dist = 1; dist <= S + 1 && !far; dist++) {
+    const next = [];
+    for (const k of frontier) for (const nk of world.graph.adj.get(k) || [])
+      if (!seen.has(nk)) { seen.add(nk); next.push(nk); }
+    if (dist === S + 1) far = next[0];
+    frontier = next;
+  }
+  assert.ok(far, 'the map must be big enough to stand outside the window');
+  a.fieldArmy.position = far;
+  assert.equal(W.capitalUnderSword(world, a, d), false);
+  // It is the SAME rule an engagement uses, so "can it fight here" and "is the
+  // throne in reach" cannot drift apart.
+  assert.equal(W.capitalUnderSword(world, a, d), W.withinResponseWindow(world, far, throne));
+});
+
 /* ── The window read is fed correctly (findings 5 and the denominator scope) ── */
 
 test('a front is priced against ITS OWN defender, never every army on the board', () => {
@@ -207,15 +274,27 @@ test('the loop labels 0%-transfer deals whitePeace and records what was demanded
     'the pre-emptive white peace must be OBSERVED for this guard to mean anything');
 });
 
-test('no war ends silently — every end carries a cause', () => {
+test('no war ends silently — the denominator closes exactly', () => {
   const recs = sampleMatches();
-  const known = new Set(['settle', 'refusePeace', 'eliminate', 'noFrontier']);
+  const known = new Set(['settle', 'refusePeace', 'eliminate', 'noFrontier',
+    'unresolved', 'participantEliminated']);
   assert.ok(recs.some((r) => r.warEnds.length > 0), 'wars must actually end in the sample');
-  for (const r of recs)
+  for (const r of recs) {
     for (const w of r.warEnds) {
       assert.ok(known.has(w.cause), `unknown cause ${w.cause}`);
       assert.ok(typeof w.turn === 'number');
     }
+    // THE guard. Every war that starts must reach a recorded end — including the
+    // ones still running when the envelope expires. Retiring the stall timer
+    // turns forced white peaces into wars that never end, so a loop that dropped
+    // them would delete exactly the fizzle-shaped wars R14 is about and report
+    // the survivors as a cure.
+    assert.equal(r.warEnds.length, r.warsStarted,
+      'wars started must equal wars recorded — an unrecorded end is a deleted war');
+  }
+  // The envelope cause must be OBSERVED, not merely handled in the abstract.
+  assert.ok(recs.some((r) => r.warEnds.some((w) => w.cause === 'unresolved')),
+    'unresolved wars must actually occur for this guard to mean anything');
 });
 
 test('the settled rung is the winner demand capped by the loser, never the ceiling', () => {
@@ -235,10 +314,18 @@ test('the baseline is re-derived crisis-OFF and decomposed by cause', () => {
   // The recorded R14 headline attributes the fizzle to the stall timer. Whether
   // that attribution holds is the READER's call — the harness only guarantees the
   // split is available to make it with.
-  assert.equal(typeof b.stallPeacePct, 'number');
-  assert.equal(typeof b.refusePeacePct, 'number');
-  assert.ok(Math.abs((b.stallPeacePct + b.refusePeacePct) - b.whitePeacePct) < 1e-9,
-    'white peace is exactly its causes — no unattributed remainder');
+  // The split must PARTITION the recorded ends — every war end lands in exactly
+  // one cause, so no white peace hides in an unnamed bucket. (Asserting
+  // stall+refuse === whitePeace would be a tautology: fizzle.js defines the
+  // latter as the former.)
+  const counted = Object.values(b.byCause).reduce((x, y) => x + y, 0);
+  assert.equal(counted, b.warEnds, 'every war end carries exactly one cause');
+  assert.deepEqual(new Set(Object.keys(b.byCause)),
+    new Set(['stallPeace', 'settle', 'eliminate', 'refusePeace'].filter((c) => b.byCause[c])),
+    'no unexpected cause appears in the baseline');
+  // The decomposition must be USABLE: the stall share has to be separable from
+  // the rest, which is the whole point of finding 1.
+  assert.ok(b.stallPeacePct > 0, 'the stall timer must actually be observed at the baseline');
   // 백지 is absent from the winner's walk, so no baseline `settle` can be a 0% rung.
   assert.ok(!Object.keys(b.rungs).includes('백지'));
 });

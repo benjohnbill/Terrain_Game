@@ -122,6 +122,9 @@ function isSupplied(graph, positionKey, baseKeys, isFriendlyHex) {
   return false;
 }
 
-const _api = { hexKey, buildGraph, shortestPath, marchStep, isSupplied };
+/* SPEED_HEXES_PER_TURN is exported so consumers cite the dial instead of copying
+   its value: window-read.js already takes `speed` as a caller-supplied slot, and
+   a caller that hard-codes 3 has silently re-cut a 가안 the magnitude pass owns. */
+const _api = { SPEED_HEXES_PER_TURN, hexKey, buildGraph, shortestPath, marchStep, isSupplied };
 if (typeof module !== 'undefined' && module.exports) module.exports = _api;
 else (window.Movement = window.Movement || {}), Object.assign(window.Movement, _api);

@@ -395,15 +395,17 @@ function candidateFronts(world, me, realms) {
  * to a war it is not in, which is not caution but a different fiction (the same
  * argument window-read.js makes against literal minimax). Fronts are therefore
  * read per-enemy, and each group sees only its own defender's detachments. */
-function detachmentsOf(me, realms, enemyName) {
+function detachmentsOf(me, realms, enemyName, matchSeed = 0) {
   const enemy = realms.find((r) => r.alive && r.name === enemyName);
   const record = me.intel.get(enemyName);
   if (!enemy || !record) return [];
   return [{
     fixKey: record.fixKey,
     turnsUnobserved: record.turnsUnobserved,
-    substanceBand: Intel.detachmentBand(record, enemy.fieldArmy.size, 1),
-    fatigueBand: Intel.detachmentBand(record, enemy.fieldArmy.fatigue.wear, 2),
+    substanceBand: Intel.detachmentBand(record, enemy.fieldArmy.size,
+      bandSeed(matchSeed, me.name, enemyName, 'substance')),
+    fatigueBand: Intel.detachmentBand(record, enemy.fieldArmy.fatigue.wear,
+      bandSeed(matchSeed, me.name, enemyName, 'fatigue')),
     // Pinned elsewhere: a detachment already committed to another war cannot also
     // answer here (spec §7 — the per-detachment game; applyFeints' own semantics).
     engaged: enemy.wars.some((w) => w.stage !== 'over' && w.def !== enemyName),
@@ -417,10 +419,28 @@ function detachmentsOf(me, realms, enemyName) {
    the intel record (js/intel detachmentBand), never as a true value. Fronts are
    grouped by defender so each is priced against the court that actually holds it
    (see detachmentsOf). */
-function readFrom(world, me, fronts, realms, allotment, seedSalt) {
+/* A stable fog-band seed for (reader, subject, front). The baseline stamps one
+   `war.bandSeed` per war so a court reads the SAME band all war long ("no
+   flicker" — tournament.js :590-594); this reproduces that property from the
+   match seed, so a band is stable across turns but moves when the match seed
+   moves. FNV-1a over the identifying strings, mixed with the match seed. */
+function bandSeed(matchSeed, ...parts) {
+  let hash = 2166136261 ^ (matchSeed | 0);
+  for (const part of parts) {
+    const str = String(part);
+    for (let i = 0; i < str.length; i++) {
+      hash ^= str.charCodeAt(i);
+      hash = Math.imul(hash, 16777619);
+    }
+    hash ^= 0x5f5f5f5f;
+  }
+  return (hash >>> 0);
+}
+
+function readFrom(world, me, fronts, realms, allotment, matchSeed) {
   const ctx = {
     graph: world.graph,
-    speed: 3,                                   // js/movement SPEED_HEXES_PER_TURN
+    speed: Movement.SPEED_HEXES_PER_TURN,       // the sealed dial, cited not copied
     disposition: 0,                             // λ neutral (bot doctrine §9: no handicap)
     attacker: {
       fromKey: me.fieldArmy.position,
@@ -441,9 +461,10 @@ function readFrom(world, me, fronts, realms, allotment, seedSalt) {
     const banded = group.map((f) => ({
       ...f,
       garrisonBand: Intel.detachmentBand(record, f.garrisonTrue,
-        Intel.hexSeed(f.sectorId.length, (seedSalt | 0) + f.sectorId.charCodeAt(f.sectorId.length - 1))),
+        bandSeed(matchSeed, me.name, enemyName, f.sectorId)),
     }));
-    out.push(...WindowRead.readFronts(banded, { ...ctx, detachments: detachmentsOf(me, realms, enemyName) }));
+    out.push(...WindowRead.readFronts(banded,
+      { ...ctx, detachments: detachmentsOf(me, realms, enemyName, matchSeed) }));
   }
   return out;
 }
@@ -459,17 +480,44 @@ function readFrom(world, me, fronts, realms, allotment, seedSalt) {
    path to 섬멸 in the sealed calculator (js/battle.js: annihilated = routed &&
    escape === 'BLOCKED'), so annihilations/match measures whether the operational
    layer can manufacture the trap at all. */
+/* THE RESPONSE WINDOW: can a force at `fromKey` be on the ground at `toKey` when
+   the blow lands? One turn's march at the SEALED speed (js/movement
+   SPEED_HEXES_PER_TURN) — the dial is cited, never copied. This is the loop's
+   single reachability rule and every consumer uses it, so "can it fight here?"
+   and "is the throne under the sword?" cannot drift apart. */
+function withinResponseWindow(world, fromKey, toKey) {
+  const path = Movement.shortestPath(world.graph, fromKey, toKey);
+  return !!path && (path.length - 1) <= Movement.SPEED_HEXES_PER_TURN;
+}
+
 function defenderAt(world, defender, frontHexKey) {
-  const dist = Movement.shortestPath(world.graph, defender.fieldArmy.position, frontHexKey);
-  if (!dist) return { reaches: false, size: defender.fieldArmy.size };
-  const turns = Math.ceil((dist.length - 1) / 3); // speed S (js/movement)
+  if (!withinResponseWindow(world, defender.fieldArmy.position, frontHexKey))
+    return { reaches: false, size: defender.fieldArmy.size };
   return {
-    reaches: turns <= 1,        // it stands here, or arrives within the response window
+    reaches: true,
     size: defender.fieldArmy.size,
     commit: HARNESS.defenseCommit,
     quality: 1.0,
     fatigue: Fatigue.effectiveness(defender.fieldArmy.fatigue.wear),
   };
+}
+
+/* Is the loser's throne under the sword? This term feeds the sealed acceptance
+   arithmetic (js/bot-exit expectedContinuedLoss → capitalRisk), so it must not be
+   invented — and it CANNOT be ported. The baseline answers it from its war STAGE
+   machine (tournament.js :865 — 'capital'/'fallen'/cascade-with-a-broken-field),
+   and that multi-turn siege→field→cascade→capital conveyor is precisely what ADR
+   0037 indicts and this slice replaces; there is no stage here to read.
+ *
+ * The slice-2 answer is geographic and reuses the response window above: the
+ * throne is under the sword when the attacker's army could be standing on it
+ * when the blow lands. Nothing new is cut — it is the sealed speed dial asked a
+ * second question. The divergence from the baseline's definition is real and is
+ * disclosed in the report; it is a different question asked of a different
+ * machine, not a re-cut of the same one. */
+function capitalUnderSword(world, attacker, defender) {
+  return withinResponseWindow(world, attacker.fieldArmy.position,
+    world.sectors.get(defender.capitalId).hexKey);
 }
 
 function escapeOf(world, defender) {
@@ -501,8 +549,21 @@ function newWar(attacker, defender, turn) {
   };
 }
 
-function endWar(war, realms) {
+/* Ending a war REQUIRES naming why. The cause is not decoration: it IS metric
+   5's denominator, and an unrecorded end is a war deleted from the sample.
+ *
+ * That deletion is not neutral — it is biased in the build's favour, which is why
+ * this is enforced by the signature rather than by discipline. Retiring the stall
+ * timer removes the thing that FORCED fizzle-shaped wars to end; without a cause
+ * for "still running when the envelope expired", exactly those wars vanish from
+ * the denominator and the white-peace rate reads far better than the board really
+ * is. Measured on this loop before the guard: the baseline left ~10% of its wars
+ * unrecorded, this loop left 30% — a 20pp asymmetry, all of it flattering the
+ * loop. `extra` carries cause-specific fields (e.g. the settled rung). */
+function endWar(war, realms, record, turn, cause, extra = {}) {
+  if (war.stage === 'over') return;
   war.stage = 'over';
+  record.warEnds.push({ turn, cause, ...extra });
   for (const r of realms) r.wars = r.wars.filter((w) => w !== war);
 }
 
@@ -528,14 +589,17 @@ function snapshot(realm) {
 function runMatch({ map, binding, assignment, seed = 1, knobs = Probe.NEUTRAL_KNOBS }) {
   const world = buildWorld(map, binding);
   const realms = seatRealms(world, binding, assignment);
-  const rng = mulberry32(seed);
+  // No RNG is drawn during a match: the sealed calculator has no dice, so the
+  // loop is a pure function of (binding, assignment, seed). The seed's ONLY job
+  // is the fog draw (bandSeed) — which is exactly the baseline's own use of it
+  // (war.bandSeed). A seed that reached nothing would be a lie in the record.
   const record = {
     seed, knobs,
     warsStarted: 0, warEnds: [], settlements: [],
     eliminations: 0,        // realm deaths — the baseline's own annihilation sense
     annihilations: 0,       // 섬멸: BLOCKED routs (js/battle) — NO baseline analogue
     engagements: 0, decisiveBattles: 0,
-    endingShape: 'timeout', winner: null, tripTurn: null,
+    endingShape: 'timeout', winner: null, tripTurn: null, turnsPlayed: 0,
   };
   const sectorOwner = (sid) => realms.find((r) => r.alive && r.holds.has(sid));
 
@@ -573,7 +637,7 @@ function runMatch({ map, binding, assignment, seed = 1, knobs = Probe.NEUTRAL_KN
       const fronts = candidateFronts(world, me, alive);
       if (!fronts.length) continue;
       const draw = CommitBudget.allocate(me.commitPool, [HARNESS.engagementCommit]);
-      const reads = readFrom(world, me, fronts, alive, HARNESS.engagementCommit, t);
+      const reads = readFrom(world, me, fronts, alive, HARNESS.engagementCommit, seed);
       const decl = WindowRead.declaration(reads);
       if (!decl) continue;
       me.commitPool = draw.pool;                       // the allotment is spent only when used
@@ -591,7 +655,7 @@ function runMatch({ map, binding, assignment, seed = 1, knobs = Probe.NEUTRAL_KN
       if (war.stage === 'over') continue;
       const A = realms.find((r) => r.name === war.att);
       const D = realms.find((r) => r.name === war.def);
-      if (!A || !D || !A.alive || !D.alive) { endWar(war, realms); continue; }
+      if (!A || !D || !A.alive || !D.alive) { endWar(war, realms, record, t, 'participantEliminated'); continue; }
 
       // Re-target each turn: the front the read now prefers against THIS enemy.
       // A war with no reachable front left cannot be prosecuted — record it with
@@ -602,11 +666,10 @@ function runMatch({ map, binding, assignment, seed = 1, knobs = Probe.NEUTRAL_KN
       const fronts = candidateFronts(world, A, alive).filter((f) => f.enemy === D.name);
       if (!fronts.length) {
         returnOccupied(war, A, D);
-        record.warEnds.push({ turn: t, cause: 'noFrontier' });
-        endWar(war, realms);
+        endWar(war, realms, record, t, 'noFrontier');
         continue;
       }
-      const reads = readFrom(world, A, fronts, alive, HARNESS.engagementCommit, t);
+      const reads = readFrom(world, A, fronts, alive, HARNESS.engagementCommit, seed);
       const best = WindowRead.bestTarget(reads);
       if (!best) continue;
       war.targetSectorId = best.front.sectorId;
@@ -663,9 +726,12 @@ function runMatch({ map, binding, assignment, seed = 1, knobs = Probe.NEUTRAL_KN
           war.occupiedIds = [];
           D.holds.clear(); D.occupied.clear(); D.alive = false; D.fieldArmy.size = 0;
           record.eliminations++;
-          record.warEnds.push({ turn: t, cause: 'eliminate' });
-          for (const w of [...D.wars]) endWar(w, realms);
-          endWar(war, realms);
+          // D's OTHER wars die with it. Each is named: they are wars that ended
+          // without resolving, and they transfer no ownership by settlement.
+          for (const w of [...D.wars]) {
+            if (w !== war) endWar(w, realms, record, t, 'participantEliminated');
+          }
+          endWar(war, realms, record, t, 'eliminate');
           continue;
         }
       }
@@ -678,13 +744,13 @@ function runMatch({ map, binding, assignment, seed = 1, knobs = Probe.NEUTRAL_KN
       if (war.stage === 'over') continue;
       const A = realms.find((r) => r.name === war.att);
       const D = realms.find((r) => r.name === war.def);
-      if (!A || !D || !A.alive || !D.alive) { endWar(war, realms); continue; }
+      if (!A || !D || !A.alive || !D.alive) { endWar(war, realms, record, t, 'participantEliminated'); continue; }
       const live = realms.filter((r) => r.alive);
 
       const state = {
         occValue: war.occupiedIds.length * SECTOR_VALUE,
         raidLoot: 0,                       // no raid primary in this loop — see LIMITS
-        capitalInReach: war.occupiedIds.length > 0 && D.holds.size <= 1,
+        capitalInReach: capitalUnderSword(world, A, D),
         margin: war.margin,
       };
       const myFronts = candidateFronts(world, D, live);
@@ -693,8 +759,8 @@ function runMatch({ map, binding, assignment, seed = 1, knobs = Probe.NEUTRAL_KN
       const exit = BotExit.decideExit({
         court: { isHuman: false, temperament: D.temperament },
         state,
-        myReads: readFrom(world, D, myFronts, live, HARNESS.defenseCommit, t),
-        readsAgainstMe: readFrom(world, A, againstFronts, live, HARNESS.engagementCommit, t),
+        myReads: readFrom(world, D, myFronts, live, HARNESS.defenseCommit, seed),
+        readsAgainstMe: readFrom(world, A, againstFronts, live, HARNESS.engagementCommit, seed),
         before, now: snapshot(D),
       });
       if (!exit.settle) continue;
@@ -727,8 +793,7 @@ function runMatch({ map, binding, assignment, seed = 1, knobs = Probe.NEUTRAL_KN
             demandedRung: demand, rung: materialRung, bundleValue: bundle.value,
             occValue: state.occValue, ceded: cededIds.length,
             ceiling: exit.ceiling, margin: war.margin });
-          record.warEnds.push({ turn: t, cause: 'settle', rung: materialRung });
-          endWar(war, realms);
+          endWar(war, realms, record, t, 'settle', { rung: materialRung });
           continue;
         }
         war.proposalStep++;                                    // concede next turn
@@ -741,8 +806,7 @@ function runMatch({ map, binding, assignment, seed = 1, knobs = Probe.NEUTRAL_KN
       // (tournament.js refusePeace :1363-1369) to keep the comparison honest.
       if (!pol.pushCapital) {
         returnOccupied(war, A, D);
-        record.warEnds.push({ turn: t, cause: 'refusePeace' });
-        endWar(war, realms);
+        endWar(war, realms, record, t, 'refusePeace');
       }
       // pushCapital: press on — the throne is the goal (ADR 0038 capital channel).
     }
@@ -765,6 +829,7 @@ function runMatch({ map, binding, assignment, seed = 1, knobs = Probe.NEUTRAL_KN
         r.fieldArmy.size = Math.max(0, r.fieldArmy.size * (1 - up.substanceLossFraction));
     }
 
+    record.turnsPlayed = t;
     const standing = realms.filter((r) => r.alive);
     if (standing.length === 1) {
       record.winner = standing[0].name;
@@ -772,6 +837,16 @@ function runMatch({ map, binding, assignment, seed = 1, knobs = Probe.NEUTRAL_KN
       record.tripTurn = t;
       break;
     }
+  }
+
+  // THE ENVELOPE. Every war still running when the match stops is an end too —
+  // the most important one this metric has, and the easiest to lose. Retiring the
+  // stall timer does not make fizzle-shaped wars decisive; it makes them RUN
+  // FOREVER. A loop that counted only wars which reached a verdict would silently
+  // drop exactly the wars R14 is about and then report the survivors as evidence
+  // the fizzle was cured. These are recorded, counted, and reported.
+  for (const war of [...new Set(realms.flatMap((r) => r.wars))]) {
+    endWar(war, realms, record, record.turnsPlayed, 'unresolved');
   }
   return record;
 }
@@ -810,5 +885,6 @@ module.exports = {
   SECTOR_VALUE, CAP_PER_POP, CAPITAL_GARRISON,
   mulberry32, pickFrom, buildWorld, nationalCap, seatRealms,
   candidateFronts, borderZone, controls, heldHexes, readFrom, detachmentsOf,
-  defenderAt, escapeOf, marginOf, runMatch, runWarLoopTournament,
+  bandSeed, withinResponseWindow, defenderAt, capitalUnderSword, escapeOf, marginOf,
+  runMatch, runWarLoopTournament,
 };

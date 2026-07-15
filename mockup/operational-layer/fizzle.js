@@ -37,7 +37,7 @@ const { runCradleTournament } = require('../combat-calc/map-board.js');
 const { CRADLE_MAP } = require('../combat-calc/map-gen.js');
 const { viableBindings } = require('../combat-calc/map-gate.js');
 const W = require('./war-loop.js');
-const { RESTORATION, forEachRestoration } = require('./metrics.js');
+const { forEachRestoration } = require('./metrics.js');
 
 /* The recorded coordinates of the L2 baseline (DESIGN-RISKS R14: "Crisis-OFF
    main-arc measurement (2026-07-13, L2 cradle, seed 42)"). battery.js cradleSheet
@@ -78,26 +78,46 @@ function baseline({ reps = BASELINE_REPS, seed = SEED, bindings } = {}) {
   const shapes = {};
   for (const r of records) shapes[r.endingShape] = (shapes[r.endingShape] || 0) + 1;
 
-  // Rung distribution: the RESOLVED rung of each applied deal.
+  // The SAME material rule the re-read applies to itself, applied here — a rate
+  // computed one way on one run and another way on the other is not a delta. A
+  // baseline deal that moved neither land nor indemnity is a white peace whatever
+  // rung it was struck at. (`accepts(0, L, coeff)` is always true, so an empty
+  // bundle is reachable here too: 백지's absence from the winner's walk bounds
+  // which NAME appears, not whether anything MOVES. Rare in practice — but its
+  // rarity is an empirical fact, not the structural guarantee it looked like.)
   const rungs = {};
+  let emptyDeals = 0;
   for (const r of records)
     for (const s of r.settlements || []) {
-      const key = s.kind === 'vassalage' ? 'vassalage' : s.preset;
+      const material = (s.ceded || 0) > 0 || (s.indemnity || 0) > 0;
+      if (!material) emptyDeals++;
+      const key = !material ? 'whitePeace' : (s.kind === 'vassalage' ? 'vassalage' : s.preset);
       rungs[key] = (rungs[key] || 0) + 1;
     }
 
+  // Wars that started and never reached a recorded end. `eliminate()` takes no
+  // `record` (tournament.js :996), so its side-war white peaces are invisible,
+  // and wars still running at the envelope are never stamped. The re-read closes
+  // this hole in itself; the baseline's is in sealed code this ticket must not
+  // edit (ticket 11 owns tournament.js), so it is COUNTED here instead of fixed.
+  const warsStarted = records.reduce((s, r) => s + r.warsStarted, 0);
+  const unrecorded = Math.max(0, warsStarted - warEnds);
+
   return {
-    matches: records.length, warEnds, byCause, shapes, rungs,
-    // 백지 is absent from the winner's walk (tournament.js trySettle :896), so no
-    // `settle` deal can be a 0% rung: white peace at the baseline is exactly the
-    // two harness exits.
-    whitePeacePct: rate(stallPeace + refusePeace, warEnds),
+    matches: records.length, warEnds, byCause, shapes, rungs, warsStarted, unrecorded, emptyDeals,
+    whitePeacePct: rate(stallPeace + refusePeace + emptyDeals, warEnds),
     stallPeacePct: rate(stallPeace, warEnds),
     refusePeacePct: rate(refusePeace, warEnds),
+    emptyDealPct: rate(emptyDeals, warEnds),
     settlePct: rate(byCause.settle || 0, warEnds),
+    unrecordedPct: rate(unrecorded, warsStarted),
+    // The R14 sense: a war that moved no ownership produced no climax, however it
+    // stopped. Denominator = wars STARTED, so unrecorded wars cannot hide.
+    noMaterialOutcomePct: rate(stallPeace + refusePeace + emptyDeals + unrecorded, warsStarted),
     eliminationsPerMatch: records.reduce((s, r) => s + r.eliminations, 0) / records.length,
     decidedPct: rate(records.filter((r) => r.endingShape !== 'timeout').length, records.length),
-    warsPerMatch: records.reduce((s, r) => s + r.warsStarted, 0) / records.length,
+    warsPerMatch: warsStarted / records.length,
+    turnsPerMatch: records.reduce((s, r) => s + (r.tripTurn || 32), 0) / records.length,
   };
 }
 
@@ -137,22 +157,38 @@ function reread({ reps = LOOP_REPS, seed = SEED, knobs, bindings } = {}) {
   // into deals that actually moved land and deals that moved nothing.
   const settleAll = byCause.settle || 0;
   const settleMaterial = settleAll - preemptive;
+  const unresolved = byCause.unresolved || 0;
+  const participantEliminated = byCause.participantEliminated || 0;
+  const noFrontier = byCause.noFrontier || 0;
+  const warsStarted = records.reduce((s, r) => s + r.warsStarted, 0);
 
   return {
-    matches: records.length, warEnds, byCause, rungs, demandedRungs,
+    matches: records.length, warEnds, byCause, rungs, demandedRungs, warsStarted,
+    // Every war end carries a cause here (endWar's signature enforces it), so
+    // warsStarted === warEnds and the two denominators coincide. The guard stays
+    // reported rather than assumed: a silent end is the defect that flatters.
+    unrecorded: Math.max(0, warsStarted - warEnds),
     whitePeacePct: rate(preemptive + refusePeace, warEnds),
     preemptiveWhitePeacePct: rate(preemptive, warEnds),
     refusePeacePct: rate(refusePeace, warEnds),
     settlePct: rate(settleAll, warEnds),
     settleMaterialPct: rate(settleMaterial, warEnds),
-    noFrontierPct: rate(byCause.noFrontier || 0, warEnds),
+    unresolvedPct: rate(unresolved, warEnds),
+    participantEliminatedPct: rate(participantEliminated, warEnds),
+    noFrontierPct: rate(noFrontier, warEnds),
     stallPeacePct: 0,      // structurally impossible — no timer exists in the loop
+    // The R14 sense, same formula as the baseline's: every war that moved no
+    // ownership, however it stopped. This is where retiring a timer shows its
+    // real cost — a forced white peace becomes a war that never ends, and both
+    // land in this bucket.
+    noMaterialOutcomePct: rate(preemptive + refusePeace + unresolved + participantEliminated + noFrontier, warsStarted),
     eliminationsPerMatch: records.reduce((s, r) => s + r.eliminations, 0) / records.length,
     annihilationsPerMatch: records.reduce((s, r) => s + r.annihilations, 0) / records.length,
     decisivePerMatch: records.reduce((s, r) => s + r.decisiveBattles, 0) / records.length,
     engagementsPerMatch: records.reduce((s, r) => s + r.engagements, 0) / records.length,
-    warsPerMatch: records.reduce((s, r) => s + r.warsStarted, 0) / records.length,
+    warsPerMatch: warsStarted / records.length,
     decidedPct: rate(records.filter((r) => r.endingShape !== 'timeout').length, records.length),
+    turnsPerMatch: records.reduce((s, r) => s + r.turnsPlayed, 0) / records.length,
   };
 }
 
@@ -220,13 +256,16 @@ if (require.main === module) {
   console.log('\n  WHITE PEACE BY CAUSE (the ~77% is not one thing — attribute only after this split):');
   console.log(`    stallPeace   (the timer)                  ${pct(b.stallPeacePct)}`);
   console.log(`    refusePeace  (winner will not storm)      ${pct(b.refusePeacePct)}`);
+  console.log(`    settle @ 0% material (empty bundle)       ${pct(b.emptyDealPct)}`);
   console.log(`    death-forced (eliminate :1026)            ${'  n/a'} — records NO cause; invisible here`);
   console.log(`    ────────────────────────────────────────────────`);
-  console.log(`    white peace TOTAL (a floor, not exact)    ${pct(b.whitePeacePct)}`);
+  console.log(`    white peace TOTAL (of RECORDED ends)      ${pct(b.whitePeacePct)}`);
   console.log(`    settle                                    ${pct(b.settlePct)}`);
   console.log(`    eliminate                                 ${pct(rate(b.byCause.eliminate || 0, b.warEnds))}`);
-  console.log(`\n  eliminations/match ${b.eliminationsPerMatch.toFixed(3)} · decided% ${b.decidedPct.toFixed(3)} · wars/match ${b.warsPerMatch.toFixed(1)}`);
-  console.log('  rung distribution (resolved deals): ' +
+  console.log(`\n  wars started ${b.warsStarted.toLocaleString()} · recorded ends ${b.warEnds.toLocaleString()} · UNRECORDED ${b.unrecorded.toLocaleString()} (${pct(b.unrecordedPct).trim()})`);
+  console.log(`  no material outcome, of wars STARTED       ${pct(b.noMaterialOutcomePct)}  <- the R14 sense`);
+  console.log(`\n  eliminations/match ${b.eliminationsPerMatch.toFixed(3)} · decided% ${b.decidedPct.toFixed(3)} · wars/match ${b.warsPerMatch.toFixed(1)} · turns/match ${b.turnsPerMatch.toFixed(1)}`);
+  console.log('  rung distribution (resolved deals, named by MATERIAL outcome): ' +
     (Object.keys(b.rungs).length ? Object.entries(b.rungs).map(([k, v]) => `${k} ${v}`).join(' · ') : 'none'));
 
   const r = reread({ reps: loopReps });
@@ -238,15 +277,26 @@ if (require.main === module) {
   console.log(`    settle, 0% rung = PRE-EMPTIVE WHITE PEACE ${pct(r.preemptiveWhitePeacePct)} — NEW; no L2 analogue`);
   console.log(`    refusePeace (winner's will, ported)       ${pct(r.refusePeacePct)}`);
   console.log(`    eliminate                                 ${pct(rate(r.byCause.eliminate || 0, r.warEnds))}`);
+  console.log(`    unresolved (still running at the envelope) ${pct(r.unresolvedPct)} — see below`);
+  console.log(`    participantEliminated (died elsewhere)    ${pct(r.participantEliminatedPct)}`);
   console.log(`    noFrontier (no reachable front left)      ${pct(r.noFrontierPct)}`);
   console.log(`    ────────────────────────────────────────────────`);
   console.log(`    white peace TOTAL (0% rung + refusePeace) ${pct(r.whitePeacePct)}`);
+  console.log(`\n  wars started ${r.warsStarted.toLocaleString()} · recorded ends ${r.warEnds.toLocaleString()} · UNRECORDED ${r.unrecorded}`);
+  console.log(`  no material outcome, of wars STARTED       ${pct(r.noMaterialOutcomePct)}  <- the R14 sense`);
+  console.log('    Read this row, not the white-peace row alone. Retiring a timer does not');
+  console.log('    make a fizzling war decisive — it makes it never end. `unresolved` is');
+  console.log('    where the wars the stall timer used to close now go, so counting only');
+  console.log('    named white peaces would score the retirement as a cure for the thing it');
+  console.log('    merely renamed. Both runs use this same formula over wars STARTED.');
   console.log('    NOTE: a rung is a claim RATE, so at composite 0 every rung — `maximum`');
-  console.log('    included — moves nothing. These deals are counted by MATERIAL outcome,');
-  console.log('    not by the name the winner demanded. Demanded-vs-material below.');
-  console.log(`\n  eliminations/match ${r.eliminationsPerMatch.toFixed(3)} (baseline sense — comparable)`);
-  console.log(`  annihilations/match ${r.annihilationsPerMatch.toFixed(3)} (섬멸 / BLOCKED rout — NO baseline analogue)`);
-  console.log(`  decisive battles/match ${r.decisivePerMatch.toFixed(2)} · engagements/match ${r.engagementsPerMatch.toFixed(1)} · wars/match ${r.warsPerMatch.toFixed(1)} · decided% ${r.decidedPct.toFixed(3)}`);
+  console.log('    included — moves nothing. Deals are counted by MATERIAL outcome, not by');
+  console.log('    the name the winner demanded. Demanded-vs-material below.');
+  console.log(`\n  eliminations/match ${r.eliminationsPerMatch.toFixed(3)} (baseline's annihilation sense, but CONFOUNDED —`);
+  console.log('    the two runs do not play the same number of turns; see SIDE BY SIDE)');
+  console.log(`  annihilations/match ${r.annihilationsPerMatch.toFixed(3)} (섬멸 / BLOCKED rout — NO baseline analogue,`);
+  console.log('    and knob-sensitive: it moves by ~30x across the restoration sweep below)');
+  console.log(`  decisive battles/match ${r.decisivePerMatch.toFixed(2)} · engagements/match ${r.engagementsPerMatch.toFixed(1)} · wars/match ${r.warsPerMatch.toFixed(1)} · turns/match ${r.turnsPerMatch.toFixed(1)}`);
   console.log('  rung distribution (RESOLVED + MATERIAL — the winner\'s demand as capped by the');
   console.log('  loser\'s ceiling, then named for what it actually moved; never the ceiling): ');
   console.log('    ' + (Object.keys(r.rungs).length ? Object.entries(r.rungs).map(([k, v]) => `${k} ${v}`).join(' · ') : 'none'));
@@ -254,16 +304,31 @@ if (require.main === module) {
     (Object.keys(r.demandedRungs).length ? Object.entries(r.demandedRungs).map(([k, v]) => `${k} ${v}`).join(' · ') : 'none'));
 
   sub('SIDE BY SIDE (rates; n differs — see reps above)');
-  console.log('  metric                       baseline      re-read');
-  console.log(`  white peace %              ${pct(b.whitePeacePct)}       ${pct(r.whitePeacePct)}`);
-  console.log(`    · of which stall timer   ${pct(b.stallPeacePct)}       ${pct(r.stallPeacePct)}`);
-  console.log(`  eliminations/match         ${b.eliminationsPerMatch.toFixed(3).padStart(6)}       ${r.eliminationsPerMatch.toFixed(3).padStart(6)}`);
-  console.log(`  wars/match                 ${b.warsPerMatch.toFixed(1).padStart(6)}       ${r.warsPerMatch.toFixed(1).padStart(6)}`);
-  console.log('  (decided% is deliberately absent — see NOT MEASURED: the two runs do not');
-  console.log('   mean the same thing by it.)');
+  console.log('  metric                            baseline      re-read');
+  console.log(`  NO MATERIAL OUTCOME % (R14 sense) ${pct(b.noMaterialOutcomePct)}       ${pct(r.noMaterialOutcomePct)}   <- the headline`);
+  console.log(`    · white peace, named            ${pct(b.whitePeacePct)}       ${pct(r.whitePeacePct)}`);
+  console.log(`    · of which the stall timer      ${pct(b.stallPeacePct)}       ${pct(r.stallPeacePct)}`);
+  console.log(`    · wars that never ended         ${pct(b.unrecordedPct)}       ${pct(r.unresolvedPct)}`);
+  console.log(`  wars/match                        ${b.warsPerMatch.toFixed(1).padStart(6)}       ${r.warsPerMatch.toFixed(1).padStart(6)}`);
+  console.log(`  turns/match                       ${b.turnsPerMatch.toFixed(1).padStart(6)}       ${r.turnsPerMatch.toFixed(1).padStart(6)}   <- NOT equal; see below`);
+  console.log(`  eliminations/match                ${b.eliminationsPerMatch.toFixed(3).padStart(6)}       ${r.eliminationsPerMatch.toFixed(3).padStart(6)}   <- CONFOUNDED; see below`);
+  console.log(`  eliminations per match-turn       ${(b.eliminationsPerMatch / b.turnsPerMatch).toFixed(4).padStart(6)}       ${(r.eliminationsPerMatch / r.turnsPerMatch).toFixed(4).padStart(6)}`);
+  console.log('\n  eliminations/match is NOT a clean delta and is not presented as one. The');
+  console.log('  baseline ends 60-70% of its matches EARLY on the hegemony gate (it returns');
+  console.log('  the moment a force ratio trips), while this loop has no such gate and plays');
+  console.log('  the full envelope. Part of the gap is turns of opportunity, not lethality —');
+  console.log('  the per-match-turn row divides that out crudely, and even it is not clean');
+  console.log('  (the baseline\'s surviving matches are the undecided ones). Same confound');
+  console.log('  that makes decided% incomparable; the discipline is applied to both.');
 
-  const sweep = restorationSweep({ reps: quick ? 1 : 1 });
+  const sweepReps = 1;
+  const sweep = restorationSweep({ reps: sweepReps });
   sub('LAYER RESTORATION (ticket 07 forEachRestoration — nothing measured with a silently stubbed layer)');
+  console.log(`  ${sweepReps} rep per cell (${sweep[0].matches} matches each) — the sweep costs a full run per cell, so it`);
+  console.log('  runs thinner than the headline above. Its neutral cell (fill 0 / shieldCommit');
+  console.log('  null) is the same world as the RE-READ but at fewer reps, so the two differ by');
+  console.log('  sampling, not by mechanism — read the sweep for SHAPE across knobs, not for');
+  console.log('  its absolute values.');
   console.log('  fill  shieldCommit   whitePeace%   annih/match   elim/match   decisive/match');
   for (const c of sweep)
     console.log(`  ${String(c.knobs.fillFactor).padEnd(5)} ${String(c.knobs.shieldCommit).padEnd(13)} ${pct(c.whitePeacePct)}        ${c.annihilationsPerMatch.toFixed(3)}        ${c.eliminationsPerMatch.toFixed(3)}        ${c.decisivePerMatch.toFixed(2)}`);
@@ -287,5 +352,19 @@ if (require.main === module) {
   console.log('    a category error. Wiring the gate is a later ticket\'s call, not this one\'s.');
   console.log('  · λ disposition is neutral (0) on both sides; the fog-band personality axis');
   console.log('    is unswept.');
+  console.log('  · 2 of the map\'s 17 authored crossings are STRAITS (r9_s0<->r10_s3,');
+  console.log('    r4_s2<->r10_s3). This loop moves armies on the hex graph, which has no sea');
+  console.log('    link, so those fronts are unreachable and those realm pairs never fight.');
+  console.log('    The baseline\'s per-front abstraction has no such limit — it is a real');
+  console.log('    divergence in the boards, narrowing this loop\'s war graph by ~12%.');
+  console.log('  · capitalInReach diverges by necessity. The baseline reads it off its war');
+  console.log('    STAGE machine (the conveyor ADR 0037 indicts); this loop asks a geographic');
+  console.log('    question (is the army within one turn\'s march of the throne?). It feeds');
+  console.log('    the sealed acceptance arithmetic on both sides, so the settlement mix is');
+  console.log('    not term-by-term comparable — only the material outcome is.');
+  console.log('  · The restoration sweep runs 1 rep/cell and the headline runs more; and the');
+  console.log('    headline sits at the LEAST-restored cell (fill 0 / shieldCommit null).');
+  console.log('    Annihilations are the knob-sensitive read — do not quote the headline');
+  console.log('    figure as if the sweep agreed with it.');
   console.log('\nVERDICT: the user reads the needles (판정 grill). L2 values never final.\n');
 }
