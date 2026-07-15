@@ -11,6 +11,20 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
 
 ## Open
 
+- [ ] **war-model-build INDEX refresh — slice-2 ticket 07 landing**
+  (2026-07-16, measurement grid merged to main at 6fbd5ce). Ritual duty 3
+  (refresh the INDEX of every touched feature): the front door still reads
+  "passed two-axis review; suite 372/372 green. Next = tickets 07–10" — stale
+  on both counts (07 has landed; suite is 399/399). Owed: mark ticket 07
+  landed, point at the harness (`mockup/operational-layer/`, run via
+  `npm run metrics:slice2`), and correct the frontier to tickets 08–11. **No
+  Projection sync is owed** — the harness is a Working-layer instrument that
+  seals nothing and registers no new terms, so DOMAIN_MAP/GLOSSARY/
+  term-inventory are untouched by it. Deferred to the 08/09 doc-sync batch so
+  the division/per-detachment cluster (the row below) lands as one coherent
+  read rather than touching the same rows twice (agent recommendation,
+  2026-07-16).
+
 - [ ] **Field-army division-doctrine stamp — registered** (2026-07-15,
   slice-2 ticket 04 landed division/merge in code — merge 1950b36). Spec §12
   owed, now actioned by the code landing: amend the match-arc GLOSSARY 야전군
