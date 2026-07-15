@@ -135,6 +135,29 @@ test('posture pricing is worst-case by default; information (caught-flat) opens 
   assert.equal(caughtFlat.shield, 36); // 20 × 1.0 × 1.8 × commitLever(0)=1.0
 });
 
+test('the posture default is the worst PLAUSIBLE commit (M2 knee), not the unreachable ceiling', () => {
+  // The in-ticket ruling prices the standing posture at the knee (×1.5), NOT at
+  // literal minimax (commit 20 → ×2.0): commit is one non-bankable realm pool
+  // (ticket 04), so a defender cannot stand at maximum on every sector at once.
+  assert.equal(W.POSTURE_WORST_COMMIT, 8);
+  assert.equal(Battle.commitLever(W.POSTURE_WORST_COMMIT), 1.5);
+  assert.ok(W.POSTURE_WORST_COMMIT < W.COMMIT_MAX);
+
+  const g = lineGraph([0, 1, 2, 3, 4]);
+  const dflt = W.windowRead({ ...baseCtx(g), front: OPEN_FRONT });
+  const ceiling = W.windowRead({ ...baseCtx(g), front: { ...OPEN_FRONT, postureCommit: W.COMMIT_MAX } });
+  assert.ok(ceiling.shield > dflt.shield);  // the ceiling would price a defender the budget forbids
+  assert.ok(ceiling.ratio < dflt.ratio);
+});
+
+test('the standing shield reuses the sealed M5 product (battle.shieldPower × posture)', () => {
+  const g = lineGraph([0, 1, 2, 3, 4]);
+  const r = W.windowRead({ ...baseCtx(g), front: OPEN_FRONT });
+  const expected = Battle.shieldPower({ garrison: 20, terrain: 'plains', fortification: 'walls' })
+    * Battle.commitLever(W.POSTURE_WORST_COMMIT);
+  assert.equal(r.shield, expected); // one composition shape, one home
+});
+
 // ── own-force exactness (D1): λ moves enemy terms only, never my numerator ───
 
 test('disposition changes the enemy side only — my own numerator is exact', () => {

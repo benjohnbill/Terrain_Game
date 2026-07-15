@@ -28,9 +28,11 @@
  * the worst-case rule below.
  *
  * ─ In-ticket ruling (posture pricing: worst-case vs expected-value) ─────────
- * DECIDED: WORST-CASE (minimax), not expected-value. The standing posture is an
- * unknown CATEGORICAL, not a scoutable band — spec §6 places commit/posture in
- * the dark market (깜깜이 시장), unreachable at any confidence. Reasons:
+ * DECIDED: WORST-CASE — the read prices the standing posture at the worst
+ * PLAUSIBLE value rather than averaging over the enemy court's hidden choice.
+ * The standing posture is an unknown CATEGORICAL, not a scoutable band: spec §6
+ * places commit/posture in the dark market (깜깜이 시장), unreachable at any
+ * confidence. Reasons:
  *   1. Expected-value would need a prior distribution over the enemy court's
  *      hidden choice — information the dark-market seal says the bot cannot
  *      have. Averaging fabricates that prior; worst-case assumes only that the
@@ -45,9 +47,28 @@
  *   3. The attacker earns first-blow decisiveness (§8) by MANUFACTURING the
  *      low-posture / no-reserve state through operations, never for free —
  *      worst-case default is what makes that manufacturing necessary.
+ *
+ * NOT literal minimax (the absolute ceiling, commit 20 → ×2.0): that value is
+ * unreachable in the world's own arithmetic, because commit is ONE non-bankable
+ * realm pool (ticket 04 / spec §4) — a defender cannot stand at maximum commit
+ * on every sector at once, so pricing every front at the ceiling would assume an
+ * enemy the budget forbids. The default is the worst posture a competent court
+ * can actually hold: POSTURE_WORST_COMMIT = 8, the M2 knee (×1.5). Minimax over
+ * a resource the enemy does not have is not caution, it is a different fiction.
+ *
  * Flagged for measurement (ticket 10): worst-case pricing biases toward fewer
  * declarations and could re-freeze the war; the appetite threshold 가안 absorbs
  * that calibration. This is a MEASUREMENT concern, not a correctness one.
+ *
+ * Corollary (spec-mandated asymmetry, NOT an inconsistency): the standing
+ * posture is worst-cased, while a RESPONDING detachment's commit slack is
+ * λ-judged. This is §7's own split — the denominator prices the standing shield
+ * as "standing posture = unknown categorical — priced, not known" (no band
+ * exists to judge), but each responder's term as "their commit slack
+ * (disposition estimate — TP② λ reuse)". The two are different quantities: a
+ * posture already stands (a taken choice the read cannot see), while a
+ * responder's commit is a FUTURE allotment the court has not yet made — the
+ * disposition estimate is the sealed instrument for exactly that read.
  */
 
 const Intel = (typeof module !== 'undefined' && module.exports) ? require('./intel.js') : window.IntelSystem;
@@ -56,10 +77,12 @@ const Battle = (typeof module !== 'undefined' && module.exports) ? require('./ba
 const Movement = (typeof module !== 'undefined' && module.exports) ? require('./movement.js') : window.Movement;
 
 /* 가안 dials — slice-2 spec §7 (provisional; ticket 10 measures, magnitude pass
-   re-cuts). The COMMIT_MAX cap is NOT 가안 — it is the sealed M2 lever ceiling. */
+   re-cuts). COMMIT_MAX is NOT 가안 — it cites the sealed M2 lever ceiling
+   (birthplace = combat-formula MAGNITUDE M2; battle.js commitLever clamps to the
+   same value but does not export it, so this is a citation, not a second dial). */
 const APPETITE_THRESHOLD = 1.7;    // 가안 — declaration gate, replacing the static ~1.7 attackRatio
-const POSTURE_WORST_COMMIT = 8;    // 가안 — worst-case standing-posture commit (the M2 "knee", ×1.5)
-const COMMIT_MAX = 20;             // sealed — M2 commit-lever ceiling (battle.js clamps here)
+const POSTURE_WORST_COMMIT = 8;    // 가안 — worst PLAUSIBLE standing-posture commit (M2 knee, ×1.5); see the posture ruling
+const COMMIT_MAX = 20;             // sealed (cited) — M2 commit-lever ceiling
 
 function round2(value) {
   return Math.round(value * 100) / 100;
@@ -124,8 +147,11 @@ function defenderResponse(graph, targetKey, detachments, myETA, speed, dispositi
     const path = Movement.shortestPath(graph, det.fixKey, targetKey);
     const dist = path ? path.length - 1 : 0;
     const substance = Math.max(0, judgeBand(det.substanceBand, disposition));
-    const commit = Math.max(0, Math.min(COMMIT_MAX,
-      judgeBand({ low: 0, high: COMMIT_MAX, mid: COMMIT_MAX / 2 }, disposition))); // commit is dark-market → λ over its full range
+    // A responder's commit slack is a FUTURE allotment, so it is λ-judged over the
+    // full M2 range (spec §7 "their commit slack — disposition estimate, λ reuse";
+    // contrast the standing posture, worst-cased — see the header corollary). The
+    // band spans the whole range, so judgeBand already returns within [0, COMMIT_MAX].
+    const commit = judgeBand({ low: 0, high: COMMIT_MAX, mid: COMMIT_MAX / 2 }, disposition);
     const arrivalWear = Math.max(0, readWear(det.fatigueBand, disposition)) + Fatigue.marchAccrual(dist);
     const p = Battle.sidePower({ substance, commit, quality: 1, fatigue: Fatigue.effectiveness(arrivalWear) });
     power += p;
@@ -157,11 +183,12 @@ function windowRead(cfg) {
   // × the worst-case posture factor) plus every responding detachment.
   const judgedGarrison = Math.max(0, judgeBand(front.garrisonBand, disposition));
   const postureCommit = front.postureCommit != null ? front.postureCommit : POSTURE_WORST_COMMIT;
-  const postureFactor = Battle.commitLever(postureCommit);
-  const shield = judgedGarrison
-    * Battle.terrainMultiplier(front.terrain)
-    * Battle.fortMultiplier(front.fortification)
-    * postureFactor;
+  // The M5 shield product stays battle.js's (garrison × terrain × fort — one
+  // composition shape, one home); the read only supplies the λ-judged garrison
+  // and multiplies in the posture factor the standing shield fights at.
+  const shield = Battle.shieldPower({
+    garrison: judgedGarrison, terrain: front.terrain, fortification: front.fortification,
+  }) * Battle.commitLever(postureCommit);
 
   const resp = defenderResponse(graph, front.hexKey, detachments, arrival.eta, speed, disposition);
   const denominator = shield + resp.power;
@@ -205,9 +232,11 @@ function applyFeints(graph, detachments, feintKeys, myETA, speed) {
 function readFronts(fronts, ctx) {
   return (fronts || []).map((front) => {
     const normal = windowRead({ ...ctx, front, forcedMarch: false });
+    // Forced march can only differ when the march is long enough to spend the
+    // premium — an ETA of at most one turn at ordinary speed already arrives.
+    if (!normal.reachable || normal.eta <= 1) return { front, read: normal };
     const forced = windowRead({ ...ctx, front, forcedMarch: true });
-    const best = forced.reachable && (!normal.reachable || forced.ratio > normal.ratio) ? forced : normal;
-    return { front, read: best };
+    return { front, read: forced.ratio > normal.ratio ? forced : normal };
   });
 }
 
