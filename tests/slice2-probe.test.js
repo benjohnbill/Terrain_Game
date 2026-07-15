@@ -40,6 +40,68 @@ test('defaulting the knobs argument is the neutral (landed-rules) reading', () =
   assert.deepEqual(P.resolveWith(sc), P.resolveWith(sc, P.NEUTRAL_KNOBS));
 });
 
+/* ---- mirror pins: the probe copies three js/battle.js dials that the sealed
+   module does not export. A behavioural guard over fixed scenarios would let a
+   mirror drift without flipping any of them, so each dial is pinned by SEARCHING
+   the calculator for the value it actually uses at its own branch flip. These
+   fail loudly if js/battle.js re-cuts a dial and the probe is not updated. ---- */
+
+/* Bisect `predicate` over [lo, hi] to the input where it flips, to 1e-9. */
+function flipPoint(lo, hi, predicate) {
+  for (let i = 0; i < 200; i++) {
+    const mid = (lo + hi) / 2;
+    if (predicate(mid)) hi = mid; else lo = mid;
+  }
+  return (lo + hi) / 2;
+}
+
+test('mirror pin: SHIELD_BREAK_THRESHOLD equals the calculator shield-break flip', () => {
+  // commit 0 / plains / none => R1 collapses to attacker size / garrison.
+  const breaksAt = (size) => B.resolveEngagement({
+    attacker: { size, commit: 0 }, front: { garrison: 1000, terrain: 'plains', fortification: 'none' },
+    fieldArmy: { reaches: false, size: 1000 }, escape: 'OPEN',
+  }).shieldBreak;
+  const sealed = flipPoint(1000, 2000, breaksAt) / 1000;
+  assert.ok(Math.abs(sealed - P.DIALS.SHIELD_BREAK_THRESHOLD) < 1e-6,
+    `probe mirrors ${P.DIALS.SHIELD_BREAK_THRESHOLD}, js/battle.js breaks at ${sealed}`);
+});
+
+test('mirror pin: ROUT_FRAC equals the calculator rout-cliff flip', () => {
+  // Shrink the field army to raise R2 until the won 결전 routs the loser.
+  const routsAt = (faSize) => {
+    const o = B.resolveEngagement({
+      attacker: { size: 3000, commit: 0 }, front: { garrison: 500, terrain: 'plains', fortification: 'none' },
+      fieldArmy: { reaches: true, size: faSize, commit: 0 }, escape: 'OPEN',
+    });
+    return o.decisiveBattle.routed;
+  };
+  const flipSize = flipPoint(3000, 100, routsAt); // predicate true as size falls
+  const o = B.resolveEngagement({
+    attacker: { size: 3000, commit: 0 }, front: { garrison: 500, terrain: 'plains', fortification: 'none' },
+    fieldArmy: { reaches: true, size: flipSize, commit: 0 }, escape: 'OPEN',
+  });
+  const sealed = B.casualtyFractions(o.decisiveBattle.R2).defender; // loser loss at the cliff
+  assert.ok(Math.abs(sealed - P.DIALS.ROUT_FRAC) < 1e-6,
+    `probe mirrors ${P.DIALS.ROUT_FRAC}, js/battle.js routs at ${sealed}`);
+});
+
+test('mirror pin: ROUT_OPEN_REMAINDER_LOSS is recoverable from a routed OPEN outcome', () => {
+  // The pursuit rate is only recoverable where a remainder actually survives the
+  // battle: past the cliff but short of a total wipe (0.30 < battleLoss < 1).
+  const o = B.resolveEngagement({
+    attacker: { size: 3000, commit: 0 }, front: { garrison: 500, terrain: 'plains', fortification: 'none' },
+    fieldArmy: { reaches: true, size: 1200, commit: 0 }, escape: 'OPEN',
+  });
+  const d = o.decisiveBattle;
+  assert.equal(d.routed, true);
+  assert.equal(d.annihilated, false);
+  const battleLoss = B.casualtyFractions(d.R2).defender;
+  assert.ok(battleLoss > 0.3 && battleLoss < 1, `need a surviving remainder, got ${battleLoss}`);
+  const sealed = (d.loserTotalLoss - battleLoss) / (1 - battleLoss);
+  assert.ok(Math.abs(sealed - P.DIALS.ROUT_OPEN_REMAINDER_LOSS) < 1e-9,
+    `probe mirrors ${P.DIALS.ROUT_OPEN_REMAINDER_LOSS}, js/battle.js pursues at ${sealed}`);
+});
+
 test('non-STRONGHOLD plans have no stubbed layer here and delegate unchanged', () => {
   const sc = { defensePlan: 'DELAYING', attacker: { size: 3000, commit: 8 },
     front: { garrison: 1000, terrain: 'hills', fortification: 'fieldworks' },

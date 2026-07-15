@@ -36,11 +36,16 @@ const F = require('../../js/fatigue.js');
 const M = require('../../js/movement.js');
 
 /* Mirrors of the js/battle.js dials (that module exports functions, not these
-   thresholds — same convention as probe-defense-layers.js). The neutral drift
-   guard (tests/slice2-probe.test.js) fails if any mirror diverges. */
+   thresholds — same convention as probe-defense-layers.js). Mirrors can rot, so
+   tests/slice2-probe.test.js pins each one by SEARCHING the sealed calculator
+   for the value it actually uses (the flip point of its own branch) and
+   comparing — a mirror that diverges fails there, not silently at measurement
+   time. Exported as DIALS for exactly that test. */
 const SHIELD_BREAK_THRESHOLD = 1.5;   // M7 Swift Seizure
 const ROUT_FRAC = 0.30;               // M4 rout cliff
 const ROUT_OPEN_REMAINDER_LOSS = 0.5; // M4 escape OPEN pursuit loss
+const M9_FILL_JOIN = 0.5;             // FG-⑩ — the fill joins the 결전 at half effect
+const DIALS = { SHIELD_BREAK_THRESHOLD, ROUT_FRAC, ROUT_OPEN_REMAINDER_LOSS, M9_FILL_JOIN };
 
 /* substance x commit lever x quality x fatigue, per side (spec §1). Local
    composition through the exported B.sidePower — B.sidePowerOf is not on the
@@ -61,8 +66,7 @@ function resolveWith(input, knobs = NEUTRAL_KNOBS) {
 
   const { attacker, front, fieldArmy, escape } = input;
   const fillFactor = knobs.fillFactor || 0;
-  const shieldCommit = knobs.shieldCommit == null ? null : knobs.shieldCommit;
-  const shieldLever = shieldCommit == null ? 1.0 : B.commitLever(shieldCommit);
+  const shieldLever = knobs.shieldCommit == null ? 1.0 : B.commitLever(knobs.shieldCommit);
 
   // FIRST BLOW — attacker (its own commit/quality/fatigue) vs the standing
   // shield, now scaled by the shield-layer commit lever when armed.
@@ -83,7 +87,7 @@ function resolveWith(input, knobs = NEUTRAL_KNOBS) {
   // fill: garrison x fillFactor, joining at x0.5, carrying the shield-layer
   // commit lever, fresh (no march fatigue) and quality 1.0.
   const attackPower2  = sidePowerOf(attacker, attackerAfter);
-  const fillPower     = front.garrison * fillFactor * 0.5 * shieldLever;
+  const fillPower     = front.garrison * fillFactor * M9_FILL_JOIN * shieldLever;
   const defensePower2 = sidePowerOf(fieldArmy) + fillPower;
   const R2 = attackPower2 / defensePower2;
   const c2 = B.casualtyFractions(R2);
@@ -142,6 +146,5 @@ function marchArrival(opts = {}) {
   return { turns, wear, effectiveness: F.effectiveness(wear) };
 }
 
-const _api = { NEUTRAL_KNOBS, resolveWith, marchArrival, corridorMap };
-if (typeof module !== 'undefined' && module.exports) module.exports = _api;
-else (window.OperationalProbe = window.OperationalProbe || {}), Object.assign(window.OperationalProbe, _api);
+/* Node-only instrument (sibling convention: mockup/decisive-battle/*.js). */
+module.exports = { NEUTRAL_KNOBS, DIALS, resolveWith, marchArrival, corridorMap };

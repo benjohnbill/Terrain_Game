@@ -20,11 +20,15 @@ const P = require('./probe.js');
 
 /* Attacker arrival effectiveness (and wear) for a march of `hexes`, via the
    sealed movement/fatigue contract (probe.marchArrival). Memoised per key so a
-   grid sharing distances stays cheap and provably deterministic. */
+   grid sharing distances stays cheap and provably deterministic.
+   Forced march (§3) is deliberately NOT swept: §11 names distance / defense
+   multipliers / reserve reach as metric 2's axes, and adding a fourth would be
+   this harness choosing a dimension the spec did not register. probe.marchArrival
+   carries the capability (and is tested); the sweep is a registered gap. */
 const _arrivalCache = new Map();
-function arrival(hexes, recoveryWhileMarching, forcedMarch = false) {
-  const key = hexes + '|' + recoveryWhileMarching + '|' + forcedMarch;
-  if (!_arrivalCache.has(key)) _arrivalCache.set(key, P.marchArrival({ hexes, recoveryWhileMarching, forcedMarch }));
+function arrival(hexes, recoveryWhileMarching) {
+  const key = hexes + '|' + recoveryWhileMarching;
+  if (!_arrivalCache.has(key)) _arrivalCache.set(key, P.marchArrival({ hexes, recoveryWhileMarching }));
   return _arrivalCache.get(key);
 }
 
@@ -232,13 +236,19 @@ function massInversionGrid() {
                   const o = P.resolveWith(sc, knobs);
                   const d = o.decisiveBattle;
                   const attackerWins = d ? d.attackerWins : null;
+                  // "Smaller force" counts the substance actually standing on
+                  // each side: with the M9 fill restored, the garrison fill is
+                  // real defending mass, so comparing against the field army
+                  // alone would label a fill-carried win as a lever inversion.
+                  // Rider (d) guards against PIERCING LEVERS, not against mass.
+                  const defendingMass = faMass + INVERSION.garrison * knobs.fillFactor;
                   let inversion = false;
                   if (d) {
-                    if (attMass < faMass && attackerWins) inversion = true;
-                    else if (attMass > faMass && !attackerWins) inversion = true;
+                    if (attMass < defendingMass && attackerWins) inversion = true;
+                    else if (attMass > defendingMass && !attackerWins) inversion = true;
                   }
                   cells.push({
-                    fatigue, attMass, faMass,
+                    fatigue, attMass, faMass, defendingMass,
                     commitDelta: attCommit - defCommit,
                     qualityDelta: attQ - defQ,
                     knobs: { fillFactor: knobs.fillFactor, shieldCommit: knobs.shieldCommit },
@@ -315,9 +325,8 @@ function runAll() {
   };
 }
 
-const _api = { parityGrid, swiftSeizureGrid, massInversionGrid, commitCurveGrid, runAll, RESTORATION };
-if (typeof module !== 'undefined' && module.exports) module.exports = _api;
-else (window.OperationalMetrics = window.OperationalMetrics || {}), Object.assign(window.OperationalMetrics, _api);
+/* Node-only harness (sibling convention: mockup/decisive-battle/*.js). */
+module.exports = { parityGrid, swiftSeizureGrid, massInversionGrid, commitCurveGrid, runAll, RESTORATION };
 
 if (require.main === module) {
   const pct = (r) => (r == null ? '  n/a' : (100 * r).toFixed(1).padStart(5) + '%');
