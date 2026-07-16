@@ -308,36 +308,50 @@ test('the settled rung is the winner demand capped by the loser, never the ceili
 
 /* ── Baseline re-derivation ─────────────────────────────────────────────── */
 
-test('the baseline is re-derived crisis-OFF and decomposed by cause', () => {
-  const b = F.baseline({ reps: 1, bindings: [BINDING] });
-  assert.ok(b.warEnds > 0);
-  // The recorded R14 headline attributes the fizzle to the stall timer. Whether
-  // that attribution holds is the READER's call — the harness only guarantees the
-  // split is available to make it with.
-  // The split must PARTITION the recorded ends — every war end lands in exactly
-  // one cause, so no white peace hides in an unnamed bucket. (Asserting
-  // stall+refuse === whitePeace would be a tautology: fizzle.js defines the
-  // latter as the former.)
-  const counted = Object.values(b.byCause).reduce((x, y) => x + y, 0);
-  assert.equal(counted, b.warEnds, 'every war end carries exactly one cause');
-  assert.deepEqual(new Set(Object.keys(b.byCause)),
-    new Set(['stallPeace', 'settle', 'eliminate', 'refusePeace'].filter((c) => b.byCause[c])),
-    'no unexpected cause appears in the baseline');
-  // The decomposition must be USABLE: the stall share has to be separable from
-  // the rest, which is the whole point of finding 1.
-  assert.ok(b.stallPeacePct > 0, 'the stall timer must actually be observed at the baseline');
-  // 백지 is absent from the winner's walk, so no baseline `settle` can be a 0% rung.
-  assert.ok(!Object.keys(b.rungs).includes('백지'));
+test('the frozen baseline is the comparison target, and carries its provenance', () => {
+  const b = F.baseline();
+  // Ticket 11 retired the stall timer, so the world that produced this cannot be
+  // re-run from this tree. A frozen number is only honest if it says WHERE it
+  // came from — the snapshot must be auditable, not merely believed.
+  assert.ok(b.provenance.sourceCommit && /^[0-9a-f]{40}$/.test(b.provenance.sourceCommit),
+    'the snapshot must name the commit it can be re-derived at');
+  assert.match(b.provenance.coordinates, /seed 42/);
+  assert.match(b.provenance.coordinates, /crisis OFF/);
+  assert.ok(b.warEnds > 0 && b.warsStarted >= b.warEnds);
 });
 
-test('the baseline run reproduces the recorded R14 shape', () => {
-  // Not an exact-value pin (the prose figure is ~77% and the harness has moved
-  // since 2026-07-13); a shape check that the coordinates still find the world
-  // R14 described. If this ever fails, the baseline drifted and the comparison
-  // target must be re-recorded before any delta is believed.
-  const b = F.baseline({ reps: 2, bindings: [BINDING] });
-  assert.ok(b.whitePeacePct > 0.6, `white peace ${b.whitePeacePct} should still dominate the baseline`);
-  assert.ok(b.eliminationsPerMatch < 0.5, 'the baseline still barely eliminates anyone');
+test('the frozen baseline decomposes by cause — the split the delta needs', () => {
+  const b = F.baseline();
+  // Finding 1: the ~77% is three code paths, and a headline attributing it to any
+  // one of them is a verdict the data has not earned. Whether the attribution
+  // holds is the READER's call; the harness only guarantees the split exists.
+  const counted = Object.values(b.byCause).reduce((x, y) => x + y, 0);
+  assert.equal(counted, b.warEnds, 'every recorded end carries exactly one cause');
+  assert.ok(b.stallPeacePct > 0, 'the stall timer must be observed in the snapshot');
+  assert.equal(typeof b.refusePeacePct, 'number');
+  assert.ok(b.noMaterialOutcomePct >= b.whitePeacePct,
+    'the R14 sense must be at least the named white peace — unrecorded wars cannot hide');
+});
+
+test('the frozen baseline reproduced the recorded R14 shape', () => {
+  // Not an exact-value pin (the prose figure is ~77%); a shape check that the
+  // snapshot really is the world R14 described, so the target is not a memory.
+  const b = F.baseline();
+  assert.ok(b.whitePeacePct > 0.6, `white peace ${b.whitePeacePct} should dominate the baseline`);
+  assert.ok(b.eliminationsPerMatch < 0.5, 'the baseline barely eliminates anyone');
+  assert.ok(!Object.keys(b.rungs).includes('백지'),
+    '백지 is absent from the winner walk, so no deal is NAMED 0% — but empty bundles are counted as whitePeace');
+});
+
+test('rederiveBaseline still exists, so the freeze can be audited not trusted', () => {
+  assert.equal(typeof F.rederiveBaseline, 'function');
+  // It runs against the CURRENT tree, which no longer has the stall timer — so it
+  // legitimately no longer reproduces the snapshot. That is the whole reason the
+  // snapshot exists, and this pins the fact rather than leaving it folklore.
+  const now = F.rederiveBaseline({ reps: 1, bindings: [BINDING] });
+  assert.equal(now.byCause.stallPeace, undefined,
+    'post-retirement the timer is gone: re-deriving now gives a DIFFERENT world');
+  assert.ok(F.baseline().stallPeacePct > 0, 'which is exactly why the target is frozen');
 });
 
 /* ── Layer restoration is reused, not re-authored ────────────────────────── */

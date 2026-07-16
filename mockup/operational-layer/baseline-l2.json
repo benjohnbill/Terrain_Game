@@ -1,0 +1,45 @@
+{
+  "//": "FROZEN L2 BASELINE — the comparison target for slice-2 metric 5.",
+  "//why": "tournament.js stall timer is RETIRED by ticket 11 (ADR 0037/0038), so this world can no longer be re-run from a current checkout. Frozen here rather than left as prose: DESIGN-RISKS R14 recorded ~77% as English, and a measurement compared against a memory is not a comparison. This file is machine-readable and REPRODUCIBLE — check out the sourceCommit below and run mockup/operational-layer/fizzle.js.",
+  "provenance": {
+    "sourceCommit": "c30f324f8697dbfa64669f6d855ac4eca8f4d4dd",
+    "generatedBy": "mockup/operational-layer/fizzle.js baseline({ reps: 30, seed: 42 })",
+    "coordinates": "runCradleTournament(CRADLE_MAP, viableBindings(CRADLE_MAP,5).viable, reps 30, seed 42), crisis OFF",
+    "recordedTarget": "docs/DESIGN-RISKS.md R14 (2026-07-13): ~77% white peace, 0 annihilations/match, decided% 0.656",
+    "frozen": "2026-07-16 (ticket 11, the session that retired the timer)"
+  },
+  "matches": 6300,
+  "warsStarted": 87201,
+  "warEnds": 79515,
+  "unrecorded": 7686,
+  "byCause": {
+    "stallPeace": 62634,
+    "settle": 16773,
+    "eliminate": 99,
+    "refusePeace": 9
+  },
+  "emptyDeals": 16,
+  "rungs": {
+    "관대": 3162,
+    "표준": 9917,
+    "vassalage": 2129,
+    "최대": 1549,
+    "whitePeace": 16
+  },
+  "shapes": {
+    "trip-solo": 3191,
+    "trip-chain": 1119,
+    "timeout": 1990
+  },
+  "whitePeacePct": 0.7880148399673018,
+  "stallPeacePct": 0.7877004338803999,
+  "refusePeacePct": 0.00011318619128466328,
+  "emptyDealPct": 0.00020121989561717915,
+  "settlePct": 0.21094133182418412,
+  "unrecordedPct": 0.08814119104138714,
+  "noMaterialOutcomePct": 0.8066994644556829,
+  "eliminationsPerMatch": 0.015714285714285715,
+  "decidedPct": 0.6841269841269841,
+  "warsPerMatch": 13.84142857142857,
+  "turnsPerMatch": 24.423968253968255
+}

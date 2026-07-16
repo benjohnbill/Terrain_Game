@@ -2483,8 +2483,10 @@
    "tier": 1,
    "status": "AGREED",
    "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
+   "codeIdentifier": "PRESETS",
+   "codeRefs": [
+    "js/bot-exit.js"
+   ],
    "verdict": "justified-coinage",
    "verdictRef": "2026-07-10-terminology-audit.md"
   },
@@ -2541,8 +2543,10 @@
    "tier": 1,
    "status": "AGREED",
    "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
+   "codeIdentifier": "TEMPERAMENT",
+   "codeRefs": [
+    "js/bot-exit.js"
+   ],
    "verdict": "synonym-exists",
    "verdictRef": "2026-07-10-terminology-audit.md"
   },
@@ -3601,15 +3605,16 @@
    "canonical": "White peace",
    "korean": "백지평화",
    "aliases": [
-    "status-quo peace",
-    "stalled-war exit"
+    "status-quo peace"
    ],
    "birthplace": "docs/features/match-arc/GLOSSARY.md",
    "tier": 1,
    "status": "AGREED",
    "kind": "mechanism",
-   "codeIdentifier": "stallPatience",
-   "codeRefs": [],
+   "codeIdentifier": "whitePeace",
+   "codeRefs": [
+    "js/bot-exit.js"
+   ],
    "verdict": null,
    "verdictRef": null
   },

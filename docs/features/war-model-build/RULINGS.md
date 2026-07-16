@@ -146,3 +146,73 @@ altitude-reclassification pass (dedicated grill, incl. the two
 reconnaissance plan cards); HCLM and three-altitude promotion proposals
 (Tier-3, user); SPEC B2 amendment text awaiting user approval
 (SYNC-DEBT row).
+
+## WM-③ — the stall timer's retirement, executed (2026-07-16)
+
+**Status: SEALED 2026-07-16 · source: ticket 11 (`.scratch/war-model-slice2/issues/11-stall-timer-retirement.md`), executing ADR 0037/0038 · L1 (hand reasoning + the measurement below)**
+
+ADR 0038 already ruled the bot stall→white-peace timer retired in favour of
+read-driven settlement. This records the *execution*, and the two calls it
+forced that the ADR did not speak to.
+
+**① `refusePeace` SURVIVES the retirement.** It is not the same animal as the
+stall timer. The timer fired on elapsed time — a counter reached regardless of
+the board — and *preempted settlement entirely* (a war fizzled before the
+decisive battle it was heading for). `refusePeace` fires only AFTER the winner
+has walked its whole concession ladder and been refused, and it states that the
+winner's *will* broke — a real ADR 0038 channel. Retiring it would delete a
+mechanism with no replacement: `js/bot-exit.js` models the LOSER's will breaking
+and has no counterpart for the winner's. That is exactly the defect ticket 11
+exists to prevent (an unowned retirement), so it stays and the gap is
+**REGISTERED, not hidden** — literally: `tournament.js SPEC_GAPS` now carries
+"WINNER-side will breaking has no read-driven home", alongside the other spec
+silences the harness had to rule on itself. A gap asserted only in prose is a
+gap nobody will find.
+Empirically near-dead (9 of 79,515 war ends before the retirement, 0 after) and
+reachable only by `free-rider` via the `proposalStep >= 3` arithmetic — but
+rarity is a fact about current bot policy, not a reason to delete the only
+channel it has.
+
+**② CE-⑳ migrates from the timer's lock to the ladder + the read.** The old
+crisis property ("stall→white-peace closes at stage 2", `totalWarLock`) died with
+its subject; deleting it would have left `tests/crisis-arc.test.js` passing
+**vacuously** — counting 0 because the cause string was gone, not because the
+seal held. CE-⑳ is now asserted where it actually lives: `availablePresets()`
+breaks the ladder bottom-up (백지→관대→표준; 최대 always survives), and
+`js/bot-exit.js` takes an **open-rungs input** so a broken rung is filtered out
+before the arithmetic runs — unreachable, not merely unattractive. The caller
+owns the calendar; the module owns the arithmetic.
+
+**Consequence of ②, re-derived not assumed:** once 백지 is broken, white peace
+stops being free and ticket 09's never-empty invariant dies with it. The "cannot
+afford any rung" branch that 09 deleted as unreachable is now REACHABLE — a court
+too poor for the cheapest surviving rung affords nothing and **drags a lost war**
+(ADR 0038's drag, arrived at honestly). Re-derived from the same sealed
+arithmetic and pinned by test, never resurrected on faith.
+
+**③ The death-forced 0%-rung path SURVIVES, and its invisibility is recorded
+rather than fixed.** The third `returnOccupied` site (inside `eliminate()`)
+returns a dead attacker's bites to the living defender. It is not the stall
+timer's kin and not a will-break: it is the consequence of a belligerent ceasing
+to exist, so there is nothing to retire. Its real defect is separate —
+`eliminate()` takes no `record`, so those ends carry NO cause and are invisible
+in `record.warEnds`, which is why the frozen baseline's white-peace share is a
+**floor** (~8.8% of wars started reach no recorded end). Left unfixed HERE by
+choice: this harness is retired (ADR 0037) and its baseline is now frozen, so
+patching it would change nothing anyone reads. The live slice-2 loop already
+records the same event honestly as `participantEliminated`, and its `endWar`
+signature makes a causeless end unwritable. Registered in `SPEC_GAPS`.
+
+**The measurement that matters (evidence, not verdict).** Removing the timer did
+**not** make fizzling wars decisive — it made them *never end*. The L2 harness
+post-retirement: 78.8% `stallPeace` → **72.1% of wars never reach an end at
+all**. The slice-2 loop shows the same shape at its own scale (metric 5's
+`unresolved` row, `mockup/operational-layer/fizzle.js`). The fizzle was renamed,
+not cured; the lever is `WINDOW_APPETITE` / the trajectory 가안, and that pass is
+not this ticket.
+
+**Baseline preserved, not trusted.** The retirement destroys the world that
+produced the recorded R14 comparison target, so the re-derived baseline is frozen
+into `mockup/operational-layer/baseline-l2.json` **before** the deletion — with
+its own provenance and source commit, so it can be audited rather than believed.
+Prose was never a comparison target; a snapshot with a re-runnable commit is.

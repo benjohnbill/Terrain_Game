@@ -45,7 +45,6 @@ const HARNESS = {
   raidBurnPp: 0.15,         // M8: usable −15pp per raid
   indemnityMenPerYield: 200, // 부대 = 0.5 yield (M13) → 1 yield = 2부대 = 200명 recruit credit
   truceTurns: 4,
-  stallPatience: 2,         // stalled war turns before white peace
   vassalPremium: 0.25,      // ruling ⑭ 가안 — THE value under test (swept)
   // -- occupation geography (stage ①, design 2026-07-10). ADR 0022 usable
   //    placeholders (HARNESS 가안) + land-ceiling coupling strength. --
@@ -84,7 +83,6 @@ const HARNESS = {
     suppressScar: 0,         // CE-⑧/⑭.3 σ — leading candidate 0 (spiral replaces it)
     suppressBudgetFrac: 0.5, // bot policy: shield fraction spent on suppression/turn
     conquestPacifyFrac: 1.0, // CE-㉑ standing-uprising fraction dispersed on definitive acquisition (가안; 1.0 = full so거. scar/fuel inherited → re-mobilizes under new owner's intensity)
-    noStallPeaceStage: 2,    // CE-⑳ overlay stage at which stall→white-peace closes (가안; ties to the truce-void stage — total war = no calling it off, wars grind to shield-break)
     rebelSiegeDragK: 0.5,    // CE-㉒ how hard a realm's OWN revolt pins its border shield (가안; drag = k × ownRebelMass / ownGarrisons)
     rebelSiegeDragCap: 0.7,  // CE-㉒ max fraction of front garrison pinned by internal revolt (가안)
     // CE-⑬/⑯ per-sector suppression terrain multiplier (가안; mirrors engine
@@ -556,7 +554,7 @@ function newWar(att, def, turn) {
     stage: 'siege', stamps: 0, starve: 0,
     occupied: 0, occupiedIds: [],  // sectors taken (count mirror + identities)
     raided: 0,                     // loot extracted (yield)
-    stalled: 0, margin: null,      // decisive | grinding | marginal
+    margin: null,                  // decisive | grinding | marginal
     proposalStep: 0,               // winner's concession ladder position
     log: [],
   };
@@ -684,7 +682,7 @@ function warBattle(war, A, D, opts = {}) {
       applyBlood(A, D, r, front);
       if (r.success && advanceOnSuccess(war, r, pick.plan)) {
         war.stage = 'field'; captureSector(war, A, D, H); D.interior = Math.max(0, D.interior);
-      } else if (!r.success && r.R < 1.1) war.stalled++;
+      }
       if (r.routed === 'defender') war.stage = 'field'; // garrison routs out of the works
       return r;
     }
@@ -693,14 +691,12 @@ function warBattle(war, A, D, opts = {}) {
         defender: { stock: g, commit: BOT.siegeCommit, reserveStock: m9Fill(D, front) }, ...site });
       applyBlood(A, D, r, front);
       if (r.success) { war.stage = 'field'; captureSector(war, A, D, H); D.interior = Math.max(0, D.interior); }
-      else if (r.R < 1.1) war.stalled++;
       return r;
     }
     const r = resolve({ plan: 'DP', attacker: { stock: A.field, commit: BOT.siegeCommit },
       defender: { stock: g, commit: BOT.siegeCommit, reserveStock: m9Fill(D, front) }, ...site });
     applyBlood(A, D, r, front);
     if (r.success) war.stamps += r.margin >= DIALS.dpErosion.deepMargin ? 2 : 1;
-    else if (r.R < 1.1) war.stalled++;
     if (r.routed === 'defender') war.stage = 'field'; // garrison routs out of the works
     return r;
   }
@@ -722,7 +718,7 @@ function warBattle(war, A, D, opts = {}) {
         war.stage = 'cascade';
         war.margin = routMargin(r.fracA);
       } else if (!r.success && r.R < 1.2) {
-        war.stalled++; war.margin = 'marginal';
+        war.margin = 'marginal';
       } else if (r.success && advanceOnSuccess(war, r, pick.plan)) war.margin = war.margin ?? 'grinding';
       return r;
     }
@@ -734,7 +730,7 @@ function warBattle(war, A, D, opts = {}) {
       war.stage = 'cascade';
       war.margin = routMargin(r.fracA);
     } else if (!r.success && r.R < 1.2) {
-      war.stalled++; war.margin = 'marginal';
+      war.margin = 'marginal';
     } else if (r.success) war.margin = war.margin ?? 'grinding';
     return r;
   }
@@ -1335,21 +1331,14 @@ function runMatch(assignment, opts = {}) {
         endWar(war, A, D, H);
         continue;
       }
-      // stall → status-quo peace (occupied sectors return). CE-⑳: under the
-      // total-war overlay (stage ≥ noStallPeaceStage, where truce already
-      // voids) there is no calling it off — a stalled war keeps grinding while
-      // shields hollow (CE-⑩), so the deciding war can reach shield-break
-      // instead of fizzling to status quo. Gated on crisis.enabled → off-path
-      // byte-identical.
-      const totalWarLock = H.crisis && H.crisis.enabled
-        && overlayStage(t, H.crisis) >= H.crisis.noStallPeaceStage;
-      if (war.stalled >= H.stallPatience && !totalWarLock) {
-        returnOccupied(war, D);
-        record.warEnds.push({ turn: t, cause: 'stallPeace' });
-        endWar(war, A, D, H);
-        continue;
-      }
-      // settlement proposal
+      // Settlement proposal — the ONLY negotiated exit. The stall→white-peace
+      // timer that used to preempt it is RETIRED (ticket 11; ADR 0037/0038):
+      // a bot court now stops because it READS that it has lost (js/bot-exit),
+      // never because a counter ran out. CE-⑳ still breaks the ladder from the
+      // bottom rung up — availablePresets(), consumed by trySettle below — but
+      // it no longer needs a lock on the stall exit, because there is no stall
+      // exit to lock. A war neither side can close now runs to the envelope,
+      // which is the honest consequence and is what metric 5 measures.
       const deal = trySettle(war, A, D, H, record);
       if (deal) {
         const res = applySettlement(deal.kind, deal.preset, war, A, D, H, realms);
@@ -1362,7 +1351,24 @@ function runMatch(assignment, opts = {}) {
         record.warEnds.push({ turn: t, cause: 'settle', preset: deal.preset });
       } else if (!BOT.archetypes[A.archetype].pushCapital
         && (war.stage === 'cascade' || war.stage === 'capital') && war.proposalStep >= 3) {
-        // lenient refused and the policy won't storm thrones: white peace
+        // The WINNER's will breaking: it has conceded to its cheapest rung, been
+        // refused, and its archetype will not storm thrones — so it calls the war
+        // off at 0%.
+        //
+        // DISPOSITION (ticket 11, recorded so it is not re-litigated): refusePeace
+        // SURVIVES the stall-timer retirement. It is not the same animal. The
+        // stall timer fired on elapsed time — a counter, reached regardless of the
+        // board — and preempted settlement entirely; this fires only AFTER the
+        // ladder is exhausted, and it is a statement about a court's will, which
+        // is a real ADR 0038 channel. Retiring it would delete a mechanism with no
+        // replacement: js/bot-exit models the LOSER's will breaking and has no
+        // counterpart for the winner's. That is precisely the defect ticket 11
+        // exists to prevent (an unowned retirement), so this stays and the gap is
+        // REGISTERED rather than hidden — the winner's-will path has no read-driven
+        // home yet. Empirically it is near-dead (9 of 79,515 war ends before the
+        // retirement; 0 after), reachable only by `free-rider` via the
+        // proposalStep arithmetic — but rarity is a fact about current bot policy,
+        // not a reason to delete the only channel it has.
         returnOccupied(war, D);
         record.warEnds.push({ turn: t, cause: 'refusePeace' });
         endWar(war, A, D, H);
@@ -1521,10 +1527,12 @@ function runTournament(opts = {}) {
 // and each needed an invented harness rule to run at all).
 const SPEC_GAPS = [
   'AI war appetite (GLOSSARY queue 8 — confirmed LOAD-BEARING): with every bot requiring the ~1.7 pre-war ratio, a viability-parity board freezes after the small realm is digested — no peer war ever launches and no match ends. The harness had to invent the opportunism read (a field army pinned elsewhere leaves screen+garrison, and THAT is what the ratio is checked against) before matches moved at all. The sheet-8 arc hand-scripted this motion (중원–동평 war); canon documents no rule that produces it.',
+  'WINNER-side will breaking has no read-driven home (REGISTERED 2026-07-16, ticket 11 / RULINGS WM-③ ①). js/bot-exit.js models only the LOSER\'s court: it reads that it has lost and takes the rung its position earns. The winner\'s will has no counterpart — the only channel is `refusePeace` here, which is harness bot policy (a lenient archetype that will not storm thrones gives up at 0% after its ladder is exhausted). Canon defines the acceptance arithmetic for the side being ASKED, and is silent on when the side ASKING stops asking. Near-dead empirically (9 of 79,515 war ends before the stall-timer retirement; 0 after) and reachable only by `free-rider` via the proposalStep arithmetic — kept because retiring it would delete the only channel it has, not because the rate justifies it.',
+  'Death-forced war end records NO cause (REGISTERED 2026-07-16, ticket 11 / RULINGS WM-③ ③). When a realm dies, its side-wars\' bites return to the living defender via returnOccupied (in eliminate()), but eliminate() takes no `record`, so those ends are invisible in record.warEnds — the harness\'s white-peace share is a FLOOR, not an exact figure (~8.8% of wars started reach no recorded end). Dispositioned as SURVIVING: it is a consequence of a belligerent ceasing to exist, not a fizzle mechanism, so it is not the stall timer\'s kin. Left unfixed HERE by choice — this harness is retired (ADR 0037) and its baseline is frozen; the live slice-2 loop already records the same event honestly as `participantEliminated` (mockup/operational-layer/war-loop.js).',
   'Two-front army allocation: which war does a realm\'s field army serve when attacked while attacking? (harness: field defends the biggest defensive war, other fronts get a 20% screen; garrisons hold sieges alone) — ADR 0025 thinness.',
   'Attacking a vassal: does the overlord\'s army defend, and does war-on-vassal mean war-on-overlord? (harness: vassals cannot be attacked at all).',
   'Settlement initiative: canon defines acceptance arithmetic but not WHO proposes or the concession tempo (harness: winner proposes one step down the preset ladder per turn).',
-  'Stalled-war exit: RESOLVED 2026-07-12 (match-arc CE-⑲) — white peace canonized as the settlement ladder 0% rung; the auto-trigger here (2 stalled turns → occupied sectors return) stays BOT POLICY, an L2-exercised 가안 that never binds a human player.',
+  'Stalled-war exit: RESOLVED 2026-07-12 (match-arc CE-⑲) — white peace canonized as the settlement ladder 0% rung. RETIRED 2026-07-16 (ticket 11; ADR 0037/0038): the 2-stalled-turns auto-trigger that used to live here is DELETED, not disabled. It was the measured driver of the 77% white-peace fizzle (DESIGN-RISKS R14), and it preempted settlement — a war fizzled before the decisive battle it was heading for. Replacement: read-driven settlement (js/bot-exit.js), where a court stops because it READS that it has lost, never because a counter ran out. Consequence, measured and not hidden: a war neither side can close now runs to the envelope instead of resetting to status quo (metric 5, mockup/operational-layer/fizzle.js).',
   'Indemnity spend: 배상 arrives as yield but nothing defines its conversion to force (harness: recruit credit at 부대=0.5 yield inside the same recruit primary).',
   'Truce/redeclaration: RESOLVED 2026-07-12 (match-arc CE-⑱) — truce lock canonized as world law (mutual, pairwise, every war end); the 4-turn value here is the L2-exercised 가안 the record-world baseline was measured under.',
   'Front redraw after cession: ruling ⑨ derives fronts from adjacency, but ceded interior sectors here do not move the border graph (harness: static adjacency — needs B\'s map).',

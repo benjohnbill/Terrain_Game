@@ -11,19 +11,35 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
 
 ## Open
 
-- [ ] **war-model-build INDEX refresh — slice-2 ticket 07 landing**
-  (2026-07-16, measurement grid merged to main at 6fbd5ce). Ritual duty 3
-  (refresh the INDEX of every touched feature): the front door still reads
-  "passed two-axis review; suite 372/372 green. Next = tickets 07–10" — stale
-  on both counts (07 has landed; suite is 399/399). Owed: mark ticket 07
-  landed, point at the harness (`mockup/operational-layer/`, run via
-  `npm run metrics:slice2`), and correct the frontier to tickets 08–11. **No
-  Projection sync is owed** — the harness is a Working-layer instrument that
-  seals nothing and registers no new terms, so DOMAIN_MAP/GLOSSARY/
-  term-inventory are untouched by it. Deferred to the 08/09 doc-sync batch so
-  the division/per-detachment cluster (the row below) lands as one coherent
-  read rather than touching the same rows twice (agent recommendation,
-  2026-07-16).
+- [x] **war-model-build INDEX refresh — PAID 2026-07-16** (slice-2 tickets
+  07/10/11). The front door now reads tickets 01–11 all landed, points at both
+  harnesses (`npm run metrics:slice2`, `npm run metrics:fizzle`), carries metric
+  5's headline with the verdict withheld, and names the frozen comparison target.
+  Confirmed at payment: **no Projection sync was owed** by the harnesses — they
+  are Working-layer instruments that seal nothing; the terms ticket 11 DID touch
+  (White peace / Settlement preset ladder / Personality coefficient) were patched
+  in `docs/audits/term-inventory.json` in the same batch (index fields only, per
+  HARVEST.md), and their birthplace definitions in match-arc are untouched.
+
+- [ ] **match-arc CE-⑳ enforcement-point stamp — registered** (2026-07-16,
+  ticket 11 / RULINGS WM-③ ②). CE-⑳'s birthplace is `match-arc/RULINGS.md`; its
+  ENFORCEMENT moved this session — from the stall timer's crisis lock
+  (`totalWarLock`, deleted with its subject) to two live surfaces:
+  `tournament.js availablePresets` (the ladder gate) and `js/bot-exit.js`'s new
+  open-rungs input. The move is execution of ADR 0038's already-declared
+  retirement, not a new decision, so **no ADR supersession is owed** — but the
+  match-arc CE-⑳ row still describes an enforcement point that no longer exists
+  and should carry a one-line pointer at its new homes. Owed at the slice-close
+  doc-sync batch, with the rest of the cross-slice §12 stamps.
+
+- [ ] **Retirement rationale is restated in five places — registered**
+  (2026-07-16, ticket 11; single-definition rule). Birthplace = RULINGS WM-③.
+  Non-birthplace surfaces owe a pointer/summary, never a normative copy, and
+  today `baseline-l2.json` (`//why`), `fizzle.js`'s header, `tournament.js
+  SPEC_GAPS`, and `REQUIREMENTS.md` A2 each restate the reasoning at length; the
+  78.8% / 72.1% figures live in three docs whose owner is the JSON. Not urgent
+  (nothing contradicts anything), but it is drift-in-waiting: the copies will rot
+  apart at the first re-cut. Trim to pointers at the slice-close batch.
 
 - [ ] **Field-army division-doctrine stamp — registered** (2026-07-15,
   slice-2 ticket 04 landed division/merge in code — merge 1950b36). Spec §12

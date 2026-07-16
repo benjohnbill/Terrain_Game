@@ -11,15 +11,32 @@ composite (ADR 0038), information ladder, opportunism read (C1),
 defense-selection wiring, bot exit (C2) — authoritative text:
 `docs/superpowers/specs/2026-07-14-slice2-operational-layer-design.md`.
 **Slice 2 implementation UNDERWAY (2026-07-15):** the sealed spec issued a
-10-ticket TDD plan (`.scratch/war-model-slice2/`); tickets **01–06 LANDED on
-main** — 01 fatigue core (`js/fatigue.js`), 02 movement + supply
+11-ticket TDD plan (`.scratch/war-model-slice2/`); tickets **01–11 ALL
+LANDED** — 01 fatigue core (`js/fatigue.js`), 02 movement + supply
 (`js/movement.js`), 03 engagement v2 (`js/battle.js`), 04 field-army
 division + commit budget (`js/field-army.js`, `js/commit.js`), 05 intel v2
-(`js/intel.js`), 06 board verbs + emergent siege (`js/board-verbs.js`). Each
-passed two-axis review; suite 372/372 green. Next = tickets 07–10
-(measurement grid, window read, bot exit, fizzle re-read); the doc-sync of
-the cross-slice §12 vocab/stamp batch stays deferred to slice close
-(SYNC-DEBT). L2 combat simulation retired (ADR 0037).
+(`js/intel.js`), 06 board verbs + emergent siege (`js/board-verbs.js`), 07
+measurement grid metrics 1–4 (`mockup/operational-layer/`, `npm run
+metrics:slice2`), 08 window read (`js/window-read.js`), 09 bot exit
+(`js/bot-exit.js`), 10 fizzle re-read metric 5 (`mockup/operational-layer/
+fizzle.js`, `npm run metrics:fizzle`), 11 stall-timer retirement. Each passed
+two-axis review; suite 466/466 green. The doc-sync of the cross-slice §12
+vocab/stamp batch stays deferred to slice close (SYNC-DEBT). L2 combat
+simulation retired (ADR 0037), and its stall→white-peace timer is now
+physically deleted (ticket 11, RULINGS WM-③).
+
+**The build is complete; the seal decision is not made.** Metric 5 is the
+evidence input and the user reads it (`npm run metrics:fizzle`; the frozen
+comparison target is `mockup/operational-layer/baseline-l2.json`). Its
+headline, verdict deliberately withheld: **no-material-outcome 80.7% → 68.7%**
+of wars started. The stall timer's share went 78.8% → 0%, but the fizzle did
+not die with it — it was **renamed**: ~35.7% pre-emptive white peace (a dial
+question — `WINDOW_APPETITE`/trajectory 가안, flagged by `js/bot-exit.js`
+itself) and ~18.6% wars that now simply never end (a MECHANISM question — with
+the timer gone, nothing closes a stalemate; ADR 0038's composite fires none of
+격멸/수도/정착). The same shape reproduces in the retired L2 harness after its
+own retirement (78.8% `stallPeace` → 72.1% never-ending), so it is a property
+of the model, not of one loop.
 
 **One-line.** The front door for building Terrain Game's war model in real
 game code (`js/`) — implementing the sealed sector-resolution combat the L2

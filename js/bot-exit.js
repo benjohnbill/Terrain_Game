@@ -54,17 +54,21 @@
  * chain-seeker path), not the losing court's own read. It belongs to the wiring
  * ticket that owns both sides of the table.
  *
- * ── KNOWN GAP, owned by ticket 11: this module is overlay-blind ──────────────
+ * ── CE-⑳: the overlay ladder (gap CLOSED by ticket 11) ──────────────────────
  * CE-⑳ breaks the settlement ladder from the bottom rung up as total war
  * escalates (the harness's availablePresets: stage >= 2 drops 백지/관대, stage
- * >= 3 leaves only 최대). acceptableRungs below walks the FULL sealed ladder and
- * knows nothing of the calendar, so a WIRED bot court would sign whitePeace
- * during total war — which CE-⑳ forbids. Latent, not live: the module is pure
- * and unwired, so it binds only at wiring. Ticket 11 gives the walk an open-rungs
- * input (the caller owns the calendar; this module owns the arithmetic).
- * Consequence for the never-empty invariant below: once 백지 is broken, white
- * peace stops being free, the invariant dies, and the drag branch this module
- * deleted as unreachable becomes REACHABLE. Re-derive it there; do not assume it.
+ * >= 3 leaves only 최대 — "wars end big or not at all"). This module used to walk
+ * the FULL sealed ladder and know nothing of the calendar, so a wired bot court
+ * would have signed whitePeace during total war, which CE-⑳ forbids.
+ *
+ * `acceptableRungs`/`decideExit` now take an OPEN-RUNGS input: the caller owns
+ * the calendar, this module owns the arithmetic. A broken rung is filtered out
+ * before the arithmetic runs — it is not a rung the court declines, it is a rung
+ * that no longer exists. Two consequences, both live:
+ *   - the never-empty invariant DIES with 백지: white peace stops being free.
+ *   - the "cannot afford any rung" branch, deleted here as unreachable, becomes
+ *     REACHABLE, and is re-derived from the same arithmetic (see decideExit) —
+ *     a court that can afford nothing on offer drags a lost war (ADR 0038).
  */
 
 const WindowRead = (typeof module !== 'undefined' && module.exports) ? require('./window-read.js') : window.WindowRead;
@@ -105,6 +109,31 @@ const WINDOW_APPETITE = 1.0;
 
 function round2(value) {
   return Math.round(value * 100) / 100;
+}
+
+/* THE VOCABULARY SEAM, owned here rather than left to callers.
+ *
+ * This module's identifiers are the registered English canonicals (Vocabulary
+ * Law: the 한국어 표시어 is a display VALUE, never a key). The CE-⑳ overlay that
+ * feeds `openRungs`, however, is the sealed harness's `availablePresets`, which
+ * keys the ladder by 표시어 — `['백지', '관대', '표준', '최대']`. Both are right at
+ * their own birthplace, so SOMETHING must translate.
+ *
+ * It lives here, next to the PRESETS whose `label` field IS the mapping's source
+ * of truth, and that placement is the whole point: ticket 09 left the overlay an
+ * unowned GAP, and pushing the translation onto every caller would have replaced
+ * it with an unowned SEAM — the same defect wearing a different hat. A caller
+ * that already speaks canonical passes through unchanged, so this narrows
+ * nothing.
+ */
+const _RUNG_BY_LABEL = Object.freeze(Object.fromEntries(
+  LADDER.map((name) => [PRESETS[name].label, name])));
+
+function rungOf(nameOrLabel) {
+  if (PRESETS[nameOrLabel]) return nameOrLabel;              // already canonical
+  const canonical = _RUNG_BY_LABEL[nameOrLabel];             // 표시어 → canonical
+  if (canonical) return canonical;
+  throw new Error('unknown settlement preset: ' + nameOrLabel);
 }
 
 /* ── Ported acceptance arithmetic (match.js) ───────────────────────────────── */
@@ -202,15 +231,28 @@ function position(cfg) {
 
 /* Every rung this court would sign, cheapest claim first. A rung is signable
    when the sealed 수락 산술 says the bundle costs no more than fighting on.
-   INVARIANT: 백지 is always signable — its bundle value is 0 and expected
-   continued loss is never negative, so `0 <= L × coeff` always holds. This is a
-   property of the sealed arithmetic, not of this port (see the white-peace note
-   on decideExit), and the return is therefore never empty. */
-function acceptableRungs(state, temperament) {
+   `openRungs` is THE OVERLAY INPUT (ticket 11, closing the CE-⑳ gap this module
+   shipped with): the caller owns the calendar, this module owns the arithmetic.
+   CE-⑳ breaks the settlement ladder from the bottom rung up as total war
+   escalates — 백지 first, then 관대, then 표준; 최대 always survives ("wars end
+   big or not at all"). A broken rung is not a rung a court declines to sign, it
+   is a rung that no longer EXISTS to be signed, so it is filtered out of the walk
+   before the arithmetic runs, never priced and rejected. Omitted (undefined) =
+   the full sealed ladder, which is the peacetime/no-overlay world.
+
+   INVARIANT, and its DEATH: while 백지 is open, it is always signable — its
+   bundle value is 0 and expected continued loss is never negative, so
+   `0 <= L × coeff` always holds, and the return is never empty. Once the overlay
+   breaks 백지 that guarantee is GONE: a court too poor to afford the cheapest
+   surviving rung can afford NOTHING, and the return is legitimately empty. That
+   is not a hole — it is ADR 0038's drag, arrived at honestly (see decideExit). */
+function acceptableRungs(state, temperament, openRungs) {
   const coeff = TEMPERAMENT[temperament];
   if (coeff === undefined) throw new Error('unknown temperament: ' + temperament);
+  const open = openRungs ? new Set(openRungs.map(rungOf)) : null;
   const L = expectedContinuedLoss(state);
   return LADDER
+    .filter((name) => !open || open.has(name))
     .map((name) => presetBundle(name, state))
     .filter((b) => accepts(b.value, L.total, coeff))
     .map((b) => b.preset);
@@ -239,19 +281,26 @@ function acceptableRungs(state, temperament) {
  * Ticket 10 note: metric 5's settlement-rung distribution must come from the
  * resolved rung, not from this ceiling.
  *
- * ── Why there is no "cannot afford any rung" branch ──────────────────────────
- * A beaten bot court can ALWAYS sign at least white peace: whitePeace's bundle
- * value is 0, and `accepts(0, L, coeff)` is `0 <= L × coeff`, true for every
- * non-negative expected loss. Bot drag is therefore not an acceptance-arithmetic
- * outcome, and a branch for it would be unreachable. This is not a gap in the
- * port — it is why the sealed harness's winner-side walk is ['최대','표준','관대']
- * with 백지 absent: a WINNER never proposes claiming nothing, so the 0% rung is
- * only ever reached from the loser's side or by a harness exit. This module reads
- * the LOSER's side, where white peace is free by construction.
+ * ── The "cannot afford any rung" branch, and when it is reachable ───────────
+ * While 백지 is OPEN, a beaten bot court can always sign at least white peace:
+ * its bundle value is 0, and `accepts(0, L, coeff)` is `0 <= L × coeff`, true for
+ * every non-negative expected loss. Under the full ladder the branch below is
+ * therefore unreachable, which is why the sealed harness's winner-side walk is
+ * ['최대','표준','관대'] with 백지 absent: a WINNER never proposes claiming
+ * nothing, so the 0% rung is only ever reached from the loser's side.
  *
- * Dragging a lost war stays possible where ADR 0038 actually puts it: a human
- * court (the CE-⑲ gate below — never force-closed), and a court that withholds
- * its army from the field. Neither is an acceptance-arithmetic branch.
+ * CE-⑳ makes it REACHABLE (ticket 11). Once the overlay breaks 백지 off the
+ * bottom of the ladder, white peace stops being free, and a court too poor to
+ * afford the cheapest surviving rung can afford nothing at all. It does not
+ * surrender — it DRAGS a lost war, which is exactly where ADR 0038 puts drag and
+ * is the honest reading of "wars end big or not at all": if the only peace on
+ * offer costs more than fighting on, a court fights on. The branch is
+ * re-derived here from the same arithmetic rather than resurrected on faith:
+ * `signable` empty ⇒ no rung is affordable ⇒ no settlement.
+ *
+ * Drag also stays possible where ADR 0038 already put it: a human court (the
+ * CE-⑲ gate below — never force-closed), and a court that withholds its army
+ * from the field. Those are not acceptance-arithmetic branches.
  *
  * Flagged for ticket-10 measurement: a court that reads itself losing before the
  * enemy sword has reached anything (occValue ~ 0) signs 백지 — a PRE-EMPTIVE
@@ -273,8 +322,17 @@ function decideExit(cfg) {
   const pos = position(cfg);
   if (!pos.losing) return { settle: false, ceiling: null, reason: 'fight-on', position: pos };
 
-  const signable = acceptableRungs(cfg.state, cfg.court.temperament)
+  // cfg.openRungs = the rungs the calendar still leaves standing (CE-⑳). The
+  // caller owns the calendar; this module owns the arithmetic. Absent = full
+  // sealed ladder.
+  const signable = acceptableRungs(cfg.state, cfg.court.temperament, cfg.openRungs)
     .map((name) => presetBundle(name, cfg.state));
+  // Nothing on the surviving ladder is affordable: the court drags a lost war.
+  // Reachable ONLY once CE-⑳ has broken 백지 off the bottom (see the header) —
+  // under the full ladder white peace is free and this cannot fire.
+  if (!signable.length) {
+    return { settle: false, ceiling: null, reason: 'no-affordable-rung', position: pos, signable: [] };
+  }
   // The most it can afford to concede. A bundle's value is composite × claimRate
   // exactly, so value rises strictly with the rung and the max IS the top rung —
   // except when the sword has reached nothing (composite 0), where every rung is
@@ -290,7 +348,7 @@ function decideExit(cfg) {
 
 const _api = {
   PRESETS, LADDER, TEMPERAMENT, LOSS_MODEL, TRAJECTORY_EPSILON, WINDOW_APPETITE,
-  presetBundle, expectedContinuedLoss, accepts,
+  presetBundle, expectedContinuedLoss, accepts, rungOf,
   trajectory, position, acceptableRungs, decideExit,
 };
 if (typeof module !== 'undefined' && module.exports) module.exports = _api;
