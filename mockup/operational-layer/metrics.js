@@ -325,8 +325,11 @@ function runAll() {
   };
 }
 
-/* Node-only harness (sibling convention: mockup/decisive-battle/*.js). */
-module.exports = { parityGrid, swiftSeizureGrid, massInversionGrid, commitCurveGrid, runAll, RESTORATION };
+/* Node-only harness (sibling convention: mockup/decisive-battle/*.js).
+   forEachRestoration is exported for metric 5 (ticket 10, fizzle.js): the
+   layer-restoration sweep is reused, never re-authored, so both measurement
+   surfaces restore the same layers in the same order. */
+module.exports = { parityGrid, swiftSeizureGrid, massInversionGrid, commitCurveGrid, runAll, RESTORATION, forEachRestoration };
 
 if (require.main === module) {
   const pct = (r) => (r == null ? '  n/a' : (100 * r).toFixed(1).padStart(5) + '%');
