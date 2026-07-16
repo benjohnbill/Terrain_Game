@@ -41,6 +41,48 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   Wayfinder 12** (spec partition after the documentation audit); this row exists so
   it is not lost there. Same for Wayfinder 01 (parallel-strangler topology).
 
+- [ ] **L3 Seam Wayfinder 03 — fog RULING promotion undecided** (registered
+  2026-07-17). Wayfinder 03
+  (`.scratch/l3-playable-seam/issues/03-define-viewer-knowledge-contract.md`,
+  resolved 2026-07-17, user-sealed) settles the L3 viewer knowledge matrix:
+  Standard Fog publishes the land and its derivations — including **current
+  political control** — and fogs only the mutable draw on that land; enemy
+  treasury leaves the viewer projection entirely and survives only as 판세 band
+  width; civilian register and 동원 강도 fall out as derived bands with zero new
+  dials; seven non-leak invariants bind every projection.
+  **Fires no mandatory-ADR trigger**: no win condition changes (the 패권 결정점
+  arithmetic is untouched — only the already-sealed *readability* of 판세 is
+  specified), no cross-feature game model changes (it fills the gap the Slice 2
+  ladder left by classifying military state but never control), no SPEC direction
+  changes. The governing precedent points at a feature RULING rather than an ADR:
+  fog **RULING ①** (wall grade is public, SEALED 2026-07-08, user grill) settled a
+  structurally identical visibility gap as a
+  `docs/features/fog-of-war-discovery/RULINGS.md` row. The control decision is
+  that ruling's sibling — a RULING ② candidate at the same birthplace — and §2 of
+  the answer is literally RULING ①'s principle ("structures are visible; the
+  manning is banded") reaching people instead of walls.
+  Open for whoever closes this: the treasury and derived-band clauses cite
+  match-arc GLOSSARY rows (패권 결정점, Affordability bound AB-①, 징집 명부 MT-②,
+  동원 강도 MT-③) without amending any of them; whether they also owe match-arc
+  RULINGS rows or ride the fog ruling alone is a partition call.
+  The ticket is the birthplace meanwhile, because the L3 Seam has no Production
+  home yet by the umbrella spec's own deferral. **Promotion decision belongs to
+  Wayfinder 12**; this row exists so it is not lost there. Same handling as
+  Wayfinder 01 and 02 above.
+
+- [ ] **Fog INDEX Status line still says "position fog"** (noticed 2026-07-17
+  while resolving Wayfinder 03; ritual duty 6 — divergence noticed, not caused).
+  `docs/features/fog-of-war-discovery/INDEX.md` § Status reads "Scope is the
+  Standard fog MVP (position fog)". "Position fog" is the retired map-discovery
+  framing: the same file's § Idea already carries the 2026-07-14 supersession
+  stamp ("geography is public from turn 0; only the mutable layer … is fogged"),
+  but the Status line was not refreshed in that batch. Wayfinder 03 completes the
+  retirement — the `[0, 0.45)` confidence interval that position fog occupied is
+  now permanently dead and `DECAY_FLOOR = 0.45` (`js/intel.js:17`) is the sealed
+  floor rather than an unimplemented instruction from the 2026-07-01 spec §4.
+  Pay with the Wayfinder 03 fog-ruling promotion above, so the INDEX refresh and
+  the ruling land in one batch.
+
 - [x] **war-model-build INDEX refresh — PAID 2026-07-16** (slice-2 tickets
   07/10/11). The front door now reads tickets 01–11 all landed, points at both
   harnesses (`npm run metrics:slice2`, `npm run metrics:fizzle`), carries metric

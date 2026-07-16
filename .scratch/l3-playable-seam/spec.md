@@ -288,8 +288,23 @@ target architecture.
   projection rather than present and visually concealed. The projection seam is
   also the single blur point: the Runtime applies the information model once when
   it builds a projection, and no downstream surface re-derives an estimate from
-  truth. The exact knowledge categories remain owned by the Fog-of-War feature and
-  the unresolved viewer-knowledge Wayfinder gate.
+  truth. Numeric dials and the Fog knowledge model stay owned by the Fog-of-War
+  feature; the L3 viewer grades and non-leak invariants are resolved by
+  [issue 03](issues/03-define-viewer-knowledge-contract.md).
+- **Viewer knowledge grades:** Standard Fog publishes the land and everything
+  derived from it — terrain, fortification grade, routes, diplomatic
+  relationships, current political control, land value/yield, and the register
+  pool — and fogs only the mutable draw a realm makes on that land. Own state is
+  exact. Enemy substance and fatigue are estimate bands over `[0.45, 0.90]`;
+  civilian register, 동원 강도, and 판세 are derived bands adding no new
+  information channel; field-army position is a last-seen fix plus reach cone;
+  border alarm is existence plus heading only. Enemy standing posture, commit
+  allocation, and treasury are absent from the projection — treasury's
+  uncertainty is expressed solely as 판세 band width. Seven non-leak invariants
+  bind every projection, including that a missing confidence record yields the
+  floor band rather than truth. Resolved by
+  [issue 03](issues/03-define-viewer-knowledge-contract.md), which owns the grade
+  matrix and the invariants.
 - **Fog-of-War completion:** Functional Standard Fog is part of L3 acceptance.
   Scouting must visibly change the approved information representation and the
   related command preview. A development label may disclose incomplete wiring
@@ -476,6 +491,12 @@ Implementation Decisions above.
   at the projection seam; preview is a pure module outside the Runtime; bots are
   callers and the Runtime enforces turn order without sleeping; the intent log
   plus seed is the canonical durable form. Resolved 2026-07-16.
+- [Define What Each Viewer Can Know](issues/03-define-viewer-knowledge-contract.md)
+  — Standard Fog publishes the land and its derivations, including current
+  political control, and fogs only the mutable draw on it; treasury leaves the
+  projection entirely and survives as 판세 band width; civilian register and
+  동원 강도 are derived bands; seven non-leak invariants bind every projection.
+  Resolved 2026-07-17.
 - [Verify Vite, TypeScript, ESM, and Legacy CommonJS Coexistence](issues/04-research-toolchain-coexistence.md)
   — resolved research evidence, not an implementation decision.
 
@@ -499,27 +520,24 @@ The following named tickets remain decision or prototype gates. Their answers
 must be recorded in their own ticket and reflected into this spec before
 implementation tickets depending on them become `ready-for-agent`.
 
-1. [Define What Each Viewer Can Know](issues/03-define-viewer-knowledge-contract.md)
-   — public/exact/estimated/last-seen/hidden categories, including the recorded
-   control-visibility tension and non-leak invariants.
-2. [Choose the Build, Module, and Test Topology](issues/05-choose-build-and-test-topology.md)
+1. [Choose the Build, Module, and Test Topology](issues/05-choose-build-and-test-topology.md)
    — package and ESM/CommonJS coexistence, commands, artifact ownership, and
    supported developer workflow, informed by the resolved toolchain research.
-3. [Define the Authored World Input Contract](issues/06-define-authored-world-input.md)
+2. [Define the Authored World Input Contract](issues/06-define-authored-world-input.md)
    — canonical data shape, generation/load timing, stable identifiers,
    validation, and production-versus-evidence disposition of current artifacts.
-4. [Make Uncertainty Legible Without Leaking Truth](issues/07-prototype-map-fog-presentation.md)
+3. [Make Uncertainty Legible Without Leaking Truth](issues/07-prototype-map-fog-presentation.md)
    — live user-evaluated presentation and the initial renderer decision.
-5. [Define the First Playable Vertical Slice](issues/08-define-first-playable-vertical-slice.md)
+4. [Define the First Playable Vertical Slice](issues/08-define-first-playable-vertical-slice.md)
    — exact match mode, player journey, commands, bot flow, feedback, and end
    point that prove the seam is real.
-6. [Define the Incremental Migration and Adapter Ladder](issues/09-define-incremental-migration-ladder.md)
+5. [Define the Incremental Migration and Adapter Ladder](issues/09-define-incremental-migration-ladder.md)
    — port order, allowed adapters, parity evidence, and adapter retirement.
-7. [Define the L3 Verification and Acceptance Gates](issues/10-define-l3-verification-gates.md)
+6. [Define the L3 Verification and Acceptance Gates](issues/10-define-l3-verification-gates.md)
    — executable evidence, human comprehension checks, and completion criteria.
-8. [Define Cutover and Legacy Retirement](issues/11-define-cutover-and-retirement.md)
+7. [Define Cutover and Legacy Retirement](issues/11-define-cutover-and-retirement.md)
    — route promotion, hosting rollback, and deletion/archive evidence.
-9. [Partition the Implementation-Ready Spec Handoff](issues/12-partition-spec-handoff.md)
+8. [Partition the Implementation-Ready Spec Handoff](issues/12-partition-spec-handoff.md)
    — Production spec partition after the decisions above and the planned
    documentation/terminology audit, including whether any resolved Wayfinder
    decision promotes to an ADR.
