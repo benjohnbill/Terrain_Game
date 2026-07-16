@@ -32,6 +32,24 @@ The design docs below run ahead of the code: several layers are sealed in
 design (the combat-resolution formula, the match-arc/settlement model) but not
 yet implemented in these modules.
 
+## Target Runtime and UI Architecture
+
+The L3 interactive build uses React + TypeScript/TSX for the UI shell and Vite
+for build tooling. All new canonical L3 production source, including the
+authoritative Game Runtime and domain modules, is TypeScript/TSX; it emits ESM
+JavaScript shared by browser play and Node-based tests or simulations. Existing
+JavaScript is ported through playable vertical slices rather than converted in
+a big-bang rewrite. React sends player intent across a narrow runtime seam and
+renders returned game state and events; rules and state transitions do not
+import React, access the DOM, or depend on browser globals.
+
+The map renderer remains a separate architectural axis. React can host and
+coordinate the map surface without becoming its renderer, and a renderer
+change does not move authoritative game state into drawing code. Full game
+engines remain reserved for a deliberate genre change toward real-time,
+animation-heavy, or physics-heavy play. See ADR 0040, which amends the source-
+language portions of ADRs 0016, 0028, and 0039.
+
 ## Design Direction
 
 The next design step is a terrain-first regional system. Political control

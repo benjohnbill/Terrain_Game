@@ -46,7 +46,7 @@ a target; ← is amended/superseded by a later ADR.
 | 0013 | Map-First Situation UX | 2026-06-29 | Accepted | — |
 | 0014 | Local Garrison Sustainment From Province Economy | 2026-06-29 | Accepted | ← Amended by 0022 (front-sector garrison scope) · ← Amended by match-arc MT-① (P1 dual billing) · ← Amended by 0031 (facing-shield garrisons) |
 | 0015 | Strait Crossing Penalty And Deferred Naval System | 2026-06-29 | Accepted | Self-amended 2026-07-03 (magnitude pass — penalty values) |
-| 0016 | Web Technology Stack With Trigger-Based Migration Path | 2026-06-29 | Accepted | ← Amended by 0028 (UI-shell/renderer axis split, L3 = Stage 1 trigger forecast) |
+| 0016 | Web Technology Stack With Trigger-Based Migration Path | 2026-06-29 | Accepted | ← Amended by 0028 (UI-shell/renderer axis split, L3 = Stage 1 trigger forecast) · ← Amended by 0039 (Stage 1 fired: React + Vite) · ← Amended by 0040 (canonical L3 source = TS/TSX; execution runtime remains JS) |
 | 0017 | Positioning — Civ-Depth World, LoL-Shaped Interaction | 2026-07-01 | Accepted | — |
 | 0018 | Phase 1 MVP — Core Fun First, Defer Capacity/Overclock | 2026-07-01 | Accepted | ← Amended by 0020 (single divisible pool → core) |
 | 0019 | Situation Judgment as a Structured, Posture-Lensed Reading | 2026-07-01 | Accepted | Self-amended 2026-07-06 (v5 front-sector — lens/leak-through, no overview recommendation) |
@@ -58,7 +58,7 @@ a target; ← is amended/superseded by a later ADR.
 | 0025 | Turn-Based Core with the Uncertainty Duel | 2026-07-02 | Accepted | — |
 | 0026 | One-Shot Plan Effects, Persistent State, Standing Rules | 2026-07-02 | Accepted | — |
 | 0027 | Free Commit Allocation — Main/Surplus as Magnitude Labels | 2026-07-07 | Accepted | → Amends 0020 |
-| 0028 | L3 Build-Out Stack Direction — UI-Shell/Renderer Axis Split | 2026-07-10 | Accepted | → Amends 0016 |
+| 0028 | L3 Build-Out Stack Direction — UI-Shell/Renderer Axis Split | 2026-07-10 | Accepted | → Amends 0016 · ← Amended by 0039 (Stage 1 fired; UI choice resolved) · ← Amended by 0040 (framework-free TS source emitted for browser/Node parity) |
 | 0029 | Uniform Integration Lag on Acquired Land | 2026-07-10 (sealed 2026-07-11) | Accepted | → Amends 0022 |
 | 0030 | Victory Conditions — Hegemony Decision Point and Domination Victory | 2026-07-10 | Accepted | Backfill (forensics F-06/07); definitions live at match-arc birthplaces · ← Amended by 0034 (structural crisis end for the never-tripped tail) |
 | 0031 | Force-Geography Defense Model — Terrain-Bound Defense and Reactive Reserve | 2026-07-10 | Accepted | → Amends 0008, 0014 · Backfill (forensics F-08) · ← Advanced by 0037 (engine adoption → build) |
@@ -68,3 +68,6 @@ a target; ← is amended/superseded by a later ADR.
 | 0035 | Match End — Internal-Uprising Crisis Arc (Design Skeleton) | 2026-07-11 | Accepted | → Amends 0034 (source family, draw fallback, arc timeline) · rulings CE-①…⑫ · SPEC amendment user-sealed 2026-07-11 · ← Extended by 0036 (rebellion body) |
 | 0036 | Crisis Rebellion Body and the Death of Peacetime Institutions | 2026-07-12 | Accepted | → Extends 0035 (skeleton → body; gate 5 resolved) · rulings CE-⑬…⑳ · truce/white-peace canonized (SPEC_GAPS ⑤/⑦ resolved) |
 | 0037 | War Model Build — Sealed Combat Resolution Replaces the L2 Stage-Machine | 2026-07-13 | Accepted | → Advances 0031 (engine adoption) · → Retires L2 harness of 0032 (sector-identity model stands as build target) · Confirms 0026 (atomic resolution; L2 stage-machine was a violation) · Feeds 0028 (stack) · R14 re-diagnosis |
+| 0038 | War-Ending Composite — Capacity or Will | 2026-07-14 | Accepted | → Amends SPEC match-structure (field-army destruction becomes dominant, not sole path) · Confirms match-arc CE-⑲/B3 · Advances capital CP-① |
+| 0039 | React + Vite UI Shell and Framework-Free JavaScript Game Runtime | 2026-07-16 | Accepted | → Amends 0016, 0028 (Stage 1 fired; deferred UI choice resolved) · ← Amended by 0040 (canonical source becomes TS/TSX) |
+| 0040 | TypeScript-First Canonical L3 Source With Incremental Legacy Porting | 2026-07-16 | Accepted | → Amends 0016, 0028, 0039 (source language separated from execution runtime) |

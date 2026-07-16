@@ -5,6 +5,12 @@ Date: 2026-07-10
 Status: Accepted
 Decision source: stack-direction discussion with the user, 2026-07-10
 (L3 build-out / PvP boundary / renderer session).
+Amended by: ADR 0039 (2026-07-16) — the forecast Stage 1 trigger has fired;
+React + Vite are selected for the UI shell while the framework-free
+JavaScript game runtime and independent renderer axis remain binding.
+Amended by: ADR 0040 (2026-07-16) — the portability obligation is preserved,
+but its source-language wording changes: canonical L3 logic is authored in
+framework-free TypeScript and emitted as ESM JavaScript for browser and Node.
 Amends: ADR 0016 (2026-06-29) — its Layer 2 ("framework") is split into two
 independent axes, UI-shell framework and map renderer; the L3 playtest
 build-out is forecast as the likely Stage 1 trigger point; and

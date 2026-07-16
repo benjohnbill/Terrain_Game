@@ -11,6 +11,36 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
 
 ## Open
 
+- [ ] **L3 Seam Wayfinder 02 — ADR promotion undecided** (registered 2026-07-16).
+  Wayfinder 02 (`.scratch/l3-playable-seam/issues/02-define-game-runtime-authority.md`,
+  resolved 2026-07-16, user-sealed) settles Game Runtime authority: the Runtime
+  privately owns match truth, blur happens once at the projection seam, command
+  preview is a pure module outside the Runtime, bots are ordinary callers while
+  the Runtime enforces turn order without sleeping, and the intent log plus seed
+  is the canonical durable form. Parts of that — preview placement and the
+  serialization contract — are architecture-grade and are natural ADR promotion
+  candidates. It fires no mandatory-ADR trigger (no win condition, no cross-feature
+  *game* model, no SPEC direction change): ADR 0039 Decision 3 explicitly deferred
+  "the exact API shape" to implementation, and this answers inside that deferral
+  while honouring 0039/0040's framework-free seam. One loose-language flag for
+  whoever closes this: ADR 0039 Decision 3 says the runtime "exposes resulting
+  state and events", and `DESIGN.md:43` mirrors it as "renders returned game state
+  and events". The sealed direction had already moved past that phrasing before
+  this ticket — ADR 0040's Consequences name the viewer-projection seam, and the
+  umbrella spec says "events plus viewer-safe match projections" — so 02 elaborates
+  rather than contradicts. **User decision 2026-07-16: both Tier-3 follow-ups ride
+  gate 12's ADR batch rather than landing early** — (a) stamp ADR 0039 and correct
+  the `DESIGN.md:43` sentence in that same batch, so the supersession duty falls in
+  one place; (b) the session's recurring principle — *a protection that depends on
+  caller discipline is not a structural guarantee*, which drove three of 02's
+  rejections (opaque state token, Runtime-side preview, and the live
+  `js/ui.js:156-157` truth-fallback) — is absorbed into that ADR rather than
+  promoted to a root doc separately.
+  The ticket is the birthplace meanwhile, because the L3 Seam has no Production
+  home yet by the umbrella spec's own deferral. **Promotion decision belongs to
+  Wayfinder 12** (spec partition after the documentation audit); this row exists so
+  it is not lost there. Same for Wayfinder 01 (parallel-strangler topology).
+
 - [x] **war-model-build INDEX refresh — PAID 2026-07-16** (slice-2 tickets
   07/10/11). The front door now reads tickets 01–11 all landed, points at both
   harnesses (`npm run metrics:slice2`, `npm run metrics:fizzle`), carries metric

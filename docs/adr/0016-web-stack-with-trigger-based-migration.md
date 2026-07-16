@@ -9,6 +9,12 @@ trigger point; Unity-of-Command-class 2D map presentation is confirmed
 in-stack (browser 2D sprite rendering — Canvas 2D or a WebGL sprite
 library), not a native-engine trigger; the logic layer's Node/browser
 isomorphism becomes a binding obligation (see § Decision).
+Amended by: ADR 0039 (2026-07-16) — the L3 build-out fires Stage 1: React is
+selected for the UI shell, Vite for build tooling, and the game runtime is
+clarified as framework-free modern ESM JavaScript shared by browser and Node.
+Amended by: ADR 0040 (2026-07-16) — JavaScript remains the browser/Node
+execution runtime, while all new canonical L3 source uses TypeScript/TSX and
+legacy JavaScript is ported incrementally behind parity gates.
 
 ## Context
 
