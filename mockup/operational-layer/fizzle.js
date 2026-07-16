@@ -7,14 +7,25 @@
  * needles. It does NOT judge them — the verdict is the user's (battery
  * precedent; metrics.js "encodes NO balance decision").
  *
- * ── The baseline is RE-DERIVED, not quoted ──────────────────────────────────
+ * ── The baseline is FROZEN, not quoted (and was re-derived, not trusted) ────
  * The recorded target (~77% white peace, 0 annihilations/match — DESIGN-RISKS
- * R14) exists ONLY as prose: no committed report file produces it, and nothing
+ * R14) existed ONLY as prose: no committed report file produced it, and nothing
  * in battery.js aggregates `warEnds` at all. Quoting a prose number as a
- * comparison target would compare a measurement against a memory. So this
- * harness re-runs the L2 cradle probe itself, at the recorded coordinates
- * (`runCradleTournament`, CRADLE_MAP, viable 5-seat bindings, seed 42, crisis
- * OFF) and tallies `record.warEnds` by CAUSE.
+ * comparison target compares a measurement against a memory, so ticket 10
+ * re-derived it by running the L2 cradle probe itself.
+ *
+ * Ticket 11 then RETIRED the stall timer from `tournament.js` (ADR 0037/0038),
+ * which means that world can no longer be re-run from a current checkout — the
+ * generator of the comparison target is gone by design. Re-running the probe now
+ * would produce a DIFFERENT world's numbers and label them "the L2 baseline":
+ * precisely the plausible-but-wrong figure this metric exists to avoid.
+ *
+ * So the re-derived baseline is FROZEN into `baseline-l2.json` — machine-readable,
+ * carrying its own provenance, and reproducible by checking out the recorded
+ * `sourceCommit` and re-running this file. That is strictly better than the prose
+ * it replaces, and honest about what it is: a snapshot of a retired world, not a
+ * live measurement. `rederiveBaseline()` below still exists and still works — at
+ * that commit — so the freeze can always be audited rather than believed.
  *
  * That decomposition is mandatory, not decoration. Three code paths in
  * `tournament.js` reach the identical 0%-material outcome — `stallPeace` (the
@@ -38,6 +49,7 @@ const { CRADLE_MAP } = require('../combat-calc/map-gen.js');
 const { viableBindings } = require('../combat-calc/map-gate.js');
 const W = require('./war-loop.js');
 const { forEachRestoration } = require('./metrics.js');
+const FROZEN_BASELINE = require('./baseline-l2.json');
 
 /* The recorded coordinates of the L2 baseline (DESIGN-RISKS R14: "Crisis-OFF
    main-arc measurement (2026-07-13, L2 cradle, seed 42)"). battery.js cradleSheet
@@ -61,7 +73,7 @@ function rate(num, den) { return den === 0 ? null : num / den; }
 
 /* ── Baseline: the L2 cradle, re-run and decomposed by cause ─────────────── */
 
-function baseline({ reps = BASELINE_REPS, seed = SEED, bindings } = {}) {
+function rederiveBaseline({ reps = BASELINE_REPS, seed = SEED, bindings } = {}) {
   const viable = bindings || viableBindings(CRADLE_MAP, 5).viable;
   // No `harness` override → HARNESS.crisis.enabled stays false. Crisis-OFF is
   // the record world by tournament.js's own comment, and the R14 measurement's
@@ -211,13 +223,22 @@ function restorationSweep({ reps = 1, seed = SEED, bindings } = {}) {
 
 function runAll(opts = {}) {
   return {
-    baseline: baseline(opts.baseline),
+    baseline: baseline(),
     reread: reread(opts.reread),
     restoration: restorationSweep(opts.restoration),
   };
 }
 
-module.exports = { SEED, BASELINE_REPS, LOOP_REPS, RECORDED, baseline, reread, restorationSweep, runAll };
+/* THE comparison target: the frozen snapshot. Reading it is not a shortcut — the
+   world that produced it no longer exists in this tree (ticket 11 retired the
+   stall timer), so re-deriving here would silently swap the target. Audit it with
+   `rederiveBaseline()` at the snapshot's own `provenance.sourceCommit`. */
+function baseline() {
+  return FROZEN_BASELINE;
+}
+
+module.exports = { SEED, BASELINE_REPS, LOOP_REPS, RECORDED, FROZEN_BASELINE,
+  baseline, rederiveBaseline, reread, restorationSweep, runAll };
 
 /* ── Report (battery.js house format: h/sub/row, honest limits printed with the
    result, NOT MEASURED section, verdict deferred) ───────────────────────── */
@@ -228,8 +249,7 @@ function pct(r) { return r == null ? '   n/a' : (100 * r).toFixed(1).padStart(5)
 
 if (require.main === module) {
   const quick = process.argv.includes('--quick');
-  const loopReps = quick ? 1 : LOOP_REPS;
-  const baseReps = quick ? 2 : BASELINE_REPS;
+  const loopReps = quick ? 1 : LOOP_REPS;   // the baseline is frozen — reps no longer apply to it
 
   h('METRIC 5 — fizzle re-read vs the L2 baseline (slice-2 spec §11)');
   console.log('QUESTION: does C1 (window read) + C2 (read-driven exit) close R14 at the source?');
@@ -249,9 +269,16 @@ if (require.main === module) {
   console.log('    (raidLoot = 0). The baseline prices raid loot into the same arithmetic.');
   console.log('  · VERDICT is the user\'s. This sheet reports needles and decides nothing.');
 
-  const b = baseline({ reps: baseReps });
-  sub(`BASELINE — L2 cradle re-run (seed ${SEED}, crisis OFF, ${baseReps} reps = ${b.matches} matches, deterministic)`);
-  console.log(`  re-derived from ${b.warEnds.toLocaleString()} war ends. Recorded prose target: ${RECORDED.whitePeacePct}% white peace,`);
+  const b = baseline();
+  sub(`BASELINE — FROZEN L2 cradle snapshot (${b.matches.toLocaleString()} matches, ${b.warEnds.toLocaleString()} war ends)`);
+  console.log(`  ${b.provenance.coordinates}`);
+  console.log(`  Frozen ${b.provenance.frozen} at commit ${b.provenance.sourceCommit.slice(0, 8)} — NOT re-run here, and it cannot be:`);
+  console.log('  ticket 11 retired the stall timer from tournament.js, so this world no longer');
+  console.log('  exists in the tree. Re-running the probe now would produce a DIFFERENT world\'s');
+  console.log('  numbers under this label. Audit it by checking out that commit and re-running');
+  console.log('  `rederiveBaseline()`; the snapshot is machine-readable so it can be checked,');
+  console.log('  not merely believed.');
+  console.log(`  Recorded prose target it reproduced: ${RECORDED.whitePeacePct}% white peace,`);
   console.log(`  ${RECORDED.annihilationsPerMatch} annihilations/match, decided% ${RECORDED.decidedPct} — ${RECORDED.source}`);
   console.log('\n  WHITE PEACE BY CAUSE (the ~77% is not one thing — attribute only after this split):');
   console.log(`    stallPeace   (the timer)                  ${pct(b.stallPeacePct)}`);

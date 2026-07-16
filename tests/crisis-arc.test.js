@@ -411,24 +411,107 @@ test('CE-㉑ acquisition drops board rebel mass by the dispersed sector stack', 
   assert.strictEqual(T.boardRebelMass([conqueror]), 0, 'denial relieved by the dispersed uprising');
 });
 
-// CE-⑳ total-war overlay closes the stall→white-peace exit: once the overlay
-// voids truce (stage ≥ noStallPeaceStage), a stalled war can no longer fizzle
-// back to status quo — it keeps grinding while shields hollow (CE-⑩) so the
-// deciding war can reach shield-break rather than resetting. Direction sealed
-// 2026-07-12; the stage threshold is 가안, validated by measurement.
-test('CE-⑳ overlay closes stall→white-peace once total war reaches stage 2 (truce-void)', () => {
-  const MB = require('../mockup/combat-calc/map-board.js');
-  const { CRADLE_MAP } = require('../mockup/combat-calc/map-gen.js');
-  const { viableBindings } = require('../mockup/combat-calc/map-gate.js');
-  const b = viableBindings(CRADLE_MAP, 5).viable.slice(0, 3);
-  const on = MB.runCradleTournament({ map: CRADLE_MAP, bindings: b, reps: 2, seed: 42,
-    harness: { crisis: { ...T.HARNESS.crisis, enabled: true } } });
-  const s2 = T.HARNESS.crisis.stage.s2;
-  let lateStall = 0;
-  for (const r of on) for (const e of (r.warEnds || []))
-    if (e.cause === 'stallPeace' && e.turn >= s2) lateStall++;
-  assert.strictEqual(lateStall, 0,
-    'a stalled war must not fizzle to status-quo peace once the overlay hits stage 2');
+// CE-⑳ — the settlement ladder breaks from the bottom rung up under total war:
+// "wars end big or not at all". Direction sealed 2026-07-12; the stage threshold
+// is 가안, validated by measurement.
+//
+// RE-BASELINED 2026-07-16 (ticket 11). This test used to count `warEnds` with
+// cause 'stallPeace' after stage 2 and assert 0 — a property of the stall timer's
+// crisis lock (`totalWarLock`). That timer is now RETIRED (ADR 0037/0038), so the
+// old test would pass VACUOUSLY: it would count 0 because the cause string no
+// longer exists, not because the sealed property holds. Deleting the timer must
+// not delete the property, so CE-⑳ is re-asserted against the mechanism that
+// replaced it — the read-driven exit (js/bot-exit) and the ladder gate
+// (tournament.js availablePresets) that both now carry it.
+test('CE-⑳ breaks the ladder bottom-up as total war escalates (availablePresets)', () => {
+  const H = { crisis: { ...T.HARNESS.crisis, enabled: true } };
+  const s = T.HARNESS.crisis.stage;
+  assert.deepEqual(T.availablePresets(s.s1 - 1, H), ['백지', '관대', '표준', '최대'], 'pre-onset: intact');
+  assert.deepEqual(T.availablePresets(s.s1, H), ['백지', '관대', '표준', '최대'], 'S1 cuts truce, not the ladder');
+  assert.deepEqual(T.availablePresets(s.s2, H), ['표준', '최대'], 'S2 breaks 백지 and 관대');
+  assert.deepEqual(T.availablePresets(s.s3, H), ['최대'], 'S3 leaves only 최대 — end big or not at all');
+  // Overlay OFF is the record world: the ladder never breaks.
+  assert.deepEqual(T.availablePresets(s.s3, { crisis: { ...T.HARNESS.crisis, enabled: false } }),
+    ['백지', '관대', '표준', '최대']);
+});
+
+test('CE-⑳ — no read-driven settlement reaches a broken rung', () => {
+  const BotExit = require('../js/bot-exit.js');
+  // A court that WOULD sign white peace under the full ladder (the sword has
+  // reached nothing, so every bundle is free) must not be able to sign it once
+  // the overlay has broken that rung off the bottom.
+  const state = { occValue: 0, raidLoot: 0, capitalInReach: false, margin: 'marginal' };
+  const full = BotExit.acceptableRungs(state, 'pragmatic');
+  assert.ok(full.includes('whitePeace'), 'under the intact ladder white peace is free — the premise');
+
+  // Stage 2: 백지/관대 broken (tournament.js availablePresets, 표시어 → canonical).
+  const s2Open = ['standard', 'maximum'];
+  const atS2 = BotExit.acceptableRungs(state, 'pragmatic', s2Open);
+  assert.ok(!atS2.includes('whitePeace'), 'a broken rung must be unreachable, not merely unattractive');
+  assert.ok(!atS2.includes('lenient'));
+  for (const rung of atS2) assert.ok(s2Open.includes(rung));
+
+  // Stage 3: only 최대 survives.
+  const atS3 = BotExit.acceptableRungs(state, 'pragmatic', ['maximum']);
+  for (const rung of atS3) assert.equal(rung, 'maximum');
+
+  // And the exit itself honours it — the ceiling can never name a broken rung.
+  const losing = {
+    court: { isHuman: false, temperament: 'pragmatic' },
+    state,
+    myReads: [],
+    readsAgainstMe: [{ front: { hexKey: '0,0' }, read: { reachable: true, ratio: 3 } }],
+    before: { fatigue: 0, land: 10, army: 100 },
+    now: { fatigue: 5, land: 6, army: 40 },
+  };
+  const openLadder = BotExit.decideExit(losing);
+  assert.equal(openLadder.ceiling, 'whitePeace', 'intact ladder: the beaten court signs 백지');
+  const broken = BotExit.decideExit({ ...losing, openRungs: s2Open });
+  assert.notEqual(broken.ceiling, 'whitePeace', 'stage 2: 백지 is gone, so it cannot be the ceiling');
+});
+
+test('CE-⑳ kills the never-empty invariant: a court that can afford nothing drags', () => {
+  const BotExit = require('../js/bot-exit.js');
+  // Ticket 09 deleted the "cannot afford any rung" branch as unreachable — TRUE
+  // only while 백지 is free. Once the overlay breaks it, a court whose expected
+  // continued loss is smaller than the cheapest surviving claim can afford
+  // NOTHING, and drags a lost war (ADR 0038). Re-derived, not assumed.
+  const state = { occValue: 100, raidLoot: 0, capitalInReach: false, margin: 'marginal' };
+  const L = BotExit.expectedContinuedLoss(state);
+  const cheapest = BotExit.presetBundle('standard', state);
+  assert.ok(cheapest.value > L.total * BotExit.TEMPERAMENT.hardliner,
+    'premise: 표준 must cost more than fighting on for this court');
+  const rungs = BotExit.acceptableRungs(state, 'hardliner', ['standard', 'maximum']);
+  assert.deepEqual(rungs, [], 'nothing on the surviving ladder is affordable');
+  const exit = BotExit.decideExit({
+    court: { isHuman: false, temperament: 'hardliner' },
+    state, openRungs: ['standard', 'maximum'],
+    myReads: [],
+    readsAgainstMe: [{ front: { hexKey: '0,0' }, read: { reachable: true, ratio: 3 } }],
+    before: { fatigue: 0, land: 10, army: 100 },
+    now: { fatigue: 5, land: 6, army: 40 },
+  });
+  assert.equal(exit.settle, false, 'it does not surrender — it drags');
+  assert.equal(exit.reason, 'no-affordable-rung');
+  assert.equal(exit.ceiling, null);
+});
+
+test('no stall/patience timer survives anywhere in the L2 harness', () => {
+  // The retirement is structural, not a disabled flag: the concepts must not
+  // exist in executable code. Guards against resurrection by a later edit.
+  // Comments and SPEC_GAPS strings may DISCUSS the retirement — a record of what
+  // was removed and why is the point, not a leak — so prose is stripped first.
+  const fs = require('fs');
+  const src = fs.readFileSync(require.resolve('../mockup/combat-calc/tournament.js'), 'utf8');
+  const code = src
+    .replace(/\/\*[\s\S]*?\*\//g, '')      // block comments
+    .replace(/\/\/.*$/gm, '')              // line comments
+    .replace(/'(?:[^'\\]|\\.)*'/g, "''");  // string literals (SPEC_GAPS prose)
+  for (const banned of ['stallPatience', 'stalled', 'stallPeace', 'totalWarLock', 'noStallPeaceStage']) {
+    assert.ok(!code.includes(banned), `retired concept "${banned}" must not exist in tournament.js code`);
+  }
+  // The guard must be able to FAIL — otherwise it proves nothing about the strip.
+  assert.ok(code.includes('trySettle'), 'the strip must leave real code standing');
 });
 
 // (CE-⑩ shield-drain reverted 2026-07-12: deducting suppressorDead from

@@ -1,3737 +1,3742 @@
 {
- "regenerated": "2026-07-10",
- "auditRun": 2,
- "terms": [
-  {
-   "canonical": "Land-derived state",
-   "korean": "땅에서 파생된 상태",
-   "aliases": [
-    "모든 것은 땅에서 파생된다"
-   ],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "meta",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Aging constitution",
-   "korean": "노화 헌법",
-   "aliases": [
-    "anti-stalemate ratchet"
-   ],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "meta",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "synonym-exists",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Map unit",
-   "korean": null,
-   "aliases": [
-    "hex"
-   ],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "mapUnit",
-   "codeRefs": [],
-   "verdict": "synonym-exists",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Terrain-first",
-   "korean": null,
-   "aliases": [],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "meta",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Faction",
-   "korean": null,
-   "aliases": [],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "faction",
-   "codeRefs": [
-    "actions.js",
-    "main.js",
-    "map.js",
-    "faction.js",
-    "ai.js",
-    "game.js",
-    "ui.js"
-   ],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Realm",
-   "korean": "국가",
-   "aliases": [],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Region value",
-   "korean": null,
-   "aliases": [],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "regionValue",
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Named province",
-   "korean": "지방",
-   "aliases": [],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "province",
-   "codeRefs": [
-    "province-data.js",
-    "capacity.js",
-    "map.js"
-   ],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Front sector",
-   "korean": "전선 섹터",
-   "aliases": [
-    "front point (rejected)",
-    "single-hex objective (rejected)"
-   ],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "frontSector",
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Sector value",
-   "korean": null,
-   "aliases": [],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "sectorValue",
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Front sector value profile",
-   "korean": null,
-   "aliases": [],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "controlWeight (control weight axis)",
-   "korean": null,
-   "aliases": [],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "controlWeight",
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "economyValue (economy value axis)",
-   "korean": null,
-   "aliases": [],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "economyValue",
-   "codeRefs": [
-    "situation.js",
-    "map.js",
-    "ai.js"
-   ],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "populationValue (population value axis)",
-   "korean": null,
-   "aliases": [],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "populationValue",
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "defenseValue (defense value axis)",
-   "korean": null,
-   "aliases": [],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "defenseValue",
-   "codeRefs": [
-    "actions.js",
-    "map.js",
-    "combat.js"
-   ],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "militaryValue (military value axis)",
-   "korean": null,
-   "aliases": [],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "militaryValue",
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "routeValue (route value axis)",
-   "korean": null,
-   "aliases": [],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "routeValue",
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Usable value",
-   "korean": null,
-   "aliases": [
-    "stable turn"
-   ],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "usableEconomy",
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Yield",
-   "korean": "생산",
-   "aliases": [
-    "기본 생산량"
-   ],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "yield",
-   "codeRefs": [],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Treasury",
-   "korean": "국고",
-   "aliases": [],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "treasury",
-   "codeRefs": [
-    "map.js",
-    "faction.js"
-   ],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Development",
-   "korean": "개발",
-   "aliases": [],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "development",
-   "codeRefs": [
-    "domain-data.js"
-   ],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Income",
-   "korean": null,
-   "aliases": [],
-   "birthplace": "docs/features/combat-formula/MAGNITUDE.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "income",
-   "codeRefs": [
-    "ui.js",
-    "faction.js"
-   ],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Force limit",
-   "korean": null,
-   "aliases": [
-    "National cap",
-    "national cap growth"
-   ],
-   "birthplace": "docs/features/combat-formula/MAGNITUDE.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "capPerPop",
-   "codeRefs": [],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Spatial extent",
-   "korean": null,
-   "aliases": [],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "spatialExtent",
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Province status",
-   "korean": null,
-   "aliases": [
-    "secure",
-    "threatened",
-    "border",
-    "contested",
-    "split",
-    "occupied"
-   ],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "computeProvinceStatus",
-   "codeRefs": [],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Province status confidence",
-   "korean": null,
-   "aliases": [],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Situation axis",
-   "korean": null,
-   "aliases": [],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Standing (situation axis)",
-   "korean": "판세",
-   "aliases": [],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "synonym-exists",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Threat (situation axis)",
-   "korean": "위협",
-   "aliases": [],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Opening (situation axis)",
-   "korean": "기회",
-   "aliases": [],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "synonym-exists",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Uncertainty/blind-spot (situation axis)",
-   "korean": "불확실",
-   "aliases": [],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "synonym-exists",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Province control summary",
-   "korean": null,
-   "aliases": [],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Border sector",
-   "korean": null,
-   "aliases": [],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Contested sector",
-   "korean": null,
-   "aliases": [],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Threatened province",
-   "korean": null,
-   "aliases": [],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Province archetype region",
-   "korean": null,
-   "aliases": [
-    "Central Plains",
-    "Guanzhong Passes",
-    "Jiangnan Grain Belt",
-    "Steppe Frontier",
-    "Northern India Route",
-    "Hebei and Northern Plains",
-    "Northeastern Frontier",
-    "Han/Jing River Corridor",
-    "Southwestern Basin",
-    "Southeastern Coast and Straits",
-    "Northwestern Oasis and Desert Corridor",
-    "Southern Mountain and Forest Frontier"
-   ],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Settlement/function layer",
-   "korean": null,
-   "aliases": [],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Local garrison",
-   "korean": null,
-   "aliases": [],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "localGarrison",
-   "codeRefs": [
-    "actions.js",
-    "situation.js",
-    "map.js",
-    "combat.js"
-   ],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Sector defense layers",
-   "korean": null,
-   "aliases": [],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "terrainDefense (natural defense layer)",
-   "korean": null,
-   "aliases": [],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "terrainDefense",
-   "codeRefs": [],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "fortificationDefense (prepared defense layer)",
-   "korean": null,
-   "aliases": [],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "fortificationDefense",
-   "codeRefs": [],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "defenseCommitment (focused defense layer)",
-   "korean": null,
-   "aliases": [],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "defenseCommitment",
-   "codeRefs": [],
-   "verdict": "synonym-exists",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Standing forces",
-   "korean": null,
-   "aliases": [],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Capacity commitment",
-   "korean": null,
-   "aliases": [
-    "commit (rejected)",
-    "raw troop slider (rejected)"
-   ],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "capacityCommitment",
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Operation plan preset",
-   "korean": null,
-   "aliases": [],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Core command",
-   "korean": null,
-   "aliases": [],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Turn decision layers",
-   "korean": null,
-   "aliases": [],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "meta",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "synonym-exists",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Operation effect axis",
-   "korean": null,
-   "aliases": [
-    "effect axes / stamps",
-    "효과 축 / 도장"
-   ],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "controlShift (effect axis)",
-   "korean": null,
-   "aliases": [],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "controlShift",
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "garrisonDamage (effect axis)",
-   "korean": null,
-   "aliases": [],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "garrisonDamage",
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "fortificationDamage (effect axis / stamp)",
-   "korean": null,
-   "aliases": [
-    "erosion",
-    "침식"
-   ],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "fortificationDamage",
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "routeDisruption (effect axis)",
-   "korean": null,
-   "aliases": [],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "routeDisruption",
-   "codeRefs": [],
-   "verdict": "synonym-exists",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "usableValueDamage (effect axis)",
-   "korean": null,
-   "aliases": [],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "usableValueDamage",
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "confidenceGain (effect axis)",
-   "korean": null,
-   "aliases": [],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "confidenceGain",
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Operation plan catalog",
-   "korean": null,
-   "aliases": [],
-   "birthplace": "docs/features/operation-plan-catalog/CATALOG.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Under-commitment failure",
-   "korean": null,
-   "aliases": [],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Atomic turn resolution",
-   "korean": null,
-   "aliases": [],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "meta",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Position as product",
-   "korean": null,
-   "aliases": [
-    "path-dependent position"
-   ],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "meta",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "synonym-exists",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Standing world rule",
-   "korean": null,
-   "aliases": [
-    "standing rules",
-    "상비 규칙"
-   ],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Uncertainty duel",
-   "korean": "불확실성 대치",
-   "aliases": [
-    "intent meter (rejected)"
-   ],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "meta",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Offensive mobilization",
-   "korean": null,
-   "aliases": [],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "mobilization",
-   "codeRefs": [
-    "actions.js",
-    "domain-data.js",
-    "combat.js",
-    "ui.js",
-    "command-preview.js"
-   ],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Local defense",
-   "korean": null,
-   "aliases": [],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Latent mobilizable population",
-   "korean": null,
-   "aliases": [
-    "manpower",
-    "manpower pool"
-   ],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "synonym-exists",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "High complexity, low micromanagement",
-   "korean": null,
-   "aliases": [],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "meta",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "synonym-exists",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Strategic posture",
-   "korean": null,
-   "aliases": [
-    "방어",
-    "공세",
-    "정찰 중시",
-    "균형"
-   ],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "posture",
-   "codeRefs": [
-    "capacity.js"
-   ],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Posture as annotation lens",
-   "korean": null,
-   "aliases": [],
-   "birthplace": "docs/adr/0019-situation-judgment-structured-province-reading.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "meta",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Leak-through",
-   "korean": null,
-   "aliases": [
-    "dissonance (retired)",
-    "부조화"
-   ],
-   "birthplace": "docs/adr/0019-situation-judgment-structured-province-reading.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "LEAK_RATIO",
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Action capacity",
-   "korean": null,
-   "aliases": [],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "actionCapacity",
-   "codeRefs": [],
-   "verdict": "synonym-exists",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Map-first situation UX",
-   "korean": null,
-   "aliases": [],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "meta",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "synonym-exists",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Situation judgment",
-   "korean": "형세판단",
-   "aliases": [],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [
-    "situation.js"
-   ],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Reachable-weakest-link",
-   "korean": null,
-   "aliases": [],
-   "birthplace": "docs/adr/0019-situation-judgment-structured-province-reading.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Capacity carryover",
-   "korean": null,
-   "aliases": [],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "capacityCarryover",
-   "codeRefs": [],
-   "verdict": "synonym-exists",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Capacity overclock",
-   "korean": null,
-   "aliases": [],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Emergency human mobilization",
-   "korean": null,
-   "aliases": [],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "synonym-exists",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Strait",
-   "korean": null,
-   "aliases": [],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "strait",
-   "codeRefs": [
-    "province-data.js"
-   ],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Active region",
-   "korean": null,
-   "aliases": [],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Background region",
-   "korean": null,
-   "aliases": [],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Relevance-filtered log",
-   "korean": null,
-   "aliases": [],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Plain",
-   "korean": null,
-   "aliases": [
-    "plains"
-   ],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "plains",
-   "codeRefs": [
-    "domain-data.js",
-    "province-data.js",
-    "map.js"
-   ],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Grain basin",
-   "korean": null,
-   "aliases": [
-    "grain_basin"
-   ],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "grain_basin",
-   "codeRefs": [
-    "domain-data.js",
-    "province-data.js"
-   ],
-   "verdict": "synonym-exists",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Mountain/pass",
-   "korean": null,
-   "aliases": [
-    "mountain_pass"
-   ],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "mountain_pass",
-   "codeRefs": [
-    "domain-data.js",
-    "province-data.js"
-   ],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "River",
-   "korean": null,
-   "aliases": [],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "river",
-   "codeRefs": [
-    "combat.js",
-    "command-preview.js",
-    "domain-data.js",
-    "province-data.js"
-   ],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Coast/harbor",
-   "korean": null,
-   "aliases": [
-    "coast_strait"
-   ],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "coast_strait",
-   "codeRefs": [
-    "combat.js",
-    "province-data.js",
-    "domain-data.js",
-    "command-preview.js"
-   ],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Steppe/highland",
-   "korean": null,
-   "aliases": [
-    "steppe_highland"
-   ],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "steppe_highland",
-   "codeRefs": [
-    "domain-data.js",
-    "province-data.js"
-   ],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Frontier basin",
-   "korean": null,
-   "aliases": [
-    "frontier_basin"
-   ],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "frontier_basin",
-   "codeRefs": [
-    "province-data.js",
-    "domain-data.js"
-   ],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Impassable terrain",
-   "korean": "공백 지형",
-   "aliases": [
-    "Void terrain"
-   ],
-   "birthplace": "docs/features/terrain-cradle/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Parity start",
-   "korean": "동일 시작 인구",
-   "aliases": [],
-   "birthplace": "docs/features/terrain-cradle/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "synonym-exists",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Emergent asymmetry",
-   "korean": "파생 비대칭",
-   "aliases": [
-    "Derived asymmetry",
-    "SPEC Core Principle #8"
-   ],
-   "birthplace": "docs/features/terrain-cradle/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "meta",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Battle-summoning placement",
-   "korean": "전장 소환 배치",
-   "aliases": [
-    "conflict-anchor placement",
-    "flashpoint placement"
-   ],
-   "birthplace": "docs/features/terrain-cradle/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "meta",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "synonym-exists",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Great range",
-   "korean": "대산맥",
-   "aliases": [],
-   "birthplace": "docs/features/terrain-cradle/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Hexi corridor",
-   "korean": "하서회랑",
-   "aliases": [],
-   "birthplace": "docs/features/terrain-cradle/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Western Ring",
-   "korean": "대환",
-   "aliases": [],
-   "birthplace": "docs/features/terrain-cradle/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Taishan",
-   "korean": "태산",
-   "aliases": [],
-   "birthplace": "docs/features/terrain-cradle/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Economy ladder",
-   "korean": "경제 사다리",
-   "aliases": [],
-   "birthplace": "docs/features/terrain-cradle/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Inbound flow",
-   "korean": "침입 유량",
-   "aliases": [],
-   "birthplace": "docs/features/terrain-cradle/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "inboundFlow",
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Border class",
-   "korean": "국경 등급",
-   "aliases": [],
-   "birthplace": "docs/features/terrain-cradle/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "borderClass",
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Corridor authoring",
-   "korean": "회랑 저작",
-   "aliases": [],
-   "birthplace": "docs/features/terrain-cradle/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "meta",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "synonym-exists",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "City",
-   "korean": "도시",
-   "aliases": [],
-   "birthplace": "docs/features/terrain-cradle/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Gate-city",
-   "korean": "성문 도시",
-   "aliases": [],
-   "birthplace": "docs/features/terrain-cradle/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Keep city",
-   "korean": "내륙 심장 도시",
-   "aliases": [],
-   "birthplace": "docs/features/terrain-cradle/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Port capital",
-   "korean": "항구 수도",
-   "aliases": [],
-   "birthplace": "docs/features/terrain-cradle/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Carve principle",
-   "korean": "조각 원칙",
-   "aliases": [],
-   "birthplace": "docs/features/terrain-cradle/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "meta",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "synonym-exists",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Resolution pipeline",
-   "korean": null,
-   "aliases": [],
-   "birthplace": "docs/features/combat-formula/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "R (combat ratio)",
-   "korean": "전투비",
-   "aliases": [
-    "force ratio"
-   ],
-   "birthplace": "docs/features/combat-formula/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "R",
-   "codeRefs": [],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Troop stock / substance",
-   "korean": "병력",
-   "aliases": [
-    "Troop stock",
-    "substance"
-   ],
-   "birthplace": "docs/features/combat-formula/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "troopStock",
-   "codeRefs": [],
-   "verdict": "synonym-exists",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Unit",
-   "korean": "부대",
-   "aliases": [],
-   "birthplace": "docs/features/combat-formula/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Command pool",
-   "korean": "명령 풀 / 커맨드 풀",
-   "aliases": [
-    "Commitment (커밋)"
-   ],
-   "birthplace": "docs/features/combat-formula/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "commandPool",
-   "codeRefs": [],
-   "verdict": "synonym-exists",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Primary action",
-   "korean": "주 행동",
-   "aliases": [],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Surplus",
-   "korean": "잉여",
-   "aliases": [],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Lever",
-   "korean": "레버",
-   "aliases": [
-    "commitment lever",
-    "커밋 레버"
-   ],
-   "birthplace": "docs/features/combat-formula/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "lever",
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Quality",
-   "korean": "질",
-   "aliases": [],
-   "birthplace": "docs/features/combat-formula/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "quality",
-   "codeRefs": [],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Terrain multiplier",
-   "korean": "지형 배수",
-   "aliases": [],
-   "birthplace": "docs/features/combat-formula/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "terrainMultiplier",
-   "codeRefs": [],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Fortification multiplier",
-   "korean": "요새 배수",
-   "aliases": [
-    "fieldworks",
-    "town walls",
-    "fortress",
-    "legendary"
-   ],
-   "birthplace": "docs/features/combat-formula/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "fortification",
-   "codeRefs": [],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "World product",
-   "korean": "세계 곱",
-   "aliases": [
-    "world multipliers"
-   ],
-   "birthplace": "docs/features/combat-formula/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Water penalty",
-   "korean": "도하 페널티",
-   "aliases": [],
-   "birthplace": "docs/features/combat-formula/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "waterPenalty",
-   "codeRefs": [],
-   "verdict": "synonym-exists",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Frontage",
-   "korean": "협로/강습 폭 / 문폭",
-   "aliases": [
-    "frontage cap"
-   ],
-   "birthplace": "docs/features/combat-formula/GLOSSARY.md",
-   "tier": 1,
-   "status": "가안",
-   "kind": "mechanism",
-   "codeIdentifier": "frontage",
-   "codeRefs": [],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Strike at half-crossing",
-   "korean": "반도이격",
-   "aliases": [],
-   "birthplace": "docs/features/combat-formula/GLOSSARY.md",
-   "tier": 1,
-   "status": "PROPOSED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Threshold",
-   "korean": "문턱",
-   "aliases": [],
-   "birthplace": "docs/features/combat-formula/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "threshold",
-   "codeRefs": [],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Headline",
-   "korean": "헤드라인",
-   "aliases": [],
-   "birthplace": "docs/features/combat-formula/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "headline",
-   "codeRefs": [],
-   "verdict": "synonym-exists",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Margin",
-   "korean": "마진",
-   "aliases": [],
-   "birthplace": "docs/features/combat-formula/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "margin",
-   "codeRefs": [
-    "ui.js"
-   ],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Casualty curve",
-   "korean": "사상자 곡선",
-   "aliases": [],
-   "birthplace": "docs/features/combat-formula/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Rout cliff",
-   "korean": "궤주 절벽 / 와해 절벽",
-   "aliases": [],
-   "birthplace": "docs/features/combat-formula/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Escape state",
-   "korean": "도주 상태 / 도주로",
-   "aliases": [],
-   "birthplace": "docs/features/combat-formula/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "escapeState",
-   "codeRefs": [],
-   "verdict": "synonym-exists",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Isolation gate",
-   "korean": "고립 게이트",
-   "aliases": [],
-   "birthplace": "docs/features/combat-formula/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Forecast",
-   "korean": "예보",
-   "aliases": [],
-   "birthplace": "docs/features/combat-formula/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "forecast",
-   "codeRefs": [],
-   "verdict": "synonym-exists",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Recommendation",
-   "korean": "추천",
-   "aliases": [],
-   "birthplace": "docs/features/combat-formula/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Preset pin",
-   "korean": "프리셋 핀",
-   "aliases": [],
-   "birthplace": "docs/features/combat-formula/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Emergency reserve",
-   "korean": "긴급 투입 / 예비대",
-   "aliases": [],
-   "birthplace": "docs/features/combat-formula/MAGNITUDE.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "synonym-exists",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Jinguan grammar",
-   "korean": "진관 grammar",
-   "aliases": [],
-   "birthplace": "docs/features/combat-formula/MAGNITUDE.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "meta",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Mobilization visibility",
-   "korean": "동원 가시성",
-   "aliases": [],
-   "birthplace": "docs/features/combat-formula/MAGNITUDE.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Surrender harvest",
-   "korean": "항복 수확",
-   "aliases": [
-    "Ulm effect"
-   ],
-   "birthplace": "docs/features/combat-formula/MAGNITUDE.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Feint follow-up",
-   "korean": "양동 후속타",
-   "aliases": [],
-   "birthplace": "docs/features/combat-formula/MAGNITUDE.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Attack axis as numeraire",
-   "korean": "기축통화 원칙",
-   "aliases": [],
-   "birthplace": "docs/features/combat-formula/MAGNITUDE.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "meta",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Commitment horizon (method lens)",
-   "korean": "방법 렌즈",
-   "aliases": [
-    "frozen commitment",
-    "liquid commitment"
-   ],
-   "birthplace": "docs/features/combat-formula/MAGNITUDE.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "meta",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "synonym-exists",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Engagement-rule verbs",
-   "korean": null,
-   "aliases": [
-    "engage",
-    "discount",
-    "bypass",
-    "erode",
-    "throttle substance",
-    "refuse"
-   ],
-   "birthplace": "docs/features/combat-formula/MATCHUP.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "meta",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "synonym-exists",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Escape-hunting family",
-   "korean": null,
-   "aliases": [],
-   "birthplace": "docs/features/combat-formula/MATCHUP.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "meta",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Fortress-ignoring family",
-   "korean": null,
-   "aliases": [],
-   "birthplace": "docs/features/combat-formula/MATCHUP.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "meta",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Swift Seizure",
-   "korean": "신속 점령",
-   "aliases": [],
-   "birthplace": "docs/features/operation-plan-catalog/CATALOG.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "synonym-exists",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Deliberate Pressure",
-   "korean": "신중 압박",
-   "aliases": [],
-   "birthplace": "docs/features/operation-plan-catalog/CATALOG.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "synonym-exists",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Flanking Breakthrough",
-   "korean": "우회 돌파",
-   "aliases": [],
-   "birthplace": "docs/features/operation-plan-catalog/CATALOG.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Raid",
-   "korean": "약탈",
-   "aliases": [],
-   "birthplace": "docs/features/operation-plan-catalog/CATALOG.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Supply Interdiction",
-   "korean": "보급 차단",
-   "aliases": [],
-   "birthplace": "docs/features/operation-plan-catalog/CATALOG.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Encirclement and Annihilation",
-   "korean": "포위 섬멸",
-   "aliases": [],
-   "birthplace": "docs/features/operation-plan-catalog/CATALOG.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Crossing / Landing Securement",
-   "korean": "도하·상륙 확보",
-   "aliases": [],
-   "birthplace": "docs/features/operation-plan-catalog/CATALOG.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "synonym-exists",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Reconnaissance",
-   "korean": "정찰",
-   "aliases": [],
-   "birthplace": "docs/features/operation-plan-catalog/CATALOG.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "scout",
-   "codeRefs": [
-    "situation.js",
-    "intel.js",
-    "actions.js",
-    "game.js",
-    "command-preview.js",
-    "ui.js",
-    "domain-data.js"
-   ],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Recovery / Consolidation",
-   "korean": "정비·회복",
-   "aliases": [],
-   "birthplace": "docs/features/operation-plan-catalog/CATALOG.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Stronghold Defense",
-   "korean": "거점 방어",
-   "aliases": [],
-   "birthplace": "docs/features/operation-plan-catalog/CATALOG.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Delaying Defense",
-   "korean": "지연 방어",
-   "aliases": [],
-   "birthplace": "docs/features/operation-plan-catalog/CATALOG.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "synonym-exists",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Strategic Abandonment",
-   "korean": "전략적 포기",
-   "aliases": [],
-   "birthplace": "docs/features/operation-plan-catalog/CATALOG.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "synonym-exists",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Scorched Earth",
-   "korean": "청야 소각",
-   "aliases": [
-    "초토화"
-   ],
-   "birthplace": "docs/features/operation-plan-catalog/CATALOG.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Match",
-   "korean": "매치",
-   "aliases": [],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "PROPOSED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Match arc",
-   "korean": "매치 아크",
-   "aliases": [],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "meta",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Engagement",
-   "korean": "교전",
-   "aliases": [],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Operation",
-   "korean": "작전",
-   "aliases": [],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "PROPOSED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "War",
-   "korean": "전쟁",
-   "aliases": [],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "PROPOSED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Shield-break",
-   "korean": "방패 깨기",
-   "aliases": [],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "shieldBreak",
-   "codeRefs": [
-    "js/battle.js"
-   ],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Decisive battle",
-   "korean": "결전",
-   "aliases": [],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "decisiveBattle",
-   "codeRefs": [
-    "js/battle.js"
-   ],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Field army",
-   "korean": "야전군",
-   "aliases": [],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "fieldArmy",
-   "codeRefs": [
-    "js/battle.js"
-   ],
-   "verdict": null,
-   "verdictRef": null
-  },
-  {
-   "canonical": "Cascade",
-   "korean": "연쇄 붕괴",
-   "aliases": [
-    "캐스케이드"
-   ],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "PROPOSED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Decision point",
-   "korean": "결정점",
-   "aliases": [],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Hegemony decision point",
-   "korean": "패권 결정점",
-   "aliases": [
-    "leadership",
-    "unassailability"
-   ],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Dominance (victory condition)",
-   "korean": "지배",
-   "aliases": [
-    "domination victory"
-   ],
-   "birthplace": "docs/features/match-arc/RULINGS.md",
-   "tier": 1,
-   "status": "SEALED",
-   "kind": "mechanism",
-   "codeIdentifier": "forceShare",
-   "codeRefs": [],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Projectable mass",
-   "korean": "투사 가능 질량",
-   "aliases": [],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "projectableMass",
-   "codeRefs": [],
-   "verdict": "synonym-exists",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Shield mass",
-   "korean": "방패 질량",
-   "aliases": [],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "shieldMass",
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "In/out of the balance — hermit clause",
-   "korean": "판세 안/밖 · 은둔국 조항",
-   "aliases": [
-    "Parthia pattern"
-   ],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Regeneration window",
-   "korean": "재생 창",
-   "aliases": [
-    "W = 6"
-   ],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "synonym-exists",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Settlement",
-   "korean": "정산",
-   "aliases": [
-    "전쟁 정산",
-    "패권 정산"
-   ],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Settlement currencies",
-   "korean": "정산 통화",
-   "aliases": [],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Cession",
-   "korean": "할양",
-   "aliases": [],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Indemnity",
-   "korean": "배상",
-   "aliases": [],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Reach",
-   "korean": "도달권",
-   "aliases": [],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "synonym-exists",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Occupation reach",
-   "korean": "점령 도달권",
-   "aliases": [],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Raid reach",
-   "korean": "약탈 도달권",
-   "aliases": [],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Settlement preset ladder",
-   "korean": "프리셋 사다리",
-   "aliases": [
-    "관대",
-    "표준",
-    "최대",
-    "lenient",
-    "standard",
-    "maximum"
-   ],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Tempo-peace preset",
-   "korean": null,
-   "aliases": [
-    "lenient identity"
-   ],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Acceptance arithmetic",
-   "korean": "수락 산술",
-   "aliases": [],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Resistance discount",
-   "korean": "저항 할인",
-   "aliases": [],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Personality coefficient",
-   "korean": "성향 계수",
-   "aliases": [
-    "완고/hardliner",
-    "실리/pragmatic",
-    "유화/conciliatory"
-   ],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "synonym-exists",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Vassalage / capitulation",
-   "korean": "복속",
-   "aliases": [
-    "부마국 model"
-   ],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Sovereignty premium",
-   "korean": "주권 프리미엄",
-   "aliases": [],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Chain collapse",
-   "korean": "사슬 붕괴",
-   "aliases": [],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Recruitment",
-   "korean": "모병",
-   "aliases": [
-    "공세 동원 (reserved seat)"
-   ],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "recruitment",
-   "codeRefs": [],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Conscription register",
-   "korean": "징집 명부",
-   "aliases": [
-    "인력 풀",
-    "manpower pool"
-   ],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "registerPerPop",
-   "codeRefs": [],
-   "verdict": "synonym-exists",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Aging constitution P-principles",
-   "korean": null,
-   "aliases": [
-    "P1 dual billing",
-    "P2 flow never ages",
-    "P3 snapshot information"
-   ],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "meta",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Mobilization intensity",
-   "korean": "동원 강도",
-   "aliases": [
-    "Marie-Louise"
-   ],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Surge Draft Model",
-   "korean": "서지 모병",
-   "aliases": [
-    "평시",
-    "전시",
-    "총동원",
-    "최후 동원"
-   ],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Blinds",
-   "korean": "블라인드",
-   "aliases": [],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "SUPERSEDED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Deterrence equilibrium",
-   "korean": "억지 평형",
-   "aliases": [
-    "동결 세계",
-    "frozen world"
-   ],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "PROPOSED",
-   "kind": "meta",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "synonym-exists",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Opportunism read",
-   "korean": "기회주의 읽기",
-   "aliases": [
-    "pile-on probe"
-   ],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "PROPOSED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Ending taxonomy",
-   "korean": "종료 분류",
-   "aliases": [],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "meta",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Denied-dominant (the wall)",
-   "korean": null,
-   "aliases": [
-    "anti-leader coalition",
-    "the wall",
-    "벽"
-   ],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "meta",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "synonym-exists",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Concentration panel (8 metrics)",
-   "korean": null,
-   "aliases": [
-    "forceShare",
-    "controlShare",
-    "HHI",
-    "shieldShare",
-    "reversibilityIndex",
-    "vassalShare",
-    "bloodAxis"
-   ],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "meta",
-   "codeIdentifier": "forceShare",
-   "codeRefs": [],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Test-trust ladder",
-   "korean": "검증 신뢰 사다리",
-   "aliases": [
-    "L0",
-    "L1",
-    "L2",
-    "L3"
-   ],
-   "birthplace": "docs/features/match-arc/TEST-LADDER.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "meta",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "synonym-exists",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Realm count 4–6",
-   "korean": null,
-   "aliases": [
-    "authoring default 5"
-   ],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "meta",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Viability parity, geometry/economy asymmetry",
-   "korean": null,
-   "aliases": [
-    "anti-snowball loop"
-   ],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "meta",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Match arc as design budget",
-   "korean": null,
-   "aliases": [],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "meta",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "synonym-exists",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Decisiveness ladder",
-   "korean": "결정성 사다리",
-   "aliases": [
-    "속국화",
-    "섬멸",
-    "전진(점령)",
-    "침식",
-    "약탈"
-   ],
-   "birthplace": "docs/features/tactical-plan-ai/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Disposition dial",
-   "korean": "성향 다이얼",
-   "aliases": [
-    "비관",
-    "중립",
-    "낙관"
-   ],
-   "birthplace": "docs/features/tactical-plan-ai/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "disposition",
-   "codeRefs": [],
-   "verdict": "synonym-exists",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Judged value",
-   "korean": "판단값",
-   "aliases": [],
-   "birthplace": "docs/features/tactical-plan-ai/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "judgedValue",
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Random-pick control",
-   "korean": "주사위 봇",
-   "aliases": [],
-   "birthplace": "docs/features/tactical-plan-ai/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "meta",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "synonym-exists",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Blind-bot floor",
-   "korean": "눈먼 봇",
-   "aliases": [],
-   "birthplace": "docs/features/tactical-plan-ai/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "meta",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "synonym-exists",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Bot information model",
-   "korean": null,
-   "aliases": [],
-   "birthplace": "docs/features/tactical-plan-ai/RULINGS.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Estimate band",
-   "korean": "추정 구간",
-   "aliases": [],
-   "birthplace": "docs/features/fog-of-war-discovery/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Force geography",
-   "korean": null,
-   "aliases": [
-    "force distribution",
-    "military geography"
-   ],
-   "birthplace": "docs/features/force-geography/RULINGS.md",
-   "tier": 1,
-   "status": "SEALED",
-   "kind": "meta",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "synonym-exists",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "One blanket",
-   "korean": "이불 한 장",
-   "aliases": [],
-   "birthplace": "docs/features/force-geography/RULINGS.md",
-   "tier": 1,
-   "status": "SEALED",
-   "kind": "meta",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "synonym-exists",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Terrain envelope",
-   "korean": "지형 봉투",
-   "aliases": [],
-   "birthplace": "docs/features/force-geography/RULINGS.md",
-   "tier": 1,
-   "status": "SEALED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Scarcity+value weak front",
-   "korean": null,
-   "aliases": [],
-   "birthplace": "docs/features/force-geography/RULINGS.md",
-   "tier": 1,
-   "status": "SEALED",
-   "kind": "meta",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "synonym-exists",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Reactive reserve",
-   "korean": "반응 예비대",
-   "aliases": [],
-   "birthplace": "docs/features/force-geography/RULINGS.md",
-   "tier": 1,
-   "status": "SEALED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Reserve destination",
-   "korean": null,
-   "aliases": [
-    "argmax(deficit × value)"
-   ],
-   "birthplace": "docs/features/force-geography/RULINGS.md",
-   "tier": 1,
-   "status": "SEALED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Attacker read",
-   "korean": "공격자 정보",
-   "aliases": [],
-   "birthplace": "docs/features/force-geography/RULINGS.md",
-   "tier": 1,
-   "status": "SEALED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Commit-scarcity",
-   "korean": null,
-   "aliases": [],
-   "birthplace": "docs/features/force-geography/RULINGS.md",
-   "tier": 1,
-   "status": "SEALED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "최소 / 정교 sequencing",
-   "korean": null,
-   "aliases": [
-    "minimal / sophisticated"
-   ],
-   "birthplace": "docs/features/force-geography/RULINGS.md",
-   "tier": 1,
-   "status": "SEALED",
-   "kind": "meta",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "synonym-exists",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Winning archetype: conquest snowball",
-   "korean": "정복 축적형",
-   "aliases": [],
-   "birthplace": "docs/features/match-arc/STRATEGY-SPACE.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "meta",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Winning archetype: vassal chain",
-   "korean": "복속 사슬형",
-   "aliases": [],
-   "birthplace": "docs/features/match-arc/STRATEGY-SPACE.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "meta",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "justified-coinage",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Winning archetype: free-rider timing",
-   "korean": "어부지리형",
-   "aliases": [],
-   "birthplace": "docs/features/match-arc/STRATEGY-SPACE.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "meta",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "synonym-exists",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Winning archetype: raid attrition",
-   "korean": "약탈 소모형",
-   "aliases": [],
-   "birthplace": "docs/features/match-arc/STRATEGY-SPACE.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "meta",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Winning archetype: shield-first",
-   "korean": "방패 우위형",
-   "aliases": [],
-   "birthplace": "docs/features/match-arc/STRATEGY-SPACE.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "meta",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "synonym-exists",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Winning archetype: interior lines",
-   "korean": "중원 내선형",
-   "aliases": [],
-   "birthplace": "docs/features/match-arc/STRATEGY-SPACE.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "meta",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Information confidence",
-   "korean": "정보 신뢰도",
-   "aliases": [],
-   "birthplace": "docs/features/fog-of-war-discovery/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "informationConfidence",
-   "codeRefs": [
-    "js/intel.js",
-    "js/game.js",
-    "js/map.js",
-    "js/situation.js",
-    "js/actions.js",
-    "js/command-preview.js"
-   ],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Force role",
-   "korean": "군사 역할",
-   "aliases": [
-    "force-role"
-   ],
-   "birthplace": "DOMAIN_MAP.md",
-   "tier": 0,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "standard-match",
-   "verdictRef": "2026-07-10-terminology-audit.md"
-  },
-  {
-   "canonical": "Full adjacency, no neutral zones",
-   "korean": null,
-   "aliases": [],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "meta",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
-  },
-  {
-   "canonical": "Mature-state start",
-   "korean": null,
-   "aliases": [],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "PROPOSED",
-   "kind": "meta",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
-  },
-  {
-   "canonical": "capital",
-   "korean": "수도",
-   "aliases": [],
-   "birthplace": "docs/features/capital/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED-concept",
-   "kind": "mechanic",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "standard-term",
-   "verdictRef": "docs/features/capital/RULINGS.md#CP-1"
-  },
-  {
-   "canonical": "capital guard",
-   "korean": "근위대",
-   "aliases": [],
-   "birthplace": "docs/features/capital/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED-concept",
-   "kind": "mechanic",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": "standard-term",
-   "verdictRef": "docs/features/capital/RULINGS.md#CP-1"
-  },
-  {
-   "canonical": "Sector world",
-   "korean": "섹터 세계",
-   "aliases": [],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
-  },
-  {
-   "canonical": "Holdings",
-   "korean": "보유 섹터",
-   "aliases": [
-    "holds"
-   ],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "holds",
-   "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
-  },
-  {
-   "canonical": "Named capture",
-   "korean": "실명 점령",
-   "aliases": [
-    "occupiedIds"
-   ],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "occupiedIds",
-   "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
-  },
-  {
-   "canonical": "Occupation frontier",
-   "korean": "점령 경계",
-   "aliases": [],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
-  },
-  {
-   "canonical": "Resistance proxy",
-   "korean": "저항 근사",
-   "aliases": [],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED-structure",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
-  },
-  {
-   "canonical": "Limbo",
-   "korean": "점령 무귀속",
-   "aliases": [
-    "occupied-untransferred"
-   ],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
-  },
-  {
-   "canonical": "Possessor-keeps",
-   "korean": "점유자 보존",
-   "aliases": [],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
-  },
-  {
-   "canonical": "capLandFrac",
-   "korean": "땅-상한 결합 다이얼",
-   "aliases": [],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "capLandFrac",
-   "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
-  },
-  {
-   "canonical": "Per-sector ripening",
-   "korean": "섹터별 숙성",
-   "aliases": [],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
-  },
-  {
-   "canonical": "Affordability bound",
-   "korean": "지불능력 상한",
-   "aliases": [
-    "affordability bound"
-   ],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "affordabilityBound",
-   "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
-  },
-  {
-   "canonical": "Affordability-bind rate",
-   "korean": null,
-   "aliases": [
-    "affordBindRate"
-   ],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "meta",
-   "codeIdentifier": "affordBindRate",
-   "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
-  },
-  {
-   "canonical": "World of record",
-   "korean": "기록 세계",
-   "aliases": [
-    "record world",
-    "world-of-record"
-   ],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "meta",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
-  },
-  {
-   "canonical": "Sudden-death crisis ending",
-   "korean": "위기 종결",
-   "aliases": [
-    "crisis ending"
-   ],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
-  },
-  {
-   "canonical": "Uprising fuel",
-   "korean": "봉기 연료",
-   "aliases": [
-    "uprising fuel"
-   ],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
-  },
-  {
-   "canonical": "Scar ledger",
-   "korean": "흉터 장부",
-   "aliases": [
-    "원한",
-    "scar"
-   ],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "state",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
-  },
-  {
-   "canonical": "Standing rebels",
-   "korean": "잔존 반란군",
-   "aliases": [
-    "rebel stack",
-    "rebels"
-   ],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "state",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
-  },
-  {
-   "canonical": "Soil-and-crop model",
-   "korean": "토양·작물 모형",
-   "aliases": [
-    "soil and crop"
-   ],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "meta",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
-  },
-  {
-   "canonical": "Rolling assessment",
-   "korean": "연동 사정",
-   "aliases": [
-    "rolling bill"
-   ],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
-  },
-  {
-   "canonical": "Crisis arc",
-   "korean": "위기 아크",
-   "aliases": [
-    "crisis phase"
-   ],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
-  },
-  {
-   "canonical": "Suppression",
-   "korean": "진압",
-   "aliases": [
-    "suppress"
-   ],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
-  },
-  {
-   "canonical": "Secession by neglect",
-   "korean": "방치 이탈",
-   "aliases": [
-    "secession"
-   ],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
-  },
-  {
-   "canonical": "Pacification condition",
-   "korean": "평정 조건",
-   "aliases": [
-    "pacification"
-   ],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
-  },
-  {
-   "canonical": "Total-war overlay",
-   "korean": "총력전 오버레이",
-   "aliases": [
-    "total war overlay"
-   ],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
-  },
-  {
-   "canonical": "Westphalian draw",
-   "korean": "베스트팔렌 무승부",
-   "aliases": [
-    "draw",
-    "무승부"
-   ],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
-  },
-  {
-   "canonical": "Burn-and-rush",
-   "korean": "태우고 진격",
-   "aliases": [
-    "burn and rush"
-   ],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "PROPOSED",
-   "kind": "strategy",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
-  },
-  {
-   "canonical": "Truce lock",
-   "korean": "휴전 잠금",
-   "aliases": [
-    "truce",
-    "휴전"
-   ],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "truceTurns",
-   "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
-  },
-  {
-   "canonical": "White peace",
-   "korean": "백지평화",
-   "aliases": [
-    "status-quo peace",
-    "stalled-war exit"
-   ],
-   "birthplace": "docs/features/match-arc/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": "stallPatience",
-   "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
-  },
-  {
-   "canonical": "Fatigue",
-   "korean": "피로도",
-   "aliases": [],
-   "birthplace": "docs/features/war-model-build/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
-  },
-  {
-   "canonical": "Fatigue ledger",
-   "korean": "원장",
-   "aliases": [],
-   "birthplace": "docs/features/war-model-build/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
-  },
-  {
-   "canonical": "Forced march",
-   "korean": "강행군",
-   "aliases": [],
-   "birthplace": "docs/features/war-model-build/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
-  },
-  {
-   "canonical": "Reach cone",
-   "korean": "도달 원뿔",
-   "aliases": [],
-   "birthplace": "docs/features/war-model-build/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
-  },
-  {
-   "canonical": "Border alarm",
-   "korean": "국경 경보",
-   "aliases": [
-    "봉수형",
-    "봉수"
-   ],
-   "birthplace": "docs/features/war-model-build/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
-  },
-  {
-   "canonical": "Commit budget",
-   "korean": "커밋 예산",
-   "aliases": [],
-   "birthplace": "docs/features/war-model-build/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
-  },
-  {
-   "canonical": "Window",
-   "korean": "창",
-   "aliases": [],
-   "birthplace": "docs/features/war-model-build/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
-  },
-  {
-   "canonical": "Dark market",
-   "korean": "깜깜이 시장",
-   "aliases": [],
-   "birthplace": "docs/features/war-model-build/GLOSSARY.md",
-   "tier": 1,
-   "status": "AGREED",
-   "kind": "meta",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
-  },
-  {
-   "canonical": "Present / predictive reconnaissance",
-   "korean": "현재적/미래적 정찰",
-   "aliases": [],
-   "birthplace": "docs/features/war-model-build/GLOSSARY.md",
-   "tier": 1,
-   "status": "PROPOSED",
-   "kind": "mechanism",
-   "codeIdentifier": null,
-   "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
-  }
- ]
+  "regenerated": "2026-07-10",
+  "auditRun": 2,
+  "terms": [
+    {
+      "canonical": "Land-derived state",
+      "korean": "땅에서 파생된 상태",
+      "aliases": [
+        "모든 것은 땅에서 파생된다"
+      ],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "meta",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Aging constitution",
+      "korean": "노화 헌법",
+      "aliases": [
+        "anti-stalemate ratchet"
+      ],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "meta",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "synonym-exists",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Map unit",
+      "korean": null,
+      "aliases": [
+        "hex"
+      ],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "mapUnit",
+      "codeRefs": [],
+      "verdict": "synonym-exists",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Terrain-first",
+      "korean": null,
+      "aliases": [],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "meta",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Faction",
+      "korean": null,
+      "aliases": [],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "faction",
+      "codeRefs": [
+        "actions.js",
+        "main.js",
+        "map.js",
+        "faction.js",
+        "ai.js",
+        "game.js",
+        "ui.js"
+      ],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Realm",
+      "korean": "국가",
+      "aliases": [],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Region value",
+      "korean": null,
+      "aliases": [],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "regionValue",
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Named province",
+      "korean": "지방",
+      "aliases": [],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "province",
+      "codeRefs": [
+        "province-data.js",
+        "capacity.js",
+        "map.js"
+      ],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Front sector",
+      "korean": "전선 섹터",
+      "aliases": [
+        "front point (rejected)",
+        "single-hex objective (rejected)"
+      ],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "frontSector",
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Sector value",
+      "korean": null,
+      "aliases": [],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "sectorValue",
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Front sector value profile",
+      "korean": null,
+      "aliases": [],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "controlWeight (control weight axis)",
+      "korean": null,
+      "aliases": [],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "controlWeight",
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "economyValue (economy value axis)",
+      "korean": null,
+      "aliases": [],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "economyValue",
+      "codeRefs": [
+        "situation.js",
+        "map.js",
+        "ai.js"
+      ],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "populationValue (population value axis)",
+      "korean": null,
+      "aliases": [],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "populationValue",
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "defenseValue (defense value axis)",
+      "korean": null,
+      "aliases": [],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "defenseValue",
+      "codeRefs": [
+        "actions.js",
+        "map.js",
+        "combat.js"
+      ],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "militaryValue (military value axis)",
+      "korean": null,
+      "aliases": [],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "militaryValue",
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "routeValue (route value axis)",
+      "korean": null,
+      "aliases": [],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "routeValue",
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Usable value",
+      "korean": null,
+      "aliases": [
+        "stable turn"
+      ],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "usableEconomy",
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Yield",
+      "korean": "생산",
+      "aliases": [
+        "기본 생산량"
+      ],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "yield",
+      "codeRefs": [],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Treasury",
+      "korean": "국고",
+      "aliases": [],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "treasury",
+      "codeRefs": [
+        "map.js",
+        "faction.js"
+      ],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Development",
+      "korean": "개발",
+      "aliases": [],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "development",
+      "codeRefs": [
+        "domain-data.js"
+      ],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Income",
+      "korean": null,
+      "aliases": [],
+      "birthplace": "docs/features/combat-formula/MAGNITUDE.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "income",
+      "codeRefs": [
+        "ui.js",
+        "faction.js"
+      ],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Force limit",
+      "korean": null,
+      "aliases": [
+        "National cap",
+        "national cap growth"
+      ],
+      "birthplace": "docs/features/combat-formula/MAGNITUDE.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "capPerPop",
+      "codeRefs": [],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Spatial extent",
+      "korean": null,
+      "aliases": [],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "spatialExtent",
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Province status",
+      "korean": null,
+      "aliases": [
+        "secure",
+        "threatened",
+        "border",
+        "contested",
+        "split",
+        "occupied"
+      ],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "computeProvinceStatus",
+      "codeRefs": [],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Province status confidence",
+      "korean": null,
+      "aliases": [],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Situation axis",
+      "korean": null,
+      "aliases": [],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Standing (situation axis)",
+      "korean": "판세",
+      "aliases": [],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "synonym-exists",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Threat (situation axis)",
+      "korean": "위협",
+      "aliases": [],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Opening (situation axis)",
+      "korean": "기회",
+      "aliases": [],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "synonym-exists",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Uncertainty/blind-spot (situation axis)",
+      "korean": "불확실",
+      "aliases": [],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "synonym-exists",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Province control summary",
+      "korean": null,
+      "aliases": [],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Border sector",
+      "korean": null,
+      "aliases": [],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Contested sector",
+      "korean": null,
+      "aliases": [],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Threatened province",
+      "korean": null,
+      "aliases": [],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Province archetype region",
+      "korean": null,
+      "aliases": [
+        "Central Plains",
+        "Guanzhong Passes",
+        "Jiangnan Grain Belt",
+        "Steppe Frontier",
+        "Northern India Route",
+        "Hebei and Northern Plains",
+        "Northeastern Frontier",
+        "Han/Jing River Corridor",
+        "Southwestern Basin",
+        "Southeastern Coast and Straits",
+        "Northwestern Oasis and Desert Corridor",
+        "Southern Mountain and Forest Frontier"
+      ],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Settlement/function layer",
+      "korean": null,
+      "aliases": [],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Local garrison",
+      "korean": null,
+      "aliases": [],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "localGarrison",
+      "codeRefs": [
+        "actions.js",
+        "situation.js",
+        "map.js",
+        "combat.js"
+      ],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Sector defense layers",
+      "korean": null,
+      "aliases": [],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "terrainDefense (natural defense layer)",
+      "korean": null,
+      "aliases": [],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "terrainDefense",
+      "codeRefs": [],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "fortificationDefense (prepared defense layer)",
+      "korean": null,
+      "aliases": [],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "fortificationDefense",
+      "codeRefs": [],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "defenseCommitment (focused defense layer)",
+      "korean": null,
+      "aliases": [],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "defenseCommitment",
+      "codeRefs": [],
+      "verdict": "synonym-exists",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Standing forces",
+      "korean": null,
+      "aliases": [],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Capacity commitment",
+      "korean": null,
+      "aliases": [
+        "commit (rejected)",
+        "raw troop slider (rejected)"
+      ],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "capacityCommitment",
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Operation plan preset",
+      "korean": null,
+      "aliases": [],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Core command",
+      "korean": null,
+      "aliases": [],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Turn decision layers",
+      "korean": null,
+      "aliases": [],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "meta",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "synonym-exists",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Operation effect axis",
+      "korean": null,
+      "aliases": [
+        "effect axes / stamps",
+        "효과 축 / 도장"
+      ],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "controlShift (effect axis)",
+      "korean": null,
+      "aliases": [],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "controlShift",
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "garrisonDamage (effect axis)",
+      "korean": null,
+      "aliases": [],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "garrisonDamage",
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "fortificationDamage (effect axis / stamp)",
+      "korean": null,
+      "aliases": [
+        "erosion",
+        "침식"
+      ],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "fortificationDamage",
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "routeDisruption (effect axis)",
+      "korean": null,
+      "aliases": [],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "routeDisruption",
+      "codeRefs": [],
+      "verdict": "synonym-exists",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "usableValueDamage (effect axis)",
+      "korean": null,
+      "aliases": [],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "usableValueDamage",
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "confidenceGain (effect axis)",
+      "korean": null,
+      "aliases": [],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "confidenceGain",
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Operation plan catalog",
+      "korean": null,
+      "aliases": [],
+      "birthplace": "docs/features/operation-plan-catalog/CATALOG.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Under-commitment failure",
+      "korean": null,
+      "aliases": [],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Atomic turn resolution",
+      "korean": null,
+      "aliases": [],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "meta",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Position as product",
+      "korean": null,
+      "aliases": [
+        "path-dependent position"
+      ],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "meta",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "synonym-exists",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Standing world rule",
+      "korean": null,
+      "aliases": [
+        "standing rules",
+        "상비 규칙"
+      ],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Uncertainty duel",
+      "korean": "불확실성 대치",
+      "aliases": [
+        "intent meter (rejected)"
+      ],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "meta",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Offensive mobilization",
+      "korean": null,
+      "aliases": [],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "mobilization",
+      "codeRefs": [
+        "actions.js",
+        "domain-data.js",
+        "combat.js",
+        "ui.js",
+        "command-preview.js"
+      ],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Local defense",
+      "korean": null,
+      "aliases": [],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Latent mobilizable population",
+      "korean": null,
+      "aliases": [
+        "manpower",
+        "manpower pool"
+      ],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "synonym-exists",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "High complexity, low micromanagement",
+      "korean": null,
+      "aliases": [],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "meta",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "synonym-exists",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Strategic posture",
+      "korean": null,
+      "aliases": [
+        "방어",
+        "공세",
+        "정찰 중시",
+        "균형"
+      ],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "posture",
+      "codeRefs": [
+        "capacity.js"
+      ],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Posture as annotation lens",
+      "korean": null,
+      "aliases": [],
+      "birthplace": "docs/adr/0019-situation-judgment-structured-province-reading.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "meta",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Leak-through",
+      "korean": null,
+      "aliases": [
+        "dissonance (retired)",
+        "부조화"
+      ],
+      "birthplace": "docs/adr/0019-situation-judgment-structured-province-reading.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "LEAK_RATIO",
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Action capacity",
+      "korean": null,
+      "aliases": [],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "actionCapacity",
+      "codeRefs": [],
+      "verdict": "synonym-exists",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Map-first situation UX",
+      "korean": null,
+      "aliases": [],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "meta",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "synonym-exists",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Situation judgment",
+      "korean": "형세판단",
+      "aliases": [],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [
+        "situation.js"
+      ],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Reachable-weakest-link",
+      "korean": null,
+      "aliases": [],
+      "birthplace": "docs/adr/0019-situation-judgment-structured-province-reading.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Capacity carryover",
+      "korean": null,
+      "aliases": [],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "capacityCarryover",
+      "codeRefs": [],
+      "verdict": "synonym-exists",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Capacity overclock",
+      "korean": null,
+      "aliases": [],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Emergency human mobilization",
+      "korean": null,
+      "aliases": [],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "synonym-exists",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Strait",
+      "korean": null,
+      "aliases": [],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "strait",
+      "codeRefs": [
+        "province-data.js"
+      ],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Active region",
+      "korean": null,
+      "aliases": [],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Background region",
+      "korean": null,
+      "aliases": [],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Relevance-filtered log",
+      "korean": null,
+      "aliases": [],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Plain",
+      "korean": null,
+      "aliases": [
+        "plains"
+      ],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "plains",
+      "codeRefs": [
+        "domain-data.js",
+        "province-data.js",
+        "map.js"
+      ],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Grain basin",
+      "korean": null,
+      "aliases": [
+        "grain_basin"
+      ],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "grain_basin",
+      "codeRefs": [
+        "domain-data.js",
+        "province-data.js"
+      ],
+      "verdict": "synonym-exists",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Mountain/pass",
+      "korean": null,
+      "aliases": [
+        "mountain_pass"
+      ],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "mountain_pass",
+      "codeRefs": [
+        "domain-data.js",
+        "province-data.js"
+      ],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "River",
+      "korean": null,
+      "aliases": [],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "river",
+      "codeRefs": [
+        "combat.js",
+        "command-preview.js",
+        "domain-data.js",
+        "province-data.js"
+      ],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Coast/harbor",
+      "korean": null,
+      "aliases": [
+        "coast_strait"
+      ],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "coast_strait",
+      "codeRefs": [
+        "combat.js",
+        "province-data.js",
+        "domain-data.js",
+        "command-preview.js"
+      ],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Steppe/highland",
+      "korean": null,
+      "aliases": [
+        "steppe_highland"
+      ],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "steppe_highland",
+      "codeRefs": [
+        "domain-data.js",
+        "province-data.js"
+      ],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Frontier basin",
+      "korean": null,
+      "aliases": [
+        "frontier_basin"
+      ],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "frontier_basin",
+      "codeRefs": [
+        "province-data.js",
+        "domain-data.js"
+      ],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Impassable terrain",
+      "korean": "공백 지형",
+      "aliases": [
+        "Void terrain"
+      ],
+      "birthplace": "docs/features/terrain-cradle/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Parity start",
+      "korean": "동일 시작 인구",
+      "aliases": [],
+      "birthplace": "docs/features/terrain-cradle/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "synonym-exists",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Emergent asymmetry",
+      "korean": "파생 비대칭",
+      "aliases": [
+        "Derived asymmetry",
+        "SPEC Core Principle #8"
+      ],
+      "birthplace": "docs/features/terrain-cradle/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "meta",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Battle-summoning placement",
+      "korean": "전장 소환 배치",
+      "aliases": [
+        "conflict-anchor placement",
+        "flashpoint placement"
+      ],
+      "birthplace": "docs/features/terrain-cradle/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "meta",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "synonym-exists",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Great range",
+      "korean": "대산맥",
+      "aliases": [],
+      "birthplace": "docs/features/terrain-cradle/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Hexi corridor",
+      "korean": "하서회랑",
+      "aliases": [],
+      "birthplace": "docs/features/terrain-cradle/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Western Ring",
+      "korean": "대환",
+      "aliases": [],
+      "birthplace": "docs/features/terrain-cradle/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Taishan",
+      "korean": "태산",
+      "aliases": [],
+      "birthplace": "docs/features/terrain-cradle/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Economy ladder",
+      "korean": "경제 사다리",
+      "aliases": [],
+      "birthplace": "docs/features/terrain-cradle/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Inbound flow",
+      "korean": "침입 유량",
+      "aliases": [],
+      "birthplace": "docs/features/terrain-cradle/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "inboundFlow",
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Border class",
+      "korean": "국경 등급",
+      "aliases": [],
+      "birthplace": "docs/features/terrain-cradle/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "borderClass",
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Corridor authoring",
+      "korean": "회랑 저작",
+      "aliases": [],
+      "birthplace": "docs/features/terrain-cradle/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "meta",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "synonym-exists",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "City",
+      "korean": "도시",
+      "aliases": [],
+      "birthplace": "docs/features/terrain-cradle/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Gate-city",
+      "korean": "성문 도시",
+      "aliases": [],
+      "birthplace": "docs/features/terrain-cradle/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Keep city",
+      "korean": "내륙 심장 도시",
+      "aliases": [],
+      "birthplace": "docs/features/terrain-cradle/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Port capital",
+      "korean": "항구 수도",
+      "aliases": [],
+      "birthplace": "docs/features/terrain-cradle/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Carve principle",
+      "korean": "조각 원칙",
+      "aliases": [],
+      "birthplace": "docs/features/terrain-cradle/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "meta",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "synonym-exists",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Resolution pipeline",
+      "korean": null,
+      "aliases": [],
+      "birthplace": "docs/features/combat-formula/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "R (combat ratio)",
+      "korean": "전투비",
+      "aliases": [
+        "force ratio"
+      ],
+      "birthplace": "docs/features/combat-formula/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "R",
+      "codeRefs": [],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Troop stock / substance",
+      "korean": "병력",
+      "aliases": [
+        "Troop stock",
+        "substance"
+      ],
+      "birthplace": "docs/features/combat-formula/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "troopStock",
+      "codeRefs": [],
+      "verdict": "synonym-exists",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Unit",
+      "korean": "부대",
+      "aliases": [],
+      "birthplace": "docs/features/combat-formula/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Command pool",
+      "korean": "명령 풀 / 커맨드 풀",
+      "aliases": [
+        "Commitment (커밋)"
+      ],
+      "birthplace": "docs/features/combat-formula/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "commandPool",
+      "codeRefs": [],
+      "verdict": "synonym-exists",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Primary action",
+      "korean": "주 행동",
+      "aliases": [],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Surplus",
+      "korean": "잉여",
+      "aliases": [],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Lever",
+      "korean": "레버",
+      "aliases": [
+        "commitment lever",
+        "커밋 레버"
+      ],
+      "birthplace": "docs/features/combat-formula/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "lever",
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Quality",
+      "korean": "질",
+      "aliases": [],
+      "birthplace": "docs/features/combat-formula/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "quality",
+      "codeRefs": [],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Terrain multiplier",
+      "korean": "지형 배수",
+      "aliases": [],
+      "birthplace": "docs/features/combat-formula/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "terrainMultiplier",
+      "codeRefs": [],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Fortification multiplier",
+      "korean": "요새 배수",
+      "aliases": [
+        "fieldworks",
+        "town walls",
+        "fortress",
+        "legendary"
+      ],
+      "birthplace": "docs/features/combat-formula/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "fortification",
+      "codeRefs": [],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "World product",
+      "korean": "세계 곱",
+      "aliases": [
+        "world multipliers"
+      ],
+      "birthplace": "docs/features/combat-formula/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Water penalty",
+      "korean": "도하 페널티",
+      "aliases": [],
+      "birthplace": "docs/features/combat-formula/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "waterPenalty",
+      "codeRefs": [],
+      "verdict": "synonym-exists",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Frontage",
+      "korean": "협로/강습 폭 / 문폭",
+      "aliases": [
+        "frontage cap"
+      ],
+      "birthplace": "docs/features/combat-formula/GLOSSARY.md",
+      "tier": 1,
+      "status": "가안",
+      "kind": "mechanism",
+      "codeIdentifier": "frontage",
+      "codeRefs": [],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Strike at half-crossing",
+      "korean": "반도이격",
+      "aliases": [],
+      "birthplace": "docs/features/combat-formula/GLOSSARY.md",
+      "tier": 1,
+      "status": "PROPOSED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Threshold",
+      "korean": "문턱",
+      "aliases": [],
+      "birthplace": "docs/features/combat-formula/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "threshold",
+      "codeRefs": [],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Headline",
+      "korean": "헤드라인",
+      "aliases": [],
+      "birthplace": "docs/features/combat-formula/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "headline",
+      "codeRefs": [],
+      "verdict": "synonym-exists",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Margin",
+      "korean": "마진",
+      "aliases": [],
+      "birthplace": "docs/features/combat-formula/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "margin",
+      "codeRefs": [
+        "ui.js"
+      ],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Casualty curve",
+      "korean": "사상자 곡선",
+      "aliases": [],
+      "birthplace": "docs/features/combat-formula/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Rout cliff",
+      "korean": "궤주 절벽 / 와해 절벽",
+      "aliases": [],
+      "birthplace": "docs/features/combat-formula/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Escape state",
+      "korean": "도주 상태 / 도주로",
+      "aliases": [],
+      "birthplace": "docs/features/combat-formula/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "escapeState",
+      "codeRefs": [],
+      "verdict": "synonym-exists",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Isolation gate",
+      "korean": "고립 게이트",
+      "aliases": [],
+      "birthplace": "docs/features/combat-formula/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Forecast",
+      "korean": "예보",
+      "aliases": [],
+      "birthplace": "docs/features/combat-formula/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "forecast",
+      "codeRefs": [],
+      "verdict": "synonym-exists",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Recommendation",
+      "korean": "추천",
+      "aliases": [],
+      "birthplace": "docs/features/combat-formula/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Preset pin",
+      "korean": "프리셋 핀",
+      "aliases": [],
+      "birthplace": "docs/features/combat-formula/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Emergency reserve",
+      "korean": "긴급 투입 / 예비대",
+      "aliases": [],
+      "birthplace": "docs/features/combat-formula/MAGNITUDE.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "synonym-exists",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Jinguan grammar",
+      "korean": "진관 grammar",
+      "aliases": [],
+      "birthplace": "docs/features/combat-formula/MAGNITUDE.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "meta",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Mobilization visibility",
+      "korean": "동원 가시성",
+      "aliases": [],
+      "birthplace": "docs/features/combat-formula/MAGNITUDE.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Surrender harvest",
+      "korean": "항복 수확",
+      "aliases": [
+        "Ulm effect"
+      ],
+      "birthplace": "docs/features/combat-formula/MAGNITUDE.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Feint follow-up",
+      "korean": "양동 후속타",
+      "aliases": [],
+      "birthplace": "docs/features/combat-formula/MAGNITUDE.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Attack axis as numeraire",
+      "korean": "기축통화 원칙",
+      "aliases": [],
+      "birthplace": "docs/features/combat-formula/MAGNITUDE.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "meta",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Commitment horizon (method lens)",
+      "korean": "방법 렌즈",
+      "aliases": [
+        "frozen commitment",
+        "liquid commitment"
+      ],
+      "birthplace": "docs/features/combat-formula/MAGNITUDE.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "meta",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "synonym-exists",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Engagement-rule verbs",
+      "korean": null,
+      "aliases": [
+        "engage",
+        "discount",
+        "bypass",
+        "erode",
+        "throttle substance",
+        "refuse"
+      ],
+      "birthplace": "docs/features/combat-formula/MATCHUP.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "meta",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "synonym-exists",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Escape-hunting family",
+      "korean": null,
+      "aliases": [],
+      "birthplace": "docs/features/combat-formula/MATCHUP.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "meta",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Fortress-ignoring family",
+      "korean": null,
+      "aliases": [],
+      "birthplace": "docs/features/combat-formula/MATCHUP.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "meta",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Swift Seizure",
+      "korean": "신속 점령",
+      "aliases": [],
+      "birthplace": "docs/features/operation-plan-catalog/CATALOG.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "synonym-exists",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Deliberate Pressure",
+      "korean": "신중 압박",
+      "aliases": [],
+      "birthplace": "docs/features/operation-plan-catalog/CATALOG.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "synonym-exists",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Flanking Breakthrough",
+      "korean": "우회 돌파",
+      "aliases": [],
+      "birthplace": "docs/features/operation-plan-catalog/CATALOG.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Raid",
+      "korean": "약탈",
+      "aliases": [],
+      "birthplace": "docs/features/operation-plan-catalog/CATALOG.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Supply Interdiction",
+      "korean": "보급 차단",
+      "aliases": [],
+      "birthplace": "docs/features/operation-plan-catalog/CATALOG.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Encirclement and Annihilation",
+      "korean": "포위 섬멸",
+      "aliases": [],
+      "birthplace": "docs/features/operation-plan-catalog/CATALOG.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Crossing / Landing Securement",
+      "korean": "도하·상륙 확보",
+      "aliases": [],
+      "birthplace": "docs/features/operation-plan-catalog/CATALOG.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "synonym-exists",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Reconnaissance",
+      "korean": "정찰",
+      "aliases": [],
+      "birthplace": "docs/features/operation-plan-catalog/CATALOG.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "scout",
+      "codeRefs": [
+        "situation.js",
+        "intel.js",
+        "actions.js",
+        "game.js",
+        "command-preview.js",
+        "ui.js",
+        "domain-data.js"
+      ],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Recovery / Consolidation",
+      "korean": "정비·회복",
+      "aliases": [],
+      "birthplace": "docs/features/operation-plan-catalog/CATALOG.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Stronghold Defense",
+      "korean": "거점 방어",
+      "aliases": [],
+      "birthplace": "docs/features/operation-plan-catalog/CATALOG.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Delaying Defense",
+      "korean": "지연 방어",
+      "aliases": [],
+      "birthplace": "docs/features/operation-plan-catalog/CATALOG.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "synonym-exists",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Strategic Abandonment",
+      "korean": "전략적 포기",
+      "aliases": [],
+      "birthplace": "docs/features/operation-plan-catalog/CATALOG.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "synonym-exists",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Scorched Earth",
+      "korean": "청야 소각",
+      "aliases": [
+        "초토화"
+      ],
+      "birthplace": "docs/features/operation-plan-catalog/CATALOG.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Match",
+      "korean": "매치",
+      "aliases": [],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "PROPOSED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Match arc",
+      "korean": "매치 아크",
+      "aliases": [],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "meta",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Engagement",
+      "korean": "교전",
+      "aliases": [],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Operation",
+      "korean": "작전",
+      "aliases": [],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "PROPOSED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "War",
+      "korean": "전쟁",
+      "aliases": [],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "PROPOSED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Shield-break",
+      "korean": "방패 깨기",
+      "aliases": [],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "shieldBreak",
+      "codeRefs": [
+        "js/battle.js"
+      ],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Decisive battle",
+      "korean": "결전",
+      "aliases": [],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "decisiveBattle",
+      "codeRefs": [
+        "js/battle.js"
+      ],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Field army",
+      "korean": "야전군",
+      "aliases": [],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "fieldArmy",
+      "codeRefs": [
+        "js/battle.js"
+      ],
+      "verdict": null,
+      "verdictRef": null
+    },
+    {
+      "canonical": "Cascade",
+      "korean": "연쇄 붕괴",
+      "aliases": [
+        "캐스케이드"
+      ],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "PROPOSED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Decision point",
+      "korean": "결정점",
+      "aliases": [],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Hegemony decision point",
+      "korean": "패권 결정점",
+      "aliases": [
+        "leadership",
+        "unassailability"
+      ],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Dominance (victory condition)",
+      "korean": "지배",
+      "aliases": [
+        "domination victory"
+      ],
+      "birthplace": "docs/features/match-arc/RULINGS.md",
+      "tier": 1,
+      "status": "SEALED",
+      "kind": "mechanism",
+      "codeIdentifier": "forceShare",
+      "codeRefs": [],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Projectable mass",
+      "korean": "투사 가능 질량",
+      "aliases": [],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "projectableMass",
+      "codeRefs": [],
+      "verdict": "synonym-exists",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Shield mass",
+      "korean": "방패 질량",
+      "aliases": [],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "shieldMass",
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "In/out of the balance — hermit clause",
+      "korean": "판세 안/밖 · 은둔국 조항",
+      "aliases": [
+        "Parthia pattern"
+      ],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Regeneration window",
+      "korean": "재생 창",
+      "aliases": [
+        "W = 6"
+      ],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "synonym-exists",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Settlement",
+      "korean": "정산",
+      "aliases": [
+        "전쟁 정산",
+        "패권 정산"
+      ],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Settlement currencies",
+      "korean": "정산 통화",
+      "aliases": [],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Cession",
+      "korean": "할양",
+      "aliases": [],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Indemnity",
+      "korean": "배상",
+      "aliases": [],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Reach",
+      "korean": "도달권",
+      "aliases": [],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "synonym-exists",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Occupation reach",
+      "korean": "점령 도달권",
+      "aliases": [],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Raid reach",
+      "korean": "약탈 도달권",
+      "aliases": [],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Settlement preset ladder",
+      "korean": "프리셋 사다리",
+      "aliases": [
+        "관대",
+        "표준",
+        "최대",
+        "lenient",
+        "standard",
+        "maximum"
+      ],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "PRESETS",
+      "codeRefs": [
+        "js/bot-exit.js"
+      ],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Tempo-peace preset",
+      "korean": null,
+      "aliases": [
+        "lenient identity"
+      ],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Acceptance arithmetic",
+      "korean": "수락 산술",
+      "aliases": [],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Resistance discount",
+      "korean": "저항 할인",
+      "aliases": [],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Personality coefficient",
+      "korean": "성향 계수",
+      "aliases": [
+        "완고/hardliner",
+        "실리/pragmatic",
+        "유화/conciliatory"
+      ],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "TEMPERAMENT",
+      "codeRefs": [
+        "js/bot-exit.js"
+      ],
+      "verdict": "synonym-exists",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Vassalage / capitulation",
+      "korean": "복속",
+      "aliases": [
+        "부마국 model"
+      ],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Sovereignty premium",
+      "korean": "주권 프리미엄",
+      "aliases": [],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Chain collapse",
+      "korean": "사슬 붕괴",
+      "aliases": [],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Recruitment",
+      "korean": "모병",
+      "aliases": [
+        "공세 동원 (reserved seat)"
+      ],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "recruitment",
+      "codeRefs": [],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Conscription register",
+      "korean": "징집 명부",
+      "aliases": [
+        "인력 풀",
+        "manpower pool"
+      ],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "registerPerPop",
+      "codeRefs": [],
+      "verdict": "synonym-exists",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Aging constitution P-principles",
+      "korean": null,
+      "aliases": [
+        "P1 dual billing",
+        "P2 flow never ages",
+        "P3 snapshot information"
+      ],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "meta",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Mobilization intensity",
+      "korean": "동원 강도",
+      "aliases": [
+        "Marie-Louise"
+      ],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Surge Draft Model",
+      "korean": "서지 모병",
+      "aliases": [
+        "평시",
+        "전시",
+        "총동원",
+        "최후 동원"
+      ],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Blinds",
+      "korean": "블라인드",
+      "aliases": [],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "SUPERSEDED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Deterrence equilibrium",
+      "korean": "억지 평형",
+      "aliases": [
+        "동결 세계",
+        "frozen world"
+      ],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "PROPOSED",
+      "kind": "meta",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "synonym-exists",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Opportunism read",
+      "korean": "기회주의 읽기",
+      "aliases": [
+        "pile-on probe"
+      ],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "PROPOSED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Ending taxonomy",
+      "korean": "종료 분류",
+      "aliases": [],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "meta",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Denied-dominant (the wall)",
+      "korean": null,
+      "aliases": [
+        "anti-leader coalition",
+        "the wall",
+        "벽"
+      ],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "meta",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "synonym-exists",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Concentration panel (8 metrics)",
+      "korean": null,
+      "aliases": [
+        "forceShare",
+        "controlShare",
+        "HHI",
+        "shieldShare",
+        "reversibilityIndex",
+        "vassalShare",
+        "bloodAxis"
+      ],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "meta",
+      "codeIdentifier": "forceShare",
+      "codeRefs": [],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Test-trust ladder",
+      "korean": "검증 신뢰 사다리",
+      "aliases": [
+        "L0",
+        "L1",
+        "L2",
+        "L3"
+      ],
+      "birthplace": "docs/features/match-arc/TEST-LADDER.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "meta",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "synonym-exists",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Realm count 4–6",
+      "korean": null,
+      "aliases": [
+        "authoring default 5"
+      ],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "meta",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Viability parity, geometry/economy asymmetry",
+      "korean": null,
+      "aliases": [
+        "anti-snowball loop"
+      ],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "meta",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Match arc as design budget",
+      "korean": null,
+      "aliases": [],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "meta",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "synonym-exists",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Decisiveness ladder",
+      "korean": "결정성 사다리",
+      "aliases": [
+        "속국화",
+        "섬멸",
+        "전진(점령)",
+        "침식",
+        "약탈"
+      ],
+      "birthplace": "docs/features/tactical-plan-ai/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Disposition dial",
+      "korean": "성향 다이얼",
+      "aliases": [
+        "비관",
+        "중립",
+        "낙관"
+      ],
+      "birthplace": "docs/features/tactical-plan-ai/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "disposition",
+      "codeRefs": [],
+      "verdict": "synonym-exists",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Judged value",
+      "korean": "판단값",
+      "aliases": [],
+      "birthplace": "docs/features/tactical-plan-ai/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "judgedValue",
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Random-pick control",
+      "korean": "주사위 봇",
+      "aliases": [],
+      "birthplace": "docs/features/tactical-plan-ai/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "meta",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "synonym-exists",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Blind-bot floor",
+      "korean": "눈먼 봇",
+      "aliases": [],
+      "birthplace": "docs/features/tactical-plan-ai/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "meta",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "synonym-exists",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Bot information model",
+      "korean": null,
+      "aliases": [],
+      "birthplace": "docs/features/tactical-plan-ai/RULINGS.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Estimate band",
+      "korean": "추정 구간",
+      "aliases": [],
+      "birthplace": "docs/features/fog-of-war-discovery/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Force geography",
+      "korean": null,
+      "aliases": [
+        "force distribution",
+        "military geography"
+      ],
+      "birthplace": "docs/features/force-geography/RULINGS.md",
+      "tier": 1,
+      "status": "SEALED",
+      "kind": "meta",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "synonym-exists",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "One blanket",
+      "korean": "이불 한 장",
+      "aliases": [],
+      "birthplace": "docs/features/force-geography/RULINGS.md",
+      "tier": 1,
+      "status": "SEALED",
+      "kind": "meta",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "synonym-exists",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Terrain envelope",
+      "korean": "지형 봉투",
+      "aliases": [],
+      "birthplace": "docs/features/force-geography/RULINGS.md",
+      "tier": 1,
+      "status": "SEALED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Scarcity+value weak front",
+      "korean": null,
+      "aliases": [],
+      "birthplace": "docs/features/force-geography/RULINGS.md",
+      "tier": 1,
+      "status": "SEALED",
+      "kind": "meta",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "synonym-exists",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Reactive reserve",
+      "korean": "반응 예비대",
+      "aliases": [],
+      "birthplace": "docs/features/force-geography/RULINGS.md",
+      "tier": 1,
+      "status": "SEALED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Reserve destination",
+      "korean": null,
+      "aliases": [
+        "argmax(deficit × value)"
+      ],
+      "birthplace": "docs/features/force-geography/RULINGS.md",
+      "tier": 1,
+      "status": "SEALED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Attacker read",
+      "korean": "공격자 정보",
+      "aliases": [],
+      "birthplace": "docs/features/force-geography/RULINGS.md",
+      "tier": 1,
+      "status": "SEALED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Commit-scarcity",
+      "korean": null,
+      "aliases": [],
+      "birthplace": "docs/features/force-geography/RULINGS.md",
+      "tier": 1,
+      "status": "SEALED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "최소 / 정교 sequencing",
+      "korean": null,
+      "aliases": [
+        "minimal / sophisticated"
+      ],
+      "birthplace": "docs/features/force-geography/RULINGS.md",
+      "tier": 1,
+      "status": "SEALED",
+      "kind": "meta",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "synonym-exists",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Winning archetype: conquest snowball",
+      "korean": "정복 축적형",
+      "aliases": [],
+      "birthplace": "docs/features/match-arc/STRATEGY-SPACE.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "meta",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Winning archetype: vassal chain",
+      "korean": "복속 사슬형",
+      "aliases": [],
+      "birthplace": "docs/features/match-arc/STRATEGY-SPACE.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "meta",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "justified-coinage",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Winning archetype: free-rider timing",
+      "korean": "어부지리형",
+      "aliases": [],
+      "birthplace": "docs/features/match-arc/STRATEGY-SPACE.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "meta",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "synonym-exists",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Winning archetype: raid attrition",
+      "korean": "약탈 소모형",
+      "aliases": [],
+      "birthplace": "docs/features/match-arc/STRATEGY-SPACE.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "meta",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Winning archetype: shield-first",
+      "korean": "방패 우위형",
+      "aliases": [],
+      "birthplace": "docs/features/match-arc/STRATEGY-SPACE.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "meta",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "synonym-exists",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Winning archetype: interior lines",
+      "korean": "중원 내선형",
+      "aliases": [],
+      "birthplace": "docs/features/match-arc/STRATEGY-SPACE.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "meta",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Information confidence",
+      "korean": "정보 신뢰도",
+      "aliases": [],
+      "birthplace": "docs/features/fog-of-war-discovery/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "informationConfidence",
+      "codeRefs": [
+        "js/intel.js",
+        "js/game.js",
+        "js/map.js",
+        "js/situation.js",
+        "js/actions.js",
+        "js/command-preview.js"
+      ],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Force role",
+      "korean": "군사 역할",
+      "aliases": [
+        "force-role"
+      ],
+      "birthplace": "DOMAIN_MAP.md",
+      "tier": 0,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "standard-match",
+      "verdictRef": "2026-07-10-terminology-audit.md"
+    },
+    {
+      "canonical": "Full adjacency, no neutral zones",
+      "korean": null,
+      "aliases": [],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "meta",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": null,
+      "verdictRef": null
+    },
+    {
+      "canonical": "Mature-state start",
+      "korean": null,
+      "aliases": [],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "PROPOSED",
+      "kind": "meta",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": null,
+      "verdictRef": null
+    },
+    {
+      "canonical": "capital",
+      "korean": "수도",
+      "aliases": [],
+      "birthplace": "docs/features/capital/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED-concept",
+      "kind": "mechanic",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "standard-term",
+      "verdictRef": "docs/features/capital/RULINGS.md#CP-1"
+    },
+    {
+      "canonical": "capital guard",
+      "korean": "근위대",
+      "aliases": [],
+      "birthplace": "docs/features/capital/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED-concept",
+      "kind": "mechanic",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": "standard-term",
+      "verdictRef": "docs/features/capital/RULINGS.md#CP-1"
+    },
+    {
+      "canonical": "Sector world",
+      "korean": "섹터 세계",
+      "aliases": [],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": null,
+      "verdictRef": null
+    },
+    {
+      "canonical": "Holdings",
+      "korean": "보유 섹터",
+      "aliases": [
+        "holds"
+      ],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "holds",
+      "codeRefs": [],
+      "verdict": null,
+      "verdictRef": null
+    },
+    {
+      "canonical": "Named capture",
+      "korean": "실명 점령",
+      "aliases": [
+        "occupiedIds"
+      ],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "occupiedIds",
+      "codeRefs": [],
+      "verdict": null,
+      "verdictRef": null
+    },
+    {
+      "canonical": "Occupation frontier",
+      "korean": "점령 경계",
+      "aliases": [],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": null,
+      "verdictRef": null
+    },
+    {
+      "canonical": "Resistance proxy",
+      "korean": "저항 근사",
+      "aliases": [],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED-structure",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": null,
+      "verdictRef": null
+    },
+    {
+      "canonical": "Limbo",
+      "korean": "점령 무귀속",
+      "aliases": [
+        "occupied-untransferred"
+      ],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": null,
+      "verdictRef": null
+    },
+    {
+      "canonical": "Possessor-keeps",
+      "korean": "점유자 보존",
+      "aliases": [],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": null,
+      "verdictRef": null
+    },
+    {
+      "canonical": "capLandFrac",
+      "korean": "땅-상한 결합 다이얼",
+      "aliases": [],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "capLandFrac",
+      "codeRefs": [],
+      "verdict": null,
+      "verdictRef": null
+    },
+    {
+      "canonical": "Per-sector ripening",
+      "korean": "섹터별 숙성",
+      "aliases": [],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": null,
+      "verdictRef": null
+    },
+    {
+      "canonical": "Affordability bound",
+      "korean": "지불능력 상한",
+      "aliases": [
+        "affordability bound"
+      ],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "affordabilityBound",
+      "codeRefs": [],
+      "verdict": null,
+      "verdictRef": null
+    },
+    {
+      "canonical": "Affordability-bind rate",
+      "korean": null,
+      "aliases": [
+        "affordBindRate"
+      ],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "meta",
+      "codeIdentifier": "affordBindRate",
+      "codeRefs": [],
+      "verdict": null,
+      "verdictRef": null
+    },
+    {
+      "canonical": "World of record",
+      "korean": "기록 세계",
+      "aliases": [
+        "record world",
+        "world-of-record"
+      ],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "meta",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": null,
+      "verdictRef": null
+    },
+    {
+      "canonical": "Sudden-death crisis ending",
+      "korean": "위기 종결",
+      "aliases": [
+        "crisis ending"
+      ],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": null,
+      "verdictRef": null
+    },
+    {
+      "canonical": "Uprising fuel",
+      "korean": "봉기 연료",
+      "aliases": [
+        "uprising fuel"
+      ],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": null,
+      "verdictRef": null
+    },
+    {
+      "canonical": "Scar ledger",
+      "korean": "흉터 장부",
+      "aliases": [
+        "원한",
+        "scar"
+      ],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "state",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": null,
+      "verdictRef": null
+    },
+    {
+      "canonical": "Standing rebels",
+      "korean": "잔존 반란군",
+      "aliases": [
+        "rebel stack",
+        "rebels"
+      ],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "state",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": null,
+      "verdictRef": null
+    },
+    {
+      "canonical": "Soil-and-crop model",
+      "korean": "토양·작물 모형",
+      "aliases": [
+        "soil and crop"
+      ],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "meta",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": null,
+      "verdictRef": null
+    },
+    {
+      "canonical": "Rolling assessment",
+      "korean": "연동 사정",
+      "aliases": [
+        "rolling bill"
+      ],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": null,
+      "verdictRef": null
+    },
+    {
+      "canonical": "Crisis arc",
+      "korean": "위기 아크",
+      "aliases": [
+        "crisis phase"
+      ],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": null,
+      "verdictRef": null
+    },
+    {
+      "canonical": "Suppression",
+      "korean": "진압",
+      "aliases": [
+        "suppress"
+      ],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": null,
+      "verdictRef": null
+    },
+    {
+      "canonical": "Secession by neglect",
+      "korean": "방치 이탈",
+      "aliases": [
+        "secession"
+      ],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": null,
+      "verdictRef": null
+    },
+    {
+      "canonical": "Pacification condition",
+      "korean": "평정 조건",
+      "aliases": [
+        "pacification"
+      ],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": null,
+      "verdictRef": null
+    },
+    {
+      "canonical": "Total-war overlay",
+      "korean": "총력전 오버레이",
+      "aliases": [
+        "total war overlay"
+      ],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": null,
+      "verdictRef": null
+    },
+    {
+      "canonical": "Westphalian draw",
+      "korean": "베스트팔렌 무승부",
+      "aliases": [
+        "draw",
+        "무승부"
+      ],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": null,
+      "verdictRef": null
+    },
+    {
+      "canonical": "Burn-and-rush",
+      "korean": "태우고 진격",
+      "aliases": [
+        "burn and rush"
+      ],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "PROPOSED",
+      "kind": "strategy",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": null,
+      "verdictRef": null
+    },
+    {
+      "canonical": "Truce lock",
+      "korean": "휴전 잠금",
+      "aliases": [
+        "truce",
+        "휴전"
+      ],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "truceTurns",
+      "codeRefs": [],
+      "verdict": null,
+      "verdictRef": null
+    },
+    {
+      "canonical": "White peace",
+      "korean": "백지평화",
+      "aliases": [
+        "status-quo peace"
+      ],
+      "birthplace": "docs/features/match-arc/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": "whitePeace",
+      "codeRefs": [
+        "js/bot-exit.js"
+      ],
+      "verdict": null,
+      "verdictRef": null
+    },
+    {
+      "canonical": "Fatigue",
+      "korean": "피로도",
+      "aliases": [],
+      "birthplace": "docs/features/war-model-build/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": null,
+      "verdictRef": null
+    },
+    {
+      "canonical": "Fatigue ledger",
+      "korean": "원장",
+      "aliases": [],
+      "birthplace": "docs/features/war-model-build/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": null,
+      "verdictRef": null
+    },
+    {
+      "canonical": "Forced march",
+      "korean": "강행군",
+      "aliases": [],
+      "birthplace": "docs/features/war-model-build/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": null,
+      "verdictRef": null
+    },
+    {
+      "canonical": "Reach cone",
+      "korean": "도달 원뿔",
+      "aliases": [],
+      "birthplace": "docs/features/war-model-build/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": null,
+      "verdictRef": null
+    },
+    {
+      "canonical": "Border alarm",
+      "korean": "국경 경보",
+      "aliases": [
+        "봉수형",
+        "봉수"
+      ],
+      "birthplace": "docs/features/war-model-build/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": null,
+      "verdictRef": null
+    },
+    {
+      "canonical": "Commit budget",
+      "korean": "커밋 예산",
+      "aliases": [],
+      "birthplace": "docs/features/war-model-build/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": null,
+      "verdictRef": null
+    },
+    {
+      "canonical": "Window",
+      "korean": "창",
+      "aliases": [],
+      "birthplace": "docs/features/war-model-build/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": null,
+      "verdictRef": null
+    },
+    {
+      "canonical": "Dark market",
+      "korean": "깜깜이 시장",
+      "aliases": [],
+      "birthplace": "docs/features/war-model-build/GLOSSARY.md",
+      "tier": 1,
+      "status": "AGREED",
+      "kind": "meta",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": null,
+      "verdictRef": null
+    },
+    {
+      "canonical": "Present / predictive reconnaissance",
+      "korean": "현재적/미래적 정찰",
+      "aliases": [],
+      "birthplace": "docs/features/war-model-build/GLOSSARY.md",
+      "tier": 1,
+      "status": "PROPOSED",
+      "kind": "mechanism",
+      "codeIdentifier": null,
+      "codeRefs": [],
+      "verdict": null,
+      "verdictRef": null
+    }
+  ]
 }
