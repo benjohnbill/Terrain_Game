@@ -444,15 +444,22 @@ test('CE-⑳ — no read-driven settlement reaches a broken rung', () => {
   const full = BotExit.acceptableRungs(state, 'pragmatic');
   assert.ok(full.includes('whitePeace'), 'under the intact ladder white peace is free — the premise');
 
-  // Stage 2: 백지/관대 broken (tournament.js availablePresets, 표시어 → canonical).
-  const s2Open = ['standard', 'maximum'];
+  // Stage 2: 백지/관대 broken. Fed STRAIGHT from the sealed producer — availablePresets
+  // keys the ladder by 표시어 and bot-exit's identifiers are English canonicals, so
+  // this pins the translation seam end to end rather than hand-writing the answer.
+  const s2Open = T.availablePresets(T.HARNESS.crisis.stage.s2,
+    { crisis: { ...T.HARNESS.crisis, enabled: true } });
+  assert.deepEqual(s2Open, ['표준', '최대'], 'the producer speaks 표시어');
   const atS2 = BotExit.acceptableRungs(state, 'pragmatic', s2Open);
+  assert.ok(atS2.length > 0, 'the surviving rungs must be signable here — else the loops below assert nothing');
   assert.ok(!atS2.includes('whitePeace'), 'a broken rung must be unreachable, not merely unattractive');
   assert.ok(!atS2.includes('lenient'));
-  for (const rung of atS2) assert.ok(s2Open.includes(rung));
+  for (const rung of atS2) assert.ok(s2Open.map(BotExit.rungOf).includes(rung));
 
   // Stage 3: only 최대 survives.
-  const atS3 = BotExit.acceptableRungs(state, 'pragmatic', ['maximum']);
+  const atS3 = BotExit.acceptableRungs(state, 'pragmatic',
+    T.availablePresets(T.HARNESS.crisis.stage.s3, { crisis: { ...T.HARNESS.crisis, enabled: true } }));
+  assert.ok(atS3.length > 0, 'and here');
   for (const rung of atS3) assert.equal(rung, 'maximum');
 
   // And the exit itself honours it — the ceiling can never name a broken rung.
@@ -496,22 +503,30 @@ test('CE-⑳ kills the never-empty invariant: a court that can afford nothing dr
   assert.equal(exit.ceiling, null);
 });
 
-test('no stall/patience timer survives anywhere in the L2 harness', () => {
-  // The retirement is structural, not a disabled flag: the concepts must not
-  // exist in executable code. Guards against resurrection by a later edit.
-  // Comments and SPEC_GAPS strings may DISCUSS the retirement — a record of what
-  // was removed and why is the point, not a leak — so prose is stripped first.
-  const fs = require('fs');
-  const src = fs.readFileSync(require.resolve('../mockup/combat-calc/tournament.js'), 'utf8');
-  const code = src
-    .replace(/\/\*[\s\S]*?\*\//g, '')      // block comments
-    .replace(/\/\/.*$/gm, '')              // line comments
-    .replace(/'(?:[^'\\]|\\.)*'/g, "''");  // string literals (SPEC_GAPS prose)
-  for (const banned of ['stallPatience', 'stalled', 'stallPeace', 'totalWarLock', 'noStallPeaceStage']) {
-    assert.ok(!code.includes(banned), `retired concept "${banned}" must not exist in tournament.js code`);
-  }
-  // The guard must be able to FAIL — otherwise it proves nothing about the strip.
-  assert.ok(code.includes('trySettle'), 'the strip must leave real code standing');
+test('no stall/patience timer survives in the L2 harness — checked at RUNTIME', () => {
+  // Checked by BEHAVIOUR, not by grepping source. A text guard would have to strip
+  // comments and string literals to let the retirement be documented — and any
+  // regex that does that is one apostrophe away from stripping real code and
+  // passing vacuously. The runtime shape cannot lie: if a dial, a counter or an
+  // exit came back, these fail.
+  assert.equal(T.HARNESS.stallPatience, undefined, 'the patience dial is gone');
+  assert.equal(T.HARNESS.crisis.noStallPeaceStage, undefined, 'and its crisis lock with it');
+
+  const A = { name: 'A', wars: [] };
+  const D = { name: 'D', wars: [], interior: 5 };
+  const war = T.newWar(A, D, 1);
+  assert.equal(war.stalled, undefined, 'a fresh war carries no stall counter');
+  assert.ok('margin' in war, 'but margin survives — it rode the same lines and is sealed input');
+
+  // And no run can produce the cause: the exit itself is gone, not merely locked.
+  const MB = require('../mockup/combat-calc/map-board.js');
+  const { CRADLE_MAP } = require('../mockup/combat-calc/map-gen.js');
+  const { viableBindings } = require('../mockup/combat-calc/map-gate.js');
+  const recs = MB.runCradleTournament({ map: CRADLE_MAP,
+    bindings: viableBindings(CRADLE_MAP, 5).viable.slice(0, 1), reps: 1, seed: 42 });
+  const ends = recs.flatMap((r) => r.warEnds || []);
+  assert.ok(ends.length > 0, 'wars must actually end, or this proves nothing');
+  assert.ok(!ends.some((e) => e.cause === 'stallPeace'), 'no stallPeace end is reachable');
 });
 
 // (CE-⑩ shield-drain reverted 2026-07-12: deducting suppressorDead from

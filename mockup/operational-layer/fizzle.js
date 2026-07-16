@@ -221,6 +221,8 @@ function restorationSweep({ reps = 1, seed = SEED, bindings } = {}) {
   return cells;
 }
 
+/* opts.baseline is deliberately absent: the baseline is frozen, so there is
+   nothing to parameterise. Audit it with rederiveBaseline() instead. */
 function runAll(opts = {}) {
   return {
     baseline: baseline(),
@@ -258,8 +260,11 @@ if (require.main === module) {
   console.log('  · The CRISIS OVERLAY IS OFF, on both runs. That is the LIKE-FOR-LIKE choice:');
   console.log('    the recorded baseline is itself a crisis-OFF measurement (DESIGN-RISKS R14),');
   console.log('    and R14 asks about the crisis-OFF main arc. The overlay-ON axis is');
-  console.log('    NOT MEASURED and is owned by ticket 11 (js/bot-exit is overlay-blind:');
-  console.log('    it would sign whitePeace during total war, which CE-⑲/⑳ forbid).');
+  console.log('    NOT MEASURED. bot-exit is NO LONGER overlay-blind (ticket 11 gave it the');
+  console.log('    open-rungs input), so an overlay-ON run is now technically valid — but it');
+  console.log('    still would not be THIS comparison: the frozen baseline is crisis-OFF, and');
+  console.log('    R14 asks about the crisis-OFF main arc. Measuring the overlay is a');
+  console.log('    different question, and it has no baseline yet.');
   console.log('  · Bot policy bounds proof power: a fizzle FOUND is real; a fizzle NOT found');
   console.log('    is not proof that decisive war is reachable by a skilled player (the R14');
   console.log('    bot caveat, unchanged).');
@@ -276,7 +281,8 @@ if (require.main === module) {
   console.log('  ticket 11 retired the stall timer from tournament.js, so this world no longer');
   console.log('  exists in the tree. Re-running the probe now would produce a DIFFERENT world\'s');
   console.log('  numbers under this label. Audit it by checking out that commit and re-running');
-  console.log('  `rederiveBaseline()`; the snapshot is machine-readable so it can be checked,');
+  console.log('  `baseline()` — its name THERE, before this file split the frozen reader from');
+  console.log('  the live derivation; the snapshot is machine-readable so it can be checked,');
   console.log('  not merely believed.');
   console.log(`  Recorded prose target it reproduced: ${RECORDED.whitePeacePct}% white peace,`);
   console.log(`  ${RECORDED.annihilationsPerMatch} annihilations/match, decided% ${RECORDED.decidedPct} — ${RECORDED.source}`);
@@ -361,8 +367,9 @@ if (require.main === module) {
     console.log(`  ${String(c.knobs.fillFactor).padEnd(5)} ${String(c.knobs.shieldCommit).padEnd(13)} ${pct(c.whitePeacePct)}        ${c.annihilationsPerMatch.toFixed(3)}        ${c.eliminationsPerMatch.toFixed(3)}        ${c.decisivePerMatch.toFixed(2)}`);
 
   sub('NOT MEASURED (machine limits — owed to later rungs, never silent)');
-  console.log('  · Crisis overlay ON: bot-exit is overlay-blind (CE-⑳). Ticket 11 owns the');
-  console.log('    open-rungs input; until it lands, an overlay-ON run would be invalid.');
+  console.log('  · Crisis overlay ON. No longer BLOCKED (ticket 11 closed bot-exit\'s CE-⑳');
+  console.log('    blindness with the open-rungs input); still not MEASURED, because the');
+  console.log('    frozen baseline is crisis-OFF and there is nothing to difference against.');
   console.log('  · The baseline\'s death-forced white peace (tournament.js :1026) records no');
   console.log('    cause, so the baseline white-peace % is a FLOOR. The gap is bounded by');
   console.log(`    eliminations (${b.eliminationsPerMatch.toFixed(3)}/match) — small, but not zero.`);

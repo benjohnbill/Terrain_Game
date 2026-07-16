@@ -35,15 +35,17 @@
  *      (crisis co-analysis 2026-07-13 → R14: "the draw/spectacle problem is
  *      UPSTREAM in the war system"). Metric 5 asks whether C1+C2 close R14 AT
  *      THE SOURCE; the source is the crisis-OFF main arc.
- *   3. VALIDITY. `js/bot-exit.js` is overlay-blind by construction (its own
- *      header says so): `acceptableRungs` walks the full sealed ladder and knows
- *      nothing of CE-⑳'s bottom-up rung breaking, so a court would sign
- *      whitePeace during total war — which CE-⑲/⑳ forbid. A crisis-ON run would
- *      be invalid on exactly the axis it added.
+ *   3. VALIDITY (historical — closed since). When this loop was built,
+ *      `js/bot-exit.js` was overlay-blind: `acceptableRungs` walked the full
+ *      sealed ladder and knew nothing of CE-⑳'s bottom-up rung breaking, so a
+ *      court would have signed whitePeace during total war, which CE-⑲/⑳ forbid.
+ *      Ticket 11 has since given the walk its open-rungs input, so this ground no
+ *      longer BLOCKS an overlay-ON run — but grounds 1 and 2 stand on their own,
+ *      and they are the ones that decide the comparison.
  *
- * The overlay ON axis is therefore NOT MEASURED here and is owned by ticket 11,
- * which gives the walk its open-rungs input. The report prints this; it is not
- * left to be inferred.
+ * The overlay ON axis is therefore NOT MEASURED here. It is no longer blocked;
+ * it is simply a different question with no baseline to difference against. The
+ * report prints this; it is not left to be inferred.
  *
  * ── The stall timer does not exist here BY CONSTRUCTION ──────────────────────
  * There is no patience dial, no `stalled` counter, no war-length timer anywhere

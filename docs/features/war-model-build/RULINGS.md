@@ -164,7 +164,10 @@ winner's *will* broke — a real ADR 0038 channel. Retiring it would delete a
 mechanism with no replacement: `js/bot-exit.js` models the LOSER's will breaking
 and has no counterpart for the winner's. That is exactly the defect ticket 11
 exists to prevent (an unowned retirement), so it stays and the gap is
-**REGISTERED, not hidden**: the winner's-will path has no read-driven home yet.
+**REGISTERED, not hidden** — literally: `tournament.js SPEC_GAPS` now carries
+"WINNER-side will breaking has no read-driven home", alongside the other spec
+silences the harness had to rule on itself. A gap asserted only in prose is a
+gap nobody will find.
 Empirically near-dead (9 of 79,515 war ends before the retirement, 0 after) and
 reachable only by `free-rider` via the `proposalStep >= 3` arithmetic — but
 rarity is a fact about current bot policy, not a reason to delete the only
@@ -186,6 +189,19 @@ afford any rung" branch that 09 deleted as unreachable is now REACHABLE — a co
 too poor for the cheapest surviving rung affords nothing and **drags a lost war**
 (ADR 0038's drag, arrived at honestly). Re-derived from the same sealed
 arithmetic and pinned by test, never resurrected on faith.
+
+**③ The death-forced 0%-rung path SURVIVES, and its invisibility is recorded
+rather than fixed.** The third `returnOccupied` site (inside `eliminate()`)
+returns a dead attacker's bites to the living defender. It is not the stall
+timer's kin and not a will-break: it is the consequence of a belligerent ceasing
+to exist, so there is nothing to retire. Its real defect is separate —
+`eliminate()` takes no `record`, so those ends carry NO cause and are invisible
+in `record.warEnds`, which is why the frozen baseline's white-peace share is a
+**floor** (~8.8% of wars started reach no recorded end). Left unfixed HERE by
+choice: this harness is retired (ADR 0037) and its baseline is now frozen, so
+patching it would change nothing anyone reads. The live slice-2 loop already
+records the same event honestly as `participantEliminated`, and its `endWar`
+signature makes a causeless end unwritable. Registered in `SPEC_GAPS`.
 
 **The measurement that matters (evidence, not verdict).** Removing the timer did
 **not** make fizzling wars decisive — it made them *never end*. The L2 harness

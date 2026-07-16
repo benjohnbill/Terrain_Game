@@ -111,6 +111,31 @@ function round2(value) {
   return Math.round(value * 100) / 100;
 }
 
+/* THE VOCABULARY SEAM, owned here rather than left to callers.
+ *
+ * This module's identifiers are the registered English canonicals (Vocabulary
+ * Law: the 한국어 표시어 is a display VALUE, never a key). The CE-⑳ overlay that
+ * feeds `openRungs`, however, is the sealed harness's `availablePresets`, which
+ * keys the ladder by 표시어 — `['백지', '관대', '표준', '최대']`. Both are right at
+ * their own birthplace, so SOMETHING must translate.
+ *
+ * It lives here, next to the PRESETS whose `label` field IS the mapping's source
+ * of truth, and that placement is the whole point: ticket 09 left the overlay an
+ * unowned GAP, and pushing the translation onto every caller would have replaced
+ * it with an unowned SEAM — the same defect wearing a different hat. A caller
+ * that already speaks canonical passes through unchanged, so this narrows
+ * nothing.
+ */
+const _RUNG_BY_LABEL = Object.freeze(Object.fromEntries(
+  LADDER.map((name) => [PRESETS[name].label, name])));
+
+function rungOf(nameOrLabel) {
+  if (PRESETS[nameOrLabel]) return nameOrLabel;              // already canonical
+  const canonical = _RUNG_BY_LABEL[nameOrLabel];             // 표시어 → canonical
+  if (canonical) return canonical;
+  throw new Error('unknown settlement preset: ' + nameOrLabel);
+}
+
 /* ── Ported acceptance arithmetic (match.js) ───────────────────────────────── */
 
 /* The claim bundle a rung asks for. reach = { occValue, raidLoot } in
@@ -224,12 +249,7 @@ function position(cfg) {
 function acceptableRungs(state, temperament, openRungs) {
   const coeff = TEMPERAMENT[temperament];
   if (coeff === undefined) throw new Error('unknown temperament: ' + temperament);
-  const open = openRungs ? new Set(openRungs) : null;
-  if (open) {
-    for (const name of open) {
-      if (!PRESETS[name]) throw new Error('unknown settlement preset in openRungs: ' + name);
-    }
-  }
+  const open = openRungs ? new Set(openRungs.map(rungOf)) : null;
   const L = expectedContinuedLoss(state);
   return LADDER
     .filter((name) => !open || open.has(name))
@@ -328,7 +348,7 @@ function decideExit(cfg) {
 
 const _api = {
   PRESETS, LADDER, TEMPERAMENT, LOSS_MODEL, TRAJECTORY_EPSILON, WINDOW_APPETITE,
-  presetBundle, expectedContinuedLoss, accepts,
+  presetBundle, expectedContinuedLoss, accepts, rungOf,
   trajectory, position, acceptableRungs, decideExit,
 };
 if (typeof module !== 'undefined' && module.exports) module.exports = _api;
