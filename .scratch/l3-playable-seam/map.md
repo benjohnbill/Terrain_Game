@@ -135,7 +135,10 @@ architecture statement. Now corrected there.
 **Order:** **05 resolved 2026-07-18** — option A (nested `game/` tree), one
 root-owned lockfile, the full `:game` command surface with gate 10 owning
 thresholds, D5 audit-lint re-aim, and single-emit parity (see § Decisions so
-far). **06 is next.** Gate 05's scope had been amended twice over, and both
+far). **06 resolved 2026-07-18** — option A (exported checked-in TS/ESM world
+artifact), immutable `(world id, revision)` identity, revision-local identifiers,
+three-tier validation, and the production/evidence split (see § Decisions so
+far). **07 is next.** Gate 05's scope had been amended twice over, and both
 amendments held at seal time:
 
 - **Freed** by ADR 0041 — the public-route question (Vite `base`, SPA mount,
@@ -159,6 +162,7 @@ Schedule the war-termination pass in parallel or immediately after; 08 →
 <!-- Closed ticket pointers are appended here. Open tickets are discovered by
      scanning the child issue files, not listed on the map. -->
 
+- [Define the Authored World Input Contract](issues/06-define-authored-world-input.md) — the authored world enters the Runtime as an exported, checked-in TS/ESM artifact (option A), not boot-time generation; immutable `(world id, revision)` identity with revision-local identifiers (a content change bumps the revision); three-tier validation (fail-closed load incl. revision content-integrity, offline authoring/balance gates, doc governance); the frozen artifact plus a new TS loader/validator are production, while `map-gen.js`/`map-loader.js`/`map-gate.js` stay archived behavioral evidence (ADR 0041) whose L2 shapes do not cross into production. Term registration deferred to gate 12. Resolved 2026-07-18.
 - [Choose the Build, Module, and Test Topology](issues/05-choose-build-and-test-topology.md) — nested `game/` ESM/TypeScript island beside the CommonJS root (option A); one root-owned lockfile with `game/package.json` a `{"type":"module"}` marker; a seven-command `:game` developer surface where gate 05 owns command names/structure and gate 10 owns pass/fail thresholds (acceptance commands fail `pending` until filled); `node:test` + `@playwright/test` runners with no second unit framework; audit-lint re-aimed to the new tree (recursive + `.ts`, per-term codeRef graduation, `code-contract` stays blocking, `game/` added to write-lint `GOVERNED`) with execution deferred to the first port ticket; and a single-emit Runtime parity contract where Node and browser load the same emitted ESM (threshold owned by gate 10). Resolved 2026-07-18.- [Verify Vite, TypeScript, ESM, and Legacy CommonJS Coexistence](issues/04-research-toolchain-coexistence.md) — root CommonJS, a scoped ESM boundary, Vite/static artifact assembly, and exact emitted-output parity can coexist without a root module flip; topology choices remain open ([report](research/toolchain-coexistence.md)).
 - [Preserve or Replace the Legacy Play Path?](issues/01-choose-migration-topology.md) — use a parallel-strangler topology: preserve `game.html` as the bounded legacy comparator while the separate canonical L3 path reaches parity, promote L3 into the stable public play-path role, use static-artifact rollback, and retire the legacy path after its named cutover gate.
 - [Define Game Runtime Authority and Its Interface](issues/02-define-game-runtime-authority.md) — the Runtime privately owns match truth; viewer projection is the single blur seam; preview is a pure module outside the Runtime; bots are ordinary callers; turn order stays in the Runtime while pacing stays outside; authored-world identity, seed, and ordered intent log form the canonical durable representation.

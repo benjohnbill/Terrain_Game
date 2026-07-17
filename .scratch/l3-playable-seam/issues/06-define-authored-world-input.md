@@ -1,7 +1,7 @@
 # Define the Authored World Input Contract
 
 Type: grilling
-Status: open
+Status: resolved
 Blocked by: 02
 
 ## Question
@@ -10,6 +10,86 @@ How should the deterministic authored map enter the Game Runtime: what is the
 canonical data shape, when is it generated or loaded, which identifiers must
 remain stable, what is validated at runtime, and which existing generator,
 loader, and gate artifacts are production inputs versus migration evidence?
+
+## Answer
+
+Adopt option A: the authored world enters the Runtime as an exported, checked-in
+artifact that the Runtime imports and validates; the deterministic generator and
+editor stay authoring-only tools. Boot-time generation (B) and the legacy
+province catalog (C) are rejected — B couples world identity to generator
+implementation, so a refactor can silently break replay, and C predates the
+accepted region/sector graph.
+
+**D1 — Generation vs artifact (option A).** The canonical world is a reviewed,
+checked-in artifact the Runtime only reads; it never runs the generator. This is
+what makes `(authored-world identity, seed, intent log)` (gate 02, C02.12) a real
+reproducibility claim: the world leg is frozen content, not a per-boot
+computation. `map-gen.js` stays a workshop tool whose output is baked into the
+artifact.
+
+**D2 — Artifact format (TypeScript/ESM module).** The frozen world ships as a
+TS/ESM module in the `game/` tree, not JSON. Decisive reason: 5 edges carry
+`choke.cap === Infinity` (open borders, unbounded projectable mass), which does
+not survive a JSON round-trip — `Infinity` serializes to `null`, silently
+inverting open borders into fully-blocked ones. A TS module preserves `Infinity`
+as a native value and gets typecheck coverage for free. This forecloses the
+registered JSON round-trip debt. A JSON export function may be added later if an
+external consumer appears.
+
+**D3 — Identity (immutable `(worldId, revision)`).** World identity is an
+immutable `world id` plus an explicit, immutable `revision`, not a mutable name.
+A content change requires a revision bump; each published revision's content is
+frozen. This is the concrete form of gate 02's `authored-world identity`. Term
+registration (Tier-0/Tier-1 + `term-inventory.json`) is deferred to gate 12 per
+the Wayfinder convention; candidates carry style-correct headers now —
+`world id (세계 식별자)`, `revision (개정판)`,
+`authored-world identity (저작 세계 정체성)` — so promotion is mechanical.
+
+**D4 — Identifier stability (revision-local).** Identifiers are stable within a
+revision, not across revisions. Each replay is interpreted against its own
+revision's world, so cross-revision identifier continuity is unnecessary and the
+queued re-authoring (terrain-cradle TC-⑪) does not conflict — a content edit
+simply produces the next revision. Consequences recorded as part of this seal:
+the first revision keeps the current `rN` / `rN_sN` / hex-coordinate identifiers
+unchanged; edges carry no independent id and derive canonically from sorted
+endpoint ids (`min|max`); seat binding is a match-setup input, not part of the
+authored map, and is outside this stability contract. Cross-version replay is out
+of scope (no save/load product in v1); a lightweight rev→rev change log kept at
+re-authoring time preserves the future option without permanent ids now.
+
+**D5 — Validation (three tiers).** (1) Fail-closed Runtime load checks,
+machine-enforced, that refuse to construct match state: schema version, unique
+ids, referential integrity, exactly-one region/sector membership, map-unit
+uniqueness, bidirectional/legal adjacency, required choke/removal data, complete
+seat coverage, landmark references, and — the enforcement D4 depends on — a
+revision content-integrity check (the loaded content matches the registered
+revision). (2) Offline authoring gates that admit a revision, run once before
+publication, never per boot: B1/B2 seat viability, viable-binding enumeration,
+derived-asymmetry checks, deterministic export, and manual map-intent review. (3)
+Documentation governance (agent review + the `write-lint` hook) that keeps map
+docs and code aligned. Boundary: structural/integrity failures block Runtime
+creation; balance/intent judgments gate publication offline. The agent-review
+tier is advisory — it failed this very session when a compaction re-ran a
+completed batch — so revision integrity must live in tier 1, not rely on tier 3.
+
+**D6 — Production vs evidence (ADR 0041 applied).** Production = the frozen world
+artifact (D1/D2) plus a new TS loader/validator (D5 tier 1). Evidence =
+`map-gen.js` (workshop tool, archive; only its output is baked to production),
+`map-loader.js` / `map-gate.js` (L2-shaped consumers whose B1/B2 and adjacency
+behavior is authoritative evidence to re-implement, but whose shapes must not
+cross into production — `map-loader.js` discards hexes and collapses the map into
+a per-seat summary), editor overrides, and fixtures. All three already self-label
+(`PROTOTYPE … js/ must not import`) and sit under `mockup/` (ADR 0041 archive).
+The label prevents import; it does not prevent copying the L2 shape when the L3
+loader is written, so the seal adds one pointer: **the source of truth for a new
+L3 loader/validator/gate is the sealed artifact schema (D1–D4) plus the tier-1
+validator contract (D5), not the old files** — the old files are behavioral
+comparators only. Re-implement from the authoritative contract and verify against
+the archive; do not translate the file.
+
+**Seal:** user, 2026-07-18 (this session, one question at a time). Working-layer
+evidence; no domain term sealed here (gate 12 owns registration). Validation
+level L0 (design reasoning).
 
 ## Decision constraints
 

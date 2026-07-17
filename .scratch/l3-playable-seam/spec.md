@@ -296,6 +296,18 @@ target architecture.
   threshold is filled. The Runtime is emitted once as an ESM graph that both
   browser and Node load for exact-artifact parity. Resolved by
   [issue 05](issues/05-choose-build-and-test-topology.md).
+- **Authored world input:** The authored map enters the Game Runtime as an
+  exported, checked-in TypeScript/ESM artifact that the Runtime imports and
+  validates; the deterministic generator and editor stay authoring-only tools and
+  are never run at boot. World identity is an immutable `(world id, revision)`, and
+  identifiers are stable within a revision — a content change bumps the revision.
+  Fail-closed load-time checks (structure, referential integrity, and revision
+  content-integrity) block Runtime construction, while balance and map-intent
+  gates run offline before a revision is published. The exported artifact and a
+  new TypeScript loader/validator are production; the prototype generator, loader,
+  gate, and fixtures remain archived behavioral evidence whose L2 shapes do not
+  cross into production. Resolved by
+  [issue 06](issues/06-define-authored-world-input.md).
 - **One semantic test surface:** The product behavior under test is the command
   cycle from viewer-visible state and player intent through authoritative
   resolution to events and a new viewer-visible state. Headless and browser
@@ -533,6 +545,13 @@ Implementation Decisions above.
   root-owned lockfile; a seven-command `:game` developer surface with gate 05
   owning names and gate 10 owning thresholds; `node:test` + `@playwright/test`
   runners; single-emit Runtime parity. Resolved 2026-07-18.
+- [Define the Authored World Input Contract](issues/06-define-authored-world-input.md)
+  — the authored world is an exported, checked-in TS/ESM artifact (option A) the
+  Runtime only validates; immutable `(world id, revision)` identity;
+  revision-local identifiers; three-tier validation (fail-closed load, offline
+  authoring gates, doc governance); the frozen artifact plus a new TS
+  loader/validator are production while the prototype generator/loader/gate stay
+  archived evidence. Resolved 2026-07-18.
 
 ### Ticket decomposition status
 
@@ -565,26 +584,23 @@ The following named tickets remain decision or prototype gates. Their answers
 must be recorded in their own ticket and reflected into this spec before
 implementation tickets depending on them become `ready-for-agent`.
 
-1. [Define the Authored World Input Contract](issues/06-define-authored-world-input.md)
-   — canonical data shape, generation/load timing, stable identifiers,
-   validation, and production-versus-evidence disposition of current artifacts.
-2. [Make Uncertainty Legible Without Leaking Truth](issues/07-prototype-map-fog-presentation.md)
+1. [Make Uncertainty Legible Without Leaking Truth](issues/07-prototype-map-fog-presentation.md)
    — live user-evaluated presentation and the initial renderer decision.
-3. [Define the First Playable Vertical Slice](issues/08-define-first-playable-vertical-slice.md)
+2. [Define the First Playable Vertical Slice](issues/08-define-first-playable-vertical-slice.md)
    — exact match mode, player journey, commands, bot flow, feedback, and end
    point that prove the seam is real.
-4. [Define the Incremental Migration and Adapter Ladder](issues/09-define-incremental-migration-ladder.md)
+3. [Define the Incremental Migration and Adapter Ladder](issues/09-define-incremental-migration-ladder.md)
    — port order, allowed adapters, parity evidence, and adapter retirement.
-5. [Define the L3 Verification and Acceptance Gates](issues/10-define-l3-verification-gates.md)
+4. [Define the L3 Verification and Acceptance Gates](issues/10-define-l3-verification-gates.md)
    — executable evidence, human comprehension checks, and completion criteria.
-6. [Define Cutover and Legacy Retirement](issues/11-define-cutover-and-retirement.md)
+5. [Define Cutover and Legacy Retirement](issues/11-define-cutover-and-retirement.md)
    — route promotion, hosting rollback, and deletion/archive evidence.
-7. [Partition the Implementation-Ready Spec Handoff](issues/12-partition-spec-handoff.md)
+6. [Partition the Implementation-Ready Spec Handoff](issues/12-partition-spec-handoff.md)
    — Production spec partition after the decisions above and the planned
    documentation/terminology audit, including whether any resolved Wayfinder
    decision promotes to an ADR.
 
-(Gate 05 resolved 2026-07-18 — see § Resolved Wayfinder decisions.)
+(Gates 05 and 06 resolved 2026-07-18 — see § Resolved Wayfinder decisions.)
 
 ### Documentation lifecycle
 

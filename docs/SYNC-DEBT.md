@@ -134,10 +134,25 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   INDEX.md` and `DOMAIN_MAP.md:440` both say "10 regions → **55** sectors → ~292
   hexes". The generator produces **56** and `tests/occupation-geography.test.js:13`
   asserts 56 ("all 56 cradle sectors present"); hexes (292) and borders (17)
-  match. Code and tests are right; the docs are off by one. Pay in the next
-  terrain-cradle-touching batch — Wayfinder 06 owns the authored-world contract
-  and is the natural carrier. Evidence:
+  match. Code and tests are right; the docs are off by one. **Wayfinder 06
+  resolved 2026-07-18**: the exported authored artifact is the source of truth,
+  so 56 (code+tests) is authoritative and the two Production docs are off by one.
+  The doc fix is a baseline/term-inventory correction, batched with gate 12's
+  term registration (`DOMAIN_MAP.md:440` + terrain-cradle `INDEX.md`). Evidence:
   `.scratch/l3-playable-seam/audit/SYNTHESIS.md` E2.
+
+- [ ] **Gate 06 authored-world contract — implementation deferred** (registered
+  2026-07-18, gate 06). Gate 06 sealed the authored-world input contract
+  (exported TS/ESM artifact; `(world id, revision)` identity; revision-local ids;
+  three-tier validation; production/evidence split). Deferred to the first
+  authored-world implementation ticket: (a) baking the frozen artifact from
+  `map-gen.js` output into the `game/` tree; (b) the tier-1 runtime
+  loader/validator, including the revision content-integrity check that D4's
+  replay safety depends on; (c) the offline authoring/publication gates
+  re-implemented from the authoritative contract (not translated from
+  `map-gate.js`). Term registration for `world id` / `revision` /
+  `authored-world identity` is owned by gate 12. Evidence:
+  `issues/06-define-authored-world-input.md` Answer.
 
 - [x] **Wayfinder 01 amendment — PAID 2026-07-17** (registered and paid the same
   day; ADR 0041 landed the correction the audit had only diagnosed). The user's
