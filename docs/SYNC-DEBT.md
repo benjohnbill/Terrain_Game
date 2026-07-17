@@ -209,9 +209,9 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   un-blocks it should re-point them first. `05-law-staleness-batch.md` is the
   natural carrier.
 
-- [ ] **`lint:docs`'s drift guard is dead behind an `&&`, and a permanent false
-  positive is holding the gate open** (found 2026-07-17 while landing the law
-  move; both halves verified directly). Two defects that only matter together:
+- [x] **`lint:docs`'s drift guard was dead behind an `&&`, and a permanent false
+  positive was holding the gate open — PAID 2026-07-17** (found while landing the
+  law move; both halves verified directly). Two defects that only mattered together:
   (a) **`ledgerCurrency` fuzzy-matches ledger row titles against commit
   messages.** It reports `ledger-possibly-paid` for the row *"L3 Seam Wayfinder
   02 — ADR promotion undecided"* against the commit *"docs(l3): audit every open
@@ -229,12 +229,39 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   has never actually run inside `lint:docs`**. It works standalone
   (`node scripts/sync-docs-law.js --check` → OK), which is how the law move was
   verified.
-  Fix candidates, not decided: make `ledgerCurrency` match on a row's stable
-  identifier rather than fuzzy title text; and/or reorder so the drift check runs
-  first, or separate the two so a report-grade finding cannot mask a
-  contract-grade one — the law says audit findings are "reports, never
-  legislation," but an `&&` gives a report legislative power over the check
-  behind it. Natural carrier: `.scratch/doc-structure/issues/09-lint-hardening.md`.
+  **PAID 2026-07-17** — `lint:docs` now exits 0 for the first time, with the drift
+  guard actually running. Three fixes, each grounded in something the tool already
+  claimed:
+  1. **`ledgerCurrency` now sees every Open row.** `OPEN_ROW_RE` required
+     `**title**` and `registered YYYY-MM-DD` on the *same line*, but rows wrap and
+     the date lands wherever the prose put it — so the check watched **6 of 36**
+     Open rows, and *which* debts it watched was decided by line-wrapping accident.
+     It now parses each row as a block (header → line before the next row marker).
+     This defect was invisible until the one below was fixed.
+  2. **Matching is distinctive-token, as the code comment always said.** The
+     comment read "whose *distinctive* title token appears in a commit subject";
+     the implementation matched on any token ≥6 chars, so "wayfinder" — shared by a
+     dozen sibling rows — fired forever. Token frequency is now counted across all
+     Open rows and only tokens belonging to exactly one row can match. A row whose
+     title is entirely shared vocabulary is honestly left unflagged rather than
+     flagged always.
+  3. **`ledgerCurrency` is advisory; it no longer sets the exit status.** It is the
+     only check that guesses — its own finding says "possibly paid … verify and
+     mark paid or dismiss" — and there is no way to record a dismissal, so letting
+     it gate meant one unlucky word match shut `lint:docs` permanently. The tool
+     printed "reports, never legislation" and then exited 1 on the next line; that
+     contradiction is resolved in the reminder's favour. `lint:docs` was also
+     reordered to `sync-docs-law --check && audit-lint` so the contract-grade drift
+     check runs before the report-grade audit rather than behind it.
+  **Left for `09-lint-hardening.md`:** classifying the *other seven* checks as
+  blocking vs advisory (only `ledgerCurrency` was decided here, on its own words);
+  giving the ledger a dismissal mechanism; and `commits.find()` returning the
+  **first** match, which can surface a coincidental commit while hiding a real one.
+  **Known residue, by design:** with the parser unblinded the check now reports 4
+  advisory candidates. Triaged 2026-07-17 — three are coincidental single-word
+  matches ("design", "evidence", "naming"), one (`battery.js growth probes` vs a
+  battery metric commit) is plausible and left for its owner. Advisory findings are
+  expected to be non-zero; that is the check working as a reminder.
 
 - [ ] **Term code contracts anchor to what is now a reference archive**
   (registered 2026-07-17; caused by ADR 0041, not merely noticed). ADR 0041 names

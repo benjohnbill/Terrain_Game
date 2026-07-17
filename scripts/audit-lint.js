@@ -252,15 +252,55 @@ function checkAdrStampDuty(productionDocs, adrs) {
 // An Open SYNC-DEBT row whose distinctive title token appears in a commit
 // subject dated AFTER the row's registration is possibly paid-but-unmarked.
 
-const OPEN_ROW_RE = /^- \[ \] \*\*(.+?)\*\*.*?registered (\d{4}-\d{2}-\d{2})/;
+const OPEN_ROW_RE = /^- \[ \] \*\*(.+?)\*\*/;
+const ROW_RE = /^- \[[ x]\] \*\*/;
+const REGISTERED_RE = /\b(?:registered|noticed)\s+(\d{4}-\d{2}-\d{2})/;
+
+const titleTokens = (title) =>
+  title.toLowerCase().split(/[^a-z0-9가-힣-]+/).filter((t) => t.length >= 6);
+
+// Rows wrap across lines, and the registration date lands wherever the prose put
+// it. Reading one line at a time only ever saw the rows whose date happened to fit
+// on the header line — 6 of ~30 — so which debts this check watched was decided by
+// line-wrapping accident. Parse the row as a block instead: header line through the
+// line before the next row marker.
+function openRows(ledgerText) {
+  const lines = ledgerText.split('\n');
+  const rows = [];
+  for (let i = 0; i < lines.length; i++) {
+    const m = lines[i].match(OPEN_ROW_RE);
+    if (!m) continue;
+    let end = i + 1;
+    while (end < lines.length && !ROW_RE.test(lines[end])) end++;
+    const registered = lines.slice(i, end).join(' ').match(REGISTERED_RE);
+    if (registered) rows.push({ title: m[1], registered: registered[1] });
+  }
+  return rows;
+}
+
+// A token shared by several row titles identifies none of them. Matching on one
+// made every sibling fire on any commit that said the word — "wayfinder" sits in a
+// dozen rows, so the ledger reported "possibly paid" forever; and because
+// audit-lint gated lint:docs, that permanent finding also held the drift check
+// behind it from ever running. The stated contract was always "whose DISTINCTIVE
+// title token appears in a commit subject" — only the implementation was missing.
+// So count each token across every Open row, and match only on tokens belonging to
+// exactly one. A row whose title is entirely shared vocabulary cannot be identified
+// this way and is honestly left unflagged rather than flagged forever.
+function distinctiveTokens(rows) {
+  const freq = new Map();
+  for (const r of rows) {
+    for (const t of new Set(titleTokens(r.title))) freq.set(t, (freq.get(t) || 0) + 1);
+  }
+  return freq;
+}
 
 function checkLedgerCurrency(ledgerText, commits) {
   const findings = [];
-  for (const line of ledgerText.split('\n')) {
-    const m = line.match(OPEN_ROW_RE);
-    if (!m) continue;
-    const [, title, registered] = m;
-    const tokens = title.toLowerCase().split(/[^a-z0-9가-힣-]+/).filter((t) => t.length >= 6);
+  const rows = openRows(ledgerText);
+  const freq = distinctiveTokens(rows);
+  for (const { title, registered } of rows) {
+    const tokens = titleTokens(title).filter((t) => freq.get(t) === 1);
     const hit = commits.find((c) =>
       c.date > registered && tokens.some((t) => c.subject.toLowerCase().includes(t)));
     if (hit) {
@@ -380,19 +420,33 @@ function runAll(root) {
 
 // -- CLI -------------------------------------------------------------------------
 
+// Seven checks assert a definite defect: a header diverged, an identifier is
+// absent, a stamp is missing, a baseline disagrees with itself. `ledgerCurrency`
+// is the one that only ever guesses — its own finding says "possibly paid …
+// verify and mark paid or dismiss". It is a reminder, and there is no way to mark
+// one dismissed, so letting it set the exit status meant a single unlucky word
+// match held the gate shut forever — and, behind `&&`, held the drift check with
+// it. The law this tool prints on its own last line ("reports, never
+// legislation") is the rule being applied here: it still reports, it no longer
+// legislates. Classifying the remaining seven is `09-lint-hardening.md`'s job.
+const ADVISORY = new Set(['ledgerCurrency']);
+
 if (require.main === module) {
   const results = runAll(process.cwd());
-  let total = 0;
+  let blocking = 0;
+  let advisory = 0;
   for (const [check, findings] of Object.entries(results)) {
     if (!findings.length) continue;
-    total += findings.length;
-    console.log(`\n[${check}] ${findings.length} finding(s)`);
+    if (ADVISORY.has(check)) advisory += findings.length;
+    else blocking += findings.length;
+    console.log(`\n[${check}] ${findings.length} finding(s)${ADVISORY.has(check) ? ' — advisory' : ''}`);
     for (const f of findings) console.log('  -', JSON.stringify(f));
   }
+  const total = blocking + advisory;
   console.log(total === 0
     ? '\naudit-lint: clean (8 checks, 0 findings)'
-    : `\naudit-lint: ${total} finding(s) — reports, never legislation; verify before acting.`);
-  process.exitCode = total === 0 ? 0 : 1;
+    : `\naudit-lint: ${blocking} blocking, ${advisory} advisory — reports, never legislation; verify before acting.`);
+  process.exitCode = blocking === 0 ? 0 : 1;
 }
 
 module.exports = {
