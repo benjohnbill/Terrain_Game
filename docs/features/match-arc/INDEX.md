@@ -287,6 +287,8 @@ Current open questions (post affordability & M9-promotion pass,
    (`docs/features/capital/`); lands as its own measured pass.
 7. **js/situation.js rework** — unchanged debt (ADR 0019 v5 amendment;
    carried since A-4).
-8. **L3 build-out signal** — the user's React/L3 build intent
-   (2026-07-11) reinforces ADR 0028's Stage-1 trigger forecast (noted,
-   no action this pass).
+8. **L3 build-out stack — RESOLVED 2026-07-16** — ADR 0039 fires the Stage 1
+   trigger and selects React + Vite; ADR 0040 makes all new canonical L3
+   source TypeScript/TSX while preserving framework independence, emitted-JS
+   browser/Node parity, incremental legacy porting, and the independent
+   renderer axis.
