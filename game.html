@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="세계정복 - 턴제 전략 게임. 헥스 맵 위에서 세력을 이끌고 세계를 정복하세요!">
+    <meta name="theme-color" content="#0a0e27">
+    <title>🌍 World Conquest - 세계정복</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Orbitron:wght@700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- Screen: Main Menu -->
+    <div id="screen-menu" class="screen active">
+        <div class="menu-container">
+            <h1 class="game-title">🌍 World Conquest</h1>
+            <p class="game-subtitle">세계정복 전략 게임</p>
+
+            <div class="menu-buttons">
+                <button id="btn-singleplayer" class="menu-btn">
+                    <span class="btn-icon">🤖</span>
+                    <span class="btn-text">AI 대전</span>
+                    <span class="btn-desc">AI 세력과 대결</span>
+                </button>
+                <button id="btn-multiplayer" class="menu-btn">
+                    <span class="btn-icon">👥</span>
+                    <span class="btn-text">로컬 멀티</span>
+                    <span class="btn-desc">친구와 함께</span>
+                </button>
+            </div>
+
+            <div id="menu-settings" class="menu-settings hidden">
+                <h2>게임 설정</h2>
+                <div class="setting-row">
+                    <label>세력 수</label>
+                    <div class="setting-options">
+                        <button class="setting-btn active" data-count="4">4</button>
+                        <button class="setting-btn" data-count="5">5</button>
+                        <button class="setting-btn" data-count="6">6</button>
+                    </div>
+                </div>
+                <!-- For multiplayer: player count selection -->
+                <div id="player-count-setting" class="setting-row hidden">
+                    <label>플레이어 수</label>
+                    <div class="setting-options" id="player-count-options">
+                        <button class="setting-btn active" data-players="2">2</button>
+                        <button class="setting-btn" data-players="3">3</button>
+                        <button class="setting-btn" data-players="4">4</button>
+                    </div>
+                </div>
+                <button id="btn-start-game" class="start-btn">⚔️ 게임 시작</button>
+            </div>
+        </div>
+
+        <!-- Animated background particles -->
+        <canvas id="menu-particles" class="particles-canvas"></canvas>
+    </div>
+
+    <!-- Screen: Game -->
+    <div id="screen-game" class="screen">
+        <div class="game-header">
+            <div class="header-left">
+                <span class="game-logo">🌍</span>
+                <span class="header-title">World Conquest</span>
+            </div>
+            <div id="turn-info" class="turn-info">
+                <span id="turn-number">턴: 1</span>
+                <span class="divider">|</span>
+                <span id="current-faction-name">현재: -</span>
+            </div>
+            <button id="btn-menu-return" class="header-btn" title="메뉴로">✕</button>
+        </div>
+
+        <div class="game-body">
+            <div class="map-container">
+                <canvas id="game-canvas"></canvas>
+                <div id="hex-tooltip" class="hex-tooltip hidden"></div>
+                <div id="situation-briefing" class="situation-briefing"></div>
+                <div id="command-card" class="command-card hidden"></div>
+            </div>
+
+            <div class="side-panel">
+                <div id="panel-faction" class="panel glass-panel">
+                    <h3 id="faction-name" class="panel-title">세력명</h3>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-icon">💰</span>
+                            <span class="stat-label">골드</span>
+                            <span id="faction-gold" class="stat-value">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-icon">⚔️</span>
+                            <span class="stat-label">군사력</span>
+                            <span id="faction-military" class="stat-value">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-icon">🔬</span>
+                            <span class="stat-label">기술력</span>
+                            <span id="faction-tech" class="stat-value">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-icon">👥</span>
+                            <span class="stat-label">인구</span>
+                            <span id="faction-pop" class="stat-value">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-icon">🗺️</span>
+                            <span class="stat-label">영토</span>
+                            <span id="faction-territory" class="stat-value">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-icon">📈</span>
+                            <span class="stat-label">수입</span>
+                            <span id="faction-income" class="stat-value">0</span>
+                        </div>
+                    </div>
+                    <div id="capacity-bar" class="capacity-bar"></div>
+                </div>
+
+                <div id="panel-actions" class="panel glass-panel">
+                    <h3 class="panel-title">🎯 행동 선택</h3>
+                    <div class="action-grid">
+                        <button id="btn-attack" class="action-btn" data-action="attack">
+                            <span class="action-icon">⚔️</span>
+                            <span class="action-name">공격</span>
+                        </button>
+                        <button id="btn-defend" class="action-btn" data-action="defend">
+                            <span class="action-icon">🛡️</span>
+                            <span class="action-name">방어</span>
+                        </button>
+                        <button id="btn-diplomacy" class="action-btn" data-action="diplomacy">
+                            <span class="action-icon">🤝</span>
+                            <span class="action-name">외교</span>
+                        </button>
+                        <button id="btn-tax" class="action-btn" data-action="tax">
+                            <span class="action-icon">💰</span>
+                            <span class="action-name">세금</span>
+                        </button>
+                        <button id="btn-build" class="action-btn" data-action="build">
+                            <span class="action-icon">🏗️</span>
+                            <span class="action-name">건설</span>
+                        </button>
+                        <button id="btn-research" class="action-btn" data-action="research">
+                            <span class="action-icon">🔬</span>
+                            <span class="action-name">기술</span>
+                        </button>
+                    </div>
+                    <button id="btn-end-turn" class="end-turn-btn">다음 턴 ▶</button>
+                </div>
+
+                <div id="panel-events" class="panel glass-panel">
+                    <h3 class="panel-title">📜 이벤트 로그</h3>
+                    <div id="event-list" class="event-list"></div>
+                </div>
+                <div id="panel-strategy-report" class="panel glass-panel">
+                    <h3 class="panel-title">전략 리포트</h3>
+                    <div id="strategy-report" class="strategy-report"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mini-map showing all factions -->
+        <div id="faction-overview" class="faction-overview">
+            <!-- Dynamically populated -->
+        </div>
+    </div>
+
+    <!-- Screen: Result -->
+    <div id="screen-result" class="screen">
+        <div class="result-container">
+            <div class="result-crown">👑</div>
+            <h1 id="result-title" class="result-title">승리!</h1>
+            <p id="result-subtitle" class="result-subtitle">홍염제국이 세계를 정복했습니다</p>
+            <div id="result-stats" class="result-stats">
+                <!-- Dynamically populated -->
+            </div>
+            <button id="btn-back-menu" class="start-btn">🏠 메인 메뉴로</button>
+        </div>
+        <canvas id="result-confetti" class="particles-canvas"></canvas>
+    </div>
+
+    <!-- Modal -->
+    <div id="modal-overlay" class="modal-overlay hidden">
+        <div id="modal-content" class="modal-content glass-panel">
+            <h2 id="modal-title" class="modal-title">제목</h2>
+            <div id="modal-body" class="modal-body">내용</div>
+            <div id="modal-buttons" class="modal-buttons"></div>
+        </div>
+    </div>
+
+    <!-- Notifications -->
+    <div id="notification-container" class="notification-container"></div>
+
+    <!-- Game Scripts -->
+    <script type="text/javascript" src="js/domain-data.js"></script>
+    <script type="text/javascript" src="js/province-data.js"></script>
+    <script type="text/javascript" src="js/intel.js"></script>
+    <script type="text/javascript" src="js/capacity.js"></script>
+    <script type="text/javascript" src="js/situation.js"></script>
+    <script type="text/javascript" src="js/buildings.js"></script>
+    <script type="text/javascript" src="js/tech.js"></script>
+    <script type="text/javascript" src="js/faction.js"></script>
+    <script type="text/javascript" src="js/map.js"></script>
+    <script type="text/javascript" src="js/diplomacy.js"></script>
+    <script type="text/javascript" src="js/combat.js"></script>
+    <script type="text/javascript" src="js/actions.js"></script>
+    <script type="text/javascript" src="js/command-preview.js"></script>
+    <script type="text/javascript" src="js/game.js"></script>
+    <script type="text/javascript" src="js/ai.js"></script>
+    <script type="text/javascript" src="js/ui.js"></script>
+    <script type="text/javascript" src="js/main.js"></script>
+</body>
+</html>

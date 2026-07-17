@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://notification-prototype-ec5c5.web.app/sitemap.xml

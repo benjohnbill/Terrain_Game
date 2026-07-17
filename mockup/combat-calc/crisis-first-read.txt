@@ -1,0 +1,18 @@
+OFF decided% 0.6555555555555556
+ON  report {
+ "total": 360,
+ "drawRate": 0.24166666666666667,
+ "warDensity2535": 2.513888888888889,
+ "warDensity1525": 4.2972222222222225,
+ "registerExhaustionRate": 0.26032404422824407,
+ "suppressCostByTerrain": {
+  "plains": 378.2362904894545,
+  "steppe": 143.3855685116974,
+  "river-valley": 125.34601899004116,
+  "highland": 125.6180728168248,
+  "mountain": 81.16315852513729,
+  "oasis": 0.615739467748107,
+  "desert": 1.834941228997822
+ },
+ "scarSpreadMeanPerMatch": 4.169583333333337
+}

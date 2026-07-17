@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>PROTOTYPE — L3 Fog Presentation (gate 07, throwaway)</title>
+<!--
+  THROWAWAY PROTOTYPE for Wayfinder gate 07. NOT L3 build source.
+  Reuses the workbench's authored-world geometry (window.TC.gen) and paints a
+  MOCK viewer projection on top to test whether the sealed 7-grade knowledge
+  matrix reads at a glance. Mock data only — no real Runtime, no persistence.
+  Switch variants with the floating bar (or ?variant=A|B). Viewport target ~1591.
+-->
+<style>
+  :root { --panel: 360px; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 13px/1.45 system-ui, sans-serif; display: flex;
+    height: 100vh; background: #0c1116; color: #d8dee6; overflow: hidden; }
+  #map { flex: 1; background: #102733; }
+  #panel { width: var(--panel); background: #12161c; padding: 14px 16px 60px;
+    overflow-y: auto; border-left: 1px solid #232a33; }
+  h1 { font-size: 12px; letter-spacing: .06em; text-transform: uppercase;
+    color: #9fd3b6; margin: 0 0 4px; }
+  h2 { font-size: 10.5px; text-transform: uppercase; letter-spacing: .09em;
+    margin: 18px 0 6px; color: #7fbf9f; border-bottom: 1px solid #262c35; padding-bottom: 3px; }
+  .sub { color: #7d8794; font-size: 11.5px; margin: 0 0 6px; }
+  .rlabel { fill: #fff; font: 700 14px system-ui; paint-order: stroke; stroke: #0009;
+    stroke-width: 3px; text-anchor: middle; }
+  .cap { fill: #ffe9a8; text-anchor: middle; }
+  .glyph { paint-order: stroke; stroke: #0009; stroke-width: 2.5px; text-anchor: middle; }
+  /* legend + focus */
+  .legend { display: grid; grid-template-columns: 18px 1fr; gap: 4px 8px; align-items: center; }
+  .legend i { width: 16px; height: 12px; border-radius: 2px; display: inline-block; }
+  .legend span { font-size: 11.5px; color: #b9c2cd; }
+  .focus-empty { color: #8a93a0; min-height: 40px; }
+  .grade { margin: 3px 0; padding: 4px 7px; border-radius: 4px; background: #171d25;
+    border-left: 3px solid #333; font-size: 12px; }
+  .grade b { color: #eef2f6; } .grade .g { color: #8a93a0; }
+  .band { color: #ffcf8a; } .exact { color: #8fdc9a; } .absent { color: #d98a8a; font-style: italic; }
+  .bar { height: 7px; border-radius: 3px; background: linear-gradient(90deg,#5aa06e,#e3c24a,#c9503f); position: relative; margin: 3px 0; }
+  .bar .mk { position: absolute; top: -2px; width: 2px; height: 11px; background: #fff; }
+  .bar .lohi { position: absolute; top: 0; height: 7px; background: #ffffff35; border: 1px solid #ffffff70; border-radius: 3px; }
+  /* floating variant switcher */
+  #switch { position: fixed; bottom: 16px; left: calc(50% - var(--panel)/2);
+    transform: translateX(-50%); background: #0e1420ee; border: 1px solid #3a4657;
+    border-radius: 999px; padding: 7px 10px; display: flex; align-items: center; gap: 10px;
+    box-shadow: 0 6px 24px #000a; z-index: 10; }
+  #switch button { background: #1d2836; color: #cfe; border: 1px solid #35506e;
+    border-radius: 999px; width: 30px; height: 30px; cursor: pointer; font-size: 15px; }
+  #switch b { color: #eaf2ff; font-size: 12.5px; min-width: 240px; text-align: center; }
+  .pill { font-size: 10px; color: #ffd27f; }
+</style>
+</head>
+<body>
+<svg id="map"></svg>
+<div id="panel"></div>
+<div id="switch">
+  <button id="prev">◀</button>
+  <b id="vlabel">—</b>
+  <button id="next">▶</button>
+</div>
+
+<script type="module" src="econ.js"></script>
+<script type="module" src="match.js"></script>
+<script type="module" src="map-loader.js"></script>
+<script type="module" src="map-gate.js"></script>
+<script type="module" src="map-gen.js"></script>
+<script type="module">
+'use strict';
+const { CRADLE_MAP: MAP, CRADLE_BINDING: BINDING, CRADLE_META: META } = window.TC.gen;
+
+// ---- workbench geometry helpers (verbatim) --------------------------------
+const HEX = META.hexR;
+const EDGE_NB = [[1, 0], [0, 1], [-1, 1], [-1, 0], [0, -1], [1, -1]];
+const TERR = { plains: '#7d9a54', 'river-valley': '#5d9078', steppe: '#a89a55',
+  desert: '#c6aa69', mountain: '#877663', oasis: '#6fae7c', highland: '#5e6b4a' };
+const RANGE_FILL = '#4e4034';
+const nameOf = Object.fromEntries(MAP.regions.map((r) => [r.id, r.name]));
+function hexToPixel(q, r) { return { x: HEX * Math.sqrt(3) * (q + r / 2), y: HEX * 1.5 * r }; }
+function corners(x, y) { const p = [];
+  for (let i = 0; i < 6; i++) { const a = Math.PI / 180 * (60 * i - 30);
+    p.push([x + HEX * Math.cos(a), y + HEX * Math.sin(a)]); } return p; }
+function tint(hex, dv) { const n = parseInt(hex.slice(1), 16); const c = (v) => Math.max(0, Math.min(255, v + dv));
+  return '#' + [c(n >> 16), c((n >> 8) & 255), c(n & 255)].map((v) => v.toString(16).padStart(2, '0')).join(''); }
+
+const hexOwn = new Map(); // 'q,r' -> {sid, rid, terr, q, r, x, y}
+for (const [sid, sec] of Object.entries(MAP.sectors))
+  for (const u of sec.mapUnits) { const { x, y } = hexToPixel(u.q, u.r);
+    hexOwn.set(u.q + ',' + u.r, { sid, rid: sec.regionId, terr: u.terrainLayer, q: u.q, r: u.r, x, y }); }
+function secCentroid(sid) { const us = MAP.sectors[sid].mapUnits; let x = 0, y = 0;
+  for (const u of us) { const p = hexToPixel(u.q, u.r); x += p.x; y += p.y; } return { x: x / us.length, y: y / us.length }; }
+
+// ---- MOCK VIEWER PROJECTION ------------------------------------------------
+// deterministic pseudo-noise so the world is stable across reloads
+const noise = (q, r, s = 0) => { let h = ((q * 73856093) ^ (r * 19349663) ^ (s * 83492791)) >>> 0;
+  h = (h ^ (h >>> 13)) * 1274126177 >>> 0; return (h >>> 8) / 16777216; };
+
+const realms = Object.keys(BINDING);           // nation names
+const SELF = realms[0];                          // 자국
+const regionToRealm = {};
+for (const [realm, rids] of Object.entries(BINDING)) for (const rid of rids) regionToRealm[rid] = realm;
+const realmOfSector = (sid) => regionToRealm[MAP.sectors[sid].regionId];
+const isSelf = (sid) => realmOfSector(sid) === SELF;
+
+// political control tint per nation (public, every fog level)
+const PALETTE = ['#4a86c8', '#c8524a', '#9a6fc8', '#c8934a', '#4ac89a'];
+const realmTint = {}; realms.forEach((n, i) => realmTint[n] = PALETTE[i % PALETTE.length]);
+
+// per-sector mock fog state
+const SF = {}; // sid -> {intensity, scout, substanceTrue}
+for (const sid of Object.keys(MAP.sectors)) {
+  const sec = MAP.sectors[sid]; const h0 = sec.mapUnits[0];
+  const intensity = 0.42 + noise(h0.q, h0.r, 1) * 0.16;           // 0.42..0.58 (섹터 귀속)
+  const scout = isSelf(sid) ? 1 : (0.45 + noise(h0.q, h0.r, 2) * 0.45); // 적: 0.45..0.90 신선도
+  const substanceTrue = Math.round(600 + sec.economyValue * 40 + noise(h0.q, h0.r, 3) * 500);
+  SF[sid] = { intensity, scout, substanceTrue };
+}
+// force a couple of worst-case spikes so the distribution has teeth
+const allSids = Object.keys(MAP.sectors);
+const enemySids = allSids.filter((s) => !isSelf(s));
+[enemySids[2], enemySids[7], enemySids[11]].forEach((s) => { if (s) SF[s].intensity = 0.575; });
+
+// region-level worst-case + spread (derived from sector truth)
+function regionStat(rid) {
+  const sids = MAP.regions.find((r) => r.id === rid).sectorIds;
+  const xs = sids.map((s) => SF[s].intensity);
+  return { worst: Math.max(...xs), min: Math.min(...xs), mean: xs.reduce((a, b) => a + b) / xs.length, xs, sids };
+}
+
+// estimate band from confidence (mirrors intel.js shape: width shrinks as confidence rises)
+function bandOf(sid) {
+  const { substanceTrue: t, scout: c } = SF[sid];
+  const u = 1.0 - (c - 0.45) / (0.90 - 0.45) * (1.0 - 0.15); // U_AT_FLOOR..U_AT_CEIL
+  const half = t * u * 0.5; const p = (noise(sid.length, t | 0, 9) - 0.5) * half * 0.8; // true-containing, midpoint≠truth
+  return { low: Math.max(0, Math.round(t + p - half)), high: Math.round(t + p + half), conf: c };
+}
+
+// a few field armies: self solid; enemy last-seen + reach cone
+const selfSids = allSids.filter(isSelf);
+const armies = [
+  { realm: SELF, sid: selfSids[Math.floor(selfSids.length / 2)], self: true, size: 4200 },
+  { realm: realmOfSector(enemySids[4]), sid: enemySids[4], self: false, ageTurns: 3 },
+  { realm: realmOfSector(enemySids[9]), sid: enemySids[9], self: false, ageTurns: 1 },
+];
+// border alarm: one self-facing edge with a heading
+const alarmSid = selfSids[1];
+// dev placeholder: mark one sector as not-implemented
+const devSid = enemySids[Math.min(6, enemySids.length - 1)];
+
+// intensity → color (0.42 green ease .. 0.58 red)
+function intColor(v) { const t = Math.max(0, Math.min(1, (v - 0.42) / 0.16));
+  const lerp = (a, b) => Math.round(a + (b - a) * t);
+  const c1 = [90, 160, 110], c2 = [201, 80, 63], mid = [227, 194, 74];
+  const p = t < 0.5 ? c1.map((a, i) => Math.round(a + (mid[i] - a) * (t * 2)))
+                    : mid.map((a, i) => Math.round(a + (c2[i] - a) * ((t - 0.5) * 2)));
+  return `rgb(${p[0]},${p[1]},${p[2]})`; }
+
+// ---- RENDER ----------------------------------------------------------------
+const VARIANTS = { A: '동원 강도 = 지방 worst 색조 (딸깍용, 개관)',
+                   B: '동원 강도 = 섹터 히트 + 지방 분포 미니바 (헤비, 정밀)' };
+let variant = (new URLSearchParams(location.search).get('variant') || 'A').toUpperCase();
+if (!VARIANTS[variant]) variant = 'A';
+
+function polyPts(h) { return corners(h.x, h.y).map(([x, y]) => x.toFixed(1) + ',' + y.toFixed(1)).join(' '); }
+
+function renderMap() {
+  const svg = document.getElementById('map');
+  const layers = { base: [], control: [], fatigue: [], band: [], army: [], alarm: [], dev: [], label: [] };
+  let minX = 1e9, minY = 1e9, maxX = -1e9, maxY = -1e9;
+  const bump = (x, y) => { minX = Math.min(minX, x); minY = Math.min(minY, y); maxX = Math.max(maxX, x); maxY = Math.max(maxY, y); };
+
+  // 1) PUBLIC: terrain (readable under every fog treatment)
+  for (const h of hexOwn.values()) { bump(h.x, h.y);
+    const dv = ((h.q * 13 + h.r * 7) % 5 - 2) * 5;
+    layers.base.push(`<polygon points="${polyPts(h)}" fill="${tint(TERR[h.terr] || '#888', dv)}" data-sid="${h.sid}" data-key="${h.q},${h.r}"/>`); }
+  for (const h of META.rangeHexes) { bump(h.x, h.y);
+    layers.base.push(`<polygon points="${polyPts(h)}" fill="${RANGE_FILL}" stroke="#2e2620" stroke-width="1"/>`); }
+
+  // 2) PUBLIC: current political control — thin nation-colored sector wash + borders
+  for (const h of hexOwn.values()) {
+    const col = realmTint[realmOfSector(h.sid)];
+    layers.control.push(`<polygon points="${polyPts(h)}" fill="${col}" opacity="0.20" pointer-events="none"/>`);
+  }
+  // nation borders (draw region-vs-region edges bold in owner color)
+  for (const h of hexOwn.values()) { const cs = corners(h.x, h.y);
+    for (let i = 0; i < 6; i++) {
+      const n = hexOwn.get((h.q + EDGE_NB[i][0]) + ',' + (h.r + EDGE_NB[i][1]));
+      const c1 = cs[i], c2 = cs[(i + 1) % 6];
+      if (!n) continue;
+      const ra = realmOfSector(h.sid), rb = realmOfSector(n.sid);
+      if (ra !== rb) layers.control.push(`<line x1="${c1[0].toFixed(1)}" y1="${c1[1].toFixed(1)}" x2="${c2[0].toFixed(1)}" y2="${c2[1].toFixed(1)}" stroke="#0b0f08" stroke-width="2.4" stroke-linecap="round" pointer-events="none"/>`);
+      else if (n.sid !== h.sid && h.sid < n.sid) layers.control.push(`<line x1="${c1[0].toFixed(1)}" y1="${c1[1].toFixed(1)}" x2="${c2[0].toFixed(1)}" y2="${c2[1].toFixed(1)}" stroke="#0b0f0870" stroke-width="1.2" stroke-dasharray="5 4" pointer-events="none"/>`);
+    } }
+
+  // 3) DERIVED BAND: mobilization intensity (sector-bound). variant switch.
+  if (variant === 'A') {
+    // per-NAMED-PROVINCE worst-case wash + label %
+    for (const reg of MAP.regions) {
+      const st = regionStat(reg.id);
+      for (const s of st.sids) for (const u of MAP.sectors[s].mapUnits) {
+        const h = hexOwn.get(u.q + ',' + u.r);
+        layers.fatigue.push(`<polygon points="${polyPts(h)}" fill="${intColor(st.worst)}" opacity="0.34" pointer-events="none"/>`);
+      }
+    }
+  } else {
+    // per-SECTOR heat dot + per-province mini distribution bar near the label
+    for (const sid of Object.keys(MAP.sectors)) {
+      const c = secCentroid(sid); const v = SF[sid].intensity;
+      layers.fatigue.push(`<circle cx="${c.x.toFixed(1)}" cy="${c.y.toFixed(1)}" r="6.5" fill="${intColor(v)}" opacity="0.9" stroke="#0009" stroke-width="1" pointer-events="none"/>`);
+    }
+  }
+
+  // 4) ESTIMATE BAND: enemy substance uncertainty — hatch texture on enemy sectors
+  for (const sid of Object.keys(MAP.sectors)) {
+    if (isSelf(sid)) continue;
+    const c = secCentroid(sid); const conf = SF[sid].scout;
+    const dens = 1 - (conf - 0.45) / 0.45; // low conf => denser hatch
+    const n = Math.round(1 + dens * 3);
+    for (let k = 0; k < n; k++) {
+      const off = (k - n / 2) * 4;
+      layers.band.push(`<line x1="${(c.x - 9 + off).toFixed(1)}" y1="${(c.y + 9).toFixed(1)}" x2="${(c.x + 9 + off).toFixed(1)}" y2="${(c.y - 9).toFixed(1)}" stroke="#0d0f14" stroke-width="1.1" opacity="${(0.25 + dens * 0.4).toFixed(2)}" pointer-events="none"/>`);
+    }
+  }
+
+  // 5) ARMIES: self solid; enemy last-seen fix + reach cone
+  for (const a of armies) {
+    const c = secCentroid(a.sid);
+    if (a.self) {
+      layers.army.push(`<circle cx="${c.x.toFixed(1)}" cy="${c.y.toFixed(1)}" r="10" fill="#2f6fb8" stroke="#cfe6ff" stroke-width="2" pointer-events="none"/>`);
+      layers.army.push(`<text class="glyph" x="${c.x.toFixed(1)}" y="${(c.y + 4).toFixed(1)}" style="fill:#fff;font:700 11px system-ui">${a.size}</text>`);
+    } else {
+      const R = 34 + a.ageTurns * 20; // older sighting => wider possible position
+      layers.army.push(`<circle cx="${c.x.toFixed(1)}" cy="${c.y.toFixed(1)}" r="${R}" fill="${realmTint[a.realm]}" opacity="0.13" pointer-events="none"/>`);
+      layers.army.push(`<circle cx="${c.x.toFixed(1)}" cy="${c.y.toFixed(1)}" r="${R}" fill="none" stroke="${realmTint[a.realm]}" stroke-width="1.4" stroke-dasharray="4 4" opacity="0.6" pointer-events="none"/>`);
+      layers.army.push(`<circle cx="${c.x.toFixed(1)}" cy="${c.y.toFixed(1)}" r="8" fill="#00000000" stroke="${realmTint[a.realm]}" stroke-width="2.4" pointer-events="none"/>`);
+      layers.army.push(`<text class="glyph" x="${c.x.toFixed(1)}" y="${(c.y - 12).toFixed(1)}" style="fill:#ffd27f;font:700 10px system-ui">${a.ageTurns}턴 전</text>`);
+    }
+  }
+
+  // 6) BORDER ALARM: existence + heading only
+  { const c = secCentroid(alarmSid);
+    layers.alarm.push(`<text class="glyph" x="${(c.x).toFixed(1)}" y="${(c.y + 5).toFixed(1)}" style="fill:#ff5a5a;font:700 20px system-ui">⚠</text>`);
+    layers.alarm.push(`<text class="glyph" x="${(c.x + 20).toFixed(1)}" y="${(c.y + 6).toFixed(1)}" style="fill:#ff8a5a;font:700 20px system-ui">→</text>`); }
+
+  // 7) DEV PLACEHOLDER: announces itself; never enemy truth as fallback
+  { for (const u of MAP.sectors[devSid].mapUnits) { const h = hexOwn.get(u.q + ',' + u.r);
+      layers.dev.push(`<polygon points="${polyPts(h)}" fill="url(#hatch)" opacity="0.85" pointer-events="none"/>`); }
+    const c = secCentroid(devSid);
+    layers.dev.push(`<rect x="${(c.x - 42).toFixed(1)}" y="${(c.y - 8).toFixed(1)}" width="84" height="16" rx="3" fill="#1b1024" stroke="#a05ad0" stroke-width="1" pointer-events="none"/>`);
+    layers.dev.push(`<text class="glyph" x="${c.x.toFixed(1)}" y="${(c.y + 4).toFixed(1)}" style="fill:#d9a8f0;font:700 9px system-ui;stroke-width:0">DEV — 미구현</text>`); }
+
+  // labels: capitals, provinces + variant-B distribution bars
+  for (const [rid, sid] of Object.entries(META.capitals)) { const c = secCentroid(sid);
+    layers.label.push(`<text class="cap glyph" x="${c.x.toFixed(1)}" y="${(c.y + 4).toFixed(1)}" style="font-size:14px">★</text>`); }
+  for (const r of MAP.regions) { const c = META.regionCenters[r.id];
+    layers.label.push(`<text class="rlabel" x="${c.x.toFixed(1)}" y="${c.y.toFixed(1)}">${r.name}</text>`);
+    if (variant === 'A') { const st = regionStat(r.id);
+      layers.label.push(`<text class="glyph" x="${c.x.toFixed(1)}" y="${(c.y + 15).toFixed(1)}" style="fill:#fff;font:700 10px system-ui">동원 ${(st.worst * 100).toFixed(0)}%</text>`);
+    } else { // mini distribution bar
+      const st = regionStat(r.id); const W = 46, x0 = c.x - W / 2, y0 = c.y + 12;
+      layers.label.push(`<rect x="${x0.toFixed(1)}" y="${y0.toFixed(1)}" width="${W}" height="6" rx="2" fill="#0009"/>`);
+      const px = (v) => x0 + (v - 0.42) / 0.16 * W;
+      layers.label.push(`<rect x="${px(st.min).toFixed(1)}" y="${y0.toFixed(1)}" width="${Math.max(2, px(st.worst) - px(st.min)).toFixed(1)}" height="6" rx="2" fill="#ffffff55"/>`);
+      layers.label.push(`<rect x="${(px(st.worst) - 1).toFixed(1)}" y="${(y0 - 1).toFixed(1)}" width="3" height="8" fill="#ff6a5a"/>`);
+    }
+  }
+
+  const pad = HEX * 2.2;
+  svg.setAttribute('viewBox', `${minX - pad} ${minY - pad} ${maxX - minX + pad * 2} ${maxY - minY + pad * 2}`);
+  svg.innerHTML = `<defs><pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="7" height="7" fill="#160c22"/><line x1="0" y1="0" x2="0" y2="7" stroke="#7a4aa8" stroke-width="2"/></pattern></defs>`
+    + layers.base.join('') + layers.control.join('') + layers.fatigue.join('')
+    + layers.band.join('') + layers.army.join('') + layers.alarm.join('')
+    + layers.dev.join('') + layers.label.join('');
+}
+
+function renderPanel(focus) {
+  const legend = [
+    [realmTint[SELF], '자국 통제 (public)'],
+    [realmTint[realms[1]] || '#c8524a', '적국 통제 (public)'],
+    ['linear-gradient(90deg,#5aa06e,#e3c24a,#c9503f)', '동원 강도 여유→한계'],
+    ['repeating-linear-gradient(45deg,#0d0f14,#0d0f14 2px,transparent 2px,transparent 5px)', '적 병력 추정 (불확실 텍스처)'],
+  ].map(([c, t]) => `<i style="background:${c}"></i><span>${t}</span>`).join('');
+
+  let f = `<p class="focus-empty">섹터를 클릭하면 등급별 뷰어 정보가 여기 나옵니다.</p>`;
+  if (focus) {
+    const sid = focus; const sec = MAP.sectors[sid]; const mine = isSelf(sid);
+    const realm = realmOfSector(sid); const st = SF[sid];
+    const rid = sec.regionId; const rstat = regionStat(rid);
+    const rows = [];
+    rows.push(`<div class="grade"><span class="g">통제 (public)</span><br><b>${realm}</b> · 지방 ${nameOf[rid]} · ${sec.mapUnits.length} hex · ${sec.mapUnits[0].terrainLayer}</div>`);
+    rows.push(`<div class="grade"><span class="g">land value / register pool (public)</span><br>econ ${sec.economyValue} · pop ${sec.populationValue}</div>`);
+    // mobilization intensity — 1차 값
+    const iv = (st.intensity * 100).toFixed(1);
+    rows.push(`<div class="grade" style="border-left-color:${intColor(st.intensity)}"><span class="g">동원 강도 — 이 섹터 ${mine ? '(exact)' : '(추정 band)'}</span><br>
+      <b class="${mine ? 'exact' : 'band'}">${iv}%</b> ${mine ? '' : `<span class="g">신뢰도 ${(st.scout * 100).toFixed(0)}%</span>`}
+      <div class="bar"><div class="mk" style="left:${((st.intensity - 0.42) / 0.16 * 100).toFixed(0)}%"></div></div>
+      <span class="g">이 지방 worst ${(rstat.worst * 100).toFixed(0)}% · min ${(rstat.min * 100).toFixed(0)}% (${rstat.sids.length}개 섹터)</span></div>`);
+    // civilian register — focus 상세 (동원 강도의 절대량 짝)
+    const pool = sec.populationValue * 30; const serving = Math.round(pool * st.intensity);
+    rows.push(`<div class="grade"><span class="g">civilian register (focus 상세) — pool − serving</span><br>
+      <span class="${mine ? 'exact' : 'band'}">${(pool - serving).toLocaleString()}</span> <span class="g">남음 / pool ${pool.toLocaleString()}</span></div>`);
+    // enemy substance band vs self exact
+    if (mine) rows.push(`<div class="grade"><span class="g">주둔 병력 (exact)</span><br><b class="exact">${st.substanceTrue.toLocaleString()}</b></div>`);
+    else { const b = bandOf(sid);
+      rows.push(`<div class="grade"><span class="g">적 병력 추정 (estimate band)</span><br><b class="band">${b.low.toLocaleString()} – ${b.high.toLocaleString()}</b>
+        <div class="bar" style="background:#20262f"><div class="lohi" style="left:10%;width:${Math.min(80, (b.high - b.low) / b.high * 100).toFixed(0)}%"></div></div>
+        <span class="g">중앙값을 진실로 읽지 말 것 · 신뢰도 ${(b.conf * 100).toFixed(0)}%</span></div>`); }
+    // categorical absent
+    if (!mine) rows.push(`<div class="grade" style="border-left-color:#7a3a3a"><span class="g">태세 · 커밋 배분 · 국고</span><br><span class="absent">정보 없음 — 정찰로도 알 수 없음 (전투 시 드러남)</span></div>`);
+    f = rows.join('');
+  }
+
+  document.getElementById('panel').innerHTML = `
+    <h1>L3 Fog — gate 07 prototype</h1>
+    <p class="sub">MOCK 뷰어 투영. throwaway. 자국 = <b style="color:${realmTint[SELF]}">${SELF}</b>.</p>
+    <h2>Focus (섹터 클릭 = drill-down)</h2>${f}
+    <h2>범례</h2><div class="legend">${legend}</div>
+    <h2>현재 variant</h2><p class="sub">${variant} — ${VARIANTS[variant]}</p>
+    <p class="sub" style="margin-top:14px">★ 수도 · ⚠→ 국경 경보(존재+방향) · 반투명 원 = 적군 last-seen + 도달 원뿔 · 빗금 = DEV 미구현.</p>`;
+}
+
+function draw(focus) { renderMap(); renderPanel(focus); wireClicks(); document.getElementById('vlabel').textContent = variant + ' · ' + VARIANTS[variant]; }
+function wireClicks() {
+  document.getElementById('map').onclick = (e) => {
+    const sid = (e.target.dataset || {}).sid; if (!sid) return; draw(sid);
+    const p = e.target; p.setAttribute('stroke', '#ffec6e'); p.setAttribute('stroke-width', '3');
+  };
+}
+const order = Object.keys(VARIANTS);
+function shift(d) { const i = (order.indexOf(variant) + d + order.length) % order.length; variant = order[i];
+  const u = new URL(location); u.searchParams.set('variant', variant); history.replaceState({}, '', u); draw(); }
+document.getElementById('prev').onclick = () => shift(-1);
+document.getElementById('next').onclick = () => shift(1);
+addEventListener('keydown', (e) => { if (e.key === 'ArrowLeft') shift(-1); if (e.key === 'ArrowRight') shift(1); });
+
+draw();
+</script>
+</body>
+</html>
