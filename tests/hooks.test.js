@@ -44,6 +44,46 @@ test('write-lint: relPath returns null for a missing path', () => {
   assert.equal(writeLint.relPath('/repo', undefined), null);
 });
 
+// Host portability: Claude sends tool_input.file_path; Codex routes edits
+// through apply_patch and sends the patch text as tool_input.command instead.
+
+test('write-lint: touchedPaths reads the Claude shape (tool_input.file_path)', () => {
+  assert.deepEqual(writeLint.touchedPaths({ tool_input: { file_path: '/repo/DOMAIN_MAP.md' } }),
+    ['/repo/DOMAIN_MAP.md']);
+});
+
+test('write-lint: touchedPaths reads the Codex apply_patch shape, including multi-file patches', () => {
+  const command = [
+    '*** Begin Patch',
+    '*** Update File: DOMAIN_MAP.md',
+    '@@ -1 +1 @@',
+    '-a',
+    '+b',
+    '*** Add File: docs/features/x/GLOSSARY.md',
+    '*** Delete File: js/old.js',
+    '*** End Patch',
+  ].join('\n');
+  assert.deepEqual(writeLint.touchedPaths({ tool_input: { command } }),
+    ['DOMAIN_MAP.md', 'docs/features/x/GLOSSARY.md', 'js/old.js']);
+});
+
+test('write-lint: patchPaths captures a rename destination (*** Move to:)', () => {
+  const command = '*** Begin Patch\n*** Update File: docs/a.md\n*** Move to: docs/b.md\n*** End Patch';
+  assert.deepEqual(writeLint.patchPaths(command), ['docs/a.md', 'docs/b.md']);
+});
+
+test('write-lint: patchPaths is reusable — module-level /g regexes reset between calls', () => {
+  const command = '*** Begin Patch\n*** Update File: DOMAIN_MAP.md\n*** End Patch';
+  assert.deepEqual(writeLint.patchPaths(command), ['DOMAIN_MAP.md']);
+  assert.deepEqual(writeLint.patchPaths(command), ['DOMAIN_MAP.md'], 'second call must match too');
+});
+
+test('write-lint: touchedPaths is empty for a payload with neither shape (e.g. a Bash command)', () => {
+  assert.deepEqual(writeLint.touchedPaths({ tool_input: { command: 'npm test' } }), []);
+  assert.deepEqual(writeLint.touchedPaths({}), []);
+  assert.deepEqual(writeLint.touchedPaths(null), []);
+});
+
 // ---------------------------------------------------------- alias-inject
 
 test('alias-inject: exact alias match (including 구칭 old-canonical name) is detected', () => {

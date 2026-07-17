@@ -4,7 +4,11 @@ This project's agent guide is maintained in `AGENTS.md` (shared across Codex and
 Claude Code). Treat `AGENTS.md` as the single source of truth.
 
 @AGENTS.md
-@.claude/rules/documentation-law.md
+
+<!-- documentation-law loads via the generated block inside AGENTS.md (synced
+     from the canonical `.claude/rules/documentation-law.md` by
+     `npm run sync:docs-law`). Do NOT re-add a separate `@`-import for it — a
+     second import would load the full law twice. -->
 
 ## Claude Code Notes
 
@@ -28,4 +32,5 @@ on a `Status:` line in the issue file. See `docs/agents/triage-labels.md`.
 
 ### Domain docs
 
-Governed by `.claude/rules/documentation-law.md` (auto-loaded above).
+Governed by `.claude/rules/documentation-law.md` (auto-loaded above via the
+generated block in `AGENTS.md`).

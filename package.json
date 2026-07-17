@@ -8,6 +8,7 @@
     "battery": "node mockup/combat-calc/battery.js",
     "metrics:slice2": "node mockup/operational-layer/metrics.js",
     "metrics:fizzle": "node mockup/operational-layer/fizzle.js",
-    "lint:docs": "node scripts/audit-lint.js"
+    "lint:docs": "node scripts/audit-lint.js && node scripts/sync-docs-law.js --check",
+    "sync:docs-law": "node scripts/sync-docs-law.js"
   }
 }
