@@ -259,7 +259,7 @@ dedicated module yet.
 
 The full documentation & terminology law — layer taxonomy, authority
 and conflict rules, ADR supersession protocol, vocabulary rules, and
-the session-close ritual — lives in `.claude/rules/documentation-law.md`.
+the session-close ritual — lives in `DOCUMENTATION-LAW.md`.
 Summary of the load-bearing rules: truth is minted in
 `docs/features/<slug>/` (with user seal) and projected into the root
 docs via doc-sync batches; all dial numbers live only in

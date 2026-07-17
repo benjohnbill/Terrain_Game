@@ -9,7 +9,7 @@ Markers:
 This file is Tier 0 of the Vocabulary Law — the promoted, project-wide
 canon. The law itself (definition tiers, single-definition rule,
 naming, promotion, the generated Quick Reference) lives in
-`.claude/rules/documentation-law.md` § Vocabulary Law.
+`DOCUMENTATION-LAW.md` § Vocabulary Law.
 
 ## Design Principle
 

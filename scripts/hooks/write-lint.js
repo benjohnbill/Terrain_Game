@@ -11,7 +11,10 @@
 // rather than forking into two drifting copies.
 'use strict';
 
-const GOVERNED = /^(DOMAIN_MAP\.md|SPEC\.md|DESIGN\.md|docs\/.*|js\/.*\.js|\.claude\/rules\/documentation-law\.md)$/;
+// `DOCUMENTATION-LAW.md` moved out of `.claude/rules/` on 2026-07-17 (the
+// harness auto-loads that directory, so the law entered context twice). The old
+// path stays matched so a stray edit to a leftover copy is still caught.
+const GOVERNED = /^(DOMAIN_MAP\.md|SPEC\.md|DESIGN\.md|DOCUMENTATION-LAW\.md|docs\/.*|js\/.*\.js|\.claude\/rules\/documentation-law\.md)$/;
 
 // apply_patch envelope directives, e.g. `*** Update File: docs/x.md`. One patch
 // may touch several files, and `*** Move to:` carries a rename's destination.

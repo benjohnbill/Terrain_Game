@@ -1,7 +1,7 @@
 # Fog-of-War & Discovery Glossary — Tier 1
 
 Birthplace and single definition point of fog/perception vocabulary
-(Vocabulary Law, `.claude/rules/documentation-law.md`). Header format:
+(Vocabulary Law, `DOCUMENTATION-LAW.md`). Header format:
 English canonical (한국어 표시어). Created 2026-07-10: the terminology
 audit (Ring B, finding R-01) found this feature's load-bearing terms in
 established use across DESIGN/ADRs/js with no registration surface.

@@ -68,7 +68,7 @@ Harvest procedure (what audit run #1 did; repeat to regenerate):
 
 One row per governed documentation file: layer, role, owner feature,
 allowed/forbidden content — all derived from
-`.claude/rules/documentation-law.md` (layer taxonomy + Production file roles).
+`DOCUMENTATION-LAW.md` (layer taxonomy + Production file roles).
 Flow is one-way: **law → registry → lint**. When the law is amended,
 regenerate the registry; never edit the registry to disagree with the law.
 

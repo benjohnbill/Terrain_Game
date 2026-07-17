@@ -37,7 +37,7 @@ one complete match.
   per session" pacing limit was overridden by the user 2026-07-16 (finish the
   pre-implementation work); the one-question-at-a-time rule and the
   user-seals-every-gate rule are **not** overridden.
-- **Documentation:** follow `.claude/rules/documentation-law.md`. Ticket answers
+- **Documentation:** follow `DOCUMENTATION-LAW.md`. Ticket answers
   remain Working-layer evidence; accepted cross-feature architecture decisions
   promote through the ADR supersession protocol when specs are authored.
 - **Repository safety:** the main worktree contains unrelated in-flight changes.

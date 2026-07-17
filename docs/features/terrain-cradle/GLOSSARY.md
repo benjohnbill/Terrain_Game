@@ -1,7 +1,7 @@
 # Terrain-Cradle Glossary — Tier 1
 
 Birthplace and single definition point of terrain-cradle vocabulary
-(Vocabulary Law, `.claude/rules/documentation-law.md`). Header format:
+(Vocabulary Law, `DOCUMENTATION-LAW.md`). Header format:
 English canonical (한국어 표시어). Status ≡ DOMAIN_MAP dictionary
 (AGREED/PROPOSED). Values cited from rulings live in `RULINGS.md`;
 door widths' sealed home is combat-formula `MAGNITUDE.md` M11 (this

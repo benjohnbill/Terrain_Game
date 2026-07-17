@@ -10,7 +10,7 @@ Codifies the audit procedure validated by two manual runs
 `docs/audits/2026-07-10-audit-run-2.md`) per design spec S8/S9
 (`docs/superpowers/specs/2026-07-10-doc-audit-and-forensics.md`). Findings
 are always **reports, never legislation** (S13, separation of powers):
-this skill never edits `.claude/rules/documentation-law.md`, never applies
+this skill never edits `DOCUMENTATION-LAW.md`, never applies
 a rename, and never registers a new term without the user's sign-off. It
 checks, drops what's provably spurious, and files new-term/rename
 candidates as recommendations for the user to seal.

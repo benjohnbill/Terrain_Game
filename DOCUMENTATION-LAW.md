@@ -1,10 +1,23 @@
 # Documentation & Terminology Law — Terrain Game
 
-Project-specific, auto-loaded. The single source for document
-hierarchy, authority, production flow, and domain-vocabulary rules.
-`AGENTS.md`, `DESIGN.md`, and `DOMAIN_MAP.md` point here — do not
-restate this law elsewhere. Auto-load carries LAW only; canon CONTENT
-(glossaries, dials) is Read on demand where the law points.
+Project-specific. The single source for document hierarchy, authority,
+production flow, and domain-vocabulary rules. `AGENTS.md`, `DESIGN.md`,
+and `DOMAIN_MAP.md` point here — do not restate this law elsewhere.
+Auto-load carries LAW only; canon CONTENT (glossaries, dials) is Read
+on demand where the law points.
+
+**Editing:** the canonical, editable source is `DOCUMENTATION-LAW.md` at
+the top level; agents read the verbatim mirror of it generated into
+`AGENTS.md`. Edit the canonical file, then `npm run sync:docs-law`
+(`--check` reports drift; `npm run lint:docs` enforces it).
+
+The canonical file sits at the top level on purpose, and must stay out
+of `.claude/rules/`: the Claude Code harness auto-loads that directory
+*in addition to* the mirror, which put the whole law in every session's
+context twice. Removing an `@`-import did not fix it — no import was
+ever the cause. Do not `@`-import it either: Codex has no external-file
+auto-import, so the mirror is the only thing reaching both hosts, and an
+import would merely restore the duplication for Claude.
 
 ## Layer taxonomy
 
@@ -15,7 +28,7 @@ restate this law elsewhere. Auto-load carries LAW only; canon CONTENT
 | Record (기록) | `docs/adr/` (promoted) · feature `RULINGS.md` (birthplace) | Why decisions were made. ADR = architecture-grade / cross-feature; RULINGS = feature-local rulings that promote up when they outgrow the feature. Append-only + supersession protocol below. |
 | Production (생산) | `docs/features/<slug>/` | The workshop where truth is minted (with user seal). File roles below. |
 | Working (작업) | `mockup/*/NOTES.md`, `docs/superpowers/`, `docs/DESIGN-RISKS.md`, `docs/GLOSSARY-QUICKREF.md` (generated), tracked debt ledgers (`docs/SYNC-DEBT.md` doc-sync debts, `docs/DISPLAY-DEBT.md` UI-design debts), `docs/audits/` (audit baselines + dated reports), `.context/` (untracked handoffs), `docs/agents/` (agent tooling config) | Time-stamped records and idea banks — consult for context and parked/deferred ideas; CURRENT truth lives in the seal chain, not here. NOTES verdicts are a staging area: they must sync to Production/Projection in the same session's doc-sync batch. Debt ledgers are registers only — a row points to the mechanic's birthplace, never redefines it. `docs/audits/` baselines (term inventory, doc registry) are machine-readable indexes maintained per `docs/audits/HARVEST.md` (two-mode model); audit-lint findings are reports, never legislation. `docs/agents/` is agent-tooling config (tracker location, triage vocabulary): it points at this law and never restates it. |
-| Law (법) | `AGENTS.md`, `CLAUDE.md`, `.claude/rules/documentation-law.md` | The rules agents execute. Changes only by explicit user decision. |
+| Law (법) | `AGENTS.md`, `CLAUDE.md`, `DOCUMENTATION-LAW.md` | The rules agents execute. Changes only by explicit user decision. |
 | Sanctuary (성역) | `docs/teach/` | The user's own space. Agents do not touch it. |
 
 ### Production file roles (`docs/features/<slug>/`)

@@ -5,7 +5,10 @@
 // AGENTS.md, so Codex (which has no external-file auto-import) receives the
 // same law Claude Code gets via CLAUDE.md's @import.
 //
-// Canonical, editable source: .claude/rules/documentation-law.md
+// Canonical, editable source: DOCUMENTATION-LAW.md (top level — deliberately NOT
+// under .claude/rules/, which the Claude Code harness auto-loads on its own;
+// keeping it there put the full law in every session's context twice, once via
+// that auto-load and once via the generated block below).
 // The AGENTS.md block is generated — never edit it by hand.
 //
 // Usage:
@@ -17,12 +20,12 @@ const path = require('path');
 
 const ROOT = path.resolve(__dirname, '..');
 const AGENTS = path.join(ROOT, 'AGENTS.md');
-const SOURCE = path.join(ROOT, '.claude', 'rules', 'documentation-law.md');
+const SOURCE = path.join(ROOT, 'DOCUMENTATION-LAW.md');
 
 const BEGIN = '<!-- BEGIN documentation-law (generated) -->';
 const END = '<!-- END documentation-law (generated) -->';
 const NOTE =
-  '<!-- source: .claude/rules/documentation-law.md — DO NOT EDIT here; edit the source and run `npm run sync:docs-law` -->';
+  '<!-- source: DOCUMENTATION-LAW.md — DO NOT EDIT here; edit the source and run `npm run sync:docs-law` -->';
 
 function rebuild(agents, law) {
   const beginIdx = agents.indexOf(BEGIN);

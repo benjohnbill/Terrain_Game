@@ -22,7 +22,7 @@ can cite one authoritative home without duplication or cross-spec drift?
 
 - Production files must define each requirement in one birthplace. Integration
   specs point to Fog, terrain, war, and match definitions; they do not restate
-  those mechanics (`.claude/rules/documentation-law.md`).
+  those mechanics (`DOCUMENTATION-LAW.md`).
 - A ticket stays Working-layer and cannot become `ready-for-agent` until it
   cites the final Production home that closes every specification gate.
 - Cross-feature architecture decisions that meet the ADR threshold must promote

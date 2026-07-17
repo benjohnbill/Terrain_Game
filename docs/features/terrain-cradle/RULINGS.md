@@ -1,7 +1,7 @@
 # Terrain-Cradle Rulings — Decision Record
 
 Feature-local decision record (Record layer, birthplace tier — see
-`.claude/rules/documentation-law.md`). Ruling history behind the
+`DOCUMENTATION-LAW.md`). Ruling history behind the
 terrain-cradle seals; GLOSSARY rows cite numbers into here. All rulings
 below were made in the C-loop authoring session of 2026-07-07 with the
 user as sealer; the executable map source is

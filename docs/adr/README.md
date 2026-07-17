@@ -14,7 +14,7 @@ Accepted ADRs guide implementation until superseded.
 ## Supersession protocol
 
 Cross-ADR relationships follow the ADR supersession protocol in
-`.claude/rules/documentation-law.md`. A new ADR that changes or
+`DOCUMENTATION-LAW.md`. A new ADR that changes or
 contradicts an existing one MUST, in the same commit: name what it
 supersedes/amends in its own header, AND stamp the OLD ADR's header
 (`Superseded by:` / `Amended by: ADR-XXXX (date)`) plus a one-line

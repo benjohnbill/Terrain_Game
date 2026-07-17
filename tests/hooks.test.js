@@ -18,7 +18,8 @@ function term(canonical, aliases, korean) {
 
 test('write-lint: GOVERNED matches DOMAIN_MAP/SPEC/DESIGN/docs/**/js/**.js', () => {
   for (const p of ['DOMAIN_MAP.md', 'SPEC.md', 'DESIGN.md', 'docs/SYNC-DEBT.md',
-    'docs/features/combat-formula/GLOSSARY.md', 'js/combat.js', '.claude/rules/documentation-law.md']) {
+    'docs/features/combat-formula/GLOSSARY.md', 'js/combat.js', 'DOCUMENTATION-LAW.md',
+    '.claude/rules/documentation-law.md']) {
     assert.equal(writeLint.GOVERNED.test(p), true, p);
   }
 });

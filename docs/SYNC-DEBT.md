@@ -1,6 +1,6 @@
 # Sync-Debt Ledger
 
-Tracked ledger required by `.claude/rules/documentation-law.md`
+Tracked ledger required by `DOCUMENTATION-LAW.md`
 (conflict rule + session-close ritual duty 6). One line per unpaid
 documentation debt; strike it (move to Paid) when paid. An unrecorded
 debt is a law violation; an unpaid-but-recorded one is normal
@@ -172,52 +172,63 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   `.scratch/l3-playable-seam/audit/SYNTHESIS.md` Finding A + its CORRECTION;
   authority: `docs/adr/0041-environment-isolation-and-reference-archive.md`.
 
-- [ ] **The documentation law auto-loads twice per Claude Code session — move
-  the canonical file out of `.claude/rules/`** (found 2026-07-17 by the
-  auto-load surface scan; observed directly in the session's loaded context, not
-  inferred). Both `AGENTS.md`'s generated block and
-  `.claude/rules/documentation-law.md` appear in full as project instructions —
-  ~1,700 words × 2 every session. **Cause (verified in the working tree):** the
-  harness auto-loads project `.claude/rules/*.md` on its own — `grep` finds no
-  `@`-import for it in the working `CLAUDE.md`/`AGENTS.md` and no
-  `settings.json` entry, yet the file appears in the loaded context anyway. So
-  the working `CLAUDE.md`'s guard comment ("Do NOT re-add a separate `@`-import
-  — a second import would load the full law twice") diagnosed the wrong
-  mechanism: removing the import deduplicated nothing, because the import was
-  never the cause.
-  **Note the state split** — HEAD and the working tree fail differently, and
-  only the working tree was measured. HEAD's `CLAUDE.md` still carries an
-  explicit `@.claude/rules/documentation-law.md` and its `AGENTS.md` has no
-  generated block: **HEAD gives Codex no law at all**, and whether HEAD
-  double-loads for Claude depends on whether the harness de-duplicates an
-  explicit import against its own auto-load — **untested**. The in-flight change
-  set (block added, import removed) fixes Codex and introduces the
-  Claude-side duplication. Do not reason about this row from HEAD.
-  **Fix (user-proposed 2026-07-17, refined):** move the canonical law to a
-  non-auto-loaded path (e.g. `docs/DOCUMENTATION-LAW.md`), keep the generated
-  block in `AGENTS.md` as the single delivery mechanism for **both** hosts,
-  delete `.claude/rules/documentation-law.md`, and update `sync-docs-law.js`'s
-  source path plus every reference (the law's own Layer table lists itself;
-  `AGENTS.md` and `CLAUDE.md` cite the path). **Do NOT `@`-import the new file:**
-  Codex has no external-file auto-import (`AGENTS.md` § Documentation &
-  Terminology Law states this as the block's whole rationale), so an `@` would
-  lose the law for Codex *and* re-duplicate it for Claude. The mirror block
-  already does the job — the only defect is the canonical file's *location*.
-  **BLOCKED** on the untracked `sync-docs-law.js` work landing (that script, the
-  `package.json` script entries, the `AGENTS.md` generated block, and the
-  `CLAUDE.md` import removal are one coherent uncommitted change set from another
-  session; touching them now would edit in-flight work). Related:
-  `.scratch/doc-structure/issues/05-law-staleness-batch.md` is the natural
-  carrier once unblocked.
-  **Ride-along when this unblocks:** slim `CLAUDE.md`. Its `## Agent skills`
-  section (issue tracker, triage labels, domain docs) now duplicates AGENTS.md's
-  authoritative `## Issue tracker` — the 2026-07-17 scan moved that knowledge to
-  AGENTS.md so Codex can see it, but could not remove the CLAUDE.md copy without
-  editing the in-flight change set that occupies the same region. Two copies is
-  a drift risk, not a correctness bug; the single-definition rule wants CLAUDE.md
-  holding a pointer. Add the guard while there: *Codex does not read CLAUDE.md —
-  never put project knowledge here that AGENTS.md lacks* (that asymmetry is what
-  hid the tracker location from the Codex session which authored the L3 gates).
+- [x] **Documentation law double-load — PAID 2026-07-17** (found and paid the
+  same day; the user's authorization to land the Codex batch removed the
+  blocker). **Found by observation, not inference:** both `AGENTS.md`'s generated
+  block and the canonical law appeared in full as project instructions in a
+  single session's loaded context — ~1,700 words twice, every Claude Code
+  session. **Cause, verified:** the harness auto-loads project
+  `.claude/rules/*.md` on its own; no `@`-import in `CLAUDE.md`/`AGENTS.md` and
+  no `settings.json` entry asked for it. So the guard comment then in flight
+  ("Do NOT re-add a separate `@`-import — a second import would load the full law
+  twice") named the wrong mechanism: removing the import deduplicated nothing,
+  because the import was never the cause. **Paid by:** `git mv
+  .claude/rules/documentation-law.md DOCUMENTATION-LAW.md` (top level, alongside
+  the other Law-layer files) — the mirror block stays the single delivery
+  mechanism for **both** hosts, and the canonical file simply leaves the
+  auto-loaded directory. **Not** by an `@`-import: Codex has no external-file
+  auto-import (the block's whole rationale), so an `@` would lose the law for
+  Codex *and* re-duplicate it for Claude. Also repointed: `sync-docs-law.js`'s
+  SOURCE, the law's own Layer table, the `AGENTS.md` preamble, `CLAUDE.md`, and
+  the live pointers in `DESIGN.md`/`DOMAIN_MAP.md`/`docs/adr/README.md`/
+  `docs/audits/HARVEST.md`/`doc-registry.json`/`doc-audit` SKILL/fog + terrain-
+  cradle docs/this ledger. Dated records (`.context/`, dated `docs/audits/`,
+  superpowers plans, match-arc research) keep the old path on purpose — they
+  record what was true then. **Caught during the move:** `write-lint.js`'s
+  `GOVERNED` regex did not match the new path, so the hook would have silently
+  stopped linting the law; regex and `tests/hooks.test.js` updated, old path kept
+  matched for stray copies. **Not verifiable in-session** — the auto-load happens
+  at session start, so the saving shows in the *next* session's context.
+  Remaining sliver: `CLAUDE.md`'s `## Agent skills` section still duplicates
+  AGENTS.md's authoritative `## Issue tracker`; slimmed to a pointer + a guard
+  comment in the same batch.
+
+- [ ] **`lint:docs`'s drift guard is dead behind an `&&`, and a permanent false
+  positive is holding the gate open** (found 2026-07-17 while landing the law
+  move; both halves verified directly). Two defects that only matter together:
+  (a) **`ledgerCurrency` fuzzy-matches ledger row titles against commit
+  messages.** It reports `ledger-possibly-paid` for the row *"L3 Seam Wayfinder
+  02 — ADR promotion undecided"* against the commit *"docs(l3): audit every open
+  wayfinder gate and re-cut the tracker"* — the word "wayfinder" is the whole
+  match. The row is **not** paid: its promotion decision belongs to Wayfinder 12,
+  which has not run. Every future commit containing "wayfinder" will flag every
+  `L3 Seam Wayfinder NN` row. Triaged and dismissed repeatedly across
+  `d7bd539`/`caf6772`/`acebded`; it is a heuristic doing its job badly, not a
+  real finding.
+  (b) **`npm run lint:docs` is `node scripts/audit-lint.js && node
+  scripts/sync-docs-law.js --check`, and `audit-lint.js` exits 1 on *any*
+  finding** (verified: exit code 1). So the `&&` short-circuits and the drift
+  check never runs. The Codex parity batch added that guard (`6754c34`) to catch
+  a hand-edited AGENTS.md block — but with (a) firing permanently, **the guard
+  has never actually run inside `lint:docs`**. It works standalone
+  (`node scripts/sync-docs-law.js --check` → OK), which is how the law move was
+  verified.
+  Fix candidates, not decided: make `ledgerCurrency` match on a row's stable
+  identifier rather than fuzzy title text; and/or reorder so the drift check runs
+  first, or separate the two so a report-grade finding cannot mask a
+  contract-grade one — the law says audit findings are "reports, never
+  legislation," but an `&&` gives a report legislative power over the check
+  behind it. Natural carrier: `.scratch/doc-structure/issues/09-lint-hardening.md`.
 
 - [ ] **Term code contracts anchor to what is now a reference archive**
   (registered 2026-07-17; caused by ADR 0041, not merely noticed). ADR 0041 names
@@ -252,6 +263,25 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   DISPLAY-DEBT rows already pointed at it. Evidence:
   `.scratch/l3-playable-seam/audit/SYNTHESIS.md` § re-cut, gate 07.
 
+- [ ] **Designation law clause — application PENDING (Tier-3, user-sealed
+  2026-07-16)**. The `## Designation — a ruling's body in a Working text` clause
+  (doc-structure ticket 04) is user-sealed but not yet in
+  `DOCUMENTATION-LAW.md`; insert it after the Mandatory-ADR-trigger
+  clause (`:94`), before `## Vocabulary Law`. Verbatim text + rationale:
+  `.scratch/doc-structure/issues/04-working-spec-authority.md` (§ "User-sealed law
+  clause") + `docs/audits/2026-07-16-designation-ruling.md`. The original "batch
+  with ticket 03" target is now conditional on ticket 09, so this may land in its
+  own seal or the next unblocked doc-sync batch — sequencing is the user's.
+
+- [ ] **war-model-build dial-sheet home — graduation owed** (2026-07-16,
+  doc-structure ticket 04 designation ruling). Slice-2 dials live in the
+  designated spec §2 as 가안; when the first magnitude pass runs (the one that
+  grades the commit curve / resolves the HELD stationary-recovery dial — rows
+  below), it builds `war-model-build`'s owning model doc (MAGNITUDE-class) and
+  migrates the sheet out of the spec — an instance of the designation "detail
+  graduates" clause. Until then the spec is the authoritative detail; it is
+  disposable only after graduation.
+
 - [x] **war-model-build INDEX refresh — PAID 2026-07-16** (slice-2 tickets
   07/10/11). The front door now reads tickets 01–11 all landed, points at both
   harnesses (`npm run metrics:slice2`, `npm run metrics:fizzle`), carries metric
@@ -261,6 +291,16 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   (White peace / Settlement preset ladder / Personality coefficient) were patched
   in `docs/audits/term-inventory.json` in the same batch (index fields only, per
   HARVEST.md), and their birthplace definitions in match-arc are untouched.
+  **Absorbed a duplicate 2026-07-17**: an earlier `[ ]` row for the same duty
+  ("war-model-build INDEX refresh — slice-2 ticket 07 landing", registered
+  2026-07-16 at `6fbd5ce`) survived uncommitted alongside this paid one, because
+  payment wrote a new row instead of striking the old. Verified before removal —
+  the row asked to "mark ticket 07 landed, point at the harness, correct the
+  frontier to tickets 08–11", and the front door today reads `01–11`, names both
+  harnesses, and reports `suite 466/466 green`. Same duty, already discharged.
+  This resolves the duplicate-state question the 2026-07-16 handoff flagged for
+  verification. **Ledger hygiene:** strike the row you are paying; do not write a
+  second one beside it.
 
 - [ ] **match-arc CE-⑳ enforcement-point stamp — registered** (2026-07-16,
   ticket 11 / RULINGS WM-③ ②). CE-⑳'s birthplace is `match-arc/RULINGS.md`; its
@@ -862,7 +902,7 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
 - [x] 2026-07-06 — **L-level seal-stamp convention ADOPTED (Codex P2,
   A-4 B6)** — the optional validation-level stamp (L0 hand / L1 grid /
   L2 tournament / L3 playtest) codified into
-  `.claude/rules/documentation-law.md` § seal mechanics: seals MAY carry
+  `DOCUMENTATION-LAW.md` § seal mechanics: seals MAY carry
   an L-stamp; applied going forward, retrofit optional, not a fourth
   mandatory field. The other two Codex P2s were user-deferred at the
   time; since then the `docs:check` lint was superseded by audit-lint
