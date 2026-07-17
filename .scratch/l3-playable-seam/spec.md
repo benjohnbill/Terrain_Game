@@ -516,6 +516,17 @@ Implementation Decisions above.
 
 ### Unresolved Wayfinder gates
 
+> **Re-cut 2026-07-17 (user-accepted).** A full gate audit against repository
+> evidence found no gate correctly framed and genuinely open, and none
+> closeable as-is. Real grills: **05 · 06 · 07 · 08**. Demoted to write-downs:
+> **09 · 10 · 11**. Split and blocked: **12**. Reduced: **07**'s renderer half
+> collapses to producing a measurement. Added out-of-band: the
+> **war-termination pass**, which owns the war-model seal decision and the
+> un-ported ADR 0030 — gate 08 cannot close without it. Full findings, the
+> derivation graph, and the amendment owed to resolved gate 01:
+> [audit/SYNTHESIS.md](audit/SYNTHESIS.md). The list below keeps the tickets'
+> original framing; where it conflicts with the re-cut, the re-cut governs.
+
 The following named tickets remain decision or prototype gates. Their answers
 must be recorded in their own ticket and reflected into this spec before
 implementation tickets depending on them become `ready-for-agent`.

@@ -83,6 +83,85 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   Pay with the Wayfinder 03 fog-ruling promotion above, so the INDEX refresh and
   the ruling land in one batch.
 
+- [ ] **Fog GLOSSARY Tier-1 row contradicts the Wayfinder 03 seal — seal-amends
+  duty owed** (found 2026-07-17 by the gate audit, against work sealed hours
+  earlier the same session). `docs/features/fog-of-war-discovery/GLOSSARY.md`
+  defines Information confidence as "a scalar from **blind (0)** to fully known
+  (1)" (Tier-1 birthplace, AGREED 2026-07-10). Wayfinder 03's C03.10 seals
+  `[0, 0.45)` as permanently dead with `DECAY_FLOOR = 0.45` (`js/intel.js:17`)
+  as the authoritative bottom, and C03.1 gives control no confidence channel at
+  all — while the row still says confidence "gates status legibility". The
+  birthplace is authoritative for the definition, so the row must be amended
+  (not the seal restated elsewhere), and by the seal-amends duty that stamp was
+  owed in the 2026-07-17 batch (`177f81f`) and was not paid. **The resolving
+  session read this file the same day and did not catch it** — a grooming pass
+  cannot see outside the active gate's radius, which is what the audit sweep is
+  for. Pay with the fog RULING ② promotion batch above; all three fog rows land
+  together. Related, needs a look before that batch: **ADR 0023**'s
+  confidence-gated status vocabulary ("border-but-uncertain",
+  "occupied-but-poorly-scouted", `threatened` requires "sufficient information
+  confidence") is Accepted and unretired vs C03.1 — probably reconcilable (the
+  gating reads as being on enemy reach/force, not on control), but Wayfinder 03
+  never named ADR 0023. Evidence: `.scratch/l3-playable-seam/audit/SYNTHESIS.md`
+  Finding D.
+
+- [ ] **DESIGN-RISKS R14 "Answered" is falsified by the build it predicted would
+  close it** (noticed 2026-07-17 by the gate audit; ritual duty 6 — divergence
+  noticed, not caused; **unregistered until now**, though R14 is mentioned in
+  four other rows). `docs/DESIGN-RISKS.md` R14 is stamped "**Answered
+  2026-07-13** (four-survey synthesis → ADR 0037)" — the diagnosis being that
+  the fizzle is a placeholder/harness artifact, "**NOT a property of the sealed
+  war**", closing "when the build implements the sealed model". The build landed
+  (slice-2 tickets 01–11, merge `edd0325`) and `docs/features/war-model-build/
+  INDEX.md` reports the opposite: no-material-outcome only 80.7% → 68.7%, the
+  fizzle survived **renamed** (~35.7% pre-emptive white peace + **~18.6% wars
+  that never end**; "ADR 0038's composite fires none of 격멸/수도/정착"), and the
+  same shape reproduces in the retired L2 harness after its own retirement
+  (78.8% → 72.1%) — "**a property of the model, not of one loop**". R14 remains
+  🟡 with an unchecked open action, and DESIGN-RISKS was last touched 2026-07-13,
+  three days before the falsifying evidence. Correct read: **diagnosis answered,
+  risk not closed.** Layer note: `docs/DESIGN-RISKS.md` is **Working**, not
+  Projection (documentation-law:17). Two riders found with it: **ADR 0038** is
+  L0-trust, pre-registered metric 5 as its own test, was falsified by it, and
+  remains "Accepted (sealed 2026-07-14)" **unamended**; and **ADR 0030**
+  (패권 결정점 — the accepted match-ending) has **zero implementation in `js/`**,
+  living only in the harness ADR 0037 retired. Owner: the war-termination pass
+  (`.scratch/l3-playable-seam/map.md` § Gate re-cut). Evidence:
+  `.scratch/l3-playable-seam/audit/SYNTHESIS.md` Finding B.
+
+- [ ] **Authored sector count is wrong in two Production docs** (found
+  2026-07-17 by the gate audit; verified directly). `docs/features/terrain-cradle/
+  INDEX.md` and `DOMAIN_MAP.md:440` both say "10 regions → **55** sectors → ~292
+  hexes". The generator produces **56** and `tests/occupation-geography.test.js:13`
+  asserts 56 ("all 56 cradle sectors present"); hexes (292) and borders (17)
+  match. Code and tests are right; the docs are off by one. Pay in the next
+  terrain-cradle-touching batch — Wayfinder 06 owns the authored-world contract
+  and is the natural carrier. Evidence:
+  `.scratch/l3-playable-seam/audit/SYNTHESIS.md` E2.
+
+- [ ] **Wayfinder 01 amendment owed — three constraints assert facts that are
+  not true** (found 2026-07-17 by the gate audit; three independent auditors
+  converged on it). Gate 01 (resolved 2026-07-16, user-sealed) chose a
+  parallel-strangler topology resting on the legacy route as a bounded
+  comparator. **The topology is not in question; its factual premises are.**
+  (a) **C01.2/C01.4** — `game.html` loads 17 classic scripts and **none of the
+  eight slice-2 war modules**, so the port targets have no comparator while the
+  comparator runs `js/combat.js`, behavior the umbrella spec's *Settled-war
+  eligibility* already declares ineligible; and "equivalent fixtures and seeds"
+  is unachievable against a path with **38 unseeded `Math.random()` sites**
+  unless the comparator gate 01 preserved is itself modified. (b) **C01.5** —
+  "the accepted L3 build assumes the public `game.html` role" was written
+  against the **working tree**: `game.html` is not in HEAD (the game's committed
+  route is `/`), the move is uncommitted in-flight landing work, and
+  firebase's `cleanUrls: true` makes the destination route **`/game`**, not a
+  filename. (c) **C01.7** — retirement is **not** a data-loss operation: the
+  gate-11 auditor inferred it was because `game.html` was never committed, but
+  the file is **byte-for-byte `HEAD:index.html`**, so its content is in history.
+  That inference was refuted only when this session went to act on it. Pay by
+  amending the ticket (Working-layer) when Wayfinder 05/11 next touch the
+  comparator, or fold into the gate-12 governance batch. Evidence:
+  `.scratch/l3-playable-seam/audit/SYNTHESIS.md` Finding A + its CORRECTION.
+
 - [x] **war-model-build INDEX refresh — PAID 2026-07-16** (slice-2 tickets
   07/10/11). The front door now reads tickets 01–11 all landed, points at both
   harnesses (`npm run metrics:slice2`, `npm run metrics:fizzle`), carries metric

@@ -33,7 +33,10 @@ one complete match.
   dependencies.
 - **Decision sessions:** grilling tickets use `grilling` + `domain-modeling`,
   one question at a time. Prototype tickets use `prototype` and require live
-  user reaction. Never resolve more than one non-research ticket per session.
+  user reaction. The original "never resolve more than one non-research ticket
+  per session" pacing limit was overridden by the user 2026-07-16 (finish the
+  pre-implementation work); the one-question-at-a-time rule and the
+  user-seals-every-gate rule are **not** overridden.
 - **Documentation:** follow `.claude/rules/documentation-law.md`. Ticket answers
   remain Working-layer evidence; accepted cross-feature architecture decisions
   promote through the ADR supersession protocol when specs are authored.
@@ -44,6 +47,81 @@ one complete match.
   captures the approved destination and standing architecture for agent-driven
   Wayfinder closure. It is not the final Production spec partition and does not
   close any open decision ticket.
+- **Decision Ledger:** [ledger.md](ledger.md) — the 41 constraints already
+  sealed by resolved gates 01/02/03/04, assembled 2026-07-17 as the single
+  baseline for gate work. Consult it before treating anything as open.
+- **Gate audit (2026-07-17):** every open gate was audited against repository
+  evidence by an independent read-only auditor. Findings + the user-accepted
+  re-cut: [audit/SYNTHESIS.md](audit/SYNTHESIS.md). The re-cut below supersedes
+  the tickets' own framing where they conflict; the tickets keep their evidence
+  and option spaces.
+
+## Gate re-cut — user-accepted 2026-07-17
+
+Source: [audit/SYNTHESIS.md](audit/SYNTHESIS.md). The tickets were drafted
+2026-07-16 without a repository survey. The audit found **no gate correctly
+framed and genuinely open**, and **no gate closeable as-is**. Accepted shape:
+
+**Real decisions (grill):** 05 · 06 · 07 · 08.
+
+**Out-of-band (not a gate) — the war-termination pass.** The long pole, owned
+by no gate and absent from every plan. Read metric 5 (`npm run metrics:fizzle`
+— the read `docs/features/war-model-build/INDEX.md` explicitly parked for the
+user); split the dial residue (~35.7%, named 가안 constants, → the registered
+magnitude pass) from the mechanism residue (~18.6%, → needs an owner); decide
+whether ADR 0030 (패권 결정점) ports into `js/` or is waived for the slice;
+amend ADR 0038 (L0, falsified by its own pre-registered metric 5, unamended);
+correct R14's "Answered" stamp (Working layer). **Gate 08 cannot close without
+it.**
+
+**Demoted — not grill gates:**
+
+- **09** — pre-answered by ADR 0040 D2/D5/D6 + spec + C01.7. The "adapter
+  ladder" frame is inapplicable: the eight port targets have no coupling to
+  adapt (~35–40 lines of mechanical edit). Real residue = a **classification**
+  (accepted / superseded / incidental), folded into 08's slice work.
+- **10** — ~85% restates the spec's Testing Decisions; 27 of 41 ledger
+  constraints already name it downstream. Real residue = proof **strength**
+  (metamorphic testing), **who judges the human rung and what is a FAIL**, and
+  the unasked question: is 10 the **admission** gate to L3 playtesting or the L3
+  **verdict**? (`docs/features/match-arc/TEST-LADDER.md` — the source of the
+  word "L3" — defines that rung as fun/tension/skill expression; neither ticket
+  nor spec cites it.)
+- **11** — one scalar (is the rollback window one deployed acceptance cycle, or
+  zero?) + the archive-vs-delete policy. Its option C is already foreclosed by
+  C01.7.
+
+**Reduced:**
+
+- **07** — the renderer half collapses to **produce a measurement**; the choice
+  is already sealed in three places the ticket never cites (spec "no renderer
+  escalation by ambition alone", this map's Not-yet-specified, ADR 0028:86-92).
+  The prototype survives, and its real job is *does the sealed 7-grade matrix
+  read to a human* — note the **derived-band grade (판세 / 동원 강도 / civilian
+  register) has no encoding proposal anywhere**.
+
+**Split:**
+
+- **12** — (a) a governance batch (Record/Production/Projection + baselines;
+  ~10 duties parked across three trackers; all the judgment) and (b) mechanical
+  ticket re-pointing (already specified by
+  `.scratch/l3-playable-build/README.md`; no grill needed). **(a) is blocked**:
+  its declared precondition is `.scratch/doc-structure/issues/10-audit-run-3.md`,
+  which reads `Status: BLOCKED — the gate itself is unsound` / `⛔ DO NOT
+  EXECUTE`.
+
+**Amendment owed to resolved gate 01** (not a reversal — its constraints assert
+facts that are not true): C01.2/C01.4 (the comparator holds no sealed war model
+and cannot be seeded — 38 unseeded `Math.random()` sites), C01.5 (written
+against the working tree: `game.html` is not in HEAD, and firebase `cleanUrls`
+makes the route `/game`), C01.7 (retirement is **not** a data-loss operation —
+`game.html` is byte-identical to `HEAD:index.html`).
+
+**Order:** 05 stays next — genuinely open, unblocked, and the war-termination
+answer changes nothing about it. Amend its scope per the synthesis (the
+audit-lint landmine, the dropped route/mount + Vite `base` question, the
+phantom lockfile). Schedule the war-termination pass in parallel or immediately
+after; 08 → 09/10/11/12 all sit behind it.
 
 ## Decisions so far
 
