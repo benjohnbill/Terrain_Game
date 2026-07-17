@@ -319,11 +319,29 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   in the new space reports `code-contract-violation` and **`npm run lint:docs`
   fails** — a session-close ritual duty (documentation-law duty 7) *and* the
   `write-lint.js` PostToolUse hook. This is a **designed** fracture with a known
-  trigger date, not a latent bug: it fires on the first L3 vertical slice. Pay
-  when gate 05 fixes the directory boundary — the lint must learn the new tree
-  (recursive scan + `.ts`), and each term's `codeRefs` re-point as its behavior
-  graduates. Do not pre-emptively re-point: the target path does not exist yet.
+  trigger date, not a latent bug: it fires on the first L3 vertical slice. **gate
+  05 sealed the method 2026-07-18 (D5):** widen `audit-lint.js`'s source scan to
+  recursive + `.ts` over `js/` and `game/src` (existing roots only — a no-op
+  until `game/` exists); move each term's `codeRefs` to the new tree only at
+  behavior graduation (parity-verified); keep `code-contract` **blocking** (fix
+  the scanner's field of view, not its strictness); add `game/` to
+  `write-lint.js`'s `GOVERNED`. Execution belongs to the **first port build
+  ticket**, not gate 05 (a decision gate) — do not pre-emptively re-point, the
+  target path does not exist yet.
   Evidence: `.scratch/l3-playable-seam/audit/SYNTHESIS.md` E3.
+
+- [ ] **Gate 05 command surface — gate 10 fills thresholds, not names**
+  (registered 2026-07-18, gate 05 D3). Gate 05 sealed the seven-command `:game`
+  developer surface (`dev`, `typecheck`, `build:runtime`, `test`, `test:browser`,
+  `build`, `verify`) and an ownership split: **gate 05 owns command existence,
+  names, and structure; the verification gate (10) owns each acceptance command's
+  pass/fail threshold.** The umbrella spec's Testing Decisions still assign "exact
+  commands and thresholds" to gate 10 (`spec.md:438-439`); when gate 10 runs it
+  fills thresholds only and does not re-design or re-name the surface. Acceptance
+  commands fail `pending` until their threshold is filled, so a deferred gate
+  cannot show green. This row exists so gate 10 does not reopen the command
+  surface. Close when gate 10 runs. (Promotion assessment, if any, belongs to
+  gate 12 — gate 05 is build topology, not architecture-grade, so likely no ADR.)
 
 - [ ] **`docs/DISPLAY-DEBT.md` may owe rows to the gate-07 prototype**
   (noticed 2026-07-17 by the gate audit; ritual duty 6 — divergence noticed, not

@@ -1,7 +1,7 @@
 # Choose the Build, Module, and Test Topology
 
 Type: grilling
-Status: open
+Status: resolved
 Blocked by: 01, 02, 04
 
 ## Question
@@ -10,6 +10,75 @@ Given the migration topology, Game Runtime interface, and verified toolchain
 constraints, where should the Vite app and runtime modules live, how should
 ESM and legacy CommonJS coexist, and which exact build, typecheck, unit-test,
 browser-test, and hosting commands constitute the supported developer path?
+
+## Answer
+
+Adopt the nested ESM/TypeScript island beside the CommonJS root (option A), with
+one root-owned dependency tree, a full command surface whose thresholds belong to
+gate 10, and a single-emit parity contract.
+
+**D1 — Directory boundary (option A).** New canonical L3 source lives in its own
+`game/` tree beside the archive `js/` and the CommonJS root, built beside rather
+than converted in place; the root `package.json` stays CommonJS. Tree name
+`game/` is role-based, not the `l3` codename; source is organized as
+`game/src/{runtime,domain,world,projection,preview,bot,renderer,ui}`.
+
+**D2 — ESM/CommonJS boundary (marker-only).** `game/package.json` carries only
+`{"type":"module"}`; dependency installation, the lockfile, and orchestration
+scripts stay single-owned by the root package. React, Vite, TypeScript, and
+Playwright install as root devDependencies in one root `node_modules`; tooling
+under `game/` resolves them by Node's upward lookup. No npm workspace and no
+second lockfile.
+
+**D3 — Command surface and ownership.** Seven new `:game` commands form the
+supported developer path — `dev:game`, `typecheck:game`, `build:runtime:game`,
+`test:game`, `test:browser:game`, `build:game`, and `verify:game`; the root
+`npm test` (legacy CommonJS regression) and `build:hosting` (single `dist`
+assembler) stay root-owned and unchanged. Runners: `node:test` for
+runtime/contract tests and `@playwright/test` for the browser lane; no second
+unit-test framework is introduced. Ownership boundary: gate 05 owns command
+existence, names, and structure, while gate 10 owns each acceptance command's
+pass/fail threshold. Safety valve: an acceptance command fails `pending` until
+its threshold is filled, so a deferred gate cannot masquerade as green. The full
+surface is specified now; implementation is deferred to the build tickets.
+
+**D5 — audit-lint re-aim.** (1) Widen the scanner to a recursive scan over both
+`js/` and `game/src` (existing roots only) including `.ts`, so a graduated term's
+`codeRefs` resolve in the new tree. (2) A term's `codeRefs` move to the new tree
+when its behavior is re-implemented and parity-verified there; until then they
+stay on `js/`. (3) `code-contract` stays blocking — the fix is the scanner's
+field of view, not its strictness. (4) Add `game/` to write-lint's `GOVERNED`
+regex so ports receive code-contract feedback. Execution is owned by the first
+port build ticket; gate 05 seals the contract and the SYNC-DEBT row records it.
+
+**D6 — exact-artifact parity.** The Runtime is a single emitted ESM graph:
+`build:runtime:game` emits it once, and both `test:game` (Node dynamic import)
+and `test:browser:game` (Playwright) load that same emitted artifact, with no
+per-host double transpile. `verify:game` includes a both-hosts parity test (same
+deterministic inputs yield the same events and final state). The parity pass
+threshold (bit-exact versus epsilon) is gate 10's to own. Noted cost: `dev:game`
+runs Vite HMR on source while acceptance runs the emitted artifact, and
+acceptance is always judged on the emitted artifact.
+
+Rejected alternatives:
+
+- **Root-scoped Vite with an `.mjs`/bundle-only runtime (option B).** Output
+  extension and bundling policy would leak into every runtime test path, and a
+  bundle makes contract tests less direct than an emitted module graph.
+- **Convert the root package to ESM (option C).** Creates unrelated conversion
+  work and removes the stable legacy test baseline during the strangler period;
+  the completed toolchain research found it unnecessary.
+- **A second unit-test framework (Vitest/Jest) because React is present.** No net
+  benefit while gate 02 keeps the view thin and the logic pure; revisit only if
+  the React view later grows heavy interaction state.
+
+Scope note: the public-route question (Vite `base`, SPA mount, the `/game` route
+from firebase `cleanUrls`) is out of scope — ADR 0041 makes the game
+non-web-routed in production. This gate seals build topology only; no domain term
+is sealed here, and term registration remains gate 12's.
+
+Decision source: user grill 2026-07-18 (D1 "A로 가자"; D2 "(i)로 가자"; D3 "응, 그
+경계로 가자" plus full-surface and runner confirmation; D5 "OK"; D6 "D6 확정할게").
 
 ## Decision constraints
 

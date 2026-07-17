@@ -283,6 +283,19 @@ target architecture.
   bounded window. Two permanent playable implementations are not an accepted end
   state. Resolved by
   [issue 01](issues/01-choose-migration-topology.md).
+- **Build, module, and test topology:** New canonical L3 source lives in a nested
+  `game/` ESM/TypeScript tree beside the CommonJS root, built beside rather than
+  converted in place; the root keeps one dependency tree and lockfile while
+  `game/package.json` is a `{"type":"module"}` marker. The supported developer
+  path is seven `:game` commands (dev, typecheck, build:runtime, test,
+  test:browser, build, verify) plus the unchanged root `npm test` and
+  `build:hosting`; `node:test` covers runtime/contract tests and
+  `@playwright/test` the browser lane, with no second unit-test framework. Gate
+  05 owns command existence and names; acceptance thresholds are owned by the
+  verification gate (issue 10), and acceptance commands fail `pending` until a
+  threshold is filled. The Runtime is emitted once as an ESM graph that both
+  browser and Node load for exact-artifact parity. Resolved by
+  [issue 05](issues/05-choose-build-and-test-topology.md).
 - **One semantic test surface:** The product behavior under test is the command
   cycle from viewer-visible state and player intent through authoritative
   resolution to events and a new viewer-visible state. Headless and browser
@@ -515,7 +528,11 @@ Implementation Decisions above.
   동원 강도 are derived bands; seven non-leak invariants bind every projection.
   Resolved 2026-07-17.
 - [Verify Vite, TypeScript, ESM, and Legacy CommonJS Coexistence](issues/04-research-toolchain-coexistence.md)
-  — resolved research evidence, not an implementation decision.
+  — resolved research evidence, not an implementation decision.- [Choose the Build, Module, and Test Topology](issues/05-choose-build-and-test-topology.md)
+  — nested `game/` ESM/TypeScript island beside the CommonJS root; one
+  root-owned lockfile; a seven-command `:game` developer surface with gate 05
+  owning names and gate 10 owning thresholds; `node:test` + `@playwright/test`
+  runners; single-emit Runtime parity. Resolved 2026-07-18.
 
 ### Ticket decomposition status
 
@@ -548,27 +565,26 @@ The following named tickets remain decision or prototype gates. Their answers
 must be recorded in their own ticket and reflected into this spec before
 implementation tickets depending on them become `ready-for-agent`.
 
-1. [Choose the Build, Module, and Test Topology](issues/05-choose-build-and-test-topology.md)
-   — package and ESM/CommonJS coexistence, commands, artifact ownership, and
-   supported developer workflow, informed by the resolved toolchain research.
-2. [Define the Authored World Input Contract](issues/06-define-authored-world-input.md)
+1. [Define the Authored World Input Contract](issues/06-define-authored-world-input.md)
    — canonical data shape, generation/load timing, stable identifiers,
    validation, and production-versus-evidence disposition of current artifacts.
-3. [Make Uncertainty Legible Without Leaking Truth](issues/07-prototype-map-fog-presentation.md)
+2. [Make Uncertainty Legible Without Leaking Truth](issues/07-prototype-map-fog-presentation.md)
    — live user-evaluated presentation and the initial renderer decision.
-4. [Define the First Playable Vertical Slice](issues/08-define-first-playable-vertical-slice.md)
+3. [Define the First Playable Vertical Slice](issues/08-define-first-playable-vertical-slice.md)
    — exact match mode, player journey, commands, bot flow, feedback, and end
    point that prove the seam is real.
-5. [Define the Incremental Migration and Adapter Ladder](issues/09-define-incremental-migration-ladder.md)
+4. [Define the Incremental Migration and Adapter Ladder](issues/09-define-incremental-migration-ladder.md)
    — port order, allowed adapters, parity evidence, and adapter retirement.
-6. [Define the L3 Verification and Acceptance Gates](issues/10-define-l3-verification-gates.md)
+5. [Define the L3 Verification and Acceptance Gates](issues/10-define-l3-verification-gates.md)
    — executable evidence, human comprehension checks, and completion criteria.
-7. [Define Cutover and Legacy Retirement](issues/11-define-cutover-and-retirement.md)
+6. [Define Cutover and Legacy Retirement](issues/11-define-cutover-and-retirement.md)
    — route promotion, hosting rollback, and deletion/archive evidence.
-8. [Partition the Implementation-Ready Spec Handoff](issues/12-partition-spec-handoff.md)
+7. [Partition the Implementation-Ready Spec Handoff](issues/12-partition-spec-handoff.md)
    — Production spec partition after the decisions above and the planned
    documentation/terminology audit, including whether any resolved Wayfinder
    decision promotes to an ADR.
+
+(Gate 05 resolved 2026-07-18 — see § Resolved Wayfinder decisions.)
 
 ### Documentation lifecycle
 
