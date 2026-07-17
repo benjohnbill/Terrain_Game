@@ -159,6 +159,60 @@ test('ledgerCurrency ignores commits that predate the row registration', () => {
   assert.deepEqual(lint.checkLedgerCurrency(ledger, commits), []);
 });
 
+// A token shared by several row titles identifies none of them, so a commit
+// carrying only that shared word must not flag any of them (the "wayfinder"
+// permanent-false-positive that held lint:docs red until 2026-07-17).
+test('ledgerCurrency does not fire on a token shared across rows', () => {
+  const ledger = [
+    '- [ ] **Wayfinder 02 authority undecided** (registered 2026-07-16): deferred.',
+    '- [ ] **Wayfinder 03 fog promotion undecided** (registered 2026-07-17): deferred.',
+    ''
+  ].join('\n');
+  const commits = [{ date: '2026-07-18', subject: 'docs(l3): re-cut the wayfinder tracker' }];
+  assert.deepEqual(lint.checkLedgerCurrency(ledger, commits), []);
+});
+
+// The distinctive token still fires even when it sits beside shared ones.
+test('ledgerCurrency fires on a distinctive token among shared siblings', () => {
+  const ledger = [
+    '- [ ] **Wayfinder 02 authority undecided** (registered 2026-07-16): deferred.',
+    '- [ ] **Wayfinder 03 treasury classification** (registered 2026-07-17): deferred.',
+    ''
+  ].join('\n');
+  const commits = [{ date: '2026-07-18', subject: 'docs(l3): seal treasury classification' }];
+  const findings = lint.checkLedgerCurrency(ledger, commits);
+  assert.equal(findings.length, 1);
+  assert.match(findings[0].row, /treasury classification/);
+});
+
+// Rows wrap: the registration date may land on a continuation line, not the
+// header. The block parser must still see the row (pre-fix it saw only rows
+// whose date fit on the header line).
+test('ledgerCurrency reads a row whose registration date wraps to a later line', () => {
+  const ledger = [
+    '- [ ] **Palisade cadence owed** (found 2026-07-01 during the',
+    '  cadence pass; registered 2026-07-09): numbers deferred to the magnitude pass.',
+    ''
+  ].join('\n');
+  const commits = [{ date: '2026-07-12', subject: 'feat: palisade cadence wired' }];
+  const findings = lint.checkLedgerCurrency(ledger, commits);
+  assert.equal(findings.length, 1);
+  assert.match(findings[0].row, /Palisade cadence/);
+});
+
+// A guessing check ("possibly paid … verify or dismiss") must not gate: only
+// blocking findings set the non-zero exit. This is the split that was letting a
+// permanent ledger false positive hold lint:docs red until 2026-07-17.
+test('tally: ledgerCurrency findings are advisory, not blocking', () => {
+  const t = lint.tally({ ledgerCurrency: [{ kind: 'ledger-possibly-paid' }] });
+  assert.deepEqual(t, { blocking: 0, advisory: 1 });
+});
+
+test('tally: a definite check (codeContract) is blocking', () => {
+  const t = lint.tally({ codeContract: [{ kind: 'code-contract-violation' }] });
+  assert.equal(t.blocking, 1);
+});
+
 // ---------------------------------------------------------------- check 6
 // Freshness: QUICKREF "Last regenerated" must not predate the newest seal
 // date on any glossary surface.

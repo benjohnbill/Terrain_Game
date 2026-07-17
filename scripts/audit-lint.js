@@ -431,19 +431,29 @@ function runAll(root) {
 // legislates. Classifying the remaining seven is `09-lint-hardening.md`'s job.
 const ADVISORY = new Set(['ledgerCurrency']);
 
-if (require.main === module) {
-  const results = runAll(process.cwd());
+// Split a results object into blocking vs advisory tallies. The exit status keys
+// off `blocking` only, so this decision — not the console output around it — is
+// what gates lint:docs, and it is exported so a test can pin it.
+function tally(results) {
   let blocking = 0;
   let advisory = 0;
   for (const [check, findings] of Object.entries(results)) {
     if (!findings.length) continue;
     if (ADVISORY.has(check)) advisory += findings.length;
     else blocking += findings.length;
+  }
+  return { blocking, advisory };
+}
+
+if (require.main === module) {
+  const results = runAll(process.cwd());
+  for (const [check, findings] of Object.entries(results)) {
+    if (!findings.length) continue;
     console.log(`\n[${check}] ${findings.length} finding(s)${ADVISORY.has(check) ? ' — advisory' : ''}`);
     for (const f of findings) console.log('  -', JSON.stringify(f));
   }
-  const total = blocking + advisory;
-  console.log(total === 0
+  const { blocking, advisory } = tally(results);
+  console.log(blocking + advisory === 0
     ? '\naudit-lint: clean (8 checks, 0 findings)'
     : `\naudit-lint: ${blocking} blocking, ${advisory} advisory — reports, never legislation; verify before acting.`);
   process.exitCode = blocking === 0 ? 0 : 1;
@@ -454,5 +464,6 @@ module.exports = {
   checkNumericRestatement, checkAdrStampDuty,
   checkLedgerCurrency, checkFreshness, checkBaselineSelf,
   parseSurfaceHeaders, splitDomainMapRows, runAll,
-  normalizeName, nameSet, buildNameIndex, lookup
+  normalizeName, nameSet, buildNameIndex, lookup,
+  tally, ADVISORY
 };
