@@ -34,6 +34,21 @@ per-gate audits (05–12) compare against ONE source instead of each re-deriving
 Source: `.scratch/l3-playable-seam/issues/01-choose-migration-topology.md`.
 Decision source: user agreement 2026-07-16 ("응, 나도 동의.").
 
+> **AMENDED 2026-07-17 by ADR 0041 — read before using any C01 row.** The
+> marketing landing and the game runtime are isolated environments: Firebase
+> hosts the landing only, the L3 game does not ship as a statically-hosted web
+> page, and its destination is a native shell. `js/`/`tests/`/the L2 harnesses
+> are a **reference archive**, not a migration source. Effect on the rows below:
+> **C01.5 VOID** (L3 never assumes the public `game.html` role; that role belongs
+> to a separate environment, and HEAD has no `game.html` — the route is `/game`).
+> **C01.6 VOID as stated** (static-artifact rollback is the wrong axis).
+> **C01.2 / C01.4 RE-SCOPE** (the comparator holds no sealed war model — the
+> route loads none of the eight slice-2 modules — and 38 unseeded
+> `Math.random()` sites make equivalent-seed parity unreachable without
+> modifying the preserved artifact). **C01.7 CORRECTED** (retirement is not a
+> data-loss operation: `game.html` is byte-for-byte `HEAD:index.html`).
+> **C01.1 / C01.3 stand.** See `audit/SYNTHESIS.md` Finding A and ADR 0041.
+
 | # | Constraint | Citation | Seal status | Cascade hint |
 |---|---|---|---|---|
 | C01.1 | Use a parallel-strangler topology: build the React+Vite+TS/TSX L3 app **beside** `game.html`, not converted in place. | 01:16–22 | resolved-ticket 2026-07-16 | **05** (two entry points must coexist in the build), **09** (strangler is the migration shape), **11** (defines what cutover promotes). |

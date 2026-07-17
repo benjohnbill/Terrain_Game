@@ -11,6 +11,11 @@ JavaScript game runtime and independent renderer axis remain binding.
 Amended by: ADR 0040 (2026-07-16) — the portability obligation is preserved,
 but its source-language wording changes: canonical L3 logic is authored in
 framework-free TypeScript and emitted as ESM JavaScript for browser and Node.
+Amended by: ADR 0041 (2026-07-17) — the staged-evolution framing is unchanged,
+but the L3 build's deployment target is stated rather than left to a Stage 2
+trigger: the game does not ship as a statically-hosted web page, Firebase
+Hosting is the marketing landing surface only, and the reference `js/` tree,
+`tests/`, and the L2 harnesses are an archive rather than the build source.
 Amends: ADR 0016 (2026-06-29) — its Layer 2 ("framework") is split into two
 independent axes, UI-shell framework and map renderer; the L3 playtest
 build-out is forecast as the likely Stage 1 trigger point; and

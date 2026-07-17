@@ -208,9 +208,13 @@ target architecture.
 47. As a deployer, I want one process to own assembly of the final static
     artifact, so that Vite output and retained legacy assets cannot race while
     cleaning or copying the deployment directory.
-48. As a deployer, I want the promoted L3 route to remain compatible with static
-    hosting, so that the stack migration does not introduce an unnecessary
-    server requirement.
+48. ~~As a deployer, I want the promoted L3 route to remain compatible with
+    static hosting, so that the stack migration does not introduce an
+    unnecessary server requirement.~~ **VOID 2026-07-17 (ADR 0041)** — the game
+    does not ship as a statically-hosted web page; static hosting is the
+    marketing landing's concern, a separate environment. The "no unnecessary
+    server requirement" intent survives on its own: the game runtime stays
+    client-side and self-contained, which a native shell also requires.
 49. As a player, I want position to change through operation outcomes and route
     access rather than a standalone move command, so that the playable controls
     preserve the accepted Position as product rule.
@@ -344,9 +348,22 @@ target architecture.
   replays in ~1.17 ms. This keeps event and internal-state schemas unfrozen while
   the war model is still being tuned. Owned by
   [issue 02](issues/02-define-game-runtime-authority.md).
-- **Static hosting:** The completed build remains a client-side static web
-  application. One build stage owns final artifact cleaning and assembly.
-  Exact package boundaries and commands remain a Wayfinder decision.
+- **Environment isolation (ADR 0041, 2026-07-17 — supersedes this spec's earlier
+  "Static hosting" decision):** the marketing landing and the game runtime are
+  isolated environments. Firebase Hosting serves the landing only; the L3 game
+  does **not** ship as a statically-hosted web page and its destination is a
+  native shell (Electron/Tauri choice deferred, ADR 0016 Stage 2). A browser is
+  a development and playtest host, not the distribution target. `js/`, `tests/`,
+  and the L2 harnesses are a **reference archive**, not the build source:
+  accepted behavior reaches L3 by re-implementation from its authoritative
+  feature contract, verified against the archive. Canonical L3 source occupies
+  its own directory tree; the exact boundary, package layout, and commands remain
+  Wayfinder gate 05's decision, now free of static-hosting constraints. One build
+  stage still owns final artifact cleaning and assembly.
+  **Void as written:** "the completed build remains a client-side static web
+  application" and user story 48 ("the promoted L3 route to remain compatible
+  with static hosting"). The Out-of-Scope line "Desktop or native packaging" is
+  now the *deferred implementation*, not a rejected direction.
 - **No renderer escalation by ambition alone:** Use the existing web-rendering
   class until the representative map/Fog prototype and measured behavior show
   a need for another renderer. PixiJS is a possible future adapter, not part of

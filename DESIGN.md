@@ -50,6 +50,18 @@ engines remain reserved for a deliberate genre change toward real-time,
 animation-heavy, or physics-heavy play. See ADR 0040, which amends the source-
 language portions of ADRs 0016, 0028, and 0039.
 
+The marketing landing page and the game runtime are **two isolated
+environments**. Firebase Hosting serves the landing surface only; the L3 game
+does not ship as a statically-hosted web page, and its intended destination is a
+native shell (the Electron-vs-Tauri choice stays deferred). A browser is a
+development and playtest host, not the distribution target. Consequently the
+existing `js/` tree, `tests/`, and the L2 harnesses are a **reference archive**
+rather than the L3 build source: accepted behavior reaches L3 by re-implementation
+from its authoritative feature contract, verified against the archive, and
+canonical L3 source occupies its own directory tree. See ADR 0041, which amends
+the deployment and source-boundary portions of ADRs 0016 and 0028; the exact
+directory boundary is an open Wayfinder decision.
+
 ## Design Direction
 
 The next design step is a terrain-first regional system. Political control

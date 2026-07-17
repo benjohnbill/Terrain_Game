@@ -139,9 +139,20 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   and is the natural carrier. Evidence:
   `.scratch/l3-playable-seam/audit/SYNTHESIS.md` E2.
 
-- [ ] **Wayfinder 01 amendment owed — three constraints assert facts that are
-  not true** (found 2026-07-17 by the gate audit; three independent auditors
-  converged on it). Gate 01 (resolved 2026-07-16, user-sealed) chose a
+- [x] **Wayfinder 01 amendment — PAID 2026-07-17** (registered and paid the same
+  day; ADR 0041 landed the correction the audit had only diagnosed). The user's
+  environment-isolation statement supplied the missing frame: Firebase hosts the
+  marketing landing only, the L3 game does not ship as a statically-hosted web
+  page, its destination is a native shell, and `js/`/`tests/`/the L2 harnesses
+  are a reference archive rather than a migration source. Paid as: **C01.5 and
+  C01.6 VOID**, **C01.2/C01.4 RE-SCOPED**, **C01.7 CORRECTED** (retirement is
+  not a data-loss operation — `game.html` is byte-for-byte `HEAD:index.html`);
+  C01.1/C01.3 stand. Stamped in the gate-01 ticket, `ledger.md` § Gate 01, and
+  `map.md` § Gate re-cut; ADRs 0016 and 0028 stamped; ADR index updated;
+  `AGENTS.md` § Verification corrected and § Environments added; `DESIGN.md`
+  given a summary + pointer. Original diagnosis below, kept for the record.
+
+  Gate 01 (resolved 2026-07-16, user-sealed) chose a
   parallel-strangler topology resting on the legacy route as a bounded
   comparator. **The topology is not in question; its factual premises are.**
   (a) **C01.2/C01.4** — `game.html` loads 17 classic scripts and **none of the
@@ -157,10 +168,42 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   filename. (c) **C01.7** — retirement is **not** a data-loss operation: the
   gate-11 auditor inferred it was because `game.html` was never committed, but
   the file is **byte-for-byte `HEAD:index.html`**, so its content is in history.
-  That inference was refuted only when this session went to act on it. Pay by
-  amending the ticket (Working-layer) when Wayfinder 05/11 next touch the
-  comparator, or fold into the gate-12 governance batch. Evidence:
-  `.scratch/l3-playable-seam/audit/SYNTHESIS.md` Finding A + its CORRECTION.
+  That inference was refuted only when this session went to act on it. Evidence:
+  `.scratch/l3-playable-seam/audit/SYNTHESIS.md` Finding A + its CORRECTION;
+  authority: `docs/adr/0041-environment-isolation-and-reference-archive.md`.
+
+- [ ] **Term code contracts anchor to what is now a reference archive**
+  (registered 2026-07-17; caused by ADR 0041, not merely noticed). ADR 0041 names
+  `js/` a reference archive and puts canonical L3 source in its own tree. But all
+  **27 sealed terms carrying a code contract** point their `codeRefs` into
+  `js/*.js` (`docs/audits/term-inventory.json`), and `scripts/audit-lint.js`
+  builds its source map from a **flat, non-recursive** `readdirSync(root/js)`
+  filtered to `.js` (:347-350), resolving only `jsFiles[ref] || jsFiles['js/' +
+  ref] || ''` (`checkCodeContract`, :130-148). Two consequences, both certain:
+  (a) every such contract now cites archived code as if it were the live
+  implementation — the Vocabulary Law's code-identifier link points at the wrong
+  tree the moment a term's behavior graduates; (b) the first module re-implemented
+  in the new space reports `code-contract-violation` and **`npm run lint:docs`
+  fails** — a session-close ritual duty (documentation-law duty 7) *and* the
+  `write-lint.js` PostToolUse hook. This is a **designed** fracture with a known
+  trigger date, not a latent bug: it fires on the first L3 vertical slice. Pay
+  when gate 05 fixes the directory boundary — the lint must learn the new tree
+  (recursive scan + `.ts`), and each term's `codeRefs` re-point as its behavior
+  graduates. Do not pre-emptively re-point: the target path does not exist yet.
+  Evidence: `.scratch/l3-playable-seam/audit/SYNTHESIS.md` E3.
+
+- [ ] **`docs/DISPLAY-DEBT.md` may owe rows to the gate-07 prototype**
+  (noticed 2026-07-17 by the gate audit; ritual duty 6 — divergence noticed, not
+  caused). The gate-07 auditor found DISPLAY-DEBT carries 12 open rows that
+  explicitly defer their design "to B (the playable slice)" — i.e. to Wayfinder
+  gate 07 — including the mobilization meter (동원 강도 zones), the
+  scar/mobilization fog intel view, the expansion break-even card, and the
+  reachability-filter display. The gate-07 ticket cites DISPLAY-DEBT nowhere.
+  Separately, the sealed knowledge matrix's **derived-band grade** (판세 ·
+  동원 강도 · civilian register) has **no encoding proposal anywhere** in the
+  corpus. Pay when gate 07 opens: reconcile its prototype scope against the
+  DISPLAY-DEBT rows already pointed at it. Evidence:
+  `.scratch/l3-playable-seam/audit/SYNTHESIS.md` § re-cut, gate 07.
 
 - [x] **war-model-build INDEX refresh — PAID 2026-07-16** (slice-2 tickets
   07/10/11). The front door now reads tickets 01–11 all landed, points at both

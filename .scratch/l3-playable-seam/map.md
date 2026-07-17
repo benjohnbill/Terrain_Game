@@ -87,9 +87,12 @@ it.**
   **verdict**? (`docs/features/match-arc/TEST-LADDER.md` — the source of the
   word "L3" — defines that rung as fun/tension/skill expression; neither ticket
   nor spec cites it.)
-- **11** — one scalar (is the rollback window one deployed acceptance cycle, or
-  zero?) + the archive-vs-delete policy. Its option C is already foreclosed by
-  C01.7.
+- **11** — **re-framed 2026-07-17 by ADR 0041.** Route promotion and hosting
+  rollback were most of its content and are now void: the game never occupies
+  the public landing route, and static-artifact rollback is the landing page's
+  concern. What survives is the archive-freeze question, which ADR 0041 §2
+  largely answers (the archive is not deleted; it stops being load-bearing).
+  Residue: whether anything is retired at all, and on what evidence.
 
 **Reduced:**
 
@@ -110,18 +113,43 @@ it.**
   which reads `Status: BLOCKED — the gate itself is unsound` / `⛔ DO NOT
   EXECUTE`.
 
-**Amendment owed to resolved gate 01** (not a reversal — its constraints assert
-facts that are not true): C01.2/C01.4 (the comparator holds no sealed war model
-and cannot be seeded — 38 unseeded `Math.random()` sites), C01.5 (written
-against the working tree: `game.html` is not in HEAD, and firebase `cleanUrls`
-makes the route `/game`), C01.7 (retirement is **not** a data-loss operation —
-`game.html` is byte-identical to `HEAD:index.html`).
+**Amendment to resolved gate 01 — PAID 2026-07-17 by ADR 0041.** Its constraints
+asserted facts that are not true. C01.5 and C01.6 are **void**, C01.2/C01.4 are
+**re-scoped**, C01.7 is **corrected** (retirement is not a data-loss operation);
+C01.1/C01.3 stand. The topology's shape survives — build beside, do not convert
+in place — but "strangler" is the wrong name for it: a strangler assumes the old
+system's traffic, and a reference archive has no traffic to assume. Stamped in
+the ticket, the ledger, and this map.
+
+**Environment isolation (ADR 0041, user-stated 2026-07-17) — reshapes several
+gates.** Firebase hosts the **marketing landing only**; the L3 game does not
+ship as a statically-hosted web page and its destination is a **native shell**;
+`js/`/`tests/`/the L2 harnesses are a **reference archive**, not a build source
+or a parity comparator; canonical L3 source occupies **its own directory tree**
+(boundary = gate 05's call). This was already half-recorded — ADR 0016 § Decision
+has always staged the native-shell wrap — and the Wayfinder simply never cited
+it. Likely proximate cause: `AGENTS.md` § Verification opened "This is currently
+a static HTML/CSS/JavaScript app," an auto-loaded present-tense fact read as an
+architecture statement. Now corrected there.
 
 **Order:** 05 stays next — genuinely open, unblocked, and the war-termination
-answer changes nothing about it. Amend its scope per the synthesis (the
-audit-lint landmine, the dropped route/mount + Vite `base` question, the
-phantom lockfile). Schedule the war-termination pass in parallel or immediately
-after; 08 → 09/10/11/12 all sit behind it.
+answer changes nothing about it. Its scope is amended twice over:
+
+- **Freed** by ADR 0041 — the public-route question (Vite `base`, SPA mount,
+  the `/game` route from firebase `cleanUrls`) is **moot for the game**. The
+  audit's criticism that gate 05 "dropped the route/mount question" is
+  **withdrawn**: correctly out of scope.
+- **Sharpened** — the audit-lint landmine is now a *designed* fracture, not an
+  accident: all 27 sealed terms with a code contract point into `js/*.js`, which
+  ADR 0041 names an archive, and `audit-lint.js`'s flat non-recursive `js/` scan
+  cannot see the new tree. Registered in `docs/SYNC-DEBT.md`.
+- **Still standing** — the phantom lockfile (there is no lockfile, no
+  `node_modules`, zero dependencies; React+Vite+TS would be the project's first
+  dependency tree) and the ownership collision with gate 10 over who names
+  commands.
+
+Schedule the war-termination pass in parallel or immediately after; 08 →
+09/10/11/12 all sit behind it.
 
 ## Decisions so far
 

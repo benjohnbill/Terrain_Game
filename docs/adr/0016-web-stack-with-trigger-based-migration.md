@@ -12,6 +12,13 @@ isomorphism becomes a binding obligation (see § Decision).
 Amended by: ADR 0039 (2026-07-16) — the L3 build-out fires Stage 1: React is
 selected for the UI shell, Vite for build tooling, and the game runtime is
 clarified as framework-free modern ESM JavaScript shared by browser and Node.
+Amended by: ADR 0041 (2026-07-17) — Stage 2's native shell is promoted from a
+deferred trigger to the L3 build's declared destination, and this ADR's "static
+HTML/CSS/JavaScript browser application" context is scoped to the reference
+prototype: the L3 game does not ship as a statically-hosted web page, Firebase
+Hosting is the marketing landing surface only, and `js/`/`tests/`/the L2
+harnesses are a reference archive rather than the build source. The shell choice
+(Tauri vs Electron) stays deferred to its own trigger, as this ADR reserves.
 Amended by: ADR 0040 (2026-07-16) — JavaScript remains the browser/Node
 execution runtime, while all new canonical L3 source uses TypeScript/TSX and
 legacy JavaScript is ported incrementally behind parity gates.

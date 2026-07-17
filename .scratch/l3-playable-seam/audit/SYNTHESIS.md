@@ -6,8 +6,57 @@
 01/02/03/04) → eight independent read-only per-gate auditors (05–12) → this
 synthesis. Auditors reported inline (they were read-only and could not write
 their own files); their findings are condensed here.
-**Status:** for the user's grooming. Nothing here is sealed. Every re-cut
-proposal is a recommendation awaiting the user's decision.
+**Status:** re-cut accepted by the user 2026-07-17 and applied to the tracker
+(`../map.md` § Gate re-cut). Findings stand as evidence except where marked.
+
+---
+
+## SUPERSEDED IN PART — read this first (2026-07-17, ADR 0041)
+
+After this audit was written and committed, the user corrected a premise **this
+document shares with the gates it audits**: Firebase Hosting serves the
+**marketing landing page only**. The L3 game does not ship as a statically-hosted
+web page; its destination is a **native shell** (Electron/Tauri, deferred), with
+the landing page later carrying download integration. The environments are to be
+kept completely isolated. And `js/`, `tests/`, and the L2 harnesses are a
+**reference archive** — not a build source, and not a parity comparator.
+
+Recorded as `docs/adr/0041-environment-isolation-and-reference-archive.md`,
+which amends ADRs 0016 and 0028.
+
+**What that changes here:**
+
+- **Finding A stands and gets its explanation.** The "inversion" this audit
+  found — the population *with* a comparator runs superseded behavior; the
+  population *with* accepted behavior has no comparator — was not an anomaly to
+  fix. It is what a **reference archive** looks like when it is mistaken for a
+  migration source. Gate 01's C01.5/C01.6 are now **void**, C01.2/C01.4
+  **re-scoped**, C01.7 **corrected**. The topology's shape survives; the name
+  does not (a strangler assumes the old system's traffic; an archive has none).
+- **The gate-05 criticism is WITHDRAWN.** This document faulted gate 05 for
+  dropping the route/mount + Vite `base` question. That was wrong — the game is
+  not web-routed in production, so it was correctly out of scope. Gate 05's
+  option space is *freed*, not incomplete.
+- **Gate 11 is re-framed, not just demoted.** Route promotion and hosting
+  rollback were most of its content and are void.
+- **E3 sharpens from landmine to designed fracture.** `js/` is now *declared* an
+  archive, so the 27 sealed terms' code contracts point at archived code by
+  design, and `audit-lint.js`'s flat `js/`-only scan cannot see the new tree.
+  Registered in `docs/SYNC-DEBT.md`.
+- **Everything else stands** — Finding B (war/match termination), Finding C
+  (gate 12), Finding D (the fog GLOSSARY contradiction), and E1/E2/E4–E9.
+
+**The method lesson is the sharpest thing in this document.** ADR 0016 § Decision
+has *always* read: "Stage 2 (trigger: a decision to publish a native/desktop
+build): wrap the existing web build with a native shell (e.g., Tauri or
+Electron)." The gates never cited it. Neither did this audit — eight independent
+auditors and a synthesis all inherited "static web app" without once asking where
+the game ships. The likely carrier: `AGENTS.md` § Verification opened *"This is
+currently a static HTML/CSS/JavaScript app"* — an auto-loaded, present-tense
+statement about the **prototype**, read as an architecture statement about the
+**project**. A sweep that checks documents against documents cannot catch a
+premise that no document contradicts and every document assumes. Only the user
+could. (Now corrected at that surface.)
 
 ---
 
