@@ -26,8 +26,26 @@ unresolved.
 npm run lint:docs
 ```
 
-Clean (`0 findings`) → done; this satisfies ritual duty 7 on its own.
-Findings → Layer 1.
+Read the last line, not the finding count. It reports two tallies, and
+they are not the same thing:
+
+- **blocking** — a check asserting a defect it can prove. Non-zero sets
+  the exit status, and is what the `write-lint.js` PostToolUse hook
+  surfaces on a governed edit. Take these to Layer 1.
+- **advisory** — a check that guesses or reminds (`ledgerCurrency`
+  today). These print, never gate, and are **expected to sit non-zero**:
+  a fuzzy commit match has no way to be marked dismissed, so driving the
+  advisory tally to zero is not a goal and not a definition of done.
+
+`0 blocking` → duty 7 is satisfied on its own, whatever the advisory
+tally says. `clean (8 checks, 0 findings)` → nothing outstanding at all.
+Any blocking finding → Layer 1.
+
+Which checks sit in which tally is a decided question, not a default —
+`ADVISORY` in `scripts/audit-lint.js` carries the rule and
+`docs/SYNC-DEBT.md` the per-check rationale. Moving a check between
+tallies is a change to what the audit enforces: propose it, don't do it
+to get a run green.
 
 ### Layer 1 — targeted judgment, or a periodic full re-harvest
 
@@ -36,7 +54,11 @@ Findings → Layer 1.
   `code-contract-violation`, `numeric-restatement`, etc.). Open the
   flagged file/line and decide: fix the doc, correct the inventory row,
   or record it as an accepted/explained false positive — never leave an
-  unexplained red finding.
+  unexplained **blocking** finding. An advisory finding is a prompt to
+  verify, not a red gate: confirm it (act, e.g. mark a paid ledger row
+  `[x]`) or judge it a false match and leave it standing. Leaving a
+  verified-spurious advisory in place is the correct outcome, not a
+  loose end.
 - **Cross-check discipline (the run-#2 lesson)**: before dropping ANY
   term-inventory row on a report's recommendation, grep the term across
   ALL definition surfaces `checkHeaderDiff` scans (`DOMAIN_MAP.md` +
@@ -67,8 +89,9 @@ Findings → Layer 1.
 
 ## After any edit
 
-- `npm run lint:docs` must end clean, or every remaining finding must be
-  a verified, explained false positive.
+- `npm run lint:docs` must end at `0 blocking`, or every remaining
+  blocking finding must be a verified, explained false positive. A
+  standing advisory tally does not hold the batch.
 - New/renamed/re-statused terms: patch the inventory row in the same
   batch (ritual duty 7) — index fields only, never definition text
   (single-definition rule).

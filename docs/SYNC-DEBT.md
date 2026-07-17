@@ -199,6 +199,10 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   stopped linting the law; regex and `tests/hooks.test.js` updated, old path kept
   matched for stray copies. **Not verifiable in-session** — the auto-load happens
   at session start, so the saving shows in the *next* session's context.
+  **Verified single-load in a fresh session 2026-07-18:** the full law text
+  (heading `# Documentation & Terminology Law — Terrain Game` + Layer-taxonomy
+  table) appears exactly **once** in loaded project context — inside the AGENTS.md
+  block only — and `.claude/` carries `skills/` with no `rules/` dir. Fix confirmed.
   Remaining sliver: `CLAUDE.md`'s `## Agent skills` section still duplicates
   AGENTS.md's authoritative `## Issue tracker`; slimmed to a pointer + a guard
   comment in the same batch.
@@ -253,15 +257,53 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
      contradiction is resolved in the reminder's favour. `lint:docs` was also
      reordered to `sync-docs-law --check && audit-lint` so the contract-grade drift
      check runs before the report-grade audit rather than behind it.
-  **Left for `09-lint-hardening.md`:** classifying the *other seven* checks as
-  blocking vs advisory (only `ledgerCurrency` was decided here, on its own words);
-  giving the ledger a dismissal mechanism; and `commits.find()` returning the
-  **first** match, which can surface a coincidental commit while hiding a real one.
+  **Left for `09-lint-hardening.md`:** giving the ledger a dismissal mechanism;
+  and `commits.find()` returning the **first** match, which can surface a
+  coincidental commit while hiding a real one.
   **Known residue, by design:** with the parser unblinded the check now reports 4
-  advisory candidates. Triaged 2026-07-17 — three are coincidental single-word
-  matches ("design", "evidence", "naming"), one (`battery.js growth probes` vs a
-  battery metric commit) is plausible and left for its owner. Advisory findings are
-  expected to be non-zero; that is the check working as a reminder.
+  advisory candidates. Triaged 2026-07-17 (below, in the classification note) —
+  **all four are coincidental single-word matches** and none is paid. Advisory
+  findings are expected to be non-zero; that is the check working as a reminder.
+
+- [x] **The other seven audit-lint checks classified blocking vs advisory —
+  DONE 2026-07-18** (the tail of the drift-guard fix above left only
+  `ledgerCurrency` decided; this is the deliberate pass over the rest). Rule
+  applied, per the `ADVISORY` comment in `scripts/audit-lint.js`: a check gates
+  only if it (1) **asserts** a defect rather than guessing, and (2) has a
+  **reachable green state** — doing the right thing clears it. The second rule is
+  the one `ledgerCurrency` broke (no way to dismiss a false match), not the first.
+  Verdicts:
+  - `headerDiff`, `statusMarkers`, `numericRestatement`, `baselineSelf`,
+    `adrStampDuty` — **blocking.** Each names a definite, verifiable, clearable
+    defect (header divergence, marker/status disagreement, a dial restated off its
+    owning doc, a self-inconsistent baseline, an unstamped ADR amendment).
+  - `freshness` — **blocking, decided on its own merits** (the handoff flagged it
+    as a possible reminder). Its date scoping is loose (`09-lint-hardening.md`
+    item 3: any glossary date counts as a seal), so it *can* fire on an incidental
+    date — but its green state is reachable and *is* the duty it guards
+    (regenerate QUICKREF + stamp the date = ritual duty 4), and the law names this
+    check as that duty's freshness target. A false positive cleared by performing
+    the duty is a blunt reminder, not a trap. Measured 2026-07-17: passes with
+    **zero margin** (QUICKREF `2026-07-14`, newest glossary date `2026-07-14`) —
+    the next dated glossary line fires it, as intended.
+  - `codeContract` — **blocking, but FLAGGED for gate 05, not settled here.** It is
+    entangled with the ADR 0041 migration: the "Term code contracts anchor to what
+    is now a reference archive" debt (below) says the first module ported to the L3
+    tree will make it fire and break `lint:docs`. Whether it needs a
+    migration-window exemption or should stay blocking with the debt repaid in the
+    same batch is the gate-05 decision's to make. Left blocking (its current, safe
+    default) and coordinated there, not forced blind here.
+  Correction to the "battery is plausible" note above: on inspection all four
+  advisory matches are spurious. `design`/`evidence`/`naming` are generic tokens
+  landing in unrelated commit subjects; `battery` matched a commit that touched
+  `mockup/decisive-battle/battery.js`, a **different file sharing the basename** —
+  the debt is about `mockup/combat-calc/battery.js`, last touched 2026-07-07
+  (before the debt was registered) and still referencing the retired `capPerSector`
+  dials. That debt stays open and unpaid. The `commits.find()` first-match bug
+  (left for 09) is exactly what let a same-basename commit surface here.
+  Pinned by `tests/audit-lint.test.js` ("tally:" tests) so the whole set can't be
+  quietly re-defaulted; the doc-audit skill's Layer-0 step now reads the blocking
+  vs advisory tallies rather than a raw finding count.
 
 - [ ] **Term code contracts anchor to what is now a reference archive**
   (registered 2026-07-17; caused by ADR 0041, not merely noticed). ADR 0041 names

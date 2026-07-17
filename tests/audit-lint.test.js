@@ -213,6 +213,35 @@ test('tally: a definite check (codeContract) is blocking', () => {
   assert.equal(t.blocking, 1);
 });
 
+// The classification of all eight checks was decided on 2026-07-17, not left to
+// default. Pinning the whole set means a future session cannot quietly demote a
+// check to advisory to get to green — it has to break this test and argue for it.
+// Rationale per check: docs/SYNC-DEBT.md.
+test('tally: ledgerCurrency is the only advisory check', () => {
+  assert.deepEqual([...lint.ADVISORY].sort(), ['ledgerCurrency']);
+});
+
+test('tally: every check that asserts a definite defect gates', () => {
+  const definite = [
+    'headerDiff', 'codeContract', 'statusMarkers', 'numericRestatement',
+    'freshness', 'baselineSelf', 'adrStampDuty'
+  ];
+  for (const check of definite) {
+    const t = lint.tally({ [check]: [{ kind: 'x' }] });
+    assert.deepEqual(t, { blocking: 1, advisory: 0 }, `${check} must gate`);
+  }
+});
+
+// A mixed run must gate on the definite finding alone — the advisory one neither
+// adds to the gate nor masks it.
+test('tally: advisory findings do not gate a run that is otherwise clean', () => {
+  const t = lint.tally({
+    ledgerCurrency: [{ kind: 'ledger-possibly-paid' }, { kind: 'ledger-possibly-paid' }],
+    freshness: []
+  });
+  assert.deepEqual(t, { blocking: 0, advisory: 2 });
+});
+
 // ---------------------------------------------------------------- check 6
 // Freshness: QUICKREF "Last regenerated" must not predate the newest seal
 // date on any glossary surface.

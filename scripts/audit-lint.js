@@ -420,15 +420,32 @@ function runAll(root) {
 
 // -- CLI -------------------------------------------------------------------------
 
-// Seven checks assert a definite defect: a header diverged, an identifier is
-// absent, a stamp is missing, a baseline disagrees with itself. `ledgerCurrency`
-// is the one that only ever guesses — its own finding says "possibly paid …
-// verify and mark paid or dismiss". It is a reminder, and there is no way to mark
-// one dismissed, so letting it set the exit status meant a single unlucky word
-// match held the gate shut forever — and, behind `&&`, held the drift check with
-// it. The law this tool prints on its own last line ("reports, never
-// legislation") is the rule being applied here: it still reports, it no longer
-// legislates. Classifying the remaining seven is `09-lint-hardening.md`'s job.
+// Which checks gate. All eight were examined deliberately on 2026-07-17; the
+// rationale per check is recorded in `docs/SYNC-DEBT.md`. Two rules decide it:
+//
+//   1. The check must ASSERT a defect, not guess at one. `ledgerCurrency` only
+//      ever guesses — its own finding says "possibly paid … verify and mark paid
+//      or dismiss".
+//   2. The finding must have a REACHABLE green state: doing the right thing must
+//      clear it. This is the rule `ledgerCurrency` actually broke. There is no
+//      way to mark a false match dismissed, so one unlucky word match held the
+//      gate shut forever — and, behind `&&`, held the drift check with it.
+//
+// `freshness` is the near miss worth naming: its date scoping is loose (any date
+// on a glossary surface counts as a seal — `09-lint-hardening.md` item 3), so it
+// can fire on an incidental date. It still gates, because rule 2 holds — its
+// remedy is to regenerate the QUICKREF and stamp the date, which is ritual duty 4
+// itself, and the law names this check as that duty's target ("the 'last
+// regenerated' date is the lint's freshness target"). A check whose false
+// positive is cleared by performing the duty is a blunt reminder, not a trap.
+//
+// Blocking is not a violation of "reports, never legislation" (S13, printed on
+// this tool's own last line). S13 is separation of powers: this tool APPLIES
+// user-sealed law and never AMENDS it. Enforcing a sealed duty is the judicial
+// half. The exit status is also what `scripts/hooks/write-lint.js` triggers on
+// (it returns early at exit 0), so advisory findings surface on a manual
+// `npm run lint:docs` — the duty-7 session-close path — and stay out of the
+// per-edit hook, where a standing reminder would be alarm fatigue by design.
 const ADVISORY = new Set(['ledgerCurrency']);
 
 // Split a results object into blocking vs advisory tallies. The exit status keys
