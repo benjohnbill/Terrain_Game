@@ -172,6 +172,53 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   `.scratch/l3-playable-seam/audit/SYNTHESIS.md` Finding A + its CORRECTION;
   authority: `docs/adr/0041-environment-isolation-and-reference-archive.md`.
 
+- [ ] **The documentation law auto-loads twice per Claude Code session — move
+  the canonical file out of `.claude/rules/`** (found 2026-07-17 by the
+  auto-load surface scan; observed directly in the session's loaded context, not
+  inferred). Both `AGENTS.md`'s generated block and
+  `.claude/rules/documentation-law.md` appear in full as project instructions —
+  ~1,700 words × 2 every session. **Cause (verified in the working tree):** the
+  harness auto-loads project `.claude/rules/*.md` on its own — `grep` finds no
+  `@`-import for it in the working `CLAUDE.md`/`AGENTS.md` and no
+  `settings.json` entry, yet the file appears in the loaded context anyway. So
+  the working `CLAUDE.md`'s guard comment ("Do NOT re-add a separate `@`-import
+  — a second import would load the full law twice") diagnosed the wrong
+  mechanism: removing the import deduplicated nothing, because the import was
+  never the cause.
+  **Note the state split** — HEAD and the working tree fail differently, and
+  only the working tree was measured. HEAD's `CLAUDE.md` still carries an
+  explicit `@.claude/rules/documentation-law.md` and its `AGENTS.md` has no
+  generated block: **HEAD gives Codex no law at all**, and whether HEAD
+  double-loads for Claude depends on whether the harness de-duplicates an
+  explicit import against its own auto-load — **untested**. The in-flight change
+  set (block added, import removed) fixes Codex and introduces the
+  Claude-side duplication. Do not reason about this row from HEAD.
+  **Fix (user-proposed 2026-07-17, refined):** move the canonical law to a
+  non-auto-loaded path (e.g. `docs/DOCUMENTATION-LAW.md`), keep the generated
+  block in `AGENTS.md` as the single delivery mechanism for **both** hosts,
+  delete `.claude/rules/documentation-law.md`, and update `sync-docs-law.js`'s
+  source path plus every reference (the law's own Layer table lists itself;
+  `AGENTS.md` and `CLAUDE.md` cite the path). **Do NOT `@`-import the new file:**
+  Codex has no external-file auto-import (`AGENTS.md` § Documentation &
+  Terminology Law states this as the block's whole rationale), so an `@` would
+  lose the law for Codex *and* re-duplicate it for Claude. The mirror block
+  already does the job — the only defect is the canonical file's *location*.
+  **BLOCKED** on the untracked `sync-docs-law.js` work landing (that script, the
+  `package.json` script entries, the `AGENTS.md` generated block, and the
+  `CLAUDE.md` import removal are one coherent uncommitted change set from another
+  session; touching them now would edit in-flight work). Related:
+  `.scratch/doc-structure/issues/05-law-staleness-batch.md` is the natural
+  carrier once unblocked.
+  **Ride-along when this unblocks:** slim `CLAUDE.md`. Its `## Agent skills`
+  section (issue tracker, triage labels, domain docs) now duplicates AGENTS.md's
+  authoritative `## Issue tracker` — the 2026-07-17 scan moved that knowledge to
+  AGENTS.md so Codex can see it, but could not remove the CLAUDE.md copy without
+  editing the in-flight change set that occupies the same region. Two copies is
+  a drift risk, not a correctness bug; the single-definition rule wants CLAUDE.md
+  holding a pointer. Add the guard while there: *Codex does not read CLAUDE.md —
+  never put project knowledge here that AGENTS.md lacks* (that asymmetry is what
+  hid the tracker location from the Codex session which authored the L3 gates).
+
 - [ ] **Term code contracts anchor to what is now a reference archive**
   (registered 2026-07-17; caused by ADR 0041, not merely noticed). ADR 0041 names
   `js/` a reference archive and puts canonical L3 source in its own tree. But all
