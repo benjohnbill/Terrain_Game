@@ -202,6 +202,12 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   Remaining sliver: `CLAUDE.md`'s `## Agent skills` section still duplicates
   AGENTS.md's authoritative `## Issue tracker`; slimmed to a pointer + a guard
   comment in the same batch.
+  **One residual, named not fixed:** five `.scratch/doc-structure/` files
+  (issues 01/04/05/07 and two research notes) still cite the old path as a live
+  target. That tracker belongs to another effort and its terminal gate currently
+  reads `⛔ DO NOT EXECUTE`, so a stale pointer harms nothing today — but whoever
+  un-blocks it should re-point them first. `05-law-staleness-batch.md` is the
+  natural carrier.
 
 - [ ] **`lint:docs`'s drift guard is dead behind an `&&`, and a permanent false
   positive is holding the gate open** (found 2026-07-17 while landing the law
