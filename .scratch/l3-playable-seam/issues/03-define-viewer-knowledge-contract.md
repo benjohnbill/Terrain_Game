@@ -250,6 +250,13 @@ User-sealed 2026-07-17.
 | **Categorical** (existence + heading only) | border alarm | Slice 2 (국경 경보) |
 | **Absent from the projection** | enemy standing posture · enemy commit allocation · **enemy treasury** | 깜깜이 시장 · this gate §3 |
 
+> **Framing note (2026-07-19, gate 07 session):** the derived-band row groups
+> sector-level lenses (civilian register, 동원 강도) with **판세**, which the
+> gate 07 session re-leveled as a match-level aggregate isolated from the
+> sector-level derived bands (its grade is unchanged — still a banded derived
+> read). Pointer: `07-prototype-map-fog-presentation.md` § Comments. The
+> formal amendment lands with gate 07's doc-sync batch.
+
 ### 5. Non-leak invariants
 
 Consequences of [issue 02](02-define-game-runtime-authority.md) and the seals
