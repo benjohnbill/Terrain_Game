@@ -11,6 +11,33 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
 
 ## Open
 
+- [ ] **Gate 07 seal — deferred duties** (registered 2026-07-23). The L3 Wayfinder
+  gate 07 sealed the read-layer presentation contract + commit-first interaction
+  skeleton + coupled-camera navigation (ticket § Answer;
+  `docs/features/fog-of-war-discovery/RULINGS.md` ②). Left unpaid **by design**:
+  (a) **throwaway-branch capture of the prototype** (`mockup/combat-calc/turn-loop-prototype.html`)
+  is deferred — the user keeps iterating on it in play; capture when iteration
+  settles. (b) **Gate-07 presentation vocabulary** (commit bar, read layer, etc.)
+  is NOT registered as Tier-1 terms — the presentation-ruling birthplace is the
+  open gate-12 publication question; kept as RULINGS ② prose meanwhile. (c) **Recon
+  economy numbers** (instant recon, radar/detection pricing, value-driven
+  differentials) stay candidate (RULINGS ② + memory `terrain-game-recon-fog-economy.md`);
+  promote to a seal only when the map scale-up pass or a playtest settles them.
+  (d) **Tier-3 PROPOSAL for the user:** promote the recurring "casual — info
+  summoned by the commit decision, calm at rest, entrance-design (never
+  spread-everything)" principle to a `DESIGN.md` / `DOMAIN_MAP.md` Design
+  Principle. Recorded here, not applied (SPEC/DESIGN promotions are user-scope).
+
+- [ ] **Spec-home divergence: config says `docs/features/<slug>/specs/`, practice says `docs/superpowers/specs/`** (registered 2026-07-23).
+  `docs/agents/issue-tracker.md` routes design specs to
+  `docs/features/<slug>/specs/` (doc-structure ticket-11 routing verdict), but
+  all 14 existing specs live in `docs/superpowers/specs/` and no feature
+  `specs/` directory exists yet. The gate-07 turn-loop prototype spec
+  (`docs/superpowers/specs/2026-07-23-gate07-turn-loop-prototype.md`) followed
+  live practice. Resolve by either migrating specs under their features or
+  amending the config to match practice — a doc-structure decision, not settled
+  here.
+
 - [ ] **L3 Seam Wayfinder 02 — ADR promotion undecided** (registered 2026-07-16).
   Wayfinder 02 (`.scratch/l3-playable-seam/issues/02-define-game-runtime-authority.md`,
   resolved 2026-07-16, user-sealed) settles Game Runtime authority: the Runtime

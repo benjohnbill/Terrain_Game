@@ -245,17 +245,20 @@ User-sealed 2026-07-17.
 | **Public** (at every confidence level) | terrain · fortification grade · routes · diplomatic relationships · **current political control** · land value / yield · **register pool** | fog RULING ① · this gate §1 · land-derived (§2) |
 | **Exact** (own realm only) | own substance · fatigue · position · treasury · register · action capacity · commit pool | Slice 2 D1, "no fog on self" |
 | **Estimate band** (`[0.45, 0.90]`) | enemy substance · enemy fatigue | Slice 2 information ladder |
-| **Estimate band, derived** (zero new dials) | civilian register (pool − serving) · 동원 강도 (serving ÷ pool) · **판세** (includes treasury uncertainty) | this gate §2, §3 |
+| **Estimate band, sector-derived** (zero new dials) | civilian register (pool − serving) · 동원 강도 (serving ÷ pool) | this gate §2 |
+| **Estimate band, match-level derived** (zero new dials) | **판세** (includes treasury uncertainty) — a match-level aggregate, isolated from the sector-level derived lenses | this gate §3; re-leveled 2026-07-19, formally split 2026-07-23 (gate 07 seal) |
 | **Last-seen fix + reach cone** | enemy field-army position | Slice 2 (도달 원뿔) |
 | **Categorical** (existence + heading only) | border alarm | Slice 2 (국경 경보) |
 | **Absent from the projection** | enemy standing posture · enemy commit allocation · **enemy treasury** | 깜깜이 시장 · this gate §3 |
 
-> **Framing note (2026-07-19, gate 07 session):** the derived-band row groups
-> sector-level lenses (civilian register, 동원 강도) with **판세**, which the
-> gate 07 session re-leveled as a match-level aggregate isolated from the
-> sector-level derived bands (its grade is unchanged — still a banded derived
-> read). Pointer: `07-prototype-map-fog-presentation.md` § Comments. The
-> formal amendment lands with gate 07's doc-sync batch.
+> **Amendment landed 2026-07-23 (gate 07 seal).** The single derived-band row is
+> now **split above** — the sector-level lenses (civilian register, 동원 강도)
+> and the match-level **판세** aggregate are separate rows. 판세's GRADE is
+> unchanged (still a banded derived read); only its LEVEL is isolated
+> (match-level vs sector-level). Origin: the 2026-07-19 gate 07 session re-level
+> (pointer: `07-prototype-map-fog-presentation.md` § Comments + § Answer). The
+> gate-07 prototype encoded the split concretely — 판세 = a match-level
+> mini-meter, distinct from the sector-bound 동원 강도 band summoned on command.
 
 ### 5. Non-leak invariants
 

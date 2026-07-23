@@ -101,7 +101,11 @@ it.**
   escalation by ambition alone", this map's Not-yet-specified, ADR 0028:86-92).
   The prototype survives, and its real job is *does the sealed 7-grade matrix
   read to a human* — note the **derived-band grade (판세 / 동원 강도 / civilian
-  register) has no encoding proposal anywhere**.
+  register) has no encoding proposal anywhere**. **Resolved 2026-07-23:** yes, it
+  reads; the derived-band grade now has an encoding (판세 = match-level
+  mini-meter, 동원 강도 = sector-bound band summoned on command, civilian
+  register = derived), the renderer stayed SVG (measurement-gated), and
+  navigation settled to coupled continuous camera. See § Decisions so far.
 
 **Split:**
 
@@ -138,8 +142,12 @@ thresholds, D5 audit-lint re-aim, and single-emit parity (see § Decisions so
 far). **06 resolved 2026-07-18** — option A (exported checked-in TS/ESM world
 artifact), immutable `(world id, revision)` identity, revision-local identifiers,
 three-tier validation, and the production/evidence split (see § Decisions so
-far). **07 is next.** Gate 05's scope had been amended twice over, and both
-amendments held at seal time:
+far). **07 resolved 2026-07-23** — live-eval on a throwaway turn-loop prototype:
+the 7-grade matrix reads, the interaction skeleton is commit-first, navigation
+is coupled continuous camera, renderer stays SVG measurement-gated; recon
+numbers and war-decisiveness stay deferred (see § Decisions so far). **Next: the
+war-termination pass (out-of-band) and gate 08.** Gate 05's scope had been
+amended twice over, and both amendments held at seal time:
 
 - **Freed** by ADR 0041 — the public-route question (Vite `base`, SPA mount,
   the `/game` route from firebase `cleanUrls`) is **moot for the game**. The
@@ -167,6 +175,7 @@ Schedule the war-termination pass in parallel or immediately after; 08 →
 - [Preserve or Replace the Legacy Play Path?](issues/01-choose-migration-topology.md) — use a parallel-strangler topology: preserve `game.html` as the bounded legacy comparator while the separate canonical L3 path reaches parity, promote L3 into the stable public play-path role, use static-artifact rollback, and retire the legacy path after its named cutover gate.
 - [Define Game Runtime Authority and Its Interface](issues/02-define-game-runtime-authority.md) — the Runtime privately owns match truth; viewer projection is the single blur seam; preview is a pure module outside the Runtime; bots are ordinary callers; turn order stays in the Runtime while pacing stays outside; authored-world identity, seed, and ordered intent log form the canonical durable representation.
 - [Define What Each Viewer Can Know](issues/03-define-viewer-knowledge-contract.md) — Standard Fog publishes the land and everything derived from it (terrain, fortification, routes, diplomacy, **current political control**, land value/yield, register pool) and fogs only the mutable draw on it; enemy substance/fatigue are bands, field-army position is last-seen plus reach cone, posture/commit/**treasury** are absent from the projection, and treasury's uncertainty survives only as 판세 band width; civilian register and 동원 강도 fall out as derived bands with zero new dials; seven non-leak invariants and the dead `[0, 0.45)` confidence interval are recorded there.
+- [Make Uncertainty Legible Without Leaking Truth](issues/07-prototype-map-fog-presentation.md) — resolved by live user reaction 2026-07-23 on a throwaway turn-loop prototype (`mockup/combat-calc/turn-loop-prototype.html`, ADR 0041): the sealed 7-grade viewer matrix reads to a human and the derived-band grade now HAS an encoding (판세 = match-level mini-meter, 동원 강도 = sector-bound band summoned on command, civilian register = derived); the interaction skeleton is **commit-first** (커밋량 → 행동 소환 → 세부 → 가능 지역 빛남 → 지목) with the **commit bar as the entrance** and a visible turn-loop closure (showdown → world update → N+1); **navigation = coupled continuous camera (연속 줌, wheel+drag)**, resolving the semantic-zoom-vs-camera-zoom sub-question, with UoC2-grade graphic zoom + physical camera-height a deferred future item; **casual layout** = thin top strip / map-fills-middle (calm) / commit-bar hero, with info summoned by the commit decision, not always painted; **renderer stays SVG measurement-gated** (the prototype produced the deferred stress test's inputs, did not run it). Recon economy numbers, showdown reveal scope, and combat decisiveness (R14 / gate 08) stay candidate/deferred. Seal is a revisable-in-play checkpoint.
 
 ## Not yet specified
 

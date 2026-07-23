@@ -1,7 +1,7 @@
 # Make Uncertainty Legible Without Leaking Truth
 
 Type: prototype
-Status: open
+Status: resolved
 Blocked by: 03, 06
 
 ## Question
@@ -117,6 +117,92 @@ failure.
 The honest cost is that SVG remains a hypothesis until the live session, and a
 later renderer swap remains possible. This recommendation does not resolve the
 gate; it prepares the concrete user test that does.
+
+## Answer
+
+Resolved by live user reaction 2026-07-23 (prototype
+`mockup/combat-calc/turn-loop-prototype.html` — throwaway per ADR 0041 +
+prototype skill; NOT L3 build source). The user's verdict on the flow/feel
+axis (graphics/UI polish explicitly held out of scope, parked to the
+presentation pass): **the interaction skeleton and its decision order match the
+imagined play process.** The v0 "the more it is designed, the less fun it
+looks" worry is answered for the sequence and skeleton — the thing paper could
+not settle.
+
+### Sealed by this gate
+
+1. **The 7-grade viewer matrix (issue 03 §4) reads to a human — gate 07's real
+   job (map.md re-cut).** Public terrain/control/seats read at rest; own force =
+   exact solid counter; enemy = dashed "?" fix + felt-width band (no comfortable
+   midpoint — invariant 7 made visceral); last-seen fix + reach cone growing
+   with age; border alarm = existence+heading pulse only; hole cards
+   (posture/commit) categorically absent; DEV placeholder = hatch + badge, never
+   an enemy-truth fallback.
+2. **The derived-band grade encoding** that map.md flagged as having "no
+   encoding proposal anywhere": **판세** = match-level mini-meter (top strip,
+   banded, progress-bar banned); **동원 강도** = sector-bound band summoned on
+   command; **civilian register** = derived. Confirms the issue 03 §4 판세
+   re-level (formal amendment landed this batch).
+3. **The interaction skeleton — commit-first (user direction 2026-07-23).**
+   커밋량 → 행동 소환 (exaggerated radial bloom) → 세부 작전 → 가능 지역 빛남 →
+   지목. The **commit bar IS the entrance** (the entrance-design principle
+   answered by the commit-bar spine — never spread-everything). Matryoshka
+   disclosure. Turn-loop closure: turn N → two-sided showdown (hole-card flip)
+   → world update (scars / control / band / mobilization) → turn N+1 — the loop
+   visibly closes on itself.
+4. **Navigation = coupled continuous camera (연속 줌, wheel + drag).** The
+   2026-07-19 semantic-zoom-vs-camera-zoom sub-question is RESOLVED to
+   **coupled** — one camera zoom whose thresholds also switch the semantic layer
+   — over decoupled click-drill. Future item (user, deferred to the renderer /
+   presentation pass): UoC2-grade graphic zoom + **physical camera height** (the
+   viewpoint physically lowers into the world — a camera-height concern, not
+   information altitude).
+5. **Casual presentation principle (user direction 2026-07-23).** Three zones —
+   a thin top info strip / the MAP fills the middle (calm at rest) / the COMMIT
+   BAR is the hero at the bottom. The board's info and glow (enemy bands, reach
+   cones, eligible-target glow) are **summoned by the commit decision**, not
+   always painted. "커밋만 하세요." This answers the v0 clutter failure at the
+   layout level.
+6. **Renderer = SVG (variant A) sufficient for the feel.** The prototype carried
+   the whole interaction on SVG. Renderer performance stays **measurement-gated**
+   (spec "no escalation by ambition alone", ADR 0028, map.md § Not-yet-specified);
+   the prototype produced the deferred stress test's INPUTS (coupled pan/zoom +
+   LOD pressure, max simultaneous animated marks) but did not run the test.
+
+### Held candidate / deferred (NOT sealed here)
+
+- **Recon economy numbers** (instant-recon adoption, radar/detection pricing,
+  value-driven differentials) — measurement-gated, deferred to the map scale-up
+  pass. Registered as candidates in `docs/features/fog-of-war-discovery/RULINGS.md`
+  ② and project memory `terrain-game-recon-fog-economy.md`.
+- **Showdown reveal scope** (exact commit vs band vs posture name) — placeholder;
+  gate-08-adjacent.
+- **Combat arithmetic / R14 war-decisiveness** — gate 08 long pole. A
+  good-feeling interface does not answer whether the war is decisive.
+- **Land-first command order** (target before action) — the candidate revision
+  the user floated; parked. The seal is a **revisable checkpoint** (user
+  2026-07-23: "나중에 play하면서 얼마든지 수정 가능"), not a freeze.
+- **Art / juice / asset pipeline, UoC2 camera-height** — the parked presentation
+  pass.
+- **Two unruled inventory items:** enemy standing-rebel stack visibility
+  (unruled); showdown reveal scope (deferred gate-08).
+
+### No ADR trigger
+
+The presentation + navigation resolution fires no mandatory-ADR trigger (no win
+condition, no cross-feature game model, no SPEC direction change). It sits
+inside issue 07's already-sealed ownership split (renderer owns camera / geometry
+/ hit-testing; React owns shell / panels / command composition) and ADR 0028's
+measurement-gated renderer. Recorded here as Working-layer evidence; the fog
+presentation rulings' birthplace is `docs/features/fog-of-war-discovery/`
+(the gate-12 publication question stays open).
+
+**Throwaway discipline (prototype skill).** Only the validated decisions above
+fold into the sealed docs. The fixture, the geometry reuse (CRADLE_MAP
+관중+촉+중원+서역 corner), and the scripted authored reducer are evidence, not
+build source (ADR 0041). Throwaway-branch capture is **deferred** — the user
+keeps iterating on the prototype in play; capture when iteration settles
+(recorded in `docs/SYNC-DEBT.md`).
 
 ## Comments
 
@@ -307,3 +393,58 @@ entrances — not a per-value keep/cut vote. UoC2 visual devices seized as
 encoding candidates for the read layer: frontline glow / contact-edge icons
 (→ border alarm, front-sector focus), banded enemy-strength marks shown
 within confidence (→ estimate-band marks).
+
+### Crossing session — 2026-07-23 (act 2; gate still open; build spec ready)
+
+The crossing session did not stop at entrance design — it converged on the
+**commit-bar spine** as the answer to entrance design (the commit pool bar IS
+the most-used entrance), then expanded into the recon/fog economy. Outcomes
+(all candidate/가안, unsealed; recorded in project memory
+`terrain-game-recon-fog-economy.md`):
+
+- **Commit bar** = visceral skin of the sealed commit pool (free-split,
+  non-bankable, no "main/sub"); radial 지목→소환; three read layers (ambient free
+  / band recon-sharpened / hole cards categorical).
+- **Recon on a ladder axis** (0.45→0.70→0.90); instant recon = premium-to-ceiling
+  attack rider (ADOPT WITH CONDITIONS, measurement-gated). Detection (radar,
+  defender) vs measurement (spotlight, attacker) split. Defender = free warning
+  floor (border alarm + threat board) + paid response; defensive UI = attack-UI
+  mirror. Radar pricing = value-driven differential, numbers deferred to map
+  scale-up.
+- **Staff briefings DROPPED** (UI not complex → crutch became barrier).
+- **Prototype re-scoped** to a full **turn-loop closure** (turn N → two-sided
+  showdown → N+1), 3 wired verbs (attack/defense/basic recon) + facade
+  (instant recon/fort/recruit/plan variations, UI real, logic inert), fixture
+  "중원 쟁탈" (관중+촉, mid-game peak war), DEV placeholder = supply, navigation
+  variants coupled vs decoupled (`?nav=`, live-compared).
+
+**Build spec:** `docs/superpowers/specs/2026-07-23-gate07-turn-loop-prototype.md`
+(Working layer; resolves this gate by live reaction, does not seal it). Gate 07
+stays OPEN until the live evaluation runs and the user seals.
+
+### Build + seal — 2026-07-23 (act 2 close; gate SEALED)
+
+The throwaway prototype was built to the spec
+(`mockup/combat-calc/turn-loop-prototype.html`, single self-contained SVG file,
+geometry reused from the CRADLE_MAP 관중+촉+중원+서역 corner, one static
+viewer-safe projection, scripted authored reducer — no combat arithmetic).
+
+**v1 (spec-literal) → live feedback → v2 (casual reshape, user direction
+2026-07-23):** the first cut painted all info at once (판세/형세/위협 side
+panels, every band/cone) and drifted back toward the v0 clutter failure. The
+user re-directed: (1) three-zone layout — thin top strip / MAP fills the middle
+(calm) / COMMIT BAR the hero; (2) the board's info/glow is **summoned by the
+commit decision**, not always painted; (3) the action radial must be big and
+exaggerated; (4) flow is **commit-first** — 커밋량 → 행동 → 세부 → 가능 지역
+빛남 → 지목 (land-first order noted as a later variant). v2 rebuilt on this.
+
+**Live verdict (user).** On the flow/feel axis, with graphics/UI polish held
+out of scope: **the sequence and skeleton match the imagined play process.**
+Navigation settled to **coupled continuous camera (연속 줌, wheel + drag)** with
+a future UoC2-grade graphic zoom + physical camera-height ambition. User sealed
+the gate "as is," explicitly as a revisable-in-play checkpoint.
+
+See **§ Answer** for the sealed set, the held-candidate/deferred set, and the
+doc-sync batch that fired on seal. Design decisions behind the build live in
+project memory `terrain-game-recon-fog-economy.md` (recon economy numbers stay
+candidate).

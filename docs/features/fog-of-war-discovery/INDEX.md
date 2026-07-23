@@ -58,12 +58,24 @@ subtle warning signals before total blindness.
 - **Wall-grade visibility (2026-07-08):** resolved — fortification grade is
   public (classified with terrain, not magnitude). See `RULINGS.md` ①; first
   consumer is the tactical-plan-ai bot information model.
+- **Read-layer presentation (2026-07-23, L3 Wayfinder gate 07):** resolved by
+  live user reaction on a throwaway turn-loop prototype — the sealed 7-grade
+  viewer matrix reads to a human; the derived-band grade now has an encoding
+  (판세 = match-level mini-meter, 동원 강도 = sector-bound band, civilian
+  register = derived); recon is a paid, deliberate live band-narrowing; the
+  casual commit-first layout summons the info layer by the commit decision
+  rather than painting it always; navigation is a coupled continuous camera; the
+  renderer stays SVG (measurement-gated). See `RULINGS.md` ②. Recon economy
+  NUMBERS (instant recon, radar pricing) stay candidate — project memory
+  `terrain-game-recon-fog-economy.md`.
 
 ## Files
 
 - `GLOSSARY.md` — Tier-1 vocabulary (created 2026-07-10, terminology-audit
   ghost registration): information confidence, estimate band.
-- `RULINGS.md` — decision record (① wall-grade visibility).
+- `RULINGS.md` — decision record (① wall-grade visibility; ② read-layer
+  presentation contract SEALED at L3 gate 07 + registered recon-economy
+  candidates, 2026-07-23).
 
 ## Related
 
