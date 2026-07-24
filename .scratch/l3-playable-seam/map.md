@@ -62,7 +62,8 @@ Source: [audit/SYNTHESIS.md](audit/SYNTHESIS.md). The tickets were drafted
 2026-07-16 without a repository survey. The audit found **no gate correctly
 framed and genuinely open**, and **no gate closeable as-is**. Accepted shape:
 
-**Real decisions (grill):** 05 · 06 · 07 · 08.
+**Real decisions (grill):** 05 · 06 · 07 · 08 — **all resolved** (08 sealed
+2026-07-25, see § Decisions so far).
 
 **Out-of-band (not a gate) — the war-termination pass.** The long pole, owned
 by no gate and absent from every plan. Read metric 5 (`npm run metrics:fizzle`
@@ -154,8 +155,12 @@ three-tier validation, and the production/evidence split (see § Decisions so
 far). **07 resolved 2026-07-23** — live-eval on a throwaway turn-loop prototype:
 the 7-grade matrix reads, the interaction skeleton is commit-first, navigation
 is coupled continuous camera, renderer stays SVG measurement-gated; recon
-numbers and war-decisiveness stay deferred (see § Decisions so far). **Next: the
-war-termination pass (out-of-band) and gate 08.** Gate 05's scope had been
+numbers and war-decisiveness stay deferred (see § Decisions so far). **08 resolved
+2026-07-25** (user grill — the first slice is a full-depth, real 1v1 match, not a
+minimal tracer; the war-termination pole was discharged by ADR 0042, not a tuning
+pass; see § Decisions so far). **All four real grill gates (05/06/07/08) are now
+sealed;** next is feature specs -> `.scratch/l3-playable-build/` (re-scoped against
+the full-depth first-match definition). Gate 05's scope had been
 amended twice over, and both amendments held at seal time:
 
 - **Freed** by ADR 0041 — the public-route question (Vite `base`, SPA mount,
@@ -185,6 +190,7 @@ Schedule the war-termination pass in parallel or immediately after; 08 →
 - [Define Game Runtime Authority and Its Interface](issues/02-define-game-runtime-authority.md) — the Runtime privately owns match truth; viewer projection is the single blur seam; preview is a pure module outside the Runtime; bots are ordinary callers; turn order stays in the Runtime while pacing stays outside; authored-world identity, seed, and ordered intent log form the canonical durable representation.
 - [Define What Each Viewer Can Know](issues/03-define-viewer-knowledge-contract.md) — Standard Fog publishes the land and everything derived from it (terrain, fortification, routes, diplomacy, **current political control**, land value/yield, register pool) and fogs only the mutable draw on it; enemy substance/fatigue are bands, field-army position is last-seen plus reach cone, posture/commit/**treasury** are absent from the projection, and treasury's uncertainty survives only as 판세 band width; civilian register and 동원 강도 fall out as derived bands with zero new dials; seven non-leak invariants and the dead `[0, 0.45)` confidence interval are recorded there.
 - [Make Uncertainty Legible Without Leaking Truth](issues/07-prototype-map-fog-presentation.md) — resolved by live user reaction 2026-07-23 on a throwaway turn-loop prototype (`mockup/combat-calc/turn-loop-prototype.html`, ADR 0041): the sealed 7-grade viewer matrix reads to a human and the derived-band grade now HAS an encoding (판세 = match-level mini-meter, 동원 강도 = sector-bound band summoned on command, civilian register = derived); the interaction skeleton is **commit-first** (커밋량 → 행동 소환 → 세부 → 가능 지역 빛남 → 지목) with the **commit bar as the entrance** and a visible turn-loop closure (showdown → world update → N+1); **navigation = coupled continuous camera (연속 줌, wheel+drag)**, resolving the semantic-zoom-vs-camera-zoom sub-question, with UoC2-grade graphic zoom + physical camera-height a deferred future item; **casual layout** = thin top strip / map-fills-middle (calm) / commit-bar hero, with info summoned by the commit decision, not always painted; **renderer stays SVG measurement-gated** (the prototype produced the deferred stress test's inputs, did not run it). Recon economy numbers, showdown reveal scope, and combat decisiveness (R14 / gate 08) stay candidate/deferred. Seal is a revisable-in-play checkpoint.
+- [Define the First Playable Vertical Slice](issues/08-define-first-playable-vertical-slice.md) — resolved 2026-07-25 (user grill). The first slice is a **real, complete 1v1 duel match** (human vs bot) at **full compound depth**, not a minimal tracer. Re-cut against ADR 0042 (two-sided simultaneous commit→reveal spine; capital fall the sole terminus). A design-state audit (sub-agent) showed the operation layer is **designed AND numbered** (magnitude pass executed, combat-formula M1–M14) — the gap is **implementation, not design** — so full depth **including the plan-vs-plan roshambo/matchup layer** is in scope. Starting state: **reuse the terrain-cradle terrain** (CANONICAL_MAP, 10 regions/~49 sectors) + a **random balanced(population)-contiguous 2-realm partition per match** (ADR 0019 dynamic-assignment pattern) + player-chosen capitals (CP-② D1.3); equal population, asymmetric geometry; the center's multipolar exposure device dissolves in 1v1 (goes wholesale to one side, a variety axis). Combat: full operation-plan selection + roshambo + 행동력 chip-stack allocation across order-kinds (D6.3) + Standard Fog + capital guard/fall via decisive battle (Moscow-trap deferred). Feedback = EVAL BAR + gate-07 commit-first (exercised, not re-decided). Turn = D6.1/D6.2/D6.3 (implemented). Bot = a **rational actor reasoning through the same instruments as the human** (per-front R / average bars + threshold needles) with a single **balanced disposition** for the judgment calls; archive multipolar bot discarded. Stopping point = a **real full match to capital fall at natural length**, no outcome-altering speed-up, mandatory victory screen. **Scope trade recorded:** a full-depth build program, not a small tracer — failure localization traded for undistorted real-play data (the user's explicit priority). Iterate targets: partition/terrain balance + bot policy quality. Working-layer; the cradle-reuse + random-partition architecture promotes to a terrain-cradle doc/ADR at build-spec authoring (`docs/SYNC-DEBT.md`).
 
 ## Not yet specified
 

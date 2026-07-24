@@ -11,6 +11,26 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
 
 ## Open
 
+- [ ] **L3 Wayfinder gate 08 — first-slice DEFINITION sealed; build + promotions
+  owed** (registered 2026-07-25, user grill). Gate 08
+  (`.scratch/l3-playable-seam/issues/08-define-first-playable-vertical-slice.md`,
+  § Answer) defines the first playable slice as a **real, complete 1v1 duel match at
+  full compound depth** (not a minimal tracer): terrain-cradle terrain reused under
+  a **random balanced(population)-contiguous 2-realm partition per match** (ADR 0019
+  pattern) + player-chosen capitals (CP-② D1.3); the full operation-plan selection +
+  the plan-vs-plan roshambo/matchup layer; run to capital fall at natural length; a
+  rational human-instrument bot (single balanced disposition). Owed: (a) the decision
+  is Working-layer — the **cradle-reuse + random-partition** architecture promotes to
+  a terrain-cradle doc note / ADR **when the build specs are authored** (relates to
+  the 1v1-map-reauthoring row below — the 2-seat binding IS the first 1v1 world
+  artifact, so that pass and this share a home); (b) the slice is a **build
+  program**, not one ticket — the `.scratch/l3-playable-build/` tickets need
+  re-scoping against this full-depth definition; (c) implementation debts already
+  tracked ride their own rows (gate-06 loader, code-contract tree, turn-structure /
+  eval-bar birthplace, operation-plan magnitude graduation). No mandatory-ADR trigger
+  at gate close (definition/scoping, Working-layer); promotion assessment belongs to
+  build-spec authoring.
+
 - [ ] **1v1 duel-pivot cascade — turn-structure + eval-bar formal birthplace
   deferred** (registered 2026-07-24, ADR 0042 cascade). The cascade landed the
   win-condition (ADR 0042 + capital CP-②) but Gate 6's **turn structure**
