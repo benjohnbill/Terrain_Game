@@ -2,10 +2,26 @@
 
 Layer: Working (local issue-tracker operations)
 Current state: pre-implementation; all build tickets are `needs-info`
+Ticket set: **re-cut 2026-07-25** against the 1v1 duel pivot (ADR 0042) and the
+gate-08 full-depth-match definition. See § Re-cut history.
 
 This runbook makes each implementation ticket executable from a fresh session
 without treating Working-layer text as game canon. Production documents and
 ADRs remain authoritative; ticket files point to them after the Wayfinder closes.
+
+## What the program delivers
+
+Wayfinder gate 08 (§ Answer, sealed 2026-07-25) defines the first playable slice
+as **one real, complete 1v1 duel match, human versus bot, at full compound
+depth**, run to a capital fall at its natural length. That is not a small tracer,
+and gate 08 recorded the trade knowingly: the slice's *smallness* was given up to
+buy undistorted real-play data.
+
+What was **not** given up is the build's *incrementality*. This tracker stays a
+walking skeleton: a thin end-to-end loop closes early — **ticket 07 is the first
+point at which a whole match can be played from setup to victory** — and each
+later ticket thickens one layer of an already-terminating game. Failures still
+localize to a demoable increment.
 
 ## Hard readiness rule
 
@@ -18,7 +34,8 @@ A ticket becomes `ready-for-agent` only after:
    and any required ADRs;
 3. the ticket's `Specification gates:` line has been replaced by exact
    Production/ADR pointers;
-4. every referenced R14-safe war-model prerequisite exists and is named;
+4. every war behavior the ticket invokes is implemented against its accepted
+   contract, and named;
 5. its acceptance criteria can be verified without inventing a mechanic or
    reading Working-layer recommendations as authority;
 6. `npm run lint:docs` passes after the publication batch.
@@ -26,42 +43,115 @@ A ticket becomes `ready-for-agent` only after:
 `ready-for-agent` means fully specified. The ticket's `Blocked by:` line still
 controls whether it is the next executable frontier.
 
-## Decision closure before implementation
+Each ticket carries an interim `Contract (interim pointers):` line so a reader can
+find today's truth before that publication happens. Those pointers are **reading
+aids, not the authority rule 3 requires** — they do not make a ticket ready.
 
-The shortest low-rework sequence is:
+## The readiness chain is not clear yet — read this before planning work
 
-1. Wayfinder 03 — viewer knowledge contract;
-2. Wayfinder 05 — build/module/test topology;
-3. Wayfinder 06 — authored-world input contract;
-4. Wayfinder 07 — live map/Fog presentation prototype;
-5. Wayfinder 08 — first playable vertical slice;
-6. Wayfinder 09 — migration and adapter ladder;
-7. Wayfinder 10 — verification and acceptance gates;
-8. Wayfinder 11 — cutover and retirement;
-9. Wayfinder 12 — Production partition, ADR promotion, and ticket handoff.
+No ticket can reach `ready-for-agent` today, and gate 12 is not the only reason.
+State as of 2026-07-25:
 
-Gates 03, 05, and 06 are currently independently unblocked, but the order above
-minimizes revisiting presentation and verification. Resolve one non-research
-Wayfinder ticket per user decision session. Gate 07 specifically requires a
-live prototype and user reaction; it is not an autonomous document-only task.
+| Gate | Status | What still blocks it |
+|---|---|---|
+| 05, 06, 07, 08 | **resolved** | — the four real grill gates are sealed |
+| 09 | open (demoted) | residue = classifying the port targets (accepted / superseded / incidental); folded into slice work by the 2026-07-17 re-cut |
+| 10 | open (demoted) | residue = proof strength, who judges the human rung and what counts as a FAIL, and whether 10 is the *admission* gate to L3 playtesting or its *verdict*. **Gate 10 owns every acceptance command's pass/fail threshold**, so it gates all thirteen tickets |
+| 11 | open (re-framed by ADR 0041) | residue = whether anything is retired at all, and on what evidence |
+| 12 (a) governance batch | **blocked** | its declared precondition `.scratch/doc-structure/issues/10-audit-run-3.md` reads `Status: BLOCKED — the gate itself is unsound` / `⛔ DO NOT EXECUTE` |
+| 12 (b) ticket re-pointing | open, mechanical | needs (a); no grill required |
+
+So the path to executable tickets is: close 09 / 10 / 11 (small residues), then
+resolve the doc-structure blocker or take a user decision to route around it, then
+run 12 (a) and 12 (b). Do not assume the re-cut alone made these tickets
+actionable — it re-cut their *shapes*, not their authority.
 
 ## Build dependency chain
 
 | Ticket | Player-visible increment | Direct blocker |
 |---|---|---|
-| 01 | deterministic L3 viewer boots | none after specification publication |
-| 02 | authored world can be read and focused | 01 |
-| 03 | reconnaissance changes player knowledge | 02 |
-| 04 | first accepted atomic war operation resolves | 03 + named R14-safe prerequisite |
-| 05 | one human–bot round completes | 04 |
-| 06 | one war reaches an accepted outcome | 05 |
-| 07 | one complete match ends legally | 06 |
-| 08 | verified L3 path becomes canonical | 07 |
-| 09 | legacy comparison path retires | 08 + bounded cutover evidence |
+| 01 | a deterministic L3 viewer boots from the new `game/` tree | none after specification publication |
+| 02 | a two-realm board is drawn, partitioned, and given capitals | 01 |
+| 03 | a turn cycles: blind commit → simultaneous reveal → resolve → N+1 | 02 |
+| 04 | the commit-first shell is the way the game is actually operated | 03 |
+| 05 | holding less land visibly costs income and force ceiling | 03 |
+| 06 | a real decisive battle resolves and changes the board | 03 |
+| 07 | **a capital falls and the match ends — the loop closes** | 06 |
+| 08 | reconnaissance changes what the player knows | 07 |
+| 09 | the EVAL BAR reads the engagement and the commitment | 08 |
+| 10 | plans are a real choice, not one generic attack | 09 |
+| 11 | plan beats plan for a legible reason | 10 |
+| 12 | a bot plays the same instruments the human does | 11 |
+| 13 | one full-depth match runs to capital fall, undistorted | 12 |
+
+Tickets 05 and 06 are both unblocked by 03 and may be taken in either order; 07
+needs 06. Everything else is a chain.
 
 One implementation session claims one ticket. Do not combine adjacent tickets
 to save setup time: the demoable boundary is also the failure-localization and
 review boundary.
+
+## Design threads that are designed IN-build, not before
+
+These need the wired engine or real play as inputs. **Do not open a pre-build
+grill for them** — the decisions they depend on are already sealed, and these are
+the parts that cannot be pre-sketched.
+
+- **The resolve-order algorithm** (ledger D6.1a) → ticket 03. The principle is
+  sealed; the case enumeration and the symmetric rule are their own rule-design
+  pass, run against the real board.
+- **The EVAL BAR's tactical-R composition formula, its name, and its visual**
+  (ledger Gate 6, explicitly left open) → ticket 09. The name is the user's call.
+- **The reconnaissance economy numbers** → ticket 08, measurement-gated. The
+  presentation contract is sealed; the prices are candidates.
+- **Capital-terrain and encirclement dynamics** → deferred with the Moscow-trap
+  fall path; tuned in the parallel map pass once the engine plays.
+
+## One open scoping question the re-cut surfaced
+
+**Is 천도 (capital relocation) in the slice?** Ledger D6.3 names it as an order
+kind the single 행동력 stack funds, and capital CP-② item 4 specifies its
+mechanics in full. Gate 08 axis 3 neither lists it among the slice's commands nor
+places it on the exclusion list (which names settlement negotiation, reserves, and
+multi-stage operations). Ticket 07 therefore forces an explicit call rather than
+letting it be silently dropped or silently built. Resolve it at build-spec
+authoring; a relocation costing a large share of the budget across turns is a real
+strategic lever, and its absence changes how a forward capital plays.
+
+## Promotions owed while these tickets run
+
+Already registered in `docs/SYNC-DEBT.md`; they fire during build-spec authoring
+rather than at gate close:
+
+- the **cradle-reuse + random two-realm partition** architecture → a
+  terrain-cradle doc note or ADR (shares a home with the 1v1 map-re-authoring
+  row: the two-realm binding *is* the first 1v1 world artifact);
+- a formal feature-doc birthplace for the **turn structure** and the **EVAL BAR**;
+- the **판세 conflict** surfaced by this re-cut (see ticket 04): gate 07 encoded a
+  live match-level 판세 mini-meter and gate 03 routes treasury uncertainty through
+  its band width, while duel-pivot Gate 6 later dropped the in-play strategic bar;
+- the gate-06 loader, the code-contract tree scan, and the operation-plan
+  magnitude graduation.
+
+## Re-cut history
+
+The pre-pivot ticket set (2026-07-16, nine tickets) was cut before ADR 0041/0042
+and before the gate-08 slice definition. It is superseded; git history holds the
+files. Mapping, so older references resolve:
+
+| Old | Fate |
+|---|---|
+| 01 boot deterministic L3 viewer | → **01** (survives, expanded with the gate-05 command surface and audit-lint re-aim) |
+| 02 read and focus authored world | → **02** (expanded: two-realm partition + capital placement) |
+| 03 scout and change player knowledge | → **08** (moved later; the migration-grade projection now lands in 03) |
+| 04 first atomic war operation | → exploded into **06** (combat core), **10** (plan selection), **11** (matchups), **07** (capital) |
+| 05 complete a human–bot round | → **03** (turn loop) + **12** (bot); the pre-pivot alternating-actor round is void — the turn is simultaneous |
+| 06 carry a war to an accepted outcome | → **07**; war and match are one, and the terminus is capital fall alone (ADR 0042 collapses the ADR 0038 composite) |
+| 07 complete one L3 match | → **13** |
+| 08 verify and promote canonical play path | **mostly void** (ADR 0041: the game never occupies a public route, so route promotion and static-artifact rollback are the landing page's concern). Surviving residue folded into **13** |
+| 09 retire legacy comparison path | **void as a build ticket** — the archive has no traffic to assume. The residue is Wayfinder 11's open question, not implementation work |
+| — | **NEW 04** commit-first UI shell (gate 07 sealed it; the old set had no home for it) |
+| — | **NEW 05** land-derived decay engine (D5.1/D5.2/D5.3 + D6.2 background tier; the old set and the re-cut sketch both had no home for it, and D6.4's "natural length" depends on it) |
 
 ## Fresh-session preflight
 
@@ -92,16 +182,19 @@ or prerequisite under `## Comments`.
 3. Keep authoritative state behind the Runtime. React and the renderer consume
    viewer projections; preview consumes only `(view, intent)`; bots are ordinary
    callers.
-4. Reimplement accepted behavior from its Production contract. Legacy code,
-   fixtures, and tests are evidence only after their behavior is classified.
+4. Reimplement accepted behavior from its Production contract. The archive
+   (`js/`, `tests/`, `mockup/`) is evidence only, and only after its behavior is
+   classified — never an import, never a line-by-line port, and never a parity
+   comparator for behavior it did not run (ADR 0041).
 5. Run the ticket-specific checks first, then the shared gates required by the
    ticket. Do not claim browser behavior from Node tests or type safety from a
    Vite build.
-6. Exercise the ticket's player-visible increment. Capture the world revision,
-   seed, intent fixture/log, browser path, and viewport when they matter.
+6. Exercise the ticket's player-visible increment. Capture the world identity and
+   revision, seed, intent fixture/log, browser path, and viewport when they matter.
 7. Review the diff for forbidden scope: new canonical JavaScript, truth fields in
    viewer surfaces, React-owned rules, Runtime sleeps, standalone movement,
-   R14 placeholders, unclassified legacy behavior, or duplicated definitions.
+   forced-termination devices, unclassified legacy behavior, or duplicated
+   definitions.
 8. Append verification evidence and any deliberate follow-up under the ticket's
    `## Comments`, then set `Status: resolved` only when every acceptance item is
    satisfied.
@@ -121,7 +214,7 @@ Append this compact record to the ticket:
 - Production authority: `<exact pointers>`
 - Narrow tests: `<commands and pass counts>`
 - Shared gates: `<commands and results>`
-- Browser/runtime check: `<path, viewport, world revision, seed>`
+- Browser/runtime check: `<path, viewport, world id + revision, seed>`
 - Legacy evidence disposition: `<accepted / structurally obsolete /
   superseded / incidental; files used>`
 - Follow-up: `<none or exact ticket/debt pointer>`
@@ -140,8 +233,8 @@ ready-for-agent and unblocked, claim it, read every Production/ADR pointer, use
 an isolated worktree if the current tree is dirty, implement test-first where
 the behavior is deterministic, run the ticket and shared verification gates,
 record evidence in the ticket, set it resolved only if all criteria pass, and
-commit only this ticket's scope. Do not infer unresolved mechanics from legacy
-JavaScript or the Working umbrella spec.
+commit only this ticket's scope. Do not infer unresolved mechanics from the
+reference archive or from the Working umbrella spec.
 ```
 
 ## Status lifecycle

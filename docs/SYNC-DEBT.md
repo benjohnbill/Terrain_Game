@@ -23,9 +23,13 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   is Working-layer — the **cradle-reuse + random-partition** architecture promotes to
   a terrain-cradle doc note / ADR **when the build specs are authored** (relates to
   the 1v1-map-reauthoring row below — the 2-seat binding IS the first 1v1 world
-  artifact, so that pass and this share a home); (b) the slice is a **build
-  program**, not one ticket — the `.scratch/l3-playable-build/` tickets need
-  re-scoping against this full-depth definition; (c) implementation debts already
+  artifact, so that pass and this share a home); (b) **PAID 2026-07-25** — the
+  `.scratch/l3-playable-build/` tickets were re-cut against this full-depth
+  definition (nine pre-pivot tickets → thirteen, walking-skeleton order, loop
+  closing at ticket 07; mapping in that tracker's README § Re-cut history). The
+  re-cut is ticket SHAPES only: no ticket can reach `ready-for-agent` until
+  Wayfinder 09/10/11 close and gate 12 publishes, and gate 12 (a) is still
+  blocked by `.scratch/doc-structure/issues/10-audit-run-3.md`; (c) implementation debts already
   tracked ride their own rows (gate-06 loader, code-contract tree, turn-structure /
   eval-bar birthplace, operation-plan magnitude graduation). No mandatory-ADR trigger
   at gate close (definition/scoping, Working-layer); promotion assessment belongs to
@@ -45,6 +49,21 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   (행동력, EVAL BAR, capital fall already done). No mandatory-ADR trigger beyond
   0042 (turn structure = making ADR 0025's uncertainty duel literal, already
   confirmed). Sequencing: after the map pass / at the next L3 build gate.
+
+- [ ] **판세 in-play surface — two sealed positions conflict** (registered
+  2026-07-25, L3 build-ticket re-cut). Gate 07 § Answer sealed the derived-band
+  grade's encoding as **판세 = a match-level mini-meter** (live, in-play), and
+  gate 03's viewer contract routes treasury uncertainty through **판세 band
+  width** as its only surviving surface. Duel-pivot ledger Gate 6 then sealed
+  (user, fork A) that the in-play **STRATEGIC 판세 bar is DROPPED** — one in-play
+  bar, tactical only, strategic verdict moved to a post-game coach explicitly
+  excluded from live play. Both are user seals, hours apart, and the later one
+  leaves treasury uncertainty with no display surface. The build tracker's ticket
+  04 is instructed to follow the later position (no live 판세 meter) and to treat
+  the treasury-uncertainty surface as blocked, rather than to pick a side. Pay by
+  resolving which position stands when the read-layer / 형세판단 feature-doc
+  birthplace is minted (same home as the turn-structure / eval-bar row above),
+  and stamping whichever gate answer is superseded.
 
 - [ ] **1v1 map re-authoring — terrain-cradle is a 5–6-seat multipolar map**
   (registered 2026-07-24, ADR 0042 cascade). DOMAIN_MAP/DESIGN now assert the

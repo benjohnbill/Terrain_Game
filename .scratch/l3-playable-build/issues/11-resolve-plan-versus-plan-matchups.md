@@ -1,0 +1,38 @@
+# 11 — Resolve Plan-Versus-Plan Matchups
+
+**What to build:** The roshambo layer — the largest new build in the program, with
+zero archive code behind it. When two revealed plans meet, the matchup does not
+apply an abstract advantage multiplier; it changes **which formula terms engage**,
+through a small closed verb vocabulary over a sparse matrix.
+
+**Blocked by:** 10 — Select Differentiated Operation Plans.
+
+Status: needs-info
+
+Specification gates: Wayfinder 10, 12.
+
+Contract (interim pointers): `docs/features/combat-formula/MATCHUP.md` (the
+closed verb vocabulary and the sparse matrix — an empty cell is the plain
+formula, and only filled cells record a deviation);
+`docs/features/combat-formula/MAGNITUDE.md` M10 (matchup fractions, mobilization
+visibility, the surprise economy, and the attacker-side surprise rider);
+`FORMULA.md` D1–D11 for the terms the verbs act on; ADR 0025 (turn-based core and
+the uncertainty duel).
+
+**Why the verbs matter more than the numbers.** The design's whole point is that a
+counter reads as a *reason* — an assault plan counters a fortification-leaning
+defence because it erodes the very term that defence relies on. An implementation
+that collapses the verbs into a scalar advantage table satisfies no acceptance
+item below, even if it produces similar numbers.
+
+- [ ] The verb vocabulary is closed and exhaustive: `engage`, `discount <term> <fraction>`, `bypass <term>`, `erode <term>`, `throttle`, `refuse`. A matchup cannot express an effect outside it.
+- [ ] Verbs act on named formula terms at the seam where those terms enter, not as a post-hoc multiplier on the result.
+- [ ] The matrix is sparse by construction: an unfilled cell resolves as the plain formula, and only a filled cell deviates. No cell is invented to fill the grid.
+- [ ] Every fraction comes from M10; a matchup needing a fraction M10 does not carry is reported as a discovery, not filled in locally.
+- [ ] `erode` is distinguished from `discount`: the term applies in full for this resolution and the plan's effect lands on a later one.
+- [ ] `bypass` of a term that does not exist in the sector is free and produces no phantom bonus.
+- [ ] Matchup resolution is symmetric with respect to which realm is labelled first, consistent with the resolve-order rule from ticket 03.
+- [ ] The matchup is applied only from what each side actually revealed — never from the opponent's pre-reveal commitment.
+- [ ] Because the opponent's plan is unknown at commit time, the pre-commit EVAL BAR reflects that as irreducible width and not as a hidden matchup preview.
+- [ ] A regression fixture covers every filled cell, and the plain-formula path is covered for at least one empty cell per family.
+- [ ] Resolution is deterministic and replays identically from `(worldId, revision, seed, ordered intent log)`.

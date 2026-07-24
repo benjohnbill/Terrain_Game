@@ -160,7 +160,14 @@ numbers and war-decisiveness stay deferred (see § Decisions so far). **08 resol
 minimal tracer; the war-termination pole was discharged by ADR 0042, not a tuning
 pass; see § Decisions so far). **All four real grill gates (05/06/07/08) are now
 sealed;** next is feature specs -> `.scratch/l3-playable-build/` (re-scoped against
-the full-depth first-match definition). Gate 05's scope had been
+the full-depth first-match definition). **The build-ticket re-cut landed
+2026-07-25** — nine pre-pivot tickets became thirteen in walking-skeleton order,
+with the loop closing at ticket 07 (capital fall) and two tickets newly minted
+(commit-first UI shell; the land-derived decay engine, which nothing previously
+owned even though D6.4's natural match length depends on it). Ticket SHAPES only:
+readiness still needs 09/10/11 closed and gate 12 published, and 12 (a) remains
+blocked. Mapping and the readiness chain live in that tracker's `README.md`.
+Gate 05's scope had been
 amended twice over, and both amendments held at seal time:
 
 - **Freed** by ADR 0041 — the public-route question (Vite `base`, SPA mount,
