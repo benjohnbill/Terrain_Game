@@ -36,17 +36,16 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   premises "new worlds = gate-06 artifacts"), a design/build pass — recorded here
   only as the Projection↔terrain-cradle divergence it opens. Not a doc-only fix.
 
-- [ ] **SPEC amendment PROPOSAL pending — Tier-3, user approval** (registered
-  2026-07-24, ADR 0042 cascade). `SPEC.md` still asserts the multi-realm model
-  (Core Principle #5 termination, realm-count 4–6, multipolar geometry,
-  hegemony-settlement end, dominance, crisis-arc / Westphalian draw, Phase-2
-  diplomacy; + sharpenings: Principle #2 uncertainty duel becomes literal, LoL
-  positioning, Goal, Core Gameplay Promise). The cascade drafted a single
-  user-approved amendment PROPOSAL
-  (`docs/features/capital/SPEC-AMENDMENT-DRAFT-duel-pivot.md`); SPEC is Direction
-  and is NOT drifted. Until the user seals it, SPEC/DOMAIN_MAP carry a known,
-  recorded contradiction (DOMAIN_MAP/DESIGN re-cut to 1v1, SPEC still multi-realm).
-  Pay by the user reviewing + approving the proposal, then applying it to SPEC.
+- [x] **SPEC amendment — PAID 2026-07-25.** The pivot's SPEC leg: grill-sealed
+  one item at a time (2026-07-24, adversarial grill; several items changed from
+  the original proposal), then applied verbatim to `SPEC.md` as E1–E12 — Goal,
+  Core Gameplay Promise, Principle #2 (sharpen) / #5 (rewrite), Positioning
+  (terrain-war-duel anchor; BM kept parked), Match envelope + Match structure
+  (two realms, war=match, capital-fall terminus), the Resolved / Domination /
+  How-a-match-ends blocks (superseded), Fun Pillars 1 & 3 (re-cut), and Phase 2
+  (parked). Draft `docs/features/capital/SPEC-AMENDMENT-DRAFT-duel-pivot.md`
+  updated to the sealed outcomes and stamped SEALED. The SPEC↔DOMAIN_MAP
+  contradiction is closed. (Registered 2026-07-24, ADR 0042 cascade.)
 
 - [ ] **Multi-realm terms marked HISTORICAL in prose, not in term-inventory
   status** (registered 2026-07-24, ADR 0042 cascade). The DOMAIN_MAP + match-arc

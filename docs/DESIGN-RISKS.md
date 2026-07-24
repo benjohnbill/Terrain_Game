@@ -28,6 +28,22 @@ Status legend: 🔴 open · 🟡 partly addressed · ✅ resolved
 | R12 | L3 immersion charter — the one-judgment bet pays only if unverified at L2: (a) situation-reading surface rewards depth (else analyst/clicker collapse into "press recommended"), (b) standoff turns carry real decisions (standing rules, surge economy, recon posture) rather than click-through, (c) no dominant preset plan emerges (matchup sparsity holds at play) | 🔴 | M9-promotion grill 2026-07-11; ADR 0019; ADR 0025/0026; matchup 21-cell | First playtest measures all three; also calibrates per-turn wall-clock (SPEC's untested 1.5–2 min variable, analyst-track ruling 2026-07-11) |
 | R13 | Crisis-decade genre-shift / chore risk — turns 25–35 could read as fire-fighting admin instead of the most war-dense phase; and a high-karma leader must never reach a mathematically hopeless state (by ~turn 33) it could not have prevented | 🟡 | crisis-ending pass 2026-07-11; crisis co-analysis 2026-07-13; match-arc RULINGS CE-⑩/⑫; ADR 0035 | Shield-natured suppression sealed (CE-⑩); the 2026-07-13 co-analysis found the crisis is a termination *backstop*, not the war-dense spectacle it was hoped to be — the spectacle deficit is upstream (R14). Chore-prevention gate (war density 25–35 ≥ 15–25) still unmet at 가안 dials |
 | R14 | **War-system produces no decisive climax — the SPEC madmovie does not occur.** Crisis-OFF main-arc measurement (2026-07-13, L2 cradle, seed 42): **ZERO annihilations/match**, ~77% of wars end by stall→white-peace fizzle, decided% 0.656 is hegemony-gate trip (force ratios) not conquest climax. The SPEC-promised "shield-break → decisive battle → cascade" deciding war essentially never fires — crisis or not. This is why the draw/timing problem could not be fixed from inside the crisis: the missing dopamine is in the war machine, not the ending. **Bot caveat:** L2 bots stall/settle where a skilled player might force annihilation, so this proves the *default* is fizzle, not that decisive war is unreachable by skill. | 🟡 | crisis co-analysis 2026-07-13; **ADR 0037 + `docs/features/war-model-build/`** (direction sealed 2026-07-13); SPEC "Match structure"; warEnds instrument | **Answered 2026-07-13 (four-survey synthesis → ADR 0037):** the fizzle is a placeholder / harness-abstraction / bot-policy artifact — per-front uniform defense (sealed = per-sector 4-layer), a multi-turn siege conveyor (contradicts ADR 0026 atomic resolution), a static declare gate + bot stall→white-peace exit — NOT a property of the sealed war (the decision gate works as sealed). It is a war-machine *implementation* gap, not a bot-policy tuning knob. **Closes when the build implements the sealed model** (`war-model-build/REQUIREMENTS.md`); L2 retired as a tuning surface. |
+| R15 | **Cheap resignation** — in a 1v1 a player may bail on slight disadvantage (blitz-chess disease); the mirror risk is toying/농락 play if resign is absent | 🟡 | SPEC E4 (resign = product-layer forfeit, below SPEC); grill 2026-07-24 | Product-layer countermeasures post-L3 (ranked incentives / friction). Structural dampers already present: long, few-heavy, land-decay matches make a lost position genuinely lost (not a momentary dip), and EVAL BAR comeback-legibility discourages premature resign. 2v2 unanimity-resign is a parked future option (premises Boundary). |
+
+### Pivot update (2026-07-25, ADR 0042)
+
+The 1v1 duel pivot resolves or reframes several rows above (recorded here rather
+than by silently editing the historical rows). **R13** — the crisis decade /
+internal-uprising system is **retired** by the pivot, so its genre-shift/chore
+risk no longer applies (superseded, not tuned). **R14** — the war-termination
+pass is **subsumed** by the pivot; anti-fizzle is now structural (1v1 removes the
+multipolar deadlock + mutual-exposure + land-derived decay), and the
+previously-missing decisive-climax / madmovie has a concrete home in the **EVAL
+BAR** (Gate 6) — still 🟡 pending the L3 build + playtest. **R2 / R3** (thin
+positive peak; absent macro-progression) are **addressed** by the pivot: the
+positive peak is the read/showdown (Fun Pillar 1 re-cut to "The psychological
+duel"), and victory / arc / comeback are now named (capital fall / single duel /
+EVAL BAR madmovie) — feel remains L3-pending.
 
 ### Next actions (open)
 

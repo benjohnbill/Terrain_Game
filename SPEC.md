@@ -2,9 +2,10 @@
 
 ## Goal
 
-Build a turn-based national management and conquest game where terrain,
-regional economy, population, local military strength, diplomacy, and events
-combine into a world-conquest strategy experience.
+Build a turn-based national management and conquest game — a two-realm
+head-to-head duel won by capturing the enemy capital. Terrain, regional economy,
+population, local military strength, and events combine into the strategy of that
+duel.
 
 The original prototype is a static browser game centered on hex ownership and
 one action per faction per turn. The next design direction is to make conquest
@@ -14,8 +15,8 @@ single global military number.
 ## Core Gameplay Promise
 
 The player grows and governs a state, then uses that state's geography,
-economy, population, military deployment, diplomacy, and timing to conquer the
-map.
+economy, population, military deployment, and timing to capture the enemy realm's
+capital — the sole win condition of the duel.
 
 The game should follow a high complexity, low micromanagement principle. The
 simulation may be deep, but the player should mainly make strategic choices
@@ -55,7 +56,10 @@ authoritative — this spec declares, it does not restate).
 2. **The uncertainty duel is the core pressure engine.** Tension comes from
    information-asymmetric simultaneous commitment under fog — with
    learnable-but-never-solvable opponent tendencies — not from a wall clock.
-   (ADR 0025; DOMAIN_MAP `Uncertainty duel`.)
+   (ADR 0025; DOMAIN_MAP `Uncertainty duel`.) In the duel this is literal: both
+   realms commit the whole turn's orders blind, then reveal and resolve together —
+   poker's bet → showdown, not chess's perfect-information alternation (ADR 0025
+   made literal; ledger Gate 6).
 
 3. **One judgment per turn.** The fun is a single high-stakes read each turn —
    one poker hand, not a checklist. Spreading a turn across many commands would
@@ -67,11 +71,9 @@ authoritative — this spec declares, it does not restate).
    machinery. Poker, not dice. (Combat FORMULA D1; DOMAIN_MAP § Combat
    Resolution.)
 
-5. **The ending is the detection of irreversibility.** A match ends not when
-   the math first tips but when the system detects that no realm or coalition
-   can reverse the balance — that moment opens settlement negotiation, and
-   concluding it is the player's decision, never an automatic game-over.
-   (match-arc GLOSSARY 결정점; DOMAIN_MAP § Arc phases.)
+5. **The ending is capital fall.** A match ends when a realm's capital falls;
+   the system names a winner by nothing else — no points-victory, no
+   timeout-draw, no scorecard. (ADR 0042; capital CP-②; DOMAIN_MAP § Match Arc.)
 
 6. **Uncertainty must be skill-piercable, never fate.** Every loss must trace
    to a decision, not to a spawn dice — the test is whether a perfect player in
@@ -110,62 +112,68 @@ note).
 
 ## Positioning and Fun Pillars
 
-**Positioning.** A "simple Civilization": a Civilization-depth *world* (terrain,
-regional value, some historical flavor) operated with a League-of-Legends-shaped
-*hand* — a low skill floor (anyone plays via posture presets and prefilled
-commands) with an optional skill ceiling (fine situational adjustment rewards
-mastery). System complexity is high; *required* interaction complexity is low;
-*expressed* interaction complexity is opt-in.
+**Positioning.** A **1v1 terrain-war duel, read like poker under fog — won by
+taking the enemy capital.** It began as the wish for a "simple Civilization" —
+Civilization-scale terrain-and-war depth through a low-micromanagement hand — and
+that depth remains the *world's* character; but the shape is a duel, the tension
+is poker under fog, and the tempo is a casual, short competitive match, operated
+with a **League-of-Legends-shaped *hand*** (low skill floor via posture presets
+and prefilled commands, optional skill ceiling for mastery), not a 4X campaign.
+The signature read/feedback organ is the **EVAL BAR (판세)**. System complexity is
+high; *required* interaction complexity is low; *expressed* interaction
+complexity is opt-in.
 
 **Match envelope.** A match is a war/empire arc compressed into roughly 30-40
 minutes — an hour at the outside — in the spirit of a LoL game, not a Paradox
 campaign. Assuming a turn resolves in roughly 1.5-2 minutes — an untested
 playtest variable — the envelope implies roughly 15-25 turns per match; that
 turn count is a derived estimate, not a design commitment. The binding target
-is the wall-clock envelope, with two consequences: a match must end at a
-decision point
-rather than by map completion (see Match structure below), and
+is the wall-clock envelope, with two consequences: a match must end at
+capital fall rather than by map completion (see Match structure below), and
 required per-turn interaction must stay inside the preset-first budget. The
 envelope is a design budget, not a wall clock; casual play stays untimed (time
 pressure remains the separate opt-in question below).
 
-**Match structure.** The match-arc pass (2026-07-04) resolved the shape inside
-that envelope. The map is fully partitioned from turn 1 — 4-6 realms (authoring
-default 5), every realm bordering neighbors, no expand-into-empty-land opening.
-Realms start as mature states (fortresses standing at chokes, armies raised)
-balanced on *survivability and starting population* — every region opens with
-the same population total, so lifetime blood budgets are equal and divergence
-comes only from play — but asymmetric in geometry and economy: a multi-front
-중원 center whose crown is economic (traffic centrality plus long-war economic
-stamina, never a population edge) against shielded, coalition-capable
-peripheries, so whoever takes the center inherits its exposure (the
-anti-snowball loop). The center-protagonist reading is a measured hypothesis,
-not a design guarantee: the design does not script a higher 중원 win rate;
-whoever *digests* the center stably earns a hegemony-probability premium
-(terrain-cradle TC-②). A match arcs standoff → buildup → first war → realignment → deciding
-war → decision point → settlement, budgeted so one player's hand fights ~2-3
-wars. A war is decided when the loser's capacity or will to resist breaks —
-field-army destruction (shield-break → decisive battle → cascade) as the
-dominant path, capital fall (regime event), or settlement acceptance
-(ADR 0038) — and converted to gains through settlement rather than
-sector-by-sector conquest; the match ends when a hegemony settlement is
-concluded, not at 100% map control. The sealed model and vocabulary live in
-`docs/features/match-arc/` and `DOMAIN_MAP.md` (Match Arc and Settlement).
+**Match structure.** The map is fully partitioned from turn 1 — **exactly two
+realms**, bordering each other, no expand-into-empty-land opening; player count
+is decided, not an authoring variable. Growth comes only from taking enemy
+ground, never from settling empty land — this is what forces confrontation
+(mutual-exposure) rather than a builder's race. Realms start as mature states
+(fortresses at chokes, armies raised) balanced on *survivability and starting
+population* — every region opens with the same population total, so lifetime
+blood budgets are equal and divergence comes only from play — but asymmetric in
+geometry and economy. The concrete two-realm board (capital placement,
+forward/rear geometry, terrain) is authored at the parallel 1v1 map pass. **War
+and match are one** — a single sustained duel, not a multi-war arc; the match
+runs at the player's pace until a capital falls (target: casual 15-30 min), its
+length induced by land-derived decay, not a fixed clock (turn structure:
+simultaneous blind commit → reveal, ledger Gate 6). A war is pressed by
+field-army destruction and encirclement — pressures **toward capital capture**,
+no longer independent match-terminators (amends ADR 0038's three-channel
+composite → capital fall is the sole terminus). The match ends when a **capital
+falls**, not at 100% map control and not at a settlement. The sealed model and
+vocabulary live in `docs/features/capital/` (CP-②), `docs/features/match-arc/`,
+and `DOMAIN_MAP.md`.
 
 **Fun pillars.**
 
-1. **Growth you can feel.** The core satisfaction is being validated that you
-   are getting stronger; each well-chosen conquest visibly compounds your
-   position.
+1. **The psychological duel.** The core satisfaction is out-reading and
+   out-planning the opponent under fog — inferring the hidden picture piece by
+   piece, allocating each turn's tactics and 행동력, and chaining several turns
+   into one well-planned war that lands a 명량-shaped comeback (매드무비). Growth
+   is felt — taking ground genuinely strengthens you — but it serves the duel;
+   the fun is the read and the 수싸움, not the size of the empire.
 2. **Skill is fitting the situation.** A posture preset is the statistical-average
    setup for a stance; the specific situation is never average. Skill is reading
    the real situation and adjusting from that average toward what this turn
    actually needs.
-3. **A skill-driven snowball, not a state-driven one.** Advantage accumulates
-   from *skill differences* at each decision — small edges from better
-   situation-fit, chained through newly opened opportunities — not from an
-   automatic "own more → grow stronger → own more" loop. The anti-snowball
-   mechanics exist to bind the lead to skill, not to state.
+3. **The lead never ends the duel early.** Land-derived decay pressures the
+   trailing side toward a decision (anti-fizzle), but the lead is never a safe
+   automatic steamroll: pressing it forward exposes your own capital
+   (mutual-exposure), and the match stays a live judgment to the end — a
+   read-driven comeback stays available, not foreclosed by an early state-lead.
+   The intent, measured in play, is that skill, not an early state-lead, decides
+   who converts pressure into a win.
 4. **Opt-in depth.** Casual players succeed on presets and prefilled commands;
    engaged players capture compounding edges by overriding the decisions that
    matter. Neither is punished.
@@ -181,48 +189,29 @@ command-card operation plan presets create a distinctive, legible gap-to-close
 The command-card preset structure is accepted in ADR 0024; preset content and
 differentiation remain open.
 
-**Resolved (match-arc pass, 2026-07-04).** Match arc and victory conditions —
-the decision-point / settlement / hegemony model is sealed (see Match structure
-above and `DOMAIN_MAP.md` Match Arc and Settlement). A match ends when a hegemony
-settlement concludes, reached through reach-priced settlement bundles and
-deterministic acceptance arithmetic read by the player through fog. The
-remaining questions are playtest-shaped rather than open design: the blinds
-mechanism (anti-safe-play pressure), showdown staging (the read-vs-reality
-reveal), and the loser-side experience between "decided" and "settled." Deferred
-clock/event pressure stays parked (ADR 0025).
+**Resolved — superseded by the 1v1 pivot (ADR 0042).** The decision-point /
+settlement / hegemony victory model is retired; capital fall is the sole win
+condition. The multi-realm machinery (hegemony decision point, domination,
+unassailability, settlement bundles, acceptance arithmetic) is historical
+(DOMAIN_MAP § Match Arc, match-arc feature docs). Open playtest questions carry
+over in duel form: showdown staging (the read-vs-reality reveal — now the EVAL
+BAR + simultaneous reveal) and the loser-side experience.
 
-**Domination victory — second win-type (2026-07-09).** The decision point
-(결정점, principle #5) can now trip through either of two paths: the original
-per-rival **leadership** bar, or **domination** — controlling the board's
-offense outright even without individually clearing every rival's shield.
-Both share one irreversibility gate (unassailability); only the offensive
-qualifying condition differs. Mechanism, dials, and rationale are
-authoritative at match-arc `RULINGS.md` DT-③ (birthplace); this is a summary
-pointer only, per the single-definition rule.
+**Domination victory — superseded by ADR 0042.** There is no hegemony gate (and
+so no leadership/domination win-types) in a two-realm duel; capital fall is the
+sole win condition.
 
-**How a match ends (crisis arc, sealed 2026-07-11).** A match ends in exactly
-one of three ways:
-
-1. **Hegemony decision point** — at any turn, the sole rule that ever
-   names a winner (leadership or domination, plus unassailability).
-2. **Under the crisis arc** — from turn 25, an internal uprising era
-   (fueled by each realm's own accumulated conduct — the land
-   remembers violence and over-mobilization) escalates turn by turn:
-   suppression drains shields, peacetime guarantees die in stages,
-   and standing rebellion joins the balance against every would-be
-   hegemon. The crown then requires conquest **and** pacification —
-   the winner is still declared only by the decision point in (1);
-   the crisis opens the door, the winner's own sword walks through it.
-3. **Westphalian draw** — if turn 35 arrives with no decision, the
-   match is a draw: multiple survivors, no judged winner. This is a
-   designed rarity (target well under 1% of matches), and its threat
-   is part of the pressure that makes late matches decide.
-
-There is no judged scorecard. Nothing but the decision point ever
-names a winner. (Mechanism, dials, and rationale are authoritative at
-match-arc `RULINGS.md` CE-①…⑫ and ADR 0035; this declaration carries
-only the arc anchors and the draw-rarity target, per the
-single-definition rule.)
+**How a match ends (1v1 pivot, ADR 0042).** A match ends in exactly one way: **a
+capital falls.** There is no hegemony decision point, no crisis arc, and no
+Westphalian draw — the crisis / internal-uprising system (ADR 0034/0035/0036) is
+retired. "No judged scorecard" stands, strengthened: nothing but capital fall
+ever names a winner. Stalemate is not resolved by any scoring terminal; the
+current design bet is that structural forces make the duel resolve without a
+forced-termination device — 1v1 removes the multipolar deadlock, mutual-exposure
+makes sitting unsafe, and land-derived decay pushes the trailing player to
+gamble — but that sufficiency is measured in L3 playtest, and an explicit device
+stays deferred behind that measurement (ADR 0042 §3); it is a design bet, not an
+always-true identity claim.
 
 ## Phase Roadmap
 
@@ -258,10 +247,15 @@ economy and population should use the MVP usable-value recovery placeholder
 until later governance systems define richer occupation, administration, unrest,
 and recovery behavior.
 
-### Phase 2: Diplomacy and International Order
+### Phase 2: Diplomacy and International Order — parked
 
-Expand diplomacy beyond alliance/war into tribute, vassalage, threats, betrayal,
-peace terms, war justification, and relationship risk.
+Diplomacy and inter-realm order are multi-party concerns with no referent in a
+1v1 (or future 2v2) duel: there is no third party to ally with or betray, and
+tribute / vassalage / settlement were multi-realm currencies retired by the pivot
+(ADR 0042). This phase is parked together with the multiplayer / PvP axis —
+itself a separate SPEC-level decision (premises Boundary), not assumed here — and
+is revived only if that axis is opened. (Epidemic, nomad-incursion, and similar
+multi-actor content is likewise a future-mode candidate, not folded in now.)
 
 ### Phase 3: National Management
 
