@@ -2,10 +2,13 @@
 
 Date: 2026-07-10
 
-Status: Accepted
-Amended by: ADR-0034 (2026-07-11) — matches that never trip the gate now
-end structurally via the sudden-death crisis ending (direction); the gate
-here remains the sole winner rule for decided matches.
+Status: Superseded by ADR-0042 (2026-07-24)
+Superseded by: ADR-0042 (2026-07-24) — the 1v1 duel pivot replaces the entire
+multi-realm victory model (hegemony decision point + domination + unassailability)
+with capital fall as the sole win condition. There is no hegemony gate in a
+head-to-head duel; nothing in this ADR's win rule still governs.
+Amended by (now moot): ADR-0034 (2026-07-11) — gave the never-tripped tail a
+structural crisis end; retired together with the gate it backstopped.
 Decision source: match-arc RULINGS ⑨⑪⑮⑰ (sealed 2026-07-04/05) and DT-③
 (sealed 2026-07-09, user); implemented commit a29eb0a; SPEC win-type
 amendment commit 2629181.

@@ -1,6 +1,13 @@
 # ADR 0038: War-Ending Composite — Capacity or Will
 
-- Status: Accepted (sealed 2026-07-14)
+- Status: Accepted (sealed 2026-07-14) — Amended by ADR-0042 (2026-07-24)
+- Amended by: ADR-0042 (2026-07-24) — the 1v1 capital-fall pivot promotes capital
+  fall from anti-drag backstop (channel 2) to the SOLE designed win condition. The
+  three-channel composite collapses: field-army destruction (channel 1) and
+  settlement acceptance (channel 3) are no longer independent match-terminators —
+  they become moves/pressures WITHIN the duel that lead toward capital capture.
+  This ADR is the seam that absorbs the pivot (it already made capital fall a
+  war-ending channel).
 - Relationship:
   - Amends the SPEC match-structure line "a war is decided by field-army
     destruction" (SPEC:147) — demoted from sole decider to **dominant path**

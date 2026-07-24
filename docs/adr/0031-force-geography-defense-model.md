@@ -2,7 +2,13 @@
 
 Date: 2026-07-10
 
-Status: Accepted
+Status: Accepted — partly stale, see ADR-0042 (2026-07-24)
+Partly stale (ADR-0042, 2026-07-24): the terrain-bound defense + reactive-reserve
+MECHANICS survive to the L3 build unchanged (force-count-independent; combat
+engine is out of the 1v1-pivot scope). What is now HISTORICAL is the multi-realm
+FRAMING — the "hegemony-freeze three-concept sequence," the hegemony-gate
+consumer, and the coalition / multi-front deterrence-equilibrium context. In a
+1v1 duel the model applies to the single border pair.
 Amends: ADR 0008 (Phase 1 stat scope) and ADR 0014 (garrison sustainment) —
 the uniform-shield defense reading those ADRs assumed is replaced by a
 terrain- and choice-shaped distribution.

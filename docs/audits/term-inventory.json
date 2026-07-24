@@ -3219,6 +3219,45 @@
    "verdictRef": "docs/features/capital/RULINGS.md#CP-1"
   },
   {
+   "canonical": "capital fall",
+   "korean": "수도 함락",
+   "aliases": [],
+   "birthplace": "docs/features/capital/GLOSSARY.md",
+   "tier": 1,
+   "status": "AGREED",
+   "kind": "mechanic",
+   "codeIdentifier": null,
+   "codeRefs": [],
+   "verdict": "standard-term",
+   "verdictRef": "docs/features/capital/RULINGS.md#CP-2"
+  },
+  {
+   "canonical": "forward / rear capital",
+   "korean": "전방 / 후방 수도",
+   "aliases": [],
+   "birthplace": "docs/features/capital/GLOSSARY.md",
+   "tier": 1,
+   "status": "AGREED",
+   "kind": "mechanic",
+   "codeIdentifier": null,
+   "codeRefs": [],
+   "verdict": "standard-term",
+   "verdictRef": "docs/features/capital/RULINGS.md#CP-2"
+  },
+  {
+   "canonical": "capital relocation",
+   "korean": "천도",
+   "aliases": [],
+   "birthplace": "docs/features/capital/GLOSSARY.md",
+   "tier": 1,
+   "status": "AGREED",
+   "kind": "mechanic",
+   "codeIdentifier": null,
+   "codeRefs": [],
+   "verdict": "standard-term",
+   "verdictRef": "docs/features/capital/RULINGS.md#CP-2"
+  },
+  {
    "canonical": "Sector world",
    "korean": "섹터 세계",
    "aliases": [],

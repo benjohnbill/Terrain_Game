@@ -2,7 +2,14 @@
 
 Date: 2026-07-11
 
-Status: Accepted
+Status: Accepted — partly stale, see ADR-0042 (2026-07-24)
+Partly stale (ADR-0042, 2026-07-24): the sector-identity occupation model (named
+captures, occupation frontier, holdings-derived income + ceiling, capLandFrac)
+SURVIVES as the L3 build target — and is now load-bearing: it is the 1v1
+anti-fizzle decay engine (ledger D5.1, capLandFrac 1 = AB-② stands). What is now
+HISTORICAL is the MULTI-REALM machinery — the third-party elimination / coalition
+transfer branches ("each war's occupier keeps its bites," dead-third-party flows)
+and the L2 tournament "world of record" framing tied to the retired hegemony gate.
 Amended by: ADR-0034 + match-arc ruling AB-② (2026-07-11) — the world of
 record moves from capLandFrac 0 to **FG board + M9 on + capLandFrac 1**
 (configuration sealed; dial values stay 가안).

@@ -2,10 +2,13 @@
 
 Date: 2026-07-11
 
-Status: Accepted
-Amends: match-arc ruling ⑪ (regeneration window W = 6) — refinement, not
-reversal: recruitment futures stay rival-side only, but are now
-affordability-bounded.
+Status: Superseded by ADR-0042 (2026-07-24)
+Superseded by: ADR-0042 (2026-07-24) — this bound refines the hegemony gate's
+unassailability clause (ADR 0030); with the gate retired by the 1v1 capital-fall
+pivot, there is no unassailability check to bind. The affordability arithmetic
+(`money`/`bodies` recruitment futures) has no consumer in a duel.
+Amends (historical): match-arc ruling ⑪ (regeneration window W = 6) — refinement,
+not reversal: recruitment futures stayed rival-side only, affordability-bounded.
 Decision source: dominance-gate grill design spec
 `docs/superpowers/specs/2026-07-11-unassailability-affordability-design.md`
 (user-approved section by section, 2026-07-11); implemented commits

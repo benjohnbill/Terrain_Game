@@ -2,11 +2,15 @@
 
 Date: 2026-07-12
 
-Status: Accepted (design-level; dial values 가안 — dial table rides the
-implementation plan)
-Extends: ADR 0035 (skeleton → body). The rebellion-body deferral
-recorded in ADR 0035's Consequences is paid; ADR 0034's gate 5
-(terrain resonance) is resolved.
+Status: Superseded by ADR-0042 (2026-07-24)
+Superseded by: ADR-0042 (2026-07-24) — the rebellion body retires with the crisis
+stack (0034/0035/0036) under the 1v1 capital-fall pivot. NOTE: this ADR also
+canonized truce and white peace (CE-⑱/⑲, resolving SPEC_GAPS ⑤/⑦); with capital
+fall the sole terminus (ledger D3.1), neither serves a match-ending role. Whether
+a will-based concession survives as a duel affordance is left to the capital /
+turn-structure passes, not resolved here.
+Extends (historical): ADR 0035 (skeleton → body); paid the rebellion-body
+deferral and resolved ADR 0034's gate 5 (terrain resonance).
 Decision source: rebellion-body & peacetime-institutions grill,
 user-sealed 2026-07-12 (match-arc RULINGS **CE-⑬…⑳** — birthplace;
 this ADR is a summary + pointer per the single-definition rule).

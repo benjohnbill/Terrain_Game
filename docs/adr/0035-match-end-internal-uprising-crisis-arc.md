@@ -2,11 +2,14 @@
 
 Date: 2026-07-11
 
-Status: Accepted (design skeleton; rebellion-body mechanics, dial
-values, and the measurement read are deferred — see Consequences)
-Extended by ADR 0036 (2026-07-12): the rebellion-body deferral is
-paid (suppression resolution, rebellion five points, seceded-sector
-behavior — CE-⑬…⑳) and gate 5 is resolved; dial values remain 가안.
+Status: Superseded by ADR-0042 (2026-07-24)
+Superseded by: ADR-0042 (2026-07-24) — the internal-uprising crisis arc retired
+with the crisis stack (0034/0035/0036); it was the multipolar forced-termination
+backstop, unneeded once 1v1 + capital fall + structural anti-fizzle end the
+match. The Westphalian draw (CE-⑪) goes with it: a duel with a sole capital-fall
+terminus has no no-winner tail to draw.
+Extended by (historical): ADR 0036 (2026-07-12): paid the rebellion-body deferral
+(suppression resolution, seceded-sector behavior — CE-⑬…⑳); resolved gate 5.
 Amends: ADR 0034 on three points — (1) crisis source family: barbarian
 invasion (이민족 침입) → **internal uprising** (봉기, karma-driven);
 (2) fallback: judged scorecard → **Westphalian draw** (no second judge

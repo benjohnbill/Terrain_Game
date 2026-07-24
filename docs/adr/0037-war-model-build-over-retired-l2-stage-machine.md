@@ -1,6 +1,12 @@
 # ADR 0037: War Model Build — Sealed Combat Resolution Replaces the L2 Stage-Machine
 
-- Status: Accepted (sealed 2026-07-13)
+- Status: Accepted (sealed 2026-07-13) — Amended by ADR-0042 (2026-07-24)
+- Amended by: ADR-0042 (2026-07-24) — the 1v1 capital-fall pivot changes the
+  build's WIN CONDITION: "reuse the sealed hegemony gate (ADR 0030/0033)" (Decision
+  §4) is now FALSE — the gate is superseded; capital fall is the terminus. The
+  COMBAT / defense build targets (§3: per-sector four-layer defense, atomic
+  resolution, opportunism bot) SURVIVE unchanged (force-count-independent). The
+  crisis "parked backstop" (§5) is retired, not merely parked.
 - Relationship:
   - → Advances ADR 0031 (force-geography terrain-bound defense + reactive
     reserve: from L2-harness-only to the build's per-sector implementation).

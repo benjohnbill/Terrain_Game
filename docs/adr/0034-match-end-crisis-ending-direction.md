@@ -2,14 +2,18 @@
 
 Date: 2026-07-11
 
-Status: Accepted — Amended by ADR-0035 (2026-07-11): the design pass it
-mandated ran the same evening and amended three parameters — crisis
-source 이민족 침입 → internal uprising (봉기, karma-driven), fallback
-judged scorecard → Westphalian draw, timeline turn-32 bell + ~3-turn
-encroachment → crisis arc turn 25→35 (rolling assessment). The five
-gates + three riders remain binding. (Original status: direction-level;
-the detailed design is a separate dedicated pass — the SPEC amendment
-proposal rides that pass, SPEC is untouched today)
+Status: Superseded by ADR-0042 (2026-07-24)
+Superseded by: ADR-0042 (2026-07-24) — the sudden-death crisis ending existed
+ONLY to force-end multipolar matches the hegemony gate never tripped. The 1v1
+capital-fall pivot (sole win condition + structural anti-fizzle, ledger D3.2)
+removes that job; the crisis stack (0034/0035/0036) is retired dormant. Insights
+reserved as reserve-device ingredients only (pay/refuse staircase CE-④/⑥,
+calendar determinism CE-⑨).
+Amended by (historical): ADR-0035 (2026-07-11): the mandated design pass amended
+three parameters — crisis source 이민족 침입 → internal uprising (봉기,
+karma-driven), fallback judged scorecard → Westphalian draw, timeline turn-32
+bell → crisis arc turn 25→35 (rolling assessment). (Original status:
+direction-level; detailed design was a separate dedicated pass.)
 Amends: ADR 0030 (the hegemony gate remains the sole winner rule for
 DECIDED matches; this ADR gives the never-tripped tail a structural end
 instead of a `winner: null` timeout). Together with match-arc ruling AB-②
