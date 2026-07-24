@@ -4,6 +4,33 @@ Front door only (documentation law): status, scope, pointers, open
 questions. Definitions live in `GLOSSARY.md`; numbers in
 `../combat-formula/MAGNITUDE.md`.
 
+> **⛔ VICTORY MACHINERY SUPERSEDED — 1v1 duel pivot (ADR 0042, 2026-07-24).**
+> This feature births the multi-realm victory model; the 1v1 pivot replaces it
+> with **capital fall as the sole win condition**. The seals below are re-sealed
+> as **HISTORICAL** (retained as the record of the multi-realm era, not current
+> truth):
+> - **Victory / terminus:** 패권 결정점 (hegemony decision point), DT-③ dominance,
+>   unassailability + AB-① affordability bound, 은둔국 조항 (hermit clause),
+>   투사 가능 질량 as a victory input, ET-① ending taxonomy + DT-① decision timing,
+>   the settlement-as-terminus cluster (⑧ preset ladder, 수락 산술, 복속
+>   vassalage-as-currency, 도달권 reach).
+> - **Frame decision:** realm count 4–6, the multipolar map, the ~2–3-war arc.
+> - **Crisis stack:** CE-①…⑳ (retired dormant with ADR 0034/0035/0036).
+>
+> **SURVIVES — LIVE, affirmed at pivot Gate 5 (do not re-stale):** the aging
+> constitution (MT-①, P1/P2/P3; purpose re-aimed to land-loss irreversibility /
+> anti-fizzle), the conscription register (MT-②, role narrowed to finite blood
+> bound + affordability body-min), surge recruitment + mobilization intensity
+> (MT-③④, pricing LIVE / pressure-and-aging-clock retired), occupation-geography
+> (OG-①…⑤ minus third-party transfer branches — now the anti-fizzle income +
+> force-limit decay engine, capLandFrac 1 / AB-② stands), and the combat spine
+> (shield-break / decisive battle / field army / cascade, WM-①). These are
+> **force-count-independent** and port to 1v1 unchanged.
+>
+> Authoritative current truth: **ADR 0042** + `docs/features/capital/` (CP-②) +
+> the duel-pivot ledger (`.scratch/l3-playable-seam/`). Individual seal rows below
+> are NOT edited (append-only record); read them under this banner's split.
+
 **Match-tilting pass — economy phase CLOSED (2026-07-08)**: the L2
 cradle run exposed the frozen world (deterrence equilibrium). The
 pass sealed the aging constitution P1–P3, re-founded 징집 명부

@@ -243,17 +243,21 @@ vocabulary. Implementation in `js/combat.js` still trails the sealed design.
 
 ## Match Arc and Settlement
 
-Above single battles, a match is a bounded arc, not an open sandbox. The map is
-fully partitioned among 4-6 mature-state realms from turn 1; a match runs
-standoff → buildup → war(s) → decision point → settlement inside the
-30-40-minute envelope, budgeted so one player's hand fights ~2-3 wars. Wars are
-decided by field-army destruction and converted to territory / indemnity /
-vassalage through reach-priced settlement bundles rather than sector-by-sector
-conquest; the match ends at a hegemony settlement, judged by shield-ratio
-arithmetic (leadership + unassailability) that the player reads through fog as a
-banded estimate. The sealed model lives in `docs/features/match-arc/` and
-`DOMAIN_MAP.md` (Match Arc and Settlement); it is a design layer with no
-dedicated module yet.
+**Re-cut by the 1v1 duel pivot (ADR 0042, 2026-07-24).** The match is a
+two-realm head-to-head duel won by **capturing the enemy capital** — the sole
+win condition. There is no hegemony settlement, no multi-realm decision point,
+and no crisis-arc terminus; war and match are one (a single sustained duel, not
+a ~2–3-war arc). The match runs at the player's pace until a capital falls,
+targeting a casual 15–30 min. Anti-fizzle is structural, not clocked: 1v1
+removes the multipolar deadlock, and mutual-exposure (committing force to
+offense undefends your own capital) plus land-derived decay force the trailing
+player to gamble. The combat spine (shield-break → decisive battle → cascade)
+and the realm-internal economy survive intact (force-count-independent);
+field-army destruction and settlement become pressures toward capital fall, not
+independent match-terminators. Current truth: ADR 0042 + `docs/features/capital/`
+(CP-②) + the duel-pivot ledger (`.scratch/l3-playable-seam/`). The multi-realm
+arc that previously stood here is retained as historical context in the
+match-arc feature docs (re-sealed as historical in the same batch).
 
 ## Documentation Policy
 

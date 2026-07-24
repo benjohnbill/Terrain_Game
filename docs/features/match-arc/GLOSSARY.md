@@ -16,6 +16,16 @@ Ruling history — evidence, rejected alternatives, riders — lives in
 history. Raw verdict text stages in `mockup/combat-calc/NOTES.md`
 §User verdicts.
 
+> **⛔ VICTORY-TERM SUPERSESSION (ADR 0042, 2026-07-24).** The 1v1 duel pivot
+> makes **capital fall the sole win condition**; the multi-realm victory terms
+> defined below (패권 결정점, dominance, unassailability, 은둔국 조항, 투사 가능
+> 질량 as a victory input, 정산/수락 산술/복속/도달권 as a settlement terminus,
+> ending-taxonomy buckets) are **HISTORICAL**. Realm-internal terms (aging
+> constitution, 징집 명부, 모병/동원 강도, occupation-geography, combat terms)
+> stay LIVE (affirmed at pivot Gate 5). Full split + current truth: `INDEX.md`
+> banner + ADR 0042. Rows are not edited individually (single-definition
+> record); read them under that split.
+
 ## Frame decisions recorded this pass
 
 - **Full adjacency, no neutral zones** (AGREED 2026-07-03): every realm

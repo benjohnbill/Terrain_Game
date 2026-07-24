@@ -36,13 +36,14 @@ naming, promotion, the generated Quick Reference) lives in
   extension point if muster location ever needs to matter.
 
 - ✅ `Aging constitution` (노화 헌법 · alias anti-stalemate ratchet) —
-  **user-sealed 2026-07-07 (match-tilting pass)**: how a match accrues
-  irreversibility so the decision point can arrive (the fix for the
-  L2-observed frozen world) — three principles: dual billing, flow
-  never ages, snapshot information. Extends land-derived state to the
-  population/blood system. Authoritative definition + rulings + parked
-  items: match-arc GLOSSARY 노화 헌법 / RULINGS MT-①. _(Re-slimmed to
-  summary+pointer 2026-07-10, forensics F-04.)_
+  **user-sealed 2026-07-07 (match-tilting pass); purpose re-aimed by the 1v1
+  pivot Gate 5 (D5.2, 2026-07-24)**: how a match accrues irreversibility — three
+  principles: dual billing, flow never ages, snapshot information. Originally the
+  clock that let the (now-retired) decision point arrive; in the duel it is the
+  buttress of anti-fizzle — **P1 dual billing (no free healing) makes land-loss
+  irreversible**, so losing ground genuinely decays the trailing player (ADR 0042
+  §3, ledger D5.1/D5.2). Mechanics unchanged. Authoritative definition + rulings:
+  match-arc GLOSSARY 노화 헌법 / RULINGS MT-①. _(Re-slimmed 2026-07-10, F-04.)_
 
 ## Core Terms
 
@@ -593,6 +594,29 @@ on any divergence the Production seal is truth (documentation-law conflict rule)
 
 ## Match Arc and Settlement
 
+> **⛔ VICTORY MODEL SUPERSEDED — 1v1 duel pivot (ADR 0042, 2026-07-24).** The
+> game is now a **two-realm head-to-head duel won by capturing the enemy
+> capital** — the sole win condition. Current truth: **ADR 0042** +
+> `docs/features/capital/` (CP-②) + the duel-pivot ledger
+> (`.scratch/l3-playable-seam/`). Much of this section describes the SUPERSEDED
+> multi-realm victory era; it is retained as historical context, not current
+> truth. Read each row against this split:
+> - **SUPERSEDED** (multi-realm victory machinery, no consumer in a duel):
+>   `Match` (as hegemony arc), `Realm count 4–6`, the multipolar
+>   Warring-States/Three-Kingdoms geometry, `Match arc as design budget`
+>   (2–3 wars), `Decision point`, `Hegemony decision point`, `Projectable
+>   mass`, the `hermit clause`, the settlement-as-match-terminus cluster
+>   (`Settlement`, `Settlement currencies`, `Reach`, `Acceptance arithmetic`,
+>   `Vassalage`), and **all six winning archetypes** (derived from the hegemony
+>   inequality). Rows below carry an inline `⛔` stamp.
+> - **SURVIVES** (realm-internal / combat, force-count-independent, affirmed at
+>   pivot Gate 5): the combat spine (`Engagement`, `Operation`, `War` as a
+>   scale label, `Shield-break`, `Decisive battle`, `Field army`, `Cascade`),
+>   `Mature-state start`, `Recruitment`, `Conscription register`, `Blinds`
+>   (already retired MT-⑤), `Test-trust ladder`, `Attack axis as numeraire`.
+>   In 1v1, war and match are one; field-army destruction and settlement
+>   become pressures toward capital fall, not independent match-terminators.
+
 The layer above battle resolution: how a full match arcs from opening standoff
 to a hegemony settlement. Vocabulary is authored in
 `docs/features/match-arc/GLOSSARY.md` (promoted here); the winning archetypes
@@ -617,9 +641,11 @@ rule)._
 - ❓ `War` (전쟁): declaration → settlement, ~8–12 turns. A war is *decided* by
   field-army destruction (shield-break → decisive battle → cascade), never by
   grinding occupation to completion.
-- ❓ `Match` (매치): pre-war standoff → hegemony settlement, ~15–25 turns /
-  30–40 min (the wall-clock envelope is the binding target; turn count is a
-  derived estimate). A match, not a campaign.
+- ❓ `Match` (매치): **⛔ Superseded (ADR 0042):** a match is now a 1v1 duel to
+  capital fall — war and match are one, player-paced to the capital's fall, not
+  a pre-war-standoff → hegemony-settlement arc. Target duration + turn band live
+  at the pivot's Gate 6 (D6.4, duel-pivot ledger). _(Historical: pre-war standoff
+  → hegemony settlement. A match, not a campaign.)_
 
 ### Match structure (frame decisions, AGREED 2026-07-03)
 
@@ -627,28 +653,27 @@ rule)._
   neighbors; the map is fully partitioned from turn 1. No expand-into-empty-land
   opening — the envelope has no room for it and the `Uncertainty duel` needs live
   neighbors immediately (ADR 0025).
-- ✅ `Realm count 4–6 (authoring default 5)`: the partition is decided by
-  authored terrain cradles (basin, shielded valley, plain, coast); 4–6 is the
-  verification condition on how many viable cradles the active region holds, not
-  an imposed cut.
-- ✅ `Viability parity, geometry/economy asymmetry`: what is balanced is
-  survivability AND starting population (parity start / emergent asymmetry,
-  terrain-cradle TC-①/TC-⑭, SPEC Core Principle #8); asymmetry lives in
-  geometry and economy. A multipolar
-  Warring-States / Three-Kingdoms shape with one multi-front 중원 center
-  whose crown is economic only (traffic centrality + economic stamina)
-  and pays in multi-front exposure; periphery realms are shielded and
-  coalition-capable. Whoever takes the center inherits its exposure (the
-  anti-snowball loop). The center-protagonist reading is a measured L2
-  hypothesis, not a design guarantee (TC-②). No realm is one-war-killable
-  from turn 1 without buildup (~1.7 shield-mass ratio is the sizing tool;
-  values → battery). _2026-07-07: supersedes the earlier "richer center,
-  mass asymmetry" wording (parity v4); SPEC amended the same day
-  (user-approved)._
-- ✅ `Match arc as design budget`: buildup cost, war length, and the hegemony
-  threshold are tuned so one player's hand fights ~2–3 wars per match; the match
-  ends at the hegemony settlement. A tuning target, never a mechanical cap — the
-  arithmetic prices out a fourth war, no rule forbids it.
+- ✅ `Realm count 4–6 (authoring default 5)`: **⛔ Superseded (ADR 0042):** the
+  duel has EXACTLY TWO realms; realm count is decided, not an authoring
+  variable. _(Historical: the multipolar partition was decided by authored
+  terrain cradles — basin, shielded valley, plain, coast — 4–6 a verification
+  condition on viable cradles, not an imposed cut.)_
+- ✅ `Viability parity, geometry/economy asymmetry`: **⛔ Multipolar geometry
+  superseded (ADR 0042):** the multipolar Warring-States / Three-Kingdoms shape
+  (中原 center + coalition-capable periphery) has no place in a two-realm duel.
+  What SURVIVES is the underlying principle — parity start / emergent asymmetry
+  (terrain-cradle TC-①/TC-⑭, SPEC Core Principle #8), asymmetry living in
+  geometry and economy — which the parallel 1v1 map pass re-expresses for two
+  realms. _(Historical: one multi-front 중원 center, economic-only crown paying
+  in multi-front exposure; periphery shielded and coalition-capable; whoever
+  takes the center inherits its exposure — the anti-snowball loop, a measured L2
+  hypothesis, TC-②. 2026-07-07 parity v4 wording.)_
+- ✅ `Match arc as design budget`: **⛔ Superseded (ADR 0042):** war and match
+  are one in the duel — there is no ~2–3-war budget and no hegemony-settlement
+  terminus. Match length is player-paced to capital fall (pivot Gate 6 D6.4).
+  _(Historical: buildup cost, war length, and the hegemony threshold were tuned
+  so one player's hand fought ~2–3 wars; the arithmetic priced out a fourth war,
+  no rule forbade it.)_
 - ❓ `Mature-state start`: realms begin as functioning states — fortresses
   standing at historical chokes, armies raised. A from-zero opening would spend
   the whole envelope on construction (a legendary fortress alone ≈ a third of a
@@ -656,9 +681,10 @@ rule)._
 
 ### Arc phases and settlement
 
-- ✅ `Match arc` (매치 아크): the phase curve a match traverses — standoff →
-  buildup → first war → realignment → deciding war → decision point →
-  settlement.
+- ✅ `Match arc` (매치 아크): **⛔ Superseded (ADR 0042):** the duel has no
+  multi-war phase curve and no decision-point/settlement terminus. _(Historical:
+  standoff → buildup → first war → realignment → deciding war → decision point →
+  settlement.)_
 - ✅ `Shield-break` (방패 깨기): the opening operation of a war — reducing the
   border fortification line that shields a realm's interior (erosion or bypass).
   The pre-war mass ratio at the shield largely decides the war. (Sealed
@@ -673,81 +699,71 @@ rule)._
   sectors fall in one-turn takes against garrison-only defense. The victory lap
   that makes winning *felt*; ending grammar must not amputate it. (Renamed
   2026-07-13, WM-①; sweep mechanic itself is a later build slice.)
-- ✅ `Decision point` (결정점): the first moment the irreversibility check opens
-  *settlement negotiation* — the system detects that no remaining realm or
-  coalition can realistically overturn the balance (R arithmetic over remaining
-  mass). The ending itself is a *player decision* (winner: accept-terms or
-  press-on; loser: capitulate or fight-on); the match ends when the hegemony
-  settlement concludes, not when the math first tips. (Operational definition of
-  SPEC's "matches end at decision points.")
-- ✅ `Hegemony decision point` (패권 결정점): the match-ending decision point.
-  Shield-ratio arithmetic, no new physics: **leadership** — the candidate's
-  projectable mass clears the war-deciding shield ratio against every
-  in-balance realm (rejects the turtle hegemon); AND **unassailability** — no
-  coalition of in-balance realms can reach that ratio × the candidate's shield
-  within a regeneration window. Shield mass is a facing-front reading derived
-  from adjacency (conquest inherits exposure); the check trips on true values
-  while the player reads a banded 판세 estimate. Sealed dials (ratio,
-  regeneration window, facing-front rule) + history → match-arc GLOSSARY
-  패권 결정점 row / RULINGS ⑨⑪⑮⑰.
-- ✅ `Projectable mass` (투사 가능 질량): the mass a realm can actually deliver to
-  fronts beyond its own shield — a derived reading of the field army through the
-  realm's exit-choke geography (M11 + route graph), never a stored variable.
-  Chokes narrow doors both ways: the unbreakable are usually also unable to
-  march out. Sealed formula + flow value + history → match-arc GLOSSARY
-  투사 가능 질량 row / RULINGS ⑩.
-- ✅ `In/out of the balance — hermit clause` (판세 안/밖 · 은둔국 조항): a realm
-  whose projectable mass falls below the sealed floor (value + rationale:
-  match-arc GLOSSARY hermit row) is *outside the balance* — excluded from coalition
-  sums and the leadership denominator. Derived per turn (a hermit can buy back in
-  via choke-removal paths). Out-of-balance realms are acknowledged at settlement
-  (tributary/hermit narrative), never forced to capitulate — the match ends
-  without requiring the whole map. A projecting-but-unbreakable realm stays in
-  and legitimately blocks the decision point (Parthia pattern).
-- ✅ `Settlement` (정산): the procedure converting a decided war into gains
-  *without* occupation grinding — annexation arrives through settlement, not
-  sector-by-sector conquest. Two levels: 전쟁 정산 (ends one war) and 패권 정산
-  (concludes the match). Settlement territory arrives *undamaged* (no scorch or
-  conquest damage, vs conquest damage + M6 inheritance cost) but integrates on
-  the same usable-ripening lag as all acquired land; the saved friction is the
-  trade surplus, split naturally (no discount dial). MVP: no free negotiation —
-  2–3 auto-priced preset bundles (관대/표준/최대); bluffing and free terms → Phase
-  2 diplomacy.
-- ✅ `Settlement currencies` (정산 통화): the MVP menu of three — 할양 (cession:
-  named sectors, undamaged, ceiling = occupation reach), 배상 (indemnity: one-time
-  economy transfer, ceiling = loot value of raid reach per M8's 50% rule), 복속
-  (vassalage: the realm survives subordinated, its mass leaving the coalition
-  pool and counting to the winner's side; available only when the capital is
-  within reach). Demilitarization and route access → Phase 2. Mixed-bundle total
-  ≤ reach value.
-- ✅ `Reach` (도달권): the closed-form price base of every settlement, never a
-  runtime simulation. 점령 도달권 (occupation reach): sectors the winner could take
-  before resistance re-forms — route graph from army positions, stopped by intact
-  shields, bounded by the regeneration window (M12). 약탈 도달권 (raid reach): the
-  wider zone reachable by sub-threshold raiding (bypasses shields, M8). Demands
-  beyond reach → deterministic refusal, war resumes; reach is recomputed at
-  suing time. "칼이 닿는 곳까지가 청구서다 — 점령의 칼은 땅을, 약탈의 칼은 돈을,
-  수도에 닿은 칼은 무릎을 청구한다."
-- ✅ `Acceptance arithmetic` (수락 산술): a loser-AI accepts a bundle iff bundle
-  value ≤ its continued-war expected loss × personality coefficient — computed on
-  *true values*, deterministic (no dice). The coefficient (완고/실리/유화) is drawn
-  per realm at match start from a narrow band (ADR 0025 tendency). A player-loser
-  decides freely. The settlement card shows a per-bundle acceptance *band* (the
-  player predicts through fog though the AI decides deterministically — tension
-  without dice). Deferred-with-trigger: fogged-read acceptance + bluffing ship
-  with Phase 2; pull earlier iff playtest shows settlement reads as solved/flat.
-  Sealed dials (resistance discount, coefficient anchors, the lenient=tempo-peace
-  identity) + history → match-arc GLOSSARY 수락 산술 row / RULINGS ⑫⑬.
-- ✅ `Vassalage / capitulation` (복속): a settlement outcome — the losing realm
-  survives diminished and subordinated; its mass leaves the coalition pool and
-  counts to the **overlord's** side of the hegemony arithmetic. Choosing
-  capitulation over a fight to the capital is the losing player's own decision
-  (surrender grammar). MVP terms: no in-match defection; chain collapse on
-  overlord fall; the vassal seat keeps full internal sovereignty (부마국 model);
-  substance–sovereignty exchange axis (할양 trades substance to keep sovereignty,
-  복속 the reverse). Priced in **acceptance currency** = standard-preset material
-  + sovereignty premium × loser remaining value. Sealed premium value +
-  floor-setter rider + history → match-arc GLOSSARY 복속 row / RULINGS ⑭⑯.
+- ✅ `Decision point` (결정점): **⛔ Superseded (ADR 0042):** the duel has no
+  irreversibility-check terminus; the match ends ONLY on capital fall (pivot
+  D3.1). Anti-fizzle is structural (mutual-exposure + land-derived decay), not a
+  detected decision point. _(Historical: the first moment the irreversibility
+  check opened settlement negotiation — no remaining realm or coalition could
+  overturn the balance; the ending was a player decision. Operational definition
+  of SPEC's "matches end at decision points.")_
+- ✅ `Hegemony decision point` (패권 결정점): **⛔ Superseded (ADR 0042):** the
+  keystone multi-realm win rule — retired outright. A two-realm duel has no
+  coalition and no "balance" to survey, so leadership + unassailability have no
+  referent; capital fall is the sole win condition. _(Historical: the
+  match-ending decision point — leadership [projectable mass clears the shield
+  ratio vs every in-balance realm] AND unassailability [no in-balance coalition
+  reaches that ratio within a regeneration window]. Dials + history: match-arc
+  GLOSSARY 패권 결정점 / RULINGS ⑨⑪⑮⑰.)_
+- ✅ `Projectable mass` (투사 가능 질량): **⛔ Stale as a victory input (ADR
+  0042):** it existed to feed the retired hegemony arithmetic (leadership /
+  unassailability across realms). The underlying reading — mass a realm can
+  deliver beyond its shield through exit-choke geography (M11 + route graph),
+  never stored; chokes narrow both ways — survives as an operational/combat
+  notion (reach cones), but is no longer a win-condition term. History: match-arc
+  GLOSSARY 투사 가능 질량 / RULINGS ⑩.
+- ✅ `In/out of the balance — hermit clause` (판세 안/밖 · 은둔국 조항):
+  **⛔ Superseded (ADR 0042):** "in/out of the balance" and coalition
+  sums/leadership denominator are multi-realm constructs with no referent in a
+  two-realm duel. _(Historical: a realm whose projectable mass fell below the
+  sealed floor was outside the balance — excluded from coalition sums and the
+  leadership denominator, derived per turn, acknowledged at settlement, never
+  forced to capitulate; a projecting-but-unbreakable realm blocked the decision
+  point, the Parthia pattern. match-arc GLOSSARY hermit row.)_
+- ✅ `Settlement` (정산): **⛔ Superseded as a match-terminus (ADR 0042):** the
+  duel ends ONLY on capital fall (D3.1) — there is no 패권 정산 concluding the
+  match, and with war=match no inter-war 전쟁 정산 either. Whether a reduced
+  concession/surrender affordance survives in a duel is deferred to the capital /
+  turn-structure passes (not resolved here). _(Historical: converted a decided
+  war into gains without occupation grinding — undamaged annexation via preset
+  bundles 관대/표준/최대; bluffing/free terms → Phase 2.)_
+- ✅ `Settlement currencies` (정산 통화): **⛔ Superseded (ADR 0042):** the
+  settlement menu was a war-terminus mechanic; the duel's terminus is capital
+  fall, not a priced bundle. _(Historical: the MVP menu of three — 할양 [cession:
+  named sectors, ceiling = occupation reach], 배상 [indemnity: economy transfer,
+  ceiling = raid-reach loot per M8's rule], 복속 [vassalage: realm survives
+  subordinated, mass leaving the coalition pool to the winner, only when the
+  capital is within reach]. Demilitarization/route access → Phase 2.)_
+- ✅ `Reach` (도달권): **⛔ Stale as a settlement-price base (ADR 0042):** with
+  no priced settlement terminus, reach no longer prices anything. The underlying
+  spatial notion (점령 도달권 = sectors takeable before resistance re-forms via the
+  route graph; 약탈 도달권 = the wider raidable zone) survives as an
+  operational/combat reading (reach cones, occupation-geography), not a
+  settlement currency. _(Historical: the closed-form price base of every
+  settlement, bounded by the regeneration window; "칼이 닿는 곳까지가 청구서다".)_
+- ✅ `Acceptance arithmetic` (수락 산술): **⛔ Superseded (ADR 0042):** there is
+  no settlement bundle for a loser to accept — the duel's terminus is capital
+  fall. _(Historical: a loser-AI accepted a bundle iff bundle value ≤
+  continued-war expected loss × personality coefficient [완고/실리/유화, ADR 0025
+  tendency], deterministic; the settlement card showed a fogged acceptance band.
+  match-arc GLOSSARY 수락 산술 / RULINGS ⑫⑬.)_
+- ✅ `Vassalage / capitulation` (복속): **⛔ Superseded (ADR 0042):** vassalage
+  moved a loser's mass into the hegemony arithmetic (overlord's side of the
+  coalition sum) — a multi-realm currency with no referent in a duel whose sole
+  terminus is capital fall. _(Historical: a settlement outcome — the losing realm
+  survived diminished and subordinated, mass counting to the overlord; MVP terms
+  no in-match defection, chain collapse on overlord fall, 부마국 internal
+  sovereignty; substance–sovereignty exchange axis [할양 trades substance to keep
+  sovereignty, 복속 the reverse]. match-arc GLOSSARY 복속 / RULINGS ⑭⑯.)_
 - ✅ `Recruitment` (모병): the single MVP economy→mass conversion — a primary
   action moving bodies from the register into serving toward the cap, paid from
   treasury yield, fighting at full strength (single troop quality). **Priced by the Surge
@@ -783,9 +799,20 @@ rule)._
 
 ### Winning archetypes (STRATEGY-SPACE.md — the value-dial checklist)
 
-Derived backward from the hegemony inequality; before sealing any value, ask
-"which archetype does this kill?" (✅ AGREED framing 2026-07-04). Not mechanics
-themselves — the check the mechanics must keep alive.
+> **⛔ Superseded framing (ADR 0042).** These six were derived backward from the
+> **hegemony inequality** — a multi-realm construct with no referent in a
+> two-realm duel. Three depend directly on a coalition / third party and are DEAD
+> outright (복속 사슬형, 어부지리형, 약탈 소모형, 중원 내선형); the other two lose
+> their multi-realm justification (정복 축적형's cascade economics survive as
+> combat, but not as a coalition-mass race; 방패 우위형's unassailability target is
+> gone). The duel's own strategy space (forward/rear leverage-vs-variance,
+> mutual-exposure timing, capital-encirclement vs decisive battle) is authored at
+> the capital / turn-structure passes, not here. Retained below as historical
+> context.
+
+_(Historical framing:_ derived backward from the hegemony inequality; before
+sealing any value, ask "which archetype does this kill?" — the check the
+mechanics had to keep alive._)_
 
 1. `정복 축적형` (conquest snowball) — cascade economics; conquest ≈ 30:1 over raiding.
 2. `복속 사슬형` (vassal chain) — 복속 moves coalition mass to my side of the balance.

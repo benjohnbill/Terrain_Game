@@ -11,6 +11,57 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
 
 ## Open
 
+- [ ] **1v1 duel-pivot cascade — turn-structure + eval-bar formal birthplace
+  deferred** (registered 2026-07-24, ADR 0042 cascade). The cascade landed the
+  win-condition (ADR 0042 + capital CP-②) but Gate 6's **turn structure**
+  (simultaneous blind commit → reveal, 행동력 single non-hoardable chip stack,
+  3-tier phase skeleton, player-paced match length) and the **EVAL BAR signature
+  UI** (single in-play TACTICAL confidence-band bar; strategic verdict → post-game
+  COACH) have NO formal feature-doc home yet — their truth lives in the
+  duel-pivot ledger (`.scratch/l3-playable-seam/duel-pivot-draft-ledger.md`,
+  Gate 6). ADR 0042 names the ledger as the interim authoritative record. Pay by
+  minting the read-layer / 형세판단 feature-doc seals (eval bar's stated
+  birthplace) + a turn-structure home, and registering their vocabulary
+  (행동력, EVAL BAR, capital fall already done). No mandatory-ADR trigger beyond
+  0042 (turn structure = making ADR 0025's uncertainty duel literal, already
+  confirmed). Sequencing: after the map pass / at the next L3 build gate.
+
+- [ ] **1v1 map re-authoring — terrain-cradle is a 5–6-seat multipolar map**
+  (registered 2026-07-24, ADR 0042 cascade). DOMAIN_MAP/DESIGN now assert the
+  two-realm duel, but `docs/features/terrain-cradle/` + `map-gen.js` still author
+  the 5–6-seat multipolar cradle world (the parity/geometry rows the DOMAIN_MAP
+  banner marks "SURVIVES as principle, re-expressed for two realms"). The hex grid
+  (TC-⑪) stays frozen; new 1v1 worlds are added as gate-06 map artifacts (no seal
+  broken). This is the **parallel map pass** (ledger "capital-terrain gate" +
+  premises "new worlds = gate-06 artifacts"), a design/build pass — recorded here
+  only as the Projection↔terrain-cradle divergence it opens. Not a doc-only fix.
+
+- [ ] **SPEC amendment PROPOSAL pending — Tier-3, user approval** (registered
+  2026-07-24, ADR 0042 cascade). `SPEC.md` still asserts the multi-realm model
+  (Core Principle #5 termination, realm-count 4–6, multipolar geometry,
+  hegemony-settlement end, dominance, crisis-arc / Westphalian draw, Phase-2
+  diplomacy; + sharpenings: Principle #2 uncertainty duel becomes literal, LoL
+  positioning, Goal, Core Gameplay Promise). The cascade drafted a single
+  user-approved amendment PROPOSAL
+  (`docs/features/capital/SPEC-AMENDMENT-DRAFT-duel-pivot.md`); SPEC is Direction
+  and is NOT drifted. Until the user seals it, SPEC/DOMAIN_MAP carry a known,
+  recorded contradiction (DOMAIN_MAP/DESIGN re-cut to 1v1, SPEC still multi-realm).
+  Pay by the user reviewing + approving the proposal, then applying it to SPEC.
+
+- [ ] **Multi-realm terms marked HISTORICAL in prose, not in term-inventory
+  status** (registered 2026-07-24, ADR 0042 cascade). The DOMAIN_MAP + match-arc
+  victory terms superseded by ADR 0042 (hegemony decision point, decision point,
+  hermit clause, vassalage, settlement cluster, winning archetypes, crisis
+  CE-①…⑳, …) carry a `⛔ Superseded` prose stamp + doc-front-door banners, but
+  their `docs/audits/term-inventory.json` rows still read `AGREED` — because the
+  documentation-law status vocabulary has only AGREED / PROPOSED / rejected-recorded
+  and NO "superseded / historical" state (single-definition record: the birthplace
+  match-arc docs now carry the historical stamp, and the inventory indexes to
+  them). Options: extend the Vocabulary Law status dictionary with a
+  `superseded`/`historical` state (a law change, Tier-3), or accept prose-level
+  supersession as sufficient. Recorded, not resolved. Related: the "Term lifecycle
+  beyond promotion" Codex P1 row below (deprecated state) is the natural carrier.
+
 - [ ] **Gate 07 seal — deferred duties** (registered 2026-07-23). The L3 Wayfinder
   gate 07 sealed the read-layer presentation contract + commit-first interaction
   skeleton + coupled-camera navigation (ticket § Answer;
@@ -516,9 +567,14 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   the build context.
   No Tier-3 default flip (crisis stays opt-in OFF).
 
-- [ ] **Crisis co-analysis seal-sync — DEFERRED** (2026-07-13, commit
-  `d64d48c`). The pass landed code that AMENDS sealed rulings but the
-  full Production/Projection seal-sync is deferred (pass is PARKED, dials
+- [ ] **Crisis co-analysis seal-sync — MOOTED by ADR 0042 (2026-07-24)** — the
+  crisis system is now RETIRED (not un-parked): ADR 0042 supersedes the crisis
+  stack (0034/0035/0036), so the crisis never un-parks in a build context and this
+  deferred seal-sync is no longer owed as a live debt. The crisis's opt-in-off code
+  is left dormant (no code change). Kept for the record; strike at the next tidy
+  pass. Original deferral below.
+  (2026-07-13, commit `d64d48c`). The pass landed code that AMENDS sealed rulings
+  but the full Production/Projection seal-sync is deferred (pass is PARKED, dials
   stay 가안, so premature to final-seal): (a) RULINGS amend CE-④/⑭
   (growth reshape — register-anchored, additive baseline + scar
   amplifier, intensity factor retired) and CE-⑦ (denial self↔board

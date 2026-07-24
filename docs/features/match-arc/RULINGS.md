@@ -16,6 +16,19 @@ pass** rulings (2026-07-07 night) use a local MT-①… series (like
 terrain-cradle's TC-…) to avoid cross-doc number collision — see the
 Match-Tilting Pass section below.
 
+> **⛔ VICTORY-RULING SUPERSESSION (ADR 0042, 2026-07-24).** This record is
+> append-only, so the rulings below are NOT edited — but the 1v1 duel pivot
+> re-seals a block of them as **HISTORICAL** (capital fall is now the sole win
+> condition). **Superseded / historical:** the victory-terminus rulings (⑨⑪⑮⑰
+> hegemony gate, DT-① / DT-③ decision timing + dominance, ET-① ending taxonomy,
+> AB-① affordability bound, ⑧ settlement ladder + ⑫⑬ acceptance + ⑭⑯ vassalage +
+> ⑩ projectable mass as a victory input) and the **entire crisis stack CE-①…⑳**
+> (retired dormant with ADR 0034/0035/0036). **LIVE (affirmed pivot Gate 5, do
+> not re-stale):** MT-①…④ (aging constitution, register, surge/mobilization —
+> purpose re-aimed, mechanics unchanged), OG-①…⑤ minus third-party branches (now
+> the anti-fizzle decay engine, AB-②/capLandFrac 1 stands), WM-① combat spine.
+> Full split + current truth: `INDEX.md` banner + ADR 0042 + capital CP-②.
+
 ## ⑧ Settlement preset ladder (A-1, 2026-07-05, Codex-consulted)
 
 Sealed: three presets as a claim-rate ladder over the composite reach
