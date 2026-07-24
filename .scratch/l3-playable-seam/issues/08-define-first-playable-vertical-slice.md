@@ -4,6 +4,21 @@ Type: grilling
 Status: open
 Blocked by: 02, 03, 06, 07
 
+> **⚠️ Pivot caveat (ADR 0042, 2026-07-25) — re-cut before grilling.** Blockers
+> 02/03/06/07 are all resolved, and the war-termination long pole (the
+> out-of-band blocker in `map.md` that "gate 08 cannot close without") is
+> **resolved by the 1v1 duel pivot**, not by a war-model tuning pass. Several
+> Decision constraints below reference the **superseded** war-ending model: the
+> ADR 0038 three-channel composite is amended by **ADR 0042 (capital fall = the
+> sole win condition)**; the R14 fizzle placeholder is reframed (anti-fizzle is
+> now structural — 1v1 + mutual-exposure + land-derived decay); and the win
+> condition is capital fall, not a hegemony/composite check. Before grilling,
+> re-cut this gate's constraints and option space against the pivot (as the
+> 2026-07-17 audit re-cut the gates). The pivot **sharpens** the slice: the
+> stopping point is now cleanly **"a capital falls."** Read-order add: ADR 0042,
+> `docs/features/capital/` CP-②, the duel-pivot ledger + premises, memory
+> `terrain-game-duel-pivot`, and the amended `SPEC.md`.
+
 ## Question
 
 What exact player journey proves the authored world, Slice 1–2 war engine,

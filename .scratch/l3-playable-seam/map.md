@@ -74,6 +74,15 @@ amend ADR 0038 (L0, falsified by its own pre-registered metric 5, unamended);
 correct R14's "Answered" stamp (Working layer). **Gate 08 cannot close without
 it.**
 
+> **↳ RESOLVED 2026-07-25 by the 1v1 duel pivot (ADR 0042).** The war-termination
+> long pole is discharged at a higher altitude, not by a war-model tuning pass:
+> capital fall is the sole terminus, anti-fizzle is structural (1v1 +
+> mutual-exposure + land-derived decay), and the crisis/hegemony machinery is
+> retired (ADR 0042 supersedes 0030/0033/0034/0035/0036, amends 0037/0038). The
+> dial/mechanism-residue framing above is superseded; the SPEC leg landed
+> 2026-07-25. **Gate 08 is unblocked** and should re-cut its war-model
+> constraints against ADR 0042 (see the gate-08 pivot caveat).
+
 **Demoted — not grill gates:**
 
 - **09** — pre-answered by ADR 0040 D2/D5/D6 + spec + C01.7. The "adapter

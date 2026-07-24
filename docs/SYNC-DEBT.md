@@ -804,6 +804,18 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   RULINGS→ADR, so all three Production tiers connect to root the same
   way. NOT A-4 B1 scope; a deliberate separate pass (user-flagged).
 
+- [ ] **DOMAIN_MAP `diplomacy` residue — 1v1 cleanup** (registered 2026-07-25,
+  SPEC-amendment grill). The grill struck `diplomacy` from the SPEC Goal/Promise
+  top-line combine-input list (a two-realm duel has no third party; the
+  opponent-read is Principle #2). `DOMAIN_MAP.md` still lists `diplomacy` as a
+  derivation input for `Province status` (~line 117) and `Border sector` (~144),
+  and as a deferred `Action capacity` (~289). Verified **not a normative
+  divergence** (in a duel the diplomatic state is a constant — at war with the
+  one enemy; the Action-capacity mention is Phase-2-deferred, consistent with the
+  now-parked Phase 2). Low priority. Pay by folding into the next DOMAIN_MAP
+  doc-sync pass: drop `diplomacy` from the reading-model derivation lists, or note
+  it collapses to the single-opponent war relationship in the duel.
+
 ## Deferred (user-decided 2026-07-06, A-4 B6 — revisit on trigger)
 
 - [ ] **Working-layer sublabels** (Codex P2): distinguish staging
