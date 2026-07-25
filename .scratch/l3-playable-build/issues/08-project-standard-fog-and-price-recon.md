@@ -30,13 +30,27 @@ while its hole cards stay dark; recon also reads the target's derived 동원 강
 band; **instant reconnaissance (즉시 정찰)** is a distinct, commit-consuming
 action (facade-only in the prototype, to be wired here).
 
-**User statement, 2026-07-25:** 일반 정찰 = 행동력 **2**, 즉시 정찰 = 행동력 **6**,
-where instant reconnaissance raises the ladder **two rungs at once**; recon is
-defined as visiting a target sector and acquiring the information **immediately
-that turn**. These values are not currently written anywhere in the repository —
-they must be landed at a birthplace (fog RULINGS or a magnitude home) before this
-ticket is implemented, not carried as conversation. Until then, treat the *values*
-as user-stated and unlanded, and the *mechanism* above as designed.
+**Pricing grammar — user ruling 2026-07-25: linear in commit, freely allocated.**
+Reconnaissance is not an action with a fixed cost. Each recon **grade** carries a
+per-sector **unit price**, and the player pours commit from the single stack;
+what they pour converts linearly into how many sectors they scout.
+
+| Grade | Unit price | Effect |
+|---|---|---|
+| normal | 2 per sector | narrows the band one rung along 0.45 → 0.70 → 0.90 |
+| enhanced | 6 per sector | takes the sector straight to confidence 0.90 |
+
+So 6 commit buys three normal scouts; 12 buys two enhanced ones. 즉시/강화 정찰
+stops being a separate action and becomes a grade — which also dissolves the
+graduated-versus-flat question that the candidate record contradicted itself on.
+Recon is defined as visiting a target sector and acquiring the information
+**immediately that turn**.
+
+**These unit prices are 가안 and have never been written in the repository** —
+they must be sealed at the fog birthplace before this ticket is implemented, not
+carried as conversation. The mechanism above is designed; the numbers are not
+sealed. The same linear-commit grammar governs fortification, recruitment, and
+supply (see `DECISIONS-OWED.md` R2); their unit numbers are unset by design.
 
 - [ ] The projection publishes terrain, fortification, routes, current political control, land value and yield, and the register pool; it publishes **no** treasury figure, **no** enemy posture, and **no** enemy commitment.
 - [ ] Enemy substance and fatigue appear only as bands; enemy field-army position appears as last-seen plus a reach cone.

@@ -20,6 +20,140 @@ explicitly. See the SYNC-DEBT row.
 
 ---
 
+## Rulings received — 2026-07-25 (user)
+
+Landed here the same session they were given, per the standing rule. These are
+Working-layer records of a user ruling; each still owes a seal at its birthplace,
+noted per row.
+
+### R1 — Capital fall is an ordinary sector capture · § 1.1 CLOSED
+
+"수도 함락은 말 그대로 땅을 점령하듯이 상대의 수도 섹터를 점령하면 그 순간 바로
+이루어지는 것 … 일반적인 섹터 점령과 똑같으며, 별도의 추가 조건은 필요하지
+않습니다."
+
+No capital-specific threshold, no "overwhelming" gate, no special predicate. The
+capital sector transfers under the same headline-bound binary control rule as any
+sector, and the match ends the instant it does. What makes it hard is the guard's
+magnitude, not an extra condition — consistent with CP-② item 7 (ordinary
+garrison, larger magnitude) and item 8 (no hard floor, purely emergent).
+
+*Owes:* a seal row at `docs/features/capital/`, and the retirement of CP-② item
+5's "overwhelming decisive battle" phrasing — the *path* survives, the implied
+extra bar does not.
+
+### R2 — Non-combat orders are linear in commit; fixed per-action prices retired · § 1.2 grammar CLOSED, numbers open
+
+"원래 의도는 유저가 행동력 수치에 따라 완전히 자유롭게 행동력을 분배할 수 있도록
+하는 것 … 고정 방식은 폐기 … 커밋 하나당 구현되는 고유 수치가 있고, 투입하는
+커밋에 따라 실제 구현 정도가 선형적으로 결정되는 구조"
+
+The grammar question in § 1.2 is answered: **free allocation, priced by unit.**
+Every non-combat order carries a **per-commit unit effect**, and what the player
+pours in converts linearly into how much of that effect they get. This is not a
+price list bolted onto D6.3 — it is D6.3's free pour extended to non-combat
+orders, so one grammar now covers every order kind.
+
+The user's worked examples:
+
+| Order | Unit | Pouring N commit yields |
+|---|---|---|
+| Reconnaissance (normal) | 2 per sector | 6 → three sectors scouted |
+| Reconnaissance (enhanced) | 6 per sector | 12 → two sectors taken straight to confidence 0.90 |
+| Fortification | progress per commit | partial progress is **kept** — falling short of the next tier is not wasted, and pouring more simply arrives sooner |
+
+Two consequences worth stating because they change how other rows read:
+
+- **2 and 6 are not retired — they are re-cut as unit prices.** What is retired
+  is "일반 정찰 = an action that costs 2". 즉시/강화 정찰 stops being a separate
+  action with a fixed price and becomes a **grade** whose unit price is 6 per
+  sector. That also resolves the memory record's internal contradiction: the
+  graduated-versus-flat question dissolves, because cost now scales with *how
+  many sectors* rather than with *which rung*.
+- **Fortification's "no threshold" rule generalizes.** Partial progress being
+  kept means non-combat orders have no all-or-nothing gate at all. A tier is a
+  cumulative total to reach, not a minimum bid.
+
+*Owes:* a seal at the fog birthplace for the recon unit prices (still 가안, and
+still the values that have never been in the repository), and a home for the
+linear-commit grammar itself — it is a match-frame rule, not a fog rule, so it
+belongs wherever the turn structure lands (SYNC-DEBT already tracks that home).
+Unit numbers for fortification, recruitment, and supply remain unset by design;
+tuned in play.
+
+### R3 — Capital candidates: leaning to any owned sector · § 1.6 direction set, confirmation owed
+
+The user set out the sealed reading first — each province's main city sector is
+the candidate, so choosing a capital means choosing a *province* (five of them in
+a 1v1 realm) and the sector follows. Then offered a design change: let the player
+pick **any** sector they own, prompted at match start ("수도를 골라주세요") by
+clicking their territory. Recommendation surfaces and benefit hints deferred.
+
+Agent note on the trade, for the confirmation: the free-choice option **removes
+§ 1.6 entirely** — the one-marker-per-province problem and r8's missing marker
+both stop mattering, because eligibility becomes "any sector I own". It also
+*strengthens* CP-② D1.4's sealed leverage-versus-variance axis, since forward and
+rear stop being a five-way choice and become a real positional judgment across
+~28 sectors. Its cost is that a capital can sit somewhere the map never authored
+as a city, so the authored `capitals`/`cities` tables become advisory
+(recommendation material, which the user has deferred) rather than the
+constraint.
+
+*Status:* direction recorded, **not sealed** — the user framed it as a lean
+("괜찮아 보입니다"), so it needs one confirmation before ticket 02 builds against it.
+
+### R4 — Bot disposition has three axes, and variety comes from seeded randomness · § 1.7 reshaped
+
+"봇에게 단순히 하드코딩된 상수를 부여해서는 안 됩니다." The disposition governs:
+
+1. **how much action resource goes to reconnaissance** — a share of the commit
+   stack, now expressible because R2 made recon linear in commit;
+2. **how it judges inside the confidence band** — "낙관적 판단, 비관적 판단, 혹은
+   중간값 판단의 **비율**";
+3. **how often it takes a given action under similar conditions** — a frequency,
+   not a fixed trigger.
+
+One disposition ships for the slice, but "모든 플레이가 매번 똑같이 흘러가서는 안
+된다" — variety comes from those frequencies plus randomness.
+
+**This amends the sealed disposition (TP-② ②, AGREED 2026-07-08) rather than
+merely applying it.** The sealed λ is a single point inside the band; axis 2 as
+stated is a **distribution over** the band (a ratio of optimistic to pessimistic
+to middling reads), and axes 1 and 3 are new dimensions the seal does not cover.
+So § 1.7's gap closes in the opposite direction from my proposal: gate 08 was
+right that disposition governs more than one thing, and the 2026-07-08 seal is
+what needs widening.
+
+**Determinism is preserved, and the mechanism matters.** ADR 0040 and gate 02
+C02.10 bar rules from reading `Math.random()` or `Date.now()` — that is why the
+archive bot `js/ai.js` was discarded. Randomness drawn from the **injected seed**
+is not barred and is exactly what the seed exists for: a different seed per match
+gives different play, the same seed replays identically. So the rule for the bot
+is not "no randomness" but "**randomness only from the injected seed**", which
+satisfies both the user's variety requirement and ticket 12's determinism
+acceptance item. Ambient randomness stays forbidden.
+
+*Owes:* a widened disposition seal at `docs/features/tactical-plan-ai/`
+(GLOSSARY row + a ruling amending ②), covering all three axes and the
+seeded-draw rule. Values — the recon share, the read-ratio mix, the frequencies —
+stay unset and are tuned in play.
+
+### R5 — Runtime authority and phase ③ · explained, § 1.3 proposal standing, § 1.4 CLOSED
+
+The user asked what these two meant; they were separate items written adjacently.
+
+- **§ 1.3 (Runtime interface)** — gate 02 sealed `currentActor` and out-of-turn
+  rejection a week before the pivot made turns simultaneous. Proposal restated
+  and standing: read `currentActor` as the current *phase*, and legality as "has
+  this realm already locked this turn / is the commit window open". Gate 02's
+  actual guarantee — the Runtime, not the caller, decides legality — never
+  depended on alternation.
+- **§ 1.4 (phase ③)** — **CLOSED.** "어차피 3단 티어가 중요하지 Phase 개념 자체는
+  지금도 얼마든지 추정 및 수정이 가능하니까요." The three tiers are the substance;
+  the circled numbers are vestigial. Drop the numbering rather than invent a ③.
+
+---
+
 ## Part 1 — Blocking the walking skeleton (tickets 01→07)
 
 These stop the loop from closing. Everything else can wait behind them.
