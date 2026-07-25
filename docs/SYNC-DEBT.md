@@ -50,6 +50,29 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   0042 (turn structure = making ADR 0025's uncertainty duel literal, already
   confirmed). Sequencing: after the map pass / at the next L3 build gate.
 
+- [ ] **Linear-commit grammar for non-combat orders — no birthplace yet**
+  (registered 2026-07-25, user ruling). Every non-combat order carries a
+  **per-commit unit effect**, and what the player pours converts linearly into how
+  much of that effect they get; fixed per-action prices are retired, and partial
+  progress is kept (falling short of a fortification tier is not wasted). This is
+  D6.3's free pour extended to non-combat orders, so one grammar now covers every
+  order kind. Recon's 2 and 6 survive **re-cut as per-sector unit prices** for the
+  normal and enhanced grades — which dissolves the graduated-versus-flat
+  contradiction inside the candidate record, since cost now scales with how many
+  sectors rather than which rung. It is a **match-frame** rule, not a fog rule, so
+  its home is wherever the turn structure lands — the same home the row below
+  already owes. Unit numbers for fortification, recruitment, and supply are unset
+  by design (tuned in play); the recon unit prices are 가안 and still absent from
+  the repository. Full text: `.scratch/l3-playable-build/DECISIONS-OWED.md` R2.
+
+- [ ] **Decisiveness ladder not re-cut for a single-terminus duel** (registered
+  2026-07-25, tactical-plan-ai ruling ⑦). Ruling ①'s five-rung ordinal objective
+  ranks **vassalization** above **annihilation** above advance — the top two are
+  multipolar-era objectives that ADR 0042 retired with the settlement terminus.
+  Ruling ⑦ widened the disposition but explicitly did not settle the ladder. A
+  duel bot's ordinal objective under "capital fall is the sole terminus" has never
+  been authored. Blocks build ticket 12's plan-choice rule.
+
 - [ ] **Production doc cites AGENT MEMORY as its record** (registered 2026-07-25,
   demand-driven value sweep). `docs/features/fog-of-war-discovery/RULINGS.md` and
   its `INDEX.md` route the recon economy's full record to the agent's project

@@ -31,7 +31,14 @@ Fallback (harness rule, 가안 — not a seal): if no plan clears its
 threshold at the judged values, pick the best judged-margin plan
 (usually DP) and log the battle as a forced grind.
 
-## ② Judgment model: window + disposition dial — SEALED 2026-07-08 (user grill, Q2)
+## ② Judgment model: window + disposition dial — SEALED 2026-07-08 (user grill, Q2) · **AMENDED by ⑦ (2026-07-25)**
+
+> **Amended by ruling ⑦ (2026-07-25).** Delta: the disposition dial is widened
+> from one axis to three (reconnaissance investment · band-read **ratio** rather
+> than a single point · action frequency), and every stochastic draw is bound to
+> the injected seed. λ as defined below survives intact as axis 2's position
+> concept; what changes is that it is no longer the whole disposition. Read ⑦
+> before implementing a bot.
 
 The bot's judged value of an enemy quantity = one point inside its
 estimate window (band):
@@ -117,3 +124,51 @@ realms get the same attack brain / passive defense).
    the residual). If the residual is SMALL, do NOT conclude the
    hegemony ADR is unnecessary until a defender-judgment arm re-test
    confirms it.
+
+## ⑦ Disposition widened to three axes; variety from the injected seed — SEALED 2026-07-25 (user ruling) · L0
+
+**Amends ruling ②.** Source: user ruling during the L3 first-match Wayfinder
+re-charting, recorded the same session in
+`.scratch/l3-playable-build/DECISIONS-OWED.md` R4. Occasion: a demand-driven
+value sweep found that Wayfinder gate 08 axis 6 assumes the disposition governs
+four judgment calls, while ruling ② governs exactly one. Gate 08 was right that
+it governs more than one thing; ② is what needed widening.
+
+**Decision — the disposition governs three axes.** *"봇에게 단순히 하드코딩된
+상수를 부여해서는 안 됩니다."*
+
+1. **Reconnaissance investment** — what share of the 행동력 chip stack goes to
+   scouting. Newly expressible because non-combat orders became linear in commit
+   (the linear-commit grammar, user ruling the same day), so a share is a
+   meaningful quantity rather than a count of actions.
+2. **Band-read ratio** — how the bot judges inside the confidence band: a
+   **ratio** of optimistic to pessimistic to middling reads. This is the amendment
+   to ②, which sets a single λ point. λ survives as the position concept; what
+   changes is that the disposition selects a *distribution over* the band rather
+   than one point on it.
+3. **Action frequency** — how often it takes a given action under similar
+   conditions. Not a fixed trigger.
+
+**Variety is required, and its mechanism is fixed.** One disposition ships for the
+first playable slice, but *"모든 플레이가 매번 똑같이 흘러가서는 안 된다"*: the
+frequencies of axis 3 plus randomness supply per-match variation.
+
+**Every draw comes from the injected seed.** `Math.random()` and `Date.now()`
+remain barred in rules (ADR 0040; Wayfinder gate 02 C02.10) — that prohibition is
+why the archive bot `js/ai.js` was discarded, since it drew ambient randomness
+throughout. A seeded draw is not barred and is what the injected seed exists for:
+a different seed per match yields different play, the same seed replays
+identically. So the rule for a bot is **not** "no randomness" but "randomness only
+from the injected seed", which satisfies the variety requirement and the
+determinism contract at once.
+
+**Values deliberately unset.** The recon share, the read-ratio mix, and the
+frequencies are 가안-to-be, tuned in L3 play. The archive's `DISPOSITIONS =
+[-0.5, 0, 0.5]` presets and its fixed `siegeCommit 8 / fieldCommit 14` are
+evidence, not values carried forward — the latter is exactly the hardcoded shape
+this ruling forbids.
+
+**Consequence for ruling ①.** The decisiveness ladder's top rungs
+(vassalization, annihilation) are multipolar-era objectives that ADR 0042 retired
+with the settlement terminus. Re-cutting the ladder for a single-terminus duel is
+**open**, registered in `docs/SYNC-DEBT.md`; this ruling does not settle it.
