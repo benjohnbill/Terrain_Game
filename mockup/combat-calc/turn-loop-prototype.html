@@ -1,0 +1,1035 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Terrain Game — 턴 루프 프로토타입 (throwaway)</title>
+<!--
+  GATE 07 THROWAWAY PROTOTYPE — turn-loop interaction feel (v2, commit-first).
+  Spec: docs/superpowers/specs/2026-07-23-gate07-turn-loop-prototype.md
+  NOT L3 build source (ADR 0041). Plays ONE full turn loop on an authored
+  mid-game fixture so the user can FEEL whether the interaction is fun/legible.
+
+  DESIGN (user direction 2026-07-23): CASUAL. Three zones — thin top info
+  strip, the MAP fills the middle (calm at rest), the COMMIT BAR is the hero at
+  the bottom. The board's info/glow is SUMMONED by the commit decision, not
+  always painted. Flow is COMMIT-FIRST: amount → big action bloom → sub-plan →
+  eligible lands glow → target. "커밋만 하세요."
+
+  THE ONE SEAM: the page renders from a SINGLE static viewer-safe projection
+  (FIX / state.proj). No hidden truth anywhere. Bands at every rung are
+  authored viewer-safe fiction; none is truth. The showdown reveal is authored
+  as the post-resolution projection (reducer's `next`). No combat arithmetic.
+  RENDERER (map drawing) is kept separate from SHELL (commands/panels) —
+  ADR 0039, a code-organization discipline (no framework needed in throwaway).
+-->
+<style>
+  :root { --sea:#0e2029; --ink:#d8dee6; --dim:#8a93a0; --line:#2a303a;
+    --gold:#ffd27f; --warn:#ff6a5a; --self:#4a86c8; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; overflow: hidden; color: var(--ink);
+    font: 13px/1.45 system-ui, "Segoe UI", sans-serif; background: var(--sea);
+    user-select: none; -webkit-user-select: none; }
+  #stage { position: fixed; inset: 0; }
+  #map { position: absolute; top: 0; right: 72px; bottom: 0; left: 72px;
+    background: radial-gradient(130% 130% at 50% 34%, #143240 0%, #0b1a22 100%);
+    touch-action: none; }
+  .rlabel { fill: #fff; font: 700 15px system-ui; paint-order: stroke;
+    stroke: #0009; stroke-width: 3.5px; text-anchor: middle; }
+  .choke { fill: var(--gold); font: 700 10px system-ui; paint-order: stroke;
+    stroke: #000a; stroke-width: 3px; text-anchor: middle; }
+
+  /* ── zone 1: thin top info strip ─────────────────────────── */
+  #hud { position: absolute; top: 0; left: 0; right: 0; height: 40px; z-index: 30;
+    display: flex; align-items: center; gap: 13px; padding: 0 16px; font-size: 12.5px;
+    color: #cfd8e2; background: linear-gradient(#0b1a22ee, #0b1a2200); pointer-events: none; }
+  #hud .g { display: flex; align-items: center; gap: 6px; pointer-events: auto; }
+  #hud b { color: #fff; font-weight: 700; }
+  #hud .sep { color: #38424f; }
+  #hud .warn, #hud .warn b { color: #ff9a86; }
+  #hud .spacer { flex: 1; }
+  #hud .meter { width: 66px; height: 5px; border-radius: 3px; background: #2a2114;
+    overflow: hidden; }
+  #hud .meter > i { display: block; height: 100%; background: linear-gradient(90deg,#d8a94a,#e86a4a); }
+  #hud .panse { position: relative; width: 76px; height: 6px; border-radius: 3px;
+    background: linear-gradient(90deg,#3a5a8a,#8a8a5a,#8a4a4a); }
+  #hud .panse > .wd { position: absolute; top: 0; height: 6px; background: #ffffff44; border-radius: 3px; }
+  #hud .panse > .mk { position: absolute; top: -2px; width: 2.5px; height: 10px;
+    background: #fff; border-radius: 2px; box-shadow: 0 0 0 1px #0007; }
+
+  /* ── zone 3: hero commit bar ─────────────────────────────── */
+  #commit { position: absolute; left: 0; right: 0; bottom: 0; z-index: 30;
+    padding: 12px 18px 14px; display: flex; flex-direction: column; gap: 9px;
+    background: linear-gradient(#0b1a2200, #0b1a22f2 42%); }
+  #slots { display: flex; gap: 5px; height: 32px; }
+  .slot { flex: 1; height: 30px; border-radius: 5px; background: #1b2531;
+    border: 1px solid #2f3b49; cursor: pointer; transition: transform .09s, background .12s; }
+  .slot:hover { transform: translateY(-4px); border-color: var(--gold); }
+  .slot.armed { background: var(--gold); border-color: #fff2c8; box-shadow: 0 0 10px #ffd27f66; }
+  .slot.used { cursor: default; } .slot.used:hover { transform: none; }
+  .slot.u-공격 { background: #c8524a; border-color: #e88; }
+  .slot.u-방어 { background: var(--self); border-color: #9cf; }
+  .slot.u-정찰 { background: #4ac89a; border-color: #9fe; }
+  .slot.u-facade { background: #6a5a8a; border-color: #a89; }
+  #commit .bottom { display: flex; align-items: center; gap: 12px; }
+  #commit .lab { font-size: 12px; color: var(--dim); white-space: nowrap; }
+  #commit .lab b { color: #fff; }
+  #commit .hint { flex: 1; text-align: center; font-size: 13.5px; color: var(--gold); min-height: 18px; }
+  .cbtn { pointer-events: auto; border-radius: 8px; padding: 8px 16px; cursor: pointer;
+    font-size: 13px; border: 1px solid #38424f; background: #1d2530; color: var(--ink); white-space: nowrap; }
+  .cbtn:hover { border-color: var(--gold); }
+  .cbtn.ghost { background: transparent; color: var(--dim); }
+  .cbtn.end { background: #2a3a24; border-color: #4a7a3a; color: #d8f0c8; font-weight: 700; }
+  .cbtn.end:hover { background: #35492c; }
+
+  /* ── big action / plan bloom (exaggerated radial) ────────── */
+  #bloom { position: absolute; inset: 0; z-index: 44; display: none; }
+  #bloom.on { display: block; }
+  #bloom .scrim { position: absolute; inset: 0; background: #0610169e; backdrop-filter: blur(1.5px); }
+  #bloom .center { position: absolute; left: 50%; top: 46%; transform: translate(-50%,-50%);
+    text-align: center; pointer-events: none; }
+  #bloom .center .amt { font: 800 44px system-ui; color: var(--gold);
+    text-shadow: 0 2px 14px #000, 0 0 26px #ffd27f55; line-height: 1; }
+  #bloom .center .cap { font-size: 13px; color: #cfd8e2; margin-top: 8px; }
+  #bloom .ring { position: absolute; inset: 0; pointer-events: none; }
+  .bnode { position: absolute; transform: translate(-50%,-50%); width: 104px; height: 104px;
+    border-radius: 50%; background: #111a24f5; border: 2.5px solid #4a5a70; cursor: pointer;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+    pointer-events: auto; animation: bloom .24s cubic-bezier(.16,1,.3,1) backwards;
+    transition: transform .1s, border-color .1s, background .1s; }
+  .bnode:hover { transform: translate(-50%,-50%) scale(1.09); border-color: var(--gold);
+    background: #1c2836f7; box-shadow: 0 6px 26px #000a; }
+  .bnode.wired { border-color: #5f9e78; }
+  .bnode.facade { border-style: dashed; width: 88px; height: 88px; opacity: .92; }
+  .bnode.dev { border-color: #7a4aa8; }
+  .bnode .ic { font-size: 30px; line-height: 1; }
+  .bnode .nm { font-size: 14px; font-weight: 700; }
+  .bnode .tag { font-size: 9px; color: var(--dim); }
+  .bnode.plan { border-radius: 16px; width: 138px; height: 92px; text-align: center; padding: 6px; }
+  .bnode.plan .nm { font-size: 15px; } .bnode.plan .tag2 { font-size: 10px; color: #a8d88a; margin-top: 3px; }
+  .bnode.plan .tag2.fac { color: #b89cd8; }
+  @keyframes bloom { from { opacity: 0; transform: translate(-50%,-50%) scale(.35); } }
+  @keyframes glowpulse { 0%,100% { opacity: .8; } 50% { opacity: 1; } }
+  @keyframes pulse { 0%,100% { opacity: .4; } 50% { opacity: .95; } }
+
+  /* ── confirm card (target chosen; what-if) ───────────────── */
+  #confirm { position: absolute; left: 50%; bottom: 104px; transform: translateX(-50%);
+    z-index: 46; width: 380px; max-width: 92vw; display: none;
+    background: #111a24f7; border: 1px solid #3a4757; border-radius: 14px;
+    box-shadow: 0 14px 44px #000a; overflow: hidden; }
+  #confirm.on { display: block; }
+  #confirm .ch { display: flex; align-items: center; gap: 8px; padding: 10px 13px;
+    border-bottom: 1px solid var(--line); }
+  #confirm .ch .v { font-weight: 700; } #confirm .ch .t { color: var(--dim); font-size: 12px; }
+  #confirm .ch .x { margin-left: auto; cursor: pointer; color: var(--dim); font-size: 16px; }
+  #confirm .cb { padding: 12px 13px; }
+  .whatif { background: #0d1219; border: 1px solid var(--line); border-radius: 9px; padding: 10px 11px; margin-bottom: 10px; }
+  .whatif .wt { font-size: 12px; color: var(--gold); margin-bottom: 8px; }
+  .whatif label { display: flex; align-items: center; gap: 9px; font-size: 12px; margin: 7px 0; }
+  .whatif label .nm { width: 92px; color: var(--dim); }
+  .whatif input[type=range] { flex: 1; accent-color: var(--gold); }
+  .whatif select { flex: 1; background: #1a222d; color: var(--ink); border: 1px solid var(--line); border-radius: 5px; padding: 3px; }
+  .whatif b { width: 22px; text-align: right; color: #fff; }
+  .outrail { height: 14px; border-radius: 7px; margin: 10px 0 4px; position: relative;
+    background: linear-gradient(90deg,#8a4a4a,#8a8a5a,#4a8a5a); }
+  .outrail > .win { position: absolute; top: -2px; height: 18px; border-radius: 5px; border: 2px solid #fff; background: #ffffff22; }
+  .outrail > .lbl2 { position: absolute; top: 16px; font-size: 10px; color: #cfd8e2; transform: translateX(-50%); }
+  .whatif .note { font-size: 10px; color: var(--dim); margin-top: 12px; }
+  #confirm .go { width: 100%; padding: 11px; border-radius: 9px; background: #2a3a24;
+    border: 1px solid #4a7a3a; color: #d8f0c8; font-weight: 700; cursor: pointer; font-size: 14px; }
+  #confirm .go:hover { background: #35492c; }
+
+  /* ── nav toggle + camera (the OTHER open sub-question) ───── */
+  #nav { position: absolute; left: 50%; transform: translateX(-50%); bottom: 92px; z-index: 28;
+    display: flex; background: #161b22ee; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; }
+  #nav button { background: none; border: 0; color: var(--dim); cursor: pointer; padding: 5px 15px; font-size: 12px; }
+  #nav button.on { background: var(--gold); color: #1a1408; font-weight: 700; }
+  #camctl { position: absolute; right: 14px; bottom: 92px; z-index: 28; display: none; flex-direction: column; gap: 4px; }
+  #camctl.on { display: flex; }
+  #camctl button { width: 30px; height: 30px; border-radius: 7px; cursor: pointer;
+    background: #161b22ee; border: 1px solid var(--line); color: var(--ink); font-size: 16px; }
+
+  /* ── event tray (turn-end loop closure) ──────────────────── */
+  #tray { position: absolute; inset: 0; z-index: 60; display: none; align-items: center;
+    justify-content: center; background: #060d12dd; backdrop-filter: blur(2px); }
+  #tray.on { display: flex; }
+  .traybox { width: 560px; max-width: 92vw; max-height: 86vh; display: flex; flex-direction: column;
+    background: #0f1620; border: 1px solid #3a4757; border-radius: 14px; overflow: hidden; box-shadow: 0 20px 60px #000; }
+  .traybox .th { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: 1px solid var(--line); }
+  .traybox .th b { font-size: 15px; } .traybox .th .cnt { color: var(--dim); font-size: 12px; } .traybox .th .sp { flex: 1; }
+  .traybox .th button { background: #1d2530; border: 1px solid #38424f; color: var(--ink);
+    border-radius: 7px; padding: 5px 12px; cursor: pointer; font-size: 12px; }
+  .traybox .th button.step { border-color: var(--gold); color: var(--gold); }
+  .traylist { padding: 8px 12px 14px; overflow-y: auto; }
+  .ev { display: flex; gap: 11px; padding: 11px 8px; border-bottom: 1px solid #ffffff0c;
+    opacity: 0; transform: translateY(8px); animation: rise .3s forwards; }
+  @keyframes rise { to { opacity: 1; transform: none; } }
+  .ev .etag { flex: none; width: 42px; text-align: center; font-size: 10px; font-weight: 700;
+    padding: 3px 0; border-radius: 5px; height: fit-content; }
+  .ev.교전 .etag { background: #3a1a16; color: #ff9a8a; } .ev.방어 .etag { background: #16243a; color: #9cc4ff; }
+  .ev.경보 .etag { background: #2a1210; color: #ff8a6a; } .ev.내정 .etag { background: #1a2a16; color: #a8d88a; }
+  .ev.상흔 .etag { background: #241a12; color: #e0b090; }
+  .ev .etx b { color: #fff; } .ev .etx .sub { color: var(--dim); font-size: 11px; margin-top: 2px; }
+  .flip { margin-top: 5px; font-size: 12px; background: #0c1119; border: 1px dashed #5a4a3a;
+    border-radius: 7px; padding: 6px 9px; color: #ffcf8a; } .flip b { color: #ffe0a8; }
+  .traybox .tf { padding: 11px 16px; border-top: 1px solid var(--line); text-align: right; }
+  .traybox .tf button { background: #2a3a24; border: 1px solid #4a7a3a; color: #d8f0c8;
+    border-radius: 8px; padding: 8px 18px; cursor: pointer; font-weight: 700; }
+
+  /* ── banner (transient teaching cue) ─────────────────────── */
+  .banner { position: absolute; top: 54px; left: 50%; transform: translateX(-50%); z-index: 25;
+    background: #0f1620f2; border: 1px solid var(--gold); border-radius: 10px; padding: 9px 18px;
+    font-size: 13px; color: #fff; text-align: center; box-shadow: 0 8px 30px #0009;
+    pointer-events: none; opacity: 0; transition: opacity .35s; max-width: 80vw; }
+  .banner.on { opacity: 1; }
+  .banner small { display: block; color: var(--dim); font-size: 11.5px; margin-top: 3px; }
+
+  /* ── grafted VERTICAL eval bar (chess.com style, equal-commit R, NO commit info) ── */
+  #eval { position: absolute; left: 8px; top: 46px; bottom: 100px; width: 60px; z-index: 22;
+    display: flex; flex-direction: column; align-items: center; font-size: 9px; color: #8592a0;
+    pointer-events: none; }
+  #eval .etop, #eval .ebot { padding: 3px 0; text-align: center; white-space: nowrap; }
+  #eval .ewrap { position: relative; flex: 1 1 auto; width: 100%; display: flex; justify-content: center; }
+  #eval .ecol { position: relative; width: 26px; height: 100%; border-radius: 5px; overflow: hidden;
+    background: #2b323b; box-shadow: 0 0 0 1px #000a; }
+  #ewhite { position: absolute; left: 0; right: 0; bottom: 0; background: #e7ecf1; }
+  #egrey { position: absolute; left: 0; right: 0; background: #727c88;
+    background-image: repeating-linear-gradient(-45deg,#00000018 0 5px,transparent 5px 10px); }
+  #evalr { position: absolute; left: 0; right: 0; bottom: 2px; text-align: center; font: 800 11px system-ui; color: #1a1f26; }
+  #evalr.dis { bottom: auto; top: 2px; color: #e7ecf1; }
+  #evalth { position: absolute; left: 30px; top: 0; bottom: 0; width: 150px; display: none; }
+  #evalth .zone { position: absolute; left: 0; width: 10px; background: #ffffff10;
+    border-top: 1.5px solid var(--gold); border-bottom: 1.5px dashed #ffffff55; }
+  #evalth .lab { position: absolute; left: 13px; font-size: 8.5px; font-weight: 700; color: var(--gold);
+    line-height: 1.15; white-space: nowrap; transform: translateY(-8px); text-shadow: 0 1px 3px #000; }
+  #eval .ename { padding: 4px 2px 0; text-align: center; color: #6f7b88; font-size: 8.5px; line-height: 1.2; }
+  /* right eval bar = this action's AVERAGE across eligible fronts (fixed baseline) */
+  #eval2 { position: absolute; right: 8px; top: 46px; bottom: 100px; width: 60px; z-index: 22;
+    display: flex; flex-direction: column; align-items: center; font-size: 9px; color: #8592a0; pointer-events: none; }
+  #eval2 .etop, #eval2 .ebot { padding: 3px 0; text-align: center; white-space: nowrap; }
+  #eval2 .ewrap { position: relative; flex: 1 1 auto; width: 100%; display: flex; justify-content: center; }
+  #eval2 .ecol { position: relative; width: 26px; height: 100%; border-radius: 5px; overflow: hidden;
+    background: #2b323b; box-shadow: 0 0 0 1px #000a; }
+  #ewhite2 { position: absolute; left: 0; right: 0; bottom: 0; background: #e7ecf1; }
+  #egrey2 { position: absolute; left: 0; right: 0; background: #727c88;
+    background-image: repeating-linear-gradient(-45deg,#00000018 0 5px,transparent 5px 10px); }
+  #evalr2 { position: absolute; left: 0; right: 0; bottom: 2px; text-align: center; font: 800 11px system-ui; color: #1a1f26; }
+  #evalr2.dis { bottom: auto; top: 2px; color: #e7ecf1; }
+  #eval2 .ename { padding: 4px 2px 0; text-align: center; color: #6f7b88; font-size: 8.5px; line-height: 1.2; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <svg id="map" xmlns="http://www.w3.org/2000/svg"></svg>
+  <div id="hud"></div>
+
+  <div id="eval">
+    <div class="etop">적 우세 ▲</div>
+    <div class="ewrap"><div class="ecol"><div id="ewhite"></div><div id="egrey"></div><div id="evalr">1.00</div></div><div id="evalth"></div></div>
+    <div class="ebot">▼ 내 우세</div>
+    <div id="evalname" class="ename">전선 교전</div>
+  </div>
+
+  <div id="eval2">
+    <div class="etop">적 우세 ▲</div>
+    <div class="ewrap"><div class="ecol"><div id="ewhite2"></div><div id="egrey2"></div><div id="evalr2">1.00</div></div></div>
+    <div class="ebot">▼ 내 우세</div>
+    <div id="evalname2" class="ename">이 행동 평균</div>
+  </div>
+
+  <div id="nav">
+    <button data-nav="drill">클릭 드릴</button>
+    <button data-nav="zoom">연속 줌</button>
+  </div>
+  <div id="camctl"><button id="zin">+</button><button id="zout">−</button><button id="zrst">⤢</button></div>
+
+  <div id="commit"></div>
+  <div id="bloom"></div>
+  <div id="confirm"></div>
+  <div id="tray"></div>
+  <div class="banner" id="banner"></div>
+</div>
+
+<script>
+'use strict';
+// § GEOMETRY — baked from CRADLE_MAP (map-gen.js), 관중+촉+중원+서역 corner.
+const GEO = {"hexR":25,"regions":[{"id":"r1","name":"중원","sizeClass":"plains","sectorIds":["r1_s0","r1_s1","r1_s2","r1_s3"],"center":{"x":643.5049875342702,"y":452.0833333333333}},{"id":"r5","name":"서역","sizeClass":"desert","sectorIds":["r5_s0","r5_s1","r5_s2","r5_s3","r5_s4","r5_s5","r5_s6","r5_s7","r5_s8","r5_s9"],"center":{"x":213.75081557043185,"y":311.59090909090907}},{"id":"r6","name":"관중","sizeClass":"mountain","sectorIds":["r6_s0","r6_s1","r6_s2","r6_s3","r6_s4","r6_s5"],"center":{"x":412.0604743813056,"y":517.741935483871}},{"id":"r8","name":"촉","sizeClass":"plains","sectorIds":["r8_s0","r8_s1","r8_s2"],"center":{"x":591.3329710215619,"y":597.65625}}],"sectors":{"r1_s0":{"id":"r1_s0","regionId":"r1","econ":1.7,"pop":1.3333333333333333,"terrain":"plains","hexes":[{"q":6,"r":13,"t":"plains"},{"q":7,"r":13,"t":"plains"},{"q":7,"r":12,"t":"plains"},{"q":8,"r":11,"t":"plains"},{"q":9,"r":10,"t":"plains"}]},"r1_s1":{"id":"r1_s1","regionId":"r1","econ":1.7,"pop":1.3333333333333333,"terrain":"plains","hexes":[{"q":9,"r":14,"t":"plains"},{"q":8,"r":14,"t":"plains"},{"q":10,"r":13,"t":"plains"},{"q":9,"r":13,"t":"plains"},{"q":8,"r":13,"t":"plains"}]},"r1_s2":{"id":"r1_s2","regionId":"r1","econ":1.7,"pop":1.3333333333333333,"terrain":"plains","hexes":[{"q":11,"r":12,"t":"plains"},{"q":11,"r":11,"t":"plains"},{"q":10,"r":11,"t":"plains"},{"q":10,"r":10,"t":"plains"}]},"r1_s3":{"id":"r1_s3","regionId":"r1","econ":2.4,"pop":2,"terrain":"plains","hexes":[{"q":9,"r":11,"t":"plains"},{"q":9,"r":12,"t":"plains"},{"q":8,"r":12,"t":"plains"},{"q":10,"r":12,"t":"plains"}]},"r5_s0":{"id":"r5_s0","regionId":"r5","econ":0.27,"pop":0.5,"terrain":"desert","hexes":[{"q":-3,"r":8,"t":"desert"},{"q":-4,"r":10,"t":"desert"},{"q":-3,"r":9,"t":"desert"},{"q":-2,"r":8,"t":"desert"},{"q":-3,"r":10,"t":"desert"},{"q":-2,"r":7,"t":"desert"}]},"r5_s1":{"id":"r5_s1","regionId":"r5","econ":0.27,"pop":0.5,"terrain":"desert","hexes":[{"q":-3,"r":11,"t":"desert"},{"q":-2,"r":10,"t":"desert"},{"q":-2,"r":11,"t":"desert"},{"q":-2,"r":9,"t":"desert"}]},"r5_s2":{"id":"r5_s2","regionId":"r5","econ":2.4,"pop":1.5,"terrain":"oasis","hexes":[{"q":1,"r":5,"t":"oasis"},{"q":-1,"r":6,"t":"oasis"},{"q":0,"r":6,"t":"oasis"},{"q":-1,"r":7,"t":"oasis"},{"q":1,"r":6,"t":"oasis"}]},"r5_s3":{"id":"r5_s3","regionId":"r5","econ":0.27,"pop":0.5,"terrain":"desert","hexes":[{"q":3,"r":4,"t":"desert"},{"q":2,"r":5,"t":"desert"},{"q":3,"r":5,"t":"desert"},{"q":2,"r":6,"t":"desert"}]},"r5_s4":{"id":"r5_s4","regionId":"r5","econ":0.27,"pop":0.5,"terrain":"desert","hexes":[{"q":1,"r":12,"t":"desert"},{"q":0,"r":12,"t":"desert"},{"q":1,"r":11,"t":"desert"},{"q":0,"r":11,"t":"desert"},{"q":2,"r":10,"t":"desert"},{"q":1,"r":10,"t":"desert"}]},"r5_s5":{"id":"r5_s5","regionId":"r5","econ":0.27,"pop":0.5,"terrain":"desert","hexes":[{"q":5,"r":5,"t":"desert"},{"q":5,"r":6,"t":"desert"},{"q":4,"r":6,"t":"desert"},{"q":4,"r":5,"t":"desert"},{"q":3,"r":6,"t":"desert"},{"q":4,"r":7,"t":"desert"}]},"r5_s6":{"id":"r5_s6","regionId":"r5","econ":0.27,"pop":0.5,"terrain":"desert","hexes":[{"q":5,"r":7,"t":"desert"},{"q":4,"r":8,"t":"desert"},{"q":3,"r":8,"t":"desert"},{"q":3,"r":9,"t":"desert"},{"q":3,"r":7,"t":"desert"},{"q":2,"r":7,"t":"desert"},{"q":2,"r":8,"t":"desert"}]},"r5_s7":{"id":"r5_s7","regionId":"r5","econ":0.27,"pop":0.5,"terrain":"desert","hexes":[{"q":-2,"r":12,"t":"desert"},{"q":-1,"r":12,"t":"desert"},{"q":-1,"r":11,"t":"desert"},{"q":-1,"r":10,"t":"desert"},{"q":0,"r":10,"t":"desert"},{"q":-1,"r":9,"t":"desert"}]},"r5_s8":{"id":"r5_s8","regionId":"r5","econ":0.27,"pop":0.5,"terrain":"desert","hexes":[{"q":3,"r":10,"t":"desert"},{"q":4,"r":9,"t":"desert"},{"q":2,"r":11,"t":"desert"}]},"r5_s9":{"id":"r5_s9","regionId":"r5","econ":0.27,"pop":0.5,"terrain":"desert","hexes":[{"q":-1,"r":8,"t":"desert"},{"q":0,"r":7,"t":"desert"},{"q":0,"r":8,"t":"desert"},{"q":0,"r":9,"t":"desert"},{"q":1,"r":7,"t":"desert"},{"q":1,"r":8,"t":"desert"},{"q":1,"r":9,"t":"desert"},{"q":2,"r":9,"t":"desert"}]},"r6_s0":{"id":"r6_s0","regionId":"r6","econ":0.5,"pop":0.5,"terrain":"mountain","hexes":[{"q":0,"r":13,"t":"mountain"},{"q":1,"r":13,"t":"mountain"},{"q":1,"r":14,"t":"mountain"},{"q":2,"r":13,"t":"mountain"},{"q":2,"r":14,"t":"mountain"}]},"r6_s1":{"id":"r6_s1","regionId":"r6","econ":1.02,"pop":0.9666666666666667,"terrain":"plains","hexes":[{"q":1,"r":16,"t":"plains"},{"q":1,"r":17,"t":"plains"},{"q":1,"r":15,"t":"plains"},{"q":2,"r":15,"t":"plains"}]},"r6_s2":{"id":"r6_s2","regionId":"r6","econ":1.02,"pop":0.9666666666666667,"terrain":"plains","hexes":[{"q":2,"r":17,"t":"plains"},{"q":3,"r":16,"t":"plains"},{"q":3,"r":15,"t":"plains"},{"q":4,"r":15,"t":"plains"},{"q":2,"r":16,"t":"plains"},{"q":3,"r":14,"t":"plains"}]},"r6_s3":{"id":"r6_s3","regionId":"r6","econ":0.5,"pop":0.5,"terrain":"mountain","hexes":[{"q":3,"r":11,"t":"mountain"},{"q":3,"r":12,"t":"mountain"},{"q":4,"r":11,"t":"mountain"},{"q":3,"r":13,"t":"mountain"},{"q":2,"r":12,"t":"mountain"},{"q":5,"r":11,"t":"mountain"}]},"r6_s4":{"id":"r6_s4","regionId":"r6","econ":1.02,"pop":0.9666666666666667,"terrain":"plains","hexes":[{"q":0,"r":15,"t":"plains"},{"q":0,"r":14,"t":"plains"},{"q":0,"r":16,"t":"plains"}]},"r6_s5":{"id":"r6_s5","regionId":"r6","econ":2.3,"pop":2.1,"terrain":"mountain","hexes":[{"q":6,"r":12,"t":"mountain"},{"q":5,"r":13,"t":"mountain"},{"q":5,"r":12,"t":"mountain"},{"q":4,"r":13,"t":"mountain"},{"q":5,"r":14,"t":"mountain"},{"q":4,"r":14,"t":"mountain"},{"q":4,"r":12,"t":"mountain"}]},"r8_s0":{"id":"r8_s0","regionId":"r8","econ":1.92,"pop":2,"terrain":"plains","hexes":[{"q":3,"r":17,"t":"plains"},{"q":4,"r":16,"t":"plains"},{"q":4,"r":17,"t":"plains"},{"q":5,"r":16,"t":"plains"},{"q":5,"r":17,"t":"plains"}]},"r8_s1":{"id":"r8_s1","regionId":"r8","econ":1.92,"pop":2,"terrain":"plains","hexes":[{"q":6,"r":17,"t":"plains"},{"q":7,"r":17,"t":"plains"},{"q":5,"r":18,"t":"plains"},{"q":7,"r":16,"t":"plains"},{"q":6,"r":16,"t":"plains"}]},"r8_s2":{"id":"r8_s2","regionId":"r8","econ":1.92,"pop":2,"terrain":"plains","hexes":[{"q":8,"r":15,"t":"plains"},{"q":7,"r":15,"t":"plains"},{"q":7,"r":14,"t":"plains"},{"q":6,"r":15,"t":"plains"},{"q":6,"r":14,"t":"plains"},{"q":5,"r":15,"t":"plains"}]}},"edges":[{"a":"r1_s0","b":"r6_s5","class":"pass","cap":1000,"front":4},{"a":"r1_s1","b":"r8_s2","class":"pass","cap":1000,"front":8},{"a":"r5_s4","b":"r6_s0","class":"pass","cap":1000,"front":7},{"a":"r6_s2","b":"r8_s0","class":"open","cap":null,"front":7}],"cities":{"r6":"r6_s5","r1":"r1_s3"},"capitals":{"r5":"r5_s2"},"range":[{"q":6,"r":2},{"q":7,"r":2},{"q":6,"r":3},{"q":7,"r":3},{"q":6,"r":4},{"q":7,"r":4},{"q":6,"r":5},{"q":7,"r":5},{"q":6,"r":6},{"q":7,"r":6},{"q":8,"r":6},{"q":7,"r":7},{"q":11,"r":7},{"q":10,"r":8},{"q":11,"r":8},{"q":10,"r":9},{"q":6,"r":7},{"q":3,"r":3},{"q":4,"r":3},{"q":1,"r":4},{"q":2,"r":4},{"q":4,"r":4},{"q":5,"r":4},{"q":-1,"r":5},{"q":0,"r":5},{"q":-2,"r":6},{"q":-3,"r":7},{"q":-4,"r":8},{"q":-4,"r":9},{"q":-5,"r":10},{"q":-5,"r":11},{"q":-4,"r":11},{"q":-4,"r":12},{"q":-3,"r":12},{"q":-3,"r":13},{"q":-2,"r":13},{"q":-1,"r":13},{"q":-1,"r":14},{"q":-1,"r":15},{"q":-1,"r":16},{"q":-1,"r":17},{"q":0,"r":17},{"q":0,"r":18},{"q":1,"r":18},{"q":2,"r":18},{"q":3,"r":18},{"q":4,"r":18},{"q":6,"r":18},{"q":4,"r":19},{"q":5,"r":19}],"massif":{"hexes":[{"q":11,"r":7},{"q":10,"r":8},{"q":11,"r":8},{"q":10,"r":9}],"cx":640,"cy":300,"label":"태산"},"massifKeys":["11,7","10,8","11,8","10,9"],"bbox":{"minx":43.30127018922193,"miny":150,"maxx":736.1215932167728,"maxy":675}};
+
+// § THE SEAM — single static viewer-safe projection. "중원 쟁탈 — mid-game peak war".
+const REALM = {
+  self: { name: '관중-촉', color: '#4a86c8' },
+  jung: { name: '중원',   color: '#c8524a' },
+  seo:  { name: '서역',   color: '#c89a4a' },
+};
+const CONTROL = { r6: 'self', r8: 'self', r1: 'jung', r5: 'seo' };
+function band(lo45, hi45, lo90, hi90) {
+  return { 0.45: [lo45, hi45], 0.70: [(lo45 + lo90) / 2 | 0, (hi45 + hi90) / 2 | 0], 0.90: [lo90, hi90] };
+}
+const FIX = {
+  turn: 17,
+  self: { treasury: 1240, projMass: 4800, projWarn: true, mob: '고', mobPct: 0.86,
+    mobNote: '등록부 고갈 임박 — 이 서지를 지금 써라' },
+  commitPerTurn: 20,
+  panse: { pos: 0.52, width: 0.16, label: '중위', note: '판세는 매치 수준 결론 — 적 국고 불확실이 이 폭에 섞임' },
+  intel: {
+    r1_s0: { conf: 0.70, sub: band(700, 1500, 1050, 1250), mob: band(0.50, 0.74, 0.58, 0.66), note: '북부 관문 너머 — 얇아지는 판' },
+    r1_s1: { conf: 0.45, sub: band(2400, 4400, 3050, 3650), mob: band(0.60, 0.82, 0.68, 0.74), note: '중원 주력 섹터 — 두터움' },
+    r1_s2: { conf: 0.45, sub: band(600, 2000, 1050, 1350), mob: band(0.50, 0.80, 0.62, 0.70), note: '' },
+    r1_s3: { conf: 0.45, sub: band(1400, 3200, 2100, 2500), mob: band(0.55, 0.80, 0.64, 0.72), note: '중원 수도 — 근위' },
+    r5_s4: { conf: 0.45, sub: band(1000, 3600, 1900, 2500), mob: band(0.44, 0.70, 0.52, 0.60), note: '서역 관문 — 유목 집결지' },
+  },
+  armies: [
+    { id: 'self_n', self: true, realm: 'self', sid: 'r6_s5', size: 4200, label: '관중 야전군' },
+    { id: 'self_e', self: true, realm: 'self', sid: 'r8_s1', size: 3100, label: '촉 야전군' },
+    { id: 'jung_e', self: false, realm: 'jung', sid: 'r1_s1', age: 1, sub: band(2600, 4600, 3200, 3900), label: '중원 주력' },
+    { id: 'seo_w', self: false, realm: 'seo', sid: 'r5_s4', age: 4, sub: band(900, 3400, 1700, 2400), label: '서역 유목 기병' },
+  ],
+  fort: { r6_s5: 2, r1_s3: 2, r5_s2: 2, r8_s2: 1, r6_s0: 1 },
+  alarm: { selfSid: 'r8_s2', enemySid: 'r1_s1' },
+  threats: [
+    { front: '촉 동부 전선', sid: 'r8_s2', army: 'jung_e', range: '이번 턴', hot: true },
+    { front: '관중 서부 전선', sid: 'r6_s0', army: 'seo_w', range: '원거리', hot: false },
+  ],
+  axes: {
+    r1: { kind: 'o', text: '북부 판 얇아짐 — 진입 기회' },
+    r8: { kind: 't', text: '동부 접경 적 집결 — 위협' },
+    r5: { kind: 'u', text: '유목 주력 위치 불명 — 불확실' },
+  },
+  scars: [],
+  devSid: 'r6_s1',
+};
+const FRONTS = {
+  attack: { targetSid: 'r1_s0', fromSid: 'r6_s5', name: '북부 전선 (관중→중원)' },
+  defense: { ownSid: 'r8_s2', threatSid: 'r1_s1', name: '동부 전선 (중원→촉)' },
+};
+console.log('[proto] fixture loaded — turn', FIX.turn);
+</script>
+<script>
+'use strict';
+// ══════════════════════════════════════════════════════════════════════════
+// § geometry helpers (renderer-owned math) — reused verbatim from the CRADLE
+//   workbench precedent.
+// ══════════════════════════════════════════════════════════════════════════
+const HEX = GEO.hexR;
+const SQRT3 = Math.sqrt(3);
+const NB = [[1, 0], [1, -1], [0, -1], [-1, 0], [-1, 1], [0, 1]];
+const EDGE_NB = [[1, 0], [0, 1], [-1, 1], [-1, 0], [0, -1], [1, -1]];
+const TERR = { plains: '#7d9a54', 'river-valley': '#5d9078', steppe: '#a89a55',
+  desert: '#c6aa69', mountain: '#877663', oasis: '#6fae7c', highland: '#5e6b4a' };
+const RANGE_FILL = '#4e4034';
+const hxpx = (q, r) => ({ x: HEX * SQRT3 * (q + r / 2), y: HEX * 1.5 * r });
+const kk = (q, r) => q + ',' + r;
+function corners(x, y) { const p = [];
+  for (let i = 0; i < 6; i++) { const a = Math.PI / 180 * (60 * i - 30);
+    p.push([x + HEX * Math.cos(a), y + HEX * Math.sin(a)]); } return p; }
+const polyPts = (h) => corners(h.x, h.y).map(([x, y]) => x.toFixed(1) + ',' + y.toFixed(1)).join(' ');
+
+const HIX = new Map();
+for (const [sid, sec] of Object.entries(GEO.sectors))
+  for (const u of sec.hexes) { const p = hxpx(u.q, u.r);
+    HIX.set(kk(u.q, u.r), { sid, rid: sec.regionId, terr: u.t, q: u.q, r: u.r, x: p.x, y: p.y }); }
+const RANGE = GEO.range.map((h) => { const p = hxpx(h.q, h.r); return { ...h, ...p }; });
+const RANGEKEYS = new Set(GEO.range.map((h) => kk(h.q, h.r)));
+const MASSIFKEYS = new Set(GEO.massifKeys);
+const nameOf = Object.fromEntries(GEO.regions.map((r) => [r.id, r.name]));
+const centerOf = Object.fromEntries(GEO.regions.map((r) => [r.id, r.center]));
+const regionOf = (sid) => GEO.sectors[sid].regionId;
+const secName = (sid) => nameOf[regionOf(sid)] + ' ' + sid.split('_')[1].toUpperCase();
+function secCentroid(sid) { let x = 0, y = 0; const hs = GEO.sectors[sid].hexes;
+  for (const u of hs) { const p = hxpx(u.q, u.r); x += p.x; y += p.y; } return { x: x / hs.length, y: y / hs.length }; }
+const realmOf = (sid) => CONTROL[regionOf(sid)];
+const isSelf = (sid) => realmOf(sid) === 'self';
+const selfSids = Object.keys(GEO.sectors).filter(isSelf);
+
+const jit = (q, r) => ((q * 13 + r * 7) % 5 - 2) * 5;
+function tint(hex, dv) { const n = parseInt(hex.slice(1), 16);
+  const c = (v) => Math.max(0, Math.min(255, v + dv));
+  return '#' + [c(n >> 16), c((n >> 8) & 255), c(n & 255)].map((v) => v.toString(16).padStart(2, '0')).join(''); }
+const pairKey = (a, b) => (a < b ? a + '|' + b : b + '|' + a);
+const k = (n) => { n = Math.round(n); return n >= 1000 ? (n / 1000).toFixed(1).replace(/\.0$/, '') + 'k' : String(n); };
+
+function reachSet(sid, radius) {
+  const seen = new Set(GEO.sectors[sid].hexes.map((u) => kk(u.q, u.r)));
+  let frontier = [...seen];
+  for (let d = 0; d < radius; d++) { const next = [];
+    for (const key of frontier) { const [q, r] = key.split(',').map(Number);
+      for (const [dq, dr] of NB) { const nk = kk(q + dq, r + dr);
+        if (HIX.has(nk) && !seen.has(nk)) { seen.add(nk); next.push(nk); } } }
+    frontier = next; }
+  return seen;
+}
+function loopsD(cellPts) {
+  const pk2 = (x, y) => x.toFixed(1) + ',' + y.toFixed(1);
+  const segMap = new Map();
+  for (const [key, h] of cellPts) { const [q, r] = key.split(',').map(Number); const cs = corners(h.x, h.y);
+    for (let i = 0; i < 6; i++) { if (cellPts.has(kk(q + EDGE_NB[i][0], r + EDGE_NB[i][1]))) continue;
+      const c1 = cs[i], c2 = cs[(i + 1) % 6]; const sk = pk2(c1[0], c1[1]);
+      if (!segMap.has(sk)) segMap.set(sk, []); segMap.get(sk).push({ x1: c1[0], y1: c1[1], x2: c2[0], y2: c2[1] }); } }
+  const used = new Set(); const loops = [];
+  for (const arr of segMap.values()) for (const s0 of arr) { if (used.has(s0)) continue;
+    const pts = [[s0.x1, s0.y1]]; let cur = s0;
+    while (cur && !used.has(cur)) { used.add(cur); pts.push([cur.x2, cur.y2]);
+      cur = (segMap.get(pk2(cur.x2, cur.y2)) || []).find((s) => !used.has(s)); }
+    if (pts.length > 3) loops.push(pts); }
+  const mid = (a, b) => [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+  const smoothD = (pts) => { const v = (pk2(...pts[0]) === pk2(...pts[pts.length - 1])) ? pts.slice(0, -1) : pts;
+    const m = v.length; const mids = v.map((p, i) => mid(p, v[(i + 1) % m]));
+    let d = `M${mids[0][0].toFixed(1)} ${mids[0][1].toFixed(1)}`;
+    for (let i = 1; i <= m; i++) { const vi = v[i % m], mi = mids[i % m];
+      d += `Q${vi[0].toFixed(1)} ${vi[1].toFixed(1)} ${mi[0].toFixed(1)} ${mi[1].toFixed(1)}`; }
+    return d + 'Z'; };
+  return loops.map(smoothD);
+}
+function facingEdges(sidA, sidB) { const out = [];
+  for (const u of GEO.sectors[sidA].hexes) { const h = HIX.get(kk(u.q, u.r)); const cs = corners(h.x, h.y);
+    for (let i = 0; i < 6; i++) { const n = HIX.get(kk(u.q + EDGE_NB[i][0], u.r + EDGE_NB[i][1]));
+      if (n && n.sid === sidB) out.push([cs[i], cs[(i + 1) % 6]]); } } return out; }
+
+// ══════════════════════════════════════════════════════════════════════════
+// § state — casual, commit-first. The board is CALM at rest; the info layer is
+//   summoned by the commit decision flow (user direction 2026-07-23).
+// ══════════════════════════════════════════════════════════════════════════
+const clone = (o) => JSON.parse(JSON.stringify(o));
+const qs = new URLSearchParams(location.search);
+const state = {
+  nav: qs.get('nav') === 'zoom' ? 'zoom' : 'drill',
+  proj: clone(FIX),
+  turn: FIX.turn,
+  used: 0,
+  orders: [],
+  cam: { scale: 1, tx: 0, ty: 0 },
+  // flow = null at rest. Command-first: amount → action → plan → target → confirm.
+  flow: null,
+};
+const remaining = () => state.proj.commitPerTurn - state.used;
+const syncURL = () => { const u = new URL(location); u.searchParams.set('nav', state.nav); history.replaceState({}, '', u); };
+const inCommand = () => !!state.flow;
+
+// fit viewBox once
+let VB = null;
+(function fit() { let a = 1e9, b = 1e9, c = -1e9, d = -1e9;
+  const bump = (x, y) => { a = Math.min(a, x); b = Math.min(b, y); c = Math.max(c, x); d = Math.max(d, y); };
+  for (const h of HIX.values()) bump(h.x, h.y);
+  for (const h of RANGE) bump(h.x, h.y);
+  const pad = HEX * 2.4; VB = { x: a - pad, y: b - pad, w: c - a + pad * 2, h: d - b + pad * 2 }; })();
+
+// band access — keys normalise to "0.45"/"0.7"/"0.9" on both sides
+const bandAt = (intel) => intel.sub[intel.conf] || intel.sub[0.45];
+const mobAt = (intel) => intel.mob[intel.conf] || intel.mob[0.45];
+const bandStr = (b) => `${k(b[0])}–${k(b[1])}`;
+
+// which sectors light up for a chosen verb
+function eligible(verb) {
+  if (verb === '공격') return ['r1_s0', 'r1_s1', 'r1_s2', 'r1_s3']; // 4 enemy fronts → meaningful average
+  if (verb === '방어') return state.proj.threats.map((t) => t.sid);
+  if (verb === '정찰' || verb === '즉시정찰') return ['r1_s0', 'r1_s1', 'r5_s4'];
+  if (verb === '축성') return ['r8_s2', 'r6_s0', 'r6_s5'];
+  if (verb === '모병') return [GEO.cities.r6];
+  if (verb === '보급') return [state.proj.devSid];
+  return [];
+}
+const enemyArmyAt = (sid) => state.proj.armies.find((a) => !a.self && a.sid === sid);
+
+// ══════════════════════════════════════════════════════════════════════════
+// § RENDERER — draws the board from state.proj. CALM at rest; the fog/threat
+//   info layer + eligible glow appear only in command mode.
+// ══════════════════════════════════════════════════════════════════════════
+const svg = document.getElementById('map');
+const ORDER_IC = { '공격': '⚔', '방어': '🛡', '정찰': '👁', '즉시정찰': '⚡', '축성': '🧱', '모병': '⚑', '보급': '📦' };
+
+function renderMap() {
+  const P = state.proj, f = state.flow;
+  const cmd = inCommand();
+  const glowSids = f && (f.step === 'target' || f.step === 'confirm') ? eligible(f.verb) : null;
+  const glowSet = glowSids ? new Set(glowSids) : null;
+  const L = { base: [], control: [], border: [], coast: [], scar: [], dev: [], seat: [],
+    dim: [], glow: [], cone: [], army: [], alarm: [], threat: [], order: [], label: [] };
+
+  // ── PUBLIC terrain ──
+  for (const h of HIX.values()) {
+    const intel = P.intel[h.sid];
+    const scouted = (cmd && intel) ? (intel.conf - 0.45) / 0.45 : 0;
+    const dv = jit(h.q, h.r) + (isSelf(h.sid) ? 0 : Math.round(scouted * 16));
+    L.base.push(`<polygon points="${polyPts(h)}" fill="${tint(TERR[h.terr] || '#888', dv)}" data-sid="${h.sid}" data-key="${h.q},${h.r}"/>`);
+  }
+  for (const h of RANGE) {
+    if (MASSIFKEYS.has(kk(h.q, h.r))) L.base.push(`<polygon points="${polyPts(h)}" fill="#6b6156" stroke="#514840" stroke-width="1" pointer-events="none"/>`);
+    else L.base.push(`<polygon points="${polyPts(h)}" fill="${RANGE_FILL}" stroke="#2e2620" stroke-width="1" pointer-events="none"/>`);
+  }
+  { const m = GEO.massif;
+    L.label.push(`<text x="${m.cx}" y="${m.cy + 8}" text-anchor="middle" style="font-size:24px;fill:#a99a85;paint-order:stroke;stroke:#0006;stroke-width:2px" pointer-events="none">▲</text>`);
+    L.label.push(`<text x="${m.cx}" y="${m.cy + 24}" text-anchor="middle" style="font:600 10px system-ui;fill:#cfc2ae;paint-order:stroke;stroke:#0008;stroke-width:2px" pointer-events="none">${m.label}</text>`); }
+
+  // ── control wash ──
+  for (const h of HIX.values())
+    L.control.push(`<polygon points="${polyPts(h)}" fill="${REALM[realmOf(h.sid)].color}" opacity="0.20" pointer-events="none"/>`);
+
+  // ── region borders (choke) + sector seams ──
+  const chokeMid = {};
+  for (const h of HIX.values()) { const cs = corners(h.x, h.y);
+    for (let i = 0; i < 6; i++) {
+      const nk = kk(h.q + EDGE_NB[i][0], h.r + EDGE_NB[i][1]); const n = HIX.get(nk);
+      const c1 = cs[i], c2 = cs[(i + 1) % 6];
+      const seg = (col, w, dash) => L.border.push(`<line x1="${c1[0].toFixed(1)}" y1="${c1[1].toFixed(1)}" x2="${c2[0].toFixed(1)}" y2="${c2[1].toFixed(1)}" stroke="${col}" stroke-width="${w}" stroke-linecap="round"${dash ? ` stroke-dasharray="${dash}"` : ''} pointer-events="none"/>`);
+      if (!n) { if (RANGEKEYS.has(nk)) seg('#0a1c26', 3); continue; }
+      if (n.rid !== h.rid) {
+        if (h.rid > n.rid) continue;
+        const pk = pairKey(h.rid, n.rid);
+        const e = GEO.edges.find((x) => pairKey(regionOf(x.a), regionOf(x.b)) === pk);
+        const cls = e ? e.class : 'open';
+        const CS = { pass: ['#6b543f', 5], river: ['#57a7d8', 4.5], open: ['#1c2b18', 2.5] }[cls] || ['#1c2b18', 2.5];
+        seg(CS[0], CS[1]);
+        if (realmOf(h.sid) !== realmOf(n.sid)) seg('#0b0f08', 2.2);
+        if (cmd && e && e.cap) { const m = chokeMid[pk] || (chokeMid[pk] = [0, 0, 0]);
+          m[0] += (c1[0] + c2[0]) / 2; m[1] += (c1[1] + c2[1]) / 2; m[2]++; }
+      } else if (n.sid !== h.sid && h.sid < n.sid && cmd) seg('#0b0f0855', 1.4, '5 4');
+    } }
+  if (cmd) for (const [pk, m] of Object.entries(chokeMid)) {
+    const e = GEO.edges.find((x) => pairKey(regionOf(x.a), regionOf(x.b)) === pk); if (!e || !e.cap) continue;
+    L.label.push(`<text class="choke" x="${(m[0] / m[2]).toFixed(1)}" y="${(m[1] / m[2]).toFixed(1)}" pointer-events="none">${e.class} ${e.cap}</text>`); }
+
+  // ── smoothed silhouette (always) ──
+  const cell = new Map();
+  for (const h of HIX.values()) cell.set(kk(h.q, h.r), h);
+  for (const h of RANGE) cell.set(kk(h.q, h.r), h);
+  const ds = loopsD(cell);
+  const strokeAll = (col, w, op) => ds.map((dd) => `<path d="${dd}" fill="none" stroke="${col}" stroke-width="${w}" stroke-linejoin="round"${op ? ` opacity="${op}"` : ''} pointer-events="none"/>`).join('');
+  L.coast.push(strokeAll('#1d4056', 15, '.5'));
+  L.coast.push(strokeAll('#0e2029', 8));
+  L.coast.push(strokeAll('#08151c', 3));
+
+  // ── scars (always — the land remembers) ──
+  for (const sid of P.scars) {
+    for (const u of GEO.sectors[sid].hexes) { const h = HIX.get(kk(u.q, u.r));
+      L.scar.push(`<polygon points="${polyPts(h)}" fill="url(#scar)" opacity="0.8" pointer-events="none"/>`); }
+    const c = secCentroid(sid);
+    L.scar.push(`<g pointer-events="none"><rect x="${(c.x - HEX * 1.9).toFixed(1)}" y="${(c.y - HEX * 2.4).toFixed(1)}" width="${HEX * 3.8}" height="${HEX * 0.9}" rx="4" fill="#2a130cdd" stroke="#a05a3a" stroke-width="1"/><text x="${c.x.toFixed(1)}" y="${(c.y - HEX * 1.75).toFixed(1)}" text-anchor="middle" style="fill:#e8b49a;font:700 ${(HEX * 0.5).toFixed(0)}px system-ui;paint-order:stroke;stroke:#0007;stroke-width:2px">상흔 · 영구</text></g>`); }
+
+  // ── DEV placeholder (always — honesty marker) ──
+  for (const u of GEO.sectors[P.devSid].hexes) { const h = HIX.get(kk(u.q, u.r));
+    L.dev.push(`<polygon points="${polyPts(h)}" fill="url(#hatch)" opacity="0.85" pointer-events="none"/>`); }
+  { const c = secCentroid(P.devSid);
+    L.dev.push(`<g pointer-events="none"><rect x="${(c.x - 48).toFixed(1)}" y="${(c.y - 8).toFixed(1)}" width="96" height="16" rx="4" fill="#1b1024dd" stroke="#a05ad0" stroke-width="1"/><text x="${c.x.toFixed(1)}" y="${(c.y + 4).toFixed(1)}" text-anchor="middle" style="fill:#d9a8f0;font:700 8.5px system-ui">보급 · DEV — 미구현</text></g>`); }
+
+  // ── seats (always, subtle) ──
+  for (const sid of Object.values(GEO.capitals)) { const c = secCentroid(sid);
+    L.seat.push(`<text x="${c.x.toFixed(1)}" y="${(c.y + 4).toFixed(1)}" text-anchor="middle" style="fill:#ffe9a8;font-size:15px;paint-order:stroke;stroke:#0009;stroke-width:2px" pointer-events="none">★</text>`); }
+  for (const sid of Object.values(GEO.cities)) { const c = secCentroid(sid);
+    L.seat.push(`<text x="${c.x.toFixed(1)}" y="${(c.y + 5).toFixed(1)}" text-anchor="middle" style="fill:#ffe9a8;font-size:15px;paint-order:stroke;stroke:#0009;stroke-width:2px" pointer-events="none">◉</text>`); }
+
+  // ── COMMAND MODE: eligible glow + dim + summoned enemy info ──
+  if (glowSet) {
+    // dim everything, then bright-outline the eligible sectors
+    L.dim.push(`<rect x="${VB.x}" y="${VB.y}" width="${VB.w}" height="${VB.h}" fill="#06101699" pointer-events="none"/>`);
+    for (const sid of glowSet) {
+      const cm = new Map(GEO.sectors[sid].hexes.map((u) => [kk(u.q, u.r), HIX.get(kk(u.q, u.r))]));
+      const chosen = f.sid === sid;
+      for (const dd of loopsD(cm))
+        L.glow.push(`<path d="${dd}" fill="#ffd27f" fill-opacity="${chosen ? 0.22 : 0.10}" stroke="${chosen ? '#fff2c8' : '#ffd27f'}" stroke-width="${chosen ? 4 : 3}" stroke-linejoin="round" pointer-events="none" style="animation:glowpulse 1.6s infinite"/>`);
+      // clickable transparent hit hexes on top of the dim so eligible stays selectable
+      for (const u of GEO.sectors[sid].hexes) { const h = HIX.get(kk(u.q, u.r));
+        L.glow.push(`<polygon points="${polyPts(h)}" fill="#ffffff01" data-sid="${sid}" data-key="${u.q},${u.r}"/>`); }
+      // summoned enemy band on eligible enemy sectors
+      const intel = P.intel[sid];
+      if (intel && !isSelf(sid)) { const c = secCentroid(sid); const b = bandAt(intel);
+        L.glow.push(`<g pointer-events="none"><rect x="${(c.x - HEX * 1.8).toFixed(1)}" y="${(c.y - HEX * 0.55).toFixed(1)}" width="${HEX * 3.6}" height="${HEX * 1.1}" rx="5" fill="#0e1420f0" stroke="${REALM[realmOf(sid)].color}" stroke-width="1.4"/><text x="${c.x.toFixed(1)}" y="${(c.y + HEX * 0.2).toFixed(1)}" text-anchor="middle" style="fill:#ffcf8a;font:700 ${(HEX * 0.62).toFixed(0)}px system-ui">${bandStr(b)}?</text></g>`); }
+    }
+  }
+
+  // ── enemy reach cones (command mode only) ──
+  if (cmd) for (const a of P.armies) { if (a.self) continue;
+    const col = REALM[a.realm].color;
+    const cone = reachSet(a.sid, 1 + a.age);
+    const cm = new Map([...cone].map((key) => [key, HIX.get(key)]).filter(([, v]) => v));
+    L.cone.push(`<g pointer-events="none">` + loopsD(cm).map((dd) => `<path d="${dd}" fill="${col}" fill-opacity="0.10" stroke="${col}" stroke-width="2" stroke-dasharray="8 5" opacity=".75"/>`).join('') + `</g>`); }
+
+  // ── armies: own always (your pieces); enemy fixes only in command mode ──
+  for (const a of P.armies) { if (a.self) L.army.push(counterSvg(a)); else if (cmd) L.army.push(counterSvg(a)); }
+
+  // ── border alarm: subtle pulse at rest; full detail in defense command ──
+  if (P.alarm) {
+    const edges = facingEdges(P.alarm.selfSid, P.alarm.enemySid);
+    if (edges.length) {
+      const showDetail = cmd && f && f.verb === '방어';
+      const glow = edges.map(([c1, c2]) => `<line x1="${c1[0].toFixed(1)}" y1="${c1[1].toFixed(1)}" x2="${c2[0].toFixed(1)}" y2="${c2[1].toFixed(1)}" stroke="#ff5a5a" stroke-width="${HEX * (showDetail ? 0.55 : 0.4)}" stroke-linecap="round"/>`).join('');
+      let extra = '';
+      if (showDetail) { const cs = secCentroid(P.alarm.selfSid), ce = secCentroid(P.alarm.enemySid);
+        const mx = (cs.x + ce.x) / 2, my = (cs.y + ce.y) / 2; const ang = Math.atan2(cs.y - ce.y, cs.x - ce.x) * 180 / Math.PI;
+        extra = `<g transform="translate(${mx.toFixed(1)} ${my.toFixed(1)}) rotate(${ang.toFixed(0)})"><path d="M ${-HEX} 0 L ${HEX * 1.3} 0 M ${HEX * 0.6} ${-HEX * 0.5} L ${HEX * 1.4} 0 L ${HEX * 0.6} ${HEX * 0.5}" stroke="#ff6a5a" stroke-width="${HEX * 0.26}" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g><rect x="${(mx - HEX * 3.0).toFixed(1)}" y="${(my + HEX * 1.1).toFixed(1)}" width="${HEX * 6.0}" height="${HEX}" rx="4" fill="#2a1210ee" stroke="#ff5a5a" stroke-width="1"/><text x="${mx.toFixed(1)}" y="${(my + HEX * 1.8).toFixed(1)}" text-anchor="middle" style="fill:#ff9a8a;font:700 ${(HEX * 0.55).toFixed(0)}px system-ui">국경 경보 — 존재+방향만</text>`; }
+      L.alarm.push(`<g pointer-events="none"><g style="animation:pulse 1.4s infinite">${glow}</g>${extra}</g>`);
+    }
+  }
+
+  // ── rest-state threat cue: one calm pulsing dot per hot threat ──
+  if (!cmd) for (const t of P.threats) { if (!t.hot) continue; const c = secCentroid(t.sid);
+    L.threat.push(`<g pointer-events="none"><circle cx="${c.x.toFixed(1)}" cy="${(c.y - HEX * 1.3).toFixed(1)}" r="${HEX * 0.42}" fill="#ff5a5a" style="animation:pulse 1.3s infinite"/><circle cx="${c.x.toFixed(1)}" cy="${(c.y - HEX * 1.3).toFixed(1)}" r="${HEX * 0.42}" fill="none" stroke="#ff9a8a" stroke-width="1.5"/></g>`); }
+
+  // ── order markers (placed commitments, always) ──
+  for (const o of state.orders) { const c = secCentroid(o.sid);
+    const col = o.verb === '공격' ? '#ff7a6a' : o.verb === '방어' ? '#7ab8ff' : o.verb === '정찰' ? '#6ee0b0' : '#b89cd8';
+    L.order.push(`<g pointer-events="none"><circle cx="${c.x.toFixed(1)}" cy="${(c.y - HEX * 1.5).toFixed(1)}" r="${HEX * 0.6}" fill="#10151cf0" stroke="${col}" stroke-width="2"/><text x="${c.x.toFixed(1)}" y="${(c.y - HEX * 1.5 + HEX * 0.26).toFixed(1)}" text-anchor="middle" style="font-size:${(HEX * 0.66).toFixed(0)}px">${ORDER_IC[o.verb] || '◆'}</text><rect x="${(c.x - HEX * 0.25).toFixed(1)}" y="${(c.y - HEX * 0.72).toFixed(1)}" width="${HEX * 1.05}" height="${HEX * 0.66}" rx="3" fill="${col}"/><text x="${(c.x + HEX * 0.28).toFixed(1)}" y="${(c.y - HEX * 0.24).toFixed(1)}" text-anchor="middle" style="fill:#10151c;font:800 ${(HEX * 0.48).toFixed(0)}px system-ui">${o.commit}</text></g>`); }
+
+  // ── region labels + tiny axis glyph (calm hint layer) ──
+  for (const r of GEO.regions) { const c = centerOf[r.id];
+    L.label.push(`<text class="rlabel" data-rid="${r.id}" x="${c.x.toFixed(1)}" y="${c.y.toFixed(1)}">${r.name}</text>`);
+    const ax = P.axes[r.id];
+    if (ax && !cmd) { const g = ax.kind === 't' ? ['▲', '#ff9a8a'] : ax.kind === 'o' ? ['◆', '#8fd08a'] : ['?', '#9ab4d8'];
+      L.label.push(`<text x="${c.x.toFixed(1)}" y="${(c.y + 15).toFixed(1)}" text-anchor="middle" style="fill:${g[1]};font:700 11px system-ui;paint-order:stroke;stroke:#0008;stroke-width:2px" pointer-events="none">${g[0]}</text>`); } }
+
+  const cam = state.cam;
+  svg.setAttribute('viewBox', `${VB.x} ${VB.y} ${VB.w} ${VB.h}`);
+  svg.innerHTML = `<defs>
+    <pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="7" height="7" fill="#160c22"/><line x1="0" y1="0" x2="0" y2="7" stroke="#7a4aa8" stroke-width="2"/></pattern>
+    <pattern id="scar" width="9" height="9" patternUnits="userSpaceOnUse"><path d="M0 9 L9 0" stroke="#2e150e" stroke-width="2.4"/><path d="M0 3.5 L3.5 0" stroke="#2e150e" stroke-width="1.3"/></pattern>
+  </defs><g id="vp" transform="translate(${cam.tx} ${cam.ty}) scale(${cam.scale})">`
+    + L.control.join('') + L.base.join('') + L.border.join('') + L.coast.join('')
+    + L.scar.join('') + L.dev.join('') + L.seat.join('') + L.dim.join('') + L.glow.join('')
+    + L.cone.join('') + L.army.join('') + L.alarm.join('') + L.threat.join('')
+    + L.order.join('') + L.label.join('') + `</g>`;
+}
+function counterSvg(a) {
+  const c = secCentroid(a.sid); const W = HEX * 2.7, H = HEX * 1.7, x = c.x - W / 2, y = c.y - H / 2;
+  if (a.self) {
+    return `<g pointer-events="none"><rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${W}" height="${H}" rx="${HEX * 0.24}" fill="#2f6fb8ee" stroke="#eaf4ff" stroke-width="2.2"/><text x="${c.x.toFixed(1)}" y="${(c.y + HEX * 0.3).toFixed(1)}" text-anchor="middle" style="fill:#fff;font:700 ${(HEX * 0.72).toFixed(0)}px system-ui;paint-order:stroke;stroke:#0006;stroke-width:2px">${k(a.size)}</text></g>`;
+  }
+  const col = REALM[a.realm].color; const b = a.sub[a.confNow != null ? a.confNow : 0.45] || a.sub[0.45];
+  return `<g pointer-events="none"><rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${W}" height="${H}" rx="${HEX * 0.24}" fill="${col}" fill-opacity="0.22" stroke="${col}" stroke-width="2" stroke-dasharray="7 4"/><text x="${c.x.toFixed(1)}" y="${(c.y + HEX * 0.34).toFixed(1)}" text-anchor="middle" style="fill:#ffd9c9;font:700 ${(HEX * 0.85).toFixed(0)}px system-ui">?</text><text x="${c.x.toFixed(1)}" y="${(y - HEX * 0.3).toFixed(1)}" text-anchor="middle" style="fill:#ffd27f;font:700 ${(HEX * 0.5).toFixed(0)}px system-ui;paint-order:stroke;stroke:#0007;stroke-width:2px">${a.age}턴 전 · ${bandStr(b)}?</text></g>`;
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// § SHELL — slim top strip, hero commit bar, big action bloom, confirm card.
+// ══════════════════════════════════════════════════════════════════════════
+function renderHud() {
+  const P = state.proj;
+  const pos = (P.panse.pos * 100).toFixed(0), wd = (P.panse.width * 100).toFixed(0);
+  document.getElementById('hud').innerHTML =
+    `<span class="g">턴 <b>${state.turn}</b></span><span class="sep">·</span>
+     <span class="g">자국 <b style="color:${REALM.self.color}">${REALM.self.name}</b></span><span class="sep">·</span>
+     <span class="g">국고 <b>${P.self.treasury.toLocaleString()}</b></span><span class="sep">·</span>
+     <span class="g ${P.self.projWarn ? 'warn' : ''}">투사 <b>${P.self.projMass.toLocaleString()}</b>${P.self.projWarn ? ' ⚠' : ''}</span>
+     <span class="spacer"></span>
+     <span class="g" title="${P.self.mobNote}">동원 <b>${P.self.mob}</b><span class="meter"><i style="width:${(P.self.mobPct * 100).toFixed(0)}%"></i></span></span>
+     <span class="g" title="${P.panse.note}">판세<span class="panse"><span class="wd" style="left:${Math.max(0, pos - wd / 2)}%;width:${wd}%"></span><span class="mk" style="left:${pos}%"></span></span></span>`;
+}
+
+function renderCommit() {
+  const P = state.proj, N = P.commitPerTurn, rem = remaining(), f = state.flow;
+  const armed = f ? f.amount : 0;
+  let slots = '';
+  const usedByOrder = [];
+  for (const o of state.orders) for (let i = 0; i < o.commit; i++) usedByOrder.push(o.verb === '공격' ? 'u-공격' : o.verb === '방어' ? 'u-방어' : o.verb === '정찰' ? 'u-정찰' : 'u-facade');
+  for (let i = 0; i < N; i++) {
+    let cls = 'slot';
+    if (i < usedByOrder.length) cls += ' used ' + usedByOrder[i];
+    else if (i < usedByOrder.length + armed) cls += ' armed';
+    slots += `<div class="${cls}" data-slot="${i}"></div>`;
+  }
+  let hint;
+  if (state.reviewOrder != null && state.orders[state.reviewOrder]) { const o = state.orders[state.reviewOrder];
+    hint = `확정된 명령 · ${o.verb} · ${secName(o.sid)} · 커밋 ${o.commit} — 왼쪽 바에 당시 R`; }
+  else if (!f) hint = rem > 0 ? `슬롯을 눌러 <b style="color:#fff">커밋량</b>을 정하세요 — 그게 시작이에요` : `커밋 소진 — 턴을 종료하세요`;
+  else if (f.step === 'target') hint = f.sid ? `${secName(f.sid)} — 다른 지역도 클릭해 비교 · <b style="color:#fff">확정</b>으로 결정` : `<b style="color:#fff">${f.verb}</b> · 빛나는 지역을 클릭 (자유 비교)`;
+  else hint = `커밋 <b style="color:#fff">${f.amount}</b> — 행동을 고르세요`;
+  document.getElementById('commit').innerHTML =
+    `<div id="slots">${slots}</div>
+     <div class="bottom"><span class="lab">커밋 풀 <b>${rem}</b>/${N} · 비축 불가</span>
+      <span class="hint">${hint}</span>
+      ${state.reviewOrder != null ? `<button class="cbtn ghost" data-act="uncommit">↩ 이 명령 취소</button><button class="cbtn ghost" data-act="review-close">닫기</button>` : ''}
+      ${f && f.step === 'target' && f.sid ? `<button class="cbtn end" data-act="confirm">커밋 ${f.amount} 소환 · 확정</button>` : ''}
+      ${f ? `<button class="cbtn ghost" data-act="cancel">취소</button>` : (state.reviewOrder == null ? `<button class="cbtn ghost" data-act="all">남은 전량</button>` : '')}
+      <button class="cbtn end" data-act="end">턴 종료 → 결전</button></div>`;
+}
+
+// ── big action / plan bloom (exaggerated radial) ──
+const VERBS = {
+  '공격': { ic: '⚔', wired: true }, '방어': { ic: '🛡', wired: true }, '정찰': { ic: '👁', wired: true },
+  '즉시정찰': { ic: '⚡', wired: false }, '축성': { ic: '🧱', wired: false }, '모병': { ic: '⚑', wired: false },
+  '보급': { ic: '📦', wired: false, dev: true },
+};
+const ACTION_RING = ['공격', '방어', '정찰', '즉시정찰', '축성', '모병', '보급'];
+const PLANS = {
+  '공격': [ { nm: '정면 돌파', pd: '관문으로 곧장', wired: true, atk: 1.0 },
+    { nm: '우회 기동', pd: '측면 우회', wired: false, atk: 0.85 }, { nm: '포위', pd: '보급선 차단', wired: false, atk: 0.7 } ],
+  '방어': [ { nm: '농성', pd: '요새 의지', wired: true, def: 1.0 },
+    { nm: '지연 방어', pd: '침식 교환', wired: false, def: 0.8 }, { nm: '역습', pd: '되받아침', wired: false, def: 0.9 } ],
+  '정찰': [ { nm: '정찰대', pd: '밴드 한 등급 좁힘', wired: true } ],
+  '즉시정찰': [ { nm: '즉시 정찰', pd: 'facade — 미배선', wired: false } ],
+  '축성': [ { nm: '요새 증축', pd: 'facade', wired: false } ],
+  '모병': [ { nm: '서지 모병', pd: 'facade', wired: false } ],
+  '보급': [ { nm: '보급로', pd: 'DEV — 미구현', wired: false, dev: true } ],
+};
+function renderBloom() {
+  const f = state.flow, el = document.getElementById('bloom');
+  if (!f || (f.step !== 'action' && f.step !== 'plan')) { el.classList.remove('on'); return; }
+  el.classList.add('on');
+  let nodes = '', center;
+  if (f.step === 'action') {
+    const items = ACTION_RING, n = items.length, R = 190;
+    items.forEach((v, i) => {
+      const ang = -Math.PI / 2 + i * (2 * Math.PI / n);
+      const dx = Math.cos(ang) * R, dy = Math.sin(ang) * R * 0.82;
+      const m = VERBS[v];
+      nodes += `<div class="bnode ${m.wired ? 'wired' : 'facade'} ${m.dev ? 'dev' : ''}" data-verb="${v}" style="left:calc(50% + ${dx.toFixed(0)}px);top:calc(46% + ${dy.toFixed(0)}px);animation-delay:${i * 26}ms"><span class="ic">${m.ic}</span><span class="nm">${v}</span>${m.wired ? '<span class="tag">배선</span>' : '<span class="tag">facade</span>'}</div>`;
+    });
+    center = `<div class="amt">${f.amount}</div><div class="cap">커밋 소환 — 무엇을 할까요?</div>`;
+  } else { // plan
+    const plans = PLANS[f.verb], n = plans.length, R = 150;
+    plans.forEach((p, i) => {
+      const ang = -Math.PI / 2 + (i - (n - 1) / 2) * (Math.PI / Math.max(2.4, n));
+      const dx = Math.cos(ang) * R, dy = Math.sin(ang) * R * 0.8 + 20;
+      nodes += `<div class="bnode plan ${p.wired ? 'wired' : 'facade'}" data-plan="${i}" style="left:calc(50% + ${dx.toFixed(0)}px);top:calc(46% + ${dy.toFixed(0)}px);animation-delay:${i * 30}ms"><span class="nm">${p.nm}</span><span class="tag">${p.pd}</span>${p.wired ? '<span class="tag2">배선</span>' : '<span class="tag2 fac">facade</span>'}</div>`;
+    });
+    center = `<div class="amt">${VERBS[f.verb].ic}</div><div class="cap">${f.verb} — 세부 작전</div>`;
+  }
+  el.innerHTML = `<div class="scrim" data-bloomclose="1"></div><div class="center">${center}</div><div class="ring">${nodes}</div>`;
+}
+
+// ── confirm card (target chosen; what-if for wired attack/defense) ──
+function renderConfirm() {
+  // Confirm CARD retired (user 2026-07-24) — the two eval bars carry the read, so a modal
+  // that re-narrates them in words is redundant. Confirmation is now an inline 확정 button
+  // in the commit bar (deliberate, since committing 행동력 is irreversible).
+  document.getElementById('confirm').classList.remove('on');
+}
+function whatIfHtml(f) {
+  // NO numeric calculator (casual / chess.com). The read is the LEFT eval bar +
+  // its reactive threshold; the enemy's hidden plan/commit lives in the band WIDTH.
+  // Give one intuitive verdict from band-vs-threshold MARGIN — feel, not arithmetic.
+  const sid = f.sid, r = ENGAGE[sid] || 1.0;
+  const intel = state.proj.intel[sid], half = confHalf(intel ? intel.conf : 0.45);
+  const lo = r - half, th = PLAN_TH[PLANS[f.verb][f.plan].nm];
+  let verdict, col;
+  if (th == null) { verdict = '이 작전은 문턱이 없어요 — 밴드로 상황만 읽으세요.'; col = '#9fb0bd'; }
+  else if (lo >= th) { verdict = '밴드가 문턱을 넉넉히 넘어요 — 이 정도면 충분해 보여요.'; col = '#7fe0a0'; }
+  else if (r >= th) { verdict = '밴드가 문턱에 걸쳐요 — 아슬아슬. 커밋을 더 실으면 안전해져요.'; col = '#ffd27f'; }
+  else { verdict = '밴드가 문턱 아래예요 — 커밋을 크게 싣거나 다른 작전을.'; col = '#ff8a78'; }
+  return `<div class="whatif"><div class="wt">🎯 왼쪽 세로 바 = 이 교전의 우세</div>
+    <div style="font-size:13.5px;color:${col};font-weight:700;margin:6px 0 2px">${verdict}</div>
+    <div class="note">적 수비 플랜·커밋은 <b>밴드(회색 폭)</b>에 이미 섞여 있어요 — 숫자로 계산하지 말고, 밴드가 문턱을 얼마나 여유 있게 넘는지로 <b>느끼세요</b>.</div></div>`;
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// § FLOW — command-first state machine (amount → action → plan → target → confirm)
+// ══════════════════════════════════════════════════════════════════════════
+function armAmount(n) {
+  state.reviewOrder = null;
+  if (n <= 0) { state.flow = null; draw(); return; }
+  state.flow = { step: 'action', amount: Math.min(remaining(), n), verb: null, plan: 0, sid: null,
+    assumedCommit: 6, assumedPlan: 0 };
+  draw();
+}
+function pickAction(verb) {
+  const f = state.flow; if (!f) return; f.verb = verb;
+  f.step = PLANS[verb].length > 1 ? 'plan' : 'target'; f.plan = 0;
+  draw();
+  flashBanner(`${VERBS[verb].ic} ${verb}`, PLANS[verb].length > 1 ? '세부 작전을 고르세요.' : '빛나는 지역을 지목하세요.');
+}
+function pickPlan(i) { const f = state.flow; if (!f) return; f.plan = i; f.step = 'target'; draw();
+  flashBanner('타겟', '빛나는 지역을 지목하세요.'); }
+function pickTarget(sid) {
+  const f = state.flow; if (!f || f.step !== 'target') return;
+  if (!eligible(f.verb).includes(sid)) return;
+  f.sid = sid;
+  // wired attack/defense: STAY in 'target' so the player can freely re-click sectors and
+  // watch the left bar change; only the inline 확정 button locks it in. Others commit now.
+  if (f.verb === '공격' || f.verb === '방어') draw();
+  else commitOrder();
+}
+function commitOrder() {
+  const f = state.flow; if (!f || !f.sid) return;
+  const plan = PLANS[f.verb][f.plan];
+  const wired = VERBS[f.verb].wired && plan.wired;
+  const kind = f.verb === '공격' ? 'attack' : f.verb === '방어' ? 'defense' : f.verb === '정찰' ? 'recon' : 'facade';
+  state.orders.push({ sid: f.sid, verb: f.verb, plan: plan.nm, commit: f.amount, wired, kind,
+    assumed: { commit: f.assumedCommit, plan: f.assumedPlan } });
+  state.used += f.amount;
+  if (f.verb === '정찰') { const intel = state.proj.intel[f.sid];
+    if (intel) intel.conf = intel.conf < 0.70 ? 0.70 : 0.90;
+    const army = enemyArmyAt(f.sid); if (army) { army.confNow = (army.confNow || 0.45) < 0.70 ? 0.70 : 0.90; army.age = 0; }
+    state.evalFocus = f.sid; // keep the just-scouted front in the eval bar so the band visibly narrows
+    flashBanner('정찰 완료 — 밴드가 좁혀졌어요', '병력 추정이 선명해졌습니다. 태세(홀카드)는 여전히 어둠 속.');
+  } else flashBanner(`${f.verb} 소환`, `${secName(f.sid)} · 커밋 ${f.amount} 배분됨.`);
+  state.flow = null; draw();
+}
+function orderAtSlot(i) { let acc = 0; for (let j = 0; j < state.orders.length; j++) { acc += state.orders[j].commit; if (i < acc) return j; } return -1; }
+function cancelOrder(j) {
+  if (j == null || !state.orders[j]) return;
+  const o = state.orders[j]; state.used -= o.commit; state.orders.splice(j, 1);
+  state.reviewOrder = null; state.evalFocus = null; draw();
+  flashBanner('명령 취소', `${o.verb} · ${secName(o.sid)} · 커밋 ${o.commit} 되돌렸습니다.`);
+}
+function cancelFlow() { const f = state.flow; if (!f) return;
+  if (f.step === 'confirm') { f.step = 'target'; f.sid = null; }
+  else if (f.step === 'target' && PLANS[f.verb].length > 1) { f.step = 'plan'; }
+  else if (f.step === 'plan' || (f.step === 'target')) { f.step = 'action'; f.verb = null; }
+  else state.flow = null;
+  draw();
+}
+
+// ── event tray (turn-end loop closure) ──
+let trayStepIdx = 0, trayEvents = [];
+function endTurn() {
+  const R = resolveTurn(state.orders);
+  trayEvents = R.events; state.nextProj = R.next; trayStepIdx = 0; state.flow = null;
+  const _atk = state.orders.find((o) => o.kind === 'attack' && o.wired);
+  const _def = state.orders.find((o) => o.kind === 'defense' && o.wired);
+  state.reveal = { r: _atk ? 1.75 : (_def ? 1.15 : 0.72), w: 0.10 }; renderEval();
+  renderTray(true);
+  document.getElementById('tray').classList.add('on');
+}
+function renderTray(stepMode) {
+  const shown = stepMode ? trayEvents.slice(0, trayStepIdx + 1) : trayEvents;
+  const list = shown.map((e) => `<div class="ev ${e.tag}"><span class="etag">${e.tag}</span><span class="etx"><b>${e.title}</b><div class="sub">${e.sub}</div>${e.flip ? `<div class="flip">🃏 홀카드 공개 — ${e.flip}</div>` : ''}</span></div>`).join('');
+  const done = !stepMode || trayStepIdx >= trayEvents.length - 1;
+  document.getElementById('tray').innerHTML = `<div class="traybox">
+    <div class="th"><b>턴 ${state.turn} 결전</b><span class="cnt">${shown.length}/${trayEvents.length}</span><span class="sp"></span>
+      <button data-tray="skip">건너뛰기</button><button class="step" data-tray="step" ${done ? 'disabled' : ''}>다음 ▸</button></div>
+    <div class="traylist">${list}</div>
+    <div class="tf"><button data-tray="next" ${done ? '' : 'disabled'}>턴 ${state.turn + 1}로 →</button></div></div>`;
+  const tl = document.querySelector('.traylist'); if (tl) tl.scrollTop = tl.scrollHeight;
+}
+function advanceTurn() {
+  state.proj = state.nextProj; state.turn += 1; state.nextProj = null;
+  state.orders = []; state.used = 0; state.flow = null; state.reveal = null; state.evalFocus = null; state.reviewOrder = null;
+  document.getElementById('tray').classList.remove('on');
+  flashBanner(`턴 ${state.turn} — 루프가 닫혔습니다`, '결전 결과가 이번 턴의 정보 상태가 됐어요: 상흔·갱신 밴드·낮아진 동원.');
+  draw();
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// § REDUCER — scripted (projection, orders) → {events, next}. AUTHORED.
+// ══════════════════════════════════════════════════════════════════════════
+function resolveTurn(orders) {
+  const P = state.proj;
+  const attacked = orders.find((o) => o.kind === 'attack' && o.wired && o.sid === FRONTS.attack.targetSid);
+  const defended = orders.find((o) => o.kind === 'defense' && o.wired && o.sid === FRONTS.defense.ownSid);
+  const events = []; const next = clone(P); next.scars = [...P.scars]; const scarred = [];
+
+  if (attacked) {
+    events.push({ tag: '교전', title: `북부 결전 — ${FRONTS.attack.name}`,
+      sub: `내 ${attacked.plan} (커밋 ${attacked.commit}) 이 관문을 관철. 얇아진 판을 뚫었습니다 — 승리.`,
+      flip: `적 태세 <b>농성</b> · 적 커밋 <b>6</b>/20 (과소투입 노출). 내 what-if 읽기가 맞았어요.` });
+    next.intel[FRONTS.attack.targetSid] = clone(P.intel[FRONTS.attack.targetSid]);
+    next.intel[FRONTS.attack.targetSid].conf = 0.90;
+    next.intel[FRONTS.attack.targetSid].sub = { 0.45: [180, 520], 0.70: [220, 440], 0.90: [260, 380] };
+    scarred.push(FRONTS.attack.targetSid);
+    const na = next.armies.find((a) => a.id === 'self_n'); if (na) na.sid = FRONTS.attack.targetSid;
+    next.axes.r1 = { kind: 'o', text: '북부 관문 점령 — 수도로 창' };
+  } else {
+    events.push({ tag: '내정', title: '북부 — 행동 없음',
+      sub: '이번 턴 공격을 소환하지 않았습니다. 얇아진 판의 기회는 유지되지만, 창은 영원하지 않아요.' });
+  }
+
+  const eArmy = next.armies.find((a) => a.id === 'jung_e');
+  if (defended) {
+    events.push({ tag: '방어', title: `동부 방어 — ${FRONTS.defense.name}`,
+      sub: `중원 주력이 관문을 두드렸고, 내 ${defended.plan}이 저지. 침식을 감수하며 전선을 지켰습니다.`,
+      flip: `적 태세 <b>정면 돌파</b> · 적 커밋 <b>11</b>/20. 대응창 안에서 묶어냈어요.` });
+    scarred.push(FRONTS.defense.ownSid); next.alarm = null;
+    if (eArmy) { eArmy.age = 0; eArmy.confNow = 0.90; eArmy.sub = { 0.45: [2000, 3000], 0.70: [2200, 2800], 0.90: [2350, 2650] }; }
+    next.axes.r8 = { kind: 'o', text: '동부 저지 — 반격 저울질' };
+    next.threats = P.threats.map((t) => t.army === 'jung_e' ? { ...t, hot: false, range: '격퇴됨' } : t);
+  } else {
+    events.push({ tag: '교전', title: `동부 붕괴 — ${FRONTS.defense.name}`,
+      sub: `방어를 소환하지 않아 중원 주력이 촉 관문을 넘었습니다. ${nameOf.r8} 동부 섹터를 상실.`,
+      flip: `적 태세 <b>정면 돌파</b> · 적 커밋 <b>11</b>/20 — 무방비였어요.` });
+    scarred.push(FRONTS.defense.ownSid);
+    if (eArmy) { eArmy.sid = FRONTS.defense.ownSid; eArmy.age = 0; }
+    next.alarm = { selfSid: 'r8_s0', enemySid: FRONTS.defense.ownSid };
+    next.axes.r8 = { kind: 't', text: '동부 관문 상실 — 촉 내부 위협' };
+  }
+
+  events.push({ tag: '경보', title: '서역 유목 — 여전히 원거리',
+    sub: '서부 전선 유목 기병은 이번 턴 접촉하지 않았습니다. 위협 보드에 남아 다음을 기다립니다.' });
+  events.push({ tag: '내정', title: '동원 강도 하락 (고 → 중)',
+    sub: '이번 서지를 전선에 쏟았습니다. 등록부가 얇아지며 동원 강도가 내려갑니다.' });
+  next.self = { ...P.self, mob: '중', mobPct: 0.58, projMass: 4200, projWarn: false,
+    mobNote: '서지 소진 — 등록부 회복 대기', treasury: P.self.treasury - state.used * 20 };
+  next.panse = { ...P.panse, pos: attacked && defended ? 0.60 : defended ? 0.52 : 0.42,
+    label: attacked && defended ? '상위-중' : defended ? '중위' : '하위-중' };
+
+  next.scars = [...new Set([...next.scars, ...scarred])];
+  if (scarred.length) events.push({ tag: '상흔', title: `영구 상흔 +${scarred.length}`,
+    sub: scarred.map(secName).join(' · ') + ' — 전투가 지나간 땅은 이 매치 내내 흉터로 남습니다.' });
+
+  return { events, next };
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// § NAV — drill vs zoom camera + banner (unchanged axis)
+// ══════════════════════════════════════════════════════════════════════════
+function setNav(nav) {
+  state.nav = nav; state.cam = { scale: 1, tx: 0, ty: 0 };
+  document.querySelectorAll('#nav button').forEach((b) => b.classList.toggle('on', b.dataset.nav === nav));
+  document.getElementById('camctl').classList.toggle('on', nav === 'drill');
+  syncURL(); draw();
+  flashBanner(nav === 'zoom' ? '연속 줌 (결합형)' : '클릭 드릴 (분리형)',
+    nav === 'zoom' ? '휠/드래그로 카메라가 움직입니다.' : '줌은 +/− 로 독립.');
+}
+function camZoom(f, cx, cy) {
+  const c = state.cam, s0 = c.scale, s1 = Math.max(1, Math.min(3.4, s0 * f));
+  const raw = clientToRawVB(cx, cy);
+  const M = { x: (raw.x - c.tx) / s0, y: (raw.y - c.ty) / s0 };
+  c.scale = s1; c.tx = raw.x - s1 * M.x; c.ty = raw.y - s1 * M.y;
+  renderMap();
+}
+function clientToRawVB(cx, cy) {
+  const r = svg.getBoundingClientRect();
+  const s = Math.max(VB.w / r.width, VB.h / r.height);
+  const px = (cx - r.left) - (r.width - VB.w / s) / 2;
+  const py = (cy - r.top) - (r.height - VB.h / s) / 2;
+  return { x: VB.x + px * s, y: VB.y + py * s };
+}
+let bannerT = null;
+function flashBanner(title, sub) {
+  const el = document.getElementById('banner');
+  el.innerHTML = `${title}${sub ? `<small>${sub}</small>` : ''}`;
+  el.classList.add('on');
+  clearTimeout(bannerT); bannerT = setTimeout(() => el.classList.remove('on'), 2400);
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// § draw + wiring
+// ══════════════════════════════════════════════════════════════════════════
+// ── grafted vertical eval bar — tactical EQUAL-COMMIT R (no commit info on the bar) ──
+// Authored R per engagement (가안, illustrative — no combat arithmetic, ADR 0041 seam).
+const ENGAGE = { r1_s0: 1.28, r1_s1: 0.92, r1_s2: 1.10, r1_s3: 0.78, r8_s2: 0.92, r6_s0: 0.88, r5_s4: 0.85 };
+const PLAN_TH = { '정면 돌파': 1.10, '우회 기동': 1.00, '포위': 1.45, '농성': 0.85, '지연 방어': 0.75, '역습': 1.05 };
+const wpV = (R) => Math.max(3, Math.min(97, 50 + (Math.max(0.5, Math.min(2.5, R)) - 1) * 45));
+const confHalf = (conf) => conf >= 0.90 ? 0.08 : conf >= 0.70 ? 0.16 : 0.28;
+function frontBand(sid) { const r = ENGAGE[sid] || 1.0, intel = state.proj.intel[sid], h = confHalf(intel ? intel.conf : 0.45);
+  return { lo: r - h, hi: r + h }; }
+function avgBand(verb) { const sids = eligible(verb).filter((s) => ENGAGE[s] != null);
+  if (!sids.length) return frontBand(FRONTS.defense.threatSid);
+  let lo = 0, hi = 0; for (const s of sids) { const b = frontBand(s); lo += b.lo; hi += b.hi; }
+  return { lo: lo / sids.length, hi: hi / sids.length }; }
+// LEFT bar = the clicked front (or this action's average before a front is picked).
+function leftEngage() {
+  if (state.reveal) return { band: { lo: state.reveal.r - state.reveal.w, hi: state.reveal.r + state.reveal.w }, name: '결전 결과', th: null };
+  const f = state.flow;
+  if (f && (f.verb === '공격' || f.verb === '방어')) {
+    if (f.sid) { let th = null; const pn = PLANS[f.verb][f.plan] && PLANS[f.verb][f.plan].nm;
+      if (pn && PLAN_TH[pn] != null) th = { r: PLAN_TH[pn], nm: pn };
+      return { band: frontBand(f.sid), name: secName(f.sid), th }; }
+    return { band: avgBand(f.verb), name: f.verb + ' 평균 · 전선 지목 전', th: null };
+  }
+  if (state.evalFocus) return { band: frontBand(state.evalFocus), name: secName(state.evalFocus) + ' · 정찰', th: null };
+  return { band: frontBand(FRONTS.defense.threatSid), name: '핫 전선', th: null };
+}
+// RIGHT bar = this action's AVERAGE across eligible fronts (FIXED — the comparison baseline).
+function rightEngage() {
+  const f = state.flow;
+  if (f && (f.verb === '공격' || f.verb === '방어')) return { band: avgBand(f.verb), name: f.verb + ' 평균 · 고정' };
+  return { band: frontBand(FRONTS.defense.threatSid), name: '전황 · 핫 전선' };
+}
+const BARL = { disp: { lo: 0.72, hi: 1.18 }, key: '', anim: null, suf: '' };
+const BARR = { disp: { lo: 0.72, hi: 1.18 }, key: '', anim: null, suf: '2' };
+function paintBar(B) {
+  const { lo, hi } = B.disp, c = (lo + hi) / 2, wl = wpV(lo), wh = wpV(hi);
+  document.getElementById('ewhite' + B.suf).style.height = wl + '%';
+  const g = document.getElementById('egrey' + B.suf); g.style.bottom = wl + '%'; g.style.height = (wh - wl) + '%';
+  const rn = document.getElementById('evalr' + B.suf); rn.textContent = c.toFixed(2); rn.className = c < 0.98 ? 'dis' : '';
+}
+function tweenBar(B, lo, hi) {
+  const key = lo.toFixed(3) + '/' + hi.toFixed(3); if (key === B.key) return; B.key = key;
+  if (B.anim) cancelAnimationFrame(B.anim);
+  const f0 = { ...B.disp }, t0 = performance.now();
+  (function s(now) { const k = Math.min(1, (now - t0) / 500), e2 = 1 - Math.pow(1 - k, 3);
+    B.disp = { lo: f0.lo + (lo - f0.lo) * e2, hi: f0.hi + (hi - f0.hi) * e2 }; paintBar(B);
+    if (k < 1) B.anim = requestAnimationFrame(s); })(t0);
+}
+function renderEval() {
+  const L = leftEngage(), thEl = document.getElementById('evalth');
+  if (L.th) { const b = wpV(L.th.r - 0.05), t = wpV(L.th.r + 0.05);
+    thEl.innerHTML = `<div class="zone" style="bottom:${b}%;height:${t - b}%"></div><div class="lab" style="bottom:${t}%">${L.th.nm}<br>R≥${L.th.r.toFixed(2)} 필요</div>`;
+    thEl.style.display = 'block';
+  } else thEl.style.display = 'none';
+  document.getElementById('evalname').textContent = L.name;
+  tweenBar(BARL, L.band.lo, L.band.hi);
+  const Rt = rightEngage();
+  document.getElementById('evalname2').textContent = Rt.name;
+  tweenBar(BARR, Rt.band.lo, Rt.band.hi);
+}
+
+function draw() { renderMap(); renderHud(); renderCommit(); renderBloom(); renderConfirm(); renderEval(); }
+
+// map click: rest = read (drill nav focus, harmless); command target = pick land
+svg.addEventListener('click', (e) => {
+  if (suppressClick) { suppressClick = false; return; }
+  const sid = e.target.dataset ? e.target.dataset.sid : null;
+  if (!sid) return;
+  const f = state.flow;
+  if (f && f.step === 'target') pickTarget(sid);
+});
+
+// bloom
+document.getElementById('bloom').addEventListener('click', (e) => {
+  if (e.target.dataset && e.target.dataset.bloomclose) { cancelFlow(); return; }
+  const bn = e.target.closest('.bnode'); if (!bn) return;
+  if (bn.dataset.verb) pickAction(bn.dataset.verb);
+  else if (bn.dataset.plan != null) pickPlan(+bn.dataset.plan);
+});
+
+// confirm card
+document.getElementById('confirm').addEventListener('click', (e) => {
+  if (e.target.closest('[data-confirmback]')) { cancelFlow(); return; }
+  if (e.target.closest('[data-confirmgo]')) { commitOrder(); return; }
+});
+document.getElementById('confirm').addEventListener('input', (e) => {
+  const w = e.target.dataset ? e.target.dataset.wf : null; if (!w || !state.flow) return;
+  if (w === 'commit') state.flow.assumedCommit = +e.target.value;
+  if (w === 'plan') state.flow.assumedPlan = +e.target.value;
+  renderConfirm();
+});
+
+// commit bar
+document.getElementById('commit').addEventListener('click', (e) => {
+  const slot = e.target.closest('[data-slot]');
+  if (slot) { const i = +slot.dataset.slot; const freeStart = state.used;
+    if (i < freeStart) { const j = orderAtSlot(i); if (j >= 0) { state.reviewOrder = j; state.evalFocus = state.orders[j].sid; state.flow = null; draw(); } return; }
+    armAmount(i - freeStart + 1); return; }
+  const act = e.target.dataset ? e.target.dataset.act : null;
+  if (act === 'all') armAmount(remaining());
+  if (act === 'confirm') commitOrder();
+  if (act === 'cancel') { state.flow = null; draw(); }
+  if (act === 'uncommit') cancelOrder(state.reviewOrder);
+  if (act === 'review-close') { state.reviewOrder = null; state.evalFocus = null; draw(); }
+  if (act === 'end') { if (state.orders.length === 0 && !confirm('아무 것도 소환하지 않았어요. 그래도 턴을 종료할까요?')) return; endTurn(); }
+});
+
+// tray
+document.getElementById('tray').addEventListener('click', (e) => {
+  const a = e.target.dataset ? e.target.dataset.tray : null;
+  if (a === 'skip') { trayStepIdx = trayEvents.length - 1; renderTray(false); }
+  if (a === 'step') { trayStepIdx = Math.min(trayEvents.length - 1, trayStepIdx + 1); renderTray(true); }
+  if (a === 'next') advanceTurn();
+});
+
+// nav + camera
+document.getElementById('nav').addEventListener('click', (e) => { const n = e.target.dataset.nav; if (n) setNav(n); });
+document.getElementById('camctl').addEventListener('click', (e) => {
+  const id = e.target.id, cx = innerWidth / 2, cy = innerHeight / 2;
+  if (id === 'zin') camZoom(1.3, cx, cy);
+  if (id === 'zout') camZoom(1 / 1.3, cx, cy);
+  if (id === 'zrst') { state.cam = { scale: 1, tx: 0, ty: 0 }; renderMap(); }
+});
+svg.addEventListener('wheel', (e) => { if (state.nav !== 'zoom') return; e.preventDefault();
+  camZoom(e.deltaY < 0 ? 1.12 : 1 / 1.12, e.clientX, e.clientY); }, { passive: false });
+let panning = null, suppressClick = false;
+svg.addEventListener('pointerdown', (e) => { if (state.nav === 'zoom' && !inCommand()) panning = { x: e.clientX, y: e.clientY, tx: state.cam.tx, ty: state.cam.ty, moved: 0 }; });
+svg.addEventListener('pointermove', (e) => { if (!panning) return;
+  const dx = e.clientX - panning.x, dy = e.clientY - panning.y; panning.moved += Math.abs(dx) + Math.abs(dy);
+  const r = svg.getBoundingClientRect(); const s = Math.max(VB.w / r.width, VB.h / r.height);
+  state.cam.tx = panning.tx + dx * s; state.cam.ty = panning.ty + dy * s; renderMap(); });
+addEventListener('pointerup', () => { if (panning && panning.moved > 6) suppressClick = true; panning = null; });
+addEventListener('keydown', (e) => { if (e.key === 'Escape') { if (state.flow) { state.flow = null; draw(); } } });
+
+// ── boot ──
+document.querySelectorAll('#nav button').forEach((b) => b.classList.toggle('on', b.dataset.nav === state.nav));
+document.getElementById('camctl').classList.toggle('on', state.nav === 'drill');
+draw();
+console.log('[proto] booted · nav =', state.nav, '· commit-first flow');
+
+</script>
+</body>
+</html>

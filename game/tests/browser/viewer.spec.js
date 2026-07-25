@@ -180,3 +180,53 @@ test('the seed decides the board, and the same seed redraws the same one', async
   expect(second).not.toBe(first);
   expect(third).toBe(first);
 });
+
+test('a human pours the stack into recruitment and watches the army and treasury move', async ({ page }) => {
+  // Ticket 05's player-visible increment through the built viewer: the realm
+  // economy is legible, a draft is priced *before* the commit, and the men and
+  // the bill land together in the background tier of the reveal.
+  const pickCapital = async (viewer) => {
+    await page.getByRole('combobox').selectOption(viewer);
+    const own = await page.evaluate(() => document.querySelector('.sector.selectable')?.dataset.sector);
+    await page.locator(`[data-sector="${own}"]`).click();
+  };
+
+  await pickCapital('realm-a');
+  await pickCapital('realm-b');
+  await page.getByRole('combobox').selectOption('realm-a');
+
+  const readEconomy = () =>
+    page.evaluate(() => {
+      const text = document.querySelector('[data-testid="economy"]').textContent;
+      const numbers = text.match(/[\d,.]+/g).map((n) => Number(n.replace(/,/g, '')));
+      return { treasury: numbers[0], income: numbers[1], field: numbers[2], limit: numbers[3] };
+    });
+
+  const before = await readEconomy();
+  expect(before.field).toBe(Math.floor(before.limit * 0.5)); // f₀ = 0.5, armed peace
+  expect(before.income).toBeGreaterThan(0);
+
+  // Four chips into the draft. The card prices it before anything is committed.
+  const orders = page.getByTestId('orders').locator('tr').first();
+  for (let i = 0; i < 4; i += 1) await orders.getByRole('button', { name: '+1' }).click();
+  await expect(page.getByTestId('chips-recruit')).toHaveText('4');
+  await expect(page.getByTestId('draft-preview')).toContainText('명');
+  const promised = Number(
+    (await page.getByTestId('draft-preview').textContent()).match(/\+([\d,]+)명/)[1].replace(/,/g, ''),
+  );
+  expect(promised).toBeGreaterThan(0);
+
+  await page.getByTestId('lock').click();
+  await page.getByRole('combobox').selectOption('realm-b');
+  await page.getByTestId('lock').click();
+  await page.getByRole('combobox').selectOption('realm-a');
+
+  await expect(page.getByTestId('events')).toContainText('recruited');
+  await expect(page.getByTestId('events')).toContainText('realm-recomputed');
+
+  const after = await readEconomy();
+  // The men the card promised are the men that arrived — one rule, both sides.
+  expect(after.field - before.field).toBe(promised);
+  // And they were paid for: income landed, but the draft's bill outweighed it.
+  expect(after.treasury).toBeLessThan(before.treasury + before.income);
+});

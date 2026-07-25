@@ -43,6 +43,16 @@ export interface CommitmentContext {
   readonly alreadyLocked: boolean;
   /** The fronts this realm is a party to, by key. */
   readonly frontKeys: readonly string[];
+  /**
+   * The non-front order kinds this realm may pour into, by key.
+   *
+   * D6.3 seals one stack as the single currency for **every** order kind, and R2
+   * (2026-07-25) put non-combat orders on the same free-pour grammar, priced by
+   * unit. So an order is not a second budget with its own rules — it is another
+   * key in this one, and the Σ ≤ budget check below covers fronts and orders
+   * together without knowing the difference.
+   */
+  readonly orderKeys?: readonly string[];
   /** This realm's own allocations so far this turn. */
   readonly allocations: Allocations;
   readonly budget: number;
@@ -74,8 +84,8 @@ export function allocationRefusal(
   if (typeof front !== 'string' || front.length === 0) {
     return 'An allocation must name a front.';
   }
-  if (!context.frontKeys.includes(front)) {
-    return `"${front}" is not a front "${actor}" holds a side of.`;
+  if (!context.frontKeys.includes(front) && !(context.orderKeys ?? []).includes(front)) {
+    return `"${front}" is neither a front "${actor}" holds a side of nor an order kind.`;
   }
   if (typeof chips !== 'number' || !Number.isInteger(chips) || chips < 0) {
     return 'An allocation must be a whole, non-negative number of chips.';

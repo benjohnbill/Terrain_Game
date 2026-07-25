@@ -22,11 +22,21 @@ import {
   lockRefusal,
   spentOf,
   TURN_COMMITMENT_BUDGET,
+  type Allocations,
   type CommitmentContext,
 } from '../domain/commitment.js';
-import { isPartyTo } from '../domain/fronts.js';
-import { frontsOf } from '../domain/state.js';
-import type { MatchState, Realm } from '../domain/state.js';
+import {
+  forceLimitOf,
+  GARRISON_PER_BORDER_SECTOR,
+  incomeOf,
+  registerOf,
+  START_FIELD_FRACTION,
+  startingTreasuryOf,
+} from '../domain/economy.js';
+import { contestedFronts, isPartyTo } from '../domain/fronts.js';
+import { draftOrder, ORDER_KEYS, ORDER_RECRUIT, orderKeyOf } from '../domain/recruitment.js';
+import { frontsOf, garrisonOf, holdingsOf, ownerOfSector } from '../domain/state.js';
+import type { MatchState, Realm, RealmForces } from '../domain/state.js';
 import { readFronts, revealTurn } from '../domain/turn.js';
 import { project } from '../projection/project.js';
 import { drawPartition } from '../world/partition.js';
@@ -95,13 +105,20 @@ export class Runtime {
     const partition = drawPartition(loadedWorld, rng);
 
     const realms: Record<ActorId, Realm> = {};
+    const homeland: Record<SectorId, ActorId> = {};
     actors.forEach((actor, side) => {
       realms[actor] = {
         actor,
         regions: partition.regions[side]!,
         sectors: [...partition.sectors[side]!],
       };
+      // The opening partition *is* the homeland map, and it never moves again:
+      // a duel has no settlement channel, so conquered ground stays in OG-③'s
+      // limbo rather than being integrated into the taker's holdings.
+      for (const sector of realms[actor]!.sectors) homeland[sector] = actor;
     });
+
+    const { forces, garrisons } = Runtime.#seatSubstance(loadedWorld.artifact, actors, realms);
 
     const state: MatchState = {
       world: { worldId: loadedWorld.artifact.worldId, revision: loadedWorld.artifact.revision },
@@ -113,12 +130,58 @@ export class Runtime {
       partitionCandidates: partition.candidateCount,
       phase: 'capital-selection',
       capitals: {},
+      homeland,
+      forces,
+      garrisons,
       turn: 1,
       commitments: {},
       turnLocks: [],
     };
 
     return new Runtime(state, config.clock ?? NO_CLOCK);
+  }
+
+  /**
+   * The armed peace both realms wake up in — M13a's start-state coordinates,
+   * applied to the drawn partition.
+   *
+   * Nothing is authored: the world artifact ships every sector at `garrison: 0`,
+   * so a realm's opening substance is derived here from sealed values and the
+   * land it drew. **f₀ = 0.5** puts the field army at half its land-derived
+   * ceiling, **g₀ = 1.0** mans every border shield at cap, and the register is
+   * land-derived once (MT-②) and a stock from then on.
+   *
+   * What is deliberately absent: the **capital guard**. Its magnitude is in live
+   * conflict (350 × population against a flat 1500) and ticket 07 carries that
+   * conflict; seeding a number here would import it and decide it by accident.
+   */
+  static #seatSubstance(
+    artifact: MatchState['loadedWorld']['artifact'],
+    actors: readonly ActorId[],
+    realms: Readonly<Record<ActorId, Realm>>,
+  ): { forces: Record<ActorId, RealmForces>; garrisons: Record<SectorId, number> } {
+    // A border sector is one standing on a contested edge — the same reading the
+    // turn loop calls a front, asked of the opening board. `contestedFronts` takes
+    // the owner lookup as a parameter precisely so this can reuse `ownerOfSector`
+    // rather than grow a fourth copy of that closure (see `domain/state.ts`).
+    const seated = { actors, realms };
+    const garrisons: Record<SectorId, number> = {};
+    for (const front of contestedFronts(artifact.edges, (sector) => ownerOfSector(seated, sector))) {
+      for (const sector of front.sectors) garrisons[sector] = GARRISON_PER_BORDER_SECTOR;
+    }
+
+    const forces: Record<ActorId, RealmForces> = {};
+    for (const actor of actors) {
+      const held = realms[actor]!.sectors;
+      forces[actor] = {
+        // Derived from the realm's own land, never a flat constant (TC-⑭).
+        treasury: startingTreasuryOf(incomeOf(artifact.sectors, held)),
+        field: Math.floor(forceLimitOf(artifact.sectors, held) * START_FIELD_FRACTION),
+        register: registerOf(artifact.sectors, held),
+      };
+    }
+
+    return { forces, garrisons };
   }
 
   /**
@@ -165,6 +228,10 @@ export class Runtime {
     if (intent.kind === 'allocate-commitment') {
       const { front, chips } = intent as { front?: unknown; chips?: unknown };
       return this.#allocateCommitment(intent.actor, front, chips);
+    }
+    if (intent.kind === 'allocate-order') {
+      const { order, chips } = intent as { order?: unknown; chips?: unknown };
+      return this.#allocateOrder(intent.actor, order, chips);
     }
     if (intent.kind === 'lock-commitment') {
       return this.#lockCommitment(intent.actor);
@@ -241,29 +308,46 @@ export class Runtime {
       windowOpen: state.phase === 'decision',
       alreadyLocked: state.turnLocks.includes(actor),
       frontKeys: fronts.filter((front) => isPartyTo(front, actor)).map((front) => front.key),
+      orderKeys: ORDER_KEYS,
       allocations: state.commitments[actor] ?? {},
       budget: TURN_COMMITMENT_BUDGET,
     };
   }
 
-  /** Pour part of the stack onto one front. Replaces that front's share (D6.3). */
-  #allocateCommitment(actor: ActorId, front: unknown, chips: unknown): GameEvent[] {
+  /**
+   * Pour part of the stack onto one target — a front, or an order kind.
+   *
+   * **One writer, because D6.3 seals one stack.** A front and an order are two
+   * keys in the same allocation map against the same budget, so they take the same
+   * refusal rule and the same write; only the event's name and its label differ.
+   * Two writers here is how the Σ ≤ budget invariant would come to be enforced
+   * twice and then, eventually, once.
+   *
+   * An allocation *replaces* its target's share rather than adding to it, which is
+   * what makes re-cutting a plan before locking free.
+   */
+  #allocate(
+    actor: ActorId,
+    key: unknown,
+    chips: unknown,
+    event: { readonly type: string; readonly label: string; readonly value: string },
+  ): GameEvent[] {
     const state = this.#state;
-    const intent = { kind: 'allocate-commitment', actor };
+    const intent = { kind: event.type.replace('-allocated', ''), actor };
 
-    const refusal = allocationRefusal(this.#commitmentContext(actor), actor, front, chips);
+    const refusal = allocationRefusal(this.#commitmentContext(actor), actor, key, chips);
     if (refusal !== null) return [this.#reject(intent, refusal)];
 
-    const key = front as string;
+    const target = key as string;
     const amount = chips as number;
     const allocations = (state.commitments[actor] ??= {});
-    if (amount === 0) delete allocations[key];
-    else allocations[key] = amount;
+    if (amount === 0) delete allocations[target];
+    else allocations[target] = amount;
 
     return [
-      this.#turnEvent('commitment-allocated', 'decision', {
+      this.#turnEvent(event.type, 'decision', {
         actor,
-        front: key,
+        [event.label]: event.value,
         chips: amount,
         // The realm's own totals. Public to nobody but this caller: the event is
         // returned to whoever submitted, and the projection is where crossing is
@@ -272,6 +356,38 @@ export class Runtime {
         remaining: TURN_COMMITMENT_BUDGET - spentOf(allocations),
       }),
     ];
+  }
+
+  /** Pour part of the stack onto one front. */
+  #allocateCommitment(actor: ActorId, front: unknown, chips: unknown): GameEvent[] {
+    if (typeof front !== 'string' || front.length === 0) {
+      return [this.#reject({ kind: 'allocate-commitment', actor }, 'An allocation must name a front.')];
+    }
+    return this.#allocate(actor, front, chips, {
+      type: 'commitment-allocated',
+      label: 'front',
+      value: front,
+    });
+  }
+
+  /**
+   * Pour part of the stack into a non-front order — recruitment, for now.
+   *
+   * Deliberately the *same* rule and the *same* allocation map as a front: D6.3
+   * seals one stack as the single currency for every order kind, and R2 put
+   * non-combat orders on the same free-pour grammar. A separate budget here would
+   * delete the mutual exposure the single stack exists to create — betting big on
+   * rebuilding has to mean standing thin somewhere, or the choice is not a choice.
+   */
+  #allocateOrder(actor: ActorId, order: unknown, chips: unknown): GameEvent[] {
+    if (typeof order !== 'string' || order.length === 0) {
+      return [this.#reject({ kind: 'allocate-order', actor }, 'An order allocation must name an order kind.')];
+    }
+    return this.#allocate(actor, orderKeyOf(order), chips, {
+      type: 'order-allocated',
+      label: 'order',
+      value: order,
+    });
   }
 
   /**
@@ -323,16 +439,86 @@ export class Runtime {
     }
 
     // ── background ────────────────────────────────────────────────────────────
+    // Upkeep, income, recruitment and the land readings, folded into the reveal's
+    // tail (D6.2) — no separate screen, no extra click, and what comes out is
+    // turn N+1's opening state.
+    events.push(...this.#recomputeRealms(revealed.commitments));
+
     // The stack does not carry over: unspent chips are discarded and the pool
-    // regenerates whole (D6.3). Upkeep, income, recovery and conscription fold in
-    // here too once ticket 05 lands the land-derived decay engine — this is their
-    // seam, and it is deliberately inside the same call as the reveal.
+    // regenerates whole (D6.3).
     state.commitments = {};
     state.turnLocks = [];
     state.turn += 1;
     events.push(
       this.#turnEvent('turn-opened', 'background', { budget: TURN_COMMITMENT_BUDGET }),
     );
+
+    return events;
+  }
+
+  /**
+   * The realm economy's one pass per turn: draft, then income, then report.
+   *
+   * **Order matters and is chosen.** A draft bills the treasury the player was
+   * looking at when they poured the chips in, and this turn's income arrives
+   * after — so a realm cannot spend money it has not yet earned, and the number
+   * on screen at decision time is the number the order was priced against.
+   *
+   * Everything else here is a *reading*, not a stock: income and the force limit
+   * are recomputed from currently-held land every single turn (M14, D5.1), which
+   * is the whole of the anti-fizzle decay. Losing a sector cuts both in the same
+   * turn because the sector simply stops being in `holdings` — there is no decay
+   * device, no timer, and nothing to tune.
+   */
+  #recomputeRealms(committed: Readonly<Record<ActorId, Allocations>>): GameEvent[] {
+    const state = this.#state;
+    const events: GameEvent[] = [];
+
+    for (const actor of state.actors) {
+      const forces = state.forces[actor]!;
+      const holdings = holdingsOf(state, actor);
+      const forceLimit = forceLimitOf(state.loadedWorld.artifact.sectors, holdings);
+      const chips = committed[actor]?.[ORDER_RECRUIT] ?? 0;
+
+      // One rule, shared with `preview`, so the card the player read before
+      // committing and the draft they actually get cannot drift.
+      const draft = draftOrder({
+        chips,
+        forceLimit,
+        field: forces.field,
+        garrison: garrisonOf(state, actor),
+        register: forces.register,
+        treasury: forces.treasury,
+      });
+
+      // P1 dual billing, in one place: men and their price move together, and
+      // there is no other statement in this engine that raises `field`.
+      forces.field += draft.men;
+      forces.treasury -= draft.bill;
+
+      const income = incomeOf(state.loadedWorld.artifact.sectors, holdings);
+      forces.treasury += income;
+
+      if (draft.men > 0) {
+        events.push(
+          this.#turnEvent('recruited', 'background', {
+            actor,
+            men: draft.men,
+            bill: draft.bill,
+            limitedBy: draft.limitedBy,
+          }),
+        );
+      }
+
+      events.push(
+        this.#turnEvent('realm-recomputed', 'background', {
+          actor,
+          income,
+          forceLimit,
+          holdings: holdings.length,
+        }),
+      );
+    }
 
     return events;
   }

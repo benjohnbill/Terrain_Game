@@ -23,7 +23,34 @@ export {
   TURN_COMMITMENT_BUDGET,
 } from '../domain/commitment.js';
 export type { Allocations, CommitmentContext } from '../domain/commitment.js';
+export {
+  CAP_LAND_FRAC,
+  CAP_PER_POP,
+  forceLimitOf,
+  GARRISON_PER_BORDER_SECTOR,
+  holdsOf,
+  incomeOf,
+  landValueOf,
+  MEN_PER_YIELD,
+  REGISTER_PER_POP,
+  registerOf,
+  START_FIELD_FRACTION,
+  startingTreasuryOf,
+  TREASURY_START_TURNS,
+} from '../domain/economy.js';
+export type { SectorTable } from '../domain/economy.js';
 export { contestedFronts, isPartyTo } from '../domain/fronts.js';
+export {
+  draftBill,
+  draftOrder,
+  marginalPrice,
+  ORDER_KEYS,
+  ORDER_RECRUIT,
+  orderKeyOf,
+  RECRUIT_FRACTION_PER_POINT,
+  SURGE,
+} from '../domain/recruitment.js';
+export type { DraftContext, DraftResult } from '../domain/recruitment.js';
 export { readFronts, revealTurn } from '../domain/turn.js';
 export type { FrontReading, RevealedTurn } from '../domain/turn.js';
 export {
@@ -71,9 +98,11 @@ export type {
 export type {
   ActorId,
   AllocateCommitmentIntent,
+  AllocateOrderIntent,
   ChooseCapitalIntent,
   Clock,
   CommitmentView,
+  EconomyView,
   Front,
   GameEvent,
   Intent,

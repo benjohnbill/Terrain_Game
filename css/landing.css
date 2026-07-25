@@ -1390,6 +1390,29 @@ marker path {
     height: auto;
 }
 
+/* The fog prototype renders its full map correctly at a wide viewport but has
+   no resize handler, so inside a fluid iframe it can draw blank. Render it at a
+   fixed base size where the whole map composition is correct (= the reference
+   screenshot), then scale that down to the responsive frame width (scale factor
+   set by landing.js). Wheel zoom / drag pan still work inside the scaled frame. */
+.build-stage {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1280 / 900;
+    overflow: hidden;
+    background: var(--ground-deep);
+}
+
+.build-stage .build-embed {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1280px;
+    height: 900px;
+    border: 0;
+    transform-origin: top left;
+}
+
 .build-shot figcaption {
     margin-top: 16px;
     display: flex;

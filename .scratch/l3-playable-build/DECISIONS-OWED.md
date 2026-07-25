@@ -373,7 +373,7 @@ shape and the numbers were filled in during implementation and never came back.
 | Value | Archive | What is actually sealed | Status |
 |---|---|---|---|
 | `menPerYield 200` — 1 부대 = **100 men** | `econ.js:22` (its comment claims M13) | M13 seals only "1 부대 = 0.5 yield"; the unit's headcount is nowhere | **가안 adopted** |
-| `treasuryStart 5` yield | `econ.js:26`, marked 가안 | nothing; ≈ ⅙ of one turn's income | **가안 adopted** |
+| ~~`treasuryStart 5` yield~~ | `econ.js:26`, marked 가안 | ~~nothing~~ — **both halves of that premise were wrong**, see the correction below | **withdrawn 2026-07-26** |
 | surge `warMult 2` / `fullMult 12` | `econ.js:68–69`, "placeholder 가안" | MT-③ seals the shape and MT-④ the knees (0.42 / 0.58); the multipliers were deferred to a magnitude session that never ran | **가안 adopted** |
 
 **User ruling.** Accepted as *"원리상 도출되는 가안"* — provisional values whose
@@ -382,9 +382,29 @@ economy, and repayable by play rather than by argument. The user recorded
 discomfort at taking archive numbers wholesale; that discomfort is the reason this
 row exists rather than a silent import.
 
-*Owes:* each needs a birthplace seal row. `menPerYield` and the surge multipliers
-belong at `MAGNITUDE.md` (M13 / MT-③'s dial sheet); `treasuryStart` belongs with
-M14's treasury.
+**Correction, same day (found by the ticket-05 code review).** The treasury row
+was adopted on a false premise and is **withdrawn**. Two seals speak to it and the
+sweep behind R11 cited neither:
+
+- `MAGNITUDE.md` **M14 ruling ㉑** already seals "start 생산 5 (가안, playtest
+  owns)" — so the value was never archive-only, and R11's stated reason for
+  adopting it ("nothing is sealed") was false.
+- terrain-cradle **TC-⑭** (2026-07-08), the derived-asymmetry seal beneath SPEC
+  principle #8, then supersedes ㉑'s *form*: every playable quantity starts
+  uniform across realms unless the inequality is read off the authored map, and
+  it names treasury as one of its two worked examples —
+  **`treasuryStartTurns × terrain-fed economy`**. A flat per-realm constant is
+  exactly the shape that seal forbids.
+
+**What was built instead:** the sealed derived form, `TREASURY_START_TURNS = 3 ×
+the realm's own income` (the multiplier is the harness's Option B figure, already
+SYNC-DEBT-registered). This is a correction *toward* a seal rather than a new
+decision, so it did not wait — but it changes R11's answer, and the user may
+overrule it. M14 ㉑ is stamped as amended in the same batch.
+
+*Owes:* `menPerYield` and the surge multipliers needed birthplace seal rows —
+**paid 2026-07-26** at `MAGNITUDE.md` M13. The treasury row is superseded rather
+than owed.
 
 ---
 
@@ -641,6 +661,18 @@ Both sides are sealed; the agent stops. Ordered by how early each bites.
 | 12 | Bot decisiveness ladder | `tactical-plan-ai` RULINGS ranks **vassalization** as the top rung | ADR 0042 retired settlement as a terminus entirely | ticket 12 |
 | 13 | 판세 in-play surface | *already registered in* `docs/SYNC-DEBT.md` | | ticket 04 |
 | 14 | **Does the operational layer track armies and move them?** | `DOMAIN_MAP.md` ✅ `Position as product`: the MVP has **no standalone move action and no tracked army counters** — position is a *product* of operations, and the runbook's own diff review (§ Implementation loop 7) lists "standalone movement" as forbidden scope | slice-2 design spec §3 movement contract + gate 08's full-compound-depth slice: armies hold hex positions, forced march is an explicit toggle, field armies divide and merge — which is army counters and standalone movement | ticket 06 |
+
+| 15 | **Does conquered land ever start paying its taker?** | `MAGNITUDE.md` M14 + ruling ⑮: "conquest raises the national cap", at a usable discount (fresh capture 50/60%) — sealed as the match-closure lever; ADR 0022/0029 supply the ripening that integrates it | OG-③: occupied-untransferred land "counts toward NEITHER side's derived quantities", and the transfer channel that ended limbo was **settlement**, which ADR 0042 retired for the duel — leaving no path from occupied to integrated | ticket 06 |
+
+Row 15 was **found 2026-07-26** by the ticket-05 code review, which caught the
+implementation answering it by accident (a frozen homeland record made limbo
+permanent, so conquest could never raise a taker's income or ceiling). Ticket 05
+was corrected to *not* decide it — nothing there captures a sector, so nothing
+there needs the answer. The stakes are large and worth stating: under permanent
+limbo, conquest is purely subtractive and land is taken only to starve the
+opponent; under ripening, taking ground also grows you and M14 ⑮'s closure lever
+survives the pivot. Whichever way it goes, **ticket 06 cannot take a sector
+without it**.
 
 Row 14 was **found 2026-07-26**, outside the original sweep, while sizing ticket
 06. Three things make it larger than a row:

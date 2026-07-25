@@ -14,6 +14,7 @@
 import { capitalChoiceRefusal } from '../domain/capital-choice.js';
 import { allocationRefusal, lockRefusal, type CommitmentContext } from '../domain/commitment.js';
 import { isPartyTo } from '../domain/fronts.js';
+import { draftOrder, ORDER_KEYS, orderKeyOf, type DraftResult } from '../domain/recruitment.js';
 import type { ActorId, Intent, MatchView, SectorId } from '../runtime/types.js';
 
 export interface PreviewCard {
@@ -21,6 +22,8 @@ export interface PreviewCard {
   readonly admissible: boolean;
   /** Why not, when it would not. Reportable to the player verbatim. */
   readonly reason?: string;
+  /** For a recruitment order: what these chips would actually raise, and at what price. */
+  readonly draft?: DraftResult;
 }
 
 const no = (reason: string): PreviewCard => ({ admissible: false, reason });
@@ -49,6 +52,43 @@ export function preview(view: MatchView, intent: Intent): PreviewCard {
       (intent as { sector?: SectorId }).sector,
     );
     return refusal === null ? { admissible: true } : no(refusal);
+  }
+
+  if (intent.kind === 'allocate-order') {
+    if (intent.actor !== view.viewer) {
+      return no(`A commitment is previewed by the realm making it; "${view.viewer}" cannot preview "${intent.actor}"'s.`);
+    }
+    const { order, chips } = intent as { order?: unknown; chips?: unknown };
+    if (typeof order !== 'string' || order.length === 0) {
+      return no('An order allocation must name an order kind.');
+    }
+    const refusal = allocationRefusal(
+      commitmentContext(view, intent.actor),
+      intent.actor,
+      orderKeyOf(order),
+      chips,
+    );
+    if (refusal !== null) return no(refusal);
+
+    // Beyond admissibility, an order preview answers the question the player is
+    // actually asking: *what do I get for this?* The Runtime resolves the draft
+    // with the same rule over the same numbers, so the card cannot promise men
+    // the background tier then declines to deliver.
+    if (order === 'recruit') {
+      const economy = view.economy;
+      if (economy === null) return no('A draft is previewed by the realm making it.');
+      const draft = draftOrder({
+        chips: chips as number,
+        forceLimit: economy.forceLimit,
+        field: economy.field,
+        garrison: economy.garrison,
+        register: economy.register,
+        treasury: economy.treasury,
+      });
+      return { admissible: true, draft };
+    }
+
+    return { admissible: true };
   }
 
   if (intent.kind === 'allocate-commitment' || intent.kind === 'lock-commitment') {
@@ -89,6 +129,7 @@ function commitmentContext(view: MatchView, actor: ActorId): CommitmentContext {
     windowOpen: view.phase === 'decision',
     alreadyLocked: view.committed.includes(actor),
     frontKeys: view.fronts.filter((front) => isPartyTo(front, actor)).map((front) => front.key),
+    orderKeys: ORDER_KEYS,
     // Safe because the caller already established `actor === view.viewer`.
     allocations: view.commitment.allocations,
     budget: view.commitment.budget,

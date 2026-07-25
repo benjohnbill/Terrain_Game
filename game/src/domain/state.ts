@@ -6,6 +6,7 @@
  * escape (gate 02 § 6).
  */
 
+import { holdsOf } from './economy.js';
 import { contestedFronts } from './fronts.js';
 import type { LoadedWorld } from '../world/load.js';
 import type { SectorId } from '../world/schema.js';
@@ -18,6 +19,25 @@ export interface Realm {
   readonly regions: readonly string[];
   /** Mutable: sectors change hands. Ticket 07 is where a capital does. */
   sectors: SectorId[];
+}
+
+/**
+ * A realm's stored stocks — and there are exactly two of them, by seal.
+ *
+ * M14's design principle is **land-derived state**: income and the force limit
+ * are recomputed from held sectors every turn and never stored. What genuinely
+ * accumulates is treasury (money) and register (blood), plus the men themselves.
+ *
+ * `field` is the mobile main force the land-derived ceiling caps; `garrisons` are
+ * the fortress shields, held per sector because that is how M13a sizes them.
+ */
+export interface RealmForces {
+  /** Yield in hand. Spent on drafts; never published to the opponent. */
+  treasury: number;
+  /** The field army, in men. Ceilinged by the land-derived force limit. */
+  field: number;
+  /** Total draftable bodies — a stock that only death shrinks (MT-②). */
+  register: number;
 }
 
 export interface MatchState {
@@ -41,6 +61,31 @@ export interface MatchState {
    */
   capitals: Record<ActorId, SectorId>;
 
+  /**
+   * Who each sector pays — seeded from the opening partition.
+   *
+   * This is what makes OG-③'s limbo rule computable: a sector pays its controller
+   * only when the controller is also its homeland, so the turn ground changes
+   * hands it pays neither side, and recapture restores the original claim.
+   *
+   * **Mutable on purpose, and unwritten so far.** Whether conquered land ever
+   * converts — the ADR 0022/0029 ripening path, which M14 ⑮ seals as "conquest
+   * raises the cap" but which reached the board through a settlement channel ADR
+   * 0042 retired — is an open question owned by the ticket that first takes a
+   * sector. Freezing this record would have answered it silently.
+   */
+  homeland: Record<SectorId, ActorId>;
+
+  /** The two stored stocks, per realm (M14). Everything else is recomputed. */
+  readonly forces: Readonly<Record<ActorId, RealmForces>>;
+
+  /**
+   * Manned shields, per sector. Seeded at g₀ = 1.0 on border sectors (M13a) and
+   * a stock thereafter — nothing in this ticket adds to it, because P1 forbids a
+   * free man and the regeneration order lives with ticket 06's damage.
+   */
+  readonly garrisons: Record<SectorId, number>;
+
   turn: number;
   /**
    * This turn's blind allocations, per realm: front key -> chips.
@@ -63,8 +108,17 @@ export interface MatchState {
   turnLocks: ActorId[];
 }
 
-/** Who holds a sector. The renderer's `ownerOf` is this reader's view-side twin. */
-export function ownerOfSector(state: MatchState, sector: SectorId): ActorId | null {
+/**
+ * Who holds a sector. The renderer's `ownerOf` is this reader's view-side twin.
+ *
+ * Takes only the two fields it reads, so setup can call it while the rest of the
+ * state is still being assembled — which is what keeps `Runtime.open` from growing
+ * its own copy of this loop.
+ */
+export function ownerOfSector(
+  state: Pick<MatchState, 'actors' | 'realms'>,
+  sector: SectorId,
+): ActorId | null {
   for (const actor of state.actors) {
     if (state.realms[actor]!.sectors.includes(sector)) return actor;
   }
@@ -80,4 +134,22 @@ export function ownerOfSector(state: MatchState, sector: SectorId): ActorId | nu
  */
 export function frontsOf(state: MatchState): readonly Front[] {
   return contestedFronts(state.loadedWorld.artifact.edges, (sector) => ownerOfSector(state, sector));
+}
+
+/**
+ * The sectors that actually pay a realm — controlled *and* homeland (OG-③).
+ *
+ * The single reader for it, for the same reason `frontsOf` is: the Runtime's
+ * recompute and the projection both ask this question every turn, and two copies
+ * of the limbo rule is how they would come to answer it differently.
+ */
+export function holdingsOf(state: MatchState, actor: ActorId): SectorId[] {
+  return holdsOf(state.realms[actor]!.sectors, state.homeland, actor);
+}
+
+/** Men manning shields across everything a realm currently controls. */
+export function garrisonOf(state: MatchState, actor: ActorId): number {
+  let total = 0;
+  for (const sector of state.realms[actor]!.sectors) total += state.garrisons[sector] ?? 0;
+  return total;
 }

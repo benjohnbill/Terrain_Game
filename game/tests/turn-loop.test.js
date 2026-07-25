@@ -210,6 +210,9 @@ test('both locks close the turn in one submit: reveal, resolve, then turn N+1', 
     'commitment-locked',
     'commitments-revealed',
     'front-resolved',
+    // Ticket 05's realm economy folded into this same tail — one per realm.
+    'realm-recomputed',
+    'realm-recomputed',
     'turn-opened',
   ]);
 
@@ -234,7 +237,15 @@ test('every event names the tier it belongs to, and there is no phase ③', () =
   const closing = lock(runtime, 'realm-b');
 
   const tiers = closing.map((e) => e.detail.tier);
-  assert.deepEqual(tiers, ['decision', 'payoff', 'payoff', 'background']);
+  assert.deepEqual(tiers, [
+    'decision',
+    'payoff',
+    'payoff',
+    // The recompute and the renewal are one background tier, not two stages.
+    'background',
+    'background',
+    'background',
+  ]);
   for (const tier of tiers) {
     assert.ok(['decision', 'payoff', 'background'].includes(tier), `unknown tier ${tier}`);
   }

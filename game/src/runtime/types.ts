@@ -93,6 +93,7 @@ export interface CommitmentView {
 export type Intent =
   | ChooseCapitalIntent
   | AllocateCommitmentIntent
+  | AllocateOrderIntent
   | LockCommitmentIntent
   | { readonly kind: string; readonly actor: ActorId };
 
@@ -127,6 +128,23 @@ export interface AllocateCommitmentIntent {
 }
 
 /**
+ * Pour part of this turn's stack into a non-front order.
+ *
+ * The same free-pour grammar a front takes, against the same budget (D6.3, R2):
+ * an order is not a second economy, it is another place to put the same chips.
+ * What a point buys is the order kind's own unit — for recruitment, +1%p of the
+ * force limit (ruling R10).
+ */
+export interface AllocateOrderIntent {
+  readonly kind: 'allocate-order';
+  readonly actor: ActorId;
+  /** An order kind. `recruit` is the only one wired today. */
+  readonly order: string;
+  /** Whole, non-negative chips. Zero clears the order. */
+  readonly chips: number;
+}
+
+/**
  * Lock this turn's allocation — blind and binding (ledger D6.1).
  *
  * When the second realm locks, the turn reveals, resolves, and opens turn N+1 in
@@ -157,13 +175,64 @@ export interface RejectedEvent extends GameEvent {
   };
 }
 
-/** What one side holds. Territory is public — fog governs forces, not borders. */
+/**
+ * What one side holds. Territory is public — fog governs forces, not borders.
+ *
+ * The land-derived figures here are public for both realms on purpose: they are
+ * arithmetic over the board and the territory, and both of those are public by
+ * seal. Hiding a number anyone can recompute would only mislead the player about
+ * what is secret. What stays secret is the *stocks* — see `EconomyView`.
+ */
 export interface RealmView {
   readonly actor: ActorId;
   readonly regions: readonly RegionId[];
+  /** Every sector under this realm's **control** — what the map is coloured by. */
   readonly sectors: readonly SectorId[];
+
+  // ── control scope: what the realm holds on the map ────────────────────────
+  /** Σ populationValue over controlled sectors. */
   readonly population: number;
+  /** Σ economyValue over controlled sectors. */
   readonly economy: number;
+
+  // ── holdings scope: what actually pays (OG-③) ─────────────────────────────
+  // Control and holdings are the same set until the first capture and can
+  // diverge from that moment on: occupied ground is controlled but pays nobody.
+  // Reading a control figure as an economic one is the mistake this split names.
+  /** Population plus economy over **holdings** — value as OG-② reads it. */
+  readonly landValue: number;
+  /** Yield per turn from **holdings**. Occupied land pays nobody. */
+  readonly yield: number;
+  /** The land-derived ceiling on the field army, over **holdings** (M14). */
+  readonly forceLimit: number;
+}
+
+/**
+ * A realm's own stocks — **its own only**.
+ *
+ * Gate 03 puts a realm's own realm at Exact: there is no fog on oneself, and a
+ * player who could not read their own treasury could not price the order they are
+ * being asked to give. The opponent's side of this object simply is not built,
+ * which is what "publishes no treasury figure" means — not that the number is
+ * rounded or banded, but that it never crosses.
+ *
+ * Banding the opponent's mobilization is the M10 standing rule and arrives with
+ * ticket 08's fog; until then the honest projection is silence.
+ */
+export interface EconomyView {
+  readonly actor: ActorId;
+  readonly treasury: number;
+  /** Income this realm will collect at the end of the turn. */
+  readonly income: number;
+  readonly forceLimit: number;
+  readonly field: number;
+  readonly garrison: number;
+  /** Total draftable bodies — a stock only death shrinks (MT-②). */
+  readonly register: number;
+  /** Men under arms: field plus manned shields. */
+  readonly serving: number;
+  /** 동원 강도 — serving ÷ register, the axis recruitment is priced along. */
+  readonly mobilization: number;
 }
 
 /**
@@ -231,6 +300,14 @@ export interface MatchView {
   readonly fronts: readonly Front[];
   /** This viewer's own stack. The opponent's is absent until the reveal. */
   readonly commitment: CommitmentView;
+  /**
+   * This viewer's own stocks, or `null` for the observer.
+   *
+   * The observer gets nothing deliberately: a tooling viewer that could read both
+   * treasuries would be a side door around the blur seam, and tests would start
+   * asserting through it.
+   */
+  readonly economy: EconomyView | null;
 }
 
 /** Everything the Runtime needs to open a match. Seed and clock are injected. */

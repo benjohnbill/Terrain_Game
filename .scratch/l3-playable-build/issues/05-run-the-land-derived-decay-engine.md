@@ -9,7 +9,7 @@ has nothing driving it.
 
 **Blocked by:** 03 — Close the Simultaneous Commit-and-Reveal Turn Loop.
 
-Status: claimed
+Status: resolved
 
 Specification gates: Wayfinder 10, 12.
 
@@ -51,31 +51,140 @@ invariant instead. **초토화** is a system, not wiring, and is out.
 
 ### The recompute
 
-- [ ] Income recomputes each turn as the sum of `economyValue × usableEconomy` over currently **held** sectors only.
-- [ ] The military force limit recomputes each turn as a land-derived ceiling through `capLandFrac`, from currently held land only.
-- [ ] Occupied-but-not-integrated land sits in limbo: it pays no income and lifts no ceiling in the turn it changes hands (OG-③), so losing a sector cuts income and ceiling in the **same** turn.
-- [ ] The whole recompute runs inside the background tier folded into the reveal's tail — no separate screen, no extra click, and its result is turn N+1's opening state.
+- [x] Income recomputes each turn as the sum of `economyValue × usableEconomy` over currently **held** sectors only.
+- [x] The military force limit recomputes each turn as a land-derived ceiling through `capLandFrac`, from currently held land only.
+- [x] Occupied-but-not-integrated land sits in limbo: it pays no income and lifts no ceiling in the turn it changes hands (OG-③), so losing a sector cuts income and ceiling in the **same** turn.
+- [x] The whole recompute runs inside the background tier folded into the reveal's tail — no separate screen, no extra click, and its result is turn N+1's opening state.
 
 ### Substance at match start (R9)
 
-- [ ] Each realm starts with a treasury, a field army, and border garrisons derived from the sealed start-state coordinates; no military magnitude is authored into the world artifact and none is invented here.
-- [ ] The conscription register is initialized land-derived at match start and behaves as a pure stock: recruitment moves civilian to serving, and only death shrinks it.
-- [ ] No capital guard is seeded — that magnitude is ticket 07's, and Part 2 #10 is not imported here.
+- [x] Each realm starts with a treasury, a field army, and border garrisons derived from the sealed start-state coordinates; no military magnitude is authored into the world artifact and none is invented here.
+- [x] The conscription register is initialized land-derived at match start and behaves as a pure stock: recruitment moves civilian to serving, and only death shrinks it.
+- [x] No capital guard is seeded — that magnitude is ticket 07's, and Part 2 #10 is not imported here.
 
 ### Recruitment (R9 / R10)
 
-- [ ] Recruitment is an order drawn from the one 행동력 stack, linear in commit at **+1%p of the force limit per point**, with **no per-turn rate cap** — the full stack is a legal allocation.
-- [ ] A draft is bounded only by the affordability mins: headroom to the force limit, treasury, and bodies (register − serving). Falling short of what was ordered recruits what is affordable rather than rejecting the order.
-- [ ] The draft's bill is the integral of the marginal price over the mobilization intensity it crosses, so cost escalates with depth rather than stepping at a band boundary.
+- [x] Recruitment is an order drawn from the one 행동력 stack, linear in commit at **+1%p of the force limit per point**, with **no per-turn rate cap** — the full stack is a legal allocation.
+- [x] A draft is bounded only by the affordability mins: headroom to the force limit, treasury, and bodies (register − serving). Falling short of what was ordered recruits what is affordable rather than rejecting the order.
+- [x] The draft's bill is the integral of the marginal price over the mobilization intensity it crosses, so cost escalates with depth rather than stepping at a band boundary.
 
 ### The two invariants (R9)
 
-- [ ] P1 dual billing holds — every man added is billed in both bodies and yield, and **no code path adds men for free**, so a lost sector's force is not silently regenerated back and land loss stays irreversible.
-- [ ] P2 holds as a negative invariant: no path in this ticket permanently damages a sector's economy; the economy sets healing speed only.
+- [x] P1 dual billing holds — every man added is billed in both bodies and yield, and **no code path adds men for free**, so a lost sector's force is not silently regenerated back and land loss stays irreversible.
+- [x] P2 holds as a negative invariant: no path in this ticket permanently damages a sector's economy; the economy sets healing speed only.
 
 ### The engine's purpose
 
-- [ ] There is **no** turn cap, timeout, stall timer, patience policy, blinds clock, or any other forced-termination device anywhere in this path.
-- [ ] A test demonstrates the decay's direction: a realm that loses sectors over consecutive turns shows monotonically falling income and ceiling, absent recapture.
-- [ ] The projection publishes land value, yield, and register pool per the viewer-knowledge contract. A realm reads its **own** economy exactly (gate 03: no fog on self) and reads **no** figure of the opponent's treasury.
-- [ ] The recompute is deterministic for equal `(worldId, revision, seed, intent log)` and reproduces in Node and browser.
+- [x] There is **no** turn cap, timeout, stall timer, patience policy, blinds clock, or any other forced-termination device anywhere in this path.
+- [x] A test demonstrates the decay's direction: a realm that loses sectors over consecutive turns shows monotonically falling income and ceiling, absent recapture.
+- [x] The projection publishes land value, yield, and register pool per the viewer-knowledge contract. A realm reads its **own** economy exactly (gate 03: no fog on self) and reads **no** figure of the opponent's treasury.
+- [x] The recompute is deterministic for equal `(worldId, revision, seed, intent log)` and reproduces in Node and browser.
+
+## Comments
+
+### Implementation evidence — 2026-07-26
+
+- Commit: (this branch, `l3/ticket-05-decay-engine`)
+- Production authority: `MAGNITUDE.md` M13 / M13a / M14; match-arc RULINGS
+  OG-①/OG-②/OG-③, MT-①/MT-②/MT-③/MT-④, AB-②; ledger D5.1/D5.2/D5.3, D6.2,
+  D6.3, D6.4; ADR 0042 § 3. Rulings R9/R10/R11 (`DECISIONS-OWED.md`).
+- Narrow tests: `node --test game/tests/realm-economy.test.js` — 25 pass
+  (land readings, limbo, the decay direction, the price curve, the four
+  affordability mins, the wired engine, the blur seam, determinism).
+- Shared gates: `npm run verify:game` — typecheck / build:runtime /
+  build:viewer / test:node **119** / test:browser **15** all PASS; parity
+  PENDING by design (gate 10 owns the threshold; both hosts identical).
+  Root `npm test` 479/479.
+- Browser/runtime check: `game/tests/browser/viewer.spec.js` — "a human pours
+  the stack into recruitment and watches the army and treasury move", against
+  the built viewer at the config's viewport, `terrain-cradle@r1`, seed
+  `duel-0001`.
+- Legacy evidence disposition: **accepted, verified against, not ported.**
+  `mockup/combat-calc/econ.js` supplied the three archive-only numbers R11
+  adopted and the shape of integral pricing; both were re-implemented from
+  MT-③/M13/M14 in TypeScript. Nothing was imported and no file was translated
+  (ADR 0041).
+- Follow-up: two measurements below, and the birthplace seals R9–R11 owe.
+
+### What the engine measures, on the real board
+
+Run with all 20 points into recruitment every turn, `terrain-cradle@r1`,
+seed `sanity-0001`, one realm's own view:
+
+| | opening | T1 | T2 | T3 | T4 | T12 |
+|---|---|---|---|---|---|---|
+| field | 9,000 | 9,999 | 13,599 | 17,199 | **18,000** | 18,000 |
+| treasury | 5.0 | 32.1 | 46.2 | 60.4 | 88.5 | 345.4 |
+| 동원 강도 | 25.0% | 26.9% | 33.5% | 40.2% | **41.7%** | 41.7% |
+
+Force limit 18,000 · income 32.12/turn · register 54,000 · garrison 4,500.
+
+**Two findings the ticket did not predict, both worth the user's attention and
+neither fixable without originating a value:**
+
+1. **The surge price curve never fires on this board.** Mobilization tops out
+   at **41.7%**, just under MT-③'s peace knee of **42%** — so every draft in a
+   whole match is billed at the flat Band-1 base and the escalation R11 adopted
+   is inert. The cause is a board mismatch rather than an implementation
+   choice: M13a's `garrisonPerBorderSector 900` was calibrated on the L2 seat
+   map, and the duel board has roughly a third as many border sectors per
+   realm (5 here), so the shield is 4,500 where MT-④'s ρ = 0.75 anchor implies
+   ~13,500. The two M13a anchors — per-border-sector garrison and the 42%
+   start intensity — **cannot both hold on this map**. Registered for the user;
+   nothing here guesses at a new figure.
+2. **Money binds exactly once, on turn 1.** `treasuryStart 5` buys 999 men
+   against an order of 3,600; from turn 2 income outruns every draft, and once
+   the field is at its ceiling the treasury grows without a sink (345 by turn
+   12). Expected for this slice — attrition and the other spends arrive with
+   06 and after — but it means the *income* half of the decay engine is not
+   yet load-bearing, and the *ceiling* half is doing all of the work.
+
+### Scope held out, per R9
+
+- **Capital guard** — not seeded. Part 2 #10 is ticket 07's to rule on, and a
+  number here would have decided it silently.
+- **Garrison regeneration** — not built. Nothing in this ticket damages a
+  garrison, so the order would need a price to repair something that cannot
+  break. P1 lands as an invariant instead: no path adds a man without billing,
+  and a ten-turn quiet run asserts that nothing regenerates.
+- **초토화** — not built. P2 lands as a negative invariant: no path here
+  permanently damages a sector's economy.
+
+### Code review — 2026-07-26 (`/code-review` since `b3faf39`, two axes)
+
+Both axes ran; the Spec axis confirmed **zero originated values** (every literal
+in `domain/economy.ts` and `domain/recruitment.ts` traced to a birthplace seal,
+R10, or R11) and confirmed no capital-guard magnitude anywhere in `game/src`.
+Four findings were real and are fixed in this ticket:
+
+1. **Opening treasury contradicted a seal** (Standards, corroborated by Spec).
+   R11 adopted a flat `5` on the premise that nothing was sealed. Both halves of
+   that premise were false: M14 ruling ㉑ seals the value, and terrain-cradle
+   **TC-⑭** — the derived-asymmetry seal beneath SPEC principle #8 — supersedes
+   its *form*, naming treasury as `treasuryStartTurns × terrain-fed economy` and
+   forbidding exactly the flat per-realm constant that was built. Rebuilt to the
+   derived form; ㉑ stamped as amended; R11's row withdrawn and corrected.
+2. **The implementation decided an open question by accident** (Spec). A frozen
+   `homeland` record made OG-③'s limbo **permanent**, so conquest could never
+   raise a taker's income or ceiling — contradicting M14 ⑮ ("conquest raises the
+   national cap") without any ruling saying so. Corrected to leave the question
+   open and registered as **Part 2 #15** for ticket 06, which is the first that
+   can take a sector.
+3. **Two writers for one budget** (Standards). `#allocateOrder` mirrored
+   `#allocateCommitment` line for line. Collapsed into one `#allocate`: a front
+   and an order are two keys in the same map against the same budget, so the
+   Σ ≤ budget invariant is now enforced in exactly one place.
+4. **A fourth copy of the owner closure** (Standards), the specific duplication
+   `domain/state.ts` warns about. `ownerOfSector` now takes only the two fields
+   it reads, so setup calls the single reader instead of re-implementing it.
+
+Also applied: the `order:recruit` key is imported rather than restated in React,
+and `RealmView` now names its two scopes explicitly — `population`/`economy` are
+**control** sums, `landValue`/`yield`/`forceLimit` are **holdings** sums, and
+they diverge from the first capture onward.
+
+Declined, with reasons: `landValueOf` is not speculative (the acceptance item
+requires land value in the projection); `CAP_LAND_FRAC * derived` stays written
+out so the sealed dial is visible rather than assumed away; `forceLimit` crossing
+to both realms is not a leak, since it is arithmetic over public territory that
+either side can recompute.
