@@ -84,7 +84,7 @@ test('a player picks a capital by clicking their own ground, and the enemy site 
   await page.locator(`[data-sector="${mine}"]`).click();
 
   await expect(page.getByTestId('events')).toContainText('capital-locked');
-  await expect(page.getByTestId('prompt')).toContainText('Waiting for the other realm');
+  await expect(page.getByTestId('prompt')).toContainText('Waiting for realm-b');
 
   // One capital marker: this player's own. The opponent has not chosen, and
   // even when they do, the site is not readable before the joint reveal.

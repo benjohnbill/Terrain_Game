@@ -60,21 +60,27 @@ function visibleCapitals(state: MatchState, viewer: ViewerId): Record<ActorId, S
 }
 
 /**
- * Which realms this viewer knows have locked a capital.
+ * Which realms have locked a capital — **public, for every viewer** (ruling R7,
+ * SEALED 2026-07-25).
  *
- * **Only their own, before the reveal.** The seal fixes that the choice is
- * simultaneous and secret and that both sites go public together; it says
- * nothing about whether a player may watch the *opponent's commitment land*.
- * Showing that would be a new visible-state rule, and inventing one is exactly
- * what the ticket's authority test forbids — so this projects the narrower
- * thing, and the question is recorded as owed rather than answered here.
+ * The *fact* of commitment crosses; the *site* does not. That asymmetry is the
+ * whole point, and it is load-bearing three times over:
  *
- * After the reveal it is moot: both capitals are public, so both locks are.
+ *   - **it is the psychological read.** How long an opponent deliberates is
+ *     signal, and a duel that hid it would delete a real layer of the contest;
+ *   - **it is the genre's commit-and-reveal grammar**, which players arrive
+ *     already fluent in;
+ *   - **the system needs it anyway.** Both sides committing is what advances the
+ *     beat, so the state is observable by construction — hiding it from the
+ *     projection would only have hidden it from the *player*, not from the game.
+ *
+ * Note what this does **not** require: no clock. The indicator flips when the
+ * commitment lands, so elapsed deliberation is read from the world rather than
+ * timed — which keeps ADR 0040's bar on rules reading the wall clock intact.
  */
 function visibleLocks(state: MatchState, viewer: ViewerId): ActorId[] {
-  const locked = state.actors.filter((actor) => actor in state.capitals);
-  if (locked.length === state.actors.length) return locked;
-  return viewer !== 'observer' && viewer in state.capitals ? [viewer] : [];
+  void viewer; // public to all, deliberately — see above
+  return state.actors.filter((actor) => actor in state.capitals);
 }
 
 /**

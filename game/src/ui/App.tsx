@@ -98,7 +98,7 @@ export function App() {
         <p className="prompt" data-testid="prompt">
           {choosing
             ? '수도를 골라주세요 — click any sector your realm owns.'
-            : 'Locked. Waiting for the other realm to commit.'}
+            : `Locked. Waiting for ${view.actors.filter((a) => !view.capitalLocked.includes(a)).join(', ')}.`}
         </p>
       )}
 

@@ -94,12 +94,12 @@ test('the choice is secret until both sides have locked', () => {
 
   runtime.submit({ kind: 'choose-capital', actor: 'realm-a', sector: mine });
 
-  // Neither the site NOR the fact of commitment crosses. The seal covers the
-  // choice being simultaneous and secret; it says nothing about letting a player
-  // watch the opponent's commitment land, so the narrower projection is the one
-  // that invents nothing.
-  assert.deepEqual(runtime.view('realm-b').capitalLocked, []);
-  assert.deepEqual(runtime.view('realm-a').capitalLocked, ['realm-a'], 'a player cannot see their own lock');
+  // The *fact* of commitment is public (ruling R7): watching the opponent
+  // deliberate is part of the contest, and both sides committing is what
+  // advances the beat.
+  assert.deepEqual(runtime.view('realm-b').capitalLocked, ['realm-a']);
+  assert.deepEqual(runtime.view('observer').capitalLocked, ['realm-a']);
+  // The *site* is not. That asymmetry is the whole mechanism.
   assert.deepEqual(runtime.view('realm-b').capitals, {}, 'the opponent could read an unrevealed capital');
   assert.deepEqual(runtime.view('realm-a').capitals, { 'realm-a': mine }, 'a player cannot see their own choice');
   // The observer is not a side door around the secrecy.

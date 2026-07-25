@@ -75,6 +75,15 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   (행동력, EVAL BAR, capital fall already done). No mandatory-ADR trigger beyond
   0042 (turn structure = making ADR 0025's uncertainty duel literal, already
   confirmed). Sequencing: after the map pass / at the next L3 build gate.
+  **Grew 2026-07-25 (ruling R7).** The same home now also owes the
+  **commit-and-reveal visibility rule**: the *fact* of a realm's commitment is
+  public, its *content* is not, and **both realms having committed is what
+  advances the turn**. User-sealed with three reasons — deliberation time is a
+  psychological read, it is the genre grammar, and the turn-advance rule needs
+  the state observable anyway. Implemented for the capital beat in L3 ticket 02
+  (`game/src/projection/project.ts`); inherited by every later commit. No clock
+  is involved, so ADR 0040 is untouched. Full text:
+  `.scratch/l3-playable-build/DECISIONS-OWED.md` § R7.
 
 - [ ] **Linear-commit grammar for non-combat orders — no birthplace yet**
   (registered 2026-07-25, user ruling). Every non-combat order carries a

@@ -126,10 +126,10 @@ export interface MatchView {
    */
   readonly capitals: Readonly<Record<ActorId, SectorId>>;
   /**
-   * Which realms this viewer knows have locked a capital — **their own only**,
-   * until the joint reveal makes both public. Whether a player should be able to
-   * watch the opponent's commitment land is an open question, not a seal, so the
-   * projection stays narrow rather than inventing an answer.
+   * Which realms have locked a capital. **Public to every viewer** (ruling R7,
+   * SEALED 2026-07-25): the fact of commitment crosses, the site does not.
+   * Watching an opponent deliberate is part of the contest, and both sides
+   * committing is what advances the beat.
    */
   readonly capitalLocked: readonly ActorId[];
 }

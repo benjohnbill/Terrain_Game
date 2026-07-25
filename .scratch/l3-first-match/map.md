@@ -153,6 +153,14 @@ the play session, and fun is the next map's business.
   both players choose a capital on any owned sector, simultaneously and in
   secret. Full result and measurements:
   `.scratch/l3-playable-build/issues/02-…md` § Result.
+- **R7 — commitment is visible, the choice is not; both-committed advances the
+  turn** (2026-07-25, user) — the *fact* of a realm's commitment is public
+  because deliberation time is a psychological read, because it is the genre's
+  commit-and-reveal grammar, and because the turn advances on both sides having
+  committed. The general rule, not a capital-beat special case. **Its rider
+  narrows § 1.3**: "both done → turn advances" *is* the turn-advance rule the
+  Runtime-interface re-expression has been proposing, so that fog item is now one
+  confirmation rather than an open design question.
 
 ## Owed right now
 

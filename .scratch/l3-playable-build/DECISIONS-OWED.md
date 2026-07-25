@@ -199,28 +199,49 @@ it.
 *Owes:* the `README.md` amendment (same batch), and a `docs/SYNC-DEBT.md` row
 for the deferred gate-12 publication.
 
-### Owed micro-ruling — may a player see that the opponent has committed?
+### R7 — Commitment is visible; the choice is not. And both-committed advances the beat · SEALED
 
-**Surfaced by ticket 02's build, 2026-07-25.** The capital beat is sealed as
-simultaneous and secret, with both sites revealed together (CP-② D1.3, item 1).
-What no seal covers is whether the *fact* of the opponent's commitment is
-visible before the reveal — i.e. whether a player watching their own screen can
-see "the enemy has locked" while still deciding.
+**User ruling 2026-07-25**, on a question ticket 02's build surfaced: may a
+player see that the opponent has finished committing, before the reveal?
 
-It reads as a trivial UI detail and is not: it is the first small piece of the
-commit-and-reveal grammar the whole turn loop will be built on (ticket 03), and
-whichever way it goes there, this should match.
+> "상대방이 '지금 고민을 끝내고 커밋을 다 했는지 여부'와 같은 표시는 필요할 것
+> 같아. 상대방이 얼마나 고민을 오래 하는지도 심리전 요인에 필수적이니까. 게임
+> 표준이기도 하고. 그리고, 우리 게임 시스템 상에서도, 어차피 양측의 결정 완료가
+> 끝나면 자동으로 턴이 넘어가는 것을 구현할 생각이기도 하니까."
 
-- **Hidden (implemented).** The projection shows a viewer only their own lock.
-  Chosen because it invents nothing — the narrower reading is the one no seal
-  contradicts.
-- **Visible (the alternative).** Standard for commit-and-reveal games; tells the
-  player the beat is half over, and removes the "am I waiting or is it stuck?"
-  ambiguity. Costs a sliver of information the secret beat was arguably meant to
-  withhold.
+**Yes — the fact of commitment is public; the content of the commitment is not.**
+Three reasons, and the third is the largest:
 
-No derivation available; a user call. Ticket 03 will need the same answer for
-turn commits, so answering it once covers both.
+1. **Deliberation is a read.** How long an opponent takes is signal, and a duel
+   that hid it would delete a real layer of the contest. This makes the waiting
+   period *itself* part of play rather than dead time.
+2. **It is the genre's commit-and-reveal grammar**, which players arrive already
+   fluent in.
+3. **The system needs it regardless: both sides having committed is what
+   advances the turn.** That is a statement about the turn structure, not about a
+   status light — see the rider below.
+
+*Scope:* this is the general commit-and-reveal rule, not a capital-beat special
+case. Every later commit — orders, plans, the turn's chips — inherits it. Ticket
+02 implements it for the capital beat; ticket 03 inherits it for turn commits.
+
+*No clock is required, and none is introduced.* The indicator flips when a
+commitment lands, so elapsed deliberation is read from the world rather than
+timed. ADR 0040's bar on rules reading the wall clock stands untouched.
+
+**Rider — this bears directly on § 1.3, and narrows it.** "양측의 결정 완료가
+끝나면 자동으로 턴이 넘어간다" *is* the turn-advance rule: a turn ends when both
+realms have committed, not when an actor is done. That is precisely the
+re-expression § 1.3 has been proposing — read legality as "has this realm
+committed this turn / is the window open" rather than as a single
+`currentActor`. Ticket 02 also produced the implementation evidence: the capital
+beat needed no turn order at all and gate 02's actual guarantee (the Runtime
+decides legality) survived intact. § 1.3 is now one explicit confirmation away
+rather than an open design question.
+
+*Owes:* a home for the commit-and-reveal visibility rule alongside the
+linear-commit grammar (same SYNC-DEBT row — both are match-frame rules awaiting
+a birthplace).
 
 ---
 
