@@ -181,6 +181,30 @@ the play session, and fun is the next map's business.
   row** — the ticket went `ready-for-agent` the same session. Full text:
   `.scratch/l3-playable-build/DECISIONS-OWED.md` § R8.
 
+- **R9 / R10 / R11 — ticket 05 is where realm substance is born** (2026-07-26,
+  user). A pre-claim verification sweep found the waiver table's "decay dials
+  unlanded" stale — all five are at their birthplaces — and found something the
+  original sweep missed: **`MatchState` holds no military state at all**, and the
+  authored world ships `garrison: 0` on every sector, so 05's force limit capped
+  nothing and 06's battle had nothing to fight with. **R9** gives 05 the treasury,
+  the force limit, the register, the starting field army and border garrisons, and
+  recruitment — with the capital guard held for 07, garrison regeneration held for
+  06, and 초토화 out. **R10** rejected the agent's proposed +10%/turn rate cap (it
+  was read off a struck-through line) and landed the unit that MT-③ had already
+  sealed: **+1%p of the force limit per 행동력 point, uncapped**, which reproduces
+  both of MT-④'s buildup tempo anchors. **R11** adopted four archive-only numbers
+  (1 부대 = 100 men, treasury start 5, surge ×2/×12) as recorded 가안 to be repaid
+  in play. Full text: `.scratch/l3-playable-build/DECISIONS-OWED.md` § R9–R11.
+- **Part 2 #14 — does the operational layer track and move armies?** (found
+  2026-07-26 while sizing ticket 06.) A three-way conflict: `DOMAIN_MAP.md`'s
+  ✅ `Position as product` forbids army counters and standalone movement, gate 08
+  bought full compound depth, and the slice-2 movement contract needs both. Its
+  march speed does not even transplant — 3 hexes/turn against a **median 5-hex
+  sector** means an army would not cross one sector in a turn. **Ticket 06 is not
+  one ticket**: its twelve items are the surface the archive built across eleven.
+  **User ruling: a Wayfinder gate, opened once 05 lands** — and it is on the
+  critical path, since ticket 07 (where the loop closes) is blocked by 06.
+
 ## Owed right now
 
 Small, sharp, and not worth a ticket each — but they are owed, so they are listed

@@ -281,6 +281,111 @@ independent supports, none of them argument alone:
 turn-structure home for all three match-frame rules (SYNC-DEBT row already
 registered; the `currentActor` row is now sealed rather than proposed).
 
+## Rulings received — 2026-07-26 (user)
+
+### R9 — The realm's military substance is born in ticket 05 · § ticket-05 scope CLOSED
+
+The sweep that produced this file did not notice that **`MatchState` holds no
+military state at all** — no treasury, no field army, no garrisons — and that the
+authored world ships `garrison: 0` and `fortTier: 'none'` on every sector. Ticket
+05's force limit therefore capped nothing and ticket 06's battle had nothing to
+fight with. Neither ticket claimed the gap.
+
+**The rule.** Ticket 05 owns the birth of realm substance: **treasury, the
+land-derived force limit, the conscription register, the starting field army and
+border garrisons, and recruitment as an order.** Ticket 06 receives forces; it
+does not invent them.
+
+The start state is fully derivable from sealed values, so this widens scope
+without originating anything: force limit = `capPerPop 600 × Σ populationValue ×
+usablePop` (M14), field starts at **f₀ 0.5** of it and garrisons at **g₀ 1.0**
+(M13a/MT-④), border garrisons at **900 per border sector** (M13a; the archive
+seeds per front, interior sectors carry none), register = `registerPerPop 1,800 ×
+Σ populationValue` (MT-②). Measured on `terrain-cradle@r1` at a 5+5 region
+partition: force limit **18,000**, field start **9,000**, income **≈30.3
+yield/turn**.
+
+**Three boundaries drawn with it**, so the ticket does not grow past its mandate:
+
+- **The capital guard stays in ticket 07.** Part 2 #10 (가안 350 × pop versus
+  `MAGNITUDE.md`'s flat `capitalGarrison 1500`) is already scheduled there;
+  seeding it here would import that conflict into 05.
+- **Garrison regeneration stays out.** MT-⑤ made it a commit-gated order and
+  MT-①'s P1 bills it — but nothing in 05 damages a garrison, so the order would
+  be a repair tool for something that cannot break, bought with one more
+  unrecorded unit price. **P1 lands in 05 as an invariant instead**: no code path
+  adds men for free, every man added is billed, and a test fixes it. The order
+  itself arrives with ticket 06, where garrisons first take damage.
+- **초토화 (scorched earth) stays out.** P2 also lands as a negative invariant —
+  no path in 05 permanently damages a sector's economy. Building the identity act
+  as an order is a system, not wiring (§ The scope test).
+
+*Owes:* the ticket-05 acceptance list is amended in the same batch; the waiver
+table row is recomputed.
+
+### R10 — 행동력 converts to recruitment at +1%p per point, and nothing caps the turn
+
+The agent proposed a linear unit **capped at the Band-1 +10%/turn**, and the user
+rejected the cap: pouring the whole stack into one order must be possible, because
+that is what makes commitment a real allocation rather than a menu. "커밋 값은
+기본적으로 하나의 단위에 대한 곱연산."
+
+The cap was an agent misreading, and the correction is in the repository. `M13`
+carries the line struck through — `~~recruitment +10% of cap per turn~~ → Band-1
+base of the Surge Draft Model (MT-③)` — and the archive's own comment reads "+10%
+of cap **per primary**", not per turn. There has been no rate cap since MT-③
+replaced the flat rate with the price curve.
+
+**The rule, which is a sealed value rather than a new one.** MT-③'s Size axis
+already carries **"Surge exchange rate +1%p/point (가안)"**. R2's re-cut removes
+the primary/surplus split, leaving it as the whole grammar:
+
+> **one 행동력 point = +1%p of the force limit, recruited. No per-turn cap.
+> The full stack of 20 buys +20%.**
+
+It reproduces both of MT-④'s sealed tempo anchors, which are both the time to
+fill from f₀ 0.5 to full (50 percentage points): all-in 20 points = +20%/turn =
+**2.5 turns** against the sealed "surged 2–3"; a knee-sized 8–10 points =
++8–10%/turn = **5–6 turns** against the sealed "plain buildup 5".
+
+What binds a draft is therefore **money and bodies**, never a rate: the four mins
+of the affordability bound (headroom to the force limit, treasury via MT-③'s
+integral price over 동원 강도, and bodies = register − serving). Measured
+consequence on this board, and the reason the curve is worth keeping: at Band-1
+base price the all-in draft costs ~18 yield against ~30 income, so early
+recruitment is unconstrained — but filling toward the force limit drives
+mobilization intensity to ≈58%, exactly MT-④'s structural-max knee, where the
+price doubles and the same draft costs ~36 yield. **The last stretch of a full
+army is deliberately unaffordable from income alone.**
+
+*Also recorded:* the agent's earlier claim in conversation that "the rate binds,
+not money" came from the same misreading and is withdrawn.
+
+*Owes:* a seal row for the 행동력 → recruitment unit at MT-③'s birthplace
+(`combat-formula/MAGNITUDE.md` M13), noting R2's flattening of primary/surplus.
+
+### R11 — Four archive-only numbers adopted as 가안, to be repaid in play
+
+Ticket 05's recruitment path needs numbers that live **only in
+`mockup/combat-calc/econ.js`** — the Part 3 pattern exactly: the design sealed the
+shape and the numbers were filled in during implementation and never came back.
+
+| Value | Archive | What is actually sealed | Status |
+|---|---|---|---|
+| `menPerYield 200` — 1 부대 = **100 men** | `econ.js:22` (its comment claims M13) | M13 seals only "1 부대 = 0.5 yield"; the unit's headcount is nowhere | **가안 adopted** |
+| `treasuryStart 5` yield | `econ.js:26`, marked 가안 | nothing; ≈ ⅙ of one turn's income | **가안 adopted** |
+| surge `warMult 2` / `fullMult 12` | `econ.js:68–69`, "placeholder 가안" | MT-③ seals the shape and MT-④ the knees (0.42 / 0.58); the multipliers were deferred to a magnitude session that never ran | **가안 adopted** |
+
+**User ruling.** Accepted as *"원리상 도출되는 가안"* — provisional values whose
+scale may move, adopted because the MVP has no cheaper way to get a running
+economy, and repayable by play rather than by argument. The user recorded
+discomfort at taking archive numbers wholesale; that discomfort is the reason this
+row exists rather than a silent import.
+
+*Owes:* each needs a birthplace seal row. `menPerYield` and the surge multipliers
+belong at `MAGNITUDE.md` (M13 / MT-③'s dial sheet); `treasuryStart` belongs with
+M14's treasury.
+
 ---
 
 ## Part 1 — Blocking the walking skeleton (tickets 01→07)
@@ -535,6 +640,28 @@ Both sides are sealed; the agent stops. Ordered by how early each bites.
 | 11 | Fatigue effectiveness floor | Slice-2 spec: "floor ×0.5 (**가안**, cited, not re-sealed)" | Same file, 72 lines later: "floor ×0.5 is a **sealed anchor**" — which the code implements | ticket 06 |
 | 12 | Bot decisiveness ladder | `tactical-plan-ai` RULINGS ranks **vassalization** as the top rung | ADR 0042 retired settlement as a terminus entirely | ticket 12 |
 | 13 | 판세 in-play surface | *already registered in* `docs/SYNC-DEBT.md` | | ticket 04 |
+| 14 | **Does the operational layer track armies and move them?** | `DOMAIN_MAP.md` ✅ `Position as product`: the MVP has **no standalone move action and no tracked army counters** — position is a *product* of operations, and the runbook's own diff review (§ Implementation loop 7) lists "standalone movement" as forbidden scope | slice-2 design spec §3 movement contract + gate 08's full-compound-depth slice: armies hold hex positions, forced march is an explicit toggle, field armies divide and merge — which is army counters and standalone movement | ticket 06 |
+
+Row 14 was **found 2026-07-26**, outside the original sweep, while sizing ticket
+06. Three things make it larger than a row:
+
+- It is a **three-way** conflict, not two-sided: `Position as product` (MVP
+  grammar), gate 08 § Answer (full compound depth, which bought depth over
+  smallness knowingly), and the slice-2 movement contract cannot all be built.
+- **The dial does not transplant even if the conflict resolves toward slice-2.**
+  Its march speed is *3 hexes per turn*, but L3 sectors are a median of **5 hexes**
+  (measured on `terrain-cradle@r1`: 56 sectors, 3/5/8 hexes min/median/max), so an
+  army would not cross one sector in a turn. A sector-level speed is a genuinely
+  new value — and it also sets the fog reach cone's radius, so it moves ticket 08.
+- **Ticket 06 is not one ticket.** Its twelve acceptance items span the whole
+  slice-2 operational layer plus the slice-1 combat core; the archive built that
+  surface across **eleven** tickets. Resolving row 14 re-cuts 06 rather than
+  unblocking it.
+
+**Venue (user ruling, 2026-07-26): a Wayfinder gate, opened after ticket 05
+lands** — this is a seal conflict plus a ticket re-cut, which is gate-shaped work
+rather than implementation work. Note it sits on the critical path: ticket 07,
+where the match loop closes, is blocked by 06.
 
 Two bookkeeping items that need a stamp rather than a ruling: `capLandFrac`'s
 default flip is recorded as "NOT done" in AB-②'s rider while the code and its
