@@ -23,26 +23,76 @@
  */
 
 import { spentOf, TURN_COMMITMENT_BUDGET } from '../domain/commitment.js';
-import { frontsOf } from '../domain/state.js';
+import { forceLimitOf, incomeOf, landValueOf } from '../domain/economy.js';
+import { frontsOf, garrisonOf, holdingsOf } from '../domain/state.js';
 import type { MatchState } from '../domain/state.js';
-import type { ActorId, CommitmentView, MatchView, RealmView, SectorId, ViewerId } from '../runtime/types.js';
+import type {
+  ActorId,
+  CommitmentView,
+  EconomyView,
+  MatchView,
+  RealmView,
+  SectorId,
+  ViewerId,
+} from '../runtime/types.js';
 
 /** Realm totals, recomputed from current holdings rather than cached at setup. */
 function realmView(state: MatchState, actor: ActorId): RealmView {
   const realm = state.realms[actor]!;
+  const sectors = state.loadedWorld.artifact.sectors;
   let population = 0;
   let economy = 0;
   for (const sectorId of realm.sectors) {
-    const sector = state.loadedWorld.artifact.sectors[sectorId]!;
+    const sector = sectors[sectorId]!;
     population += sector.populationValue;
     economy += sector.economyValue;
   }
+
+  // Territory and holdings are different questions once ground changes hands:
+  // control is what the map shows, holdings are what pays (OG-③). The two are
+  // equal until the first capture, and they must not be conflated after it.
+  const holdings = holdingsOf(state, actor);
   return {
     actor,
     regions: realm.regions,
     sectors: [...realm.sectors],
     population,
     economy,
+    landValue: landValueOf(sectors, holdings),
+    yield: incomeOf(sectors, holdings),
+    forceLimit: forceLimitOf(sectors, holdings),
+  };
+}
+
+/**
+ * The viewer's own stocks — treasury, register, men — and nobody else's.
+ *
+ * This is the ticket's blur decision, and it is a hard omission rather than a
+ * blurred figure: the opponent's object is never built. Gate 03 puts a realm's
+ * own realm at Exact, so this side is unrounded; the opponent's mobilization
+ * becomes readable as a *band* when ticket 08 lands M10, and not before.
+ */
+function visibleEconomy(state: MatchState, viewer: ViewerId): EconomyView | null {
+  if (viewer === 'observer') return null;
+
+  const forces = state.forces[viewer];
+  if (forces === undefined) return null;
+
+  const sectors = state.loadedWorld.artifact.sectors;
+  const holdings = holdingsOf(state, viewer);
+  const garrison = garrisonOf(state, viewer);
+  const serving = forces.field + garrison;
+
+  return {
+    actor: viewer,
+    treasury: forces.treasury,
+    income: incomeOf(sectors, holdings),
+    forceLimit: forceLimitOf(sectors, holdings),
+    field: forces.field,
+    garrison,
+    register: forces.register,
+    serving,
+    mobilization: forces.register === 0 ? 0 : serving / forces.register,
   };
 }
 
@@ -135,5 +185,6 @@ export function project(state: MatchState, viewer: ViewerId): MatchView {
     committed: visibleLocks(state, viewer),
     fronts: frontsOf(state),
     commitment: visibleCommitment(state, viewer),
+    economy: visibleEconomy(state, viewer),
   };
 }

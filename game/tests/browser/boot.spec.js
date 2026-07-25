@@ -83,6 +83,9 @@ test('a turn commits, reveals and resolves in a browser, from the same artifact'
     'commitment-locked',
     'commitments-revealed',
     'front-resolved',
+    // Ticket 05's realm economy, folded into the same tail — one per realm.
+    'realm-recomputed',
+    'realm-recomputed',
     'turn-opened',
   ]);
   expect(events.map((e) => e.detail.tier)).toEqual([
@@ -92,6 +95,8 @@ test('a turn commits, reveals and resolves in a browser, from the same artifact'
     'decision',
     'payoff',
     'payoff',
+    'background',
+    'background',
     'background',
   ]);
   expect(view.turn).toBe(2);

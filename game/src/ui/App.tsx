@@ -76,6 +76,11 @@ export function App() {
     [submitting, viewer],
   );
 
+  const allocateOrder = useCallback(
+    (order: string, chips: number) => submitting({ kind: 'allocate-order', actor: viewer, order, chips }),
+    [submitting, viewer],
+  );
+
   const lockTurn = useCallback(() => submitting({ kind: 'lock-commitment', actor: viewer }), [submitting, viewer]);
 
   const pick = useCallback(
@@ -119,7 +124,13 @@ export function App() {
       )}
 
       {view.phase === 'decision' && (
-        <TurnStrip view={view} viewer={viewer} onAllocate={allocateChips} onLock={lockTurn} />
+        <TurnStrip
+          view={view}
+          viewer={viewer}
+          onAllocate={allocateChips}
+          onOrder={allocateOrder}
+          onLock={lockTurn}
+        />
       )}
 
       <MapBoard
@@ -141,7 +152,8 @@ export function App() {
                   <td>{r.regions.join(' ')}</td>
                   <td>{r.sectors.length} sectors</td>
                   <td>pop {r.population.toFixed(1)}</td>
-                  <td>econ {r.economy.toFixed(2)}</td>
+                  <td data-testid={`yield-${r.actor}`}>수입 {r.yield.toFixed(2)}</td>
+                  <td data-testid={`limit-${r.actor}`}>상한 {r.forceLimit.toLocaleString('en-US')}</td>
                   <td>{view.capitals[r.actor] ?? (view.committed.includes(r.actor) ? 'locked (hidden)' : '—')}</td>
                 </tr>
               ))}
@@ -174,6 +186,11 @@ export function App() {
  * a human rather than only to tests: allocate chips to a front, lock, watch the
  * reveal land in the event log, and see turn N+1 open. It is meant to be deleted.
  *
+ * Ticket 05 added two rows to the same probe rather than a second surface: the
+ * realm's own economy, and a draft order priced by the same rule that will
+ * resolve it. Both belong to the commit bar gate 07 sealed, so ticket 04 inherits
+ * *what* they say while replacing *how* they look.
+ *
  * The viewer dropdown makes this shell hotseat by construction, and the event log
  * is shared across both seats — a development affordance, not a two-client
  * surface. Secrecy is enforced where it is load-bearing: the projection hands a
@@ -183,15 +200,27 @@ function TurnStrip({
   view,
   viewer,
   onAllocate,
+  onOrder,
   onLock,
 }: {
   view: MatchView;
   viewer: ActorId;
   onAllocate: (front: string, chips: number) => void;
+  onOrder: (order: string, chips: number) => void;
   onLock: () => void;
 }) {
   const locked = view.committed.includes(viewer);
   const waitingOn = view.actors.filter((actor) => !view.committed.includes(actor));
+  const economy = view.economy;
+  const recruitChips = view.commitment.allocations['order:recruit'] ?? 0;
+  // The same rule the background tier will resolve the draft with, so the number
+  // shown before locking is the number that arrives after.
+  const draft = preview(view, {
+    kind: 'allocate-order',
+    actor: viewer,
+    order: 'recruit',
+    chips: recruitChips,
+  }).draft;
 
   return (
     <section className="prompt" data-testid="turn-strip">
@@ -220,6 +249,37 @@ function TurnStrip({
                 </tr>
               );
             })}
+        </tbody>
+      </table>
+      {economy && (
+        <p data-testid="economy">
+          국고 {economy.treasury.toFixed(2)} (+{economy.income.toFixed(2)}/턴) · 야전군{' '}
+          {economy.field.toLocaleString('en-US')}/{economy.forceLimit.toLocaleString('en-US')} · 수비대{' '}
+          {economy.garrison.toLocaleString('en-US')} · 명부 {economy.register.toLocaleString('en-US')} · 동원 강도{' '}
+          {(economy.mobilization * 100).toFixed(1)}%
+        </p>
+      )}
+      <table data-testid="orders">
+        <tbody>
+          <tr>
+            <td>모병</td>
+            <td data-testid="chips-recruit">{recruitChips}</td>
+            <td data-testid="draft-preview">
+              {draft && draft.men > 0
+                ? `+${draft.men.toLocaleString('en-US')}명 · ${draft.bill.toFixed(2)} 생산${
+                    draft.limitedBy ? ` (${draft.limitedBy} 한계)` : ''
+                  }`
+                : '—'}
+            </td>
+            <td>
+              <button type="button" disabled={locked} onClick={() => onOrder('recruit', recruitChips + 1)}>
+                +1
+              </button>
+              <button type="button" disabled={locked || recruitChips === 0} onClick={() => onOrder('recruit', 0)}>
+                clear
+              </button>
+            </td>
+          </tr>
         </tbody>
       </table>
       <button type="button" data-testid="lock" disabled={locked} onClick={onLock}>
