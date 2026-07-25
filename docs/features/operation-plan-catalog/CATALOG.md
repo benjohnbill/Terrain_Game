@@ -697,6 +697,21 @@ risk to deter it).
   it all now; Abandonment gives it up instantly and buys no time. Uniquely
   cheapest in reliable-time-for-ground → **not dominated.**
 
+**Bands — APPROVED 2026-07-26 (user, Part 3 bulk batch) · L1.** This is the owning
+model doc for these two values; they ran in the archive (`js/battle.js`) and no
+document recorded them until now.
+
+| Dial | Value | Meaning |
+|---|---|---|
+| breakthrough R | **2.0** | The over-commit ratio at which an attacker overruns a delaying screen and seizes the sector. Below it the sector is "not taken this turn". |
+| erosion per turn | **0.15** | How much the sector's defensive state degrades for each delayed turn — the erosion clock the claim block prices. |
+
+Both stay **가안**: they were exercised in the L2 harness but never the subject of a
+sweep, so nothing measured them against a target. The **shape** above (cheap contest,
+no repulsion, erosion clock, dissolution on final failure) is what is sealed; these
+two numbers are the shape's current calibration and are expected to move in L3.
+Consumer: ticket 06c.
+
 ### Strategic Abandonment (전략적 포기) + Scorched Earth (청야 소각) — shape COMPLETE
 
 **Two-tier structure (user-confirmed 2026-07-02).** Abandonment's value is

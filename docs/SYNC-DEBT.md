@@ -11,14 +11,27 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
 
 ## Open
 
-- [ ] **Gate C's movement model has no Production birthplace** (registered
-  2026-07-26). ADR 0043 records the decision and `DECISIONS-OWED.md` R12–R15
-  carry the full text, but a *movement* mechanic has no owning feature doc — the
-  slice-2 spec (`docs/superpowers/`) is Working layer and its §3 is now amended in
-  three places (commit-free, per-hex fatigue, reachability legality). **Owed:** a
-  birthplace for the movement contract and its dials, most likely a model doc
-  under `docs/features/war-model-build/`. Until then ADR 0043 is authoritative
-  and the slice-2 spec must not be read as current on §3.
+- [x] **Gate C's movement model has no Production birthplace** — **PAID
+  2026-07-26**, the same day it was registered, by the Part 3 approval landing.
+  `docs/features/war-model-build/MAGNITUDE.md` is new and is the owning model doc:
+  **WB-M①** holds the fatigue/movement/supply dials, **WB-M②** holds march speed with
+  its gate C measurement. The feature had no model doc at all, which is the actual
+  reason the dials had no home. Shape authority stays with the slice-2 spec §2–§3 and
+  with ADR 0043 where gate C amended it — and the spec's §3 must **not** be read as
+  current, since it is now amended in three places (commit-free movement, per-hex
+  fatigue, reachability legality).
+
+- [ ] **Bot policy values are approved but have no birthplace** (registered
+  2026-07-26). The user's Part 3 bulk approval covered them — the judged-value
+  formula `mid − λ(high−low)/2`, the disposition presets, siege and field commit, and
+  the per-plan physical eligibility gates — but they belong to **ticket 12**'s
+  contract and block nothing now, so they were not landed with the rest of the batch.
+  Note that `mockup/combat-calc/plan-ai.js` mixes them with fog-band constants
+  (`DECAY_FLOOR 0.45`, `MAX_CONFIDENCE 0.9`, `WIDTH_PCT 0.35`, `WIDTH_ABS 1.0`) which
+  are **excluded** from the approval by Part 3's own precondition — they conflict with
+  `combat-formula/MAGNITUDE.md` M8 (Part 2 #5, unresolved). **Do not land the file's
+  constants as one group.** Owed: a birthplace for the bot values at ticket 12, and
+  Part 2 #5 before any fog constant is sealed.
 
 - [ ] **Terrain re-authoring produces world revision `r2`, and only then a
   movement cost table** (registered 2026-07-26, gate C R15 item 6). The authored

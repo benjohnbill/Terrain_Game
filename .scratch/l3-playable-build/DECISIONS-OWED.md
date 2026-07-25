@@ -909,6 +909,25 @@ matrix".
 
 ## Part 3 — Approve in bulk: values already running in code
 
+> **APPROVED 2026-07-26 (user), and landed at birthplaces the same session — except
+> the fog sub-batch, which Part 3's own precondition excludes.**
+>
+> | Sub-batch | Where it landed |
+> |---|---|
+> | Fatigue, movement, supply (14 dials) | **`docs/features/war-model-build/MAGNITUDE.md` WB-M① and WB-M②** — a model doc created for the purpose, because this feature had none and that is why the dials had no birthplace. |
+> | Delaying defence (breakthrough R 2.0, erosion 0.15) | `docs/features/operation-plan-catalog/CATALOG.md`, at the Delaying Defense entry — the owning model doc for plan-shaped values. |
+> | Bot (λ formula, disposition presets, siege/field commit, eligibility gates) | **Approved, birthplace owed.** They belong to ticket 12's contract and block nothing now; `docs/SYNC-DEBT.md` carries the row. |
+> | Fog band shape (4 constants in `js/intel.js`) | **Excluded, not refused.** Part 3 itself states they "cannot be approved until [Part 2 #5] resolves", and it is unresolved. Approving them would have sealed one side of a live conflict by accident. |
+>
+> Two debts were paid by the landing rather than by a ruling: **Part 2 #11** (the
+> ×0.5 fatigue floor — both sides always said 0.5, so it was a stamp) and the
+> SYNC-DEBT row for the missing movement birthplace. Every landed value carries an
+> **L1** stamp with its reason stated: these ran inside the L2 harness but were never
+> the *subject* of a sweep, so nothing measured them against a target. March speed is
+> the exception at **L2**, having been measured during gate C.
+>
+> Unblocked by this: **06a, 06b, 06c**.
+
 These are not decisions to originate. They are values that **already determine
 how the game behaves** and that no document records — so they have never been
 seen, let alone approved. The ask is to confirm or edit, then land them at a

@@ -1,5 +1,15 @@
 # War Model Build — Feature Index
 
+> **📐 `MAGNITUDE.md` created 2026-07-26 — this feature finally has an owning model
+> doc.** The slice-2 operational dials (fatigue, movement, supply) had **no
+> birthplace**: the design spec names each by number and leaves the value blank, the
+> archive filled them in, and nothing brought them back. All fourteen are now sealed
+> there as **WB-M①** and march speed as **WB-M②**, on the user's 2026-07-26 Part 3
+> bulk approval. Two riders pay old debts: the ×0.5 effectiveness floor is stamped as
+> the sealed anchor (dissolving `DECISIONS-OWED.md` Part 2 #11, where both sides
+> already said 0.5), and dial 9 (does recovery require standing still) stays
+> deliberately **HELD**. Shape authority stays with the design spec and ADR 0043.
+
 **Status:** OPENED 2026-07-13 (R14 war-decisiveness co-analysis). **Slice 1
 — decisive-battle spine calculator — SEALED 2026-07-13 (`RULINGS.md`
 WM-①)**: `js/battle.js` + `mockup/decisive-battle/battery.js` merged to
