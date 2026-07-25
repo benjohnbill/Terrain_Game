@@ -7,6 +7,22 @@ rout, escape, fatigue — land on the board. Ticket 03's stub
 
 **Blocked by:** 06b — fatigue is an input to the product.
 
+> **SPLIT 2026-07-26 — the calculator half may be built ahead, in parallel.** This
+> ticket's *pure calculation* — the per-side power product, the M2 lever curve, M5
+> terrain and fortification, M4 rout and escape, the two defence methods — needs no
+> match state and can therefore run concurrently with 06a. It is scoped by
+> `.context/handoff-codex-06c-battle-calculator.md` and lands as a new pure module
+> `game/src/domain/battle.ts` that **imports nothing from `domain/state.ts`**, which
+> is the whole reason the parallelism is safe.
+>
+> **What stays blocked by 06b is the wiring**: replacing ticket 03's
+> `outcome: 'pending-operations'` stub, drawing substance from the detachment
+> actually at the front (06a), taking fatigue from the ledger (06b), shrinking the
+> register on casualties (and 06d re-cuts that to per-province, R18 iii), the
+> `turn.ts` case-4 adjudication, ordered event emission, and the surge-curve
+> re-measurement. **Check whether `domain/battle.ts` already exists before building
+> it** — if it does, this ticket is the adapter and the wiring, not the formula.
+
 Status: needs-info — see § Needs-info.
 
 Specification gates: Wayfinder 10, 12.
