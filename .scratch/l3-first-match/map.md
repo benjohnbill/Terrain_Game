@@ -222,6 +222,48 @@ the play session, and fun is the next map's business.
   as **Part 2 #15** for ticket 06. Full result:
   `.scratch/l3-playable-build/issues/05-…md` § Comments.
 
+- **Gate C SEALED — the operational layer moves, and conquest integrates**
+  (2026-07-26, user; rulings R12–R17, ADRs 0043 + 0044). The two kind-1 seal
+  conflicts blocking ticket 06 are both closed, and neither closed the way the row
+  predicted.
+
+  **#14 → R12–R15.** The row was framed as three-way (`Position as product` vs
+  gate 08 vs the slice-2 movement contract), but reading the landed build moved the
+  question: `readFronts` resolves a front from **chips alone** while the sealed
+  formula is `substance × lever × quality × fatigue`, so nothing said how *substance*
+  reaches a front. Position now exists; **hex-denominated math with destination-grain
+  orders** (a distinction the seals already drew and the row had collapsed); a march
+  costs **turns and fatigue, never commit** — commit is a multiplier and a march has
+  no multiplicand, and slice-2 §3 already refuses "a third resource"; march fatigue
+  accrues **per hex**; and **commit legality is reachability**, which reuses the
+  sealed reach cone with a second caller instead of adding a mechanism. Two holes
+  closed by lookup rather than ruling: M2's `0 points = ×1.00` already makes an
+  unattended garrison fight at its own strength, and `sectorAdjacency` was baked in
+  at ticket 02 *for* sector-level movement. Amends the Tier-0 `Position as product`
+  entry — what it protected (no hex-by-hex marching, no movement turn-toll) survives.
+
+  **#15 → R16–R17.** Both sides were damaged by the same ADR, so neither could win:
+  M14 ⑮ argued cap growth from a hegemony check ADR 0042 retired, and OG-③'s limbo
+  lost its settlement exit to the same ADR. A third seal, D5.3, turned out to sit
+  *downstream* of OG-③ — its "land loss never shrinks the register" was deduced from
+  permanent limbo, so it **dissolves** rather than being overridden. Conquered land
+  now transfers everything the land carries, on the unchanged ADR 0022/0029 ripening
+  lag, and the register succeeds **in proportion to the accumulated stock** so that
+  a bled-dry province cannot hand its taker fresh bodies. Snowball is accepted as
+  inherent; the three counterweight directions are recorded as a later session's
+  input and deliberately not designed.
+
+  **Two measurements this gate paid for.** (a) The claim that the march-speed dial
+  "does not transplant" is **retracted**: it compared 3 hexes/turn against sector
+  *size* (median 5) when what a march crosses is sector *spacing* (median **2**).
+  Speed 3 gives reinforcement in 1–2 turns, invasion in 2–3, lateral redeployment in
+  3–4 — so movement introduces **no new value**, only a Part 3 bulk approval. (b) The
+  pure hex graph has **two components**: only 15 of 17 authored edges are
+  hex-adjacent, and the two that are not are the `strait` doors into **r10, an
+  island**. Hex-only pathfinding would reject every march there as unreachable and
+  report it as correct behaviour, so the movement graph is hex adjacency ∪ authored
+  edges. Full text: `DECISIONS-OWED.md` § Rulings received 2026-07-26 (gate C).
+
 ## Owed right now
 
 Small, sharp, and not worth a ticket each — but they are owed, so they are listed

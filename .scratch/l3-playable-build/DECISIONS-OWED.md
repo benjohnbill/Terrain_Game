@@ -408,6 +408,205 @@ than owed.
 
 ---
 
+## Rulings received — 2026-07-26 (user, Wayfinder gate C)
+
+Gate C was opened to grill Part 2 **#14** and **#15**, the two kind-1 seal
+conflicts blocking ticket 06. Both are closed below. R12–R15 resolve #14, R16–R17
+resolve #15.
+
+### R12 — Movement enters the slice, priced in turns and fatigue, not commit · #14 CLOSED
+
+**Position exists.** The field army occupies a place, and it can be the wrong
+place. What made this a live question is narrower than the row recorded: the
+landed build resolves a front from **chips alone** (`readFronts`), while the
+sealed battle formula is `substance × commit lever × quality × fatigue` — so no
+rule anywhere said how *substance* reaches a front. That, not hex marching, was
+the gap.
+
+**Two layers the row conflated, and the seals already separate them:**
+
+- the **math** is hex-denominated — `DOMAIN_MAP` `Position as product` itself says
+  "Hexes keep doing movement *math* … as calculation substrate", and TC-⑪ froze
+  the resolution;
+- the **order** is destination-grain — slice-2 §3: "destination only; pathing is
+  automatic shortest passable route. No per-hex micromanagement."
+
+So "hex or sector" was never one question. Hex math, destination orders.
+
+**Movement consumes no commit.** Its price is turns + fatigue. Four grounds:
+
+1. Commit is a **multiplier** (the M2 lever), and a march has no multiplicand —
+   pouring chips does not make an army arrive *better*, only arrived or not.
+2. R2's linear-in-commit grammar grades an outcome (sectors scouted, fort
+   progress, men drafted). Movement's outcome is binary, so the grammar has
+   nothing to grade. This is not an exception carved out of R2; it is an item R2
+   never caught.
+3. Slice-2 §3 already prices movement's *graded* part — forced march — in
+   fatigue, and refuses a second resource in as many words: "**The wallet is the
+   fatigue gauge itself — no third resource.**"
+4. §4's enumeration of what commit buys (development, attack, defense,
+   reconnaissance) **omits movement**.
+
+**Amends `DOMAIN_MAP` ✅ `Position as product`:** its "no standalone move action"
+clause is retired. What that entry was protecting survives intact — no per-hex
+micromanagement (orders are destination-grain) and no movement turn-toll before
+an attack (R14). The amendment is recorded in ADR 0043; the entry keeps its
+Tier-0 summary+pointer form.
+
+### R13 — March fatigue accrues per hex
+
+Distance-proportional, not per-turn-on-the-road: *"피로도가 이동 거리에 비례해서
+발생한다고 보는 게 깔끔해 보여서."* This is also the archive's rate basis (per-hex
+accrual), so the basis is carried rather than invented; the rate **value** stays
+in the Part 3 bulk-approval batch.
+
+Recorded forward: distance and supply are expected to compose into a fatigue
+amplification later. **Morale (사기) is parked** — commit is judged to already
+absorb part of it, and whether a separate device is needed at all is its own
+grill, not this gate's business.
+
+### R14 — Commit legality is reachability, and arriving does not cost the turn
+
+Any force that can **reach** a front by resolution time may be committed to it.
+An army two-thirds of the way to a front and arriving next turn may take next
+turn's attack or defense commit now. The user's general form: *"전장이 확대되거나
+전장에 접근 가능한 상태인 군대는 언제나 공격/방어 등의 커밋과 바로 연결이 가능해.
+접근성에 따라 판단하면 될 듯."*
+
+**Zero new mechanisms — this is the sealed reach cone with a second caller.**
+`js/intel.js reachCone(graph, fixKey, turnsUnobserved, speed)` is a BFS to radius
+`turns × speed`. Fog asks it "where can the enemy be next turn"; legality asks it
+"can I be there this turn". One computation, two questions.
+
+Grounds: slice-2 §3's forced-march clause — "arrival fatigue already prices the R
+sacrifice" — *presupposes* arriving and fighting in the same turn, because
+otherwise there is no R to sacrifice into. And a game where arrival always costs
+a turn telegraphs every offensive, which removes surprise from the uncertainty
+duel (ADR 0025).
+
+Legality is Runtime-owned (gate 02), so an unreachable front is an illegal order
+the Runtime rejects and the UI greys — the caller does not police itself.
+
+**Confirmed by lookup rather than ruled:** a front with no field army still
+fights. M2 seals `0 points = ×1.00` — "an unattended garrison fights at its own
+strength." A field army marching away does not leave an open door.
+
+### R15 — The movement model
+
+1. A destination order produces **one route**: minimum **cost** on the hex graph.
+2. The route is split into turns by **cost fraction**, not distance fraction, so
+   a mountain turn covers fewer hexes than a plains turn. Today the two readings
+   coincide, because of item 6.
+3. **Redirect is free at any time.** A new destination recomputes the
+   minimum-cost route from the current position. Fatigue already spent is not
+   refunded — that is the whole price of changing your mind, and it needs no new
+   device because fatigue is already a spend ledger.
+4. The UI shows the field army's current position explicitly.
+5. **Substance at a front = the detachment(s) present or arriving.** Being in two
+   places requires §4's free division. Derived, not ruled: no new rule.
+6. **Terrain cost is uniform 1.0 today.** The authored per-hex terrain is a
+   region-painted placeholder — whole regions were painted one layer at a time,
+   which is why 116 of 292 hexes are `plains` and five or six regions are
+   uniformly so. A cost table built on it would harden the placeholder into a
+   rule. The extension point is hex-denominated and waits on the terrain-authoring
+   pass, which produces a new world revision (`r2`): TC-⑪ froze orientation and
+   resolution, not terrain values.
+7. **The movement graph is hex adjacency ∪ the authored edges.** Measured: the pure
+   hex graph has **two** components — 274 hexes (r1–r9) and 18 (r10) — because only
+   15 of 17 authored edges are hex-adjacent at their endpoints. The two that are not
+   are both `strait`, and both are the doors into **r10, an island**. Hex-only
+   pathfinding therefore rejects every march into r10 as unreachable, and item 3's
+   "an unreachable order is rejected" would report that defect as correct
+   behaviour. All 17 edges are links; the 15 redundant ones are cheaper to include
+   than to special-case, and `choke.cap` still bounds projectable mass through the
+   door.
+8. **Speed stays at the archive's 3 hexes/turn — no new value.** Measured on
+   `terrain-cradle@r1`: reinforcement 1–2 turns (own depth → own front, median 3 /
+   p75 5), invasion 2–3 (own front → enemy sector, median 5 / p75 7), lateral
+   redeployment 3–4 (front → front, median 8 / p75 10). Fast local response against
+   costly redeployment is the spread that makes position matter; speed 2 makes
+   redeployment 4–5 turns and speed 4 drops it to 2–3. This lands in the **Part 3
+   bulk-approval** batch rather than as a new value, and because the reach cone's
+   radius is `turns × speed`, approving it settles a fog dial at the same time.
+
+### R16 — Conquered land transfers fully, and ripens · #15 CLOSED
+
+**What transfers: everything the land carries** — population, economy, the
+conscription register share (R17), and the mobilization base. This is a direct
+consequence of the Tier-0 principle **land-derived state**: if population and
+economy are derived from land, they travel with it. The user: *"영토가 귀속된다는
+것은 그 땅에 속한 인구와 경제력도 함께 귀속됨을 의미하기 때문입니다."*
+
+Mobilization intensity needs no rule — it is already a derived ratio in the code
+(`marginalPrice(intensity)`), so it re-reads itself from the new totals.
+
+**Speed: the ADR 0022 / 0029 ripening lag, unchanged** — fresh capture at 50%
+usable economy / 60% usable population, +10pp per stable turn. Instant full
+transfer is not an option: the `AGENTS.md` guardrail bars it directly ("Avoid
+treating conquest or control as an instant full-value transfer").
+
+Ripening applies to **productivity** — income and the force limit — per 0029's own
+wording ("yield AND military ceiling"). The register is a body count, not
+productivity, and transfers unripened.
+
+**Framing correction (user):** the lag is not a risk device. It is the fruit
+arriving slowly. The agent had promoted 0029's "counterattack window" phrase into
+an anti-runaway mechanism; the user rejected that reading.
+
+**What this does to the three seals in play:**
+
+- **OG-③'s limbo stops being terminal.** Conquest becomes the transfer channel
+  that settlement used to be. OG-③ still governs the interval before
+  integration; it no longer describes an end state.
+- **D5.3 dissolves rather than being overridden.** Its "land loss does not shrink
+  the register" was *deduced* — limbo is permanent → the only transfer channel is
+  settlement → a duel has no settlement → therefore the register never moves. The
+  first link is now false, so the chain unwinds without a seal having to lose.
+  D5.3's own flagged L3 watch ("lost half my land, why is my register intact?")
+  is resolved in the direction it worried about.
+- **M14 ⑮'s conclusion survives its grounds.** ⑮ argued cap growth from "96% of
+  matches never trip the hegemony check" — a check ADR 0042 retired. The
+  conclusion (conquest raises the cap) is re-grounded here on land-derived state
+  rather than on match closure, because closure is now carried by capital fall
+  plus the D6.4 land decay.
+
+**Snowball: accepted as inherent to a conquest game.** The counterweight is
+explicitly *not* to be found in limiting growth from land. Three directions are
+recorded as input to a later session and **deliberately not designed here** (user
+ruling: designing them now would stretch the session):
+
+- (a) **the defender's structural advantage** — already mechanical, and confirmed
+  by lookup: M5 gives defense up to ×2.0 terrain × ×2.4 fortification = **×4.8**,
+  while M2's commit lever is symmetric at ×1.00–×2.00. At equal commit the
+  defender holds a large asymmetric edge the attacker must pay for in substance.
+  The formula being a product is what makes levers cheaper than mass.
+- (b) **holding out, then counterattacking into an Opening** (the sealed situation
+  axis).
+- (c) **breadth costing cognitive load**, and coarsening the commit-allocation
+  unit so the risk unit grows with the realm. This one has no device anywhere and
+  is the genuinely new work.
+
+*Owes:* a research-only survey of precedents for (a)–(c), user confirmation, then
+a document. Not a design pass.
+
+### R17 — The register succeeds in proportion to the accumulated stock
+
+On capture the taker gains `loser's current register × (transferred population ÷
+loser's total population)`, and the loser's register falls by the same amount.
+Conservation, on OG-③'s R2 rider ("conservation holds both ways … never silently
+discarded").
+
+**Not** the land's nominal `1,800 × populationValue`. A province already bled dry
+would otherwise hand its taker fresh bodies — resurrecting dead men as the
+enemy's draftees, and breaking the SPEC principle that blood is permanent
+currency.
+
+Zero new state: no per-sector register is needed. A realm-level stock spread
+proportionally across its own population *is* the accumulated-state reading the
+user asked for — *"상대방이 축적해 온 … 기반 상황을 통째로 가져오는 셈."*
+
+---
+
 ## Part 1 — Blocking the walking skeleton (tickets 01→07)
 
 These stop the loop from closing. Everything else can wait behind them.
@@ -660,9 +859,9 @@ Both sides are sealed; the agent stops. Ordered by how early each bites.
 | 11 | Fatigue effectiveness floor | Slice-2 spec: "floor ×0.5 (**가안**, cited, not re-sealed)" | Same file, 72 lines later: "floor ×0.5 is a **sealed anchor**" — which the code implements | ticket 06 |
 | 12 | Bot decisiveness ladder | `tactical-plan-ai` RULINGS ranks **vassalization** as the top rung | ADR 0042 retired settlement as a terminus entirely | ticket 12 |
 | 13 | 판세 in-play surface | *already registered in* `docs/SYNC-DEBT.md` | | ticket 04 |
-| 14 | **Does the operational layer track armies and move them?** | `DOMAIN_MAP.md` ✅ `Position as product`: the MVP has **no standalone move action and no tracked army counters** — position is a *product* of operations, and the runbook's own diff review (§ Implementation loop 7) lists "standalone movement" as forbidden scope | slice-2 design spec §3 movement contract + gate 08's full-compound-depth slice: armies hold hex positions, forced march is an explicit toggle, field armies divide and merge — which is army counters and standalone movement | ticket 06 |
+| 14 | **Does the operational layer track armies and move them?** — **CLOSED by R12–R15** (2026-07-26, gate C) | `DOMAIN_MAP.md` ✅ `Position as product`: the MVP has **no standalone move action and no tracked army counters** — position is a *product* of operations, and the runbook's own diff review (§ Implementation loop 7) lists "standalone movement" as forbidden scope | slice-2 design spec §3 movement contract + gate 08's full-compound-depth slice: armies hold hex positions, forced march is an explicit toggle, field armies divide and merge — which is army counters and standalone movement | ticket 06 |
 
-| 15 | **Does conquered land ever start paying its taker?** | `MAGNITUDE.md` M14 + ruling ⑮: "conquest raises the national cap", at a usable discount (fresh capture 50/60%) — sealed as the match-closure lever; ADR 0022/0029 supply the ripening that integrates it | OG-③: occupied-untransferred land "counts toward NEITHER side's derived quantities", and the transfer channel that ended limbo was **settlement**, which ADR 0042 retired for the duel — leaving no path from occupied to integrated | ticket 06 |
+| 15 | **Does conquered land ever start paying its taker?** — **CLOSED by R16–R17** (2026-07-26, gate C) | `MAGNITUDE.md` M14 + ruling ⑮: "conquest raises the national cap", at a usable discount (fresh capture 50/60%) — sealed as the match-closure lever; ADR 0022/0029 supply the ripening that integrates it | OG-③: occupied-untransferred land "counts toward NEITHER side's derived quantities", and the transfer channel that ended limbo was **settlement**, which ADR 0042 retired for the duel — leaving no path from occupied to integrated | ticket 06 |
 
 Row 15 was **found 2026-07-26** by the ticket-05 code review, which caught the
 implementation answering it by accident (a frozen homeland record made limbo
@@ -680,11 +879,15 @@ Row 14 was **found 2026-07-26**, outside the original sweep, while sizing ticket
 - It is a **three-way** conflict, not two-sided: `Position as product` (MVP
   grammar), gate 08 § Answer (full compound depth, which bought depth over
   smallness knowingly), and the slice-2 movement contract cannot all be built.
-- **The dial does not transplant even if the conflict resolves toward slice-2.**
-  Its march speed is *3 hexes per turn*, but L3 sectors are a median of **5 hexes**
-  (measured on `terrain-cradle@r1`: 56 sectors, 3/5/8 hexes min/median/max), so an
-  army would not cross one sector in a turn. A sector-level speed is a genuinely
-  new value — and it also sets the fog reach cone's radius, so it moves ticket 08.
+- **RETRACTED 2026-07-26 by measurement (R15) — this bullet previously claimed the
+  march-speed dial does not transplant. It does; do not act on the old reading.**
+  The claim was that 3 hexes/turn cannot cross a median 5-hex sector in a turn.
+  The 5 was right (sector *size*: 56 sectors, 3/5/8) but the inference was not:
+  what a march crosses is sector *spacing*, and adjacent sectors are a median of
+  **2 hexes** apart centroid-to-centroid (1/2/3/5 over 84 pairs). Speed 3
+  transplants, so movement needs **no new value** — only Part 3 bulk approval of a
+  value already running. Full derivation and the turn table: ADR 0043
+  § Consequences.
 - **Ticket 06 is not one ticket.** Its twelve acceptance items span the whole
   slice-2 operational layer plus the slice-1 combat core; the archive built that
   surface across **eleven** tickets. Resolving row 14 re-cuts 06 rather than

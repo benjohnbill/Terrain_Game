@@ -1,41 +1,52 @@
-# 06 — Resolve the Decisive-Battle Core
+# 06 — The Operational Layer (re-cut index)
 
-**What to build:** Real combat resolution behind the turn loop's reveal. A
-symmetric per-side power product decides a per-sector decisive battle, and its
-products — control, routes, fatigue, reachability, rout and escape — land on the
-authored world. Stubbed resolution from ticket 03 is replaced here.
+**RE-CUT 2026-07-26 by Wayfinder gate C. This file no longer carries acceptance
+items; it is the index for 06a–06d.** Do not implement against this file.
 
-**Blocked by:** 03 — Close the Simultaneous Commit-and-Reveal Turn Loop.
+Status: re-cut (superseded by 06a, 06b, 06c, 06d)
 
-Status: needs-info
+## Why it was re-cut
 
-Specification gates: Wayfinder 10, 12.
+The original ticket carried twelve acceptance items spanning the whole slice-2
+operational layer **plus** the slice-1 combat core — a surface the reference
+archive built across eleven tickets. It was also blocked on two kind-1 seal
+conflicts, `DECISIONS-OWED.md` Part 2 **#14** and **#15**, both of which are now
+closed by gate C (rulings R12–R17, ADR 0043 + ADR 0044).
 
-Contract (interim pointers): `docs/features/combat-formula/FORMULA.md` D1–D11
-(deterministic ratio core, sector ledger, saturation lever);
-`docs/features/combat-formula/MAGNITUDE.md` M1–M14 (M2 commit lever curve,
-M4 convexity, M5 terrain and fortification); `docs/features/war-model-build/`
-RULINGS WM-①/WM-② and the slice-2 design spec §0–§13 (fatigue dual ledger,
-movement contract and forced march, supply predicate, free field-army division
-with total preservation, 창 산술); ADR 0015 (river crossing is an engagement
-cost, not a movement cost); ADR 0032.
+Closing #14 did not unblock the ticket; it revealed that the missing piece was
+**upstream of combat**. The landed turn loop resolves a front from committed chips
+alone (`readFronts`), while the sealed battle formula is
+`substance × commit lever × quality × fatigue` — so no rule said how *substance*
+reaches a front. A field army had no position at all. Combat cannot be built on
+top of that gap, which is why the movement substrate is now its own ticket and
+comes first.
 
-**Re-implementation, not translation (ADR 0041).** The archive codes only part of
-this: `js/battle.js` carries the R-ratio core plus Stronghold and Delaying, and
-`js/fatigue.js` / `js/movement.js` / `js/field-army.js` / `js/commit.js` carry
-the slice-2 behavior. All of it is **evidence to verify against**, never a module
-to import or a file to port line by line. The authority is the contract above.
-The archive is not a parity comparator for behavior it never ran.
+## The cut
 
-- [ ] A battle resolves from a symmetric per-side power product (substance × commit lever × quality × fatigue); neither side gets an attacker-only or defender-only term the other lacks.
-- [ ] The defending field army carries its own commit lever; the retired flat march-worn default is not reintroduced as a hidden constant — where a test needs it, it is passed explicitly.
-- [ ] The commit lever converts allocated 행동력 into a quality multiplier along the sealed M2 curve.
-- [ ] Fatigue runs as the sealed dual ledger: march and battle accrue on the convex curve with a floor, supply failure produces starvation as substance loss only, and no path inverts capability.
-- [ ] Movement obeys the deterministic reachability graph on the world artifact; forced march is an explicit fatigue-paying toggle; an unreachable order is rejected rather than silently clamped.
-- [ ] The supply predicate governs whether a force is supplied, with no unit and no sector exempted by class — including a capital sector.
-- [ ] Field armies divide and merge freely with total preservation: substance is bit-exact across a division, and merge is a size-weighted average whose documented round-trip tolerance is stated rather than claimed exact.
-- [ ] Terrain and fortification enter defense through the sealed M5 magnitudes; river crossing prices the engagement, not the movement.
-- [ ] Rout and escape follow M4, and defeat-in-detail appears as an emergent consequence of convexity plus a thinned ratio — there is no special defeat-in-detail rule.
-- [ ] Resolution is atomic per sector, reports its ordered board-changing events, and is deterministic for equal inputs.
-- [ ] No retired mechanism is invoked: no stage conveyor, no bot stall timer, no per-front uniform-defense placeholder, no legacy victory check.
-- [ ] Behavior carried forward from the archive is classified (accepted / superseded / incidental) before use, and replacement tests cover only what is deliberately carried.
+| Ticket | What it builds | Blocked by |
+|---|---|---|
+| **06a** | Move a field army: position, the movement graph, destination orders, division and merge | 03, 05 |
+| **06b** | The fatigue and supply dual ledger | 06a |
+| **06c** | Resolve the decisive battle | 06b |
+| **06d** | Capture a sector and integrate it | 06c |
+
+Ticket **07** (capital fall) is blocked by **06d**, not by this file: R1 makes a
+capital fall an ordinary sector capture, so the capture path must exist first.
+
+## Shared contract (all four inherit)
+
+- `docs/adr/0043-operational-layer-movement-position-and-reachability.md` —
+  position, the price of a march, reachability legality.
+- `docs/adr/0044-conquest-integrates-on-the-ripening-lag.md` — what a captured
+  sector pays, and when.
+- `DECISIONS-OWED.md` § Rulings received 2026-07-26 (gate C) — R12–R17 in full,
+  with the measurements and the two retractions.
+- `docs/features/combat-formula/FORMULA.md` D1–D11 · `MAGNITUDE.md` M1–M14 ·
+  `docs/features/war-model-build/` RULINGS WM-①/WM-② · the slice-2 design spec
+  `docs/superpowers/specs/2026-07-14-slice2-operational-layer-design.md` §0–§13 ·
+  ADR 0015 (river crossing prices the engagement, not the march) · ADR 0032.
+
+## Shared hygiene (all four inherit — the original items 11 and 12)
+
+- [ ] No retired mechanism is invoked: no stage conveyor, no bot stall timer, no per-front uniform-defense placeholder, no legacy victory check, no settlement terminus (ADR 0042).
+- [ ] Behavior carried forward from the archive is classified (accepted / superseded / incidental) before use, and replacement tests cover only what is deliberately carried. **Re-implementation, not translation (ADR 0041)**: `js/battle.js`, `js/fatigue.js`, `js/movement.js`, `js/field-army.js`, `js/commit.js`, `js/intel.js` are evidence to verify against, never modules to import or files to port line by line. The archive is not a parity comparator for behavior it never ran.

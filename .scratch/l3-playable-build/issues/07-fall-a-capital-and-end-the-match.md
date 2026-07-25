@@ -7,7 +7,9 @@ explicit victory screen. **After this ticket a complete match can be played from
 setup to victory** — thin, but closed. Every later ticket thickens a terminating
 game rather than an open-ended one.
 
-**Blocked by:** 06 — Resolve the Decisive-Battle Core.
+**Blocked by:** 06d — Capture a Sector and Integrate It. (Ticket 06 was re-cut into
+06a–06d by gate C, 2026-07-26. R1 makes a capital fall an ordinary sector capture,
+so the capture path is the real blocker, not the battle alone.)
 
 Status: needs-info
 

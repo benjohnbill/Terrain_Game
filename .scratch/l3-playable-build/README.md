@@ -71,7 +71,11 @@ leaves this table by having its blocking value landed at a birthplace.
 | 03 | ✅ gate 02 | ✅ **R8 sealed § 1.3** (2026-07-25); the 행동력 stack size is recorded (ledger D6.3, 가안 20) and the non-combat unit prices R2 left unset are not invoked by this ticket | **LANDED 2026-07-25** |
 | 04 | ✅ gate 07 | ❌ 판세 in-play surface (Part 2 #13) | needs-info |
 | 05 | ✅ | ✅ **recomputed 2026-07-26** — the row's "decay dials unlanded" was stale: all five verified at their birthplaces (`capLandFrac 1` AB-②, `registerPerPop 1,800` / `capPerPop 600` / sustain ⅓ MT-②+M13, ripening ADR 0022/0029). The scope widened by **R9** (force model + recruitment) adds no undetermined value: **R10** found the commit→recruitment unit already sealed (MT-③ +1%p/point) and **R11** adopted the four archive-only numbers as recorded 가안 | **LANDED 2026-07-26** |
-| 06 | ✅ | ❌ **Part 2 #14** — does the operational layer track and move armies at all (found 2026-07-26; a Wayfinder gate after 05 lands, not a value). Part 2 #11 (fatigue floor) is a stamp, not a blocker: both sides say ×0.5 | needs-info |
+| 06 | — | — | **re-cut 2026-07-26 into 06a–06d** (gate C); the file is an index |
+| 06a | ✅ | ✅ **gate C closed Part 2 #14** (R12–R15, ADR 0043). The one value is an *approval*, not an origination: march speed 3 + forced-march premium 3.0 + 2-hex cap are Part 3 rows, and the gate C measurement retracted the "the dial does not transplant" claim — adjacent sectors are a median of **2** hexes apart, not 5 | needs-info (Part 3 batch only) |
+| 06b | ✅ | ❌ the Part 3 fatigue/supply batch (nine dials the spec left blank and the archive filled in). Part 2 #11 (fatigue floor) is a **stamp**, not a blocker: both sides say ×0.5 | needs-info |
+| 06c | ✅ | ❌ 06b's batch + the delaying-defence 가안 (breakthrough R 2.0, erosion 0.15). Part 2 #2 (Encirclement) is **not** in scope here and must not be resolved by implication | needs-info |
+| 06d | ✅ | ❌ **garrison regeneration rate** — genuinely unlanded: M5 exports it by name and no later stage received it. Kind-2 batched value. Everything else is sealed by gate C (R16/R17, ADR 0044) + ADR 0022/0029 | needs-info |
 | 07 | ✅ | ❌ capital guard magnitude (Part 2 #10); CP-① item 3 stale (§ 1.8) | needs-info |
 | 08 | ✅ | ❌ Part 2 #1, #4, #5, #6 — the whole fog band | needs-info |
 | 09 | ✅ | ❌ Part 2 #3; the tactical-R composition | needs-info |
@@ -117,8 +121,11 @@ actionable — it re-cut their *shapes*, not their authority.
 | 03 | a turn cycles: blind commit → simultaneous reveal → resolve → N+1 | 02 |
 | 04 | the commit-first shell is the way the game is actually operated | 03 |
 | 05 | holding less land visibly costs income and force ceiling | 03 |
-| 06 | a real decisive battle resolves and changes the board | 03 |
-| 07 | **a capital falls and the match ends — the loop closes** | 06 |
+| 06a | a field army stands somewhere, marches, divides and merges | 03, 05 |
+| 06b | marching and fighting tire an army; a cut supply line starves it | 06a |
+| 06c | a real decisive battle resolves | 06b |
+| 06d | ground changes hands and starts paying its taker | 06c |
+| 07 | **a capital falls and the match ends — the loop closes** | 06d |
 | 08 | reconnaissance changes what the player knows | 07 |
 | 09 | the EVAL BAR reads the engagement and the commitment | 08 |
 | 10 | plans are a real choice, not one generic attack | 09 |
@@ -126,8 +133,13 @@ actionable — it re-cut their *shapes*, not their authority.
 | 12 | a bot plays the same instruments the human does | 11 |
 | 13 | one full-depth match runs to capital fall, undistorted | 12 |
 
-Tickets 05 and 06 are both unblocked by 03 and may be taken in either order; 07
-needs 06. Everything else is a chain.
+**Ticket 06 was re-cut into 06a–06d by Wayfinder gate C (2026-07-26)**; the old
+`06-…md` is now an index, not a work unit. The cut is a chain — the operational
+layer's position substrate (06a) turned out to be *upstream* of combat rather than
+beside it, because the landed turn loop resolves a front from committed chips alone
+while the sealed formula needs substance, and a field army had no position at all.
+07 needs 06d, since R1 makes a capital fall an ordinary sector capture.
+Everything else is a chain.
 
 One implementation session claims one ticket. Do not combine adjacent tickets
 to save setup time: the demoable boundary is also the failure-localization and
