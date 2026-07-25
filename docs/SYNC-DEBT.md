@@ -11,18 +11,26 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
 
 ## Open
 
-- [ ] **M13a's two start-state anchors contradict each other on the duel board**
-  (registered 2026-07-26, measured by ticket 05). `garrisonPerBorderSector 900`
-  and ρ = 0.75 were both calibrated on the L2 seat map, which gave a realm ~15
-  border sectors. `terrain-cradle@r1` under a 5+5 region partition gives ~5, so
-  the shield builds to **4,500** where ρ implies ~13,500, and the derived start
-  intensity is **25%, not the sealed 42%**. Downstream consequence, and the
-  reason this is not cosmetic: mobilization peaks at **41.7%** even at a full
-  field, just under MT-③'s 42% peace knee — so **the surge price curve never
-  fires for a whole match** and every draft bills at the flat Band-1 base. The
-  escalation R11 adopted is currently inert. **Owed: a user decision** on which
-  anchor gives (per-sector garrison, ρ, or the knee coordinates), not an agent
-  re-derivation. Rider recorded at `MAGNITUDE.md` M13a; measurement table at
+- [ ] **M13a's start-state coordinates were cut for a 5-seat board; a 1v1 cut
+  of the same terrain thins the shield threefold** (registered 2026-07-26 by
+  ticket 05, restated the same day after the cause was isolated).
+  `garrisonPerBorderSector 900` and ρ = 0.75 reproduce M13a exactly at **15
+  border sectors per seat**; enumerated over all 15 legal partitions of
+  `terrain-cradle@r1`, a 1v1 realm gets **3–8 (mean 6)**, so ρ at war footing
+  lands near 0.25. The cause is the realm count, not the map: five contiguous
+  regions behind one frontier are mostly interior where two regions among five
+  seats were mostly frontier.
+  **Not a defect until measured.** The structural term is map-independent (the
+  sustain fraction ⅓ puts a full field at 33.3% intensity anywhere), the surge
+  curve's designed trigger is register erosion from deaths, and ticket 05 has no
+  deaths in it — 429 cumulative casualties clear the 42% knee at B = 5, and the
+  curve is live in peace at B ≥ 6. Restoring ρ = 0.75 by tripling garrisons would
+  also risk re-importing the thick-shield freeze the duel pivot escaped
+  (L2: decided 21%→7%).
+  **Owed: a re-measurement, then a user decision if one is still needed** —
+  after ticket 06 lands deaths and ticket 07 runs a whole match. Pairs with the
+  treasury-sink row below; the user parked both as play questions 2026-07-26.
+  Rider at `MAGNITUDE.md` M13a; measurement table at
   `.scratch/l3-playable-build/issues/05-…md` § Comments.
 
 - [ ] **The realm economy has no sink after the field fills** (registered
@@ -31,7 +39,10 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   by turn 12 against an income of 32). Expected — attrition, fortification and
   the rest of the spends arrive with ticket 06 and after — but it means the
   **income half of the D5.1 decay engine is not yet load-bearing**, and the
-  ceiling half carries the whole anti-fizzle claim. Re-measure once 06 lands;
+  ceiling half carries the whole anti-fizzle claim. **User ruling 2026-07-26:
+  parked as a play question, not a calculation** — how much scarcity money should
+  impose depends on how much a player actually spends executing strategies and
+  how much they recruit, which only real play shows. Re-measure once 06 lands;
   nothing to decide before then.
 
 - [ ] **R6 per-ticket authority waiver — gate-12 publication deferred behind the

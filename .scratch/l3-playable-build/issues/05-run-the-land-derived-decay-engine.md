@@ -122,22 +122,53 @@ Force limit 18,000 · income 32.12/turn · register 54,000 · garrison 4,500.
 **Two findings the ticket did not predict, both worth the user's attention and
 neither fixable without originating a value:**
 
-1. **The surge price curve never fires on this board.** Mobilization tops out
-   at **41.7%**, just under MT-③'s peace knee of **42%** — so every draft in a
-   whole match is billed at the flat Band-1 base and the escalation R11 adopted
-   is inert. The cause is a board mismatch rather than an implementation
-   choice: M13a's `garrisonPerBorderSector 900` was calibrated on the L2 seat
-   map, and the duel board has roughly a third as many border sectors per
-   realm (5 here), so the shield is 4,500 where MT-④'s ρ = 0.75 anchor implies
-   ~13,500. The two M13a anchors — per-border-sector garrison and the 42%
-   start intensity — **cannot both hold on this map**. Registered for the user;
-   nothing here guesses at a new figure.
+1. **The surge price curve is quiet in peacetime, and the cause is the realm
+   count.** *(First reported as "never fires"; corrected 2026-07-26 after
+   isolating the cause — the original wording was true of the measured world and
+   false of the design.)*
+
+   Mobilization splits into two terms. The structural one is map-independent:
+   `capPerPop 600` against `registerPerPop 1,800` makes the sustain fraction ⅓,
+   so **a full field army is 33.3% intensity on any board**. Only the garrison
+   shield lifts peacetime intensity above that, and the shield is
+   `900 × border sectors` — which the partition decides.
+
+   | border sectors / realm | ρ at war footing | full-field intensity |
+   |---|---|---|
+   | 3 | 0.15 | 38.3% — quiet |
+   | 5 *(this seed)* | 0.25 | 41.7% — quiet |
+   | 6 | 0.30 | 43.3% — **live** |
+   | 8 | 0.40 | 46.7% — **live** |
+   | **15** | **0.75** | **58.3%** |
+
+   Enumerated over all 15 legal partitions: **3–8 per realm, mean 6**, so roughly
+   half of matches have the curve live even in peace. The bottom row identifies
+   the board M13a was cut on — at B = 15 its sealed coordinates reproduce
+   exactly (42% half field, 58% full). **Same terrain, different cut**: a 5-seat
+   map gave each seat two regions and nearly all frontier; a 1v1 realm holds five
+   contiguous regions behind a single frontier and is mostly interior.
+
+   **The curve's designed trigger is not peacetime fill — it is blood.** Deaths
+   shrink the register permanently while the land-derived ceiling does not, so a
+   bled realm rebuilding pays into the steep band (MT-③'s own reading). At B = 5,
+   **429 cumulative deaths** clear the 42% knee and **15,207** reach the 58%
+   structural max. Ticket 05 has no path by which anyone dies, so it measured
+   precisely the condition under which the curve is meant to be silent.
+
+   **Open, not tuned here.** Whether the thinner shield is a defect is a real
+   question: the L2 board's freeze (decided 21%→7%) was caused by *thick* shields,
+   so restoring ρ = 0.75 could re-import what the pivot escaped. Re-measure after
+   06 (deaths) and 07 (a whole match).
 2. **Money binds exactly once, on turn 1.** `treasuryStart 5` buys 999 men
    against an order of 3,600; from turn 2 income outruns every draft, and once
    the field is at its ceiling the treasury grows without a sink (345 by turn
    12). Expected for this slice — attrition and the other spends arrive with
    06 and after — but it means the *income* half of the decay engine is not
    yet load-bearing, and the *ceiling* half is doing all of the work.
+   **User ruling 2026-07-26: parked as a play question.** How much scarcity money
+   should impose depends on what strategies actually cost to execute and how much
+   a player recruits — a composite only real play resolves, and one the seal
+   system was built anticipating.
 
 ### Scope held out, per R9
 

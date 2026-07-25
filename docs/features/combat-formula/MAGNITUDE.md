@@ -854,17 +854,42 @@ formula, the rest pinned from history:
   21%→7%, Vauban indecisive-war signature) — the tilting devices'
   target, not a reason to unseal.
 
-**Rider — the anchors do not both hold on the duel board (measured
-2026-07-26, ticket 05 instrumentation).** `terrain-cradle@r1` under a 5+5
-region partition leaves a realm roughly **5 border sectors**, where the L2
-seat map gave ~15. So `garrisonPerBorderSector 900` builds a shield of
-**4,500** while ρ = 0.75 against an 18,000 field ceiling implies ~13,500 —
-and the derived **start intensity lands at 25%, not 42%**. Consequence
-downstream: even at a full field, mobilization peaks at **41.7%**, just
-under the MT-③ peace knee, so the surge price curve never fires for a whole
-match. **Not resolved here.** Reconciling the per-border-sector garrison
-with ρ — or re-cutting either for a map with a third the border — is a user
-decision; ticket 05 registered it rather than guessing. Measurement table:
+**Rider — these coordinates were calibrated at 15 border sectors per seat,
+and a 1v1 cut of the same terrain gives 3–8 (measured 2026-07-26, ticket 05
+instrumentation; corrected the same day).**
+
+Mobilization decomposes into a structural term and a map term. The
+structural one is map-independent: `capPerPop 600` against `registerPerPop
+1,800` makes the sustain fraction exactly ⅓, so **a field army at its
+ceiling is 33.3% intensity on any board, at any realm count**. Only the
+garrison shield can lift peacetime intensity above that — and the shield is
+`900 × border sectors`, which is precisely what the partition decides.
+
+Enumerated over all 15 legal partitions of `terrain-cradle@r1`: **3–8 border
+sectors per realm, mean 6**. At **B = 15 these coordinates reproduce exactly**
+— 42% at half field, 58% at full — which identifies the board they were cut
+on: a 5-seat map where each seat held two regions and was nearly all
+frontier. A 1v1 realm holds five contiguous regions behind one frontier, so
+ρ at war footing lands near **0.25 rather than 0.75**.
+
+**The cause is the realm count, not a different map.** Same terrain; fewer
+cuts, less border, a thinner shield.
+
+**What this does NOT mean.** The surge curve is not broken. Its designed
+trigger is **register erosion**: deaths shrink the register permanently while
+the land-derived ceiling does not, so a bled realm rebuilding pays into the
+steep band (MT-③'s own reading). At B = 5, **429 cumulative deaths** put a
+full-field realm past the 42% knee and **15,207** reach the 58% structural
+max; at B ≥ 6 the curve is live even in peace. Ticket 05 measured a world
+with no combat in it, which is exactly the condition under which the curve
+is supposed to be quiet.
+
+**Open, and deliberately not tuned here.** Whether a thinner shield is a
+defect or a benefit is a real question rather than a rhetorical one: the L2
+board's freeze (decided 21%→7%) was *caused* by thick shields, and restoring
+ρ = 0.75 by tripling garrisons risks re-importing the signature the duel
+pivot was escaping. Re-measure once deaths exist (ticket 06) and once a whole
+match runs (ticket 07). Measurement table:
 `.scratch/l3-playable-build/issues/05-…md` § Comments.
 
 ## M14 — Thin economy (2026-07-05, A-3 session; rulings ⑱–㉑)
