@@ -42,6 +42,20 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   genuinely new work.** **Owed:** a precedent survey, user confirmation, then a
   document. Explicitly **not** a design pass, and explicitly a later session.
 
+- [ ] **`conquest damage` is named in the seal chain and defined nowhere**
+  (registered 2026-07-26, found by the gate C snowball survey). ADR 0029 and the
+  match-arc `정산` GLOSSARY row both say settlement arrives undamaged "vs conquest
+  damage + M6 inheritance cost", and **no rule or value anywhere defines either
+  term.** Its only contrast was settlement, retired by ADR 0042, so the phrase now
+  floats with nothing on the other side. It is simultaneously a live candidate
+  device for the deferred snowball session ("freshly taken ground is weakly held" is
+  what counterweight directions (a) and (b) want). **Ticket 06d therefore builds it
+  as a named seam at identity 1.0**, so a later decision is a value change rather
+  than a redesign. **Owed:** either a definition or an explicit retirement of the
+  phrase, and the resolution of one tension — 노화 헌법 P2 permits permanent damage
+  only through identity acts (초토화, out of scope by R9), so conquest damage could
+  only act on recovery speed, which the ripening lag already does.
+
 - [ ] **Morale (사기) is parked, and the reason should not be lost**
   (registered 2026-07-26, gate C R13). The user's read: commit already absorbs
   part of morale's role, so a separate device may not be needed at all — and if it
