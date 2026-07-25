@@ -116,3 +116,4 @@ export type {
   ViewerId,
   WorldIdentity,
 } from './types.js';
+export * from '../domain/battle.js';
