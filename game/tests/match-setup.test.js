@@ -32,7 +32,7 @@ test('a match opens onto a two-realm board at the capital prompt', () => {
   assert.equal(view.realms.length, 2);
   assert.equal(view.realms[0].sectors.length + view.realms[1].sectors.length, 56);
   assert.ok(Math.abs(view.realms[0].population - view.realms[1].population) < 1e-9);
-  assert.deepEqual(view.capitalLocked, []);
+  assert.deepEqual(view.committed, []);
 });
 
 test('a duel seats exactly two actors', () => {
@@ -85,7 +85,7 @@ test('a sector the realm does not own is refused', () => {
   const events = runtime.submit({ kind: 'choose-capital', actor: 'realm-a', sector: theirs });
   assert.equal(events[0].type, 'intent-rejected');
   assert.match(events[0].detail.reason, /is not a sector "realm-a" owns/);
-  assert.deepEqual(runtime.view('observer').capitalLocked, [], 'a refused choice locked something');
+  assert.deepEqual(runtime.view('observer').committed, [], 'a refused choice locked something');
 });
 
 test('the choice is secret until both sides have locked', () => {
@@ -97,8 +97,8 @@ test('the choice is secret until both sides have locked', () => {
   // The *fact* of commitment is public (ruling R7): watching the opponent
   // deliberate is part of the contest, and both sides committing is what
   // advances the beat.
-  assert.deepEqual(runtime.view('realm-b').capitalLocked, ['realm-a']);
-  assert.deepEqual(runtime.view('observer').capitalLocked, ['realm-a']);
+  assert.deepEqual(runtime.view('realm-b').committed, ['realm-a']);
+  assert.deepEqual(runtime.view('observer').committed, ['realm-a']);
   // The *site* is not. That asymmetry is the whole mechanism.
   assert.deepEqual(runtime.view('realm-b').capitals, {}, 'the opponent could read an unrevealed capital');
   assert.deepEqual(runtime.view('realm-a').capitals, { 'realm-a': mine }, 'a player cannot see their own choice');
@@ -124,7 +124,9 @@ test('both sites are revealed together, and stay public', () => {
   for (const viewer of ['realm-a', 'realm-b', 'observer']) {
     assert.deepEqual(runtime.view(viewer).capitals, { 'realm-a': a, 'realm-b': b }, `hidden from ${viewer}`);
   }
-  assert.equal(runtime.view('realm-a').phase, 'in-play');
+  // 'in-play' became 'decision' with ticket 03: the turn loop's sole agency tier
+  // is what the capital beat hands over to (ledger D6.2).
+  assert.equal(runtime.view('realm-a').phase, 'decision');
 });
 
 test('both actors are legal callers at the same moment — the beat is simultaneous', () => {

@@ -121,6 +121,46 @@ test('camera and hover are interaction state — they change the view, not the m
   await expect(page.getByTestId('prompt')).toContainText('수도를 골라주세요');
 });
 
+test('a human can cycle a whole turn: commit, lock, watch it reveal, land on N+1', async ({ page }) => {
+  // Ticket 03's player-visible increment, exercised through the built viewer
+  // rather than only through the engine. The strip this drives is a grey-box
+  // probe — gate 07's commit-first shell is ticket 04's — but the loop under it
+  // is the real one.
+  const pickCapital = async (viewer) => {
+    await page.getByRole('combobox').selectOption(viewer);
+    const own = await page.evaluate(() => document.querySelector('.sector.selectable')?.dataset.sector);
+    await page.locator(`[data-sector="${own}"]`).click();
+  };
+
+  await pickCapital('realm-a');
+  await pickCapital('realm-b');
+
+  await expect(page.getByTestId('turn-strip')).toContainText('턴 1');
+  await expect(page.getByTestId('turn-strip')).toContainText('20/20 남음');
+
+  // realm-b (the viewer in focus) pours two chips onto its first front and locks.
+  const fronts = page.getByTestId('fronts').locator('tr');
+  await expect(fronts.first()).toBeVisible();
+  await fronts.first().getByRole('button', { name: '+1' }).click();
+  await fronts.first().getByRole('button', { name: '+1' }).click();
+  await expect(page.getByTestId('turn-strip')).toContainText('18/20 남음');
+  await page.getByTestId('lock').click();
+  await expect(page.getByTestId('turn-strip')).toContainText('대기 중');
+
+  // The opponent's allocation is not readable while the turn is still open.
+  await page.getByRole('combobox').selectOption('realm-a');
+  await expect(page.getByTestId('turn-strip')).toContainText('20/20 남음');
+
+  await page.getByTestId('lock').click();
+
+  // Both locked → reveal, resolve, and turn 2 opens, with no further click.
+  await expect(page.getByTestId('events')).toContainText('commitments-revealed');
+  await expect(page.getByTestId('events')).toContainText('front-resolved');
+  await expect(page.getByTestId('events')).toContainText('turn-opened');
+  await expect(page.getByTestId('turn-strip')).toContainText('턴 2');
+  await expect(page.getByTestId('turn-strip')).toContainText('20/20 남음');
+});
+
 test('the seed decides the board, and the same seed redraws the same one', async ({ page }) => {
   const layout = () =>
     page.evaluate(() =>

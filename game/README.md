@@ -11,6 +11,7 @@ evidence and never imported from here (ADR 0041).
 | Own ESM/TypeScript island beside the CommonJS root; built beside, never converted in place | Wayfinder gate 05 D1 |
 | `package.json` here carries **only** `{"type":"module"}` — the root owns dependencies, the lockfile, `node_modules`, and every script | gate 05 D2 |
 | The Runtime exposes exactly `currentActor`, `view(viewerId)`, `submit(intent)`; no snapshot API, no subscription API | gate 02 § 6 |
+| `currentActor` reads as the current **phase**, never as whose move it is; legality is "has this realm locked this turn / is the commit window open" | ruling R8 |
 | Rules read no DOM, renderer, browser global, wall clock, or ambient entropy — seed and clock are injected | ADR 0040, gate 02 § 6 |
 | One emitted ESM graph; Node and browser acceptance both load *that* artifact, never a per-host re-transpile | gate 05 D6 |
 | No archive module is imported here | ADR 0041 |
@@ -26,7 +27,7 @@ src/preview/      pure preview(view, intent), used by the UI and by bots alike
 src/bot/          decideBotIntent(view, seed), submitted through the same door
 src/renderer/     pure geometry over a projection; no DOM (so both hosts test it)
 src/ui/           the React viewer shell — drawing, camera, hover, focus
-acceptance/       the threshold registry and the `pending` mechanism
+acceptance/       the threshold registry, the `pending` mechanism, the replay fixture
 tools/            authoring-time only: bake-world, publish-gate. Never run at boot.
 tests/            Node contract tests, loading the emitted artifact
 tests/browser/    Playwright tests, loading the same emitted artifact

@@ -6,9 +6,10 @@
  * escape (gate 02 § 6).
  */
 
+import { contestedFronts } from './fronts.js';
 import type { LoadedWorld } from '../world/load.js';
 import type { SectorId } from '../world/schema.js';
-import type { ActorId, MatchPhase, WorldIdentity } from '../runtime/types.js';
+import type { ActorId, Front, MatchPhase, WorldIdentity } from '../runtime/types.js';
 import type { Rng } from '../runtime/rng.js';
 
 /** One side's holdings. Drawn at setup; ownership changes as the war does. */
@@ -42,21 +43,41 @@ export interface MatchState {
 
   turn: number;
   /**
-   * Sealed by gate 02 § 6 as `currentActor -> ActorId`, and implemented here
-   * exactly as sealed.
+   * This turn's blind allocations, per realm: front key -> chips.
    *
-   * That seal predates the duel pivot, which made both realms commit
-   * simultaneously and in secret (ledger D6.1). Re-expressing it — reading
-   * `currentActor` as the current *phase*, and legality as "has this realm
-   * already locked this turn" — is a standing proposal awaiting a ruling
-   * (`DECISIONS-OWED.md` § 1.3) and belongs to **ticket 03**, which owns the
-   * turn loop. Do not pre-empt it here.
-   *
-   * Note what the capital-selection phase already demonstrates: its legality
-   * rule is "has this realm locked yet", and it needs no single current actor at
-   * all. Gate 02's actual guarantee — the *Runtime*, not the caller, decides
-   * what is legal now — holds either way, which is the evidence ticket 03's
-   * ruling can lean on.
+   * Hidden from every viewer but its owner until both realms lock (ledger D6.1).
+   * Cleared by the background tier at renewal, because the stack does not carry
+   * over (D6.3).
    */
-  currentActor: ActorId;
+  commitments: Record<ActorId, Record<string, number>>;
+  /**
+   * Realms that have locked this turn's commitment.
+   *
+   * Note what is **not** here: a `currentActor` field. Gate 02 sealed that member
+   * on the Runtime's surface, and ruling R8 (2026-07-25) re-read it as the current
+   * *phase* — so the surface keeps the name while the state keeps no actor, because
+   * in a simultaneous turn there is no such thing as whose move it is. Legality is
+   * "has this realm locked this turn / is the window open", and this array plus
+   * `phase` is the whole of it.
+   */
+  turnLocks: ActorId[];
+}
+
+/** Who holds a sector. The renderer's `ownerOf` is this reader's view-side twin. */
+export function ownerOfSector(state: MatchState, sector: SectorId): ActorId | null {
+  for (const actor of state.actors) {
+    if (state.realms[actor]!.sectors.includes(sector)) return actor;
+  }
+  return null;
+}
+
+/**
+ * The board's contested fronts, over truth.
+ *
+ * One reader, called by the Runtime's legality rules, its resolution, and the
+ * projection alike. Three copies of this closure is how the Runtime and the view
+ * would come to disagree about what a front is.
+ */
+export function frontsOf(state: MatchState): readonly Front[] {
+  return contestedFronts(state.loadedWorld.artifact.edges, (sector) => ownerOfSector(state, sector));
 }

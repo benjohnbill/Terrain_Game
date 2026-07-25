@@ -17,13 +17,32 @@
  */
 
 import { capitalChoiceRefusal } from '../domain/capital-choice.js';
+import {
+  allocationRefusal,
+  lockRefusal,
+  spentOf,
+  TURN_COMMITMENT_BUDGET,
+  type CommitmentContext,
+} from '../domain/commitment.js';
+import { isPartyTo } from '../domain/fronts.js';
+import { frontsOf } from '../domain/state.js';
 import type { MatchState, Realm } from '../domain/state.js';
+import { readFronts, revealTurn } from '../domain/turn.js';
 import { project } from '../projection/project.js';
 import { drawPartition } from '../world/partition.js';
 import { loadWorld } from '../world/load.js';
 import type { SectorId } from '../world/schema.js';
 import { createRng } from './rng.js';
-import type { ActorId, Clock, GameEvent, Intent, MatchConfig, MatchView, ViewerId } from './types.js';
+import type {
+  ActorId,
+  Clock,
+  GameEvent,
+  Intent,
+  MatchConfig,
+  MatchView,
+  TurnTier,
+  ViewerId,
+} from './types.js';
 
 /** A clock that refuses to be read. Rules must never need one (ADR 0040). */
 const NO_CLOCK: Clock = {
@@ -95,15 +114,25 @@ export class Runtime {
       phase: 'capital-selection',
       capitals: {},
       turn: 1,
-      currentActor: actors[0]!,
+      commitments: {},
+      turnLocks: [],
     };
 
     return new Runtime(state, config.clock ?? NO_CLOCK);
   }
 
-  /** Whose move the Runtime is currently accepting. See `MatchState.currentActor`. */
+  /**
+   * Gate 02 § 6's sealed member, **read as the current phase** (ruling R8, SEALED
+   * 2026-07-25) — what may be submitted now, rather than whose move it is.
+   *
+   * A simultaneous turn has no single current actor: both realms are legal callers
+   * at the same moment, and legality is "has this realm locked this turn / is the
+   * commit window open". Gate 02's guarantee — the *Runtime*, not the caller,
+   * decides what is legal — never depended on alternation, so the member survives
+   * with its name, its type, and its purpose intact.
+   */
   get currentActor(): ActorId {
-    return this.#state.currentActor;
+    return this.#state.phase;
   }
 
   /** The viewer-safe projection. Blurred here, once. */
@@ -132,6 +161,13 @@ export class Runtime {
 
     if (intent.kind === 'choose-capital') {
       return this.#chooseCapital(intent.actor, (intent as { sector?: SectorId }).sector);
+    }
+    if (intent.kind === 'allocate-commitment') {
+      const { front, chips } = intent as { front?: unknown; chips?: unknown };
+      return this.#allocateCommitment(intent.actor, front, chips);
+    }
+    if (intent.kind === 'lock-commitment') {
+      return this.#lockCommitment(intent.actor);
     }
 
     return [
@@ -178,7 +214,9 @@ export class Runtime {
     ];
 
     if (state.actors.every((a) => a in state.capitals)) {
-      state.phase = 'in-play';
+      // The opening beat's own reveal, and the handover into the turn loop's sole
+      // agency tier. Nothing else happens between: there is no setup screen.
+      state.phase = 'decision';
       events.push({
         type: 'capitals-revealed',
         turn: state.turn,
@@ -187,6 +225,121 @@ export class Runtime {
     }
 
     return events;
+  }
+
+  /**
+   * What the spend rules need, assembled from truth.
+   *
+   * `preview` builds the same context from a projection, which is what keeps the
+   * two answering identically without either one reaching into the other's data.
+   */
+  #commitmentContext(actor: ActorId): CommitmentContext {
+    const state = this.#state;
+    const fronts = frontsOf(state);
+
+    return {
+      windowOpen: state.phase === 'decision',
+      alreadyLocked: state.turnLocks.includes(actor),
+      frontKeys: fronts.filter((front) => isPartyTo(front, actor)).map((front) => front.key),
+      allocations: state.commitments[actor] ?? {},
+      budget: TURN_COMMITMENT_BUDGET,
+    };
+  }
+
+  /** Pour part of the stack onto one front. Replaces that front's share (D6.3). */
+  #allocateCommitment(actor: ActorId, front: unknown, chips: unknown): GameEvent[] {
+    const state = this.#state;
+    const intent = { kind: 'allocate-commitment', actor };
+
+    const refusal = allocationRefusal(this.#commitmentContext(actor), actor, front, chips);
+    if (refusal !== null) return [this.#reject(intent, refusal)];
+
+    const key = front as string;
+    const amount = chips as number;
+    const allocations = (state.commitments[actor] ??= {});
+    if (amount === 0) delete allocations[key];
+    else allocations[key] = amount;
+
+    return [
+      this.#turnEvent('commitment-allocated', 'decision', {
+        actor,
+        front: key,
+        chips: amount,
+        // The realm's own totals. Public to nobody but this caller: the event is
+        // returned to whoever submitted, and the projection is where crossing is
+        // decided.
+        spent: spentOf(allocations),
+        remaining: TURN_COMMITMENT_BUDGET - spentOf(allocations),
+      }),
+    ];
+  }
+
+  /**
+   * Lock this turn's allocation — and, if that was the second realm, run the whole
+   * payoff and background tiers before returning.
+   *
+   * Both realms having committed is what advances the turn (ruling R7). There is
+   * deliberately no separate "end turn" intent: one would be the extra click D6.2
+   * forbids, and it would let a caller hold a resolved turn open.
+   */
+  #lockCommitment(actor: ActorId): GameEvent[] {
+    const state = this.#state;
+
+    const refusal = lockRefusal(this.#commitmentContext(actor), actor);
+    if (refusal !== null) return [this.#reject({ kind: 'lock-commitment', actor }, refusal)];
+
+    state.turnLocks.push(actor);
+    const events: GameEvent[] = [this.#turnEvent('commitment-locked', 'decision', { actor })];
+
+    if (state.actors.every((a) => state.turnLocks.includes(a))) {
+      events.push(...this.#resolveTurn());
+    }
+
+    return events;
+  }
+
+  /**
+   * The payoff tier, then the background tier folded into its tail (D6.2).
+   *
+   * The reveal is not a notification — it is the **input** to resolution, so no
+   * code path can resolve a turn without having revealed it. That is what makes the
+   * payoff structurally non-demotable rather than merely promised.
+   *
+   * Resolution changes no ownership here: the readings carry an explicit pending
+   * outcome, and the operations that move a border arrive with ticket 06.
+   */
+  #resolveTurn(): GameEvent[] {
+    const state = this.#state;
+    const events: GameEvent[] = [];
+
+    // ── payoff ────────────────────────────────────────────────────────────────
+    const revealed = revealTurn(state.actors, state.commitments);
+    events.push(
+      this.#turnEvent('commitments-revealed', 'payoff', { commitments: revealed.commitments }),
+    );
+
+    for (const reading of readFronts(revealed, frontsOf(state))) {
+      events.push(this.#turnEvent('front-resolved', 'payoff', { ...reading }));
+    }
+
+    // ── background ────────────────────────────────────────────────────────────
+    // The stack does not carry over: unspent chips are discarded and the pool
+    // regenerates whole (D6.3). Upkeep, income, recovery and conscription fold in
+    // here too once ticket 05 lands the land-derived decay engine — this is their
+    // seam, and it is deliberately inside the same call as the reveal.
+    state.commitments = {};
+    state.turnLocks = [];
+    state.turn += 1;
+    events.push(
+      this.#turnEvent('turn-opened', 'background', { budget: TURN_COMMITMENT_BUDGET }),
+    );
+
+    return events;
+  }
+
+  /** A turn-loop event, stamped with the tier it belongs to (D6.2). */
+  #turnEvent(type: string, tier: TurnTier, detail: Record<string, unknown>): GameEvent {
+    return { type, turn: this.#state.turn, detail: { tier, ...detail } };
   }
 
   #reject(intent: { kind?: string; actor?: ActorId } | null | undefined, reason: string): GameEvent {

@@ -55,6 +55,8 @@ export function describeProjection(view: MatchView): string {
             .map(([actor, sector]) => `${actor}=${sector}`)
             .join(', ')
     }`,
-    `locked   ${view.capitalLocked.length === 0 ? '(none yet)' : view.capitalLocked.join(', ')}`,
+    `locked   ${view.committed.length === 0 ? '(none yet)' : view.committed.join(', ')}`,
+    `fronts   ${view.fronts.length === 0 ? '(none contested)' : view.fronts.map((f) => f.key).join(' ')}`,
+    `stack    ${view.commitment.spent}/${view.commitment.budget} 행동력 committed`,
   ].join('\n');
 }

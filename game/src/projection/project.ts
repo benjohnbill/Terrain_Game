@@ -22,8 +22,10 @@
  * rather than copying 292 hexes per call is safe for exactly that reason.
  */
 
+import { spentOf, TURN_COMMITMENT_BUDGET } from '../domain/commitment.js';
+import { frontsOf } from '../domain/state.js';
 import type { MatchState } from '../domain/state.js';
-import type { ActorId, MatchView, RealmView, SectorId, ViewerId } from '../runtime/types.js';
+import type { ActorId, CommitmentView, MatchView, RealmView, SectorId, ViewerId } from '../runtime/types.js';
 
 /** Realm totals, recomputed from current holdings rather than cached at setup. */
 function realmView(state: MatchState, actor: ActorId): RealmView {
@@ -60,10 +62,15 @@ function visibleCapitals(state: MatchState, viewer: ViewerId): Record<ActorId, S
 }
 
 /**
- * Which realms have locked a capital — **public, for every viewer** (ruling R7,
- * SEALED 2026-07-25).
+ * Which realms have locked the current beat's commitment — **public, for every
+ * viewer** (ruling R7, SEALED 2026-07-25).
  *
- * The *fact* of commitment crosses; the *site* does not. That asymmetry is the
+ * One rule, two beats: during `capital-selection` a lock is a chosen capital;
+ * during `decision` it is this turn's allocation. R7 is the general
+ * commit-and-reveal rule and every later commit inherits it, so this reads whichever
+ * beat is open rather than special-casing the first one.
+ *
+ * The *fact* of commitment crosses; the *content* does not. That asymmetry is the
  * whole point, and it is load-bearing three times over:
  *
  *   - **it is the psychological read.** How long an opponent deliberates is
@@ -80,15 +87,37 @@ function visibleCapitals(state: MatchState, viewer: ViewerId): Record<ActorId, S
  */
 function visibleLocks(state: MatchState, viewer: ViewerId): ActorId[] {
   void viewer; // public to all, deliberately — see above
-  return state.actors.filter((actor) => actor in state.capitals);
+  return state.phase === 'capital-selection'
+    ? state.actors.filter((actor) => actor in state.capitals)
+    : state.actors.filter((actor) => state.turnLocks.includes(actor));
+}
+
+/**
+ * This viewer's own 행동력 stack — and **only** their own.
+ *
+ * The blind commit is the mechanism the whole turn rests on (ledger D6.1), so an
+ * opponent's allocation must not cross here in any form: not the map, not the sum,
+ * not a remaining count that a subtraction would recover it from. The observer sees
+ * nothing either, which keeps the tooling viewer from being a side door.
+ */
+function visibleCommitment(state: MatchState, viewer: ViewerId): CommitmentView {
+  const own = viewer === 'observer' ? {} : { ...(state.commitments[viewer] ?? {}) };
+  const spent = spentOf(own);
+  return {
+    budget: TURN_COMMITMENT_BUDGET,
+    allocations: own,
+    spent,
+    remaining: TURN_COMMITMENT_BUDGET - spent,
+  };
 }
 
 /**
  * Builds the viewer-safe view of a match.
  *
- * Note what is *not* copied: the seed, the RNG, the unrevealed capitals, whether
- * the opponent has committed, and anything reachable from them. That omission is
- * the seam.
+ * Note what is *not* copied: the seed, the RNG, the unrevealed capitals, the
+ * opponent's allocation, and anything reachable from them. That omission is the
+ * seam. What *is* copied and public: the board, both realms' territory, and the
+ * bare fact of who has committed (R7).
  */
 export function project(state: MatchState, viewer: ViewerId): MatchView {
   return {
@@ -96,11 +125,15 @@ export function project(state: MatchState, viewer: ViewerId): MatchView {
     viewer,
     turn: state.turn,
     phase: state.phase,
-    currentActor: state.currentActor,
+    // Gate 02's sealed member, re-read as the phase (R8). Same value as `phase` by
+    // construction, so the two can never disagree about what is legal now.
+    currentActor: state.phase,
     actors: [...state.actors],
     board: state.loadedWorld.artifact,
     realms: state.actors.map((actor) => realmView(state, actor)),
     capitals: visibleCapitals(state, viewer),
-    capitalLocked: visibleLocks(state, viewer),
+    committed: visibleLocks(state, viewer),
+    fronts: frontsOf(state),
+    commitment: visibleCommitment(state, viewer),
   };
 }

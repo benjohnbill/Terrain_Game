@@ -16,6 +16,17 @@ export { decideBotIntent } from '../bot/index.js';
 export { capitalChoiceRefusal } from '../domain/capital-choice.js';
 export type { CapitalChoiceContext } from '../domain/capital-choice.js';
 export {
+  allocationRefusal,
+  commitmentShare,
+  lockRefusal,
+  spentOf,
+  TURN_COMMITMENT_BUDGET,
+} from '../domain/commitment.js';
+export type { Allocations, CommitmentContext } from '../domain/commitment.js';
+export { contestedFronts, isPartyTo } from '../domain/fronts.js';
+export { readFronts, revealTurn } from '../domain/turn.js';
+export type { FrontReading, RevealedTurn } from '../domain/turn.js';
+export {
   boardBounds,
   CHOKE_STYLE,
   describeProjection,
@@ -59,15 +70,20 @@ export type {
 } from '../world/index.js';
 export type {
   ActorId,
+  AllocateCommitmentIntent,
   ChooseCapitalIntent,
   Clock,
+  CommitmentView,
+  Front,
   GameEvent,
   Intent,
+  LockCommitmentIntent,
   MatchConfig,
   MatchPhase,
   MatchView,
   RealmView,
   RejectedEvent,
+  TurnTier,
   ViewerId,
   WorldIdentity,
 } from './types.js';

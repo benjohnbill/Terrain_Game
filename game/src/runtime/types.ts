@@ -31,23 +31,70 @@ export interface WorldIdentity {
 }
 
 /**
- * Where the match stands in its own arc.
+ * Where the match stands in its own arc — and therefore what may be submitted.
  *
  * `capital-selection` is the sealed opening beat: both players choose a capital
  * simultaneously and in secret, and both locations become public together
- * (capital CP-② D1.3 and item 1). `in-play` begins once both are locked.
+ * (capital CP-② D1.3 and item 1). `decision` is the turn loop's sole agency tier,
+ * and the match rests there between turns.
  *
- * This is **not** the turn structure. The commit-and-reveal turn loop, its three
- * tiers, and how legality reads once both realms commit at once are ticket 03's,
- * against its own contract.
+ * **Only resting states appear here.** The payoff and background tiers are stages
+ * *inside* a resolution: they take no input (D6.2), the Runtime never sleeps
+ * (gate 02 § 4), and pacing belongs to the UI — so a resting `payoff` phase would
+ * mean the caller had to submit something to leave it, which is precisely the
+ * extra click D6.2 forbids. The tiers are named on every event instead; see
+ * `TurnTier`.
  */
-export type MatchPhase = 'capital-selection' | 'in-play';
+export type MatchPhase = 'capital-selection' | 'decision';
+
+/**
+ * The three tiers of a turn (ledger D6.2). Carried on every turn-loop event, so a
+ * display can pace the payoff without the Runtime resting inside it.
+ *
+ * The ledger's circled numbers (①②④⑤, with no ③ anywhere) are deliberately absent:
+ * the tiers are the substance and the numbering was vestigial (user ruling
+ * 2026-07-25).
+ */
+export type TurnTier = 'decision' | 'payoff' | 'background';
+
+/**
+ * A contested border between the two realms — the surface the duel is fought on.
+ *
+ * `sectors` is sorted by sector id and `owners` is aligned to it, so a front is
+ * described identically from either side. All of it is public: territory is public
+ * by seal, and fog governs forces and intent rather than borders.
+ */
+export interface Front {
+  /** The canonical edge name, `min|max` (gate 06 D4). */
+  readonly key: string;
+  readonly sectors: readonly [SectorId, SectorId];
+  readonly owners: readonly [ActorId, ActorId];
+}
+
+/**
+ * The viewer's own 행동력 stack this turn (ledger D6.3).
+ *
+ * One stack, regenerated to the same size every turn, non-hoardable, and the
+ * single currency for every order kind. `allocations` is the viewer's **own** —
+ * the opponent's is hidden until the reveal, which is what makes the commit blind.
+ */
+export interface CommitmentView {
+  readonly budget: number;
+  /** Front key -> chips, for this viewer's realm only. */
+  readonly allocations: Readonly<Record<string, number>>;
+  readonly spent: number;
+  readonly remaining: number;
+}
 
 /**
  * An instruction submitted to the Runtime. Every intent names its actor, so the
  * Runtime can judge legality without trusting the caller.
  */
-export type Intent = ChooseCapitalIntent | { readonly kind: string; readonly actor: ActorId };
+export type Intent =
+  | ChooseCapitalIntent
+  | AllocateCommitmentIntent
+  | LockCommitmentIntent
+  | { readonly kind: string; readonly actor: ActorId };
 
 /**
  * The opening beat's intent: the player clicks a sector they own.
@@ -60,6 +107,34 @@ export interface ChooseCapitalIntent {
   readonly kind: 'choose-capital';
   readonly actor: ActorId;
   readonly sector: SectorId;
+}
+
+/**
+ * Pour part of this turn's stack onto one front.
+ *
+ * Replaces that front's share rather than adding to it, so reviewing and re-cutting
+ * a plan before locking costs nothing — the decision tier is where every judgment
+ * the turn asks for lives, and a rule that made revision expensive would move that
+ * judgment into the click.
+ */
+export interface AllocateCommitmentIntent {
+  readonly kind: 'allocate-commitment';
+  readonly actor: ActorId;
+  /** A front key from `MatchView.fronts`. */
+  readonly front: string;
+  /** Whole, non-negative chips. Zero clears the front. */
+  readonly chips: number;
+}
+
+/**
+ * Lock this turn's allocation — blind and binding (ledger D6.1).
+ *
+ * When the second realm locks, the turn reveals, resolves, and opens turn N+1 in
+ * that same call. No third submission exists in between.
+ */
+export interface LockCommitmentIntent {
+  readonly kind: 'lock-commitment';
+  readonly actor: ActorId;
 }
 
 /** Something the Runtime did. Returned by `submit`; never pushed. */
@@ -105,6 +180,20 @@ export interface MatchView {
   readonly viewer: ViewerId;
   readonly turn: number;
   readonly phase: MatchPhase;
+  /**
+   * Gate 02 § 6's sealed member, **read as the current phase** (ruling R8, SEALED
+   * 2026-07-25).
+   *
+   * Gate 02 sealed `currentActor -> ActorId` a week before the pivot made turns
+   * simultaneous, and a single current actor cannot express two realms committing
+   * at once. R8 kept the member and re-read it: the question it answers — *what may
+   * be submitted now?* — is answered by the phase, so this reports the phase and
+   * never names an actor. Gate 02's actual guarantee, that the Runtime rather than
+   * the caller decides legality, never depended on alternation and is untouched.
+   *
+   * It is deliberately the same value as `phase`, not a second source: keeping the
+   * sealed name as an alias is what the ruling chose over renaming the member.
+   */
   readonly currentActor: ActorId;
   /** Every actor in the match. Identity is public; hidden holdings are not here. */
   readonly actors: readonly ActorId[];
@@ -126,12 +215,22 @@ export interface MatchView {
    */
   readonly capitals: Readonly<Record<ActorId, SectorId>>;
   /**
-   * Which realms have locked a capital. **Public to every viewer** (ruling R7,
-   * SEALED 2026-07-25): the fact of commitment crosses, the site does not.
-   * Watching an opponent deliberate is part of the contest, and both sides
-   * committing is what advances the beat.
+   * Which realms have locked their commitment for the **current beat** — a capital
+   * during `capital-selection`, this turn's orders during `decision`.
+   *
+   * **Public to every viewer** (ruling R7, SEALED 2026-07-25): the fact of
+   * commitment crosses, its content does not. Watching an opponent deliberate is
+   * part of the contest, and both sides having committed is what advances the beat.
+   *
+   * One field for both beats on purpose. R7 is "the general commit-and-reveal rule,
+   * not a capital-beat special case", and every later commit inherits it — two
+   * parallel fields would be the same rule implemented twice.
    */
-  readonly capitalLocked: readonly ActorId[];
+  readonly committed: readonly ActorId[];
+  /** The contested borders, in canonical order. Public — see `Front`. */
+  readonly fronts: readonly Front[];
+  /** This viewer's own stack. The opponent's is absent until the reveal. */
+  readonly commitment: CommitmentView;
 }
 
 /** Everything the Runtime needs to open a match. Seed and clock are injected. */
