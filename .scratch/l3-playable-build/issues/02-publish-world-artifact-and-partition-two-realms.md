@@ -8,9 +8,11 @@ two-realm board with their own realm, the enemy realm, and both capitals.
 
 **Blocked by:** 01 — Establish the L3 Tree and Boot a Deterministic Viewer.
 
-Status: needs-info
+Status: ready-for-agent — blocked by 01
 
-Specification gates: Wayfinder 06, 10, 12.
+Specification gates: Wayfinder 06 (`resolved`) — read its § Answer as authority
+directly, under the R6 per-ticket waiver (`README.md` § Amendment R6). Gate 10's
+unfilled thresholds fail `pending`; gate 12's publication is a doc-sync debt.
 
 Contract (interim pointers): gate 06 § Answer D1–D6 (checked-in TS/ESM artifact,
 immutable `(worldId, revision)`, revision-local identifiers, three-tier
@@ -70,9 +72,11 @@ Verified content of `CRADLE_MAP`, measured 2026-07-25: **10 regions / 56 sectors
    derived once from the frozen hex layout (TC-⑪) and baked into the revision.
    This is assembly from the existing hex geometry, not a new rule.
 
-**One gap to route, not to fill:** region `r8` carries neither a `capitals` nor a
-`cities` entry. Capital placement must not assume every region offers a legal
-site.
+**One gap, now dissolved:** region `r8` carries neither a `capitals` nor a
+`cities` entry. Under R3 (SEALED 2026-07-25) this no longer matters — capital
+eligibility is ownership, so a realm drawing r8 loses no option. The tables are
+still authored into the artifact; they are advisory content for a later
+recommendation surface, not a placement constraint.
 
 - [ ] The world ships as a checked-in TS/ESM module under `game/` carrying an immutable `(worldId, revision)`; `Infinity` choke caps survive as native values.
 - [ ] Identifiers are stable within the revision; edges carry no independent id and derive from sorted endpoint ids.
@@ -80,7 +84,7 @@ site.
 - [ ] The tier-1 loader **fails closed** on schema version, duplicate ids, referential integrity, exactly-one region/sector membership, map-unit uniqueness, illegal or one-way adjacency, missing choke/removal data, and a revision content-integrity mismatch — it refuses to construct match state rather than degrading.
 - [ ] Match setup draws a **contiguous** two-realm partition balanced by **population** (not region count, not economy), deterministically from the seed; both realms are contiguous and non-empty, and an empty candidate set fails closed instead of falling back to a hardcoded split.
 - [ ] The candidate count and the achieved population imbalance are reported by an offline publication gate (gate 06 D5 tier 2: seat viability, viable-binding enumeration, derived-asymmetry, deterministic export), reusing the L2 sheet-14 viable-binding logic as re-implemented evidence. Note that B1/B2's recorded `~1.7×` thresholds were authored for **5-seat** adjacent-pair bindings and have never been re-cut for two realms — report that rather than silently reusing the number.
-- [ ] Each player chooses a capital site inside their own realm from that realm's authored city/capital sectors; both commit before either is revealed; both capital locations are public from that point on. A realm containing a region with no authored city sector still offers a legal site.
+- [ ] Each player chooses a capital site by clicking **any sector their realm owns** (R3, SEALED 2026-07-25 — eligibility is ownership, not an authored marker); both commit before either is revealed; both capital locations are public from that point on. `CRADLE_META`'s `capitals` / `cities` tables are carried into the artifact as authored content but do **not** gate the choice.
 - [ ] The rendered map preserves region, front-sector, route, terrain, and realm identity, and the renderer consumes only viewer-safe projection data.
 - [ ] Hover, camera, and unsubmitted focus stay interaction state outside the Runtime.
 - [ ] Equal `(worldId, revision, seed)` reproduces the same partition and the same initial projection in Node and browser.

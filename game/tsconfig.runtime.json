@@ -1,0 +1,27 @@
+{
+  // The single-emit runtime graph (gate 05 D6). `build:runtime:game` emits this
+  // once; both `test:game` (Node) and `test:browser:game` (Playwright) load the
+  // emitted output, so neither host re-transpiles.
+  //
+  // The viewer layers — `src/ui` and `src/renderer` — are deliberately excluded:
+  // they are Vite's to build, and keeping them out is what lets the emitted
+  // graph stay loadable in bare Node with no DOM.
+  //
+  // `NodeNext` resolves against `game/package.json`'s `{"type":"module"}`, so
+  // the emit is ESM. It also requires every relative import to carry an explicit
+  // `.js` extension — which is exactly what makes the same files loadable by
+  // bare Node, by a browser `<script type="module">`, and by Vite alike.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "lib": ["ES2022"],
+    "module": "NodeNext",
+    "moduleResolution": "nodenext",
+    "noEmit": false,
+    "outDir": "dist",
+    "rootDir": "src",
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true
+  },
+  "include": ["src/runtime", "src/domain", "src/world", "src/projection", "src/preview", "src/bot"]
+}

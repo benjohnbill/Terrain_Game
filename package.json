@@ -4,6 +4,13 @@
   "private": true,
   "type": "commonjs",
   "scripts": {
+    "dev:game": "vite --config game/vite.config.js",
+    "typecheck:game": "tsc --noEmit --project game/tsconfig.json",
+    "build:runtime:game": "tsc --project game/tsconfig.runtime.json",
+    "test:game": "node --test game/tests/*.test.js",
+    "test:browser:game": "playwright test --config game/playwright.config.js",
+    "build:game": "vite build --config game/vite.config.js",
+    "verify:game": "node game/acceptance/verify.js",
     "build:hosting": "node scripts/build-hosting.js",
     "test": "node --test tests/*.test.js",
     "battery": "node mockup/combat-calc/battery.js",
@@ -11,5 +18,15 @@
     "metrics:fizzle": "node mockup/operational-layer/fizzle.js",
     "lint:docs": "node scripts/sync-docs-law.js --check && node scripts/audit-lint.js",
     "sync:docs-law": "node scripts/sync-docs-law.js"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.62.0",
+    "@types/react": "^18.3.31",
+    "@types/react-dom": "^18.3.7",
+    "@vitejs/plugin-react": "^4.7.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "typescript": "^5.9.3",
+    "vite": "^6.4.3"
   }
 }

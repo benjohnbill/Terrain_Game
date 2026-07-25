@@ -43,13 +43,53 @@ A ticket becomes `ready-for-agent` only after:
 `ready-for-agent` means fully specified. The ticket's `Blocked by:` line still
 controls whether it is the next executable frontier.
 
+### Amendment R6 — per-ticket authority waiver (user ruling, 2026-07-25)
+
+Conditions 2, 3 and 6 above are **waived per ticket** when both of the following
+hold. Conditions 1, 4 and 5 are untouched.
+
+- **(i) sealed authority** — every Wayfinder gate the ticket cites is
+  `resolved`, so its contract exists in a sealed § Answer that the ticket may
+  read as authority directly;
+- **(ii) zero unlanded values** — no acceptance item needs a value or rule that
+  is undetermined, in conflict, or recorded only outside the repository.
+
+The waiver moves *where the contract is read from*; it does not soften the bar
+against inventing values, because test (ii) **is** that bar. Gate 12's
+publication is now a doc-sync debt paid alongside the build, not a gate in front
+of it. Rationale and the ruling text: `DECISIONS-OWED.md` § R6.
+
+**Waiver status, 2026-07-25** — recompute (ii) at claim time; a ticket only
+leaves this table by having its blocking value landed at a birthplace.
+
+| Ticket | (i) | (ii) | Result |
+|---|---|---|---|
+| 01 | ✅ gates 05, 06, 02 | ✅ no value at all; gate 10's unfilled thresholds are already designed to fail `pending` | **ready-for-agent** |
+| 02 | ✅ gate 06 | ✅ R3 sealed the capital rule; partition balance was withdrawn (every region is pop 6.0) | **ready-for-agent** behind 01 |
+| 03 | ✅ gate 02 | ❌ § 1.3's re-expression is a standing proposal, not a seal | needs-info |
+| 04 | ✅ gate 07 | ❌ 판세 in-play surface (Part 2 #13) | needs-info |
+| 05 | ✅ | ❌ decay dials unlanded | needs-info |
+| 06 | ✅ | ❌ fatigue effectiveness floor (Part 2 #11) | needs-info |
+| 07 | ✅ | ❌ capital guard magnitude (Part 2 #10); CP-① item 3 stale (§ 1.8) | needs-info |
+| 08 | ✅ | ❌ Part 2 #1, #4, #5, #6 — the whole fog band | needs-info |
+| 09 | ✅ | ❌ Part 2 #3; the tactical-R composition | needs-info |
+| 10 | ✅ | ❌ Part 2 #7; the fit-ranking function (§ 1.5) | needs-info |
+| 11 | ✅ | ❌ Part 2 #2, #8, #9 | needs-info |
+| 12 | ✅ | ❌ Part 2 #12; R4's three axes are unvalued | needs-info |
+| 13 | ✅ | ❌ every acceptance threshold belongs to gate 10 | needs-info |
+
 Each ticket carries an interim `Contract (interim pointers):` line so a reader can
 find today's truth before that publication happens. Those pointers are **reading
 aids, not the authority rule 3 requires** — they do not make a ticket ready.
 
-## The readiness chain is not clear yet — read this before planning work
+## The readiness chain — read this before planning work
 
-No ticket can reach `ready-for-agent` today, and gate 12 is not the only reason.
+> **Amended 2026-07-25 by R6.** This section previously opened "No ticket can
+> reach `ready-for-agent` today". That is no longer true: tickets 01 and 02 pass
+> the per-ticket waiver above. The gate table below still describes the *gates*
+> accurately — what changed is that an open gate 12 no longer bars a ticket whose
+> own gates are resolved and whose values are all landed.
+
 State as of 2026-07-25:
 
 | Gate | Status | What still blocks it |

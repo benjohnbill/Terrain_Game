@@ -4,3 +4,8 @@ node_modules/
 dist/
 coverage/
 *.log
+
+# L3 build output (game/) — emitted artifacts and test runs, never committed
+game/dist-viewer/
+game/test-results/
+game/playwright-report/

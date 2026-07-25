@@ -1,0 +1,92 @@
+/* Grey-box, deliberately. Visual design is carved out of this map by user
+   ruling and gets layered on while playing; what this stylesheet owes is
+   legibility, nothing more. */
+
+:root {
+  color-scheme: dark;
+  --ink: #e8e6e1;
+  --ink-dim: #9a978f;
+  --ground: #16181c;
+  --panel: #1e2126;
+  --line: #32363d;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font: 15px/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+.shell {
+  max-width: 46rem;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 4rem;
+}
+
+h1 {
+  font-size: 1.25rem;
+  letter-spacing: 0.02em;
+  margin: 0 0 0.35rem;
+}
+
+h2 {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--ink-dim);
+  margin: 2rem 0 0.6rem;
+}
+
+.note {
+  color: var(--ink-dim);
+  margin: 0 0 1rem;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+}
+
+label {
+  display: inline-flex;
+  gap: 0.4rem;
+  align-items: center;
+  color: var(--ink-dim);
+}
+
+input,
+select,
+button {
+  font: inherit;
+  color: var(--ink);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 0.35rem 0.6rem;
+}
+
+button {
+  cursor: pointer;
+  margin: 0 0.5rem 0.5rem 0;
+}
+
+button:hover {
+  border-color: var(--ink-dim);
+}
+
+pre {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 0.75rem 0.9rem;
+  margin: 0;
+  overflow-x: auto;
+  min-height: 1.5rem;
+}

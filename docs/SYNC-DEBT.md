@@ -11,6 +11,30 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
 
 ## Open
 
+- [ ] **R6 per-ticket authority waiver — gate-12 publication deferred behind the
+  build** (registered 2026-07-25, user ruling). The L3 build's readiness rule
+  required gate 12 to republish every accepted decision into Production docs
+  before any ticket ran. Gate 12 (a) is blocked behind
+  `.scratch/doc-structure/issues/10-audit-run-3.md`, which declares itself
+  unsound, so the ritual had become the sole obstacle between the program and its
+  redrawn destination (one played match). The user waived conditions 2/3/6 **per
+  ticket**, on a two-part test: every cited gate `resolved`, and zero unlanded
+  values. Ruling text + rationale: `.scratch/l3-playable-build/DECISIONS-OWED.md`
+  § R6; the amended rule and the per-ticket table: that tracker's `README.md`
+  § Amendment R6. **Owed:** gate 12 (a)'s publication batch still runs — the
+  resolved gates' § Answer contracts land in Production docs and any required
+  ADRs — but now alongside or after the build rather than in front of it. This
+  row is the record that the debt is deliberate.
+
+- [ ] **Capital candidate set widened to any owned sector — birthplace seal owed**
+  (registered 2026-07-25, user ruling R3). CP-① item 3 seals "the player picks
+  one of the **seat's main city sectors**"; the user replaced that with free
+  choice across every sector the realm owns, prompted at match start. Owed: a
+  seal row at `docs/features/capital/` amending CP-① item 3, recording that
+  `CRADLE_META`'s `capitals` / `cities` tables become **advisory** (recommendation
+  material, deferred) rather than the eligibility constraint. Ruling text:
+  `.scratch/l3-playable-build/DECISIONS-OWED.md` § R3.
+
 - [ ] **L3 Wayfinder gate 08 — first-slice DEFINITION sealed; build + promotions
   owed** (registered 2026-07-25, user grill). Gate 08
   (`.scratch/l3-playable-seam/issues/08-define-first-playable-vertical-slice.md`,
@@ -27,9 +51,11 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   `.scratch/l3-playable-build/` tickets were re-cut against this full-depth
   definition (nine pre-pivot tickets → thirteen, walking-skeleton order, loop
   closing at ticket 07; mapping in that tracker's README § Re-cut history). The
-  re-cut is ticket SHAPES only: no ticket can reach `ready-for-agent` until
-  Wayfinder 09/10/11 close and gate 12 publishes, and gate 12 (a) is still
-  blocked by `.scratch/doc-structure/issues/10-audit-run-3.md`; (c) implementation debts already
+  re-cut is ticket SHAPES only. **Amended 2026-07-25 by R6** (row above): this
+  clause originally read "no ticket can reach `ready-for-agent` until Wayfinder
+  09/10/11 close and gate 12 publishes". Under the per-ticket waiver, a ticket
+  whose cited gates are all `resolved` and whose values are all landed may run —
+  tickets 01 and 02 now do; (c) implementation debts already
   tracked ride their own rows (gate-06 loader, code-contract tree, turn-structure /
   eval-bar birthplace, operation-plan magnitude graduation). No mandatory-ADR trigger
   at gate close (definition/scoping, Working-layer); promotion assessment belongs to

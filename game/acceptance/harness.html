@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>L3 acceptance harness</title>
+  </head>
+  <body>
+    <!--
+      The browser half of the single-emit contract (gate 05 D6). This page loads
+      `/dist/runtime/index.js` — the very artifact Node imports — so the two
+      hosts are demonstrably running the same code rather than two builds of the
+      same source.
+    -->
+    <script type="module">
+      import { Runtime } from '/dist/runtime/index.js';
+
+      window.__l3 = {
+        /**
+         * Boots a match and returns its initial projection.
+         * @param {{ world: {worldId: string, revision: string}, seed: string, actors: string[], viewer: string }} config
+         */
+        initialProjection({ world, seed, actors, viewer }) {
+          return Runtime.open({ world, seed, actors }).view(viewer);
+        },
+      };
+      window.__l3ready = true;
+    </script>
+  </body>
+</html>

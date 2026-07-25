@@ -125,16 +125,32 @@ the play session, and fun is the next map's business.
   three axes with variety from seeded randomness; capital-candidate free choice
   recorded as a lean awaiting confirmation. Full text with derivations:
   `.scratch/l3-playable-build/DECISIONS-OWED.md` § Rulings received.
+- **R6 — per-ticket authority waiver** (2026-07-25, user) — the build's readiness
+  rule required gate 12 to republish every decision into Production docs first,
+  and gate 12 (a) is blocked behind a doc-structure gate that declares itself
+  unsound. The user waived that condition **per ticket**, on a two-part test:
+  every cited Wayfinder gate `resolved`, and zero unlanded values. The bar
+  against inventing values is untouched — it *is* the second half of the test.
+  Gate 12's publication became a doc-sync debt paid alongside the build. **This
+  is what turned the map from planning into building:** tickets 01 and 02 went
+  `ready-for-agent` the same session.
+- **R3 confirmed — capital candidates are any owned sector** (2026-07-25, user) —
+  the lean sealed. Eligibility is ownership, so `DECISIONS-OWED.md` § 1.6
+  dissolves entirely and `CRADLE_META`'s city tables become advisory. Owes a seal
+  at `docs/features/capital/` (SYNC-DEBT registered).
+- **Ticket 01 landed** (2026-07-25) — **the L3 build exists and runs.** The
+  `game/` TS/ESM island, the seven `:game` commands, and a Runtime holding
+  exactly gate 02's three-method surface. `verify:game`: typecheck / build /
+  18 Node contract tests / 3 Playwright tests all PASS; parity reports **PENDING**
+  with identical digests in both hosts, because gate 10 owns the pass threshold —
+  the safety valve doing its job rather than a defect. Root regression 479/479
+  untouched. Full result: `.scratch/l3-playable-build/issues/01-…md` § Result.
 
 ## Owed right now
 
 Small, sharp, and not worth a ticket each — but they are owed, so they are listed
 here rather than left to memory.
 
-- **One confirmation:** capital-candidate free choice (any owned sector) is
-  recorded as a **lean, not a seal** — the user framed it as "괜찮아 보입니다".
-  Ticket 02 cannot build against it until it is confirmed. Trade already written
-  out in `DECISIONS-OWED.md` R3.
 - **One citation fix:** the gate-08 § Answer in `.scratch/l3-playable-seam/issues/`
   still names `map-data.js CANONICAL_MAP` as the reuse basis. That is C-loop
   iteration 1; the authoritative map is `map-gen.js CRADLE_MAP` (iteration 2).
