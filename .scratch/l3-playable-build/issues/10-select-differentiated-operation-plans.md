@@ -30,7 +30,7 @@ than approximated.
 - [ ] Plans are presets a player selects, not one generic attack with parameters; picking a different plan against the same front produces a materially different resolution.
 - [ ] Each plan reads its threshold and its six-axis stamp from its owning magnitude doc, with no value restated in `game/` beyond the re-implementation itself.
 - [ ] Availability is computed from the acting viewer's projection: a plan whose conditions are unmet is shown as unavailable with a legible reason, and submitting it is rejected without a state transition.
-- [ ] Ranking or ordering of viable plans, if shown, is descriptive and never recommends or pre-selects — the judgment stays the player's.
+- [ ] Viable plans are ordered by statistically expected fit, **and the top plan doubles as the recommendation**, per ADR 0024 — the preset is a coherent recommendation, not an empty form. (This ticket originally asserted the opposite, "descriptive and never recommends"; that was written without checking ADR 0024, which is Accepted and unsuperseded. Corrected 2026-07-25.)
 - [ ] Plan choice is funded from the same single 행동력 chip stack as every other order kind.
 - [ ] One-shot effects, persistent state, and standing rules are distinguished per ADR 0026 rather than collapsed into one effect kind.
 - [ ] Plans depending on settlement negotiation, reserves, or multi-stage operations are absent, and their absence is recorded in the ticket's evidence.

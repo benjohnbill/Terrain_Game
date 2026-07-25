@@ -143,6 +143,15 @@ Precedent, both from 2026-07-25: the 판세 display conflict went to the user
 (kind 1); the land-derived decay engine was built as ticket 05 by assembling
 D5.1/D5.2/D5.3 + D6.2/D6.4 + OG-①/AB-②/MT-② with zero new values (kind 4).
 
+## What the user must decide before this runs
+
+`DECISIONS-OWED.md` in this directory is the decision surface, assembled
+2026-07-25 from a demand-driven sweep: six read-only agents started from these
+thirteen tickets' contract pointers, enumerated every value and rule an
+implementer needs, and searched the repository for each. It keeps only what the
+user must rule on, and shows a derivation for every proposal so the user edits
+rather than invents. Read it before treating any ticket as buildable.
+
 ## Promotions owed while these tickets run
 
 Already registered in `docs/SYNC-DEBT.md`; they fire during build-spec authoring

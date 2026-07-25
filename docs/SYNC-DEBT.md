@@ -50,6 +50,87 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   0042 (turn structure = making ADR 0025's uncertainty duel literal, already
   confirmed). Sequencing: after the map pass / at the next L3 build gate.
 
+- [ ] **Production doc cites AGENT MEMORY as its record** (registered 2026-07-25,
+  demand-driven value sweep). `docs/features/fog-of-war-discovery/RULINGS.md` and
+  its `INDEX.md` route the recon economy's full record to the agent's project
+  memory file `terrain-game-recon-fog-economy.md`, which holds the 가안 costs
+  (일반 정찰 2 / 즉시 정찰 6 행동력) and the pricing principle. That file is not
+  in git, is not version-controlled, is invisible to Codex, and cannot be read by
+  the user — so a Production seal's stated evidence is unreachable to every reader
+  but one agent on one machine. Pay by landing the values and the principle at the
+  fog birthplace. Two contradictions inside the memory record need a user ruling
+  first (graduated versus flat recon pricing; instant recon as an attack rider
+  versus a standalone action) — tracked in
+  `.scratch/l3-playable-build/DECISIONS-OWED.md` § 1.2. Standing rule adopted the
+  same day: a value decided in conversation lands in the repository in that
+  session.
+
+- [ ] **Runtime interface predates the duel pivot — `currentActor` cannot express
+  simultaneous commit** (registered 2026-07-25, demand-driven value sweep).
+  Wayfinder gate 02 (2026-07-16) seals the surface `currentActor -> ActorId` plus
+  "the Runtime rejects an intent submitted out of turn"; D6.1 (2026-07-23) seals
+  both realms committing in secret and revealing together. A single current actor
+  cannot express simultaneous submission, and no document defines what "out of
+  turn" means once both realms commit at once — while build ticket 12 requires bot
+  intents to be rejected "exactly as a human's would be". Never previously
+  registered. Proposed resolution (agent, needs user seal): `currentActor` reads as
+  the current *phase* under D6.2's three tiers, and legality becomes
+  per-realm-per-turn — gate 02's actual guarantee (the Runtime, not the caller,
+  decides legality) survives without alternation. See
+  `.scratch/l3-playable-build/DECISIONS-OWED.md` § 1.3.
+
+- [ ] **Seal-versus-seal conflicts surfaced by the value sweep — twelve rows**
+  (registered 2026-07-25). A demand-driven sweep over the thirteen build tickets
+  found conflicts that no reader had hit because nobody had assembled the design
+  end to end: band centre wobble versus seed-stable position; Encirclement
+  threshold 2.2 versus 1.92 (the latter is the rout-onset figure); the eval bar's
+  live commit marker versus both prototypes' "no commit info, ever"; two recon
+  economies (M8 +0.30/saturating versus the 0.45→0.70→0.90 ladder); two estimate
+  band-width formulas; own-realm Exact versus `OWNED_CONFIDENCE 0.85`; plan effect
+  axes as per-axis magnitude (ADR 0024) versus core/secondary/none (CATALOG);
+  matchup filled-cell count 6 versus 12; the matrix's "Strategic Abandonment"
+  column versus the catalog's "abandonment is not a plan"; capital guard 350×pop
+  versus `capitalGarrison 1500`; the fatigue floor stated both 가안 and sealed in
+  one file; and the bot decisiveness ladder's top rung (vassalization) retired by
+  ADR 0042. Full table with citations:
+  `.scratch/l3-playable-build/DECISIONS-OWED.md` § Part 2. Two are stamp-only
+  rather than rulings: `capLandFrac`'s default flip is recorded as "NOT done" in
+  AB-②'s rider though code and tests already treat it as the factory default, and
+  the viewer knowledge matrix has carried eight rows since its 2026-07-23
+  amendment while every citation still says "seven-grade".
+
+- [ ] **Dials named-but-unvalued in design docs, valued only in code**
+  (registered 2026-07-25, demand-driven value sweep). The slice-2 operational
+  design seals each fatigue/movement/supply dial by *number* — "dial (3)",
+  "dial (6)" — and leaves the value blank, while `js/fatigue.js` and
+  `js/movement.js` carry concrete numbers (march accrual 1.0, forced-march premium
+  3.0, battle-fatigue coefficient 40, convexity 2.0, terminal ledger 10, supply
+  pump 1.0, starvation entry 2, starvation loss 0.02/2.0, recovery 2.0/1.0, march
+  speed 3). Same pattern in the bot layer (judged-value formula, disposition
+  presets ±0.5, siege/field commits 8/14) and the delaying-defence dials
+  (2.0 / 0.15). These already determine behavior and have never been user-seen.
+  March speed 3 additionally sets the reach cone's radius, so it is a fog dial
+  too. Pay by landing each at its owning model doc. Inventory:
+  `.scratch/l3-playable-build/DECISIONS-OWED.md` § Part 3.
+
+- [ ] **Build-ticket map source was wrong — corrected 2026-07-25.** Ticket 02 and
+  the gate-08 § Answer both named `mockup/combat-calc/map-data.js` `CANONICAL_MAP`
+  as the reuse basis. That is C-loop **iteration 1**; the seal chain points at
+  `map-gen.js` `CRADLE_MAP` (**iteration 2**) in three places —
+  `terrain-cradle/RULINGS.md`, `terrain-cradle/INDEX.md`, and `capital/INDEX.md`
+  (the authored city/capital tables) — and gate 06's own evidence (5 `Infinity`
+  choke caps, the `rN`/`rN_sN` identifier scheme) describes iteration 2.
+  `CANONICAL_MAP` carries no city markers at all, which would make CP-②'s "the
+  player picks one of the seat's main city sectors" unimplementable. Ticket 02 is
+  corrected; **the gate-08 answer's citation still needs the same correction**
+  (the decision it sealed is unaffected — reuse cradle terrain, random balanced
+  partition, player-chosen capital). Consequence: the "balance tolerance trades
+  against variety" finding is **withdrawn** — on the authoritative map every
+  region's population is exactly 6.0 ("parity v5: equal pop totals"), so any
+  contiguous five-region split is balanced to 0% and thirty exist. Also owed: B1/B2
+  viability thresholds (`~1.7×`) were authored for 5-seat bindings and have never
+  been re-cut for two realms.
+
 - [ ] **Designed mechanisms whose only written home is the Working layer**
   (registered 2026-07-25, L3 build-ticket re-cut). The documentation law puts
   `docs/superpowers/` in the Working layer — "consult for context; CURRENT truth
