@@ -161,6 +161,14 @@ the play session, and fun is the next map's business.
   narrows § 1.3**: "both done → turn advances" *is* the turn-advance rule the
   Runtime-interface re-expression has been proposing, so that fog item is now one
   confirmation rather than an open design question.
+- **R8 — turn legality is per-realm-per-turn, not alternating** (2026-07-25,
+  user) — the § 1.3 confirmation, taken as written: legality reads "has this
+  realm committed this turn / is the commit window open", and gate 02's
+  `currentActor` keeps its name while being read as the current phase. Gate 02's
+  guarantee (the Runtime decides legality, not the caller) never depended on
+  alternation, so it survives verbatim. **This was ticket 03's only blocking
+  row** — the ticket went `ready-for-agent` the same session. Full text:
+  `.scratch/l3-playable-build/DECISIONS-OWED.md` § R8.
 
 ## Owed right now
 
@@ -190,10 +198,6 @@ here rather than left to memory.
   code); the Encirclement threshold (2.2 versus 1.92, where 1.92 is the
   rout-onset figure); whether a commit marker appears on the eval bar (a seal
   twice over against both prototypes' "never").
-- **Re-expressing gate 02's turn-order clause for a simultaneous turn.** Proposal
-  standing (read `currentActor` as the current phase; legality becomes "has this
-  realm locked / is the window open"), user confirmation owed. Sharp, but it may
-  resolve inside the batch above rather than needing its own ticket.
 - **Which surfaces the values single-source.** The supervision design turns on
   values living in exactly one declared place with a lint forbidding numeric
   literals in rule modules. Whether that place is a birthplace document with a

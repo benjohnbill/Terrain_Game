@@ -163,7 +163,7 @@ The user asked what these two meant; they were separate items written adjacently
   and standing: read `currentActor` as the current *phase*, and legality as "has
   this realm already locked this turn / is the commit window open". Gate 02's
   actual guarantee — the Runtime, not the caller, decides legality — never
-  depended on alternation.
+  depended on alternation. **Confirmed as written 2026-07-25 → § R8.**
 - **§ 1.4 (phase ③)** — **CLOSED.** "어차피 3단 티어가 중요하지 Phase 개념 자체는
   지금도 얼마든지 추정 및 수정이 가능하니까요." The three tiers are the substance;
   the circled numbers are vestigial. Drop the numbering rather than invent a ③.
@@ -242,6 +242,44 @@ rather than an open design question.
 *Owes:* a home for the commit-and-reveal visibility rule alongside the
 linear-commit grammar (same SYNC-DEBT row — both are match-frame rules awaiting
 a birthplace).
+
+### R8 — Turn legality is per-realm-per-turn, not alternating · § 1.3 CLOSED
+
+**User confirmation 2026-07-25**, closing the proposal that had been standing
+since the sweep (§ 1.3) and that R7's rider had already narrowed to a formality.
+
+**The rule.** Legality in a simultaneous turn reads as **"has this realm already
+committed this turn / is the commit window open"**. Gate 02's `currentActor`
+keeps its name and its `ActorId` type, and is read as the **current phase** under
+D6.2's three tiers. The alternating out-of-turn test does not exist: both realms
+are legal callers at the same moment, and the two rejection reasons a turn needs
+are *"this realm has already locked this turn"* and *"the commit window is
+closed"*.
+
+**What is unchanged.** Gate 02's actual guarantee — the Runtime, not the caller,
+decides what is legal now — never depended on alternation, so it survives
+verbatim. Nothing in its rationale (no caller cheats; a caller bug cannot
+reorder the match) is weakened. The surface stays exactly three members; no
+snapshot API and no subscription API appear.
+
+**Why this was confirmable rather than a fresh design question.** Three
+independent supports, none of them argument alone:
+
+1. **R7's rider already sealed the turn-advance rule** — "양측의 결정 완료가
+   끝나면 자동으로 턴이 넘어간다" *is* per-realm-per-turn legality stated from the
+   advance side.
+2. **Ticket 02 produced the implementation evidence.** The capital beat needed no
+   turn order at all; its legality rule is already "has this realm locked yet",
+   and both actors are legal callers simultaneously. Test: `both actors are legal
+   callers at the same moment` in `game/tests/match-setup.test.js`.
+3. **Ticket 03's acceptance item 8 was written expecting this answer**, verbatim.
+
+*Effect on readiness:* this was the single row failing R6 test (ii) for ticket
+03. The waiver table flips and ticket 03 becomes buildable.
+
+*Owes:* the same birthplace as R7 and the linear-commit grammar — one
+turn-structure home for all three match-frame rules (SYNC-DEBT row already
+registered; the `currentActor` row is now sealed rather than proposed).
 
 ---
 
@@ -324,7 +362,13 @@ else about recon pricing follows from that choice.
 the same chips. If recon is never bought, it is overpriced; if it is always
 bought first, underpriced.
 
-### 1.3 The Runtime interface predates the pivot
+### 1.3 The Runtime interface predates the pivot — **CLOSED by R8**
+
+**Closed 2026-07-25 (user).** The proposal below was confirmed as written: legality
+reads as "has this realm committed this turn / is the window open", and
+`currentActor` keeps its name while being read as the current phase. Full ruling
+and its three supports: § R8. The rest of this section is kept as the derivation
+that produced it.
 
 **Status: seal versus seal.** Gate 02 (2026-07-16) seals `currentActor ->
 ActorId` and "the Runtime rejects an intent submitted out of turn". D6.1

@@ -8,7 +8,13 @@ commit, the symmetric reveal, and the budget.
 
 **Blocked by:** 02 — Publish the World Artifact and Partition It Into Two Realms.
 
-Status: needs-info
+Status: ready-for-agent
+
+Ready under README § Amendment R6, 2026-07-25: (i) gate 02 is `resolved`;
+(ii) the one row that was failing — § 1.3's re-expression — is **sealed by ruling
+R8** (`DECISIONS-OWED.md` § R8), the 행동력 stack size is recorded in the repository
+(ledger D6.3, 가안 20), and the non-combat unit prices R2 left unset are not
+invoked here (recon is ticket 08, 천도 is out of scope).
 
 Specification gates: Wayfinder 02 (resolved), 10, 12.
 
@@ -43,7 +49,7 @@ itself, not a scaffold to throw away.
 - [ ] Spreading the stack across fronts measurably thins each front's relative ratio (no per-order-count budget anywhere).
 - [ ] Resolution applies both revealed plans with **no first-mover asymmetry**: swapping which realm is `realmA` leaves the resulting board and events equivalent under that relabelling.
 - [ ] The enumerated overlap cases each have a stated symmetric resolution, covered by tests, and the ruling is recorded for promotion at spec authoring.
-- [ ] Legality lives in the Runtime, expressed for a simultaneous turn: `currentActor` reads as the current **phase** (is the commit window open?), and rejection covers "this realm has already locked this turn" and "the window is closed" rather than an alternating out-of-turn test. Gate 02's guarantee — the Runtime, not the caller, decides legality — holds unchanged; only its expression changes, because gate 02 was sealed a week before the pivot made turns simultaneous.
+- [ ] Legality lives in the Runtime, expressed for a simultaneous turn: `currentActor` reads as the current **phase** (is the commit window open?), and rejection covers "this realm has already locked this turn" and "the window is closed" rather than an alternating out-of-turn test. Gate 02's guarantee — the Runtime, not the caller, decides legality — holds unchanged; only its expression changes, because gate 02 was sealed a week before the pivot made turns simultaneous. **Sealed by ruling R8** (2026-07-25, user) — this item is no longer a proposal.
 - [ ] The three tiers are implemented as decision / payoff / background, and the vestigial circled phase numbers (①②④⑤, with no ③ defined anywhere) are dropped rather than back-filled with a phase nobody designed (user ruling 2026-07-25).
 - [ ] `submit` returns immediately and never sleeps; pacing stays in the UI.
 - [ ] No standalone move command exists; position changes only as a product of an operation outcome.

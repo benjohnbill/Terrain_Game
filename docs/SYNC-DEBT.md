@@ -131,11 +131,17 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   cannot express simultaneous submission, and no document defines what "out of
   turn" means once both realms commit at once — while build ticket 12 requires bot
   intents to be rejected "exactly as a human's would be". Never previously
-  registered. Proposed resolution (agent, needs user seal): `currentActor` reads as
-  the current *phase* under D6.2's three tiers, and legality becomes
-  per-realm-per-turn — gate 02's actual guarantee (the Runtime, not the caller,
-  decides legality) survives without alternation. See
-  `.scratch/l3-playable-build/DECISIONS-OWED.md` § 1.3.
+  registered. **SEALED 2026-07-25 by ruling R8** (user), as proposed:
+  `currentActor` keeps its name and is read as the current *phase* under D6.2's
+  three tiers, and legality becomes per-realm-per-turn — "has this realm already
+  committed this turn / is the commit window open" — with no alternating
+  out-of-turn test. Gate 02's actual guarantee (the Runtime, not the caller,
+  decides legality) survives verbatim; only its expression changed. **What stays
+  owed is publication, not the decision**: this is a match-frame rule and belongs
+  in the same turn-structure birthplace the R7 visibility rule and the
+  linear-commit grammar are waiting on (rows above). Implemented in L3 ticket 03.
+  Full ruling: `.scratch/l3-playable-build/DECISIONS-OWED.md` § R8 (§ 1.3 kept as
+  its derivation).
 
 - [ ] **Seal-versus-seal conflicts surfaced by the value sweep — twelve rows**
   (registered 2026-07-25). A demand-driven sweep over the thirteen build tickets
