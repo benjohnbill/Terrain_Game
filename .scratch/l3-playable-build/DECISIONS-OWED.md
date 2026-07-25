@@ -199,6 +199,29 @@ it.
 *Owes:* the `README.md` amendment (same batch), and a `docs/SYNC-DEBT.md` row
 for the deferred gate-12 publication.
 
+### Owed micro-ruling — may a player see that the opponent has committed?
+
+**Surfaced by ticket 02's build, 2026-07-25.** The capital beat is sealed as
+simultaneous and secret, with both sites revealed together (CP-② D1.3, item 1).
+What no seal covers is whether the *fact* of the opponent's commitment is
+visible before the reveal — i.e. whether a player watching their own screen can
+see "the enemy has locked" while still deciding.
+
+It reads as a trivial UI detail and is not: it is the first small piece of the
+commit-and-reveal grammar the whole turn loop will be built on (ticket 03), and
+whichever way it goes there, this should match.
+
+- **Hidden (implemented).** The projection shows a viewer only their own lock.
+  Chosen because it invents nothing — the narrower reading is the one no seal
+  contradicts.
+- **Visible (the alternative).** Standard for commit-and-reveal games; tells the
+  player the beat is half over, and removes the "am I waiting or is it stuck?"
+  ambiguity. Costs a sliver of information the secret beat was arguably meant to
+  withhold.
+
+No derivation available; a user call. Ticket 03 will need the same answer for
+turn commits, so answering it once covers both.
+
 ---
 
 ## Part 1 — Blocking the walking skeleton (tickets 01→07)

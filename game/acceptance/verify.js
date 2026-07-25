@@ -18,6 +18,9 @@ const REPO_ROOT = fileURLToPath(new URL('../..', import.meta.url));
 const LANES = [
   { name: 'typecheck', run: ['npm', ['run', '--silent', 'typecheck:game']] },
   { name: 'build:runtime', run: ['npm', ['run', '--silent', 'build:runtime:game']] },
+  // The viewer lane runs against the built viewer, so it is built here rather
+  // than assumed to be current from some earlier session.
+  { name: 'build:viewer', run: ['npm', ['run', '--silent', 'build:game']] },
   { name: 'test:node', run: ['npm', ['run', '--silent', 'test:game']] },
   { name: 'test:browser', run: ['npm', ['run', '--silent', 'test:browser:game']] },
   { name: 'parity', run: ['node', ['game/acceptance/parity.js']], pendingExitCode: 2 },

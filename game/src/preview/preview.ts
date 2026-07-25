@@ -6,11 +6,13 @@
  * bots. That shared door is the point: a bot that previewed against truth while
  * the human previewed against a projection would be reading a different game.
  *
- * Its input is a `MatchView`, never a `MatchState` — enforced by the type, and
- * the reason this module cannot import from `domain/`.
+ * Its input is a `MatchView`, never a `MatchState` — enforced by the type. It
+ * may read a *rule* from `domain/` (a pure function over plain values, which is
+ * how it and the Runtime stay in step by construction); it may never read truth.
  */
 
-import type { Intent, MatchView } from '../runtime/types.js';
+import { capitalChoiceRefusal } from '../domain/capital-choice.js';
+import type { Intent, MatchView, SectorId } from '../runtime/types.js';
 
 export interface PreviewCard {
   /** Whether the Runtime would accept this intent, as far as a viewer can tell. */
@@ -19,21 +21,33 @@ export interface PreviewCard {
   readonly reason?: string;
 }
 
+const no = (reason: string): PreviewCard => ({ admissible: false, reason });
+
 /**
- * Ticket 01 previews only what a viewer can check without any rules: that the
- * intent names a real actor, and that it is that actor's move. Outcome
- * previewing — the commit-first UI's whole point — arrives with the tickets that
- * build the orders it previews.
+ * What a viewer can check without truth. Kept deliberately in step with the
+ * Runtime's own guards: a preview that said yes where `submit` says no would
+ * teach the player a rule the game does not have.
  */
 export function preview(view: MatchView, intent: Intent): PreviewCard {
   if (!intent || typeof intent.kind !== 'string' || intent.kind.length === 0) {
-    return { admissible: false, reason: 'An intent must carry a non-empty kind.' };
+    return no('An intent must carry a non-empty kind.');
   }
   if (!view.actors.includes(intent.actor)) {
-    return { admissible: false, reason: `"${String(intent.actor)}" is not an actor in this match.` };
+    return no(`"${String(intent.actor)}" is not an actor in this match.`);
   }
-  if (intent.actor !== view.currentActor) {
-    return { admissible: false, reason: `The Runtime is accepting "${view.currentActor}".` };
+
+  if (intent.kind === 'choose-capital') {
+    const refusal = capitalChoiceRefusal(
+      {
+        inSelectionPhase: view.phase === 'capital-selection',
+        alreadyLocked: view.capitalLocked.includes(intent.actor),
+        ownedSectors: view.realms.find((r) => r.actor === intent.actor)?.sectors ?? [],
+      },
+      intent.actor,
+      (intent as { sector?: SectorId }).sector,
+    );
+    return refusal === null ? { admissible: true } : no(refusal);
   }
-  return { admissible: true };
+
+  return no(`No resolution is wired for intent kind "${intent.kind}" yet.`);
 }

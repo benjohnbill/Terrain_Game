@@ -145,6 +145,14 @@ the play session, and fun is the next map's business.
   with identical digests in both hosts, because gate 10 owns the pass threshold —
   the safety valve doing its job rather than a defect. Root regression 479/479
   untouched. Full result: `.scratch/l3-playable-build/issues/01-…md` § Result.
+- **Ticket 02 landed** (2026-07-25) — **the board exists and is playable to the
+  capital prompt.** The cradle terrain is baked into a frozen `terrain-cradle@r1`
+  artifact (10 regions · 56 sectors · 17 edges · 292 hexes, five open borders
+  keeping their native `Infinity`), guarded by a fail-closed tier-1 loader; match
+  setup draws one of 15 contiguous population-equal partitions from the seed; and
+  both players choose a capital on any owned sector, simultaneously and in
+  secret. Full result and measurements:
+  `.scratch/l3-playable-build/issues/02-…md` § Result.
 
 ## Owed right now
 

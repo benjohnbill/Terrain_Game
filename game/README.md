@@ -20,16 +20,38 @@ evidence and never imported from here (ADR 0041).
 ```
 src/runtime/      the state-owning shell and its three-method surface
 src/domain/       rules — pure, deterministic, no I/O
-src/world/        the authored world artifact and its loader   (ticket 02)
+src/world/        the frozen world artifact, its fail-closed loader, the partition draw
 src/projection/   the single blur seam: truth -> viewer-safe MatchView
 src/preview/      pure preview(view, intent), used by the UI and by bots alike
 src/bot/          decideBotIntent(view, seed), submitted through the same door
-src/renderer/     draws a projection; consumes viewer-safe data only
-src/ui/           the React viewer shell
+src/renderer/     pure geometry over a projection; no DOM (so both hosts test it)
+src/ui/           the React viewer shell — drawing, camera, hover, focus
 acceptance/       the threshold registry and the `pending` mechanism
+tools/            authoring-time only: bake-world, publish-gate. Never run at boot.
 tests/            Node contract tests, loading the emitted artifact
 tests/browser/    Playwright tests, loading the same emitted artifact
 ```
+
+## The world artifact
+
+`src/world/cradle-r1.ts` is **generated** — baked by `tools/bake-world.js` from
+the terrain-cradle generator, which gate 06 D1 keeps as a workshop tool whose
+*output* is frozen here. Do not edit it by hand: the loader recomputes its
+content stamp and refuses a mismatch.
+
+To change the world: change the generator or its authoring inputs, bump
+`revision`, then
+
+```bash
+npm run build:runtime:game   # content-hash.js must exist first
+node game/tools/bake-world.js
+npm run build:runtime:game   # re-emit with the new artifact
+node game/tools/publish-gate.js
+```
+
+`publish-gate.js` is the offline tier-2 gate: it reports the candidate-partition
+count, the achieved population imbalance, the derived asymmetry, and whether the
+export is deterministic. It runs **before publication, never per boot**.
 
 ## Commands
 

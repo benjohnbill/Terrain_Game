@@ -16,7 +16,6 @@ import { startStaticServer } from './static-server.js';
 import { formatPending, PendingThreshold, requireThreshold } from './thresholds.js';
 
 const FIXTURE = Object.freeze({
-  world: { worldId: 'boot-null-world', revision: '0' },
   seed: 'parity-fixture-0001',
   actors: ['realm-a', 'realm-b'],
   viewer: 'realm-a',
@@ -39,9 +38,9 @@ function canonical(value) {
 const digest = (value) => createHash('sha256').update(canonical(value)).digest('hex').slice(0, 16);
 
 async function nodeProjection() {
-  const { Runtime } = await import(pathToFileURL(DIST_ENTRY.pathname).href);
+  const { Runtime, CRADLE_R1 } = await import(pathToFileURL(DIST_ENTRY.pathname).href);
   return Runtime.open({
-    world: FIXTURE.world,
+    world: CRADLE_R1,
     seed: FIXTURE.seed,
     actors: FIXTURE.actors,
   }).view(FIXTURE.viewer);
@@ -71,7 +70,8 @@ const nodeDigest = digest(node);
 const browserDigest = digest(browser);
 
 console.log('both-hosts parity');
-console.log(`  fixture   ${FIXTURE.world.worldId}@${FIXTURE.world.revision} seed=${FIXTURE.seed}`);
+console.log(`  fixture   ${node.world.worldId}@${node.world.revision} seed=${FIXTURE.seed}`);
+console.log(`  partition ${node.realms.map((r) => `${r.actor}[${r.regions.join(' ')}]`).join('  ')}`);
 console.log(`  node      ${nodeDigest}`);
 console.log(`  browser   ${browserDigest}`);
 console.log(`  identical ${nodeDigest === browserDigest ? 'yes' : 'NO'}`);

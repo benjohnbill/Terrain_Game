@@ -14,22 +14,47 @@
 
 import type { MatchView } from '../runtime/types.js';
 
+export {
+  boardBounds,
+  CHOKE_STYLE,
+  hexCenter,
+  hexCorners,
+  hexPolygon,
+  ownerOf,
+  realmBorderSegments,
+  sectorCenter,
+  TERRAIN_TINT,
+} from './map-geometry.js';
+export type { BorderSegment, Bounds, Point } from './map-geometry.js';
+
 /** What a renderer must accept. Note the input: a view, never a state. */
 export interface Renderer {
   draw(view: MatchView): void;
 }
 
 /**
- * A renderer that writes the projection as text. It exists so the boot path has
- * something honest to show before there is a board, and so the "consumes only
- * projection" boundary is exercised from day one.
+ * A renderer that writes the projection as text. Kept alongside the map because
+ * it exercises the "consumes only projection" boundary in a form a test can read
+ * at a glance, and because a headless lane needs something to assert on.
  */
 export function describeProjection(view: MatchView): string {
+  const holdings = view.realms
+    .map((r) => `${r.actor} ${r.regions.length}r/${r.sectors.length}s pop ${r.population.toFixed(1)} econ ${r.economy.toFixed(2)}`)
+    .join('\n         ');
+
   return [
     `world    ${view.world.worldId}@${view.world.revision}`,
     `viewer   ${view.viewer}`,
-    `turn     ${view.turn}`,
-    `accepting ${view.currentActor}`,
-    `actors   ${view.actors.join(', ')}`,
+    `turn     ${view.turn}  phase ${view.phase}`,
+    `board    ${view.board.regions.length} regions · ${Object.keys(view.board.sectors).length} sectors · ${view.board.edges.length} edges`,
+    `realms   ${holdings}`,
+    `capitals ${
+      Object.keys(view.capitals).length === 0
+        ? '(none visible to this viewer)'
+        : Object.entries(view.capitals)
+            .map(([actor, sector]) => `${actor}=${sector}`)
+            .join(', ')
+    }`,
+    `locked   ${view.capitalLocked.length === 0 ? '(none yet)' : view.capitalLocked.join(', ')}`,
   ].join('\n');
 }

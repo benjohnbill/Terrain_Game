@@ -3,9 +3,15 @@
   // once; both `test:game` (Node) and `test:browser:game` (Playwright) load the
   // emitted output, so neither host re-transpiles.
   //
-  // The viewer layers — `src/ui` and `src/renderer` — are deliberately excluded:
-  // they are Vite's to build, and keeping them out is what lets the emitted
-  // graph stay loadable in bare Node with no DOM.
+  // `src/ui` is deliberately excluded: it is React/TSX and Vite's to build, and
+  // keeping it out is what lets the emitted graph stay loadable in bare Node
+  // with no DOM.
+  //
+  // `src/renderer` **is** included, because it is pure geometry over a
+  // projection with no DOM dependency at all. Drawing lives in `src/ui`; the
+  // maths lives here, where both acceptance hosts can test it. Keeping the two
+  // apart is what makes "the renderer consumes only viewer-safe projection
+  // data" an assertion rather than an aspiration.
   //
   // `NodeNext` resolves against `game/package.json`'s `{"type":"module"}`, so
   // the emit is ESM. It also requires every relative import to carry an explicit
@@ -23,5 +29,13 @@
     "declarationMap": true,
     "sourceMap": true
   },
-  "include": ["src/runtime", "src/domain", "src/world", "src/projection", "src/preview", "src/bot"]
+  "include": [
+    "src/runtime",
+    "src/domain",
+    "src/world",
+    "src/projection",
+    "src/preview",
+    "src/bot",
+    "src/renderer"
+  ]
 }

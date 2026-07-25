@@ -23,9 +23,98 @@ body {
 }
 
 .shell {
-  max-width: 46rem;
+  max-width: 72rem;
   margin: 0 auto;
   padding: 2rem 1.25rem 4rem;
+}
+
+/* --- board ---------------------------------------------------------------
+   Grey-box by ruling: legibility is the bar, beauty is the next map's. */
+
+.board {
+  display: block;
+  width: 100%;
+  height: min(68vh, 40rem);
+  margin: 1rem 0;
+  background: #101216;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  touch-action: none;
+  cursor: grab;
+}
+
+.board:active {
+  cursor: grabbing;
+}
+
+.sector polygon {
+  transition: fill-opacity 90ms linear;
+}
+
+.sector.selectable {
+  cursor: pointer;
+}
+
+/* A sector you may act on lifts toward the light when the pointer finds it —
+   the affordance the capital prompt is asking the player to use. */
+.sector.selectable.focused .realm-wash polygon {
+  fill: rgba(255, 255, 255, 0.22);
+}
+
+.sector.focused polygon {
+  stroke: var(--ink);
+  stroke-width: 1.4;
+}
+
+.region-label {
+  fill: rgba(232, 230, 225, 0.72);
+  font-size: 15px;
+  font-weight: 600;
+  text-anchor: middle;
+  paint-order: stroke;
+  stroke: rgba(0, 0, 0, 0.65);
+  stroke-width: 3px;
+}
+
+.prompt {
+  margin: 0.75rem 0 0;
+  padding: 0.6rem 0.85rem;
+  background: rgba(226, 194, 122, 0.1);
+  border: 1px solid rgba(226, 194, 122, 0.35);
+  border-radius: 4px;
+}
+
+.hint {
+  color: var(--ink-dim);
+  font-size: 0.85em;
+}
+
+.readout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  gap: 1.5rem;
+}
+
+@media (max-width: 60rem) {
+  .readout {
+    grid-template-columns: 1fr;
+  }
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.9em;
+}
+
+td {
+  padding: 0.3rem 0.5rem;
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+
+tr.self td:first-child {
+  color: #e2c27a;
 }
 
 h1 {

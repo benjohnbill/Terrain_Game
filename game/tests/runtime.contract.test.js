@@ -7,10 +7,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-const { Runtime, BOOT_WORLD, preview } = await import('../dist/runtime/index.js');
+const { Runtime, CRADLE_R1, preview } = await import('../dist/runtime/index.js');
 
 const FIXTURE = {
-  world: BOOT_WORLD,
+  world: CRADLE_R1,
   seed: 'contract-0001',
   actors: ['realm-a', 'realm-b'],
 };
@@ -65,18 +65,17 @@ test('equal world identity and seed produce equal projections', () => {
   assert.deepEqual(a, b);
 });
 
-test('a different seed is a different match, and a different world is a different world', () => {
+test('a different seed is a different match', () => {
+  // Ticket 01 could only assert that identity flowed through, because nothing
+  // in the projection was seed-derived yet. Ticket 02's partition draw is, so
+  // the real claim is now testable: the seed decides the board you play on.
   const base = open().view('realm-a');
 
-  // The projection this ticket ships carries no seed-derived content yet, so
-  // what is asserted is what is true today: identity flows through, and the
-  // seed does not leak into it. Seed-sensitivity of *content* becomes testable
-  // when ticket 02 draws the partition from it.
-  const otherSeed = open({ seed: 'contract-0002' }).view('realm-a');
-  assert.deepEqual(otherSeed, base);
+  const different = Array.from({ length: 20 }, (_, i) =>
+    open({ seed: `contract-alt-${i}` }).view('realm-a'),
+  ).some((v) => JSON.stringify(v.realms) !== JSON.stringify(base.realms));
 
-  const otherWorld = open({ world: { worldId: 'other', revision: '9' } }).view('realm-a');
-  assert.notDeepEqual(otherWorld.world, base.world);
+  assert.ok(different, 'twenty seeds all produced the same realms');
 });
 
 test('each viewer is addressed by name, and an unknown viewer is refused', () => {
@@ -87,16 +86,23 @@ test('each viewer is addressed by name, and an unknown viewer is refused', () =>
   assert.throws(() => runtime.view('realm-c'), /Unknown viewer/);
 });
 
-test('an out-of-turn intent is rejected with a reason and no state transition', () => {
+test('an unwired intent kind is rejected by name, with no state transition', () => {
+  // Ticket 01 asserted a blanket out-of-turn guard here, because `currentActor`
+  // was the only legality rule it had. Ticket 02 replaced that with a real,
+  // phase-scoped rule — and the first phase is *simultaneous*, so "whose turn"
+  // is not what makes a capital choice legal or illegal. See match-setup tests.
+  //
+  // What must remain true, and is asserted here, is the guarantee underneath:
+  // the Runtime — not the caller — decides, and nothing unwired slips through.
+  // Turn-legality for the commit loop returns with ticket 03.
   const runtime = open();
   const before = runtime.view('observer');
-  const notCurrent = runtime.currentActor === 'realm-a' ? 'realm-b' : 'realm-a';
 
-  const events = runtime.submit({ kind: 'noop', actor: notCurrent });
+  const events = runtime.submit({ kind: 'noop', actor: 'realm-b' });
 
   assert.equal(events.length, 1);
   assert.equal(events[0].type, 'intent-rejected');
-  assert.match(events[0].detail.reason, /not "realm-\w"'s turn/);
+  assert.match(events[0].detail.reason, /No resolution is wired for intent kind "noop"/);
   assert.deepEqual(runtime.view('observer'), before, 'A rejected intent advanced state.');
 });
 
@@ -118,9 +124,10 @@ test('a malformed intent is rejected without throwing', () => {
 test('opening rejects a bad config rather than substituting a default', () => {
   assert.throws(() => Runtime.open({ ...FIXTURE, seed: '' }), /seed/);
   assert.throws(() => Runtime.open({ ...FIXTURE, seed: undefined }), /seed/);
-  assert.throws(() => Runtime.open({ ...FIXTURE, world: { worldId: 'x' } }), /worldId and revision/);
-  assert.throws(() => Runtime.open({ ...FIXTURE, actors: [] }), /at least one actor/);
+  assert.throws(() => Runtime.open({ ...FIXTURE, actors: [] }), /exactly two actors/);
   assert.throws(() => Runtime.open({ ...FIXTURE, actors: ['a', 'a'] }), /unique/);
+  // A world that is not an artifact fails the same closed door as a corrupt one.
+  assert.throws(() => Runtime.open({ ...FIXTURE, world: { worldId: 'x' } }), /schema version/);
 });
 
 test('no clock is needed to boot — rules never read the wall clock', () => {
@@ -134,19 +141,17 @@ test('no clock is needed to boot — rules never read the wall clock', () => {
 test('preview is pure, reads only a view, and agrees with the Runtime', () => {
   const runtime = open();
   const view = runtime.view('realm-a');
-  const notCurrent = view.currentActor === 'realm-a' ? 'realm-b' : 'realm-a';
+  const mine = view.realms.find((r) => r.actor === 'realm-a').sectors[0];
 
-  const once = preview(view, { kind: 'noop', actor: notCurrent });
-  const twice = preview(view, { kind: 'noop', actor: notCurrent });
+  const once = preview(view, { kind: 'choose-capital', actor: 'realm-a', sector: mine });
+  const twice = preview(view, { kind: 'choose-capital', actor: 'realm-a', sector: mine });
   assert.deepEqual(once, twice, 'preview is not pure.');
+  assert.equal(once.admissible, true);
 
-  assert.equal(once.admissible, false);
-  const events = runtime.submit({ kind: 'noop', actor: notCurrent });
-  assert.equal(
-    events[0].type,
-    'intent-rejected',
-    'preview and the Runtime disagree about admissibility.',
-  );
-
-  assert.equal(preview(view, { kind: 'noop', actor: view.currentActor }).admissible, true);
+  // And it says no exactly where the Runtime does, with the same words.
+  const card = preview(view, { kind: 'noop', actor: 'realm-a' });
+  const events = runtime.submit({ kind: 'noop', actor: 'realm-a' });
+  assert.equal(card.admissible, false);
+  assert.equal(events[0].type, 'intent-rejected');
+  assert.equal(card.reason, events[0].detail.reason);
 });
