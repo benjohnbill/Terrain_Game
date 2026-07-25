@@ -4,6 +4,16 @@ Front door only (documentation law): status, scope, pointers, open
 questions. Definitions live in `GLOSSARY.md`; numbers in
 `../combat-formula/MAGNITUDE.md`.
 
+> **⚠ OCCUPATION SEALS AMENDED — Wayfinder gate C (ADR 0044, 2026-07-26).**
+> `OG-③`'s **limbo is now an interval, not an end state**: conquest is itself a
+> transfer channel and acquired land integrates on the ADR 0022/0029 ripening lag
+> (50% economy / 60% population, +10pp per stable turn). The register succeeds in
+> **proportion to the accumulated stock**, not to the land's nominal value. The
+> duel-pivot ledger's `D5.3` corollary ("land loss never shrinks the register") is
+> **dissolved** — it was deduced from permanent limbo. Channels, possessor-keeps
+> and the R2 conservation rider are unchanged. Authority: ADR 0044 +
+> `.scratch/l3-playable-build/DECISIONS-OWED.md` R16–R17.
+
 > **⛔ VICTORY MACHINERY SUPERSEDED — 1v1 duel pivot (ADR 0042, 2026-07-24).**
 > This feature births the multi-realm victory model; the 1v1 pivot replaces it
 > with **capital fall as the sole win condition**. The seals below are re-sealed

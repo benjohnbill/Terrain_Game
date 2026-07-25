@@ -666,6 +666,14 @@ special rule.
 
 ### OG-③ Transfer channels, possessor-keeps, conservation both ways — SEALED 2026-07-10/11 (design spec §5 + ruling R2) · L1
 
+**Amended by ADR 0044 (2026-07-26, gate C ruling R16).** Delta: **limbo is an
+interval, not a terminal state.** Conquest is now itself a transfer channel —
+acquired land integrates on the ADR 0022/0029 ripening lag — so occupied ground
+counts toward neither side only until it integrates, rather than indefinitely. The
+channel list, the no-enclave cession constraint, possessor-keeps, and the R2
+conservation rider are all unchanged; what changed is that settlement is no longer
+the only way out of limbo (ADR 0042 having retired it).
+
 Transfer channels move real sector ids: **cession** = value-descending
 under a connectivity/no-enclave constraint (each pick adjacent to winner
 territory ∪ already chosen), ceiling = this war's occupiedIds; **stall /

@@ -197,7 +197,17 @@ LIVE / INERT / REPURPOSED in the compressed 1v1 frame.
   15–30 min duel is an L3 watch already registered under the fog economy
   (gate-07 recon-pricing open question), not a Gate-5 device. **L-stamp L1.**
 - **D5.3 — SEALED — conscription register LIVE, role narrowed; mechanics
-  unchanged (MT-②).** The register survives intact: land-derived at match start
+  unchanged (MT-②).** **Corollary dissolved by ADR 0044 (2026-07-26, gate C
+  ruling R16/R17): the "faithful reading of land-loss" paragraph below no longer
+  holds.** It was deduced from permanent limbo — limbo is terminal → the only
+  transfer channel is settlement → a duel has no settlement → therefore the
+  register never moves. Conquest is now itself a transfer channel, so the first
+  link is false and the chain unwinds. The register now succeeds in proportion to
+  the accumulated stock (R17), and D5.3's own flagged L3 watch ("lost half my
+  land, why is my register intact?") is resolved in the direction it worried
+  about. **Everything else in D5.3 stands**: the register is land-derived at
+  start, a total-bodies stock, the finite blood bound, and the body-side of the
+  affordability bound. The register survives intact: land-derived at match start
   (명부 = registerPerPop × Σ populationValue), total-bodies accounting, a pure
   STOCK (only death shrinks it; recruitment moves civilian→serving), capPerPop
   600 = sustain fraction ⅓. Its OLD job — the multi-war aging clock ("one lost

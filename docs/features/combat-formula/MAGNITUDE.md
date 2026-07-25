@@ -800,7 +800,14 @@ Adopted during the match-arc pass (see `docs/features/match-arc/`):
   **Cap growth SEALED as structure (2026-07-05, ruling ⑮, battery
   sheet 12): conquest/development raises the national cap** — the
   sheet-9 "raising the cap itself = economy development" reservation
-  coming due. Grounds: the L2 tournament showed a static-cap world
+  coming due. **Amended by ADR 0044 (2026-07-26, gate C ruling R16):
+  the conclusion stands, its grounds are re-based.** ⑮ argued cap
+  growth from "a static-cap world cannot close — 96% never trip the
+  hegemony check", and ADR 0042 retired the hegemony check; closure is
+  now capital fall plus D6.4 land decay. Cap growth is retained because
+  land-derived state implies it (quantities derived from land travel
+  with the land), **not** because the match needs it to end. Original
+  grounds below, as recorded: the L2 tournament showed a static-cap world
   cannot close (96% of matches never trip the hegemony check —
   leadership is arithmetically unreachable against any healthy
   same-size peer while blood falls on the pool, not the cap), whereas

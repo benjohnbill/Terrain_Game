@@ -1,5 +1,15 @@
 # Feature: Combat-Balancing Formula
 
+> **⚠ M14 ⑮ AMENDED — Wayfinder gate C (ADR 0044, 2026-07-26).** "Conquest raises
+> the national cap" **stands**, but its grounds are re-based: ⑮ argued cap growth
+> from "96% of matches never trip the hegemony check", and ADR 0042 retired that
+> check. Cap growth is now retained because **land-derived state implies it**, not
+> because the match needs it to close — closure is capital fall plus the D6.4 land
+> decay. Also from gate C: the **movement contract has no birthplace here yet**
+> (SYNC-DEBT row), and **garrison regeneration rates** are still unlanded — M5
+> exports them by name and no later stage received them (ticket 06d's one
+> needs-info item). Read the strikethroughs in M13 before deriving any rate.
+
 ## Purpose
 
 Design the resolution layer: how a chosen operation plan plus commitment,

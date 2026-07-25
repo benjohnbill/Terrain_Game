@@ -11,6 +11,50 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
 
 ## Open
 
+- [ ] **Gate C's movement model has no Production birthplace** (registered
+  2026-07-26). ADR 0043 records the decision and `DECISIONS-OWED.md` R12–R15
+  carry the full text, but a *movement* mechanic has no owning feature doc — the
+  slice-2 spec (`docs/superpowers/`) is Working layer and its §3 is now amended in
+  three places (commit-free, per-hex fatigue, reachability legality). **Owed:** a
+  birthplace for the movement contract and its dials, most likely a model doc
+  under `docs/features/war-model-build/`. Until then ADR 0043 is authoritative
+  and the slice-2 spec must not be read as current on §3.
+
+- [ ] **Terrain re-authoring produces world revision `r2`, and only then a
+  movement cost table** (registered 2026-07-26, gate C R15 item 6). The authored
+  per-hex terrain is a region-painted placeholder: whole regions carry one layer,
+  which is why 116 of 292 hexes are `plains` and five or six regions are
+  uniformly so. The user confirmed the steppe/desert/oasis tendency is roughly
+  trustworthy and will be kept, while the all-`plains` regions **must** be fixed.
+  Movement cost is therefore uniform 1.0 today, and the cost table waits on that
+  pass. TC-⑪ froze orientation and resolution, **not** terrain values, so
+  re-painting is a revision bump rather than a seal violation. Out of this map's
+  scope; recorded so the dependency is not lost.
+
+- [ ] **The snowball counterweights are researched-only, by user ruling**
+  (registered 2026-07-26, gate C R16). Growth from conquered land is *not* to be
+  limited; counterweights live outside the transfer rule. Three directions:
+  (a) the defender's structural advantage — already mechanical, M5 gives defence
+  up to ×2.0 terrain × ×2.4 fortification = ×4.8 against M2's symmetric
+  ×1.00–×2.00 lever; (b) holding out and counterattacking into an Opening;
+  (c) breadth costing cognitive load and coarsening the commit-allocation unit so
+  the risk unit grows with the realm — **(c) has no device anywhere and is the
+  genuinely new work.** **Owed:** a precedent survey, user confirmation, then a
+  document. Explicitly **not** a design pass, and explicitly a later session.
+
+- [ ] **Morale (사기) is parked, and the reason should not be lost**
+  (registered 2026-07-26, gate C R13). The user's read: commit already absorbs
+  part of morale's role, so a separate device may not be needed at all — and if it
+  is, complexity argues for it rather than against. **Owed:** its own grill, not a
+  value. Do not implement a morale term in the 06 family.
+
+- [ ] **Interception of a force in transit has no design anywhere**
+  (registered 2026-07-26, gate C). Raised by the user while ruling R14 ("그 길목을
+  친다는 전략적인 결정도 수비측에"), and it is a real defensive option that
+  positioned armies make thinkable for the first time. Undesigned = kind 3 = out
+  of this slice under the four-kind workflow. **Owed:** a scope ruling before any
+  ticket touches it.
+
 - [ ] **M13a's start-state coordinates were cut for a 5-seat board; a 1v1 cut
   of the same terrain thins the shield threefold** (registered 2026-07-26 by
   ticket 05, restated the same day after the cause was isolated).

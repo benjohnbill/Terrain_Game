@@ -243,18 +243,19 @@ naming, promotion, the generated Quick Reference) lives in
   isolated") — that is state-reading, not a multi-turn action. _Avoid_:
   casting times, progress bars, multi-turn scripted operations (a HOI4-style
   authored multi-stage plan would be a model change, parked post-MVP).
-- ✅ `Position as product`: The MVP has no standalone move action and no
-  tracked army counters. Position is a *product* of operations: taking a
-  sector or opening a route changes what is reachable next turn, and
-  availability gates read that position (adjacency, routes, water
-  boundaries). Crossing/landing is an attack plan whose fiction is movement
-  under fire — the turn is spent forcing the passage; its products are the
-  far-bank sector and an opened route, and the inland attack is the next
-  turn's separate decision from the new position. Hexes keep doing movement
-  *math* (reachability, ADR 0015 penalties) as calculation substrate.
-  _Avoid_: a generic move order, hex-by-hex marching, movement turn-tolls
-  before attacks (a scripted two-turn sequence violates atomic turn
-  resolution).
+- ✅ `Position as product`: **Amended 2026-07-26 by ADR 0043** — the original
+  "no standalone move action and no tracked army counters" clause is retired;
+  a field army has a position and a destination order. What the entry
+  protects is unchanged: position stays a *product* of decisions rather than
+  a micromanagement surface. Orders are destination-grain with automatic
+  pathing, hexes carry the movement *math* (cost, reachability, ADR 0015
+  penalties) as calculation substrate, and an arriving force fights on
+  arrival — so there is no movement turn-toll before an attack. Taking a
+  sector or opening a route still changes what is reachable next turn, and
+  availability gates read that position. Crossing/landing remains an attack
+  plan whose fiction is movement under fire. _Avoid_: hex-by-hex marching, a
+  scripted two-turn move-then-attack sequence (it violates atomic turn
+  resolution). Authoritative: ADR 0043 + `DECISIONS-OWED.md` R12–R15.
 - ✅ `Standing world rule`: A per-turn world process that reads persistent
   state and applies consequences without consuming any faction's action
   capacity (ADR 0026). Phase-1 instances: usable-value recovery (ADR 0022),
