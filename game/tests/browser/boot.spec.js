@@ -68,8 +68,58 @@ test('the capital beat reveals both sites together, in a browser', async ({ page
     'capital-locked',
     'capitals-revealed',
   ]);
-  expect(view.phase).toBe('in-play');
+  // The beat hands straight over to the turn loop's sole agency tier (D6.2).
+  expect(view.phase).toBe('decision');
   expect(Object.keys(view.capitals).sort()).toEqual(['realm-a', 'realm-b']);
+});
+
+test('a turn commits, reveals and resolves in a browser, from the same artifact', async ({ page }) => {
+  const { events, view } = await page.evaluate((f) => window.__l3.oneTurn(f), FIXTURE);
+
+  expect(events.map((e) => e.type)).toEqual([
+    'commitment-allocated',
+    'commitment-allocated',
+    'commitment-locked',
+    'commitment-locked',
+    'commitments-revealed',
+    'front-resolved',
+    'turn-opened',
+  ]);
+  expect(events.map((e) => e.detail.tier)).toEqual([
+    'decision',
+    'decision',
+    'decision',
+    'decision',
+    'payoff',
+    'payoff',
+    'background',
+  ]);
+  expect(view.turn).toBe(2);
+  expect(view.phase).toBe('decision');
+  expect(view.committed).toEqual([]);
+});
+
+test('an ordered intent log replays to the same turn state in both hosts', async ({ page }) => {
+  // The canonical durable form is `(world identity, seed, ordered intent log)`
+  // (gate 02 § 5). This is that claim across the host boundary: Node and the
+  // browser pump the *same* log through the *same* emitted artifact and must land
+  // on the same board.
+  const { replayLog, turnSummary } = await import('../../acceptance/replay.js');
+  const { CRADLE_R1, Runtime } = await import('../../dist/runtime/index.js');
+
+  const open = () => Runtime.open({ world: CRADLE_R1, seed: FIXTURE.seed, actors: FIXTURE.actors });
+  const log = replayLog(open());
+  const node = open();
+  const nodeResult = { events: log.flatMap((intent) => node.submit(intent)), view: node.view('observer') };
+
+  const browserResult = await page.evaluate(
+    ({ fixture, log: intents }) => window.__l3.replay({ ...fixture, log: intents }),
+    { fixture: FIXTURE, log },
+  );
+
+  expect(turnSummary(browserResult)).toEqual(turnSummary(nodeResult));
+  expect(nodeResult.events.filter((e) => e.type === 'intent-rejected')).toEqual([]);
+  expect(nodeResult.view.turn).toBe(5);
 });
 
 test('the same seed projects identically across two boots in one browser', async ({ page }) => {

@@ -22,7 +22,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { Runtime } from '../runtime/runtime.js';
 import { CRADLE_R1 } from '../world/index.js';
 import { preview } from '../preview/preview.js';
-import type { ActorId, GameEvent, SectorId } from '../runtime/types.js';
+import type { ActorId, GameEvent, Intent, MatchView, SectorId } from '../runtime/types.js';
 import { MapBoard } from './MapBoard.js';
 
 const ACTORS: readonly ActorId[] = ['realm-a', 'realm-b'];
@@ -51,20 +51,36 @@ export function App() {
   }, []);
 
   const myRealm = view.realms.find((r) => r.actor === viewer);
-  const choosing = view.phase === 'capital-selection' && !view.capitalLocked.includes(viewer);
+  const choosing = view.phase === 'capital-selection' && !view.committed.includes(viewer);
   const selectable = choosing ? (myRealm?.sectors ?? []) : [];
 
-  const pick = useCallback(
-    (sector: SectorId) => {
-      const card = preview(view, { kind: 'choose-capital', actor: viewer, sector });
+  // Every player action goes through one door: preview first, submit only what
+  // preview admits, and let the Runtime own the outcome. A second copy of this for
+  // each intent kind is how the shell would start deciding legality for itself.
+  const submitting = useCallback(
+    (intent: Intent) => {
+      const card = preview(view, intent);
       if (!card.admissible) {
         setLog((l) => [...l, { type: 'preview-refused', turn: view.turn, detail: { reason: card.reason ?? '' } }]);
         return;
       }
-      setLog((l) => [...l, ...runtime.submit({ kind: 'choose-capital', actor: viewer, sector })]);
+      setLog((l) => [...l, ...runtime.submit(intent)]);
       setTick((t) => t + 1);
     },
-    [runtime, view, viewer],
+    [runtime, view],
+  );
+
+  const allocateChips = useCallback(
+    (front: string, chips: number) =>
+      submitting({ kind: 'allocate-commitment', actor: viewer, front, chips }),
+    [submitting, viewer],
+  );
+
+  const lockTurn = useCallback(() => submitting({ kind: 'lock-commitment', actor: viewer }), [submitting, viewer]);
+
+  const pick = useCallback(
+    (sector: SectorId) => submitting({ kind: 'choose-capital', actor: viewer, sector }),
+    [submitting, viewer],
   );
 
   return (
@@ -98,8 +114,12 @@ export function App() {
         <p className="prompt" data-testid="prompt">
           {choosing
             ? '수도를 골라주세요 — click any sector your realm owns.'
-            : `Locked. Waiting for ${view.actors.filter((a) => !view.capitalLocked.includes(a)).join(', ')}.`}
+            : `Locked. Waiting for ${view.actors.filter((a) => !view.committed.includes(a)).join(', ')}.`}
         </p>
+      )}
+
+      {view.phase === 'decision' && (
+        <TurnStrip view={view} viewer={viewer} onAllocate={allocateChips} onLock={lockTurn} />
       )}
 
       <MapBoard
@@ -122,7 +142,7 @@ export function App() {
                   <td>{r.sectors.length} sectors</td>
                   <td>pop {r.population.toFixed(1)}</td>
                   <td>econ {r.economy.toFixed(2)}</td>
-                  <td>{view.capitals[r.actor] ?? (view.capitalLocked.includes(r.actor) ? 'locked (hidden)' : '—')}</td>
+                  <td>{view.capitals[r.actor] ?? (view.committed.includes(r.actor) ? 'locked (hidden)' : '—')}</td>
                 </tr>
               ))}
             </tbody>
@@ -142,6 +162,70 @@ export function App() {
         </pre>
       </section>
     </main>
+  );
+}
+
+/**
+ * A grey-box probe for ticket 03's loop — **not** the commit-first shell.
+ *
+ * Ticket 04 owns how the game is actually operated, against gate 07's sealed
+ * interaction skeleton (three zones, a commit bar, information summoned rather than
+ * displayed). This strip exists only so the turn cycle ticket 03 built is visible to
+ * a human rather than only to tests: allocate chips to a front, lock, watch the
+ * reveal land in the event log, and see turn N+1 open. It is meant to be deleted.
+ *
+ * The viewer dropdown makes this shell hotseat by construction, and the event log
+ * is shared across both seats — a development affordance, not a two-client
+ * surface. Secrecy is enforced where it is load-bearing: the projection hands a
+ * viewer only their own stack, and the log renders event *types*, never contents.
+ */
+function TurnStrip({
+  view,
+  viewer,
+  onAllocate,
+  onLock,
+}: {
+  view: MatchView;
+  viewer: ActorId;
+  onAllocate: (front: string, chips: number) => void;
+  onLock: () => void;
+}) {
+  const locked = view.committed.includes(viewer);
+  const waitingOn = view.actors.filter((actor) => !view.committed.includes(actor));
+
+  return (
+    <section className="prompt" data-testid="turn-strip">
+      <p>
+        턴 {view.turn} · 행동력 {view.commitment.remaining}/{view.commitment.budget} 남음
+        {locked ? ` · 잠금 완료, ${waitingOn.join(', ')} 대기 중` : ' · 전선에 커밋하고 잠그세요'}
+      </p>
+      <table data-testid="fronts">
+        <tbody>
+          {view.fronts
+            .filter((front) => front.owners.includes(viewer))
+            .map((front) => {
+              const chips = view.commitment.allocations[front.key] ?? 0;
+              return (
+                <tr key={front.key}>
+                  <td>{front.sectors.join(' ↔ ')}</td>
+                  <td data-testid={`chips-${front.key}`}>{chips}</td>
+                  <td>
+                    <button type="button" disabled={locked} onClick={() => onAllocate(front.key, chips + 1)}>
+                      +1
+                    </button>
+                    <button type="button" disabled={locked || chips === 0} onClick={() => onAllocate(front.key, 0)}>
+                      clear
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
+        </tbody>
+      </table>
+      <button type="button" data-testid="lock" disabled={locked} onClick={onLock}>
+        커밋 잠그기
+      </button>
+    </section>
   );
 }
 

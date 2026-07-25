@@ -1,9 +1,8 @@
 # L3 Playable Build — Independent Ticket Execution Runbook
 
 Layer: Working (local issue-tracker operations)
-Current state: **building** — tickets 01 and 02 landed 2026-07-25 under the R6
-waiver; 03 is `ready-for-agent` (R8 sealed its one blocking row); 04 onward are
-`needs-info` behind the values in `DECISIONS-OWED.md`
+Current state: **building** — tickets 01, 02 and 03 landed 2026-07-25 under the R6
+waiver; 04 onward are `needs-info` behind the values in `DECISIONS-OWED.md`
 Ticket set: **re-cut 2026-07-25** against the 1v1 duel pivot (ADR 0042) and the
 gate-08 full-depth-match definition. See § Re-cut history.
 
@@ -68,7 +67,7 @@ leaves this table by having its blocking value landed at a birthplace.
 |---|---|---|---|
 | 01 | ✅ gates 05, 06, 02 | ✅ no value at all; gate 10's unfilled thresholds are already designed to fail `pending` | **LANDED 2026-07-25** |
 | 02 | ✅ gate 06 | ✅ R3 sealed the capital rule; partition balance was withdrawn (every region is pop 6.0) | **LANDED 2026-07-25** |
-| 03 | ✅ gate 02 | ✅ **R8 sealed § 1.3** (2026-07-25); the 행동력 stack size is recorded (ledger D6.3, 가안 20) and the non-combat unit prices R2 left unset are not invoked by this ticket | **ready-for-agent 2026-07-25** |
+| 03 | ✅ gate 02 | ✅ **R8 sealed § 1.3** (2026-07-25); the 행동력 stack size is recorded (ledger D6.3, 가안 20) and the non-combat unit prices R2 left unset are not invoked by this ticket | **LANDED 2026-07-25** |
 | 04 | ✅ gate 07 | ❌ 판세 in-play surface (Part 2 #13) | needs-info |
 | 05 | ✅ | ❌ decay dials unlanded | needs-info |
 | 06 | ✅ | ❌ fatigue effectiveness floor (Part 2 #11) | needs-info |

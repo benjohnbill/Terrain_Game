@@ -161,6 +161,17 @@ the play session, and fun is the next map's business.
   narrows § 1.3**: "both done → turn advances" *is* the turn-advance rule the
   Runtime-interface re-expression has been proposing, so that fog item is now one
   confirmation rather than an open design question.
+- **Ticket 03 landed** (2026-07-25) — **the turn turns.** Both realms allocate a
+  whole turn from one 20-chip 행동력 stack in secret, lock, and the second lock
+  reveals, resolves and opens turn N+1 inside the same call — no upkeep screen, no
+  extra click. Resolution is deliberately a *reading* (`outcome:
+  'pending-operations'`): combat is ticket 06. The resolve-order rule D6.1a routed
+  into the build was designed here (ruling TL-①, four enumerated overlap cases, two
+  of which this board makes impossible) with **zero new values**. Symmetry is
+  asserted rather than argued — swapping the two realm ids leaves the board and the
+  events equivalent under that relabelling. `verify:game` all PASS, parity PENDING
+  by design; 94 Node + 14 browser; root 479/479. Full result:
+  `.scratch/l3-playable-build/issues/03-…md` § Ruling and § Comments.
 - **R8 — turn legality is per-realm-per-turn, not alternating** (2026-07-25,
   user) — the § 1.3 confirmation, taken as written: legality reads "has this
   realm committed this turn / is the commit window open", and gate 02's

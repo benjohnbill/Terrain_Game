@@ -84,6 +84,16 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   (`game/src/projection/project.ts`); inherited by every later commit. No clock
   is involved, so ADR 0040 is untouched. Full text:
   `.scratch/l3-playable-build/DECISIONS-OWED.md` § R7.
+  **Grew again 2026-07-25 (L3 ticket 03).** The same home owes two more
+  match-frame rules, both now running in code: ruling **R8**'s turn legality
+  ("has this realm committed this turn / is the commit window open", with gate
+  02's `currentActor` read as the current phase), and the in-build **resolve-order
+  ruling TL-①** that D6.1a routed into the build — one engagement per front, fronts
+  resolved in canonical key order, nothing consulting actor identity or submission
+  order, with the four enumerated overlap cases and which of them the board makes
+  impossible. Zero new values in either. Full text:
+  `.scratch/l3-playable-build/issues/03-close-the-commit-reveal-turn-loop.md`
+  § Ruling.
 
 - [ ] **Linear-commit grammar for non-combat orders — no birthplace yet**
   (registered 2026-07-25, user ruling). Every non-combat order carries a

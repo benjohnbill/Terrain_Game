@@ -12,7 +12,9 @@
  */
 
 import { capitalChoiceRefusal } from '../domain/capital-choice.js';
-import type { Intent, MatchView, SectorId } from '../runtime/types.js';
+import { allocationRefusal, lockRefusal, type CommitmentContext } from '../domain/commitment.js';
+import { isPartyTo } from '../domain/fronts.js';
+import type { ActorId, Intent, MatchView, SectorId } from '../runtime/types.js';
 
 export interface PreviewCard {
   /** Whether the Runtime would accept this intent, as far as a viewer can tell. */
@@ -40,7 +42,7 @@ export function preview(view: MatchView, intent: Intent): PreviewCard {
     const refusal = capitalChoiceRefusal(
       {
         inSelectionPhase: view.phase === 'capital-selection',
-        alreadyLocked: view.capitalLocked.includes(intent.actor),
+        alreadyLocked: view.committed.includes(intent.actor),
         ownedSectors: view.realms.find((r) => r.actor === intent.actor)?.sectors ?? [],
       },
       intent.actor,
@@ -49,5 +51,46 @@ export function preview(view: MatchView, intent: Intent): PreviewCard {
     return refusal === null ? { admissible: true } : no(refusal);
   }
 
+  if (intent.kind === 'allocate-commitment' || intent.kind === 'lock-commitment') {
+    // A commitment can only be previewed by the realm making it. This is not the
+    // preview disagreeing with the Runtime — it is the blur seam speaking: a
+    // projection carries the viewer's own stack and nobody else's, so the input the
+    // rule needs genuinely is not there. Answering anyway, from whatever stack the
+    // viewer happens to hold, is how a preview starts inventing a rule.
+    if (intent.actor !== view.viewer) {
+      return no(`A commitment is previewed by the realm making it; "${view.viewer}" cannot preview "${intent.actor}"'s.`);
+    }
+    const context = commitmentContext(view, intent.actor);
+    const refusal =
+      intent.kind === 'lock-commitment'
+        ? lockRefusal(context, intent.actor)
+        : allocationRefusal(
+            context,
+            intent.actor,
+            (intent as { front?: unknown }).front,
+            (intent as { chips?: unknown }).chips,
+          );
+    return refusal === null ? { admissible: true } : no(refusal);
+  }
+
   return no(`No resolution is wired for intent kind "${intent.kind}" yet.`);
+}
+
+/**
+ * The spend context, assembled from a projection.
+ *
+ * Every field is available to a viewer by seal: the phase, who has committed (R7),
+ * the fronts (territory is public), and the viewer's *own* stack. Nothing here
+ * needs the opponent's allocation — which is exactly why a blind commit can be
+ * previewed at all.
+ */
+function commitmentContext(view: MatchView, actor: ActorId): CommitmentContext {
+  return {
+    windowOpen: view.phase === 'decision',
+    alreadyLocked: view.committed.includes(actor),
+    frontKeys: view.fronts.filter((front) => isPartyTo(front, actor)).map((front) => front.key),
+    // Safe because the caller already established `actor === view.viewer`.
+    allocations: view.commitment.allocations,
+    budget: view.commitment.budget,
+  };
 }

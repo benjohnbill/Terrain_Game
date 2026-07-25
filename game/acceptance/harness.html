@@ -34,6 +34,42 @@
           return { events, view: runtime.view('observer') };
         },
 
+        /**
+         * Plays the capital beat and then one whole turn: both realms allocate,
+         * both lock, and the second lock reveals, resolves and opens turn N+1.
+         */
+        oneTurn({ seed, actors }) {
+          const runtime = open({ seed, actors });
+          const setup = runtime.view('observer');
+          for (const actor of actors) {
+            runtime.submit({
+              kind: 'choose-capital',
+              actor,
+              sector: setup.realms.find((r) => r.actor === actor).sectors[0],
+            });
+          }
+
+          const front = runtime.view('observer').fronts[0].key;
+          const events = [];
+          for (const actor of actors) {
+            events.push(...runtime.submit({ kind: 'allocate-commitment', actor, front, chips: 4 }));
+          }
+          for (const actor of actors) {
+            events.push(...runtime.submit({ kind: 'lock-commitment', actor }));
+          }
+          return { events, view: runtime.view('observer') };
+        },
+
+        /**
+         * Pumps an ordered intent log — the canonical durable form (gate 02 § 5).
+         * The Node lane replays the same log and the two are compared.
+         */
+        replay({ seed, actors, log }) {
+          const runtime = open({ seed, actors });
+          const events = log.flatMap((intent) => runtime.submit(intent));
+          return { events, view: runtime.view('observer') };
+        },
+
         /** The world as the loader sees it, for cross-host integrity comparison. */
         worldSummary() {
           const world = loadWorld(CRADLE_R1);
