@@ -56,3 +56,29 @@ at tickets 09/10/11 and stays there. Do not resolve it by implication here.
 
 **Recompute readiness at claim time** (R6 test ii): this ticket needs 06b's batch
 approved as well, since fatigue is an input.
+
+## Comments
+
+### Calculator implementation evidence — 2026-07-26
+
+- Commits: `2663eba` (state-free calculator and host-parity tests), `2010d1a`
+  (review fixes: Stronghold parity and float-assertion diagnostics).
+- Scope: only the split pure-calculator half is complete. The ticket's state,
+  turn-loop, ordered-event, register, and surge-curve wiring remains blocked on
+  06a/06b and is deliberately untouched.
+- Production authority: combat-formula `FORMULA.md` D1–D11 and `MAGNITUDE.md`
+  M2/M4/M5; war-model-build WM-①/WM-②; operation-plan-catalog Delaying Defense;
+  ADR 0015. `game/src/domain/battle.ts` has no imports and accepts no match-state
+  object.
+- Narrow test: `node --test game/tests/battle-calculator.test.js` — **12 pass**,
+  including the M2 knee, symmetric product, M4 mirror/rout/escape,
+  defeat-in-detail emergence, both defence methods, and parity repulse.
+- Shared gates: `npm run verify:game` — typecheck / build:runtime / build:viewer /
+  test:node **131** / test:browser **16** all PASS; parity PENDING by design
+  (gate 10 owns the threshold; the browser test invokes the same emitted
+  `dist/runtime/index.js` artifact twice and matches Node). Root `npm test`
+  **479/479**. `npm run lint:docs` has zero blocking findings.
+- Legacy evidence disposition: `js/battle.js` was read only after the fresh
+  implementation. M2/M4/M5 arithmetic was accepted and compared numerically;
+  hidden fatigue/quality defaults were superseded; CommonJS/browser export
+  shape was incidental. No archive source was translated or imported.
