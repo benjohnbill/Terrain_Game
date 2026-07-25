@@ -21,11 +21,22 @@ a free inner ring; defensive UI mirrors the offensive one); capital CP-② item 
 (capital location is public, guard strength is fogged); duel-pivot ledger Gate 6
 (irreducible width = the enemy's this-turn hidden commit).
 
-**In-build: the reconnaissance economy numbers are candidates, not seals.** The
-*presentation* contract is sealed; the prices are not. Value-driven differential
-radar pricing, the immediate-scout premium, and the conditional-adoption cost
-were left as candidates pending scale-up. Land them as measurement-gated
-candidates, record what play says, and do not treat a candidate as a seal.
+**Reconnaissance is designed — read the spec before treating any of it as open.**
+`docs/superpowers/specs/2026-07-23-gate07-turn-loop-prototype.md` (user stories
+19–22) specifies the mechanism: basic reconnaissance spends commit to narrow a
+sector's band **one rung along the 0.45 → 0.70 → 0.90 ladder** and, for a tracked
+army, fixes its position; the scouted sector's force reading visibly brightens
+while its hole cards stay dark; recon also reads the target's derived 동원 강도
+band; **instant reconnaissance (즉시 정찰)** is a distinct, commit-consuming
+action (facade-only in the prototype, to be wired here).
+
+**User statement, 2026-07-25:** 일반 정찰 = 행동력 **2**, 즉시 정찰 = 행동력 **6**,
+where instant reconnaissance raises the ladder **two rungs at once**; recon is
+defined as visiting a target sector and acquiring the information **immediately
+that turn**. These values are not currently written anywhere in the repository —
+they must be landed at a birthplace (fog RULINGS or a magnitude home) before this
+ticket is implemented, not carried as conversation. Until then, treat the *values*
+as user-stated and unlanded, and the *mechanism* above as designed.
 
 - [ ] The projection publishes terrain, fortification, routes, current political control, land value and yield, and the register pool; it publishes **no** treasury figure, **no** enemy posture, and **no** enemy commitment.
 - [ ] Enemy substance and fatigue appear only as bands; enemy field-army position appears as last-seen plus a reach cone.

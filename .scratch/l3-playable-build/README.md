@@ -107,16 +107,41 @@ the parts that cannot be pre-sketched.
 - **Capital-terrain and encirclement dynamics** → deferred with the Moscow-trap
   fall path; tuned in the parallel map pass once the engine plays.
 
-## One open scoping question the re-cut surfaced
+## The scope test — wiring, not new systems
 
-**Is 천도 (capital relocation) in the slice?** Ledger D6.3 names it as an order
-kind the single 행동력 stack funds, and capital CP-② item 4 specifies its
-mechanics in full. Gate 08 axis 3 neither lists it among the slice's commands nor
-places it on the exclusion list (which names settlement negotiation, reserves, and
-multi-stage operations). Ticket 07 therefore forces an explicit call rather than
-letting it be silently dropped or silently built. Resolve it at build-spec
-authoring; a relocation costing a large share of the budget across turns is a real
-strategic lever, and its absence changes how a forward capital plays.
+**User ruling, 2026-07-25:** this program's mandate is to **lay the wiring so that
+everything already designed actually gets implemented**. That gives a scope test
+sharper than a feature list: for anything in question, ask *is this wiring an
+existing design, or is it introducing a system?* Wiring is in. A system is out,
+even when it is fully designed elsewhere.
+
+Worked example: **capital relocation (천도) is OUT** — ruled out by the user under
+exactly this test. Ledger D6.3 names it as an order kind and capital CP-② item 4
+specifies its mechanics completely, so it is not an undesigned hole; it is a large
+system and a core strategic element, and building it is not wiring. Recorded in
+ticket 07 so a later reader of CP-② does not mistake the absence for a gap.
+
+## When implementation meets a design problem — the confirmed workflow
+
+**Confirmed by the user 2026-07-25.** Assembling everything designed will keep
+surfacing design problems; this is the standing rule for who decides, by kind.
+Only the last row is the agent's to act on alone.
+
+| Kind | What it looks like | Who decides |
+|---|---|---|
+| **Seal conflict** | two or more sealed statements that cannot both be implemented | **User.** Stop at the seam. The user also corrects seals that are wrong or that their thinking has moved past. |
+| **Undetermined 가안 value** | the design says a value exists and is tuned in play, but no value is recorded | **User** — batched, not one interruption at a time. The agent brings a table: value name / why nothing runs without it / a starting value derived from a neighbouring seal / that derivation / what play would reveal. The user approves or edits. The agent never originates the number, and the user is never asked to invent one from nothing. |
+| **Undesigned system** | mentioned but never specified | **Out of this slice.** Never filled in, never coded. |
+| **Plan omission** | the design is complete and self-consistent; no ticket was building it | **Agent, autonomously** — with a duty to cite the seals it assembled and to have written **zero** new values or rules. If that citation list cannot be produced, it was not a plan omission and the work stops. |
+
+**The boundary test the agent runs**, in order: (1) does implementing this require
+me to write a normative statement that does not exist? → if yes, not mine; (2) do
+two or more seals disagree? → if yes, stop; (3) otherwise it is assembly, and mine.
+**When the call is ambiguous, treat it as (1).**
+
+Precedent, both from 2026-07-25: the 판세 display conflict went to the user
+(kind 1); the land-derived decay engine was built as ticket 05 by assembling
+D5.1/D5.2/D5.3 + D6.2/D6.4 + OG-①/AB-②/MT-② with zero new values (kind 4).
 
 ## Promotions owed while these tickets run
 

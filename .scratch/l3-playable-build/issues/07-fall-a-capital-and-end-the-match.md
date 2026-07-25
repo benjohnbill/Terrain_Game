@@ -36,7 +36,7 @@ deferred is the fall path built on it, not the vulnerability.
 - [ ] Defeating the full guard on the capital sector through a decisive battle ends the match immediately with that attacker as the winner.
 - [ ] No other win check exists anywhere: no last-faction-standing, no percentage-of-hexes, no hegemony or decision point, no points, territory, or economy tiebreak, no draw path, no turn cap.
 - [ ] The Moscow-trap fall path is absent rather than approximated, and its absence is stated in the ticket's evidence rather than left to be discovered.
-- [ ] Relocation, if built here, keeps the old capital as both win target and shield until relocation completes, does not strip the guard, does not cede the old province, and drains 행동력 across turns per CP-② item 4; otherwise it is explicitly out of scope for this ticket.
+- [ ] **Capital relocation (천도) is OUT of scope** (user ruling 2026-07-25) and is absent rather than approximated. It is a large system and a core strategic element, not wiring for an already-designed mechanism — and this build's mandate is to wire what is designed, not to introduce systems. Note for whoever reads CP-② item 4 later and wonders: relocation *is* fully specified there; its absence here is a deliberate scope call, not a design gap.
 - [ ] There is no early-rush floor: no rule forbids a capital falling before a given turn.
 - [ ] The match ends explicitly and finally with a victory screen that states who won and why play stopped.
 - [ ] A new match can start afterwards, resetting authoritative and interaction state.

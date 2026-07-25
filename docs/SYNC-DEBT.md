@@ -50,6 +50,25 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   0042 (turn structure = making ADR 0025's uncertainty duel literal, already
   confirmed). Sequencing: after the map pass / at the next L3 build gate.
 
+- [ ] **Designed mechanisms whose only written home is the Working layer**
+  (registered 2026-07-25, L3 build-ticket re-cut). The documentation law puts
+  `docs/superpowers/` in the Working layer — "consult for context; CURRENT truth
+  lives in the seal chain" — and `AGENTS.md` § Read Order does not list it. But
+  `docs/superpowers/specs/` holds 15 design specs (~200 KB) carrying mechanism
+  detail that has **no Production home**, so a law-compliant agent that reads only
+  the seal chain cannot find it. Instance that exposed this: the reconnaissance
+  mechanism (band narrows one rung along the 0.45 → 0.70 → 0.90 ladder; 즉시 정찰
+  as a distinct commit-consuming action; scouted 동원 강도 read) is specified only
+  in `2026-07-23-gate07-turn-loop-prototype.md` user stories 19–22, and an
+  agent-side classification consequently mis-read the whole area as undecided.
+  Related and worse: the **recon costs the user states as decided** (일반 정찰 =
+  행동력 2, 즉시 정찰 = 행동력 6, instant raising two rungs) are **absent from the
+  repository entirely** — a decision that exists only in conversation is invisible
+  to every future reader regardless of how much they read. Pay by promoting
+  spec-only mechanism content to its feature birthplaces and landing the stated
+  values at a birthplace. This is substantially the work gate 12 (a) was blocked
+  from doing.
+
 - [ ] **판세 in-play surface — two sealed positions conflict** (registered
   2026-07-25, L3 build-ticket re-cut). Gate 07 § Answer sealed the derived-band
   grade's encoding as **판세 = a match-level mini-meter** (live, in-play), and
