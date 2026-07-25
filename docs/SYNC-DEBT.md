@@ -60,6 +60,36 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   taxes breadth and this project excludes taxes. **Still owed:** the design session
   itself. Explicitly **not** a design pass here.
 
+- [ ] **There is no L2 rung under the L3 build's values** (registered 2026-07-26,
+  gate C). The test-trust ladder is L0 hand reasoning · L1 decision grid ·
+  **L2 tournament / battery** · L3 playtest. The L3 build has L1 and L3 and
+  **nothing between them**: the archive's L2 harness exists but ADR 0041 makes it
+  evidence rather than a build source, so it cannot be pointed at these values.
+
+  **Which values this covers:** everything landed on 2026-07-26 —
+  `war-model-build/MAGNITUDE.md` WB-M①'s fourteen fatigue/movement/supply dials
+  (L1) and the CATALOG delaying bands (L1). WB-M②'s march speed is the exception at
+  **L2**, having been measured against the board during gate C.
+
+  **Why it is a debt and not a footnote.** A played match falsifies **gross**
+  failures — a device never chosen, a stock always full or always empty — and that
+  much these tickets can instrument. It cannot say "180 should have been 150." So an
+  L1 value moves only when play breaks visibly, and sits unexamined otherwise. The
+  user named this directly at gate C: *"단순히 play로 넘기기만 하면 문제가 될 것
+  같은 느낌."* The agent answered honestly — the *structure* of a value choice is not
+  provable by play at all (there is no counterfactual to observe), only its symptoms
+  are — and promised to register the gap. This row is that promise, paid late.
+
+  **The pairing that makes it bite.** Unifying two behaviours onto one dial removes a
+  tuning knob, and with no L2 rung there is also no instrument that would tell you the
+  knob was needed. Where that happened this session the substitute knobs are elsewhere
+  and **coupled** (a garrison's local cap changes both how expensive it is to fill and
+  how strong it is when full).
+
+  **Owed:** a decision on whether the L3 build gets a batch harness of its own, and —
+  until it does — the discipline that an L1-stamped value is *provisional by
+  construction*, not merely unverified. Ladder: `docs/features/match-arc/TEST-LADDER.md`.
+
 - [ ] **Recruitment siting is a deferred pass, and it reopens the turn budget**
   (registered 2026-07-26, gate C ruling R19). Where a realm raises men — and
   therefore how far they must march to reach a front or a wall — is real design with
