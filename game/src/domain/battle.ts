@@ -172,7 +172,7 @@ export function resolveBattle(input: BattleInput): BattleOutcome {
   const delaying = defenseMethod === 'DELAYING';
   const attackerWins = delaying
     ? attackerPower >= defenderPower * DELAYING_BREAKTHROUGH_RATIO
-    : attackerPower >= defenderPower;
+    : attackerPower > defenderPower;
   const attackerRouted =
     !delaying && !attackerWins && input.attacker.substance > 0 && losses.attacker >= ROUT_FRACTION;
   const defenderRouted =

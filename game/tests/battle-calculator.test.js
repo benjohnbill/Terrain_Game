@@ -14,6 +14,13 @@ import assert from 'node:assert/strict';
 const { attackPower, casualtyFractions, commitLever, defensePower, resolveBattle, sidePower } =
   await import('../dist/runtime/index.js');
 
+function assertClose(actual, expected, tolerance) {
+  assert.ok(
+    Math.abs(actual - expected) < tolerance,
+    `expected ${actual} to be within ${tolerance} of ${expected}`,
+  );
+}
+
 test('the M2 commit lever keeps the unattended baseline and changes slope at the knee', () => {
   const cases = [
     [0, 1],
@@ -53,10 +60,10 @@ test('the M4 casualty curve mirrors exactly when the power ratio is inverted', (
   const strongerAttack = casualtyFractions(2);
   const strongerDefense = casualtyFractions(0.5);
 
-  assert.ok(Math.abs(strongerAttack.attacker - 0.045471496995311944) < 1e-12);
-  assert.ok(Math.abs(strongerAttack.defender - 0.3166818985854946) < 1e-12);
-  assert.ok(Math.abs(strongerAttack.attacker - strongerDefense.defender) < 1e-15);
-  assert.ok(Math.abs(strongerAttack.defender - strongerDefense.attacker) < 1e-15);
+  assertClose(strongerAttack.attacker, 0.045471496995311944, 1e-12);
+  assertClose(strongerAttack.defender, 0.3166818985854946, 1e-12);
+  assertClose(strongerAttack.attacker, strongerDefense.defender, 1e-15);
+  assertClose(strongerAttack.defender, strongerDefense.attacker, 1e-15);
   assert.deepEqual(casualtyFractions(1), { attacker: 0.12, defender: 0.12 });
 });
 
@@ -74,6 +81,18 @@ test('Stronghold is the default and a march-worn attacker must receive fatigue e
   assert.equal(outcome.sectorFalls, false);
   assert.equal(outcome.attacker.routed, false);
   assert.ok(outcome.attacker.casualties > outcome.defender.casualties);
+});
+
+test('Stronghold parity is a bloody repulse rather than an attacker capture', () => {
+  const outcome = resolveBattle({
+    attacker: { substance: 1_000, commit: 8, quality: 1, fatigue: 1, escape: 'OPEN' },
+    defender: { substance: 1_000, commit: 8, quality: 1, fatigue: 1, escape: 'OPEN' },
+    ...neutralGround,
+  });
+
+  assert.equal(outcome.winner, 'DEFENDER');
+  assert.equal(outcome.sectorFalls, false);
+  assert.equal(outcome.attacker.battleCasualties, outcome.defender.battleCasualties);
 });
 
 test('the defender carries its own commit lever into the resolved power duel', () => {
@@ -102,10 +121,10 @@ test('swapping the two plain-ground sides mirrors a Stronghold outcome', () => {
 
   assert.equal(forward.winner, 'ATTACKER');
   assert.equal(reverse.winner, 'DEFENDER');
-  assert.ok(Math.abs(forward.attacker.casualties - reverse.defender.casualties) < 1e-12);
-  assert.ok(Math.abs(forward.defender.casualties - reverse.attacker.casualties) < 1e-12);
+  assertClose(forward.attacker.casualties, reverse.defender.casualties, 1e-12);
+  assertClose(forward.defender.casualties, reverse.attacker.casualties, 1e-12);
   assert.equal(forward.defender.routed, reverse.attacker.routed);
-  assert.ok(Math.abs(forward.defender.escaped - reverse.attacker.escaped) < 1e-12);
+  assertClose(forward.defender.escaped, reverse.attacker.escaped, 1e-12);
 });
 
 test('M4 rout converts the losing remainder through OPEN escape or BLOCKED annihilation', () => {
@@ -119,9 +138,9 @@ test('M4 rout converts the losing remainder through OPEN escape or BLOCKED annih
   });
 
   assert.equal(open.defender.routed, true);
-  assert.ok(Math.abs(open.defender.battleCasualties - 316.6818985854946) < 1e-9);
-  assert.ok(Math.abs(open.defender.casualties - 658.3409492927472) < 1e-9);
-  assert.ok(Math.abs(open.defender.escaped - 341.6590507072528) < 1e-9);
+  assertClose(open.defender.battleCasualties, 316.6818985854946, 1e-9);
+  assertClose(open.defender.casualties, 658.3409492927472, 1e-9);
+  assertClose(open.defender.escaped, 341.6590507072528, 1e-9);
   assert.equal(blocked.defender.routed, true);
   assert.equal(blocked.defender.casualties, 1_000);
   assert.equal(blocked.defender.escaped, 0);
