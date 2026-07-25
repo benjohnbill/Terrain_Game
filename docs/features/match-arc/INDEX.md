@@ -4,6 +4,11 @@ Front door only (documentation law): status, scope, pointers, open
 questions. Definitions live in `GLOSSARY.md`; numbers in
 `../combat-formula/MAGNITUDE.md`.
 
+> **Research added 2026-07-26:** `research/snowball-counterweights.md` — a survey
+> for the deferred snowball-counterweight session. RESEARCH layer, adopts nothing.
+> Read § 2 first: the user ruled that growth from conquered land is **not** to be
+> limited, and most genre precedent fails that frame.
+
 > **⚠ OCCUPATION SEALS AMENDED — Wayfinder gate C (ADR 0044, 2026-07-26).**
 > `OG-③`'s **limbo is now an interval, not an end state**: conquest is itself a
 > transfer channel and acquired land integrates on the ADR 0022/0029 ripening lag

@@ -39,8 +39,13 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   ×1.00–×2.00 lever; (b) holding out and counterattacking into an Opening;
   (c) breadth costing cognitive load and coarsening the commit-allocation unit so
   the risk unit grows with the realm — **(c) has no device anywhere and is the
-  genuinely new work.** **Owed:** a precedent survey, user confirmation, then a
-  document. Explicitly **not** a design pass, and explicitly a later session.
+  genuinely new work.** **Survey PAID 2026-07-26** —
+  `docs/features/match-arc/research/snowball-counterweights.md` (user-confirmed
+  structure; RESEARCH layer, adopts nothing). It found that (a) and (b) are largely
+  already mechanical, that `conquest damage` is the half-named device for them (own
+  row below), and that **(c) has no transplantable precedent** because the genre
+  taxes breadth and this project excludes taxes. **Still owed:** the design session
+  itself. Explicitly **not** a design pass here.
 
 - [ ] **`conquest damage` is named in the seal chain and defined nowhere**
   (registered 2026-07-26, found by the gate C snowball survey). ADR 0029 and the
