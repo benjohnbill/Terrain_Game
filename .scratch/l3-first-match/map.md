@@ -76,9 +76,15 @@ correct. This map redraws the *destination*, not the settled decisions beneath i
   design specs and eighteen plans sit there, Working-layer by the law and absent
   from `AGENTS.md` § Read Order, yet carrying mechanism detail with no Production
   home. Reading only the seal chain produced false "undecided" verdicts twice.
+- **Read the artifact before asserting about it.** This effort has been wrong
+  about the cradle map twice: once from not opening it, once from opening the
+  superseded draft while three feature docs pointed at the right file. A partial
+  correction is still a wrong answer.
 - **Tooling:** `/usr/bin/grep` for existence checks (`grep`/`rg` are wrapped here
-  and give false negatives on recursive searches); `/usr/bin/git` (bare `git log`
-  is unreliable across worktrees).
+  and give false negatives on recursive searches — quote the glob, zsh expands
+  it); `/usr/bin/git` (bare `git log` is unreliable across worktrees). Parallel
+  subagents reading large docs hit the session limit at six; three at a time with
+  grep-then-read-a-slice instructions works.
 - **Voice:** conversation in Korean 존댓말; artifacts in neutral professional
   English.
 
@@ -119,6 +125,26 @@ the play session, and fun is the next map's business.
   three axes with variety from seeded randomness; capital-candidate free choice
   recorded as a lean awaiting confirmation. Full text with derivations:
   `.scratch/l3-playable-build/DECISIONS-OWED.md` § Rulings received.
+
+## Owed right now
+
+Small, sharp, and not worth a ticket each — but they are owed, so they are listed
+here rather than left to memory.
+
+- **One confirmation:** capital-candidate free choice (any owned sector) is
+  recorded as a **lean, not a seal** — the user framed it as "괜찮아 보입니다".
+  Ticket 02 cannot build against it until it is confirmed. Trade already written
+  out in `DECISIONS-OWED.md` R3.
+- **One citation fix:** the gate-08 § Answer in `.scratch/l3-playable-seam/issues/`
+  still names `map-data.js CANONICAL_MAP` as the reuse basis. That is C-loop
+  iteration 1; the authoritative map is `map-gen.js CRADLE_MAP` (iteration 2).
+  Ticket 02 is corrected and carries the full evidence; the gate is not. **The
+  decision that gate sealed is unaffected** — reuse cradle terrain, random
+  balanced partition, player-chosen capital — only its supporting citation is
+  wrong, so this is a stamp, not a re-grill.
+- **Two seal amendments** already recorded as SYNC-DEBT duties rather than gates:
+  a birthplace for the linear-commit grammar, and the decisiveness ladder re-cut
+  for a single-terminus duel (its top two rungs are objectives ADR 0042 retired).
 
 ## Not yet specified
 
