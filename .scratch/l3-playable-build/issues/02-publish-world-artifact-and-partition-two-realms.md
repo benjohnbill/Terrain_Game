@@ -8,9 +8,11 @@ two-realm board with their own realm, the enemy realm, and both capitals.
 
 **Blocked by:** 01 — Establish the L3 Tree and Boot a Deterministic Viewer.
 
-Status: needs-info
+Status: landed 2026-07-25
 
-Specification gates: Wayfinder 06, 10, 12.
+Specification gates: Wayfinder 06 (`resolved`) — read its § Answer as authority
+directly, under the R6 per-ticket waiver (`README.md` § Amendment R6). Gate 10's
+unfilled thresholds fail `pending`; gate 12's publication is a doc-sync debt.
 
 Contract (interim pointers): gate 06 § Answer D1–D6 (checked-in TS/ESM artifact,
 immutable `(worldId, revision)`, revision-local identifiers, three-tier
@@ -70,18 +72,116 @@ Verified content of `CRADLE_MAP`, measured 2026-07-25: **10 regions / 56 sectors
    derived once from the frozen hex layout (TC-⑪) and baked into the revision.
    This is assembly from the existing hex geometry, not a new rule.
 
-**One gap to route, not to fill:** region `r8` carries neither a `capitals` nor a
-`cities` entry. Capital placement must not assume every region offers a legal
-site.
+**One gap, now dissolved:** region `r8` carries neither a `capitals` nor a
+`cities` entry. Under R3 (SEALED 2026-07-25) this no longer matters — capital
+eligibility is ownership, so a realm drawing r8 loses no option. The tables are
+still authored into the artifact; they are advisory content for a later
+recommendation surface, not a placement constraint.
 
-- [ ] The world ships as a checked-in TS/ESM module under `game/` carrying an immutable `(worldId, revision)`; `Infinity` choke caps survive as native values.
-- [ ] Identifiers are stable within the revision; edges carry no independent id and derive from sorted endpoint ids.
-- [ ] Explicit intra-region sector adjacency is authored into the revision and is bidirectional and legal.
-- [ ] The tier-1 loader **fails closed** on schema version, duplicate ids, referential integrity, exactly-one region/sector membership, map-unit uniqueness, illegal or one-way adjacency, missing choke/removal data, and a revision content-integrity mismatch — it refuses to construct match state rather than degrading.
-- [ ] Match setup draws a **contiguous** two-realm partition balanced by **population** (not region count, not economy), deterministically from the seed; both realms are contiguous and non-empty, and an empty candidate set fails closed instead of falling back to a hardcoded split.
-- [ ] The candidate count and the achieved population imbalance are reported by an offline publication gate (gate 06 D5 tier 2: seat viability, viable-binding enumeration, derived-asymmetry, deterministic export), reusing the L2 sheet-14 viable-binding logic as re-implemented evidence. Note that B1/B2's recorded `~1.7×` thresholds were authored for **5-seat** adjacent-pair bindings and have never been re-cut for two realms — report that rather than silently reusing the number.
-- [ ] Each player chooses a capital site inside their own realm from that realm's authored city/capital sectors; both commit before either is revealed; both capital locations are public from that point on. A realm containing a region with no authored city sector still offers a legal site.
-- [ ] The rendered map preserves region, front-sector, route, terrain, and realm identity, and the renderer consumes only viewer-safe projection data.
-- [ ] Hover, camera, and unsubmitted focus stay interaction state outside the Runtime.
-- [ ] Equal `(worldId, revision, seed)` reproduces the same partition and the same initial projection in Node and browser.
-- [ ] The archive `map-gen.js` / `map-loader.js` / `map-gate.js` are used as behavioral evidence only; the per-seat summary shape that discards hexes does not cross into production.
+- [x] The world ships as a checked-in TS/ESM module under `game/` carrying an immutable `(worldId, revision)`; `Infinity` choke caps survive as native values.
+- [x] Identifiers are stable within the revision; edges carry no independent id and derive from sorted endpoint ids.
+- [x] Explicit intra-region sector adjacency is authored into the revision and is bidirectional and legal.
+- [x] The tier-1 loader **fails closed** on schema version, duplicate ids, referential integrity, exactly-one region/sector membership, map-unit uniqueness, illegal or one-way adjacency, missing choke/removal data, and a revision content-integrity mismatch — it refuses to construct match state rather than degrading.
+- [x] Match setup draws a **contiguous** two-realm partition balanced by **population** (not region count, not economy), deterministically from the seed; both realms are contiguous and non-empty, and an empty candidate set fails closed instead of falling back to a hardcoded split.
+- [x] The candidate count and the achieved population imbalance are reported by an offline publication gate (gate 06 D5 tier 2: seat viability, viable-binding enumeration, derived-asymmetry, deterministic export), reusing the L2 sheet-14 viable-binding logic as re-implemented evidence. Note that B1/B2's recorded `~1.7×` thresholds were authored for **5-seat** adjacent-pair bindings and have never been re-cut for two realms — report that rather than silently reusing the number.
+- [x] Each player chooses a capital site by clicking **any sector their realm owns** (R3, SEALED 2026-07-25 — eligibility is ownership, not an authored marker); both commit before either is revealed; both capital locations are public from that point on. `CRADLE_META`'s `capitals` / `cities` tables are carried into the artifact as authored content but do **not** gate the choice.
+- [x] The rendered map preserves region, front-sector, route, terrain, and realm identity, and the renderer consumes only viewer-safe projection data.
+- [x] Hover, camera, and unsubmitted focus stay interaction state outside the Runtime.
+- [x] Equal `(worldId, revision, seed)` reproduces the same partition and the same initial projection in Node and browser.
+- [x] The archive `map-gen.js` / `map-loader.js` / `map-gate.js` are used as behavioral evidence only; the per-seat summary shape that discards hexes does not cross into production.
+
+---
+
+## Result — landed 2026-07-25
+
+`npm run verify:game`:
+
+```
+PASS     typecheck        strict tsc over game/src
+PASS     build:runtime    one ESM graph emitted to game/dist/
+PASS     build:viewer     the playtest bundle
+PASS     test:node        68/68 contract tests, against the emitted artifact
+PASS     test:browser     11/11 Playwright tests (runtime lane + viewer lane)
+PENDING  parity           node 1f1df0557c34ed77 == browser 1f1df0557c34ed77
+```
+
+Root regression 479/479 untouched. `npm run lint:docs` 0 blocking.
+
+### The artifact
+
+`terrain-cradle@r1`, baked from `map-gen.js` (C-loop iteration 2) by
+`game/tools/bake-world.js` and checked in at `game/src/world/cradle-r1.ts`:
+**10 regions · 56 sectors · 17 edges · 292 hexes**, with **five open borders
+carrying a native `Infinity` cap** — the reason gate 06 D2 chose a TS module,
+and a test asserts that the same edge JSON-round-trips to `null`, so the hazard
+stays visible rather than remembered.
+
+Intra-region sector adjacency is derived once from the frozen hex layout and
+baked in, as finding 3 required. A content-integrity stamp (`113f7635`) is
+recomputed at load and identical in Node and browser by construction.
+
+### Measurements
+
+The publication gate (`game/tools/publish-gate.js`, tier 2 — offline, never per
+boot) reports:
+
+| | |
+|---|---|
+| candidate partitions | **15** unordered, **30** with side assignment — the ticket's figure, confirmed |
+| worst population imbalance | **0.000%** across all candidates |
+| achieved imbalance | **0.000%** worst over 200 seeded draws |
+| distinct layouts drawn | **30 of 30** — the draw reaches the whole space |
+| economy gap | min **0.08**, max **6.34** |
+| sector-count gap | min **0**, max **14** |
+| B1/B2 seat viability | **UNJUDGED** — reported, not reused |
+
+**Two of those want the user's eye.** A partition can be population-identical
+and still hand one realm **14 more sectors** than the other, or **6.34** more
+economy on totals near 30. That is SPEC's sealed asymmetry doing exactly what it
+says — balanced on population, asymmetric in geometry *and* economy — but it is
+much larger than "asymmetric" might suggest in the abstract, and it is per-match
+variance a player will feel. Nothing here treats it as a defect; it is recorded
+so the question is asked deliberately rather than discovered mid-playtest.
+
+B1/B2 is reported rather than applied: its ~1.7× threshold was authored for
+five-seat adjacent-pair bindings and has never been re-cut for two realms.
+Borrowing it would be importing a bar from a game this no longer is.
+
+### What the loader refuses
+
+Nine tier-1 checks, each with a test that breaks the artifact in exactly that
+one way: schema version · identity · **revision integrity** · duplicate region
+ids · a sector claimed by two regions · a sector claimed by none · a dangling
+reference · two sectors on one hex · one-way adjacency · cross-region adjacency ·
+adjacency to a non-existent sector · a `null` choke cap · a missing removal path ·
+a duplicate edge · an edge to a missing sector · a landmark pointing nowhere. All
+findings are reported at once rather than the first only.
+
+**D5's tenth item, "complete seat coverage", is discharged rather than skipped**,
+and the discharge is written into `load.ts` rather than left implicit: D4 settled
+that "seat binding is a match-setup input, not part of the authored map", and the
+duel pivot replaced fixed seats with a per-match partition — so coverage is now
+enforced in `partition.ts`, which guarantees two non-empty contiguous realms
+covering every region and fails closed when no such split exists.
+
+### One rule change made during review
+
+The projection originally published `capitalLocked` for **both** realms, so a
+player could watch the opponent's commitment land. No seal says that. Under the
+R6 authority test that is an invented visible-state rule, so the projection was
+narrowed to the viewer's own lock, and the question is now recorded as an owed
+micro-ruling (`DECISIONS-OWED.md` § Owed micro-ruling). Ticket 03 needs the same
+answer for turn commits.
+
+### Assumptions worth naming
+
+- **Cross-region sector adjacency is refused**, not merely absent. Finding 3 only
+  said intra-region adjacency was missing. The loader hardens that into a
+  rejection, because a cross-region adjacency row would open a second,
+  undocumented channel between regions that bypasses every choke the map
+  authored. If a revision ever needs sector-level cross-region contact, that is
+  an edge-model change and belongs in a gate.
+- **`currentActor` is still implemented exactly as gate 02 sealed it.** The
+  capital beat needed no turn order at all — its legality rule is "has this realm
+  locked yet" — which is direct evidence for § 1.3's standing proposal, and is
+  left for ticket 03 to rule on rather than pre-empted here.

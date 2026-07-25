@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>L3 acceptance harness</title>
+  </head>
+  <body>
+    <!--
+      The browser half of the single-emit contract (gate 05 D6). This page loads
+      `/dist/runtime/index.js` — the very artifact Node imports — so the two
+      hosts are demonstrably running the same code rather than two builds of the
+      same source.
+    -->
+    <script type="module">
+      import { Runtime, CRADLE_R1, loadWorld } from '/dist/runtime/index.js';
+
+      const open = ({ seed, actors }) => Runtime.open({ world: CRADLE_R1, seed, actors });
+
+      window.__l3 = {
+        /** Boots a match and returns its initial projection for one viewer. */
+        initialProjection({ seed, actors, viewer }) {
+          return open({ seed, actors }).view(viewer);
+        },
+
+        /** Runs the capital beat to completion and returns the revealed state. */
+        capitalBeat({ seed, actors }) {
+          const runtime = open({ seed, actors });
+          const setup = runtime.view('observer');
+          const events = [];
+          for (const actor of actors) {
+            const sector = setup.realms.find((r) => r.actor === actor).sectors[0];
+            events.push(...runtime.submit({ kind: 'choose-capital', actor, sector }));
+          }
+          return { events, view: runtime.view('observer') };
+        },
+
+        /** The world as the loader sees it, for cross-host integrity comparison. */
+        worldSummary() {
+          const world = loadWorld(CRADLE_R1);
+          return {
+            worldId: world.artifact.worldId,
+            revision: world.artifact.revision,
+            contentHash: world.artifact.contentHash,
+            openBorders: world.artifact.edges.filter((e) => e.choke.cap === Infinity).length,
+            regionPopulation: world.regionPopulation,
+          };
+        },
+      };
+      window.__l3ready = true;
+    </script>
+  </body>
+</html>

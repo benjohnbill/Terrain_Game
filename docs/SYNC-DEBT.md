@@ -11,6 +11,30 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
 
 ## Open
 
+- [ ] **R6 per-ticket authority waiver — gate-12 publication deferred behind the
+  build** (registered 2026-07-25, user ruling). The L3 build's readiness rule
+  required gate 12 to republish every accepted decision into Production docs
+  before any ticket ran. Gate 12 (a) is blocked behind
+  `.scratch/doc-structure/issues/10-audit-run-3.md`, which declares itself
+  unsound, so the ritual had become the sole obstacle between the program and its
+  redrawn destination (one played match). The user waived conditions 2/3/6 **per
+  ticket**, on a two-part test: every cited gate `resolved`, and zero unlanded
+  values. Ruling text + rationale: `.scratch/l3-playable-build/DECISIONS-OWED.md`
+  § R6; the amended rule and the per-ticket table: that tracker's `README.md`
+  § Amendment R6. **Owed:** gate 12 (a)'s publication batch still runs — the
+  resolved gates' § Answer contracts land in Production docs and any required
+  ADRs — but now alongside or after the build rather than in front of it. This
+  row is the record that the debt is deliberate.
+
+- [ ] **Capital candidate set widened to any owned sector — birthplace seal owed**
+  (registered 2026-07-25, user ruling R3). CP-① item 3 seals "the player picks
+  one of the **seat's main city sectors**"; the user replaced that with free
+  choice across every sector the realm owns, prompted at match start. Owed: a
+  seal row at `docs/features/capital/` amending CP-① item 3, recording that
+  `CRADLE_META`'s `capitals` / `cities` tables become **advisory** (recommendation
+  material, deferred) rather than the eligibility constraint. Ruling text:
+  `.scratch/l3-playable-build/DECISIONS-OWED.md` § R3.
+
 - [ ] **L3 Wayfinder gate 08 — first-slice DEFINITION sealed; build + promotions
   owed** (registered 2026-07-25, user grill). Gate 08
   (`.scratch/l3-playable-seam/issues/08-define-first-playable-vertical-slice.md`,
@@ -27,9 +51,11 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   `.scratch/l3-playable-build/` tickets were re-cut against this full-depth
   definition (nine pre-pivot tickets → thirteen, walking-skeleton order, loop
   closing at ticket 07; mapping in that tracker's README § Re-cut history). The
-  re-cut is ticket SHAPES only: no ticket can reach `ready-for-agent` until
-  Wayfinder 09/10/11 close and gate 12 publishes, and gate 12 (a) is still
-  blocked by `.scratch/doc-structure/issues/10-audit-run-3.md`; (c) implementation debts already
+  re-cut is ticket SHAPES only. **Amended 2026-07-25 by R6** (row above): this
+  clause originally read "no ticket can reach `ready-for-agent` until Wayfinder
+  09/10/11 close and gate 12 publishes". Under the per-ticket waiver, a ticket
+  whose cited gates are all `resolved` and whose values are all landed may run —
+  tickets 01 and 02 now do; (c) implementation debts already
   tracked ride their own rows (gate-06 loader, code-contract tree, turn-structure /
   eval-bar birthplace, operation-plan magnitude graduation). No mandatory-ADR trigger
   at gate close (definition/scoping, Working-layer); promotion assessment belongs to
@@ -49,6 +75,15 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   (행동력, EVAL BAR, capital fall already done). No mandatory-ADR trigger beyond
   0042 (turn structure = making ADR 0025's uncertainty duel literal, already
   confirmed). Sequencing: after the map pass / at the next L3 build gate.
+  **Grew 2026-07-25 (ruling R7).** The same home now also owes the
+  **commit-and-reveal visibility rule**: the *fact* of a realm's commitment is
+  public, its *content* is not, and **both realms having committed is what
+  advances the turn**. User-sealed with three reasons — deliberation time is a
+  psychological read, it is the genre grammar, and the turn-advance rule needs
+  the state observable anyway. Implemented for the capital beat in L3 ticket 02
+  (`game/src/projection/project.ts`); inherited by every later commit. No clock
+  is involved, so ADR 0040 is untouched. Full text:
+  `.scratch/l3-playable-build/DECISIONS-OWED.md` § R7.
 
 - [ ] **Linear-commit grammar for non-combat orders — no birthplace yet**
   (registered 2026-07-25, user ruling). Every non-combat order carries a
@@ -96,11 +131,17 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   cannot express simultaneous submission, and no document defines what "out of
   turn" means once both realms commit at once — while build ticket 12 requires bot
   intents to be rejected "exactly as a human's would be". Never previously
-  registered. Proposed resolution (agent, needs user seal): `currentActor` reads as
-  the current *phase* under D6.2's three tiers, and legality becomes
-  per-realm-per-turn — gate 02's actual guarantee (the Runtime, not the caller,
-  decides legality) survives without alternation. See
-  `.scratch/l3-playable-build/DECISIONS-OWED.md` § 1.3.
+  registered. **SEALED 2026-07-25 by ruling R8** (user), as proposed:
+  `currentActor` keeps its name and is read as the current *phase* under D6.2's
+  three tiers, and legality becomes per-realm-per-turn — "has this realm already
+  committed this turn / is the commit window open" — with no alternating
+  out-of-turn test. Gate 02's actual guarantee (the Runtime, not the caller,
+  decides legality) survives verbatim; only its expression changed. **What stays
+  owed is publication, not the decision**: this is a match-frame rule and belongs
+  in the same turn-structure birthplace the R7 visibility rule and the
+  linear-commit grammar are waiting on (rows above). Implemented in L3 ticket 03.
+  Full ruling: `.scratch/l3-playable-build/DECISIONS-OWED.md` § R8 (§ 1.3 kept as
+  its derivation).
 
 - [ ] **Seal-versus-seal conflicts surfaced by the value sweep — twelve rows**
   (registered 2026-07-25). A demand-driven sweep over the thirteen build tickets

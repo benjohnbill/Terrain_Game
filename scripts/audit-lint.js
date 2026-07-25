@@ -384,10 +384,30 @@ function runAll(root) {
   const glossaries = glob('docs/features', 'GLOSSARY.md').map((p) => ({ path: p, text: read(p) }));
   const surfaces = [{ path: 'DOMAIN_MAP.md', text: domainMap }, ...glossaries];
 
+  // Code-asset scan (Wayfinder gate 05 D5, executed by build ticket 01).
+  //
+  // Recursive over BOTH roots, and over TypeScript as well as JavaScript, so a
+  // graduated term's `codeRefs` resolve once its behavior is re-implemented in
+  // the L3 tree. D5 (2) keeps a term's refs pointing at `js/` until that
+  // re-implementation is parity-verified — this widens the scanner's field of
+  // view, not its strictness, and D5 (3) keeps `code-contract` blocking.
+  const CODE_ROOTS = ['js', 'game/src'];
+  const CODE_EXTENSIONS = ['.js', '.ts', '.tsx'];
+
   const jsFiles = {};
-  for (const f of fs.readdirSync(path.join(root, 'js')).filter((f) => f.endsWith('.js'))) {
-    jsFiles['js/' + f] = read('js/' + f);
-  }
+  const walkCode = (rel) => {
+    const abs = path.join(root, rel);
+    if (!fs.existsSync(abs)) return; // existing roots only
+    for (const entry of fs.readdirSync(abs, { withFileTypes: true })) {
+      const child = path.posix.join(rel, entry.name);
+      if (entry.isDirectory()) {
+        walkCode(child);
+      } else if (CODE_EXTENSIONS.some((ext) => entry.name.endsWith(ext))) {
+        jsFiles[child] = read(child);
+      }
+    }
+  };
+  for (const codeRoot of CODE_ROOTS) walkCode(codeRoot);
 
   const adrs = {};
   for (const f of fs.readdirSync(path.join(root, 'docs/adr'))) {

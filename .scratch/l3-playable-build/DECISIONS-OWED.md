@@ -99,8 +99,24 @@ as a city, so the authored `capitals`/`cities` tables become advisory
 (recommendation material, which the user has deferred) rather than the
 constraint.
 
-*Status:* direction recorded, **not sealed** — the user framed it as a lean
-("괜찮아 보입니다"), so it needs one confirmation before ticket 02 builds against it.
+*Status:* **SEALED 2026-07-25** — the user confirmed the free-choice option
+("자기 영토 아무 섹터나"). The capital candidate set is **every sector the realm
+owns at match start**, chosen by clicking one's own territory under the sealed
+simultaneous-commit prompt (CP-② D1.3), public from reveal (CP-② item 1).
+
+Consequences, now load-bearing:
+
+- **§ 1.6 closes and does not need its proposal.** Eligibility is ownership, so
+  the one-marker-per-region count and r8's missing marker stop being constraints.
+  The "read seat as the partition" proposal is withdrawn as unnecessary.
+- **`CRADLE_META`'s `capitals` / `cities` tables become advisory.** They no
+  longer gate placement. They stay in the artifact as authored map content and
+  are the natural material for the recommendation surface the user deferred.
+- **Ticket 02's acceptance item is amended** in the same batch: "from that
+  realm's authored city/capital sectors" → any owned sector.
+
+*Owes:* a seal row at `docs/features/capital/` amending CP-① item 3's
+"the player picks one of the seat's main city sectors".
 
 ### R4 — Bot disposition has three axes, and variety comes from seeded randomness · § 1.7 reshaped
 
@@ -147,10 +163,123 @@ The user asked what these two meant; they were separate items written adjacently
   and standing: read `currentActor` as the current *phase*, and legality as "has
   this realm already locked this turn / is the commit window open". Gate 02's
   actual guarantee — the Runtime, not the caller, decides legality — never
-  depended on alternation.
+  depended on alternation. **Confirmed as written 2026-07-25 → § R8.**
 - **§ 1.4 (phase ③)** — **CLOSED.** "어차피 3단 티어가 중요하지 Phase 개념 자체는
   지금도 얼마든지 추정 및 수정이 가능하니까요." The three tiers are the substance;
   the circled numbers are vestigial. Drop the numbering rather than invent a ③.
+
+### R6 — Per-ticket authority waiver: a resolved gate's § Answer is sufficient authority
+
+**User ruling 2026-07-25.** The `README.md` § Hard readiness rule required, among
+six conditions, that gate 12 first republish the accepted decision set into
+Production documents. That condition was authored when this program's destination
+was a plumbing **seam** handed off to other agents, and gate 12's publication
+batch *was* the handoff. Two things have since changed: the destination was
+redrawn to **one played match** (`.scratch/l3-first-match/map.md`), and gate
+12 (a) is blocked behind `.scratch/doc-structure/issues/10`, which declares
+itself `Status: BLOCKED — the gate itself is unsound` / `⛔ DO NOT EXECUTE`. So a
+republication ritual protecting a handoff that no longer happens had become the
+only thing standing between the program and its destination.
+
+**The ruling.** A ticket may be set `ready-for-agent` **without** conditions 2, 3
+and 6 when both of these hold:
+
+- **(i) sealed authority** — every Wayfinder gate the ticket cites is
+  `resolved`, so its contract already exists in a sealed § Answer;
+- **(ii) zero unlanded values** — no acceptance item needs a value or rule that
+  is undetermined, in conflict, or recorded only outside the repository.
+
+Conditions 1, 4 and 5 are untouched. The waiver changes **where the contract is
+read from** — a resolved gate's § Answer instead of a republished Production
+doc — and weakens nothing about agents inventing values: test (ii) *is* that
+bar, now applied per ticket instead of program-wide. Gate 12's publication
+becomes a doc-sync debt paid alongside the build rather than a gate in front of
+it.
+
+*Owes:* the `README.md` amendment (same batch), and a `docs/SYNC-DEBT.md` row
+for the deferred gate-12 publication.
+
+### R7 — Commitment is visible; the choice is not. And both-committed advances the beat · SEALED
+
+**User ruling 2026-07-25**, on a question ticket 02's build surfaced: may a
+player see that the opponent has finished committing, before the reveal?
+
+> "상대방이 '지금 고민을 끝내고 커밋을 다 했는지 여부'와 같은 표시는 필요할 것
+> 같아. 상대방이 얼마나 고민을 오래 하는지도 심리전 요인에 필수적이니까. 게임
+> 표준이기도 하고. 그리고, 우리 게임 시스템 상에서도, 어차피 양측의 결정 완료가
+> 끝나면 자동으로 턴이 넘어가는 것을 구현할 생각이기도 하니까."
+
+**Yes — the fact of commitment is public; the content of the commitment is not.**
+Three reasons, and the third is the largest:
+
+1. **Deliberation is a read.** How long an opponent takes is signal, and a duel
+   that hid it would delete a real layer of the contest. This makes the waiting
+   period *itself* part of play rather than dead time.
+2. **It is the genre's commit-and-reveal grammar**, which players arrive already
+   fluent in.
+3. **The system needs it regardless: both sides having committed is what
+   advances the turn.** That is a statement about the turn structure, not about a
+   status light — see the rider below.
+
+*Scope:* this is the general commit-and-reveal rule, not a capital-beat special
+case. Every later commit — orders, plans, the turn's chips — inherits it. Ticket
+02 implements it for the capital beat; ticket 03 inherits it for turn commits.
+
+*No clock is required, and none is introduced.* The indicator flips when a
+commitment lands, so elapsed deliberation is read from the world rather than
+timed. ADR 0040's bar on rules reading the wall clock stands untouched.
+
+**Rider — this bears directly on § 1.3, and narrows it.** "양측의 결정 완료가
+끝나면 자동으로 턴이 넘어간다" *is* the turn-advance rule: a turn ends when both
+realms have committed, not when an actor is done. That is precisely the
+re-expression § 1.3 has been proposing — read legality as "has this realm
+committed this turn / is the window open" rather than as a single
+`currentActor`. Ticket 02 also produced the implementation evidence: the capital
+beat needed no turn order at all and gate 02's actual guarantee (the Runtime
+decides legality) survived intact. § 1.3 is now one explicit confirmation away
+rather than an open design question.
+
+*Owes:* a home for the commit-and-reveal visibility rule alongside the
+linear-commit grammar (same SYNC-DEBT row — both are match-frame rules awaiting
+a birthplace).
+
+### R8 — Turn legality is per-realm-per-turn, not alternating · § 1.3 CLOSED
+
+**User confirmation 2026-07-25**, closing the proposal that had been standing
+since the sweep (§ 1.3) and that R7's rider had already narrowed to a formality.
+
+**The rule.** Legality in a simultaneous turn reads as **"has this realm already
+committed this turn / is the commit window open"**. Gate 02's `currentActor`
+keeps its name and its `ActorId` type, and is read as the **current phase** under
+D6.2's three tiers. The alternating out-of-turn test does not exist: both realms
+are legal callers at the same moment, and the two rejection reasons a turn needs
+are *"this realm has already locked this turn"* and *"the commit window is
+closed"*.
+
+**What is unchanged.** Gate 02's actual guarantee — the Runtime, not the caller,
+decides what is legal now — never depended on alternation, so it survives
+verbatim. Nothing in its rationale (no caller cheats; a caller bug cannot
+reorder the match) is weakened. The surface stays exactly three members; no
+snapshot API and no subscription API appear.
+
+**Why this was confirmable rather than a fresh design question.** Three
+independent supports, none of them argument alone:
+
+1. **R7's rider already sealed the turn-advance rule** — "양측의 결정 완료가
+   끝나면 자동으로 턴이 넘어간다" *is* per-realm-per-turn legality stated from the
+   advance side.
+2. **Ticket 02 produced the implementation evidence.** The capital beat needed no
+   turn order at all; its legality rule is already "has this realm locked yet",
+   and both actors are legal callers simultaneously. Test: `both actors are legal
+   callers at the same moment` in `game/tests/match-setup.test.js`.
+3. **Ticket 03's acceptance item 8 was written expecting this answer**, verbatim.
+
+*Effect on readiness:* this was the single row failing R6 test (ii) for ticket
+03. The waiver table flips and ticket 03 becomes buildable.
+
+*Owes:* the same birthplace as R7 and the linear-commit grammar — one
+turn-structure home for all three match-frame rules (SYNC-DEBT row already
+registered; the `currentActor` row is now sealed rather than proposed).
 
 ---
 
@@ -233,7 +362,13 @@ else about recon pricing follows from that choice.
 the same chips. If recon is never bought, it is overpriced; if it is always
 bought first, underpriced.
 
-### 1.3 The Runtime interface predates the pivot
+### 1.3 The Runtime interface predates the pivot — **CLOSED by R8**
+
+**Closed 2026-07-25 (user).** The proposal below was confirmed as written: legality
+reads as "has this realm committed this turn / is the window open", and
+`currentActor` keeps its name while being read as the current phase. Full ruling
+and its three supports: § R8. The rest of this section is kept as the derivation
+that produced it.
 
 **Status: seal versus seal.** Gate 02 (2026-07-16) seals `currentActor ->
 ActorId` and "the Runtime rejects an intent submitted out of turn". D6.1
@@ -303,7 +438,12 @@ a retired map-discovery model), and the **fit-ranking function** — which matte
 more than it sounds, because ADR 0024 makes the top-ranked plan double as the
 recommendation, so the ranking is player-facing, not internal bookkeeping.
 
-### 1.6 Capital site eligibility does not survive the pivot
+### 1.6 Capital site eligibility does not survive the pivot — **CLOSED by R3**
+
+> **Dissolved 2026-07-25.** R3's seal makes eligibility *ownership*, so neither
+> the one-marker-per-region count nor r8's missing marker constrains placement
+> any more. The proposal below is withdrawn; the section is kept for the
+> measurement it records about `CRADLE_META`.
 
 **Status: the rule is sealed but cannot be executed as written.** CP-① seals
 that "the player picks one of the **seat's main city sectors**". On the

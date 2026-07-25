@@ -125,16 +125,56 @@ the play session, and fun is the next map's business.
   three axes with variety from seeded randomness; capital-candidate free choice
   recorded as a lean awaiting confirmation. Full text with derivations:
   `.scratch/l3-playable-build/DECISIONS-OWED.md` § Rulings received.
+- **R6 — per-ticket authority waiver** (2026-07-25, user) — the build's readiness
+  rule required gate 12 to republish every decision into Production docs first,
+  and gate 12 (a) is blocked behind a doc-structure gate that declares itself
+  unsound. The user waived that condition **per ticket**, on a two-part test:
+  every cited Wayfinder gate `resolved`, and zero unlanded values. The bar
+  against inventing values is untouched — it *is* the second half of the test.
+  Gate 12's publication became a doc-sync debt paid alongside the build. **This
+  is what turned the map from planning into building:** tickets 01 and 02 went
+  `ready-for-agent` the same session.
+- **R3 confirmed — capital candidates are any owned sector** (2026-07-25, user) —
+  the lean sealed. Eligibility is ownership, so `DECISIONS-OWED.md` § 1.6
+  dissolves entirely and `CRADLE_META`'s city tables become advisory. Owes a seal
+  at `docs/features/capital/` (SYNC-DEBT registered).
+- **Ticket 01 landed** (2026-07-25) — **the L3 build exists and runs.** The
+  `game/` TS/ESM island, the seven `:game` commands, and a Runtime holding
+  exactly gate 02's three-method surface. `verify:game`: typecheck / build /
+  18 Node contract tests / 3 Playwright tests all PASS; parity reports **PENDING**
+  with identical digests in both hosts, because gate 10 owns the pass threshold —
+  the safety valve doing its job rather than a defect. Root regression 479/479
+  untouched. Full result: `.scratch/l3-playable-build/issues/01-…md` § Result.
+- **Ticket 02 landed** (2026-07-25) — **the board exists and is playable to the
+  capital prompt.** The cradle terrain is baked into a frozen `terrain-cradle@r1`
+  artifact (10 regions · 56 sectors · 17 edges · 292 hexes, five open borders
+  keeping their native `Infinity`), guarded by a fail-closed tier-1 loader; match
+  setup draws one of 15 contiguous population-equal partitions from the seed; and
+  both players choose a capital on any owned sector, simultaneously and in
+  secret. Full result and measurements:
+  `.scratch/l3-playable-build/issues/02-…md` § Result.
+- **R7 — commitment is visible, the choice is not; both-committed advances the
+  turn** (2026-07-25, user) — the *fact* of a realm's commitment is public
+  because deliberation time is a psychological read, because it is the genre's
+  commit-and-reveal grammar, and because the turn advances on both sides having
+  committed. The general rule, not a capital-beat special case. **Its rider
+  narrows § 1.3**: "both done → turn advances" *is* the turn-advance rule the
+  Runtime-interface re-expression has been proposing, so that fog item is now one
+  confirmation rather than an open design question.
+- **R8 — turn legality is per-realm-per-turn, not alternating** (2026-07-25,
+  user) — the § 1.3 confirmation, taken as written: legality reads "has this
+  realm committed this turn / is the commit window open", and gate 02's
+  `currentActor` keeps its name while being read as the current phase. Gate 02's
+  guarantee (the Runtime decides legality, not the caller) never depended on
+  alternation, so it survives verbatim. **This was ticket 03's only blocking
+  row** — the ticket went `ready-for-agent` the same session. Full text:
+  `.scratch/l3-playable-build/DECISIONS-OWED.md` § R8.
 
 ## Owed right now
 
 Small, sharp, and not worth a ticket each — but they are owed, so they are listed
 here rather than left to memory.
 
-- **One confirmation:** capital-candidate free choice (any owned sector) is
-  recorded as a **lean, not a seal** — the user framed it as "괜찮아 보입니다".
-  Ticket 02 cannot build against it until it is confirmed. Trade already written
-  out in `DECISIONS-OWED.md` R3.
 - **One citation fix:** the gate-08 § Answer in `.scratch/l3-playable-seam/issues/`
   still names `map-data.js CANONICAL_MAP` as the reuse basis. That is C-loop
   iteration 1; the authoritative map is `map-gen.js CRADLE_MAP` (iteration 2).
@@ -158,10 +198,6 @@ here rather than left to memory.
   code); the Encirclement threshold (2.2 versus 1.92, where 1.92 is the
   rout-onset figure); whether a commit marker appears on the eval bar (a seal
   twice over against both prototypes' "never").
-- **Re-expressing gate 02's turn-order clause for a simultaneous turn.** Proposal
-  standing (read `currentActor` as the current phase; legality becomes "has this
-  realm locked / is the window open"), user confirmation owed. Sharp, but it may
-  resolve inside the batch above rather than needing its own ticket.
 - **Which surfaces the values single-source.** The supervision design turns on
   values living in exactly one declared place with a lint forbidding numeric
   literals in rule modules. Whether that place is a birthplace document with a

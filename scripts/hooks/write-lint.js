@@ -14,7 +14,9 @@
 // `DOCUMENTATION-LAW.md` moved out of `.claude/rules/` on 2026-07-17 (the
 // harness auto-loads that directory, so the law entered context twice). The old
 // path stays matched so a stray edit to a leftover copy is still caught.
-const GOVERNED = /^(DOMAIN_MAP\.md|SPEC\.md|DESIGN\.md|DOCUMENTATION-LAW\.md|docs\/.*|js\/.*\.js|\.claude\/rules\/documentation-law\.md)$/;
+// `game/` joins the governed set per gate 05 D5 (4), so ports receive
+// code-contract feedback as they are written rather than at audit time.
+const GOVERNED = /^(DOMAIN_MAP\.md|SPEC\.md|DESIGN\.md|DOCUMENTATION-LAW\.md|docs\/.*|js\/.*\.js|game\/.*\.(js|ts|tsx)|\.claude\/rules\/documentation-law\.md)$/;
 
 // apply_patch envelope directives, e.g. `*** Update File: docs/x.md`. One patch
 // may touch several files, and `*** Move to:` carries a rename's destination.
