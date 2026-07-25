@@ -2,7 +2,7 @@
 
 Layer: Working (local issue-tracker operations)
 Current state: **building** — tickets 01, 02 and 03 landed 2026-07-25 under the R6
-waiver; **05 claimed 2026-07-26** (rulings R9/R10/R11); 04, 06 onward are
+waiver; **05 landed 2026-07-26** (rulings R9/R10/R11); 04, 06 onward are
 `needs-info` behind the values in `DECISIONS-OWED.md`
 Ticket set: **re-cut 2026-07-25** against the 1v1 duel pivot (ADR 0042) and the
 gate-08 full-depth-match definition. See § Re-cut history.
@@ -70,7 +70,7 @@ leaves this table by having its blocking value landed at a birthplace.
 | 02 | ✅ gate 06 | ✅ R3 sealed the capital rule; partition balance was withdrawn (every region is pop 6.0) | **LANDED 2026-07-25** |
 | 03 | ✅ gate 02 | ✅ **R8 sealed § 1.3** (2026-07-25); the 행동력 stack size is recorded (ledger D6.3, 가안 20) and the non-combat unit prices R2 left unset are not invoked by this ticket | **LANDED 2026-07-25** |
 | 04 | ✅ gate 07 | ❌ 판세 in-play surface (Part 2 #13) | needs-info |
-| 05 | ✅ | ✅ **recomputed 2026-07-26** — the row's "decay dials unlanded" was stale: all five verified at their birthplaces (`capLandFrac 1` AB-②, `registerPerPop 1,800` / `capPerPop 600` / sustain ⅓ MT-②+M13, ripening ADR 0022/0029). The scope widened by **R9** (force model + recruitment) adds no undetermined value: **R10** found the commit→recruitment unit already sealed (MT-③ +1%p/point) and **R11** adopted the four archive-only numbers as recorded 가안 | **claimed 2026-07-26** |
+| 05 | ✅ | ✅ **recomputed 2026-07-26** — the row's "decay dials unlanded" was stale: all five verified at their birthplaces (`capLandFrac 1` AB-②, `registerPerPop 1,800` / `capPerPop 600` / sustain ⅓ MT-②+M13, ripening ADR 0022/0029). The scope widened by **R9** (force model + recruitment) adds no undetermined value: **R10** found the commit→recruitment unit already sealed (MT-③ +1%p/point) and **R11** adopted the four archive-only numbers as recorded 가안 | **LANDED 2026-07-26** |
 | 06 | ✅ | ❌ **Part 2 #14** — does the operational layer track and move armies at all (found 2026-07-26; a Wayfinder gate after 05 lands, not a value). Part 2 #11 (fatigue floor) is a stamp, not a blocker: both sides say ×0.5 | needs-info |
 | 07 | ✅ | ❌ capital guard magnitude (Part 2 #10); CP-① item 3 stale (§ 1.8) | needs-info |
 | 08 | ✅ | ❌ Part 2 #1, #4, #5, #6 — the whole fog band | needs-info |

@@ -205,6 +205,23 @@ the play session, and fun is the next map's business.
   **User ruling: a Wayfinder gate, opened once 05 lands** — and it is on the
   critical path, since ticket 07 (where the loop closes) is blocked by 06.
 
+- **Ticket 05 landed** (2026-07-26) — **losing ground now costs.** Income and the
+  land-derived force limit recompute from currently-held land every turn, folded
+  into the reveal's tail; occupied ground pays neither side (OG-③); recruitment
+  converts action points into men at MT-③'s integral price with no rate cap. Realm
+  substance — treasury, field army, border garrisons, conscription register — is
+  born here rather than nowhere. `verify:game` all PASS (parity PENDING by
+  design), 119 Node + 15 browser, root 479/479. **Two measurements the ticket did
+  not predict**, both registered in `docs/SYNC-DEBT.md` rather than patched: the
+  surge price curve never fires on this board (mobilization peaks 41.7% under a
+  42% knee, because M13a's per-border-sector garrison and its ρ anchor cannot both
+  hold on a map with a third the border), and the economy has no sink once the
+  field fills. The two-axis review also caught the implementation contradicting a
+  seal (flat opening treasury against TC-⑭) and silently answering an open
+  question (permanent limbo against M14 ⑮) — both corrected, the second registered
+  as **Part 2 #15** for ticket 06. Full result:
+  `.scratch/l3-playable-build/issues/05-…md` § Comments.
+
 ## Owed right now
 
 Small, sharp, and not worth a ticket each — but they are owed, so they are listed
