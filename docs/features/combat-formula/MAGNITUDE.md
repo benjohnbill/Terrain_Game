@@ -759,9 +759,41 @@ Adopted during the match-arc pass (see `docs/features/match-arc/`):
   The old flat "+10% of cap/turn at 부대=0.5 yield" is the **Band-1
   base** of that curve. A discounted levy tier was rejected (reopens
   quality=1); 공세 동원 (ADR 0009 role 3) stays a reserved seat.
-  Curve knees anchor to M13a coordinates; multipliers → magnitude
-  session. Rider: M14 flat blood-EV check owed (band escalation bends
-  it at depth).
+  Curve knees anchor to M13a coordinates; ~~multipliers → magnitude
+  session~~ → **adopted 2026-07-26 as 가안, R11 (below)**. Rider: M14
+  flat blood-EV check owed (band escalation bends it at depth).
+  **SEALED 2026-07-26 (ruling R10, user) · L0 — the action-point
+  conversion, and no rate cap.** R2's re-cut of non-combat orders into
+  one linear free-pour grammar collapses the base-primary/surplus split
+  above: **one 행동력 point = +1%p of the force limit, and nothing caps
+  the turn** — the whole stack is a legal pour. The number is this
+  row's own surge exchange rate, now carrying the whole conversion
+  rather than only the surplus. Explicitly **retired as a reading**:
+  "+10% of cap **per turn**" as a rate ceiling — it was struck through
+  here when MT-③ replaced the flat rate, and the bounds are the
+  affordability mins (headroom / treasury / bodies), never a rate.
+  Checks against M13a: all-in 20 points = +20%/turn fills f₀ 0.5 to
+  full in **2.5 turns** (sealed "surged 2–3"); 8–10 points fills it in
+  **5–6** (sealed "plain buildup 5"). Built at ticket 05
+  (`game/src/domain/recruitment.ts`).
+  **가안 adopted 2026-07-26 (ruling R11, user) · L0 — the deferred
+  multipliers, taken from the L2 harness rather than originated**:
+  price multiple **×2 at the war knee**, **×12 at total mobilization**
+  (`mockup/combat-calc/econ.js`, where they were marked placeholder and
+  never brought back). The magnitude session that owned them never ran;
+  these are start values to be repaid in play, not a seal of the
+  numbers. **First measurement, ticket 05 (2026-07-26): the curve never
+  fires on the duel board** — mobilization peaks at 41.7% against this
+  row's 42% peace knee, so every draft in a match bills at the Band-1
+  base. Cause is a board mismatch, recorded at M13a's rider.
+- **부대 (unit) headcount = 100 men** — **가안 adopted 2026-07-26
+  (ruling R11, user) · L0.** M13's price anchor is "1 부대 = 0.5
+  yield"; the unit's *headcount* was never sealed anywhere, and reaches
+  the build from the L2 harness (`econ.js` `menPerYield: 200`). It is
+  the bridge between a price quoted in units and a force counted in
+  men. Rescaling it rescales every troop figure a player reads without
+  changing a single decision, which is why it was safe to adopt ahead
+  of play.
 - **국가 상한 (national sustainable cap)**: economy-derived ceiling on
   standing forces; the cap replaces per-turn upkeep bookkeeping
   (low-micromanagement). Garrison ceilings stay local (ADR 0014).
@@ -822,6 +854,19 @@ formula, the rest pinned from history:
   21%→7%, Vauban indecisive-war signature) — the tilting devices'
   target, not a reason to unseal.
 
+**Rider — the anchors do not both hold on the duel board (measured
+2026-07-26, ticket 05 instrumentation).** `terrain-cradle@r1` under a 5+5
+region partition leaves a realm roughly **5 border sectors**, where the L2
+seat map gave ~15. So `garrisonPerBorderSector 900` builds a shield of
+**4,500** while ρ = 0.75 against an 18,000 field ceiling implies ~13,500 —
+and the derived **start intensity lands at 25%, not 42%**. Consequence
+downstream: even at a full field, mobilization peaks at **41.7%**, just
+under the MT-③ peace knee, so the surge price curve never fires for a whole
+match. **Not resolved here.** Reconciling the per-border-sector garrison
+with ρ — or re-cutting either for a map with a third the border — is a user
+decision; ticket 05 registered it rather than guessing. Measurement table:
+`.scratch/l3-playable-build/issues/05-…md` § Comments.
+
 ## M14 — Thin economy (2026-07-05, A-3 session; rulings ⑱–㉑)
 
 The minimum economy that makes M13 prices and 정산 codable. Governed by
@@ -830,6 +875,16 @@ and cap are derived from held sectors every turn, never stored. The
 only new stored state is the treasury. All values playtest-provisional
 under the A-3 epistemic rider (battery NOTES: economy feel is an L3
 question; keep re-running L2 as values move).
+
+**Amended by terrain-cradle TC-⑭ (2026-07-08) — stamped 2026-07-26.**
+Ruling ㉑'s treasury row below seals a **flat** "start 생산 5 (가안)". TC-⑭,
+the derived-asymmetry seal beneath SPEC principle #8, later ruled that every
+playable quantity starts uniform across realms unless the inequality is read
+off the authored map, and named treasury as one of its two worked examples:
+**`treasuryStartTurns × terrain-fed economy`**. A flat per-realm constant is
+the shape that seal forbids, so ㉑'s *form* is superseded while its 가안
+status stands. Built that way at ticket 05 (`domain/economy.ts`
+`TREASURY_START_TURNS = 3`, the harness Option B figure, SYNC-DEBT-registered).
 
 - **Unit — yield (생산), the 기본 생산량**: one ordinary sector at full
   usable produces 생산 1 per turn. The common measure of cost and asset
@@ -851,8 +906,11 @@ question; keep re-running L2 as values move).
   L2-validated: sheet-12 re-run at derived caps closes 27% of matches
   with archetype spread intact (ruling ⑮ re-run duty paid at candidate
   values; re-run again if these numbers move).
-- **Treasury** (ruling ㉑): realm-level stock of unspent income; start
-  생산 5 (가안, playtest owns). 배상 (indemnity) lands here as cash and
+- **Treasury** (ruling ㉑): realm-level stock of unspent income;
+  ~~start 생산 5 (가안, playtest owns)~~ → **amended by TC-⑭
+  (2026-07-08, stamped 2026-07-26)**: the opening chest is
+  `treasuryStartTurns × the realm's own income`, because a flat per-realm
+  constant is what the derived-asymmetry seal forbids. Multiplier 가안 3. 배상 (indemnity) lands here as cash and
   is spent through normal prices — no special conversion rule (pays
   sheet-12 spec gap #6).
 - **Fortification build prices** (ruling ⑲): fieldworks 생산 2 +

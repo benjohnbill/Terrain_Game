@@ -31,11 +31,11 @@ import {
   incomeOf,
   registerOf,
   START_FIELD_FRACTION,
-  TREASURY_START,
+  startingTreasuryOf,
 } from '../domain/economy.js';
 import { contestedFronts, isPartyTo } from '../domain/fronts.js';
 import { draftOrder, ORDER_KEYS, ORDER_RECRUIT, orderKeyOf } from '../domain/recruitment.js';
-import { frontsOf, garrisonOf, holdingsOf } from '../domain/state.js';
+import { frontsOf, garrisonOf, holdingsOf, ownerOfSector } from '../domain/state.js';
 import type { MatchState, Realm, RealmForces } from '../domain/state.js';
 import { readFronts, revealTurn } from '../domain/turn.js';
 import { project } from '../projection/project.js';
@@ -160,13 +160,13 @@ export class Runtime {
     actors: readonly ActorId[],
     realms: Readonly<Record<ActorId, Realm>>,
   ): { forces: Record<ActorId, RealmForces>; garrisons: Record<SectorId, number> } {
-    const ownerOf = (sector: SectorId): ActorId | null =>
-      actors.find((actor) => realms[actor]!.sectors.includes(sector)) ?? null;
-
     // A border sector is one standing on a contested edge — the same reading the
-    // turn loop calls a front, asked of the opening board.
+    // turn loop calls a front, asked of the opening board. `contestedFronts` takes
+    // the owner lookup as a parameter precisely so this can reuse `ownerOfSector`
+    // rather than grow a fourth copy of that closure (see `domain/state.ts`).
+    const seated = { actors, realms };
     const garrisons: Record<SectorId, number> = {};
-    for (const front of contestedFronts(artifact.edges, ownerOf)) {
+    for (const front of contestedFronts(artifact.edges, (sector) => ownerOfSector(seated, sector))) {
       for (const sector of front.sectors) garrisons[sector] = GARRISON_PER_BORDER_SECTOR;
     }
 
@@ -174,7 +174,8 @@ export class Runtime {
     for (const actor of actors) {
       const held = realms[actor]!.sectors;
       forces[actor] = {
-        treasury: TREASURY_START,
+        // Derived from the realm's own land, never a flat constant (TC-⑭).
+        treasury: startingTreasuryOf(incomeOf(artifact.sectors, held)),
         field: Math.floor(forceLimitOf(artifact.sectors, held) * START_FIELD_FRACTION),
         register: registerOf(artifact.sectors, held),
       };
@@ -313,24 +314,40 @@ export class Runtime {
     };
   }
 
-  /** Pour part of the stack onto one front. Replaces that front's share (D6.3). */
-  #allocateCommitment(actor: ActorId, front: unknown, chips: unknown): GameEvent[] {
+  /**
+   * Pour part of the stack onto one target — a front, or an order kind.
+   *
+   * **One writer, because D6.3 seals one stack.** A front and an order are two
+   * keys in the same allocation map against the same budget, so they take the same
+   * refusal rule and the same write; only the event's name and its label differ.
+   * Two writers here is how the Σ ≤ budget invariant would come to be enforced
+   * twice and then, eventually, once.
+   *
+   * An allocation *replaces* its target's share rather than adding to it, which is
+   * what makes re-cutting a plan before locking free.
+   */
+  #allocate(
+    actor: ActorId,
+    key: unknown,
+    chips: unknown,
+    event: { readonly type: string; readonly label: string; readonly value: string },
+  ): GameEvent[] {
     const state = this.#state;
-    const intent = { kind: 'allocate-commitment', actor };
+    const intent = { kind: event.type.replace('-allocated', ''), actor };
 
-    const refusal = allocationRefusal(this.#commitmentContext(actor), actor, front, chips);
+    const refusal = allocationRefusal(this.#commitmentContext(actor), actor, key, chips);
     if (refusal !== null) return [this.#reject(intent, refusal)];
 
-    const key = front as string;
+    const target = key as string;
     const amount = chips as number;
     const allocations = (state.commitments[actor] ??= {});
-    if (amount === 0) delete allocations[key];
-    else allocations[key] = amount;
+    if (amount === 0) delete allocations[target];
+    else allocations[target] = amount;
 
     return [
-      this.#turnEvent('commitment-allocated', 'decision', {
+      this.#turnEvent(event.type, 'decision', {
         actor,
-        front: key,
+        [event.label]: event.value,
         chips: amount,
         // The realm's own totals. Public to nobody but this caller: the event is
         // returned to whoever submitted, and the projection is where crossing is
@@ -339,6 +356,18 @@ export class Runtime {
         remaining: TURN_COMMITMENT_BUDGET - spentOf(allocations),
       }),
     ];
+  }
+
+  /** Pour part of the stack onto one front. */
+  #allocateCommitment(actor: ActorId, front: unknown, chips: unknown): GameEvent[] {
+    if (typeof front !== 'string' || front.length === 0) {
+      return [this.#reject({ kind: 'allocate-commitment', actor }, 'An allocation must name a front.')];
+    }
+    return this.#allocate(actor, front, chips, {
+      type: 'commitment-allocated',
+      label: 'front',
+      value: front,
+    });
   }
 
   /**
@@ -351,30 +380,14 @@ export class Runtime {
    * rebuilding has to mean standing thin somewhere, or the choice is not a choice.
    */
   #allocateOrder(actor: ActorId, order: unknown, chips: unknown): GameEvent[] {
-    const intent = { kind: 'allocate-order', actor };
     if (typeof order !== 'string' || order.length === 0) {
-      return [this.#reject(intent, 'An order allocation must name an order kind.')];
+      return [this.#reject({ kind: 'allocate-order', actor }, 'An order allocation must name an order kind.')];
     }
-
-    const state = this.#state;
-    const key = orderKeyOf(order);
-    const refusal = allocationRefusal(this.#commitmentContext(actor), actor, key, chips);
-    if (refusal !== null) return [this.#reject(intent, refusal)];
-
-    const amount = chips as number;
-    const allocations = (state.commitments[actor] ??= {});
-    if (amount === 0) delete allocations[key];
-    else allocations[key] = amount;
-
-    return [
-      this.#turnEvent('order-allocated', 'decision', {
-        actor,
-        order,
-        chips: amount,
-        spent: spentOf(allocations),
-        remaining: TURN_COMMITMENT_BUDGET - spentOf(allocations),
-      }),
-    ];
+    return this.#allocate(actor, orderKeyOf(order), chips, {
+      type: 'order-allocated',
+      label: 'order',
+      value: order,
+    });
   }
 
   /**

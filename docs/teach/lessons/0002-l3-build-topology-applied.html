@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 2 · The L3 build decisions, sorted into the model</title>
+<link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+<div class="wrap">
+<div class="col">
+
+  <p class="kicker">Game Stack Literacy · Lesson 2</p>
+  <h1>Applying the model: the L3 build decisions</h1>
+  <p class="subtitle">Six choices just got made in gate 05. Sort each one into
+  the four layers you already know — and meet the one axis the model doesn’t
+  show.</p>
+
+  <p>In Lesson 1 you learned the four-layer model, and noticed something: at
+  three of the four layers, this game ran on <em>nothing</em> — no framework, no
+  build tool, no packaging beyond a URL. Those empty layers were a deliberate
+  starting point, waiting to be filled when a real need appeared.</p>
+
+  <p>The L3 build is that need. <strong>gate 05</strong> is the first decision
+  batch that actually fills the empty layers. We just made six choices in it
+  (I called them D1–D6 while we talked). Six decisions in unfamiliar vocabulary
+  feels like a lot. This lesson does one thing: it drops each of the six into a
+  layer you already know, and shows that almost all of them are the cheap,
+  reversible kind — with exactly <strong>two</strong> carrying real new weight.</p>
+
+  <h2>The new tools, placed</h2>
+
+  <p class="sidenote"><span class="num">▸</span> Same diagram as Lesson 1 — but
+  where it used to read “This project: none,” gate 05 now names what fills each
+  layer. That’s the whole story: <em>filling empty layers, not rewriting full
+  ones.</em></p>
+
+  <div class="stack">
+    <div class="layer l1">
+      <div class="n">1</div>
+      <div class="body">
+        <b>Language / runtime</b> — what code is written in, what executes it
+        <small>Was: JavaScript. Now: <b>TypeScript</b> on top — but it compiles
+        <em>down to</em> JavaScript. The browser and Node still run JS.</small>
+        <div class="cost">Still JavaScript — NOT a Godot-style rewrite</div>
+      </div>
+    </div>
+    <div class="layer l2">
+      <div class="n">2</div>
+      <div class="body">
+        <b>Framework</b> — how code is structured inside the runtime
+        <small>Was: none (hand-written DOM in <code>js/ui.js</code>). Now:
+        <b>React</b> for the UI.</small>
+        <div class="cost">Filling an empty layer — moderate, contained</div>
+      </div>
+    </div>
+    <div class="layer l3">
+      <div class="n">3</div>
+      <div class="body">
+        <b>Build tooling</b> — turns source into shippable files, and checks it
+        <small>Was: none (raw <code>&lt;script&gt;</code> tags). Now: <b>Vite</b>
+        (bundler + dev server), <b>tsc</b> (type checker), <b>node:test</b> +
+        <b>Playwright</b> (test runners).</small>
+        <div class="cost">Additive — low cost</div>
+      </div>
+    </div>
+    <div class="layer l4">
+      <div class="n">4</div>
+      <div class="body">
+        <b>Packaging / distribution</b> — how it reaches players
+        <small>Was: a browser URL. Later: a native shell (Electron/Tauri) — ADR
+        0041, deferred. Not decided in gate 05.</small>
+        <div class="cost">Background only — untouched this round</div>
+      </div>
+    </div>
+  </div>
+
+  <p>Read the “Now” lines: gate 05 is almost entirely a Layer-2 and Layer-3
+  event. The only Layer-1 move is adding <strong>TypeScript</strong>, and even
+  that is not the expensive kind. TypeScript is JavaScript with type labels; a
+  compiler strips the labels and emits plain JavaScript, which is what actually
+  runs. You never leave the JS runtime. (That “strip the labels and emit JS”
+  step is <em>transpiling</em>, and it’s the single fact under half our
+  decisions.)</p>
+
+  <div class="callout key">
+    <span class="label">Key insight</span>
+    Of the six gate-05 decisions, only <strong>two</strong> carry real new
+    weight: adding <strong>TypeScript</strong> at Layer&nbsp;1 (and even that
+    never leaves JavaScript), and <strong>D5</strong>, where the documentation
+    governance has to follow the code as it moves house. The other four are
+    cheap, reversible Layer-2/3 plumbing — naming folders, naming commands,
+    picking test runners.
+  </div>
+
+  <h2>The six decisions, by layer</h2>
+
+  <p>Here is what each of D1–D6 actually decided, in one line, with the layer it
+  lives in. This is the table to come back to.</p>
+
+  <table>
+    <thead>
+      <tr><th>Decision</th><th>What it settled, in one line</th><th>Layer</th><th>Weight</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><b>D1</b> · folder boundary</td>
+        <td>New L3 code lives in its own <code>game/</code> tree, <em>beside</em>
+        the old <code>js/</code> archive and the CommonJS root — not converted in
+        place.</td>
+        <td><span class="chip l2">L2</span><span class="chip l3">L3</span></td>
+        <td>Cheap — placement</td>
+      </tr>
+      <tr>
+        <td><b>D2</b> · one lockfile</td>
+        <td>Dependencies + lockfile stay owned by the root; <code>game/</code>
+        just carries a one-line “I am ESM” sign.</td>
+        <td><span class="chip l3">L3</span></td>
+        <td>Cheap — plumbing</td>
+      </tr>
+      <tr>
+        <td><b>D3</b> · command surface</td>
+        <td>Define the seven developer commands (dev / typecheck / build / test /
+        …) — their <em>names and jobs</em>. The <em>pass/fail thresholds</em> are
+        gate 10’s job, not now.</td>
+        <td><span class="chip l3">L3</span></td>
+        <td>Cheap — a map</td>
+      </tr>
+      <tr>
+        <td><b>D5</b> · audit-lint re-aim</td>
+        <td>Teach the term↔code checker to see the new <code>game/</code> tree, and
+        move each term’s code pointer when its behavior graduates there.</td>
+        <td><span class="chip" style="background:#6a4a7c">GOV</span></td>
+        <td>The one crossing</td>
+      </tr>
+      <tr>
+        <td><b>D6</b> · parity</td>
+        <td>Compile the game logic <em>once</em>; make both the browser and Node
+        run that same compiled file, so “tested code” = “shipped code.”</td>
+        <td><span class="chip l1">L1</span><span class="chip l3">L3</span></td>
+        <td>Guards determinism</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p class="sidenote"><span class="num">▸</span> “D4” isn’t missing — it folded
+  into D3. Choosing the test runners (<code>node:test</code> for logic,
+  Playwright for the browser) <em>is</em> part of naming the command surface.</p>
+
+  <p>Notice the shape. D1, D2, D3, D6 are all pure build plumbing — where files
+  sit, what commands are called, how logic is compiled. None of them touch the
+  meaning of a single game term. Only <strong>D5</strong> reaches into the other
+  world you already know — and that’s the part worth its own section.</p>
+
+  <h2>The fifth axis the model doesn’t draw: governance</h2>
+
+  <p>The four-layer model answers one question: <em>how does code get built and
+  reach a player?</em> But this repository runs a <strong>second axis</strong>,
+  at a right angle to the first, that the stack model never shows —
+  <strong>documentation governance</strong>. It answers a different question:
+  <em>do the documents, the terms, and the code still agree with each other?</em></p>
+
+  <p>You already know its machinery, because you built it:</p>
+
+  <ul>
+    <li><code>docs/audits/term-inventory.json</code> — the machine-readable index
+      of every sealed term. Each term can claim a <b>code identifier</b> and the
+      files it lives in (<b>codeRefs</b>).</li>
+    <li><code>scripts/audit-lint.js</code> — among its checks, the
+      <b>code-contract</b> one: “does the identifier this term <em>claims</em> to
+      have actually exist in the files it points at?” If not, the doc and the
+      code have drifted.</li>
+    <li><code>scripts/hooks/write-lint.js</code> — the hook that runs that audit
+      automatically after you edit a governed file, and <em>shows</em> the
+      findings (it never blocks the edit).</li>
+    <li><code>docs/SYNC-DEBT.md</code> — the ledger where any unpaid drift is
+      recorded on purpose.</li>
+  </ul>
+
+  <p class="sidenote"><span class="num">▸</span> This is why “I couldn’t connect
+  the stack decisions to the doc-audit/hook world” was the <em>correct</em>
+  feeling. They mostly don’t connect. Four of five decisions live purely on the
+  build axis and never touch governance at all.</p>
+
+  <p>Here is the point that unlocks the whole thing: <strong>most stack decisions
+  never meet the governance axis.</strong> D1, D2, D3, D6 are invisible to
+  term-inventory and audit-lint — moving a folder or naming a command changes no
+  term’s meaning. The two axes are independent.</p>
+
+  <p>They cross at exactly <strong>one</strong> point, and that point is D5.
+  Here’s the chain, slowly:</p>
+
+  <div class="callout">
+    <span class="label">Why D5 is the crossing</span>
+    Today, 27 sealed terms carry a code pointer that says “my implementation is
+    in <code>js/…</code>.” &nbsp;→&nbsp; ADR 0041 just declared <code>js/</code> a
+    <em>reference archive</em>; the real code is being re-implemented under
+    <code>game/</code>. &nbsp;→&nbsp; So when a term’s behavior moves house to
+    <code>game/</code>, its code pointer must move with it, <em>and</em>
+    audit-lint (which only ever looked inside <code>js/</code>) must be taught to
+    look in the new tree too. &nbsp;That re-aiming is D5. It is the only place a
+    build decision and a documentation contract touch.
+  </div>
+
+  <p>So the mental picture to leave with: a horizontal build stack (four layers)
+  and a vertical governance axis. gate 05’s six decisions are almost all on the
+  build stack; a single wire (D5) runs across to the governance axis, and only
+  because the code is changing address.</p>
+
+  <h2>Check yourself</h2>
+
+  <p>Same four layers as Lesson 1, plus one option for the governance axis. Pick
+  where each decision lives. Guess, then read the feedback — retrieval is the
+  point.</p>
+
+  <div class="quiz">
+    <div class="quiz-q" data-answer="l2">
+      <p class="quiz-prompt">“Replace the hand-written <code>js/ui.js</code> with
+      <strong>React</strong> components.”</p>
+      <div class="quiz-options">
+        <button data-v="l1">Language / runtime</button>
+        <button data-v="l2">Framework</button>
+        <button data-v="l3">Build tooling</button>
+        <button data-v="gov">Governance axis</button>
+      </div>
+      <div class="quiz-explain">React changes how UI code is structured inside the
+      runtime, Layer&nbsp;2. It fills an empty layer and replaces the UI only;
+      the logic modules are untouched.</div>
+    </div>
+
+    <div class="quiz-q" data-answer="l3">
+      <p class="quiz-prompt">“Add <strong>Vite</strong> and <strong>Playwright</strong>
+      so I have a dev server and a browser test.”</p>
+      <div class="quiz-options">
+        <button data-v="l1">Language / runtime</button>
+        <button data-v="l2">Framework</button>
+        <button data-v="l3">Build tooling</button>
+        <button data-v="gov">Governance axis</button>
+      </div>
+      <div class="quiz-explain">Both turn source into runnable/shippable artifacts
+      at Layer&nbsp;3. Additive and low-cost; your JavaScript and its logic are
+      unchanged.</div>
+    </div>
+
+    <div class="quiz-q" data-answer="l1still">
+      <p class="quiz-prompt">“Adopt <strong>TypeScript</strong> for all new
+      code.” Is this a Godot-style Layer-1 rewrite?”</p>
+      <div class="quiz-options">
+        <button data-v="l1rewrite">Yes — a full rewrite</button>
+        <button data-v="l1still">Layer 1, but still JavaScript</button>
+        <button data-v="l2">A framework change</button>
+        <button data-v="gov">A governance change</button>
+      </div>
+      <div class="quiz-explain">TypeScript sits at Layer&nbsp;1 but compiles down
+      to JavaScript, which is what runs. You never leave the JS runtime — so it is
+      nothing like a Godot/GDScript rewrite. This is the one “new weight” move
+      that is still cheap because it never leaves the language family.</div>
+    </div>
+
+    <div class="quiz-q" data-answer="gov">
+      <p class="quiz-prompt">“<code>audit-lint</code> will break when a term’s code
+      moves from <code>js/</code> to <code>game/</code>.” Which axis is this?”</p>
+      <div class="quiz-options">
+        <button data-v="l1">Language / runtime</button>
+        <button data-v="l3">Build tooling</button>
+        <button data-v="l4">Packaging</button>
+        <button data-v="gov">Governance axis</button>
+      </div>
+      <div class="quiz-explain">This is the governance axis, the term↔code
+      contract, not the build stack. It is the single point (D5) where a build
+      decision (moving code to <code>game/</code>) crosses into documentation
+      governance. Every other gate-05 decision stays on the build stack.</div>
+    </div>
+  </div>
+
+  <h2>Primary source</h2>
+
+  <p>The three documents this lesson is built on, worth reading with the model in
+  hand:</p>
+
+  <ul>
+    <li><a href="../../adr/0041-environment-isolation-and-reference-archive.md"><strong>ADR&nbsp;0041</strong></a>
+      — why <code>js/</code> becomes a reference archive and L3 gets its own tree.
+      This is the decision that makes D5 necessary.</li>
+    <li><a href="../../adr/0040-l3-typescript-esm-canonical-source.md"><strong>ADR&nbsp;0040</strong></a>
+      — why canonical L3 source is TypeScript/ESM. This is the Layer-1 “new
+      weight” in the key insight.</li>
+    <li><a href="../../../.scratch/l3-playable-seam/issues/05-choose-build-and-test-topology.md"><strong>gate 05 ticket</strong></a>
+      — the option space for D1–D3 and D6, in the project’s own words.</li>
+  </ul>
+
+  <p>This lesson <em>is</em> your mission in action: taking a real, scary-looking
+  stack decision and defending it by sorting it into layers — seeing that most of
+  it is cheap, and naming precisely the parts that aren’t.</p>
+
+  <div class="ask">
+    <b>Ask your teacher.</b> Fuzzy spots worth firing back: “Why is compiling
+    TypeScript to JavaScript not a rewrite, when it <em>feels</em> like new code?”
+    · “What exactly is a lockfile, and why does having two of them cost double?”
+    · “If the hook never blocks, what does ‘blocking’ even mean for audit-lint?”
+    · “Could a future decision cross to the governance axis the way D5 does?”
+    Push until you can re-derive the sort, not just recall it.
+  </div>
+
+  <div class="lesson-nav">
+    <span>Lesson 2 · <a href="../MISSION.md">Mission</a> · builds on
+    <a href="0001-four-layer-stack-model.html">Lesson 1</a></span>
+    <span>When you’re back → we seal D6 and write the decisions into the docs</span>
+  </div>
+
+</div>
+</div>
+<script src="../assets/quiz.js"></script>
+</body>
+</html>

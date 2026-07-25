@@ -57,13 +57,30 @@ export const START_FIELD_FRACTION = 0.5;
 export const GARRISON_PER_BORDER_SECTOR = 900;
 
 /**
- * The war chest a realm opens with, in yield.
+ * The opening war chest, counted in **turns of the realm's own income**.
  *
- * **가안, adopted by ruling R11 (2026-07-26)** from the L2 harness, where it was
- * marked provisional and never brought back. Roughly a sixth of one turn's
- * income on this board. Repayable in play.
+ * Two seals speak here and the later one governs. `MAGNITUDE.md` **M14 ruling ㉑**
+ * (2026-07-05) sealed a flat "start 생산 5 (가안)". Terrain-cradle **TC-⑭**
+ * (2026-07-08), the derived-asymmetry seal beneath SPEC principle #8, then ruled
+ * that every playable quantity starts uniform across realms *unless* the inequality
+ * is read off the authored map — and named treasury as one of its two worked
+ * examples: `treasuryStartTurns × terrain-fed economy`. A flat per-realm constant is
+ * precisely the shape TC-⑭ forbids, so it amends ㉑'s form while leaving its
+ * 가안 status intact.
+ *
+ * The multiplier is **가안 3**, the harness's Option B figure
+ * (`map-board.js treasuryStartTurns`), already registered in `docs/SYNC-DEBT.md`.
+ *
+ * Ruling R11 first adopted the flat 5 on the stated premise that nothing was
+ * sealed. Both halves of that premise were wrong — ㉑ seals the value and TC-⑭
+ * supersedes its form — and R11's row carries the correction.
  */
-export const TREASURY_START = 5;
+export const TREASURY_START_TURNS = 3;
+
+/** The opening war chest for a realm earning `income` per turn (TC-⑭). */
+export function startingTreasuryOf(income: number): number {
+  return TREASURY_START_TURNS * income;
+}
 
 /**
  * Men per yield — the bridge between a price quoted in units and a force counted
@@ -90,13 +107,20 @@ function sumOver(sectors: SectorTable, ids: readonly SectorId[], read: (sector: 
  * Which of the sectors a realm *controls* actually pay it — OG-③'s limbo rule.
  *
  * Occupied-but-untransferred land "counts toward NEITHER side's derived
- * quantities". A duel has no settlement channel to transfer it through (ADR 0042
- * retired settlement entirely; war and match are one), so occupied land stays in
- * limbo for as long as it is held: **conquest subtracts from the loser and adds
- * nothing to the winner**, and recapture restores the original owner's claim.
+ * quantities", so the turn a sector changes hands it stops paying its old owner
+ * and does not yet pay its new one. That is the half of D5.1's decay that bites
+ * immediately: the loser's income and ceiling both fall the same turn.
  *
- * That is what makes the decay converge rather than compound — the leader does
- * not inflate on captured ground while the trailing realm starves.
+ * **What this deliberately does not decide: whether conquered land ever converts.**
+ * In the L2 world, occupation was resolved at settlement, after which ADR 0022 /
+ * ADR 0029 ripening integrated it (fresh capture at 50/60% usable, +10pp per stable
+ * turn) — and M14 ruling ⑮ seals that "conquest raises the national cap". ADR 0042
+ * retired settlement for the duel, which leaves no channel between "occupied" and
+ * "integrated" and no seal saying whether one is needed. Nothing in this ticket
+ * captures a sector, so nothing here needs the answer; `homeland` is therefore an
+ * ordinary mutable record rather than a frozen one, and the question is registered
+ * for the ticket that first takes ground. Encoding permanence here would have ruled
+ * on it by accident.
  */
 export function holdsOf(
   controlled: readonly SectorId[],

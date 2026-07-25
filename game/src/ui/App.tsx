@@ -22,10 +22,13 @@ import { useCallback, useMemo, useState } from 'react';
 import { Runtime } from '../runtime/runtime.js';
 import { CRADLE_R1 } from '../world/index.js';
 import { preview } from '../preview/preview.js';
+import { ORDER_RECRUIT } from '../domain/recruitment.js';
 import type { ActorId, GameEvent, Intent, MatchView, SectorId } from '../runtime/types.js';
 import { MapBoard } from './MapBoard.js';
 
 const ACTORS: readonly ActorId[] = ['realm-a', 'realm-b'];
+/** The order kind, as the intent names it — `ORDER_RECRUIT` is its allocation key. */
+const RECRUIT = 'recruit';
 
 export function App() {
   const [seed, setSeed] = useState('duel-0001');
@@ -150,7 +153,7 @@ export function App() {
                 <tr key={r.actor} className={r.actor === viewer ? 'self' : ''}>
                   <td>{r.actor}</td>
                   <td>{r.regions.join(' ')}</td>
-                  <td>{r.sectors.length} sectors</td>
+                  <td>{r.sectors.length} sectors (control)</td>
                   <td>pop {r.population.toFixed(1)}</td>
                   <td data-testid={`yield-${r.actor}`}>수입 {r.yield.toFixed(2)}</td>
                   <td data-testid={`limit-${r.actor}`}>상한 {r.forceLimit.toLocaleString('en-US')}</td>
@@ -212,13 +215,13 @@ function TurnStrip({
   const locked = view.committed.includes(viewer);
   const waitingOn = view.actors.filter((actor) => !view.committed.includes(actor));
   const economy = view.economy;
-  const recruitChips = view.commitment.allocations['order:recruit'] ?? 0;
+  const recruitChips = view.commitment.allocations[ORDER_RECRUIT] ?? 0;
   // The same rule the background tier will resolve the draft with, so the number
   // shown before locking is the number that arrives after.
   const draft = preview(view, {
     kind: 'allocate-order',
     actor: viewer,
-    order: 'recruit',
+    order: RECRUIT,
     chips: recruitChips,
   }).draft;
 
@@ -272,10 +275,10 @@ function TurnStrip({
                 : '—'}
             </td>
             <td>
-              <button type="button" disabled={locked} onClick={() => onOrder('recruit', recruitChips + 1)}>
+              <button type="button" disabled={locked} onClick={() => onOrder(RECRUIT, recruitChips + 1)}>
                 +1
               </button>
-              <button type="button" disabled={locked || recruitChips === 0} onClick={() => onOrder('recruit', 0)}>
+              <button type="button" disabled={locked || recruitChips === 0} onClick={() => onOrder(RECRUIT, 0)}>
                 clear
               </button>
             </td>

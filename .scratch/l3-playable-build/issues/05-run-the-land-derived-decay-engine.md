@@ -149,3 +149,42 @@ neither fixable without originating a value:**
   and a ten-turn quiet run asserts that nothing regenerates.
 - **초토화** — not built. P2 lands as a negative invariant: no path here
   permanently damages a sector's economy.
+
+### Code review — 2026-07-26 (`/code-review` since `b3faf39`, two axes)
+
+Both axes ran; the Spec axis confirmed **zero originated values** (every literal
+in `domain/economy.ts` and `domain/recruitment.ts` traced to a birthplace seal,
+R10, or R11) and confirmed no capital-guard magnitude anywhere in `game/src`.
+Four findings were real and are fixed in this ticket:
+
+1. **Opening treasury contradicted a seal** (Standards, corroborated by Spec).
+   R11 adopted a flat `5` on the premise that nothing was sealed. Both halves of
+   that premise were false: M14 ruling ㉑ seals the value, and terrain-cradle
+   **TC-⑭** — the derived-asymmetry seal beneath SPEC principle #8 — supersedes
+   its *form*, naming treasury as `treasuryStartTurns × terrain-fed economy` and
+   forbidding exactly the flat per-realm constant that was built. Rebuilt to the
+   derived form; ㉑ stamped as amended; R11's row withdrawn and corrected.
+2. **The implementation decided an open question by accident** (Spec). A frozen
+   `homeland` record made OG-③'s limbo **permanent**, so conquest could never
+   raise a taker's income or ceiling — contradicting M14 ⑮ ("conquest raises the
+   national cap") without any ruling saying so. Corrected to leave the question
+   open and registered as **Part 2 #15** for ticket 06, which is the first that
+   can take a sector.
+3. **Two writers for one budget** (Standards). `#allocateOrder` mirrored
+   `#allocateCommitment` line for line. Collapsed into one `#allocate`: a front
+   and an order are two keys in the same map against the same budget, so the
+   Σ ≤ budget invariant is now enforced in exactly one place.
+4. **A fourth copy of the owner closure** (Standards), the specific duplication
+   `domain/state.ts` warns about. `ownerOfSector` now takes only the two fields
+   it reads, so setup calls the single reader instead of re-implementing it.
+
+Also applied: the `order:recruit` key is imported rather than restated in React,
+and `RealmView` now names its two scopes explicitly — `population`/`economy` are
+**control** sums, `landValue`/`yield`/`forceLimit` are **holdings** sums, and
+they diverge from the first capture onward.
+
+Declined, with reasons: `landValueOf` is not speculative (the acceptance item
+requires land value in the projection); `CAP_LAND_FRAC * derived` stays written
+out so the sealed dial is visible rather than assumed away; `forceLimit` crossing
+to both realms is not a leak, since it is arithmetic over public territory that
+either side can recompute.

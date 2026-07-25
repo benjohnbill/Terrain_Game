@@ -43,8 +43,9 @@ const {
   registerOf,
   Runtime,
   START_FIELD_FRACTION,
+  startingTreasuryOf,
   SURGE,
-  TREASURY_START,
+  TREASURY_START_TURNS,
   TURN_COMMITMENT_BUDGET,
 } = await import('../dist/runtime/index.js');
 
@@ -226,8 +227,11 @@ test('a match opens with substance derived from the sealed start-state coordinat
   assert.equal(view.economy.forceLimit, limit);
   assert.equal(view.economy.field, Math.floor(limit * START_FIELD_FRACTION));
   assert.equal(view.economy.register, registerOf(SECTORS, realm.sectors));
-  assert.equal(view.economy.treasury, TREASURY_START);
+  // TC-⑭: the war chest is derived from the realm's own land, not a flat
+  // constant — a per-realm baked value is what that seal forbids.
   assert.equal(view.economy.income, incomeOf(SECTORS, realm.sectors));
+  assert.equal(view.economy.treasury, startingTreasuryOf(view.economy.income));
+  assert.equal(TREASURY_START_TURNS, 3);
 
   // g0 = 1.0: every border sector this realm holds starts its shield manned.
   // Deduplicated: one sector can stand on two different region borders, and it

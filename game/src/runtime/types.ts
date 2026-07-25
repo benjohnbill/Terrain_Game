@@ -186,14 +186,24 @@ export interface RejectedEvent extends GameEvent {
 export interface RealmView {
   readonly actor: ActorId;
   readonly regions: readonly RegionId[];
+  /** Every sector under this realm's **control** — what the map is coloured by. */
   readonly sectors: readonly SectorId[];
+
+  // ── control scope: what the realm holds on the map ────────────────────────
+  /** Σ populationValue over controlled sectors. */
   readonly population: number;
+  /** Σ economyValue over controlled sectors. */
   readonly economy: number;
-  /** Population plus economy over holdings — value as OG-② reads it. */
+
+  // ── holdings scope: what actually pays (OG-③) ─────────────────────────────
+  // Control and holdings are the same set until the first capture and can
+  // diverge from that moment on: occupied ground is controlled but pays nobody.
+  // Reading a control figure as an economic one is the mistake this split names.
+  /** Population plus economy over **holdings** — value as OG-② reads it. */
   readonly landValue: number;
-  /** Yield per turn from holdings. Occupied land pays nobody (OG-③). */
+  /** Yield per turn from **holdings**. Occupied land pays nobody. */
   readonly yield: number;
-  /** The land-derived ceiling on the field army (M14, `capLandFrac 1`). */
+  /** The land-derived ceiling on the field army, over **holdings** (M14). */
   readonly forceLimit: number;
 }
 

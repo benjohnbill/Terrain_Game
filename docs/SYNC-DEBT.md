@@ -11,6 +11,29 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
 
 ## Open
 
+- [ ] **M13a's two start-state anchors contradict each other on the duel board**
+  (registered 2026-07-26, measured by ticket 05). `garrisonPerBorderSector 900`
+  and ρ = 0.75 were both calibrated on the L2 seat map, which gave a realm ~15
+  border sectors. `terrain-cradle@r1` under a 5+5 region partition gives ~5, so
+  the shield builds to **4,500** where ρ implies ~13,500, and the derived start
+  intensity is **25%, not the sealed 42%**. Downstream consequence, and the
+  reason this is not cosmetic: mobilization peaks at **41.7%** even at a full
+  field, just under MT-③'s 42% peace knee — so **the surge price curve never
+  fires for a whole match** and every draft bills at the flat Band-1 base. The
+  escalation R11 adopted is currently inert. **Owed: a user decision** on which
+  anchor gives (per-sector garrison, ρ, or the knee coordinates), not an agent
+  re-derivation. Rider recorded at `MAGNITUDE.md` M13a; measurement table at
+  `.scratch/l3-playable-build/issues/05-…md` § Comments.
+
+- [ ] **The realm economy has no sink after the field fills** (registered
+  2026-07-26, measured by ticket 05). With recruitment the only spend in the
+  slice, treasury grows without bound once the force limit is reached (345 yield
+  by turn 12 against an income of 32). Expected — attrition, fortification and
+  the rest of the spends arrive with ticket 06 and after — but it means the
+  **income half of the D5.1 decay engine is not yet load-bearing**, and the
+  ceiling half carries the whole anti-fizzle claim. Re-measure once 06 lands;
+  nothing to decide before then.
+
 - [ ] **R6 per-ticket authority waiver — gate-12 publication deferred behind the
   build** (registered 2026-07-25, user ruling). The L3 build's readiness rule
   required gate 12 to republish every accepted decision into Production docs

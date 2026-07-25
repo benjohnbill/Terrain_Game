@@ -35,7 +35,8 @@ export {
   REGISTER_PER_POP,
   registerOf,
   START_FIELD_FRACTION,
-  TREASURY_START,
+  startingTreasuryOf,
+  TREASURY_START_TURNS,
 } from '../domain/economy.js';
 export type { SectorTable } from '../domain/economy.js';
 export { contestedFronts, isPartyTo } from '../domain/fronts.js';

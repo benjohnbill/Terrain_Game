@@ -62,15 +62,19 @@ export interface MatchState {
   capitals: Record<ActorId, SectorId>;
 
   /**
-   * Who each sector's population belongs to, fixed by the opening partition and
-   * never rewritten.
+   * Who each sector pays — seeded from the opening partition.
    *
    * This is what makes OG-③'s limbo rule computable: a sector pays its controller
-   * only when the controller is also its homeland. A duel has no settlement
-   * channel to integrate conquered ground through, so occupied land stays in
-   * limbo for as long as it is held, and recapture restores the claim.
+   * only when the controller is also its homeland, so the turn ground changes
+   * hands it pays neither side, and recapture restores the original claim.
+   *
+   * **Mutable on purpose, and unwritten so far.** Whether conquered land ever
+   * converts — the ADR 0022/0029 ripening path, which M14 ⑮ seals as "conquest
+   * raises the cap" but which reached the board through a settlement channel ADR
+   * 0042 retired — is an open question owned by the ticket that first takes a
+   * sector. Freezing this record would have answered it silently.
    */
-  readonly homeland: Readonly<Record<SectorId, ActorId>>;
+  homeland: Record<SectorId, ActorId>;
 
   /** The two stored stocks, per realm (M14). Everything else is recomputed. */
   readonly forces: Readonly<Record<ActorId, RealmForces>>;
@@ -104,8 +108,17 @@ export interface MatchState {
   turnLocks: ActorId[];
 }
 
-/** Who holds a sector. The renderer's `ownerOf` is this reader's view-side twin. */
-export function ownerOfSector(state: MatchState, sector: SectorId): ActorId | null {
+/**
+ * Who holds a sector. The renderer's `ownerOf` is this reader's view-side twin.
+ *
+ * Takes only the two fields it reads, so setup can call it while the rest of the
+ * state is still being assembled — which is what keeps `Runtime.open` from growing
+ * its own copy of this loop.
+ */
+export function ownerOfSector(
+  state: Pick<MatchState, 'actors' | 'realms'>,
+  sector: SectorId,
+): ActorId | null {
   for (const actor of state.actors) {
     if (state.realms[actor]!.sectors.includes(sector)) return actor;
   }

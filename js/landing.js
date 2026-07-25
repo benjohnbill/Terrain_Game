@@ -143,4 +143,18 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     setOperationStep("read", false);
+
+    // Build-section embed: the fog prototype is rendered at a fixed 1280-wide
+    // base (where its whole map draws correctly); scale it to the frame width so
+    // the full map shows at every screen size instead of a blank/clipped iframe.
+    const buildStage = document.querySelector(".build-stage");
+    if (buildStage) {
+        const embed = buildStage.querySelector(".build-embed");
+        const BASE_WIDTH = 1280;
+        const fitEmbed = () => {
+            embed.style.transform = `scale(${buildStage.clientWidth / BASE_WIDTH})`;
+        };
+        fitEmbed();
+        new ResizeObserver(fitEmbed).observe(buildStage);
+    }
 });
