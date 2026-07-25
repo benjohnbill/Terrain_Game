@@ -60,6 +60,33 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   taxes breadth and this project excludes taxes. **Still owed:** the design session
   itself. Explicitly **not** a design pass here.
 
+- [ ] **Recruitment siting is a deferred pass, and it reopens the turn budget**
+  (registered 2026-07-26, gate C ruling R19). Where a realm raises men — and
+  therefore how far they must march to reach a front or a wall — is real design with
+  a UI surface, deferred out of scope discipline rather than doubt. Two decisions are
+  already recorded as its input so they are not lost: **the grain is the sector**,
+  not the province (user ruling, correcting the agent's province-grain proposal —
+  recruitment needs to be sited exactly, and one commit point *is* the minimum unit
+  that picks one recruiting sector); and **therefore the pass also opens the 행동력
+  stack size** (ledger D6.3, 가안 20 — the user has considered 30), because the budget
+  decides how many sectors a realm can raise from at once. That reaches ticket 03's
+  landed turn loop and ticket 04's shell, which is the main reason it is a pass and
+  not a ticket amendment. What it buys: reinforcement becomes local, so
+  "reinforcing a heavily-attacked sector is hard" emerges from march time plus
+  register depletion with no special rule.
+
+- [ ] **Three stamps owed from gate C's R18** (registered 2026-07-26).
+  (a) **`DOMAIN_MAP`'s `Standing world rule` entry is stale**: it still lists
+  local-garrison regeneration as a Phase-1 instance consuming no action capacity,
+  which `MAGNITUDE.md` M12's 2026-07-08 amendment (MT-⑤ / ADR 0027) retired.
+  Projection against an amended Production seal is a sync debt and the seal wins.
+  (b) **ADR 0014's header stamp** — M12's 2026-07-07 amendment says it amends ADR
+  0014 (garrison auto-regen) and records the stamp as owed; it is still owed.
+  (c) **M13a's start-state coordinates need a rider**: with garrison↔field transfer
+  (R18 ii), g₀ = 1.0 and f₀ = 0.5 become an opening *shape* a player may rebalance
+  rather than a standing constraint. The turn cost of transfer is what keeps them
+  meaningful, and the rider should say so.
+
 - [ ] **`conquest damage` is named in the seal chain and defined nowhere**
   (registered 2026-07-26, found by the gate C snowball survey). ADR 0029 and the
   match-arc `정산` GLOSSARY row both say settlement arrives undamaged "vs conquest

@@ -264,6 +264,44 @@ the play session, and fun is the next map's business.
   report it as correct behaviour, so the movement graph is hex adjacency ∪ authored
   edges. Full text: `DECISIONS-OWED.md` § Rulings received 2026-07-26 (gate C).
 
+- **Gate C tail — the last owed value dissolved instead of being filled**
+  (2026-07-26, user; rulings **R18–R19**). Ticket 06d's one `needs-info` was the
+  garrison regeneration rate, and chasing it produced three findings that reach
+  further than the ticket.
+
+  First, **the rate was never missing.** `MAGNITUDE.md` M5 exports "garrison
+  regeneration rates" to later stages and **M12 received it** — item 1, +10% of
+  sustainable cap, twice amended (MT-① made it bill the register; MT-⑤ / ADR 0027
+  made it purchased per committed action rather than automatic). The agent's
+  "genuinely unlanded" verdict was the **third** summary this session that reading
+  the artifact overturned.
+
+  Second, **garrison regeneration is not a mechanism at all.** The user's read:
+  *"수비대 재생이라는 게 전쟁 중에 모병하는 것과 똑같은 개념"* — the same men from
+  the same register at the same price, differing only in where they stand. So a
+  garrison fills by **transfer** from the field army, priced at what R12 already
+  charges for movement — turns and fatigue, never 행동력 — and there is no second
+  rate to own. A free instant transfer was rejected: an action with no cost is not
+  a decision, and the point is that stripping a border to mass a decisive field
+  army should be a gamble the enemy has a window to punish. The local cap bounds it
+  (900 a sector; the whole shield line is 30% of the national ceiling).
+
+  Third, **the conscription register returns to per-province.** MT-②, M13 and the
+  match-arc GLOSSARY all say "per province"; ticket 05 flattened it to a realm-level
+  scalar — and that flattening is precisely why **R17 had to approximate**
+  succession proportionally. Restoring the seal makes R17 exact rather than
+  approximate, so the correction *simplifies* the rule written around its absence.
+
+  **Deferred by ruling, with its inputs recorded (R19):** recruitment siting. The
+  user overruled the agent's province-grain proposal — the grain is the **sector**,
+  because one commit point is the minimum unit that picks one recruiting sector —
+  and that makes the **turn budget part of the same pass** (D6.3's 가안 20; the user
+  has considered 30). It reaches ticket 03's landed loop and ticket 04's shell,
+  which is why it is a pass rather than a ticket amendment.
+
+  **All four of 06a–06d are now `ready-for-agent`.** Full text: `DECISIONS-OWED.md`
+  § R18–R19.
+
 ## Owed right now
 
 Small, sharp, and not worth a ticket each — but they are owed, so they are listed

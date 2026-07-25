@@ -605,6 +605,88 @@ Zero new state: no per-sector register is needed. A realm-level stock spread
 proportionally across its own population *is* the accumulated-state reading the
 user asked for — *"상대방이 축적해 온 … 기반 상황을 통째로 가져오는 셈."*
 
+### R18 — Garrison regeneration is recruitment with a destination; the register returns to per-province
+
+Three decisions, taken together because each dissolved the one before it.
+
+**(i) Garrison regeneration is not a standing world rule.** `MAGNITUDE.md` M12's
+2026-07-08 amendment (MT-⑤ / ADR 0027) already retired the automatic pulse: the
++10%/turn became "the amount purchased per COMMITTED action". `DOMAIN_MAP`'s Tier-0
+`Standing world rule` entry still lists local-garrison regeneration as a Phase-1
+instance consuming no action capacity — **that is a stale Projection against an
+amended Production seal, so it is a sync debt, not a conflict**, and the seal wins.
+
+M12's rider "a realm at war cannot re-man its shields" is a **measured consequence,
+not a rule** (user ruling): the L2 implementation puts it in `tournament.js`'s
+`peacePrimary`, which is bot action-ordering, and R2's later, more general grammar
+makes every non-combat order free allocation priced by unit. A realm at war may
+re-man its shields by paying for them; the throttle is budget competition, and it
+self-scales with the number of bleeding fronts — which is what the attention-scarcity
+rationale wanted in the first place.
+
+**(ii) Garrison and field are the same men in different postures, and may be
+transferred.** The user: *"수비대 재생이라는 게 전쟁 중에 모병하는 것과 똑같은
+개념."* Transfer costs what R12 already prices movement at — **turns and fatigue,
+never commit** — because changing posture *is* moving. Zero new pricing devices. The
+local garrison cap bounds it: no realm hides its army behind M5's ×4.8, since a
+sector holds 900 and the whole shield line is 30% of the national ceiling.
+
+A free, instant transfer was rejected: an action with no cost is not a decision, and
+the point of the mechanism is that stripping a border to mass a decisive field army
+is a *gamble* — it costs turns, and the enemy has that window to read.
+
+**Stamp owed:** M13a's start-state coordinates (g₀ = 1.0 full shields, f₀ = 0.5 half
+field) become an opening *shape* rather than a standing constraint, since a player
+may rebalance. The time cost is what keeps them meaningful.
+
+**(iii) The conscription register returns to per-province.** MT-②, M13 and the
+match-arc GLOSSARY all say the register is `registerPerPop × Σ populationValue,
+**per province**`. Ticket 05 flattened it to one realm-level scalar.
+
+The text is genuinely ambiguous — "per province" could describe only how the opening
+value is computed — and **the user's adoption settles the reading: it persists per
+province.** Two things argue for that reading independently: the same sentence has
+the register moved by "land transfer ±", which needs per-province accounting to be
+exact; and **R17's proportional succession was a workaround the flattening forced.**
+With per-province registers a captured province simply carries its own register, so
+R17 stops being an approximation and becomes exact. Restoring the seal *simplifies*
+the rule that was written around its absence.
+
+Scope: this reaches back into ticket 05's landed code. Folded into **06d**, which
+already owns register succession.
+
+### R19 — Recruitment siting is its own pass, and it opens the turn budget too
+
+**Deferred by user ruling.** Where a realm raises men — and therefore how far they
+must march to reach a front or a wall — is real design with a UI surface, not
+wiring. It is *not* being decided here.
+
+Recorded as that pass's input, because it was decided in conversation and would
+otherwise be lost:
+
+- **The grain is the sector, not the province** (user ruling, correcting the agent's
+  province-grain proposal). The agent's argument was micromanagement — 28 sectors per
+  realm against 5 provinces — and the user's counter is precision: recruitment needs
+  to be sited exactly, and one commit point *is* the minimum unit that picks one
+  recruiting sector.
+- **Therefore the pass also opens the turn budget.** If one point buys one sector's
+  levy, the budget size decides how many sectors a realm can raise from at once —
+  with 20 points and a war to fight, that is two or three. The user has previously
+  considered **30** for exactly this reason. So the 행동력 stack (ledger D6.3, 가안 20)
+  is inside this pass, not outside it — which reaches ticket 03's landed turn loop and
+  ticket 04's shell.
+- **What it buys, and why it is worth a pass:** siting makes reinforcement *local*.
+  Raising beside the fighting is fast but drains that province's register and climbs
+  the surge price; raising in the rear is cheap in bodies and slow in march. The
+  user's target behaviour — *"많이 공격받은 섹터 쪽으로 군대를 조달하는 게 더 힘들어야
+  한다"* — then emerges from movement time and register depletion with **no special
+  rule**. It also removes the incoherence of levies raised far away filling a distant
+  wall the next turn.
+
+Not deferred out of doubt: the design is good and probably seal-consistent. It is
+deferred because it is a **system**, this map's mandate is wiring, and it lands right
+before a Codex handoff that cannot ask questions.
+
 ---
 
 ## Part 1 — Blocking the walking skeleton (tickets 01→07)
