@@ -9,6 +9,7 @@
 import { holdsOf } from './economy.js';
 import { menOf } from './force.js';
 import { contestedFronts } from './fronts.js';
+import type { MovementGraph } from './movement.js';
 import type { LoadedWorld } from '../world/load.js';
 import type { Detachment, ForceCohort, GarrisonForce } from './force.js';
 import type { RegionId, SectorId } from '../world/schema.js';
@@ -45,6 +46,8 @@ export interface MatchState {
   readonly world: WorldIdentity;
   /** The validated world plus its derived indexes. Public content, privately held. */
   readonly loadedWorld: LoadedWorld;
+  /** The one canonical hex/adjoining-door graph used by movement and later supply. */
+  readonly movementGraph: MovementGraph;
   /** Hidden. Never projected — see `projection/project.ts`. */
   readonly seed: string;
   /** Hidden. The single draw source; every consumer forks a labelled stream. */

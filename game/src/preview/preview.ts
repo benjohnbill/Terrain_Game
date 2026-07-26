@@ -14,6 +14,7 @@
 import { capitalChoiceRefusal } from '../domain/capital-choice.js';
 import { allocationRefusal, lockRefusal, type CommitmentContext } from '../domain/commitment.js';
 import { isPartyTo } from '../domain/fronts.js';
+import { buildMovementGraph, movementOrderRefusal } from '../domain/movement.js';
 import { draftOrder, ORDER_KEYS, orderKeyOf, type DraftResult } from '../domain/recruitment.js';
 import type { ActorId, Intent, MatchView, SectorId } from '../runtime/types.js';
 
@@ -110,6 +111,25 @@ export function preview(view: MatchView, intent: Intent): PreviewCard {
             (intent as { front?: unknown }).front,
             (intent as { chips?: unknown }).chips,
           );
+    return refusal === null ? { admissible: true } : no(refusal);
+  }
+
+  if (intent.kind === 'move-detachment') {
+    if (intent.actor !== view.viewer) {
+      return no(`A movement order is previewed by the realm making it; "${view.viewer}" cannot preview "${intent.actor}"'s.`);
+    }
+    const movement = intent as {
+      detachmentId?: unknown;
+      destinationHex?: unknown;
+      forcedMarch?: unknown;
+    };
+    const refusal = movementOrderRefusal(
+      buildMovementGraph(view.board),
+      view.detachments,
+      movement.detachmentId,
+      movement.destinationHex,
+      movement.forcedMarch,
+    );
     return refusal === null ? { admissible: true } : no(refusal);
   }
 

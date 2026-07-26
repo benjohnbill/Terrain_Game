@@ -43,6 +43,13 @@ import {
   type OriginComposition,
 } from '../domain/force.js';
 import { contestedFronts, isPartyTo } from '../domain/fronts.js';
+import {
+  advanceOneTurn,
+  buildMovementGraph,
+  minimumCostRoute,
+  movementOrderRefusal,
+  musterHexOf,
+} from '../domain/movement.js';
 import { draftOrder, ORDER_KEYS, ORDER_RECRUIT, orderKeyOf } from '../domain/recruitment.js';
 import { frontsOf, garrisonOf, holdingsOf, ownerOfSector } from '../domain/state.js';
 import type { MatchState, Realm, RealmForces } from '../domain/state.js';
@@ -50,7 +57,7 @@ import { readFronts, revealTurn } from '../domain/turn.js';
 import { project } from '../projection/project.js';
 import { drawPartition } from '../world/partition.js';
 import { loadWorld } from '../world/load.js';
-import type { HexPosition, RegionId, Sector, SectorId } from '../world/schema.js';
+import type { HexPosition, RegionId, SectorId } from '../world/schema.js';
 import { createRng } from './rng.js';
 import type {
   ActorId,
@@ -105,30 +112,6 @@ function allocateByRegion(
     allocation[region] = allocation[region]! + 1;
   }
   return allocation;
-}
-
-/** WM-④'s centre-nearest member hex, with canonical q/r ties. */
-function centreNearestHex(sector: Sector): HexPosition {
-  if (sector.mapUnits.length === 0) {
-    throw new Error(`Capital sector "${sector.id}" has no authored hex.`);
-  }
-  const centres = sector.mapUnits.map((unit) => ({
-    position: { q: unit.q, r: unit.r },
-    x: Math.sqrt(3) * (unit.q + unit.r / 2),
-    y: 1.5 * unit.r,
-  }));
-  const centroid = centres.reduce(
-    (sum, point) => ({ x: sum.x + point.x, y: sum.y + point.y }),
-    { x: 0, y: 0 },
-  );
-  centroid.x /= centres.length;
-  centroid.y /= centres.length;
-  centres.sort((a, b) => {
-    const distanceA = (a.x - centroid.x) ** 2 + (a.y - centroid.y) ** 2;
-    const distanceB = (b.x - centroid.x) ** 2 + (b.y - centroid.y) ** 2;
-    return distanceA - distanceB || a.position.q - b.position.q || a.position.r - b.position.r;
-  });
-  return centres[0]!.position;
 }
 
 function addOrigins(
@@ -199,6 +182,7 @@ export class Runtime {
     const state: MatchState = {
       world: { worldId: loadedWorld.artifact.worldId, revision: loadedWorld.artifact.revision },
       loadedWorld,
+      movementGraph: buildMovementGraph(loadedWorld.artifact),
       seed,
       rng,
       actors: [...actors],
@@ -309,12 +293,11 @@ export class Runtime {
       const openingField = forces.openingField;
       if (openingField === null) continue;
       const capital = state.capitals[actor]!;
-      const sector = state.loadedWorld.artifact.sectors[capital]!;
       const ordinal = forces.nextDetachmentOrdinal;
       forces.nextDetachmentOrdinal += 1;
       forces.detachments.push({
         id: `detachment:${actor}:${ordinal}`,
-        position: centreNearestHex(sector),
+        position: musterHexOf(state.loadedWorld.artifact, capital),
         ready: openingField,
         pending: [],
         movement: null,
@@ -372,6 +355,14 @@ export class Runtime {
       const { order, chips } = intent as { order?: unknown; chips?: unknown };
       return this.#allocateOrder(intent.actor, order, chips);
     }
+    if (intent.kind === 'move-detachment') {
+      const { detachmentId, destinationHex, forcedMarch } = intent as {
+        detachmentId?: unknown;
+        destinationHex?: unknown;
+        forcedMarch?: unknown;
+      };
+      return this.#moveDetachment(intent.actor, detachmentId, destinationHex, forcedMarch);
+    }
     if (intent.kind === 'lock-commitment') {
       return this.#lockCommitment(intent.actor);
     }
@@ -379,6 +370,41 @@ export class Runtime {
     return [
       this.#reject(intent, `No resolution is wired for intent kind "${intent.kind}" yet.`),
     ];
+  }
+
+  /** Replace a destination order; movement itself waits for simultaneous resolution. */
+  #moveDetachment(
+    actor: ActorId,
+    detachmentId: unknown,
+    destinationHex: unknown,
+    forcedMarch: unknown,
+  ): GameEvent[] {
+    const state = this.#state;
+    const detachments = state.forces[actor]!.detachments;
+    const refusal = movementOrderRefusal(
+      state.movementGraph,
+      detachments,
+      detachmentId,
+      destinationHex,
+      forcedMarch,
+    );
+    const intent = { kind: 'move-detachment', actor };
+    if (refusal !== null) return [this.#reject(intent, refusal)];
+
+    const detachment = detachments.find((candidate) => candidate.id === detachmentId)!;
+    const destination = destinationHex as HexPosition;
+    const route = minimumCostRoute(state.movementGraph, detachment.position, destination)!;
+    detachment.movement = {
+      destination: { ...destination },
+      route,
+      forcedMarch: forcedMarch as boolean,
+    };
+    return [this.#turnEvent('movement-planned', 'decision', {
+      actor,
+      detachmentId: detachment.id,
+      destinationHex: { ...destination },
+      forcedMarch,
+    })];
   }
 
   /**
@@ -573,6 +599,22 @@ export class Runtime {
     events.push(
       this.#turnEvent('commitments-revealed', 'payoff', { commitments: revealed.commitments }),
     );
+
+    for (const actor of state.actors) {
+      const detachments = state.forces[actor]!.detachments;
+      for (let index = 0; index < detachments.length; index += 1) {
+        const advanced = advanceOneTurn(state.movementGraph, detachments[index]!);
+        detachments[index] = advanced.detachment;
+        if (advanced.travelled === 0) continue;
+        events.push(this.#turnEvent('detachment-moved', 'payoff', {
+          actor,
+          detachmentId: advanced.detachment.id,
+          position: { ...advanced.detachment.position },
+          travelled: advanced.travelled,
+          fatigueAdded: advanced.fatigueAdded,
+        }));
+      }
+    }
 
     for (const reading of readFronts(revealed, frontsOf(state))) {
       events.push(this.#turnEvent('front-resolved', 'payoff', { ...reading }));

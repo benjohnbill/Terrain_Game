@@ -33,6 +33,7 @@ import {
   type GarrisonForce,
   type PendingCohort,
 } from '../domain/force.js';
+import { advanceOneTurn, type MovementGraph } from '../domain/movement.js';
 import { frontsOf, garrisonOf, holdingsOf } from '../domain/state.js';
 import type { MatchState } from '../domain/state.js';
 import type {
@@ -145,15 +146,37 @@ function pendingFatigue(pending: readonly PendingCohort[]): number | null {
   ) / men;
 }
 
-function detachmentView(detachment: Detachment): DetachmentView {
+function movementView(
+  graph: MovementGraph,
+  detachment: Detachment,
+): Pick<DetachmentView, 'turnEndpoint' | 'turnsRemaining'> {
+  if (detachment.movement === null) {
+    return { turnEndpoint: { ...detachment.position }, turnsRemaining: 0 };
+  }
+  const first = advanceOneTurn(graph, detachment).detachment;
+  let simulated = detachment;
+  let turnsRemaining = 0;
+  while (simulated.movement !== null) {
+    const advanced = advanceOneTurn(graph, simulated);
+    turnsRemaining += 1;
+    if (advanced.travelled === 0 && advanced.detachment.movement !== null) {
+      turnsRemaining = Infinity;
+      break;
+    }
+    simulated = advanced.detachment;
+  }
+  return { turnEndpoint: { ...first.position }, turnsRemaining };
+}
+
+function detachmentView(graph: MovementGraph, detachment: Detachment): DetachmentView {
   const readyMen = menOf(detachment.ready.origins);
   const waiting = pendingMen(detachment.pending);
+  const movement = movementView(graph, detachment);
   return {
     id: detachment.id,
     position: { ...detachment.position },
     destination: detachment.movement === null ? null : { ...detachment.movement.destination },
-    turnEndpoint: { ...detachment.position },
-    turnsRemaining: 0,
+    ...movement,
     men: readyMen + waiting,
     readyMen,
     pendingMen: waiting,
@@ -177,7 +200,8 @@ function garrisonView(sectorId: SectorId, garrison: GarrisonForce): GarrisonView
 
 function visibleDetachments(state: MatchState, viewer: ViewerId): DetachmentView[] {
   if (viewer === 'observer') return [];
-  return state.forces[viewer]?.detachments.map(detachmentView) ?? [];
+  return state.forces[viewer]?.detachments.map((detachment) =>
+    detachmentView(state.movementGraph, detachment)) ?? [];
 }
 
 function visibleGarrisons(state: MatchState, viewer: ViewerId): GarrisonView[] {

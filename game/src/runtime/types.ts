@@ -94,6 +94,7 @@ export type Intent =
   | ChooseCapitalIntent
   | AllocateCommitmentIntent
   | AllocateOrderIntent
+  | MoveDetachmentIntent
   | LockCommitmentIntent
   | { readonly kind: string; readonly actor: ActorId };
 
@@ -153,6 +154,15 @@ export interface AllocateOrderIntent {
 export interface LockCommitmentIntent {
   readonly kind: 'lock-commitment';
   readonly actor: ActorId;
+}
+
+/** Destination-grain field movement; pathing remains Runtime-owned. */
+export interface MoveDetachmentIntent {
+  readonly kind: 'move-detachment';
+  readonly actor: ActorId;
+  readonly detachmentId: string;
+  readonly destinationHex: HexPosition;
+  readonly forcedMarch: boolean;
 }
 
 /** Something the Runtime did. Returned by `submit`; never pushed. */

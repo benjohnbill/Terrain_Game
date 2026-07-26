@@ -41,6 +41,20 @@ export {
 export type { SectorTable } from '../domain/economy.js';
 export { contestedFronts, isPartyTo } from '../domain/fronts.js';
 export {
+  advanceOneTurn,
+  buildMovementGraph,
+  FORCED_MARCH_EXTRA_CAP,
+  FORCED_MARCH_PREMIUM,
+  MARCH_FATIGUE_PER_HEX,
+  MARCH_SPEED,
+  minimumCostRoute,
+  movementOrderRefusal,
+  musterHexOf,
+  reachCone,
+  terrainMovementCost,
+} from '../domain/movement.js';
+export type { MovementArc, MovementGraph, MovementNode } from '../domain/movement.js';
+export {
   draftBill,
   draftOrder,
   marginalPrice,
@@ -131,6 +145,7 @@ export type {
   MatchConfig,
   MatchPhase,
   MatchView,
+  MoveDetachmentIntent,
   ProvinceForcesView,
   RealmView,
   RejectedEvent,
