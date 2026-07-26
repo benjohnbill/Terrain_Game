@@ -46,6 +46,11 @@ questions. Definitions live in `GLOSSARY.md`; numbers in
 > the duel-pivot ledger (`.scratch/l3-playable-seam/`). Individual seal rows below
 > are NOT edited (append-only record); read them under this banner's split.
 
+> **R19 authority batch SEALED (2026-07-26).** Recruitment is now sector-sited,
+> settles as a simultaneous integral-priced batch, preserves province origin, and
+> becomes combat-ready on the following turn. Authority: `RULINGS.md` MT-⑥ and
+> ADR 0045; values remain at combat-formula M13 and war-model-build WB-M①/WB-M②.
+
 **Match-tilting pass — economy phase CLOSED (2026-07-08)**: the L2
 cradle run exposed the frozen world (deterrence equilibrium). The
 pass sealed the aging constitution P1–P3, re-founded 징집 명부
@@ -240,7 +245,7 @@ vassalage), and the economy→mass conversion it needs (M13).
 
 - `GLOSSARY.md` — Tier-1 vocabulary, sealed terms with dates. THE
   reference for this feature (definition + current value + seal stamp).
-- `RULINGS.md` — ruling history (⑧–⑰, MT-①…⑤, ET-①, DT-①…③, OG-①…⑤,
+- `RULINGS.md` — ruling history (⑧–⑰, MT-①…⑥, ET-①, DT-①…③, OG-①…⑤,
   AB-①…④, CE-①…⑳): evidence, rejected alternatives, riders. Glossary
   rows cite ruling numbers here.
 - `SPEC-AMENDMENT-DRAFT-crisis-ending.md` — drafting record of the

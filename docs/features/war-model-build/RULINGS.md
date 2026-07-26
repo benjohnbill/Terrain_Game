@@ -216,3 +216,15 @@ produced the recorded R14 comparison target, so the re-derived baseline is froze
 into `mockup/operational-layer/baseline-l2.json` **before** the deletion — with
 its own provenance and source commit, so it can be audited rather than believed.
 Prose was never a comparison target; a snapshot with a re-runnable commit is.
+
+## WM-④ — Hex Endpoint Topology for Opening Placement and Authored Edges — SEALED 2026-07-26 · L0
+
+**Verdict source:** user ruling 2026-07-26, recorded in
+`.scratch/l3-playable-build/DECISIONS-OWED.md` §1.9 and published by ADR 0045.
+
+The opening field army starts at the chosen capital sector's centre-nearest hex.
+An authored edge uses natural hex contact when its endpoint sectors have it;
+otherwise it expands to the nearest pair of endpoint-sector hexes at movement
+cost 1. Exact ties use canonical coordinate order. These rules complete ADR 0043's
+hex-adjacency-plus-authored-edges graph without changing its route, cost, or
+reachability contracts.

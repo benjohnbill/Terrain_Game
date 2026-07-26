@@ -154,6 +154,11 @@ This feature is that build.
 
 ## Open questions (remaining)
 
+**R19 topology authority published (2026-07-26):** WM-④ resolves the two
+hex-endpoint rules ADR 0043 left open: capital-sector centre-nearest opening
+placement, and natural-contact-or-nearest-pair authored-edge expansion. ADR 0045
+is the cross-feature contract.
+
 1. **Slice 2 implementation** — tickets 01–06 landed on main (2026-07-15);
    remaining 07–10 (measurement grid, window read, bot exit, fizzle re-read),
    then the measurement pass (spec §11).

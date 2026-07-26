@@ -7,12 +7,13 @@ that.
 
 **Blocked by:** 03 (turn loop), 05 (realm forces exist).
 
-Status: ready-for-agent, except item 8's value — see § Needs-info.
+Status: ready-for-agent (2026-07-26 — R19 authority batch published)
 
-Specification gates: Wayfinder 10 (acceptance thresholds), 12.
-Authority: **ADR 0043** + `DECISIONS-OWED.md` R12–R15. Slice-2 spec §3 (movement
-contract) and §4 (field-army doctrine) are adopted; read ADR 0043 first, because it
-records where this slice departs from §3.
+Specification gates: Wayfinder 10 (acceptance thresholds), 12 (published).
+Authority: **ADR 0043**, **ADR 0045**, war-model-build **WM-④**, and
+match-arc **MT-⑥**. Slice-2 spec §3 (movement contract) and §4 (field-army
+doctrine) are adopted; read ADR 0043 first, because it records where this slice
+departs from §3.
 
 - [ ] A field army (and every detachment) holds a **position** on the world's hex graph. `RealmForces.field` stops being a positionless scalar; a realm may hold several detachments at once.
 - [ ] The **movement graph is hex adjacency ∪ every authored edge.** Measured on `terrain-cradle@r1`: the pure hex graph has two components, 274 hexes (r1–r9) and 18 (r10), because only 15 of 17 edges are hex-adjacent at their endpoints — the two that are not are the `strait` doors into r10, an island. A test asserts a march into r10 finds a path; hex-only pathfinding would reject it as unreachable and look correct doing so.
@@ -29,17 +30,29 @@ records where this slice departs from §3.
 - [ ] The grey-box UI shows every own detachment's **current position** and, for one under orders, its destination and turns remaining. Legibility only; ticket 04 owns the real shell.
 - [ ] Resolution is deterministic for equal inputs and identical across Node and browser hosts.
 
-## Needs-info
+## Resolved authority batch
 
-**One value, and it is an approval rather than an origination.** March speed 3
-hexes/turn, forced-march premium 3.0 per extra hex, and the 2-hex extra cap all sit
-in `DECISIONS-OWED.md` **Part 3** — values already running in the archive that no
-document records. The gate C measurement showed 3 transplants (reinforcement 1–2
-turns, invasion 2–3, lateral redeployment 3–4 on this board), so what is owed is
-the Part 3 bulk approval, not a new number. Approving it also settles the reach
-cone's radius, so it is a fog dial for ticket 08 at the same time.
+**The old value block is paid.** March speed 3 hexes/turn, forced-march premium
+3.0, the 2-hex extra cap, and the rest of the fatigue/movement batch were approved
+2026-07-26 and landed at `war-model-build/MAGNITUDE.md` WB-M①/WB-M②.
 
-**Not owed:** the terrain cost table. R15 fixes it uniform for now, and the
+**Two topology rules were absent and are now ruled by the user (2026-07-26):**
+
+1. **Initial field-army hex:** the chosen capital sector's centre-nearest hex.
+2. **Authored-edge expansion:** natural hex contact is the link when present;
+   otherwise connect the endpoint sectors' nearest hex pair at cost 1. Ties use
+   canonical coordinate order.
+
+**Published 2026-07-26:** war-model-build WM-④ and ADR 0045. The canonical
+topology contract is now code-ready; `DECISIONS-OWED.md` §1.9 remains the
+Working-layer discovery record.
+
+**The recruitment composition conflict is resolved.** MT-⑥ and ADR 0045 now
+site every request, preserve province origin, create a not-yet-ready cohort, and
+define field destination/affiliation plus the next-turn readiness boundary.
+`DECISIONS-OWED.md` §1.10 remains the Working-layer record that exposed the gap.
+
+**Still not owed:** the terrain cost table. R15 fixes it uniform for now, and the
 authoring pass that fills it produces a new world revision (`r2`).
 
 ## Comments
@@ -55,3 +68,8 @@ rediscovering:
   "cannot arise yet — no standalone move command exists" and explicitly deferred to
   "the ticket that gives operations a force to move." **That is this ticket**, so
   the case becomes live here and the enumeration is inherited rather than restarted.
+
+Claim-time evidence (2026-07-26): clean baseline before the blocks —
+`verify:game` 119 Node / 15 browser with identical host digests and parity PENDING
+by gate 10; root `npm test` 479/479; `lint:docs` 0 blocking / 7 advisory. No
+production code was written before the missing rules were found.

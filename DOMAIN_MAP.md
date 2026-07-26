@@ -22,18 +22,17 @@ naming, promotion, the generated Quick Reference) lives in
   province's route-connected stock (march-worn on arrival); the
   manpower pool travels with territory; usable value is the land's
   current condition. Consequences arrive free of extra rules: conquest
-  raises the cap at a discount (fresh captures are 50/60% usable),
+  raises the cap on its sealed integration lag,
   raids shrink the victim's cap, geography prices power projection.
   The terrain-first thesis (SPEC) made mechanical; the escape-state
   doctrine (도주로 is derived at rout time, never stored) is its
   resolution-layer precedent. **Named exception (deliberate): the
-  command pool.** Attention is realm-size-independent (20 points) —
+  command pool.** Attention is realm-size-independent —
   the land gives the body, the player gives the mind; this is what
   prices expansion break-even and keeps the vassal seat a complete
-  game. **MVP boundary (reserved seat)**: realm-level recruitment
-  abstracts muster geography (recruits join the field army directly);
-  the province-level grammar (M9 awakening + march effect) is the
-  extension point if muster location ever needs to matter.
+  game. **MVP contract:** recruitment is sited at a controlled front
+  sector; the full recruitment, province-origin, readiness, and
+  endpoint contract is authoritative at match-arc MT-⑥ and ADR 0045.
 
 - ✅ `Aging constitution` (노화 헌법 · alias anti-stalemate ratchet) —
   **user-sealed 2026-07-07 (match-tilting pass); purpose re-aimed by the 1v1
