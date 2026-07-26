@@ -401,6 +401,10 @@ export class Runtime {
     forcedMarch: unknown,
   ): GameEvent[] {
     const state = this.#state;
+    const intent = { kind: 'move-detachment', actor };
+    const windowRefusal = lockRefusal(this.#commitmentContext(actor), actor);
+    if (windowRefusal !== null) return [this.#reject(intent, windowRefusal)];
+
     const detachments = state.forces[actor]!.detachments;
     const refusal = movementOrderRefusal(
       state.movementGraph,
@@ -409,7 +413,6 @@ export class Runtime {
       destinationHex,
       forcedMarch,
     );
-    const intent = { kind: 'move-detachment', actor };
     if (refusal !== null) return [this.#reject(intent, refusal)];
 
     const detachment = detachments.find((candidate) => candidate.id === detachmentId)!;

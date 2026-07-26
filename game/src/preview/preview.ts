@@ -192,6 +192,8 @@ export function preview(view: MatchView, intent: Intent): PreviewCard {
     if (intent.actor !== view.viewer) {
       return no(`A movement order is previewed by the realm making it; "${view.viewer}" cannot preview "${intent.actor}"'s.`);
     }
+    const windowRefusal = lockRefusal(commitmentContext(view, intent.actor), intent.actor);
+    if (windowRefusal !== null) return no(windowRefusal);
     const movement = intent as {
       detachmentId?: unknown;
       destinationHex?: unknown;

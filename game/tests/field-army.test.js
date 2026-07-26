@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-const { CRADLE_R1, Runtime } = await import('../dist/runtime/index.js');
+const { CRADLE_R1, Runtime, preview } = await import('../dist/runtime/index.js');
 
 function openAtDecision(seed = 'field-army-0001', world = CRADLE_R1) {
   const runtime = Runtime.open({ world, seed, actors: ['realm-a', 'realm-b'] });
@@ -110,6 +110,32 @@ test('front commitment names the arriving detachment and rejects one outside thi
     detachmentIds: [id],
   })[0].type, 'commitment-allocated');
   assert.deepEqual(runtime.view('realm-a').commitment.assignments[front], [id]);
+});
+
+test('a locked front assignment cannot be redirected before the other realm locks', () => {
+  const runtime = openAtDecision();
+  const id = runtime.view('realm-a').detachments[0].id;
+  const front = 'r1_s0|r2_s3';
+  runtime.submit({
+    kind: 'move-detachment', actor: 'realm-a', detachmentId: id,
+    destinationHex: { q: 9, r: 9 }, forcedMarch: true,
+  });
+  runtime.submit({
+    kind: 'allocate-commitment', actor: 'realm-a', front, chips: 4,
+    detachmentIds: [id],
+  });
+  assert.equal(lock(runtime, 'realm-a')[0].type, 'commitment-locked');
+
+  const before = runtime.view('realm-a');
+  const redirect = {
+    kind: 'move-detachment', actor: 'realm-a', detachmentId: id,
+    destinationHex: { q: 9, r: 5 }, forcedMarch: false,
+  };
+  const card = preview(before, redirect);
+  const events = runtime.submit(redirect);
+  assert.equal(events[0].type, 'intent-rejected');
+  assert.equal(card.admissible, false);
+  assert.deepEqual(runtime.view('realm-a'), before);
 });
 
 test('split and merge preserve every man and cannot launder fatigue', () => {
