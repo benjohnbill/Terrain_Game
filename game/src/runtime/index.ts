@@ -11,7 +11,7 @@ export { createRng } from './rng.js';
 export type { Rng } from './rng.js';
 export { project } from '../projection/project.js';
 export { preview } from '../preview/preview.js';
-export type { PreviewCard } from '../preview/preview.js';
+export type { PreviewCard, RecruitmentPreview } from '../preview/preview.js';
 export { decideBotIntent } from '../bot/index.js';
 export { capitalChoiceRefusal } from '../domain/capital-choice.js';
 export type { CapitalChoiceContext } from '../domain/capital-choice.js';
@@ -20,6 +20,8 @@ export {
   commitmentShare,
   frontAssignmentRefusal,
   lockRefusal,
+  recruitmentCommitOf,
+  recruitmentOrderKeyOf,
   spentOf,
   TURN_COMMITMENT_BUDGET,
 } from '../domain/commitment.js';
@@ -64,13 +66,22 @@ export {
   draftBill,
   draftOrder,
   marginalPrice,
-  ORDER_KEYS,
   ORDER_RECRUIT,
-  orderKeyOf,
   RECRUIT_FRACTION_PER_POINT,
+  recruitmentRequestRefusal,
+  settleRecruitmentBatch,
   SURGE,
 } from '../domain/recruitment.js';
-export type { DraftContext, DraftResult } from '../domain/recruitment.js';
+export type {
+  DraftContext,
+  DraftResult,
+  RecruitmentBatchContext,
+  RecruitmentBatchResult,
+  RecruitmentFulfillment,
+  RecruitmentLegalityContext,
+  RecruitmentPosture,
+  RecruitmentRequest,
+} from '../domain/recruitment.js';
 export {
   activateReadyCohorts,
   availableCiviliansByOrigin,
@@ -140,6 +151,7 @@ export type {
   ActorId,
   AllocateCommitmentIntent,
   AllocateOrderIntent,
+  AllocateRecruitmentIntent,
   ChooseCapitalIntent,
   Clock,
   CommitmentView,

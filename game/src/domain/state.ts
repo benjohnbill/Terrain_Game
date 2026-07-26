@@ -12,6 +12,7 @@ import { contestedFronts } from './fronts.js';
 import type { MovementGraph } from './movement.js';
 import type { LoadedWorld } from '../world/load.js';
 import type { Detachment, ForceCohort, GarrisonForce } from './force.js';
+import type { RecruitmentRequest } from './recruitment.js';
 import type { RegionId, SectorId } from '../world/schema.js';
 import type { ActorId, Front, MatchPhase, WorldIdentity } from '../runtime/types.js';
 import type { Rng } from '../runtime/rng.js';
@@ -99,6 +100,8 @@ export interface MatchState {
    * over (D6.3).
    */
   commitments: Record<ActorId, Record<string, number>>;
+  /** Rich one-turn recruitment requests, hidden from every viewer but their owner. */
+  recruitmentOrders: Record<ActorId, Record<string, RecruitmentRequest>>;
   /** Own field detachments explicitly assigned to each committed front. */
   frontAssignments: Record<ActorId, Record<string, readonly string[]>>;
   /**

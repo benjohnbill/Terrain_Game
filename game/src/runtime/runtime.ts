@@ -21,9 +21,9 @@ import {
   allocationRefusal,
   frontAssignmentRefusal,
   lockRefusal,
+  recruitmentOrderKeyOf,
   spentOf,
   TURN_COMMITMENT_BUDGET,
-  type Allocations,
   type CommitmentContext,
 } from '../domain/commitment.js';
 import {
@@ -58,7 +58,11 @@ import {
   FORCED_MARCH_EXTRA_CAP,
   MARCH_SPEED,
 } from '../domain/movement.js';
-import { draftOrder, ORDER_KEYS, ORDER_RECRUIT, orderKeyOf } from '../domain/recruitment.js';
+import {
+  recruitmentRequestRefusal,
+  settleRecruitmentBatch,
+  type RecruitmentRequest,
+} from '../domain/recruitment.js';
 import { frontsOf, garrisonOf, holdingsOf, ownerOfSector } from '../domain/state.js';
 import type { MatchState, Realm, RealmForces } from '../domain/state.js';
 import { readFronts, revealTurn } from '../domain/turn.js';
@@ -203,6 +207,7 @@ export class Runtime {
       garrisons,
       turn: 1,
       commitments: {},
+      recruitmentOrders: {},
       frontAssignments: {},
       turnLocks: [],
     };
@@ -365,8 +370,29 @@ export class Runtime {
       return this.#allocateCommitment(intent.actor, front, chips, detachmentIds);
     }
     if (intent.kind === 'allocate-order') {
-      const { order, chips } = intent as { order?: unknown; chips?: unknown };
-      return this.#allocateOrder(intent.actor, order, chips);
+      return [this.#reject(
+        intent,
+        'Scalar recruitment is retired; submit allocate-recruitment with a controlled sector.',
+      )];
+    }
+    if (intent.kind === 'allocate-recruitment') {
+      const { requestId, sectorId, commit, posture, destinationHex, joinDetachmentId } = intent as {
+        requestId?: unknown;
+        sectorId?: unknown;
+        commit?: unknown;
+        posture?: unknown;
+        destinationHex?: unknown;
+        joinDetachmentId?: unknown;
+      };
+      return this.#allocateRecruitment(
+        intent.actor,
+        requestId,
+        sectorId,
+        commit,
+        posture,
+        destinationHex,
+        joinDetachmentId,
+      );
     }
     if (intent.kind === 'move-detachment') {
       const { detachmentId, destinationHex, forcedMarch } = intent as {
@@ -574,7 +600,7 @@ export class Runtime {
    * `preview` builds the same context from a projection, which is what keeps the
    * two answering identically without either one reaching into the other's data.
    */
-  #commitmentContext(actor: ActorId): CommitmentContext {
+  #commitmentContext(actor: ActorId, candidateOrderKeys: readonly string[] = []): CommitmentContext {
     const state = this.#state;
     const fronts = frontsOf(state);
 
@@ -582,20 +608,21 @@ export class Runtime {
       windowOpen: state.phase === 'decision',
       alreadyLocked: state.turnLocks.includes(actor),
       frontKeys: fronts.filter((front) => isPartyTo(front, actor)).map((front) => front.key),
-      orderKeys: ORDER_KEYS,
+      orderKeys: [...new Set([
+        ...Object.keys(state.recruitmentOrders[actor] ?? {}).map(recruitmentOrderKeyOf),
+        ...candidateOrderKeys,
+      ])],
       allocations: state.commitments[actor] ?? {},
       budget: TURN_COMMITMENT_BUDGET,
     };
   }
 
   /**
-   * Pour part of the stack onto one target — a front, or an order kind.
+   * Pour part of the stack onto one front.
    *
-   * **One writer, because D6.3 seals one stack.** A front and an order are two
-   * keys in the same allocation map against the same budget, so they take the same
-   * refusal rule and the same write; only the event's name and its label differ.
-   * Two writers here is how the Σ ≤ budget invariant would come to be enforced
-   * twice and then, eventually, once.
+   * Recruitment shares this allocation map and budget, but its dynamic keys enter
+   * only through the rich-request writer. Keeping this writer front-only prevents
+   * either lane from changing the other's allocation without its companion state.
    *
    * An allocation *replaces* its target's share rather than adding to it, which is
    * what makes re-cutting a plan before locking free.
@@ -609,7 +636,12 @@ export class Runtime {
     const state = this.#state;
     const intent = { kind: event.type.replace('-allocated', ''), actor };
 
-    const refusal = allocationRefusal(this.#commitmentContext(actor), actor, key, chips);
+    const refusal = allocationRefusal(
+      { ...this.#commitmentContext(actor), orderKeys: [] },
+      actor,
+      key,
+      chips,
+    );
     if (refusal !== null) return [this.#reject(intent, refusal)];
 
     const target = key as string;
@@ -655,7 +687,12 @@ export class Runtime {
       return [this.#reject({ kind: 'allocate-commitment', actor }, 'An allocation must name a front.')];
     }
     const context = this.#commitmentContext(actor);
-    const allocationError = allocationRefusal(context, actor, front, chips);
+    const allocationError = allocationRefusal(
+      { ...context, orderKeys: [] },
+      actor,
+      front,
+      chips,
+    );
     if (allocationError !== null) {
       return [this.#reject({ kind: 'allocate-commitment', actor }, allocationError)];
     }
@@ -691,24 +728,76 @@ export class Runtime {
     return events;
   }
 
-  /**
-   * Pour part of the stack into a non-front order — recruitment, for now.
-   *
-   * Deliberately the *same* rule and the *same* allocation map as a front: D6.3
-   * seals one stack as the single currency for every order kind, and R2 put
-   * non-combat orders on the same free-pour grammar. A separate budget here would
-   * delete the mutual exposure the single stack exists to create — betting big on
-   * rebuilding has to mean standing thin somewhere, or the choice is not a choice.
-   */
-  #allocateOrder(actor: ActorId, order: unknown, chips: unknown): GameEvent[] {
-    if (typeof order !== 'string' || order.length === 0) {
-      return [this.#reject({ kind: 'allocate-order', actor }, 'An order allocation must name an order kind.')];
+  /** Store one rich request beside its dynamic allocation in the shared stack. */
+  #allocateRecruitment(
+    actor: ActorId,
+    requestId: unknown,
+    sectorId: unknown,
+    commit: unknown,
+    posture: unknown,
+    destinationHex: unknown,
+    joinDetachmentId: unknown,
+  ): GameEvent[] {
+    const state = this.#state;
+    const sectorRegions = Object.fromEntries(
+      Object.values(state.loadedWorld.artifact.sectors).map((sector) => [sector.id, sector.regionId]),
+    );
+    const refusal = recruitmentRequestRefusal(
+      {
+        controlledSectors: state.realms[actor]!.sectors,
+        ownedRegions: Object.keys(state.forces[actor]!.registers),
+        sectorRegions,
+      },
+      requestId,
+      sectorId,
+      commit,
+      posture,
+      destinationHex,
+      joinDetachmentId,
+    );
+    const intent = { kind: 'allocate-recruitment', actor };
+    if (refusal !== null) return [this.#reject(intent, refusal)];
+
+    const id = requestId as string;
+    const key = recruitmentOrderKeyOf(id);
+    const allocationError = allocationRefusal(
+      this.#commitmentContext(actor, [key]),
+      actor,
+      key,
+      commit,
+    );
+    if (allocationError !== null) return [this.#reject(intent, allocationError)];
+
+    const amount = commit as number;
+    const allocations = (state.commitments[actor] ??= {});
+    const requests = (state.recruitmentOrders[actor] ??=
+      Object.create(null) as Record<string, RecruitmentRequest>);
+    if (amount === 0) {
+      delete allocations[key];
+      delete requests[id];
+    } else {
+      allocations[key] = amount;
+      requests[id] = {
+        requestId: id,
+        sectorId: sectorId as SectorId,
+        commit: amount,
+        posture: posture as RecruitmentRequest['posture'],
+        ...(destinationHex === undefined
+          ? {}
+          : { destinationHex: { ...(destinationHex as HexPosition) } }),
+        ...(joinDetachmentId === undefined ? {} : { joinDetachmentId: joinDetachmentId as string }),
+      };
     }
-    return this.#allocate(actor, orderKeyOf(order), chips, {
-      type: 'order-allocated',
-      label: 'order',
-      value: order,
-    });
+
+    return [this.#turnEvent('recruitment-allocated', 'decision', {
+      actor,
+      requestId: id,
+      sectorId,
+      commit: amount,
+      posture,
+      spent: spentOf(allocations),
+      remaining: TURN_COMMITMENT_BUDGET - spentOf(allocations),
+    })];
   }
 
   /**
@@ -776,6 +865,12 @@ export class Runtime {
   #resolveTurn(): GameEvent[] {
     const state = this.#state;
     const events: GameEvent[] = [];
+    const turnStartOwners = Object.fromEntries(
+      Object.keys(state.loadedWorld.artifact.sectors).map((sector) => [
+        sector,
+        ownerOfSector(state, sector),
+      ]),
+    ) as Record<SectorId, ActorId | null>;
 
     // ── payoff ────────────────────────────────────────────────────────────────
     const revealed = revealTurn(state.actors, state.commitments, state.frontAssignments);
@@ -785,6 +880,8 @@ export class Runtime {
         assignments: revealed.assignments,
       }),
     );
+
+    events.push(...this.#resolveRecruitment(turnStartOwners));
 
     for (const actor of state.actors) {
       const detachments = state.forces[actor]!.detachments;
@@ -807,14 +904,15 @@ export class Runtime {
     }
 
     // ── background ────────────────────────────────────────────────────────────
-    // Upkeep, income, recruitment and the land readings, folded into the reveal's
+    // Upkeep, income, and the land readings, folded into the reveal's
     // tail (D6.2) — no separate screen, no extra click, and what comes out is
     // turn N+1's opening state.
-    events.push(...this.#recomputeRealms(revealed.commitments));
+    events.push(...this.#recomputeRealms());
 
     // The stack does not carry over: unspent chips are discarded and the pool
     // regenerates whole (D6.3).
     state.commitments = {};
+    state.recruitmentOrders = {};
     state.frontAssignments = {};
     state.turnLocks = [];
     state.turn += 1;
@@ -825,10 +923,105 @@ export class Runtime {
     return events;
   }
 
+  /** Settle and materialize one actor-wide batch before movement and income. */
+  #resolveRecruitment(turnStartOwners: Readonly<Record<SectorId, ActorId | null>>): GameEvent[] {
+    const state = this.#state;
+    const events: GameEvent[] = [];
+
+    for (const actor of state.actors) {
+      const forces = state.forces[actor]!;
+      const requests = Object.values(state.recruitmentOrders[actor] ?? {}).filter((request) => {
+        const region = state.loadedWorld.artifact.sectors[request.sectorId]?.regionId;
+        return turnStartOwners[request.sectorId] === actor &&
+          region !== undefined && forces.registers[region] !== undefined;
+      });
+      if (requests.length === 0) continue;
+
+      const controlledGarrisons = state.realms[actor]!.sectors.flatMap((sector) => {
+        const garrison = state.garrisons[sector];
+        return garrison === undefined ? [] : [garrison];
+      });
+      const servingOrigins = servingByOrigin(forces, controlledGarrisons);
+      const availableCivilians = availableCiviliansByOrigin(forces.registers, servingOrigins);
+      const holdings = holdingsOf(state, actor);
+      const sectorRegions = Object.fromEntries(requests.map((request) => [
+        request.sectorId,
+        state.loadedWorld.artifact.sectors[request.sectorId]!.regionId,
+      ]));
+      const musterHexes = Object.fromEntries(requests.map((request) => [
+        request.sectorId,
+        musterHexOf(state.loadedWorld.artifact, request.sectorId),
+      ]));
+      const garrisonHeadroom = Object.fromEntries(requests.map((request) => {
+        const garrison = state.garrisons[request.sectorId];
+        const men = garrison === undefined
+          ? 0
+          : menOf(garrison.ready) + garrison.pending.reduce(
+              (sum, cohort) => sum + menOf(cohort.origins),
+              0,
+            );
+        return [request.sectorId, Math.max(0, GARRISON_PER_BORDER_SECTOR - men)];
+      }));
+      const result = settleRecruitmentBatch({
+        requests,
+        forceLimit: forceLimitOf(state.loadedWorld.artifact.sectors, holdings),
+        field: fieldOf(forces),
+        garrison: garrisonOf(state, actor),
+        register: Object.values(forces.registers).reduce((sum, men) => sum + men, 0),
+        treasury: forces.treasury,
+        availableCivilians,
+        sectorRegions,
+        garrisonHeadroom,
+        musterHexes,
+      });
+
+      forces.treasury -= result.bill;
+      events.push(this.#turnEvent('recruitment-resolved', 'payoff', {
+        actor,
+        men: result.men,
+        bill: result.bill,
+        fulfilled: result.fulfilled,
+      }));
+
+      const requestsById = Object.fromEntries(requests.map((request) => [request.requestId, request]));
+      for (const fulfillment of result.fulfilled) {
+        if (fulfillment.men === 0) continue;
+        const request = requestsById[fulfillment.requestId]!;
+        const origin = sectorRegions[request.sectorId]!;
+        if (request.posture === 'field') {
+          const ordinal = forces.nextDetachmentOrdinal;
+          forces.nextDetachmentOrdinal += 1;
+          forces.detachments.push({
+            id: `detachment:${actor}:${ordinal}`,
+            position: { ...musterHexes[request.sectorId]! },
+            ready: { origins: { [origin]: fulfillment.men }, fatigue: 0 },
+            pending: [],
+            movement: null,
+          });
+        } else {
+          const garrison = (state.garrisons[request.sectorId] ??= { ready: {}, pending: [] });
+          const ready: Record<RegionId, number> = { ...garrison.ready };
+          ready[origin] = (ready[origin] ?? 0) + fulfillment.men;
+          garrison.ready = ready;
+        }
+        events.push(this.#turnEvent('recruited', 'payoff', {
+          actor,
+          requestId: request.requestId,
+          sectorId: request.sectorId,
+          posture: request.posture,
+          requestedMen: fulfillment.requestedMen,
+          men: fulfillment.men,
+          limitedBy: fulfillment.limitedBy,
+        }));
+      }
+    }
+    return events;
+  }
+
   /**
-   * The realm economy's one pass per turn: draft, then income, then report.
+   * The realm economy's one pass per turn: income, then report.
    *
-   * **Order matters and is chosen.** A draft bills the treasury the player was
+   * **Order matters and is chosen.** Recruitment bills the treasury the player was
    * looking at when they poured the chips in, and this turn's income arrives
    * after — so a realm cannot spend money it has not yet earned, and the number
    * on screen at decision time is the number the order was priced against.
@@ -839,7 +1032,7 @@ export class Runtime {
    * turn because the sector simply stops being in `holdings` — there is no decay
    * device, no timer, and nothing to tune.
    */
-  #recomputeRealms(committed: Readonly<Record<ActorId, Allocations>>): GameEvent[] {
+  #recomputeRealms(): GameEvent[] {
     const state = this.#state;
     const events: GameEvent[] = [];
 
@@ -847,56 +1040,8 @@ export class Runtime {
       const forces = state.forces[actor]!;
       const holdings = holdingsOf(state, actor);
       const forceLimit = forceLimitOf(state.loadedWorld.artifact.sectors, holdings);
-      const chips = committed[actor]?.[ORDER_RECRUIT] ?? 0;
-      const garrisons = state.realms[actor]!.sectors.flatMap((sector) => {
-        const garrison = state.garrisons[sector];
-        return garrison === undefined ? [] : [garrison];
-      });
-      const field = fieldOf(forces);
-      const servingOrigins = servingByOrigin(forces, garrisons);
-      const register = Object.values(forces.registers).reduce((sum, men) => sum + men, 0);
-
-      // One rule, shared with `preview`, so the card the player read before
-      // committing and the draft they actually get cannot drift.
-      const draft = draftOrder({
-        chips,
-        forceLimit,
-        field,
-        garrison: garrisonOf(state, actor),
-        register,
-        treasury: forces.treasury,
-      });
-
-      // P1 dual billing, in one place: men and their price move together, and
-      // there is no other statement in this compatibility path that raises field.
-      if (draft.men > 0) {
-        const available = availableCiviliansByOrigin(forces.registers, servingOrigins);
-        const draftedOrigins = allocateByRegion(draft.men, available);
-        const host = forces.detachments[0];
-        if (host === undefined) throw new Error(`Realm ${actor} has no field detachment.`);
-        const before = menOf(host.ready.origins);
-        const origins: Record<RegionId, number> = { ...host.ready.origins };
-        addOrigins(origins, draftedOrigins);
-        host.ready = {
-          origins,
-          fatigue: (host.ready.fatigue * before) / (before + draft.men),
-        };
-      }
-      forces.treasury -= draft.bill;
-
       const income = incomeOf(state.loadedWorld.artifact.sectors, holdings);
       forces.treasury += income;
-
-      if (draft.men > 0) {
-        events.push(
-          this.#turnEvent('recruited', 'background', {
-            actor,
-            men: draft.men,
-            bill: draft.bill,
-            limitedBy: draft.limitedBy,
-          }),
-        );
-      }
 
       events.push(
         this.#turnEvent('realm-recomputed', 'background', {

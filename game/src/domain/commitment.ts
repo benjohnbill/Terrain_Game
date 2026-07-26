@@ -18,6 +18,7 @@
  */
 
 import type { ActorId } from '../runtime/types.js';
+import { ORDER_RECRUIT } from './recruitment.js';
 import { reachCone, type MovementGraph } from './movement.js';
 import { hexKey } from '../world/schema.js';
 import type { Front, HexPosition } from '../runtime/types.js';
@@ -40,6 +41,16 @@ export type Allocations = Readonly<Record<string, number>>;
 
 /** One realm's selected field substance: front key -> own detachment ids. */
 export type FrontAssignments = Readonly<Record<string, readonly string[]>>;
+
+/** One stable request's key in the shared front/order allocation namespace. */
+export const recruitmentOrderKeyOf = (requestId: string): string =>
+  `${ORDER_RECRUIT}:${requestId}`;
+
+/** The share of the one stack currently poured into sited recruitment. */
+export const recruitmentCommitOf = (allocations: Readonly<Record<string, number>>): number =>
+  Object.entries(allocations)
+    .filter(([key]) => key.startsWith(`${ORDER_RECRUIT}:`))
+    .reduce((sum, [, commit]) => sum + commit, 0);
 
 export interface AssignableDetachment {
   readonly id: string;

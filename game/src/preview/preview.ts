@@ -16,8 +16,10 @@ import {
   allocationRefusal,
   frontAssignmentRefusal,
   lockRefusal,
+  recruitmentOrderKeyOf,
   type CommitmentContext,
 } from '../domain/commitment.js';
+import { GARRISON_PER_BORDER_SECTOR } from '../domain/economy.js';
 import { mergeDetachmentsRefusal, splitDetachmentRefusal } from '../domain/force.js';
 import { isPartyTo } from '../domain/fronts.js';
 import {
@@ -25,11 +27,24 @@ import {
   FORCED_MARCH_EXTRA_CAP,
   MARCH_SPEED,
   movementOrderRefusal,
+  musterHexOf,
   reachCone,
 } from '../domain/movement.js';
-import { draftOrder, ORDER_KEYS, orderKeyOf, type DraftResult } from '../domain/recruitment.js';
+import {
+  recruitmentRequestRefusal,
+  settleRecruitmentBatch,
+  type DraftResult,
+  type RecruitmentBatchResult,
+  type RecruitmentFulfillment,
+  type RecruitmentRequest,
+} from '../domain/recruitment.js';
 import { hexKey } from '../world/schema.js';
-import type { ActorId, DetachmentView, Intent, MatchView, SectorId } from '../runtime/types.js';
+import type { ActorId, DetachmentView, HexPosition, Intent, MatchView, SectorId } from '../runtime/types.js';
+
+export interface RecruitmentPreview {
+  readonly fulfillment: RecruitmentFulfillment;
+  readonly batch: RecruitmentBatchResult;
+}
 
 export interface PreviewCard {
   /** Whether the Runtime would accept this intent, as far as a viewer can tell. */
@@ -38,6 +53,8 @@ export interface PreviewCard {
   readonly reason?: string;
   /** For a recruitment order: what these chips would actually raise, and at what price. */
   readonly draft?: DraftResult;
+  /** The selected request plus the exact aggregate batch answer it participates in. */
+  readonly recruitment?: RecruitmentPreview;
 }
 
 const no = (reason: string): PreviewCard => ({ admissible: false, reason });
@@ -85,40 +102,94 @@ export function preview(view: MatchView, intent: Intent): PreviewCard {
   }
 
   if (intent.kind === 'allocate-order') {
+    return no('Scalar recruitment is retired; submit allocate-recruitment with a controlled sector.');
+  }
+
+  if (intent.kind === 'allocate-recruitment') {
     if (intent.actor !== view.viewer) {
       return no(`A commitment is previewed by the realm making it; "${view.viewer}" cannot preview "${intent.actor}"'s.`);
     }
-    const { order, chips } = intent as { order?: unknown; chips?: unknown };
-    if (typeof order !== 'string' || order.length === 0) {
-      return no('An order allocation must name an order kind.');
-    }
-    const refusal = allocationRefusal(
-      commitmentContext(view, intent.actor),
-      intent.actor,
-      orderKeyOf(order),
-      chips,
+    const economy = view.economy;
+    if (economy === null) return no('Recruitment is previewed by the realm making it.');
+    const allocation = intent as {
+      requestId?: unknown;
+      sectorId?: unknown;
+      commit?: unknown;
+      posture?: unknown;
+      destinationHex?: unknown;
+      joinDetachmentId?: unknown;
+    };
+    const sectorRegions = Object.fromEntries(
+      Object.values(view.board.sectors).map((sector) => [sector.id, sector.regionId]),
     );
-    if (refusal !== null) return no(refusal);
-
-    // Beyond admissibility, an order preview answers the question the player is
-    // actually asking: *what do I get for this?* The Runtime resolves the draft
-    // with the same rule over the same numbers, so the card cannot promise men
-    // the background tier then declines to deliver.
-    if (order === 'recruit') {
-      const economy = view.economy;
-      if (economy === null) return no('A draft is previewed by the realm making it.');
-      const draft = draftOrder({
-        chips: chips as number,
-        forceLimit: economy.forceLimit,
-        field: economy.field,
-        garrison: economy.garrison,
-        register: economy.register,
-        treasury: economy.treasury,
-      });
-      return { admissible: true, draft };
+    let refusal = recruitmentRequestRefusal(
+      {
+        controlledSectors: view.realms.find((realm) => realm.actor === intent.actor)?.sectors ?? [],
+        ownedRegions: Object.keys(economy.provinces),
+        sectorRegions,
+      },
+      allocation.requestId,
+      allocation.sectorId,
+      allocation.commit,
+      allocation.posture,
+      allocation.destinationHex,
+      allocation.joinDetachmentId,
+    );
+    const requestId = allocation.requestId as string;
+    const key = typeof requestId === 'string' ? recruitmentOrderKeyOf(requestId) : '';
+    if (refusal === null) {
+      refusal = allocationRefusal(
+        commitmentContext(view, intent.actor, [key]),
+        intent.actor,
+        key,
+        allocation.commit,
+      );
     }
+    if (refusal !== null) return no(refusal);
+    if (allocation.commit === 0) return { admissible: true };
 
-    return { admissible: true };
+    const request: RecruitmentRequest = {
+      requestId,
+      sectorId: allocation.sectorId as SectorId,
+      commit: allocation.commit as number,
+      posture: allocation.posture as RecruitmentRequest['posture'],
+      ...(allocation.destinationHex === undefined
+        ? {}
+        : { destinationHex: allocation.destinationHex as HexPosition }),
+      ...(allocation.joinDetachmentId === undefined
+        ? {}
+        : { joinDetachmentId: allocation.joinDetachmentId as string }),
+    };
+    const requests = [
+      ...view.recruitmentOrders.filter((stored) => stored.requestId !== request.requestId),
+      request,
+    ];
+    const musterHexes = Object.fromEntries(
+      requests.map((stored) => [stored.sectorId, musterHexOf(view.board, stored.sectorId)]),
+    );
+    const currentGarrisons = Object.fromEntries(
+      view.garrisons.map((garrison) => [garrison.sectorId, garrison.men]),
+    );
+    const garrisonHeadroom = Object.fromEntries(requests.map((stored) => [
+      stored.sectorId,
+      Math.max(0, GARRISON_PER_BORDER_SECTOR - (currentGarrisons[stored.sectorId] ?? 0)),
+    ]));
+    const batch = settleRecruitmentBatch({
+      requests,
+      forceLimit: economy.forceLimit,
+      field: economy.field,
+      garrison: economy.garrison,
+      register: economy.register,
+      treasury: economy.treasury,
+      availableCivilians: Object.fromEntries(
+        Object.entries(economy.provinces).map(([region, province]) => [region, province.availableCivilians]),
+      ),
+      sectorRegions,
+      garrisonHeadroom,
+      musterHexes,
+    });
+    const fulfillment = batch.fulfilled.find((candidate) => candidate.requestId === request.requestId)!;
+    return { admissible: true, recruitment: { fulfillment, batch } };
   }
 
   if (intent.kind === 'allocate-commitment' || intent.kind === 'lock-commitment') {
@@ -134,7 +205,7 @@ export function preview(view: MatchView, intent: Intent): PreviewCard {
     let refusal = intent.kind === 'lock-commitment'
       ? lockRefusal(context, intent.actor)
       : allocationRefusal(
-          context,
+          { ...context, orderKeys: [] },
           intent.actor,
           (intent as { front?: unknown }).front,
           (intent as { chips?: unknown }).chips,
@@ -244,12 +315,19 @@ export function preview(view: MatchView, intent: Intent): PreviewCard {
  * needs the opponent's allocation — which is exactly why a blind commit can be
  * previewed at all.
  */
-function commitmentContext(view: MatchView, actor: ActorId): CommitmentContext {
+function commitmentContext(
+  view: MatchView,
+  actor: ActorId,
+  candidateOrderKeys: readonly string[] = [],
+): CommitmentContext {
   return {
     windowOpen: view.phase === 'decision',
     alreadyLocked: view.committed.includes(actor),
     frontKeys: view.fronts.filter((front) => isPartyTo(front, actor)).map((front) => front.key),
-    orderKeys: ORDER_KEYS,
+    orderKeys: [...new Set([
+      ...view.recruitmentOrders.map((request) => recruitmentOrderKeyOf(request.requestId)),
+      ...candidateOrderKeys,
+    ])],
     // Safe because the caller already established `actor === view.viewer`.
     allocations: view.commitment.allocations,
     budget: view.commitment.budget,

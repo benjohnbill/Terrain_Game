@@ -9,6 +9,7 @@
  */
 
 import type { HexPosition, RegionId, SectorId, WorldArtifact } from '../world/schema.js';
+import type { RecruitmentRequest } from '../domain/recruitment.js';
 
 export type { HexPosition, RegionId, SectorId } from '../world/schema.js';
 
@@ -96,6 +97,7 @@ export type Intent =
   | ChooseCapitalIntent
   | AllocateCommitmentIntent
   | AllocateOrderIntent
+  | AllocateRecruitmentIntent
   | MoveDetachmentIntent
   | SplitDetachmentIntent
   | MergeDetachmentsIntent
@@ -134,21 +136,20 @@ export interface AllocateCommitmentIntent {
   readonly detachmentIds?: readonly string[];
 }
 
-/**
- * Pour part of this turn's stack into a non-front order.
- *
- * The same free-pour grammar a front takes, against the same budget (D6.3, R2):
- * an order is not a second economy, it is another place to put the same chips.
- * What a point buys is the order kind's own unit — for recruitment, +1%p of the
- * force limit (ruling R10).
- */
+/** Retired scalar order shape, retained so legacy callers receive a reportable refusal. */
 export interface AllocateOrderIntent {
   readonly kind: 'allocate-order';
   readonly actor: ActorId;
-  /** An order kind. `recruit` is the only one wired today. */
+  /** The legacy order kind supplied by the caller. */
   readonly order: string;
   /** Whole, non-negative chips. Zero clears the order. */
   readonly chips: number;
+}
+
+/** Pour part of the shared stack into one sector-sited recruitment request. */
+export interface AllocateRecruitmentIntent extends RecruitmentRequest {
+  readonly kind: 'allocate-recruitment';
+  readonly actor: ActorId;
 }
 
 /**
@@ -363,6 +364,8 @@ export interface MatchView {
   readonly fronts: readonly Front[];
   /** This viewer's own stack. The opponent's is absent until the reveal. */
   readonly commitment: CommitmentView;
+  /** This viewer's own one-turn recruitment plans, in canonical settlement order. */
+  readonly recruitmentOrders: readonly RecruitmentRequest[];
   /**
    * This viewer's own stocks, or `null` for the observer.
    *

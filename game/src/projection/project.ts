@@ -33,7 +33,8 @@ import {
   type GarrisonForce,
   type PendingCohort,
 } from '../domain/force.js';
-import { advanceOneTurn, type MovementGraph } from '../domain/movement.js';
+import { advanceOneTurn, musterHexOf, type MovementGraph } from '../domain/movement.js';
+import { compareRecruitmentRequests, type RecruitmentRequest } from '../domain/recruitment.js';
 import { frontsOf, garrisonOf, holdingsOf } from '../domain/state.js';
 import type { MatchState } from '../domain/state.js';
 import type {
@@ -283,6 +284,23 @@ function visibleCommitment(state: MatchState, viewer: ViewerId): CommitmentView 
   };
 }
 
+function visibleRecruitmentOrders(state: MatchState, viewer: ViewerId): RecruitmentRequest[] {
+  if (viewer === 'observer') return [];
+  const requests = Object.values(state.recruitmentOrders[viewer] ?? {});
+  const musterHexes = Object.fromEntries(requests.map((request) => [
+    request.sectorId,
+    musterHexOf(state.loadedWorld.artifact, request.sectorId),
+  ]));
+  return requests
+    .map((request) => ({
+      ...request,
+      ...(request.destinationHex === undefined
+        ? {}
+        : { destinationHex: { ...request.destinationHex } }),
+    }))
+    .sort((a, b) => compareRecruitmentRequests(musterHexes, a, b));
+}
+
 /**
  * Builds the viewer-safe view of a match.
  *
@@ -307,6 +325,7 @@ export function project(state: MatchState, viewer: ViewerId): MatchView {
     committed: visibleLocks(state, viewer),
     fronts: frontsOf(state),
     commitment: visibleCommitment(state, viewer),
+    recruitmentOrders: visibleRecruitmentOrders(state, viewer),
     economy: visibleEconomy(state, viewer),
     detachments: visibleDetachments(state, viewer),
     garrisons: visibleGarrisons(state, viewer),

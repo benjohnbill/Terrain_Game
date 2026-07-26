@@ -30,20 +30,13 @@
  */
 
 import { MEN_PER_YIELD } from './economy.js';
+import type { HexPosition, RegionId, SectorId } from '../world/schema.js';
 
 /** One action point's purchase, as a fraction of the force limit (MT-③, R10). */
 export const RECRUIT_FRACTION_PER_POINT = 0.01;
 
 /** The allocation key recruitment occupies. One namespace with the front keys. */
 export const ORDER_RECRUIT = 'order:recruit';
-
-/** Every order kind that draws on the stack without being a front. */
-export const ORDER_KEYS: readonly string[] = [ORDER_RECRUIT];
-
-/** `order:<kind>` — the key an order allocation is stored under. */
-export function orderKeyOf(kind: string): string {
-  return `order:${kind}`;
-}
 
 /**
  * The marginal price curve over 동원 강도 (serving ÷ register).
@@ -143,37 +136,248 @@ export function draftOrder(context: DraftContext): DraftResult {
   const { chips, forceLimit, field, garrison, register, treasury } = context;
   if (!(chips > 0)) return { men: 0, bill: 0, limitedBy: null };
 
-  const ordered = Math.floor(forceLimit * RECRUIT_FRACTION_PER_POINT * chips);
   const headroom = Math.max(0, Math.floor(forceLimit - field));
   const serving = field + garrison;
   const bodies = Math.max(0, Math.floor(register - serving));
+  const sectorId = 'legacy-draft-sector' as SectorId;
+  const regionId = 'legacy-draft-region' as RegionId;
+  const batch = settleRecruitmentBatch({
+    requests: [{ requestId: 'legacy-draft', sectorId, commit: chips, posture: 'field' }],
+    forceLimit,
+    field,
+    garrison,
+    register,
+    treasury,
+    availableCivilians: { [regionId]: bodies },
+    sectorRegions: { [sectorId]: regionId },
+    garrisonHeadroom: { [sectorId]: 0 },
+    musterHexes: { [sectorId]: { q: 0, r: 0 } },
+  });
+  const fulfillment = batch.fulfilled[0]!;
+  const limitedBy: DraftResult['limitedBy'] = fulfillment.men === fulfillment.requestedMen
+    ? null
+    : fulfillment.limitedBy.includes('treasury')
+      ? 'treasury'
+      : headroom <= bodies
+        ? 'headroom'
+        : 'bodies';
+  return { men: fulfillment.men, bill: batch.bill, limitedBy };
+}
 
-  let men = Math.min(ordered, headroom, bodies);
-  let limitedBy: DraftResult['limitedBy'] =
-    men === ordered ? null : headroom <= bodies ? 'headroom' : 'bodies';
+export type RecruitmentPosture = 'field' | 'garrison';
 
-  const billFor = (count: number): number =>
-    draftBill(register, serving / register, (serving + count) / register);
+export interface RecruitmentRequest {
+  readonly requestId: string;
+  readonly sectorId: SectorId;
+  readonly commit: number;
+  readonly posture: RecruitmentPosture;
+  readonly destinationHex?: HexPosition;
+  readonly joinDetachmentId?: string;
+}
 
-  if (billFor(men) > treasury) {
-    // The bill rises strictly with the count, so the largest affordable draft is
-    // a clean bisection — and an integer one, so the answer is exact rather than
-    // a float that would differ between hosts.
-    //
-    // Strict, with no tolerance: a treasury holding *exactly* the price of N men
-    // may buy N−1 when the float sum lands a hair above. Deterministic on both
-    // hosts, one man wide, and only reachable at an exact boundary — cheaper to
-    // state than to paper over with an epsilon nobody sealed.
-    let lo = 0;
-    let hi = men;
-    while (lo < hi) {
-      const mid = Math.ceil((lo + hi) / 2);
-      if (billFor(mid) <= treasury) lo = mid;
-      else hi = mid - 1;
-    }
-    men = lo;
-    limitedBy = 'treasury';
+export interface RecruitmentFulfillment {
+  readonly requestId: string;
+  readonly requestedMen: number;
+  readonly men: number;
+  readonly limitedBy: readonly ('province' | 'field-headroom' | 'garrison-headroom' | 'treasury')[];
+}
+
+export interface RecruitmentBatchContext {
+  readonly requests: readonly RecruitmentRequest[];
+  readonly forceLimit: number;
+  readonly field: number;
+  readonly garrison: number;
+  readonly register: number;
+  readonly treasury: number;
+  readonly availableCivilians: Readonly<Record<RegionId, number>>;
+  readonly sectorRegions: Readonly<Record<SectorId, RegionId>>;
+  readonly garrisonHeadroom: Readonly<Record<SectorId, number>>;
+  readonly musterHexes: Readonly<Record<SectorId, HexPosition>>;
+}
+
+export interface RecruitmentBatchResult {
+  readonly fulfilled: readonly RecruitmentFulfillment[];
+  readonly men: number;
+  readonly bill: number;
+}
+
+export interface RecruitmentLegalityContext {
+  readonly controlledSectors: readonly SectorId[];
+  readonly ownedRegions: readonly RegionId[];
+  readonly sectorRegions: Readonly<Record<SectorId, RegionId>>;
+}
+
+/** Validation shared by Runtime mutation and viewer-safe preview. */
+export function recruitmentRequestRefusal(
+  context: RecruitmentLegalityContext,
+  requestId: unknown,
+  sectorId: unknown,
+  commit: unknown,
+  posture: unknown,
+  destinationHex: unknown,
+  joinDetachmentId: unknown,
+): string | null {
+  if (typeof requestId !== 'string' || requestId.length === 0) {
+    return 'A recruitment allocation must carry a non-empty stable requestId.';
+  }
+  if (typeof sectorId !== 'string' || !context.controlledSectors.includes(sectorId)) {
+    return `Recruitment sector "${String(sectorId)}" is not controlled by this actor.`;
+  }
+  const region = context.sectorRegions[sectorId];
+  if (region === undefined || !context.ownedRegions.includes(region)) {
+    return `Recruitment sector "${sectorId}" does not have an owned province register.`;
+  }
+  if (typeof commit !== 'number' || !Number.isInteger(commit) || commit < 0) {
+    return 'A recruitment allocation must commit a whole, non-negative number of points.';
+  }
+  if (posture !== 'field' && posture !== 'garrison') {
+    return 'A recruitment allocation posture must be "field" or "garrison".';
+  }
+  if (posture === 'garrison' && (destinationHex !== undefined || joinDetachmentId !== undefined)) {
+    return 'Garrison recruitment cannot declare a destination or detachment.';
+  }
+  if (destinationHex !== undefined && (
+    typeof destinationHex !== 'object' || destinationHex === null ||
+    !Number.isInteger((destinationHex as { q?: unknown }).q) ||
+    !Number.isInteger((destinationHex as { r?: unknown }).r)
+  )) {
+    return 'A field recruitment destination must be a valid hex position.';
+  }
+  if (joinDetachmentId !== undefined && (
+    typeof joinDetachmentId !== 'string' || joinDetachmentId.length === 0
+  )) {
+    return 'A field recruitment affiliation must name a stable detachment id.';
+  }
+  return null;
+}
+
+type RecruitmentLimit = RecruitmentFulfillment['limitedBy'][number];
+
+interface WorkingFulfillment {
+  readonly request: RecruitmentRequest;
+  readonly requestedMen: number;
+  men: number;
+  readonly limitedBy: RecruitmentLimit[];
+}
+
+/** The one tie-break used by settlement, event emission, and own-plan projection. */
+export function compareRecruitmentRequests(
+  musterHexes: Readonly<Record<SectorId, HexPosition>>,
+  a: RecruitmentRequest,
+  b: RecruitmentRequest,
+): number {
+  const aMuster = musterHexes[a.sectorId];
+  const bMuster = musterHexes[b.sectorId];
+  if (aMuster === undefined || bMuster === undefined) {
+    throw new Error('Every recruitment request must have a muster hex.');
+  }
+  return aMuster.q - bMuster.q || aMuster.r - bMuster.r ||
+    (a.requestId < b.requestId ? -1 : a.requestId > b.requestId ? 1 : 0);
+}
+
+function limit(
+  requests: readonly WorkingFulfillment[],
+  total: number,
+  reason: RecruitmentLimit,
+  compare: (a: WorkingFulfillment, b: WorkingFulfillment) => number,
+): void {
+  const available = Math.max(0, Math.floor(total));
+  const demand = requests.reduce((sum, request) => sum + request.men, 0);
+  if (demand <= available) return;
+
+  const target = Math.min(available, demand);
+  const remainders: { readonly request: WorkingFulfillment; readonly fraction: number }[] = [];
+  let assigned = 0;
+  for (const request of requests) {
+    const exact = demand === 0 ? 0 : target * request.men / demand;
+    const whole = Math.floor(exact);
+    assigned += whole;
+    remainders.push({ request, fraction: exact - whole });
+    request.men = whole;
+  }
+  remainders.sort((a, b) => b.fraction - a.fraction || compare(a.request, b.request));
+  for (let index = 0; assigned < target; index += 1, assigned += 1) {
+    remainders[index]!.request.men += 1;
+  }
+  for (const request of requests) {
+    if (!request.limitedBy.includes(reason)) request.limitedBy.push(reason);
+  }
+}
+
+function largestAffordableMen(
+  maximum: number,
+  billFor: (men: number) => number,
+  treasury: number,
+): number {
+  if (billFor(maximum) <= treasury) return maximum;
+  let lo = 0;
+  let hi = maximum;
+  while (lo < hi) {
+    const mid = Math.ceil((lo + hi) / 2);
+    if (billFor(mid) <= treasury) lo = mid;
+    else hi = mid - 1;
+  }
+  return lo;
+}
+
+/**
+ * Settle every legal request for one realm as one deterministic, integral-priced
+ * batch. No request ever owns a bill: the treasury mutation belongs to the one
+ * fulfilled aggregate.
+ */
+export function settleRecruitmentBatch(context: RecruitmentBatchContext): RecruitmentBatchResult {
+  const compare = (a: WorkingFulfillment, b: WorkingFulfillment): number =>
+    compareRecruitmentRequests(context.musterHexes, a.request, b.request);
+  const menPerPoint = Math.floor(context.forceLimit * RECRUIT_FRACTION_PER_POINT);
+  const working: WorkingFulfillment[] = context.requests.map((request) => {
+    const requestedMen = menPerPoint * request.commit;
+    return { request, requestedMen, men: requestedMen, limitedBy: [] };
+  });
+
+  const byProvince = new Map<RegionId, WorkingFulfillment[]>();
+  for (const request of working) {
+    const region = context.sectorRegions[request.request.sectorId];
+    if (region === undefined) throw new Error(`Unknown recruiting sector "${request.request.sectorId}".`);
+    const province = byProvince.get(region) ?? [];
+    province.push(request);
+    byProvince.set(region, province);
+  }
+  for (const [region, requests] of [...byProvince].sort(([a], [b]) =>
+    a < b ? -1 : a > b ? 1 : 0)) {
+    limit(requests, context.availableCivilians[region] ?? 0, 'province', compare);
   }
 
-  return { men, bill: billFor(men), limitedBy };
+  const garrisons = new Map<SectorId, WorkingFulfillment[]>();
+  for (const request of working.filter(({ request }) => request.posture === 'garrison')) {
+    const atSector = garrisons.get(request.request.sectorId) ?? [];
+    atSector.push(request);
+    garrisons.set(request.request.sectorId, atSector);
+  }
+  for (const [sector, requests] of [...garrisons].sort(([a], [b]) =>
+    a < b ? -1 : a > b ? 1 : 0)) {
+    limit(requests, context.garrisonHeadroom[sector] ?? 0, 'garrison-headroom', compare);
+  }
+
+  const fields = working.filter(({ request }) => request.posture === 'field');
+  limit(fields, Math.max(0, context.forceLimit - context.field), 'field-headroom', compare);
+
+  const preTreasuryMen = working.reduce((sum, request) => sum + request.men, 0);
+  const preServing = context.field + context.garrison;
+  const billFor = (men: number): number => draftBill(
+    context.register,
+    preServing / context.register,
+    (preServing + men) / context.register,
+  );
+  const affordable = largestAffordableMen(preTreasuryMen, billFor, context.treasury);
+  limit(working, affordable, 'treasury', compare);
+
+  working.sort(compare);
+  const fulfilled = working.map(({ request, requestedMen, men, limitedBy }) => ({
+    requestId: request.requestId,
+    requestedMen,
+    men,
+    limitedBy,
+  }));
+  const men = fulfilled.reduce((sum, fulfillment) => sum + fulfillment.men, 0);
+  return { fulfilled, men, bill: billFor(men) };
 }
