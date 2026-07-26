@@ -12,11 +12,24 @@
  */
 
 import { capitalChoiceRefusal } from '../domain/capital-choice.js';
-import { allocationRefusal, lockRefusal, type CommitmentContext } from '../domain/commitment.js';
+import {
+  allocationRefusal,
+  frontAssignmentRefusal,
+  lockRefusal,
+  type CommitmentContext,
+} from '../domain/commitment.js';
+import { mergeDetachmentsRefusal, splitDetachmentRefusal } from '../domain/force.js';
 import { isPartyTo } from '../domain/fronts.js';
-import { buildMovementGraph, movementOrderRefusal } from '../domain/movement.js';
+import {
+  buildMovementGraph,
+  FORCED_MARCH_EXTRA_CAP,
+  MARCH_SPEED,
+  movementOrderRefusal,
+  reachCone,
+} from '../domain/movement.js';
 import { draftOrder, ORDER_KEYS, orderKeyOf, type DraftResult } from '../domain/recruitment.js';
-import type { ActorId, Intent, MatchView, SectorId } from '../runtime/types.js';
+import { hexKey } from '../world/schema.js';
+import type { ActorId, DetachmentView, Intent, MatchView, SectorId } from '../runtime/types.js';
 
 export interface PreviewCard {
   /** Whether the Runtime would accept this intent, as far as a viewer can tell. */
@@ -28,6 +41,22 @@ export interface PreviewCard {
 }
 
 const no = (reason: string): PreviewCard => ({ admissible: false, reason });
+
+function assignableDetachmentViews(
+  graph: ReturnType<typeof buildMovementGraph>,
+  detachments: readonly DetachmentView[],
+) {
+  return detachments.map((detachment) => {
+    const endpoint = hexKey(detachment.turnEndpoint.q, detachment.turnEndpoint.r);
+    const normallyReachable = reachCone(graph, detachment.position, 1, MARCH_SPEED).has(endpoint);
+    return {
+      id: detachment.id,
+      position: detachment.position,
+      turnEndpoint: detachment.turnEndpoint,
+      reachSpeed: normallyReachable ? MARCH_SPEED : MARCH_SPEED + FORCED_MARCH_EXTRA_CAP,
+    };
+  });
+}
 
 /**
  * What a viewer can check without truth. Kept deliberately in step with the
@@ -102,15 +131,60 @@ export function preview(view: MatchView, intent: Intent): PreviewCard {
       return no(`A commitment is previewed by the realm making it; "${view.viewer}" cannot preview "${intent.actor}"'s.`);
     }
     const context = commitmentContext(view, intent.actor);
-    const refusal =
-      intent.kind === 'lock-commitment'
-        ? lockRefusal(context, intent.actor)
-        : allocationRefusal(
-            context,
-            intent.actor,
-            (intent as { front?: unknown }).front,
-            (intent as { chips?: unknown }).chips,
-          );
+    let refusal = intent.kind === 'lock-commitment'
+      ? lockRefusal(context, intent.actor)
+      : allocationRefusal(
+          context,
+          intent.actor,
+          (intent as { front?: unknown }).front,
+          (intent as { chips?: unknown }).chips,
+        );
+    if (refusal === null && intent.kind === 'allocate-commitment') {
+      const allocation = intent as {
+        front?: unknown;
+        chips?: unknown;
+        detachmentIds?: unknown;
+      };
+      if (allocation.chips !== 0) {
+        const front = view.fronts.find((candidate) => candidate.key === allocation.front)!;
+        const graph = buildMovementGraph(view.board);
+        refusal = frontAssignmentRefusal(
+          graph,
+          front,
+          assignableDetachmentViews(graph, view.detachments),
+          allocation.detachmentIds,
+          Object.entries(view.commitment.assignments)
+            .filter(([assignedFront]) => assignedFront !== allocation.front)
+            .flatMap(([, ids]) => ids),
+        );
+      }
+    }
+    if (refusal === null && intent.kind === 'lock-commitment') {
+      const graph = buildMovementGraph(view.board);
+      const detachments = assignableDetachmentViews(graph, view.detachments);
+      const assigned = new Set<string>();
+      const assignments = Object.entries(view.commitment.assignments)
+        .sort(([a], [b]) => a.localeCompare(b));
+      for (const [frontKey, detachmentIds] of assignments) {
+        const front = view.fronts.find((candidate) => candidate.key === frontKey);
+        if (front === undefined) {
+          refusal = `Front "${frontKey}" is no longer contested; revise this commitment before locking.`;
+          break;
+        }
+        const assignmentError = frontAssignmentRefusal(
+          graph,
+          front,
+          detachments,
+          detachmentIds,
+          [...assigned],
+        );
+        if (assignmentError !== null) {
+          refusal = `${assignmentError} Revise this commitment before locking.`;
+          break;
+        }
+        for (const detachmentId of detachmentIds) assigned.add(detachmentId);
+      }
+    }
     return refusal === null ? { admissible: true } : no(refusal);
   }
 
@@ -130,6 +204,30 @@ export function preview(view: MatchView, intent: Intent): PreviewCard {
       movement.destinationHex,
       movement.forcedMarch,
     );
+    return refusal === null ? { admissible: true } : no(refusal);
+  }
+
+  if (intent.kind === 'split-detachment' || intent.kind === 'merge-detachments') {
+    if (intent.actor !== view.viewer) {
+      return no(`A formation order is previewed by the realm making it; "${view.viewer}" cannot preview "${intent.actor}"'s.`);
+    }
+    const windowRefusal = lockRefusal(commitmentContext(view, intent.actor), intent.actor);
+    if (windowRefusal !== null) return no(windowRefusal);
+    const formations = view.detachments.map((detachment) => ({
+      id: detachment.id,
+      position: detachment.position,
+      men: detachment.men,
+    }));
+    const refusal = intent.kind === 'split-detachment'
+      ? splitDetachmentRefusal(
+          formations,
+          (intent as { detachmentId?: unknown }).detachmentId,
+          (intent as { men?: unknown }).men,
+        )
+      : mergeDetachmentsRefusal(
+          formations,
+          (intent as { detachmentIds?: unknown }).detachmentIds,
+        );
     return refusal === null ? { admissible: true } : no(refusal);
   }
 

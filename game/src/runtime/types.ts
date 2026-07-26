@@ -82,6 +82,8 @@ export interface CommitmentView {
   readonly budget: number;
   /** Front key -> chips, for this viewer's realm only. */
   readonly allocations: Readonly<Record<string, number>>;
+  /** Front key -> own field detachments explicitly committed there. */
+  readonly assignments: Readonly<Record<string, readonly string[]>>;
   readonly spent: number;
   readonly remaining: number;
 }
@@ -95,6 +97,8 @@ export type Intent =
   | AllocateCommitmentIntent
   | AllocateOrderIntent
   | MoveDetachmentIntent
+  | SplitDetachmentIntent
+  | MergeDetachmentsIntent
   | LockCommitmentIntent
   | { readonly kind: string; readonly actor: ActorId };
 
@@ -126,6 +130,8 @@ export interface AllocateCommitmentIntent {
   readonly front: string;
   /** Whole, non-negative chips. Zero clears the front. */
   readonly chips: number;
+  /** Own detachments whose planned turn endpoint supplies field substance. */
+  readonly detachmentIds?: readonly string[];
 }
 
 /**
@@ -163,6 +169,21 @@ export interface MoveDetachmentIntent {
   readonly detachmentId: string;
   readonly destinationHex: HexPosition;
   readonly forcedMarch: boolean;
+}
+
+/** Free division of one positioned detachment. */
+export interface SplitDetachmentIntent {
+  readonly kind: 'split-detachment';
+  readonly actor: ActorId;
+  readonly detachmentId: string;
+  readonly men: number;
+}
+
+/** Free consolidation of co-located own detachments. */
+export interface MergeDetachmentsIntent {
+  readonly kind: 'merge-detachments';
+  readonly actor: ActorId;
+  readonly detachmentIds: readonly string[];
 }
 
 /** Something the Runtime did. Returned by `submit`; never pushed. */

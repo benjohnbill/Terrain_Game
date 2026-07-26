@@ -18,11 +18,17 @@ export type { CapitalChoiceContext } from '../domain/capital-choice.js';
 export {
   allocationRefusal,
   commitmentShare,
+  frontAssignmentRefusal,
   lockRefusal,
   spentOf,
   TURN_COMMITMENT_BUDGET,
 } from '../domain/commitment.js';
-export type { Allocations, CommitmentContext } from '../domain/commitment.js';
+export type {
+  Allocations,
+  AssignableDetachment,
+  CommitmentContext,
+  FrontAssignments,
+} from '../domain/commitment.js';
 export {
   CAP_LAND_FRAC,
   CAP_PER_POP,
@@ -72,8 +78,10 @@ export {
   fieldOf,
   menOf,
   mergeDetachments,
+  mergeDetachmentsRefusal,
   servingByOrigin,
   splitDetachment,
+  splitDetachmentRefusal,
 } from '../domain/force.js';
 export type {
   Detachment,
@@ -145,10 +153,12 @@ export type {
   MatchConfig,
   MatchPhase,
   MatchView,
+  MergeDetachmentsIntent,
   MoveDetachmentIntent,
   ProvinceForcesView,
   RealmView,
   RejectedEvent,
+  SplitDetachmentIntent,
   TurnTier,
   ViewerId,
   WorldIdentity,

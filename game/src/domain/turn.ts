@@ -34,12 +34,10 @@
  *     board.* The partition covers all 56 sectors, so every sector has an owner,
  *     and an owned sector's holder is a party to the front rather than a
  *     co-entrant. It would need an unowned sector, which no draw produces.
- *  3. **One realm vacates as the other enters.** *Cannot arise yet.* No standalone
- *     move command exists (`DOMAIN_MAP.md`); position changes only as a product of
- *     an operation outcome, and outcomes resolve inside this same payoff tier. The
- *     case becomes real when ticket 06 gives operations a force to move, and it is
- *     recorded here so that ticket inherits the enumeration rather than restarting
- *     it.
+ *  3. **One realm vacates as the other enters.** Field movement now exists, but
+ *     ownership still changes only through later combat/capture work. Movement and
+ *     both sides' front assignments resolve from the same revealed turn, never in
+ *     submission order.
  *  4. **One realm commits to two fronts that share a sector.** Real and measured:
  *     `r7_s0` is the door for two different region borders, so a realm can press
  *     it from two sides at once. Resolution: **they stay two fronts**, because a
@@ -61,7 +59,7 @@
  */
 
 import type { ActorId, Front } from '../runtime/types.js';
-import type { Allocations } from './commitment.js';
+import type { Allocations, FrontAssignments } from './commitment.js';
 
 /**
  * The revealed turn — both realms' allocations, in the open.
@@ -71,12 +69,14 @@ import type { Allocations } from './commitment.js';
  */
 export interface RevealedTurn {
   readonly commitments: Readonly<Record<ActorId, Allocations>>;
+  readonly assignments: Readonly<Record<ActorId, FrontAssignments>>;
 }
 
 /** One front's reading after the reveal. Integers only — shares are a display's. */
 export interface FrontReading {
   readonly front: string;
   readonly commitments: Readonly<Record<ActorId, number>>;
+  readonly assignments: Readonly<Record<ActorId, readonly string[]>>;
   readonly total: number;
   /**
    * What the engagement resolved to. `pending-operations` until ticket 06 wires
@@ -89,10 +89,17 @@ export interface FrontReading {
 export function revealTurn(
   actors: readonly ActorId[],
   commitments: Readonly<Record<ActorId, Allocations>>,
+  frontAssignments: Readonly<Record<ActorId, FrontAssignments>> = {},
 ): RevealedTurn {
   const revealed: Record<ActorId, Allocations> = {};
-  for (const actor of actors) revealed[actor] = { ...(commitments[actor] ?? {}) };
-  return { commitments: revealed };
+  const assignments: Record<ActorId, FrontAssignments> = {};
+  for (const actor of actors) {
+    revealed[actor] = { ...(commitments[actor] ?? {}) };
+    assignments[actor] = Object.fromEntries(
+      Object.entries(frontAssignments[actor] ?? {}).map(([front, ids]) => [front, [...ids]]),
+    );
+  }
+  return { commitments: revealed, assignments };
 }
 
 /**
@@ -108,14 +115,16 @@ export function readFronts(revealed: RevealedTurn, fronts: readonly Front[]): re
   // Canonical order, decided by the board rather than by either player.
   for (const front of fronts) {
     const commitments: Record<ActorId, number> = {};
+    const assignments: Record<ActorId, readonly string[]> = {};
     let total = 0;
     for (const actor of front.owners) {
       const chips = revealed.commitments[actor]?.[front.key] ?? 0;
       commitments[actor] = chips;
+      assignments[actor] = [...(revealed.assignments[actor]?.[front.key] ?? [])];
       total += chips;
     }
     if (total === 0) continue;
-    readings.push({ front: front.key, commitments, total, outcome: 'pending-operations' });
+    readings.push({ front: front.key, commitments, assignments, total, outcome: 'pending-operations' });
   }
 
   return readings;

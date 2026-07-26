@@ -39,6 +39,8 @@ export interface GarrisonForce {
   pending: PendingCohort[];
 }
 
+type FormationDetachment = Pick<Detachment, 'id' | 'position'> & { readonly men: number };
+
 export const menOf = (origins: OriginComposition): number =>
   Object.values(origins).reduce((sum, men) => sum + men, 0);
 
@@ -197,12 +199,32 @@ export function splitDetachment(
   ];
 }
 
+/** Shared Runtime/preview validation for a free division order. */
+export function splitDetachmentRefusal(
+  detachments: readonly FormationDetachment[],
+  detachmentId: unknown,
+  men: unknown,
+): string | null {
+  if (typeof detachmentId !== 'string' || detachmentId.length === 0) {
+    return 'A split must name a detachment.';
+  }
+  const source = detachments.find((detachment) => detachment.id === detachmentId);
+  if (source === undefined) return `Detachment "${detachmentId}" is not owned by this actor.`;
+  if (typeof men !== 'number' || !Number.isInteger(men) || men <= 0 || men >= source.men) {
+    return `A split must move a positive whole number below ${source.men}; got ${String(men)}.`;
+  }
+  return null;
+}
+
 export function mergeDetachments(
   sources: readonly Detachment[], mergedId: string,
 ): Detachment {
-  if (sources.length === 0) throw new Error('At least one detachment is required to merge.');
-  const position = sources[0]!.position;
-  if (sources.some((source) => source.position.q !== position.q || source.position.r !== position.r)) {
+  if (sources.length < 2 || new Set(sources.map((source) => source.id)).size !== sources.length) {
+    throw new Error('At least two unique detachments are required to merge.');
+  }
+  const ordered = [...sources].sort((a, b) => a.id.localeCompare(b.id));
+  const position = ordered[0]!.position;
+  if (ordered.some((source) => source.position.q !== position.q || source.position.r !== position.r)) {
     throw new Error('Detachments must occupy the same hex to merge.');
   }
 
@@ -210,7 +232,7 @@ export function mergeDetachments(
   let readyMen = 0;
   let fatigueMass = 0;
   const pending: PendingCohort[] = [];
-  for (const source of sources) {
+  for (const source of ordered) {
     const sourceReadyMen = menOf(source.ready.origins);
     addOrigins(origins, source.ready.origins);
     readyMen += sourceReadyMen;
@@ -225,6 +247,30 @@ export function mergeDetachments(
     pending,
     movement: null,
   };
+}
+
+/** Shared Runtime/preview validation for a free consolidation order. */
+export function mergeDetachmentsRefusal(
+  detachments: readonly FormationDetachment[],
+  detachmentIds: unknown,
+): string | null {
+  if (!Array.isArray(detachmentIds)) return 'A merge must name its detachments.';
+  if (detachmentIds.length < 2 || new Set(detachmentIds).size !== detachmentIds.length) {
+    return 'A merge requires at least two unique detachments.';
+  }
+  if (detachmentIds.some((id) => typeof id !== 'string' || id.length === 0)) {
+    return 'A merge must name valid detachment ids.';
+  }
+  const sources = detachmentIds.map((id) =>
+    detachments.find((detachment) => detachment.id === id));
+  const missing = detachmentIds.find((_id, index) => sources[index] === undefined);
+  if (missing !== undefined) return `Detachment "${String(missing)}" is not owned by this actor.`;
+  const position = sources[0]!.position;
+  if (sources.some((source) =>
+    source!.position.q !== position.q || source!.position.r !== position.r)) {
+    return 'Detachments must occupy the same hex to merge.';
+  }
+  return null;
 }
 
 export function combatEligibleMen(detachment: Detachment, turn: number): number {

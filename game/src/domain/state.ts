@@ -99,6 +99,8 @@ export interface MatchState {
    * over (D6.3).
    */
   commitments: Record<ActorId, Record<string, number>>;
+  /** Own field detachments explicitly assigned to each committed front. */
+  frontAssignments: Record<ActorId, Record<string, readonly string[]>>;
   /**
    * Realms that have locked this turn's commitment.
    *

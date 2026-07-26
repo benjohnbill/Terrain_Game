@@ -19,6 +19,7 @@
 import { capitalChoiceRefusal } from '../domain/capital-choice.js';
 import {
   allocationRefusal,
+  frontAssignmentRefusal,
   lockRefusal,
   spentOf,
   TURN_COMMITMENT_BUDGET,
@@ -36,8 +37,13 @@ import {
 import {
   availableCiviliansByOrigin,
   fieldOf,
+  mergeDetachments,
+  mergeDetachmentsRefusal,
   menOf,
   servingByOrigin,
+  splitDetachment,
+  splitDetachmentRefusal,
+  type Detachment,
   type ForceCohort,
   type GarrisonForce,
   type OriginComposition,
@@ -49,6 +55,8 @@ import {
   minimumCostRoute,
   movementOrderRefusal,
   musterHexOf,
+  FORCED_MARCH_EXTRA_CAP,
+  MARCH_SPEED,
 } from '../domain/movement.js';
 import { draftOrder, ORDER_KEYS, ORDER_RECRUIT, orderKeyOf } from '../domain/recruitment.js';
 import { frontsOf, garrisonOf, holdingsOf, ownerOfSector } from '../domain/state.js';
@@ -195,6 +203,7 @@ export class Runtime {
       garrisons,
       turn: 1,
       commitments: {},
+      frontAssignments: {},
       turnLocks: [],
     };
 
@@ -348,8 +357,12 @@ export class Runtime {
       return this.#chooseCapital(intent.actor, (intent as { sector?: SectorId }).sector);
     }
     if (intent.kind === 'allocate-commitment') {
-      const { front, chips } = intent as { front?: unknown; chips?: unknown };
-      return this.#allocateCommitment(intent.actor, front, chips);
+      const { front, chips, detachmentIds } = intent as {
+        front?: unknown;
+        chips?: unknown;
+        detachmentIds?: unknown;
+      };
+      return this.#allocateCommitment(intent.actor, front, chips, detachmentIds);
     }
     if (intent.kind === 'allocate-order') {
       const { order, chips } = intent as { order?: unknown; chips?: unknown };
@@ -362,6 +375,14 @@ export class Runtime {
         forcedMarch?: unknown;
       };
       return this.#moveDetachment(intent.actor, detachmentId, destinationHex, forcedMarch);
+    }
+    if (intent.kind === 'split-detachment') {
+      const { detachmentId, men } = intent as { detachmentId?: unknown; men?: unknown };
+      return this.#splitDetachment(intent.actor, detachmentId, men);
+    }
+    if (intent.kind === 'merge-detachments') {
+      const { detachmentIds } = intent as { detachmentIds?: unknown };
+      return this.#mergeDetachments(intent.actor, detachmentIds);
     }
     if (intent.kind === 'lock-commitment') {
       return this.#lockCommitment(intent.actor);
@@ -404,6 +425,90 @@ export class Runtime {
       detachmentId: detachment.id,
       destinationHex: { ...destination },
       forcedMarch,
+    })];
+  }
+
+  /** Free formation changes share the decision window but spend no commitment. */
+  #formationWindowRefusal(actor: ActorId): string | null {
+    return lockRefusal(this.#commitmentContext(actor), actor);
+  }
+
+  #formationInputs(detachments: readonly Detachment[]): readonly {
+    readonly id: string;
+    readonly position: HexPosition;
+    readonly men: number;
+  }[] {
+    return detachments.map((detachment) => ({
+      id: detachment.id,
+      position: detachment.position,
+      men: menOf(detachment.ready.origins) + detachment.pending.reduce(
+        (sum, cohort) => sum + menOf(cohort.origins),
+        0,
+      ),
+    }));
+  }
+
+  /** Divide a detachment without changing its position, orders, fatigue, or total men. */
+  #splitDetachment(actor: ActorId, detachmentId: unknown, men: unknown): GameEvent[] {
+    const state = this.#state;
+    const intent = { kind: 'split-detachment', actor };
+    const windowRefusal = this.#formationWindowRefusal(actor);
+    if (windowRefusal !== null) return [this.#reject(intent, windowRefusal)];
+
+    const forces = state.forces[actor]!;
+    const refusal = splitDetachmentRefusal(
+      this.#formationInputs(forces.detachments),
+      detachmentId,
+      men,
+    );
+    if (refusal !== null) return [this.#reject(intent, refusal)];
+
+    const sourceIndex = forces.detachments.findIndex((detachment) => detachment.id === detachmentId);
+    const childId = `detachment:${actor}:${forces.nextDetachmentOrdinal}`;
+    forces.nextDetachmentOrdinal += 1;
+    const [retained, child] = splitDetachment(
+      forces.detachments[sourceIndex]!,
+      men as number,
+      childId,
+    );
+    forces.detachments.splice(sourceIndex, 1, retained, child);
+    return [this.#turnEvent('detachment-split', 'decision', {
+      actor,
+      detachmentId: retained.id,
+      childDetachmentId: child.id,
+      men,
+    })];
+  }
+
+  /** Consolidate co-located detachments under the canonical-lowest stable id. */
+  #mergeDetachments(actor: ActorId, detachmentIds: unknown): GameEvent[] {
+    const state = this.#state;
+    const intent = { kind: 'merge-detachments', actor };
+    const windowRefusal = this.#formationWindowRefusal(actor);
+    if (windowRefusal !== null) return [this.#reject(intent, windowRefusal)];
+
+    const forces = state.forces[actor]!;
+    const refusal = mergeDetachmentsRefusal(
+      this.#formationInputs(forces.detachments),
+      detachmentIds,
+    );
+    if (refusal !== null) return [this.#reject(intent, refusal)];
+
+    const ids = [...(detachmentIds as string[])].sort();
+    const selected = new Set(ids);
+    const sources = ids.map((id) =>
+      forces.detachments.find((detachment) => detachment.id === id)!);
+    const firstIndex = Math.min(...forces.detachments.map(
+      (detachment, index) => selected.has(detachment.id) ? index : Infinity,
+    ));
+    const merged = mergeDetachments(sources, ids[0]!);
+    const survivors = forces.detachments.filter((detachment) => !selected.has(detachment.id));
+    survivors.splice(firstIndex, 0, merged);
+    forces.detachments.splice(0, forces.detachments.length, ...survivors);
+    return [this.#turnEvent('detachments-merged', 'decision', {
+      actor,
+      detachmentIds: ids,
+      detachmentId: merged.id,
     })];
   }
 
@@ -524,16 +629,63 @@ export class Runtime {
     ];
   }
 
-  /** Pour part of the stack onto one front. */
-  #allocateCommitment(actor: ActorId, front: unknown, chips: unknown): GameEvent[] {
+  #assignableDetachments(actor: ActorId) {
+    const state = this.#state;
+    return state.forces[actor]!.detachments.map((detachment) => ({
+      id: detachment.id,
+      position: detachment.position,
+      turnEndpoint: advanceOneTurn(state.movementGraph, detachment).detachment.position,
+      reachSpeed: detachment.movement?.forcedMarch
+        ? MARCH_SPEED + FORCED_MARCH_EXTRA_CAP
+        : MARCH_SPEED,
+    }));
+  }
+
+  /** Pour part of the stack onto one front and name any arriving field substance. */
+  #allocateCommitment(
+    actor: ActorId,
+    front: unknown,
+    chips: unknown,
+    detachmentIds: unknown,
+  ): GameEvent[] {
     if (typeof front !== 'string' || front.length === 0) {
       return [this.#reject({ kind: 'allocate-commitment', actor }, 'An allocation must name a front.')];
     }
-    return this.#allocate(actor, front, chips, {
+    const context = this.#commitmentContext(actor);
+    const allocationError = allocationRefusal(context, actor, front, chips);
+    if (allocationError !== null) {
+      return [this.#reject({ kind: 'allocate-commitment', actor }, allocationError)];
+    }
+
+    const state = this.#state;
+    const namedFront = frontsOf(state).find((candidate) => candidate.key === front)!;
+    if (chips !== 0) {
+      const assignmentError = frontAssignmentRefusal(
+        state.movementGraph,
+        namedFront,
+        this.#assignableDetachments(actor),
+        detachmentIds,
+        Object.entries(state.frontAssignments[actor] ?? {})
+          .filter(([assignedFront]) => assignedFront !== front)
+          .flatMap(([, ids]) => ids),
+      );
+      if (assignmentError !== null) {
+        return [this.#reject({ kind: 'allocate-commitment', actor }, assignmentError)];
+      }
+    }
+
+    const events = this.#allocate(actor, front, chips, {
       type: 'commitment-allocated',
       label: 'front',
       value: front,
     });
+    const assignments = (state.frontAssignments[actor] ??= {});
+    if (chips === 0 || !Array.isArray(detachmentIds) || detachmentIds.length === 0) {
+      delete assignments[front];
+    } else {
+      assignments[front] = [...detachmentIds] as string[];
+    }
+    return events;
   }
 
   /**
@@ -570,6 +722,34 @@ export class Runtime {
     const refusal = lockRefusal(this.#commitmentContext(actor), actor);
     if (refusal !== null) return [this.#reject({ kind: 'lock-commitment', actor }, refusal)];
 
+    const fronts = frontsOf(state);
+    const assigned = new Set<string>();
+    const assignments = Object.entries(state.frontAssignments[actor] ?? {})
+      .sort(([a], [b]) => a.localeCompare(b));
+    for (const [frontKey, detachmentIds] of assignments) {
+      const front = fronts.find((candidate) => candidate.key === frontKey);
+      if (front === undefined) {
+        return [this.#reject(
+          { kind: 'lock-commitment', actor },
+          `Front "${frontKey}" is no longer contested; revise this commitment before locking.`,
+        )];
+      }
+      const assignmentError = frontAssignmentRefusal(
+        state.movementGraph,
+        front,
+        this.#assignableDetachments(actor),
+        detachmentIds,
+        [...assigned],
+      );
+      if (assignmentError !== null) {
+        return [this.#reject(
+          { kind: 'lock-commitment', actor },
+          `${assignmentError} Revise this commitment before locking.`,
+        )];
+      }
+      for (const detachmentId of detachmentIds) assigned.add(detachmentId);
+    }
+
     state.turnLocks.push(actor);
     const events: GameEvent[] = [this.#turnEvent('commitment-locked', 'decision', { actor })];
 
@@ -595,9 +775,12 @@ export class Runtime {
     const events: GameEvent[] = [];
 
     // ── payoff ────────────────────────────────────────────────────────────────
-    const revealed = revealTurn(state.actors, state.commitments);
+    const revealed = revealTurn(state.actors, state.commitments, state.frontAssignments);
     events.push(
-      this.#turnEvent('commitments-revealed', 'payoff', { commitments: revealed.commitments }),
+      this.#turnEvent('commitments-revealed', 'payoff', {
+        commitments: revealed.commitments,
+        assignments: revealed.assignments,
+      }),
     );
 
     for (const actor of state.actors) {
@@ -629,6 +812,7 @@ export class Runtime {
     // The stack does not carry over: unspent chips are discarded and the pool
     // regenerates whole (D6.3).
     state.commitments = {};
+    state.frontAssignments = {};
     state.turnLocks = [];
     state.turn += 1;
     events.push(

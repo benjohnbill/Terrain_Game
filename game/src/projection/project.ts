@@ -268,10 +268,16 @@ function visibleLocks(state: MatchState, viewer: ViewerId): ActorId[] {
  */
 function visibleCommitment(state: MatchState, viewer: ViewerId): CommitmentView {
   const own = viewer === 'observer' ? {} : { ...(state.commitments[viewer] ?? {}) };
+  const assignments = viewer === 'observer'
+    ? {}
+    : Object.fromEntries(
+        Object.entries(state.frontAssignments[viewer] ?? {}).map(([front, ids]) => [front, [...ids]]),
+      );
   const spent = spentOf(own);
   return {
     budget: TURN_COMMITMENT_BUDGET,
     allocations: own,
+    assignments,
     spent,
     remaining: TURN_COMMITMENT_BUDGET - spent,
   };

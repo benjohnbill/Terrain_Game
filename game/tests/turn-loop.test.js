@@ -35,7 +35,7 @@ function openAtDecision(overrides = {}) {
 
 const frontsOf = (runtime, actor) => runtime.view(actor).fronts.map((f) => f.key);
 const allocate = (runtime, actor, front, chips) =>
-  runtime.submit({ kind: 'allocate-commitment', actor, front, chips });
+  runtime.submit({ kind: 'allocate-commitment', actor, front, chips, detachmentIds: [] });
 const lock = (runtime, actor) => runtime.submit({ kind: 'lock-commitment', actor });
 const types = (events) => events.map((e) => e.type);
 
@@ -417,19 +417,19 @@ test('fronts resolve in a canonical order that no actor decides', () => {
   assert.deepEqual(order, [...order].sort(), 'resolution order followed submission order');
 });
 
-test('no standalone move command exists — position is an operation’s product', () => {
+test('standalone movement spends no commitment and changes no ownership', () => {
   const runtime = openAtDecision();
+  const id = runtime.view('realm-a').detachments[0].id;
+  const allocationBefore = runtime.view('realm-a').commitment;
   const before = runtime.view('observer').realms.map((r) => [...r.sectors]);
 
-  for (const kind of ['move', 'move-army', 'march', 'reposition']) {
-    const events = runtime.submit({ kind, actor: 'realm-a', from: 'r1_s0', to: 'r2_s3' });
-    assert.equal(events[0].type, 'intent-rejected', `"${kind}" was wired as a movement command`);
-  }
+  const movement = runtime.submit({
+    kind: 'move-detachment', actor: 'realm-a', detachmentId: id,
+    destinationHex: { q: 9, r: 9 }, forcedMarch: true,
+  });
+  assert.equal(movement[0].type, 'movement-planned');
+  assert.deepEqual(runtime.view('realm-a').commitment, allocationBefore);
 
-  // And a stubbed resolution moves nothing: ownership changes arrive with the
-  // operations that cause them (ticket 06 combat, ticket 07 capital fall).
-  const [front] = frontsOf(runtime, 'realm-a');
-  allocate(runtime, 'realm-a', front, 20);
   lock(runtime, 'realm-a');
   lock(runtime, 'realm-b');
   assert.deepEqual(runtime.view('observer').realms.map((r) => [...r.sectors]), before);

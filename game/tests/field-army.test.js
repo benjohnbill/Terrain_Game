@@ -92,3 +92,54 @@ test('a destination outside the authored movement graph is rejected without muta
   assert.equal(events[0].type, 'intent-rejected');
   assert.deepEqual(runtime.view('realm-a'), before);
 });
+
+test('front commitment names the arriving detachment and rejects one outside this-turn reach', () => {
+  const runtime = openAtDecision();
+  const id = runtime.view('realm-a').detachments[0].id;
+  const front = 'r1_s0|r2_s3';
+  assert.equal(runtime.submit({
+    kind: 'allocate-commitment', actor: 'realm-a', front, chips: 4,
+    detachmentIds: [id],
+  })[0].type, 'intent-rejected');
+  runtime.submit({
+    kind: 'move-detachment', actor: 'realm-a', detachmentId: id,
+    destinationHex: { q: 9, r: 9 }, forcedMarch: true,
+  });
+  assert.equal(runtime.submit({
+    kind: 'allocate-commitment', actor: 'realm-a', front, chips: 4,
+    detachmentIds: [id],
+  })[0].type, 'commitment-allocated');
+  assert.deepEqual(runtime.view('realm-a').commitment.assignments[front], [id]);
+});
+
+test('split and merge preserve every man and cannot launder fatigue', () => {
+  const runtime = openAtDecision();
+  const before = runtime.view('realm-a').detachments[0];
+  const split = runtime.submit({
+    kind: 'split-detachment', actor: 'realm-a', detachmentId: before.id, men: 1234,
+  });
+  assert.equal(split[0].type, 'detachment-split');
+  const divided = runtime.view('realm-a').detachments;
+  assert.equal(divided.reduce((sum, d) => sum + d.men, 0), before.men);
+  assert.deepEqual(new Set(divided.map((d) => d.fatigue)), new Set([before.fatigue]));
+  const child = divided.find((d) => d.id !== before.id);
+  runtime.submit({
+    kind: 'move-detachment', actor: 'realm-a', detachmentId: child.id,
+    destinationHex: { q: 9, r: 6 }, forcedMarch: false,
+  });
+  closeTurn(runtime);
+  runtime.submit({
+    kind: 'move-detachment', actor: 'realm-a', detachmentId: child.id,
+    destinationHex: { q: 9, r: 5 }, forcedMarch: false,
+  });
+  closeTurn(runtime);
+  const beforeMerge = runtime.view('realm-a').detachments;
+  const expectedFatigue = beforeMerge.reduce((sum, d) => sum + d.fatigue * d.men, 0) / before.men;
+  const merged = runtime.submit({
+    kind: 'merge-detachments', actor: 'realm-a',
+    detachmentIds: beforeMerge.map((d) => d.id),
+  });
+  assert.equal(merged[0].type, 'detachments-merged');
+  assert.equal(runtime.view('realm-a').detachments[0].men, before.men);
+  assert.ok(Math.abs(runtime.view('realm-a').detachments[0].fatigue - expectedFatigue) < 1e-12);
+});
