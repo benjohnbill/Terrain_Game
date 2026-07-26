@@ -64,10 +64,10 @@
          * Pumps an ordered intent log — the canonical durable form (gate 02 § 5).
          * The Node lane replays the same log and the two are compared.
          */
-        replay({ seed, actors, log }) {
+        replay({ seed, actors, viewer = 'observer', log }) {
           const runtime = open({ seed, actors });
           const events = log.flatMap((intent) => runtime.submit(intent));
-          return { events, view: runtime.view('observer') };
+          return { events, view: runtime.view(viewer) };
         },
 
         /** The world as the loader sees it, for cross-host integrity comparison. */

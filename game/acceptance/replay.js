@@ -17,31 +17,69 @@
  * allocations with the two realms locking in **opposite order each turn**, so a
  * first-mover dependence anywhere in the loop would change the outcome.
  *
- * Reads the runtime it is handed only through `view`, so the log is a function of
- * public projection data — which is what lets the same log be replayed in a host
- * that never saw the runtime that produced it.
+ * Pumps the runtime it is handed while deriving the fixture from public projection
+ * data. The returned log can then be replayed in a host that never saw the planning
+ * runtime that produced it.
  */
 export function replayLog(runtime) {
   const setup = runtime.view('observer');
-  const log = setup.actors.map((actor) => ({
+  const log = [];
+  const append = (...intents) => {
+    for (const intent of intents) {
+      log.push(intent);
+      const rejected = runtime.submit(intent).find((event) => event.type === 'intent-rejected');
+      if (rejected) throw new Error(`replay fixture rejected: ${rejected.detail.reason}`);
+    }
+  };
+
+  append(...setup.actors.map((actor) => ({
     kind: 'choose-capital',
     actor,
     sector: setup.realms.find((r) => r.actor === actor).sectors[0],
-  }));
+  })));
+
+  const [first, second] = runtime.view('observer').actors;
+  const firstView = runtime.view(first);
+  const firstCapital = firstView.capitals[first];
+  const firstDetachment = firstView.detachments[0].id;
+  append(
+    {
+      kind: 'allocate-recruitment', actor: first, requestId: 'replay-recruit-1',
+      sectorId: firstCapital, commit: 2, posture: 'field',
+    },
+    {
+      kind: 'split-detachment', actor: first,
+      detachmentId: firstDetachment, men: 1000,
+    },
+  );
+  const splitDetachmentIds = runtime.view(first).detachments.map((detachment) => detachment.id);
+  append(
+    {
+      kind: 'merge-detachments', actor: first,
+      detachmentIds: splitDetachmentIds,
+    },
+    {
+      kind: 'move-detachment', actor: first, detachmentId: firstDetachment,
+      destinationHex: { q: 19, r: 13 }, forcedMarch: false,
+    },
+  );
 
   // The fronts are known only after the partition, and they do not move while
   // resolution is stubbed — so reading them once here is enough for the fixture.
   const probe = runtime.view('observer');
   const fronts = probe.fronts.map((f) => f.key);
-  const [first, second] = setup.actors;
 
   for (let turn = 0; turn < 4; turn++) {
     const near = fronts[turn % fronts.length];
     const far = fronts[(turn + 1) % fronts.length];
-    log.push(
-      { kind: 'allocate-commitment', actor: first, front: near, chips: 3 + turn },
-      { kind: 'allocate-commitment', actor: second, front: far, chips: 2 },
-      { kind: 'allocate-commitment', actor: second, front: near, chips: 5 },
+    // The fixed fixture's field endpoint is r10_s2, outside every contested
+    // front below. These commitments are intentionally and explicitly the
+    // existing garrison-only lane; naming the detachment would be an illegal
+    // claim that it reaches one of these fronts this turn.
+    append(
+      { kind: 'allocate-commitment', actor: first, front: near, chips: 3 + turn, detachmentIds: [] },
+      { kind: 'allocate-commitment', actor: second, front: far, chips: 2, detachmentIds: [] },
+      { kind: 'allocate-commitment', actor: second, front: near, chips: 5, detachmentIds: [] },
       // Alternating lock order, turn by turn.
       ...(turn % 2 === 0
         ? [{ kind: 'lock-commitment', actor: first }, { kind: 'lock-commitment', actor: second }]
@@ -71,5 +109,22 @@ export function turnSummary({ events, view }) {
     fronts: view.fronts.map((front) => front.key),
     capitals: { ...view.capitals },
     realms: view.realms.map((realm) => ({ actor: realm.actor, sectors: [...realm.sectors] })),
+    detachments: view.detachments.map((detachment) => ({
+      id: detachment.id,
+      position: detachment.position,
+      destination: detachment.destination,
+      men: detachment.men,
+      readyMen: detachment.readyMen,
+      pendingMen: detachment.pendingMen,
+      fatigue: detachment.fatigue,
+    })),
+    economy: view.economy && {
+      treasury: view.economy.treasury,
+      field: view.economy.field,
+      garrison: view.economy.garrison,
+      register: view.economy.register,
+      provinces: view.economy.provinces,
+    },
+    mobilizationSignals: view.mobilizationSignals,
   };
 }

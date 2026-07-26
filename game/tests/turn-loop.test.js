@@ -19,6 +19,7 @@ import assert from 'node:assert/strict';
 const { commitmentShare, CRADLE_R1, Runtime, preview, TURN_COMMITMENT_BUDGET } = await import(
   '../dist/runtime/index.js'
 );
+const { replayLog, turnSummary } = await import('../acceptance/replay.js');
 
 const FIXTURE = { world: CRADLE_R1, seed: 'turn-0001', actors: ['realm-a', 'realm-b'] };
 
@@ -488,31 +489,38 @@ test('preview never sees more than the projection it was handed', () => {
 });
 
 test('(worldId, revision, seed, ordered intent log) replays the same match', () => {
-  const log = [];
-  const source = openAtDecision({ seed: 'replay-0001' });
-  const setup = source.view('observer');
-  for (const actor of setup.actors) {
-    log.push({ kind: 'choose-capital', actor, sector: setup.realms.find((r) => r.actor === actor).sectors[0] });
-  }
+  const open = () => Runtime.open({ world: CRADLE_R1, seed: 'browser-lane-0001', actors: FIXTURE.actors });
+  const log = replayLog(open());
 
-  const fronts = frontsOf(source, 'realm-a');
-  for (let turn = 0; turn < 4; turn++) {
-    log.push({ kind: 'allocate-commitment', actor: 'realm-a', front: fronts[turn % fronts.length], chips: 3 + turn });
-    log.push({ kind: 'allocate-commitment', actor: 'realm-b', front: fronts[(turn + 1) % fronts.length], chips: 2 });
-    log.push({ kind: 'lock-commitment', actor: 'realm-b' });
-    log.push({ kind: 'lock-commitment', actor: 'realm-a' });
-  }
+  assert.ok(log.some((intent) => intent.kind === 'allocate-recruitment'));
+  assert.ok(log.some((intent) => intent.kind === 'split-detachment'));
+  assert.ok(log.some((intent) => intent.kind === 'merge-detachments'));
+  assert.ok(log.some((intent) => intent.kind === 'move-detachment'));
+  assert.ok(log
+    .filter((intent) => intent.kind === 'allocate-commitment')
+    .every((intent) => Array.isArray(intent.detachmentIds) && intent.detachmentIds.length === 0));
 
   const replay = () => {
-    const runtime = Runtime.open({ world: CRADLE_R1, seed: 'replay-0001', actors: ['realm-a', 'realm-b'] });
+    const runtime = open();
     const events = log.flatMap((intent) => runtime.submit(intent));
-    return { events, view: runtime.view('observer') };
+    return { events, view: runtime.view('realm-a') };
   };
 
   const first = replay();
   const second = replay();
-  assert.deepEqual(first, second);
+  assert.deepEqual(turnSummary(first), turnSummary(second));
+  assert.equal(first.events.some((event) => event.type === 'detachment-split'), true);
+  assert.equal(first.events.some((event) => event.type === 'detachments-merged'), true);
   assert.equal(first.view.turn, 5);
+  assert.equal(first.view.detachments.length, 2);
+  assert.deepEqual(
+    first.view.detachments.find((detachment) => detachment.id === 'detachment:realm-a:1').position,
+    { q: 19, r: 13 },
+  );
+  assert.equal(
+    first.view.detachments.reduce((men, detachment) => men + detachment.men, 0),
+    first.view.economy.field,
+  );
   assert.equal(
     first.events.filter((e) => e.type === 'intent-rejected').length,
     0,

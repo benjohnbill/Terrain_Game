@@ -2,9 +2,8 @@
 
 Layer: Working (local issue-tracker operations)
 Current state: **building** — tickets 01, 02 and 03 landed 2026-07-25 under the R6
-waiver; **05 landed 2026-07-26** (rulings R9/R10/R11); 06a is
-`ready-for-agent` after the R19 authority batch, while 04 and 06b onward remain
-`needs-info` behind the values in `DECISIONS-OWED.md`
+waiver; **05 and 06a landed 2026-07-26**; every other ticket retains its
+recorded status behind the values in `DECISIONS-OWED.md`
 Ticket set: **re-cut 2026-07-25** against the 1v1 duel pivot (ADR 0042) and the
 gate-08 full-depth-match definition. See § Re-cut history.
 
@@ -73,7 +72,7 @@ leaves this table by having its blocking value landed at a birthplace.
 | 04 | ✅ gate 07 | ❌ 판세 in-play surface (Part 2 #13) | needs-info |
 | 05 | ✅ | ✅ **recomputed 2026-07-26** — the row's "decay dials unlanded" was stale: all five verified at their birthplaces (`capLandFrac 1` AB-②, `registerPerPop 1,800` / `capPerPop 600` / sustain ⅓ MT-②+M13, ripening ADR 0022/0029). The scope widened by **R9** (force model + recruitment) adds no undetermined value: **R10** found the commit→recruitment unit already sealed (MT-③ +1%p/point) and **R11** adopted the four archive-only numbers as recorded 가안 | **LANDED 2026-07-26** |
 | 06 | — | — | **re-cut 2026-07-26 into 06a–06d** (gate C); the file is an index |
-| 06a | ✅ | ✅ **R19 authority batch landed 2026-07-26** — ADR 0045 + match-arc MT-⑥ resolve recruitment siting, province-origin accounting, readiness, and the retained 20-point/+1%p command economy; war-model-build WM-④ publishes opening placement and authored-edge endpoints. Zero unlanded values | **ready-for-agent** |
+| 06a | ✅ | ✅ **R19 authority batch and implementation landed 2026-07-26** — ADR 0045 + match-arc MT-⑥ resolve recruitment siting, province-origin accounting, readiness, and the retained 20-point/+1%p command economy; war-model-build WM-④ publishes opening placement and authored-edge endpoints. Cross-host replay: 146 Node / 17 browser, identical `29f214a11fc56ef8` parity observations; gate-10 threshold remains PENDING | **LANDED 2026-07-26** |
 | 06b | ✅ | ✅ **the fourteen fatigue/movement/supply dials landed at `war-model-build/MAGNITUDE.md` WB-M①** (2026-07-26, user bulk approval; L1 — exercised in the L2 harness, never the subject of a sweep). Part 2 #11 was a **stamp** and is paid there: both sides always said ×0.5. Dial 9 stays deliberately **HELD** and is wired so a later answer is a value change | **ready-for-agent** |
 | 06c | ✅ | ✅ 06b's batch landed, and the delaying 가안 (breakthrough R 2.0, erosion 0.15) landed at `operation-plan-catalog/CATALOG.md`. M2/M4/M5 were already sealed. Part 2 #2 (Encirclement) is **not** in scope here and must not be resolved by implication | **ready-for-agent** |
 | 06d | ✅ | ✅ **the last question dissolved rather than being answered** (R18, 2026-07-26). The garrison-regen rate *was* landed all along — M5 exported it and **M12 received it**, twice amended — and then R18 removed the need for it: garrison regeneration is recruitment plus a destination, and a garrison fills by **transfer** at the movement price R12 already sealed. The register also returns to **per-province** (R18 iii), which restores MT-②'s wording and makes R17's proportional succession exact rather than approximate. R19 recruitment siting is now the upstream MT-⑥ / ADR 0045 authority batch, not an unlanded 06d concern | **ready-for-agent** |

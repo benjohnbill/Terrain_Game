@@ -115,16 +115,27 @@ test('an ordered intent log replays to the same turn state in both hosts', async
   const open = () => Runtime.open({ world: CRADLE_R1, seed: FIXTURE.seed, actors: FIXTURE.actors });
   const log = replayLog(open());
   const node = open();
-  const nodeResult = { events: log.flatMap((intent) => node.submit(intent)), view: node.view('observer') };
+  const nodeResult = { events: log.flatMap((intent) => node.submit(intent)), view: node.view(FIXTURE.viewer) };
 
   const browserResult = await page.evaluate(
     ({ fixture, log: intents }) => window.__l3.replay({ ...fixture, log: intents }),
     { fixture: FIXTURE, log },
   );
 
-  expect(turnSummary(browserResult)).toEqual(turnSummary(nodeResult));
+  const browserSummary = turnSummary(browserResult);
+  const nodeSummary = turnSummary(nodeResult);
+  expect(browserSummary).toEqual(nodeSummary);
   expect(nodeResult.events.filter((e) => e.type === 'intent-rejected')).toEqual([]);
+  expect(nodeResult.events.some((e) => e.type === 'detachment-split')).toBe(true);
+  expect(nodeResult.events.some((e) => e.type === 'detachments-merged')).toBe(true);
   expect(nodeResult.view.turn).toBe(5);
+  expect(nodeSummary.detachments).toHaveLength(2);
+  expect(nodeSummary.detachments).toContainEqual(expect.objectContaining({
+    id: 'detachment:realm-a:1', position: { q: 19, r: 13 }, fatigue: 2,
+  }));
+  expect(nodeSummary.detachments.reduce((men, detachment) => men + detachment.men, 0))
+    .toBe(nodeSummary.economy.field);
+  expect(nodeSummary.economy.provinces).toBeDefined();
 });
 
 test('the same seed projects identically across two boots in one browser', async ({ page }) => {
