@@ -8,9 +8,9 @@
  * own contracts.
  */
 
-import type { RegionId, SectorId, WorldArtifact } from '../world/schema.js';
+import type { HexPosition, RegionId, SectorId, WorldArtifact } from '../world/schema.js';
 
-export type { RegionId, SectorId } from '../world/schema.js';
+export type { HexPosition, RegionId, SectorId } from '../world/schema.js';
 
 /** A party that can act in a match. In a 1v1 duel there are exactly two. */
 export type ActorId = string;
@@ -233,6 +233,38 @@ export interface EconomyView {
   readonly serving: number;
   /** 동원 강도 — serving ÷ register, the axis recruitment is priced along. */
   readonly mobilization: number;
+  readonly provinces: Readonly<Record<RegionId, ProvinceForcesView>>;
+}
+
+/** One own-side positioned field formation, projected exactly. */
+export interface DetachmentView {
+  readonly id: string;
+  readonly position: HexPosition;
+  readonly destination: HexPosition | null;
+  readonly turnEndpoint: HexPosition;
+  readonly turnsRemaining: number;
+  readonly men: number;
+  readonly readyMen: number;
+  readonly pendingMen: number;
+  readonly pendingReadyOnTurn: number | null;
+  readonly fatigue: number;
+  readonly pendingFatigue: number | null;
+}
+
+/** One own-side local shield, including separately visible pending substance. */
+export interface GarrisonView {
+  readonly sectorId: SectorId;
+  readonly men: number;
+  readonly readyMen: number;
+  readonly pendingMen: number;
+  readonly pendingReadyOnTurn: number | null;
+}
+
+/** Exact body conservation for one province origin. */
+export interface ProvinceForcesView {
+  readonly register: number;
+  readonly serving: number;
+  readonly availableCivilians: number;
 }
 
 /**
@@ -308,6 +340,10 @@ export interface MatchView {
    * asserting through it.
    */
   readonly economy: EconomyView | null;
+  /** Exact own-side operational substance. Empty for the observer. */
+  readonly detachments: readonly DetachmentView[];
+  /** Exact own-side local shields. Empty for the observer. */
+  readonly garrisons: readonly GarrisonView[];
 }
 
 /** Everything the Runtime needs to open a match. Seed and clock are injected. */

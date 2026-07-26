@@ -24,14 +24,27 @@
 
 import { spentOf, TURN_COMMITMENT_BUDGET } from '../domain/commitment.js';
 import { forceLimitOf, incomeOf, landValueOf } from '../domain/economy.js';
+import {
+  availableCiviliansByOrigin,
+  fieldOf,
+  menOf,
+  servingByOrigin,
+  type Detachment,
+  type GarrisonForce,
+  type PendingCohort,
+} from '../domain/force.js';
 import { frontsOf, garrisonOf, holdingsOf } from '../domain/state.js';
 import type { MatchState } from '../domain/state.js';
 import type {
   ActorId,
   CommitmentView,
+  DetachmentView,
   EconomyView,
+  GarrisonView,
   MatchView,
+  ProvinceForcesView,
   RealmView,
+  RegionId,
   SectorId,
   ViewerId,
 } from '../runtime/types.js';
@@ -81,19 +94,98 @@ function visibleEconomy(state: MatchState, viewer: ViewerId): EconomyView | null
   const sectors = state.loadedWorld.artifact.sectors;
   const holdings = holdingsOf(state, viewer);
   const garrison = garrisonOf(state, viewer);
-  const serving = forces.field + garrison;
+  const field = fieldOf(forces);
+  const serving = field + garrison;
+  const ownedGarrisons = state.realms[viewer]!.sectors.flatMap((sector) => {
+    const force = state.garrisons[sector];
+    return force === undefined ? [] : [force];
+  });
+  const servingOrigins = servingByOrigin(forces, ownedGarrisons);
+  const available = availableCiviliansByOrigin(forces.registers, servingOrigins);
+  const provinces: Record<RegionId, ProvinceForcesView> = {};
+  for (const region of Object.keys(forces.registers).sort()) {
+    provinces[region] = {
+      register: forces.registers[region]!,
+      serving: servingOrigins[region] ?? 0,
+      availableCivilians: available[region]!,
+    };
+  }
+  const register = Object.values(forces.registers).reduce((sum, men) => sum + men, 0);
 
   return {
     actor: viewer,
     treasury: forces.treasury,
     income: incomeOf(sectors, holdings),
     forceLimit: forceLimitOf(sectors, holdings),
-    field: forces.field,
+    field,
     garrison,
-    register: forces.register,
+    register,
     serving,
-    mobilization: forces.register === 0 ? 0 : serving / forces.register,
+    mobilization: register === 0 ? 0 : serving / register,
+    provinces,
   };
+}
+
+function pendingMen(pending: readonly PendingCohort[]): number {
+  return pending.reduce((sum, cohort) => sum + menOf(cohort.origins), 0);
+}
+
+function earliestReadyTurn(pending: readonly PendingCohort[]): number | null {
+  return pending.length === 0
+    ? null
+    : pending.reduce((earliest, cohort) => Math.min(earliest, cohort.readyOnTurn), Infinity);
+}
+
+function pendingFatigue(pending: readonly PendingCohort[]): number | null {
+  const men = pendingMen(pending);
+  if (men === 0) return null;
+  return pending.reduce(
+    (sum, cohort) => sum + cohort.fatigue * menOf(cohort.origins),
+    0,
+  ) / men;
+}
+
+function detachmentView(detachment: Detachment): DetachmentView {
+  const readyMen = menOf(detachment.ready.origins);
+  const waiting = pendingMen(detachment.pending);
+  return {
+    id: detachment.id,
+    position: { ...detachment.position },
+    destination: detachment.movement === null ? null : { ...detachment.movement.destination },
+    turnEndpoint: { ...detachment.position },
+    turnsRemaining: 0,
+    men: readyMen + waiting,
+    readyMen,
+    pendingMen: waiting,
+    pendingReadyOnTurn: earliestReadyTurn(detachment.pending),
+    fatigue: detachment.ready.fatigue,
+    pendingFatigue: pendingFatigue(detachment.pending),
+  };
+}
+
+function garrisonView(sectorId: SectorId, garrison: GarrisonForce): GarrisonView {
+  const readyMen = menOf(garrison.ready);
+  const waiting = pendingMen(garrison.pending);
+  return {
+    sectorId,
+    men: readyMen + waiting,
+    readyMen,
+    pendingMen: waiting,
+    pendingReadyOnTurn: earliestReadyTurn(garrison.pending),
+  };
+}
+
+function visibleDetachments(state: MatchState, viewer: ViewerId): DetachmentView[] {
+  if (viewer === 'observer') return [];
+  return state.forces[viewer]?.detachments.map(detachmentView) ?? [];
+}
+
+function visibleGarrisons(state: MatchState, viewer: ViewerId): GarrisonView[] {
+  if (viewer === 'observer') return [];
+  return state.realms[viewer]!.sectors
+    .filter((sector) => state.garrisons[sector] !== undefined)
+    .sort()
+    .map((sector) => garrisonView(sector, state.garrisons[sector]!));
 }
 
 /**
@@ -186,5 +278,7 @@ export function project(state: MatchState, viewer: ViewerId): MatchView {
     fronts: frontsOf(state),
     commitment: visibleCommitment(state, viewer),
     economy: visibleEconomy(state, viewer),
+    detachments: visibleDetachments(state, viewer),
+    garrisons: visibleGarrisons(state, viewer),
   };
 }

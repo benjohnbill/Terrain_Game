@@ -33,6 +33,15 @@ import {
   START_FIELD_FRACTION,
   startingTreasuryOf,
 } from '../domain/economy.js';
+import {
+  availableCiviliansByOrigin,
+  fieldOf,
+  menOf,
+  servingByOrigin,
+  type ForceCohort,
+  type GarrisonForce,
+  type OriginComposition,
+} from '../domain/force.js';
 import { contestedFronts, isPartyTo } from '../domain/fronts.js';
 import { draftOrder, ORDER_KEYS, ORDER_RECRUIT, orderKeyOf } from '../domain/recruitment.js';
 import { frontsOf, garrisonOf, holdingsOf, ownerOfSector } from '../domain/state.js';
@@ -41,7 +50,7 @@ import { readFronts, revealTurn } from '../domain/turn.js';
 import { project } from '../projection/project.js';
 import { drawPartition } from '../world/partition.js';
 import { loadWorld } from '../world/load.js';
-import type { SectorId } from '../world/schema.js';
+import type { HexPosition, RegionId, Sector, SectorId } from '../world/schema.js';
 import { createRng } from './rng.js';
 import type {
   ActorId,
@@ -63,6 +72,73 @@ const NO_CLOCK: Clock = {
     );
   },
 };
+
+/** Canonical largest-remainder allocation over province weights. */
+function allocateByRegion(
+  total: number,
+  weights: Readonly<Record<RegionId, number>>,
+): Record<RegionId, number> {
+  const regions = Object.keys(weights).sort();
+  const weightTotal = regions.reduce((sum, region) => sum + weights[region]!, 0);
+  if (!Number.isInteger(total) || total < 0 || total > weightTotal) {
+    throw new Error(`Cannot allocate ${total} men over ${weightTotal} province capacity.`);
+  }
+  const allocation: Record<RegionId, number> = Object.fromEntries(
+    regions.map((region) => [region, 0]),
+  );
+  if (total === 0) return allocation;
+
+  const remainders: { readonly region: RegionId; readonly fraction: number }[] = [];
+  let assigned = 0;
+  for (const region of regions) {
+    const exact = total * weights[region]! / weightTotal;
+    const whole = Math.floor(exact);
+    allocation[region] = whole;
+    assigned += whole;
+    remainders.push({ region, fraction: exact - whole });
+  }
+  remainders.sort((a, b) =>
+    b.fraction - a.fraction ||
+    (a.region < b.region ? -1 : a.region > b.region ? 1 : 0));
+  for (let index = 0; assigned < total; index += 1, assigned += 1) {
+    const region = remainders[index]!.region;
+    allocation[region] = allocation[region]! + 1;
+  }
+  return allocation;
+}
+
+/** WM-④'s centre-nearest member hex, with canonical q/r ties. */
+function centreNearestHex(sector: Sector): HexPosition {
+  if (sector.mapUnits.length === 0) {
+    throw new Error(`Capital sector "${sector.id}" has no authored hex.`);
+  }
+  const centres = sector.mapUnits.map((unit) => ({
+    position: { q: unit.q, r: unit.r },
+    x: Math.sqrt(3) * (unit.q + unit.r / 2),
+    y: 1.5 * unit.r,
+  }));
+  const centroid = centres.reduce(
+    (sum, point) => ({ x: sum.x + point.x, y: sum.y + point.y }),
+    { x: 0, y: 0 },
+  );
+  centroid.x /= centres.length;
+  centroid.y /= centres.length;
+  centres.sort((a, b) => {
+    const distanceA = (a.x - centroid.x) ** 2 + (a.y - centroid.y) ** 2;
+    const distanceB = (b.x - centroid.x) ** 2 + (b.y - centroid.y) ** 2;
+    return distanceA - distanceB || a.position.q - b.position.q || a.position.r - b.position.r;
+  });
+  return centres[0]!.position;
+}
+
+function addOrigins(
+  destination: Record<RegionId, number>,
+  addition: OriginComposition,
+): void {
+  for (const [region, men] of Object.entries(addition)) {
+    destination[region] = (destination[region] ?? 0) + men;
+  }
+}
 
 export class Runtime {
   /** Truth. `#`-private, so it is unreachable from outside even at runtime. */
@@ -159,29 +235,92 @@ export class Runtime {
     artifact: MatchState['loadedWorld']['artifact'],
     actors: readonly ActorId[],
     realms: Readonly<Record<ActorId, Realm>>,
-  ): { forces: Record<ActorId, RealmForces>; garrisons: Record<SectorId, number> } {
+  ): { forces: Record<ActorId, RealmForces>; garrisons: Record<SectorId, GarrisonForce> } {
     // A border sector is one standing on a contested edge — the same reading the
     // turn loop calls a front, asked of the opening board. `contestedFronts` takes
     // the owner lookup as a parameter precisely so this can reuse `ownerOfSector`
     // rather than grow a fourth copy of that closure (see `domain/state.ts`).
     const seated = { actors, realms };
-    const garrisons: Record<SectorId, number> = {};
+    const garrisons: Record<SectorId, GarrisonForce> = {};
     for (const front of contestedFronts(artifact.edges, (sector) => ownerOfSector(seated, sector))) {
-      for (const sector of front.sectors) garrisons[sector] = GARRISON_PER_BORDER_SECTOR;
+      for (const sectorId of front.sectors) {
+        if (garrisons[sectorId] !== undefined) continue;
+        const region = artifact.sectors[sectorId]!.regionId;
+        garrisons[sectorId] = {
+          ready: { [region]: GARRISON_PER_BORDER_SECTOR },
+          pending: [],
+        };
+      }
     }
 
     const forces: Record<ActorId, RealmForces> = {};
     for (const actor of actors) {
       const held = realms[actor]!.sectors;
+      const heldByRegion: Record<RegionId, SectorId[]> = {};
+      for (const sectorId of held) {
+        const region = artifact.sectors[sectorId]!.regionId;
+        (heldByRegion[region] ??= []).push(sectorId);
+      }
+      const registers: Record<RegionId, number> = {};
+      for (const region of Object.keys(heldByRegion).sort()) {
+        registers[region] = registerOf(artifact.sectors, heldByRegion[region]!);
+      }
+
+      const openingGarrisonOrigins: Record<RegionId, number> = {};
+      for (const sectorId of held) {
+        const garrison = garrisons[sectorId];
+        if (garrison !== undefined) addOrigins(openingGarrisonOrigins, garrison.ready);
+      }
+      const remaining: Record<RegionId, number> = {};
+      for (const region of Object.keys(registers).sort()) {
+        remaining[region] = registers[region]! - (openingGarrisonOrigins[region] ?? 0);
+        if (remaining[region]! < 0) {
+          throw new Error(`Opening garrison exceeds ${region}'s living register.`);
+        }
+      }
+      const openingFieldMen = Math.floor(
+        forceLimitOf(artifact.sectors, held) * START_FIELD_FRACTION,
+      );
+      const openingField: ForceCohort = {
+        origins: allocateByRegion(openingFieldMen, remaining),
+        fatigue: 0,
+      };
+      if (menOf(openingField.origins) !== openingFieldMen) {
+        throw new Error(`Opening field allocation for ${actor} does not conserve men.`);
+      }
+
       forces[actor] = {
-        // Derived from the realm's own land, never a flat constant (TC-⑭).
         treasury: startingTreasuryOf(incomeOf(artifact.sectors, held)),
-        field: Math.floor(forceLimitOf(artifact.sectors, held) * START_FIELD_FRACTION),
-        register: registerOf(artifact.sectors, held),
+        registers,
+        openingField,
+        detachments: [],
+        nextDetachmentOrdinal: 1,
       };
     }
 
     return { forces, garrisons };
+  }
+
+  /** Consume both setup-only cohorts together at the simultaneous capital reveal. */
+  #placeOpeningFields(): void {
+    const state = this.#state;
+    for (const actor of state.actors) {
+      const forces = state.forces[actor]!;
+      const openingField = forces.openingField;
+      if (openingField === null) continue;
+      const capital = state.capitals[actor]!;
+      const sector = state.loadedWorld.artifact.sectors[capital]!;
+      const ordinal = forces.nextDetachmentOrdinal;
+      forces.nextDetachmentOrdinal += 1;
+      forces.detachments.push({
+        id: `detachment:${actor}:${ordinal}`,
+        position: centreNearestHex(sector),
+        ready: openingField,
+        pending: [],
+        movement: null,
+      });
+      forces.openingField = null;
+    }
   }
 
   /**
@@ -283,6 +422,7 @@ export class Runtime {
     if (state.actors.every((a) => a in state.capitals)) {
       // The opening beat's own reveal, and the handover into the turn loop's sole
       // agency tier. Nothing else happens between: there is no setup screen.
+      this.#placeOpeningFields();
       state.phase = 'decision';
       events.push({
         type: 'capitals-revealed',
@@ -479,21 +619,40 @@ export class Runtime {
       const holdings = holdingsOf(state, actor);
       const forceLimit = forceLimitOf(state.loadedWorld.artifact.sectors, holdings);
       const chips = committed[actor]?.[ORDER_RECRUIT] ?? 0;
+      const garrisons = state.realms[actor]!.sectors.flatMap((sector) => {
+        const garrison = state.garrisons[sector];
+        return garrison === undefined ? [] : [garrison];
+      });
+      const field = fieldOf(forces);
+      const servingOrigins = servingByOrigin(forces, garrisons);
+      const register = Object.values(forces.registers).reduce((sum, men) => sum + men, 0);
 
       // One rule, shared with `preview`, so the card the player read before
       // committing and the draft they actually get cannot drift.
       const draft = draftOrder({
         chips,
         forceLimit,
-        field: forces.field,
+        field,
         garrison: garrisonOf(state, actor),
-        register: forces.register,
+        register,
         treasury: forces.treasury,
       });
 
       // P1 dual billing, in one place: men and their price move together, and
-      // there is no other statement in this engine that raises `field`.
-      forces.field += draft.men;
+      // there is no other statement in this compatibility path that raises field.
+      if (draft.men > 0) {
+        const available = availableCiviliansByOrigin(forces.registers, servingOrigins);
+        const draftedOrigins = allocateByRegion(draft.men, available);
+        const host = forces.detachments[0];
+        if (host === undefined) throw new Error(`Realm ${actor} has no field detachment.`);
+        const before = menOf(host.ready.origins);
+        const origins: Record<RegionId, number> = { ...host.ready.origins };
+        addOrigins(origins, draftedOrigins);
+        host.ready = {
+          origins,
+          fatigue: (host.ready.fatigue * before) / (before + draft.men),
+        };
+      }
       forces.treasury -= draft.bill;
 
       const income = incomeOf(state.loadedWorld.artifact.sectors, holdings);

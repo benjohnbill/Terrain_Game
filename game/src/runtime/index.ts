@@ -51,6 +51,24 @@ export {
   SURGE,
 } from '../domain/recruitment.js';
 export type { DraftContext, DraftResult } from '../domain/recruitment.js';
+export {
+  activateReadyCohorts,
+  availableCiviliansByOrigin,
+  combatEligibleMen,
+  fieldOf,
+  menOf,
+  mergeDetachments,
+  servingByOrigin,
+  splitDetachment,
+} from '../domain/force.js';
+export type {
+  Detachment,
+  ForceCohort,
+  GarrisonForce,
+  MovementOrder,
+  OriginComposition,
+  PendingCohort,
+} from '../domain/force.js';
 export { readFronts, revealTurn } from '../domain/turn.js';
 export type { FrontReading, RevealedTurn } from '../domain/turn.js';
 export {
@@ -84,6 +102,7 @@ export type {
   Choke,
   ChokeClass,
   Edge,
+  HexPosition,
   LoadedWorld,
   MapUnit,
   Partition,
@@ -102,14 +121,17 @@ export type {
   ChooseCapitalIntent,
   Clock,
   CommitmentView,
+  DetachmentView,
   EconomyView,
   Front,
   GameEvent,
+  GarrisonView,
   Intent,
   LockCommitmentIntent,
   MatchConfig,
   MatchPhase,
   MatchView,
+  ProvinceForcesView,
   RealmView,
   RejectedEvent,
   TurnTier,
