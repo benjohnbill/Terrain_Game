@@ -58,5 +58,26 @@ export function describeProjection(view: MatchView): string {
     `locked   ${view.committed.length === 0 ? '(none yet)' : view.committed.join(', ')}`,
     `fronts   ${view.fronts.length === 0 ? '(none contested)' : view.fronts.map((f) => f.key).join(' ')}`,
     `stack    ${view.commitment.spent}/${view.commitment.budget} 행동력 committed`,
+    `detachments ${view.detachments.length === 0
+      ? '(none visible)'
+      : view.detachments.map((detachment) => {
+          const destination = detachment.destination === null
+            ? '(holding)'
+            : `${detachment.destination.q},${detachment.destination.r}`;
+          return `${detachment.id}@${detachment.position.q},${detachment.position.r}->${destination} ` +
+            `${detachment.turnsRemaining}t ${detachment.readyMen} ready +${detachment.pendingMen} next-battle`;
+        }).join(' ')}`,
+    `garrisons ${view.garrisons.length === 0
+      ? '(none visible)'
+      : view.garrisons.map((garrison) =>
+          `${garrison.sectorId}:${garrison.readyMen} ready +${garrison.pendingMen} next-battle`).join(' ')}`,
+    `recruitment ${view.recruitmentOrders.length === 0
+      ? '(none planned)'
+      : view.recruitmentOrders.map((order) =>
+          `${order.requestId}@${order.sectorId}:${order.posture}/${order.commit}`).join(' ')}`,
+    `mobilization ${view.mobilizationSignals.length === 0
+      ? '(none observed)'
+      : view.mobilizationSignals.map((signal) =>
+          `${signal.actor}@${signal.sectorId}:${signal.band}/t${signal.observedTurn}`).join(' ')}`,
   ].join('\n');
 }

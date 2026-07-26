@@ -76,6 +76,30 @@ body {
   stroke-width: 3px;
 }
 
+.detachment-route {
+  stroke: var(--ink);
+  stroke-width: 2;
+  stroke-dasharray: 5 4;
+  stroke-opacity: 0.8;
+}
+
+.detachment-marker {
+  fill: #101216;
+  stroke: var(--ink);
+  stroke-width: 2.5;
+}
+
+.operation-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  align-items: center;
+}
+
+.operation-controls input[type='number'] {
+  width: 8rem;
+}
+
 .prompt {
   margin: 0.75rem 0 0;
   padding: 0.6rem 0.85rem;
