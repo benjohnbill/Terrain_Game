@@ -68,7 +68,7 @@ import {
   type RecruitmentRequest,
 } from '../domain/recruitment.js';
 import { frontsOf, garrisonOf, holdingsOf, ownerOfSector } from '../domain/state.js';
-import type { MatchState, Realm, RealmForces } from '../domain/state.js';
+import type { MatchState, MobilizationTrace, Realm, RealmForces } from '../domain/state.js';
 import { readFronts, revealTurn, type RevealedTurn } from '../domain/turn.js';
 import { project } from '../projection/project.js';
 import { drawPartition } from '../world/partition.js';
@@ -221,6 +221,7 @@ export class Runtime {
       turn: 1,
       commitments: {},
       recruitmentOrders: {},
+      mobilizationTraces: [],
       frontAssignments: {},
       turnLocks: [],
     };
@@ -1180,8 +1181,42 @@ export class Runtime {
       this.#turnEvent('front-resolved', 'payoff', { ...reading }));
   }
 
-  /** Ticket 07 owns the first mobilization trace; this preserves its sealed slot. */
+  /**
+   * Replace this beat's private recruitment truth after all payoffs have settled.
+   *
+   * New recruitment cohorts alone are due on `turn + 1`: earlier cohorts were
+   * activated before this turn's settlement. Their source sectors therefore give
+   * this information-update beat one exact, positive aggregate per actor-sector.
+   */
   #updateMobilizationSignals(): GameEvent[] {
+    const state = this.#state;
+    const traces: MobilizationTrace[] = [];
+    for (const actor of state.actors) {
+      const menBySector = new Map<SectorId, number>();
+      const record = (cohort: PendingCohort): void => {
+        if (cohort.readyOnTurn !== state.turn + 1) return;
+        const men = menOf(cohort.origins);
+        if (men === 0) return;
+        menBySector.set(cohort.sourceSector, (menBySector.get(cohort.sourceSector) ?? 0) + men);
+      };
+
+      for (const detachment of state.forces[actor]!.detachments) {
+        for (const cohort of detachment.pending) record(cohort);
+      }
+      for (const sectorId of state.realms[actor]!.sectors) {
+        for (const cohort of state.garrisons[sectorId]?.pending ?? []) record(cohort);
+      }
+
+      for (const sectorId of [...menBySector.keys()].sort()) {
+        traces.push({
+          actor,
+          sectorId,
+          men: menBySector.get(sectorId)!,
+          turn: state.turn,
+        });
+      }
+    }
+    state.mobilizationTraces = traces;
     return [];
   }
 

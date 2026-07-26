@@ -292,6 +292,14 @@ export interface GarrisonView {
   readonly pendingReadyOnTurn: number | null;
 }
 
+/** One categorical report of an opposing realm's recruitment activity. */
+export interface MobilizationSignalView {
+  readonly actor: ActorId;
+  readonly sectorId: SectorId;
+  readonly observedTurn: number;
+  readonly band: 'activity-detected';
+}
+
 /** Exact body conservation for one province origin. */
 export interface ProvinceForcesView {
   readonly register: number;
@@ -366,6 +374,8 @@ export interface MatchView {
   readonly commitment: CommitmentView;
   /** This viewer's own one-turn recruitment plans, in canonical settlement order. */
   readonly recruitmentOrders: readonly RecruitmentRequest[];
+  /** Opposing recruitment sources visible during this decision beat only. */
+  readonly mobilizationSignals: readonly MobilizationSignalView[];
   /**
    * This viewer's own stocks, or `null` for the observer.
    *

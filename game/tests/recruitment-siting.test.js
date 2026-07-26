@@ -283,3 +283,35 @@ test('garrison recruits count toward the local cap while pending and defend only
   assert.equal(activated.pendingMen, 0);
   assert.equal(activated.readyMen, pending.pendingMen);
 });
+
+test('a positive draft publishes its source for one enemy decision beat without exact men or destination', () => {
+  const runtime = openAtDecision();
+  recruit(runtime, 'realm-a', 'signal', 'r2_s0', 3, 'field', {
+    destinationHex: { q: 8, r: 7 },
+  });
+  closeTurn(runtime);
+  const enemy = runtime.view('realm-b');
+  assert.deepEqual(enemy.mobilizationSignals, [
+    { actor: 'realm-a', sectorId: 'r2_s0', observedTurn: 1, band: 'activity-detected' },
+  ]);
+  const serialized = JSON.stringify(enemy.mobilizationSignals);
+  assert.equal(serialized.includes('men'), false);
+  assert.equal(serialized.includes('destination'), false);
+  closeTurn(runtime);
+  assert.deepEqual(runtime.view('realm-b').mobilizationSignals, []);
+});
+
+test('a zero-man fulfillment creates no mobilization signal', () => {
+  const runtime = openAtDecision();
+  recruit(runtime, 'realm-a', 'zero', 'r2_s0', 0, 'field');
+  closeTurn(runtime);
+  assert.deepEqual(runtime.view('realm-b').mobilizationSignals, []);
+});
+
+test('mobilization signals do not echo to the drafting realm or observer', () => {
+  const runtime = openAtDecision();
+  recruit(runtime, 'realm-a', 'private', 'r2_s0', 1, 'field');
+  closeTurn(runtime);
+  assert.deepEqual(runtime.view('realm-a').mobilizationSignals, []);
+  assert.deepEqual(runtime.view('observer').mobilizationSignals, []);
+});

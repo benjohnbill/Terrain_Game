@@ -44,6 +44,7 @@ import type {
   EconomyView,
   GarrisonView,
   MatchView,
+  MobilizationSignalView,
   ProvinceForcesView,
   RealmView,
   RegionId,
@@ -301,6 +302,22 @@ function visibleRecruitmentOrders(state: MatchState, viewer: ViewerId): Recruitm
     .sort((a, b) => compareRecruitmentRequests(musterHexes, a, b));
 }
 
+/** The actor receives exact own state; only opponents receive this categorical trace. */
+function visibleMobilizationSignals(
+  state: MatchState,
+  viewer: ViewerId,
+): MobilizationSignalView[] {
+  if (viewer === 'observer') return [];
+  return state.mobilizationTraces
+    .filter((trace) => trace.actor !== viewer)
+    .map((trace) => ({
+      actor: trace.actor,
+      sectorId: trace.sectorId,
+      observedTurn: trace.turn,
+      band: 'activity-detected',
+    }));
+}
+
 /**
  * Builds the viewer-safe view of a match.
  *
@@ -326,6 +343,7 @@ export function project(state: MatchState, viewer: ViewerId): MatchView {
     fronts: frontsOf(state),
     commitment: visibleCommitment(state, viewer),
     recruitmentOrders: visibleRecruitmentOrders(state, viewer),
+    mobilizationSignals: visibleMobilizationSignals(state, viewer),
     economy: visibleEconomy(state, viewer),
     detachments: visibleDetachments(state, viewer),
     garrisons: visibleGarrisons(state, viewer),

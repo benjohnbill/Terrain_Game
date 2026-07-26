@@ -43,6 +43,14 @@ export interface RealmForces {
   nextDetachmentOrdinal: number;
 }
 
+/** Exact recruitment truth retained by the Runtime for the current decision beat. */
+export interface MobilizationTrace {
+  readonly actor: ActorId;
+  readonly sectorId: SectorId;
+  readonly men: number;
+  readonly turn: number;
+}
+
 export interface MatchState {
   readonly world: WorldIdentity;
   /** The validated world plus its derived indexes. Public content, privately held. */
@@ -102,6 +110,8 @@ export interface MatchState {
   commitments: Record<ActorId, Record<string, number>>;
   /** Rich one-turn recruitment requests, hidden from every viewer but their owner. */
   recruitmentOrders: Record<ActorId, Record<string, RecruitmentRequest>>;
+  /** Exact positive recruitment aggregates; projection alone decides who may read them. */
+  mobilizationTraces: MobilizationTrace[];
   /** Own field detachments explicitly assigned to each committed front. */
   frontAssignments: Record<ActorId, Record<string, readonly string[]>>;
   /**
