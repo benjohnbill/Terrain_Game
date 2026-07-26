@@ -19,7 +19,7 @@ import assert from 'node:assert/strict';
 const { commitmentShare, CRADLE_R1, Runtime, preview, TURN_COMMITMENT_BUDGET } = await import(
   '../dist/runtime/index.js'
 );
-const { replayLog, turnSummary } = await import('../acceptance/replay.js');
+const { replayForViewer, replayLog, turnSummary } = await import('../acceptance/replay.js');
 
 const FIXTURE = { world: CRADLE_R1, seed: 'turn-0001', actors: ['realm-a', 'realm-b'] };
 
@@ -502,8 +502,7 @@ test('(worldId, revision, seed, ordered intent log) replays the same match', () 
 
   const replay = () => {
     const runtime = open();
-    const events = log.flatMap((intent) => runtime.submit(intent));
-    return { events, view: runtime.view('realm-a') };
+    return replayForViewer(runtime, 'realm-a', log);
   };
 
   const first = replay();

@@ -5,10 +5,14 @@
 > from "96% of matches never trip the hegemony check", and ADR 0042 retired that
 > check. Cap growth is now retained because **land-derived state implies it**, not
 > because the match needs it to close — closure is capital fall plus the D6.4 land
-> decay. Also from gate C: the **movement contract has no birthplace here yet**
-> (SYNC-DEBT row), and **garrison regeneration rates** are still unlanded — M5
-> exports them by name and no later stage received them (ticket 06d's one
-> needs-info item). Read the strikethroughs in M13 before deriving any rate.
+> decay. Gate C's movement values now live in war-model-build MAGNITUDE, and R18
+> retired automatic garrison regeneration in favor of paid recruitment or
+> physical transfer (ADR 0045). Read the strikethroughs in M13 before deriving
+> any historical rate.
+
+> **R18 documentation sync paid 2026-07-26.** M13a now marks its field/garrison
+> coordinates as setup-only. Later posture rebalancing uses the existing movement
+> price; no new magnitude was introduced.
 
 ## Purpose
 
@@ -105,11 +109,10 @@ pass: plan axis magnitudes only gain meaning through this formula.
 
 ## Honest Gaps (audited 2026-07-03 — asserted properties not yet designed)
 
-- **Blood-price economy coupling**: garrison regeneration is currently free
-  while economy/population survive (ADR 0022/0026); whether regeneration
-  *drains* economy/population (making chronic war expensive and blood a
-  situationally priced currency) is undecided. Owner: standing-rules /
-  economy design thread + magnitude pass (rates).
+- **Blood-price economy coupling — resolved by R18 / ADR 0045**: garrison
+  replenishment is paid recruitment or physical transfer, not a free standing
+  rule. Its price therefore uses the existing recruitment and movement contracts;
+  no regeneration-rate dial remains to land.
 - **Bloodless panic collapse (Fei River class)**: the D10 rout cliff is
   blood-triggered (30% cumulative losses); a command/panic collapse at
   near-zero casualties (비수대전 383) is not representable. Owner: a

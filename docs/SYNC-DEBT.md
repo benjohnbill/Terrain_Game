@@ -67,17 +67,14 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   topology complement is war-model-build WM-④. The original Working inputs remain
   recorded at `.scratch/l3-playable-build/DECISIONS-OWED.md` R19.
 
-- [ ] **Three stamps owed from gate C's R18** (registered 2026-07-26).
-  (a) **`DOMAIN_MAP`'s `Standing world rule` entry is stale**: it still lists
-  local-garrison regeneration as a Phase-1 instance consuming no action capacity,
-  which `MAGNITUDE.md` M12's 2026-07-08 amendment (MT-⑤ / ADR 0027) retired.
-  Projection against an amended Production seal is a sync debt and the seal wins.
-  (b) **ADR 0014's header stamp** — M12's 2026-07-07 amendment says it amends ADR
-  0014 (garrison auto-regen) and records the stamp as owed; it is still owed.
-  (c) **M13a's start-state coordinates need a rider**: with garrison↔field transfer
-  (R18 ii), g₀ = 1.0 and f₀ = 0.5 become an opening *shape* a player may rebalance
-  rather than a standing constraint. The turn cost of transfer is what keeps them
-  meaningful, and the rider should say so.
+- [x] **Three stamps owed from gate C's R18 — PAID 2026-07-26.**
+  (a) `DOMAIN_MAP` no longer presents local-garrison regeneration as a standing
+  world rule and points replenishment to ADR 0045's paid recruitment / physical
+  transfer contract. (b) ADR 0014 already carries the ADR 0045 amendment stamp.
+  (c) combat-formula M13a now states that its coordinates govern setup only and
+  that later posture rebalancing pays the existing movement price rather than a
+  separate commitment or dial. The distinct 1v1 shield-density remeasurement row
+  below remains open; this stamp does not pay that playtest question.
 
 - [ ] **`conquest damage` is named in the seal chain and defined nowhere**
   (registered 2026-07-26, found by the gate C snowball survey). ADR 0029 and the

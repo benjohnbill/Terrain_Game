@@ -76,18 +76,20 @@ production code was written before the missing rules were found.
 
 ## Result — landed 2026-07-26
 
-- `npm run verify:game`: typecheck, Runtime build, viewer build, **146/146 Node**
-  and **17/17 browser** tests PASS. Parity remains **PENDING** only because
+- `npm run verify:game`: typecheck, Runtime build, viewer build, **149/149 Node**
+  and **18/18 browser** tests PASS. Parity remains **PENDING** only because
   Wayfinder gate 10 has not authorized an equality threshold; both observed
   digests are identical: Node `29f214a11fc56ef8`, browser
   `29f214a11fc56ef8`.
 - Durable cross-host replay: `browser-lane-0001`, viewer `realm-a`, **26 intents /
-  55 events**, canonical summary digest `f916f11cc9e3dc53`. The fixture includes
+  43 actor-safe events**, canonical summary digest `0ca0eb0d6bd4a9d7`. The fixture includes
   recruitment, split, merge, normal movement to `{q:19,r:13}`, and explicit
   garrison-only `detachmentIds: []`; Node and browser compare the same
   viewer-safe summary including detachments, readiness, economy, province
-  accounting, and mobilization signals.
-- Focused field-army/recruitment/economy/turn-loop run: **78/78 PASS**, no skips.
+  accounting, and mobilization signals. Relational submit and durable-host tests
+  vary hidden opponent recruitment and movement truth without changing the
+  viewer's events or summary.
+- Focused field-army/recruitment/economy/turn-loop run: **81/81 PASS**, no skips.
   Root regression: `npm test` **479/479 PASS**. Documentation audit:
   `npm run lint:docs` **0 blocking / 9 advisory**; the two advisories above the
   old seven-count baseline are pre-existing `ledgerCurrency` guesses introduced

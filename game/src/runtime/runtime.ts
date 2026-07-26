@@ -37,6 +37,8 @@ import {
 import {
   activateReadyCohorts,
   activateReadyGarrisonCohorts,
+  accumulateOrigins,
+  apportionOrigins,
   availableCiviliansByOrigin,
   fieldOf,
   mergeDetachments,
@@ -48,7 +50,6 @@ import {
   type Detachment,
   type ForceCohort,
   type GarrisonForce,
-  type OriginComposition,
   type PendingCohort,
 } from '../domain/force.js';
 import { contestedFronts, isPartyTo } from '../domain/fronts.js';
@@ -103,49 +104,6 @@ const NO_CLOCK: Clock = {
     );
   },
 };
-
-/** Canonical largest-remainder allocation over province weights. */
-function allocateByRegion(
-  total: number,
-  weights: Readonly<Record<RegionId, number>>,
-): Record<RegionId, number> {
-  const regions = Object.keys(weights).sort();
-  const weightTotal = regions.reduce((sum, region) => sum + weights[region]!, 0);
-  if (!Number.isInteger(total) || total < 0 || total > weightTotal) {
-    throw new Error(`Cannot allocate ${total} men over ${weightTotal} province capacity.`);
-  }
-  const allocation: Record<RegionId, number> = Object.fromEntries(
-    regions.map((region) => [region, 0]),
-  );
-  if (total === 0) return allocation;
-
-  const remainders: { readonly region: RegionId; readonly fraction: number }[] = [];
-  let assigned = 0;
-  for (const region of regions) {
-    const exact = total * weights[region]! / weightTotal;
-    const whole = Math.floor(exact);
-    allocation[region] = whole;
-    assigned += whole;
-    remainders.push({ region, fraction: exact - whole });
-  }
-  remainders.sort((a, b) =>
-    b.fraction - a.fraction ||
-    (a.region < b.region ? -1 : a.region > b.region ? 1 : 0));
-  for (let index = 0; assigned < total; index += 1, assigned += 1) {
-    const region = remainders[index]!.region;
-    allocation[region] = allocation[region]! + 1;
-  }
-  return allocation;
-}
-
-function addOrigins(
-  destination: Record<RegionId, number>,
-  addition: OriginComposition,
-): void {
-  for (const [region, men] of Object.entries(addition)) {
-    destination[region] = (destination[region] ?? 0) + men;
-  }
-}
 
 export class Runtime {
   /** Truth. `#`-private, so it is unreachable from outside even at runtime. */
@@ -281,7 +239,7 @@ export class Runtime {
       const openingGarrisonOrigins: Record<RegionId, number> = {};
       for (const sectorId of held) {
         const garrison = garrisons[sectorId];
-        if (garrison !== undefined) addOrigins(openingGarrisonOrigins, garrison.ready);
+        if (garrison !== undefined) accumulateOrigins(openingGarrisonOrigins, garrison.ready);
       }
       const remaining: Record<RegionId, number> = {};
       for (const region of Object.keys(registers).sort()) {
@@ -294,7 +252,7 @@ export class Runtime {
         forceLimitOf(artifact.sectors, held) * START_FIELD_FRACTION,
       );
       const openingField: ForceCohort = {
-        origins: allocateByRegion(openingFieldMen, remaining),
+        origins: apportionOrigins(openingFieldMen, remaining),
         fatigue: 0,
       };
       if (menOf(openingField.origins) !== openingFieldMen) {
@@ -902,10 +860,73 @@ export class Runtime {
     const events: GameEvent[] = [this.#turnEvent('commitment-locked', 'decision', { actor })];
 
     if (state.actors.every((a) => state.turnLocks.includes(a))) {
-      events.push(...this.#resolveTurn());
+      const publicFrontKeys = new Set(fronts.map((front) => front.key));
+      events.push(...this.#globallySafeResolutionEvents(this.#resolveTurn(), publicFrontKeys));
     }
 
     return events;
+  }
+
+  /**
+   * Resolution is shared with whichever actor supplies the second lock. Keep an
+   * internal exact event stream for orchestration, but whitelist only facts that
+   * are presentation-safe for every viewer before it crosses `submit()`.
+   *
+   * Own exact force and economy state remains available through `view(actor)`;
+   * default-dropping an unknown event prevents a later resolver from silently
+   * creating a new truth egress.
+   */
+  #globallySafeResolutionEvents(
+    events: readonly GameEvent[],
+    publicFrontKeys: ReadonlySet<string>,
+  ): GameEvent[] {
+    return events.flatMap((event): GameEvent[] => {
+      const detail = event.detail ?? {};
+      if (event.type === 'commitments-revealed') {
+        const revealed = detail.commitments as
+          | Readonly<Record<ActorId, Readonly<Record<string, number>>>>
+          | undefined;
+        const commitments = Object.fromEntries(this.#state.actors.map((actor) => [
+          actor,
+          Object.fromEntries(Object.entries(revealed?.[actor] ?? {})
+            .filter(([key]) => publicFrontKeys.has(key))
+            .sort(([a], [b]) => a.localeCompare(b))),
+        ]));
+        return [{
+          type: event.type,
+          turn: event.turn,
+          detail: { tier: detail.tier, commitments },
+        }];
+      }
+      if (event.type === 'front-resolved') {
+        return [{
+          type: event.type,
+          turn: event.turn,
+          detail: {
+            tier: detail.tier,
+            front: detail.front,
+            commitments: detail.commitments,
+            total: detail.total,
+            outcome: detail.outcome,
+          },
+        }];
+      }
+      if (event.type === 'realm-recomputed') {
+        return [{
+          type: event.type,
+          turn: event.turn,
+          detail: { tier: detail.tier, actor: detail.actor },
+        }];
+      }
+      if (event.type === 'turn-opened') {
+        return [{
+          type: event.type,
+          turn: event.turn,
+          detail: { tier: detail.tier, budget: detail.budget },
+        }];
+      }
+      return [];
+    });
   }
 
   /**

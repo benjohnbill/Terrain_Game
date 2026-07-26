@@ -53,8 +53,8 @@ questions. Definitions live in `GLOSSARY.md`; numbers in
 > **L3 implementation landed with ticket 06a (2026-07-26).** The emitted Runtime
 > now carries sited recruitment, origin accounting, pending readiness, positioned
 > detachments, and source-only mobilization signals through the same actor-safe
-> Node/browser replay. Closeout evidence: 146 Node / 17 browser, root 479/479;
-> replay digest `f916f11cc9e3dc53`; parity observations both
+> Node/browser replay. Closeout evidence: 149 Node / 18 browser, root 479/479;
+> actor-safe replay digest `0ca0eb0d6bd4a9d7`; parity observations both
 > `29f214a11fc56ef8` (gate-10 threshold still PENDING). Casualty mutation remains
 > 06c; capture/register succession remains 06d.
 

@@ -90,6 +90,34 @@ export function replayLog(runtime) {
   return log;
 }
 
+const GLOBALLY_SAFE_EVENT_TYPES = new Set([
+  'capital-locked',
+  'capitals-revealed',
+  'commitment-locked',
+  'commitments-revealed',
+  'front-resolved',
+  'realm-recomputed',
+  'turn-opened',
+]);
+
+/**
+ * Project one mixed-actor replay event stream to a viewer. Decision acknowledgements
+ * belong only to the actor that submitted them; the shared resolution tail has a
+ * fail-closed allowlist matching Runtime's globally-safe event egress.
+ */
+export function eventsForViewer(viewer, events) {
+  return events.filter((event) =>
+    GLOBALLY_SAFE_EVENT_TYPES.has(event.type) ||
+    (viewer !== 'observer' && event.detail?.actor === viewer));
+}
+
+/** Replay the canonical intent log without turning another actor's acknowledgements into a side door. */
+export function replayForViewer(runtime, viewer, log) {
+  const events = [];
+  for (const intent of log) events.push(...eventsForViewer(viewer, runtime.submit(intent)));
+  return { events, view: runtime.view(viewer) };
+}
+
 /**
  * What "the same match" means for a cross-host comparison: the events in order and
  * the board state they produced.
@@ -101,7 +129,8 @@ export function replayLog(runtime) {
  */
 export function turnSummary({ events, view }) {
   return {
-    events: events.map((event) => ({ type: event.type, turn: event.turn, detail: event.detail ?? null })),
+    events: eventsForViewer(view.viewer, events)
+      .map((event) => ({ type: event.type, turn: event.turn, detail: event.detail ?? null })),
     turn: view.turn,
     phase: view.phase,
     currentActor: view.currentActor,

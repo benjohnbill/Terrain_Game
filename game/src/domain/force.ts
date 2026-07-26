@@ -49,7 +49,7 @@ type ForceCollection = {
   readonly detachments: readonly Detachment[];
 };
 
-function addOrigins(
+export function accumulateOrigins(
   destination: Record<RegionId, number>,
   origins: OriginComposition,
 ): void {
@@ -77,14 +77,14 @@ export function servingByOrigin(
   garrisons: readonly GarrisonForce[],
 ): Record<RegionId, number> {
   const serving: Record<RegionId, number> = {};
-  if (forces.openingField !== null) addOrigins(serving, forces.openingField.origins);
+  if (forces.openingField !== null) accumulateOrigins(serving, forces.openingField.origins);
   for (const detachment of forces.detachments) {
-    addOrigins(serving, detachment.ready.origins);
-    for (const cohort of detachment.pending) addOrigins(serving, cohort.origins);
+    accumulateOrigins(serving, detachment.ready.origins);
+    for (const cohort of detachment.pending) accumulateOrigins(serving, cohort.origins);
   }
   for (const garrison of garrisons) {
-    addOrigins(serving, garrison.ready);
-    for (const cohort of garrison.pending) addOrigins(serving, cohort.origins);
+    accumulateOrigins(serving, garrison.ready);
+    for (const cohort of garrison.pending) accumulateOrigins(serving, cohort.origins);
   }
   return serving;
 }
@@ -134,6 +134,14 @@ function prorate(total: number, weights: Readonly<Record<string, number>>): Reco
     allocated[key] = allocated[key]! + 1;
   }
   return allocated;
+}
+
+/** Canonical integer apportionment over province-origin capacity. */
+export function apportionOrigins(
+  total: number,
+  weights: Readonly<Record<RegionId, number>>,
+): Record<RegionId, number> {
+  return prorate(total, weights);
 }
 
 function splitOrigins(
@@ -234,7 +242,7 @@ export function mergeDetachments(
   const pending: PendingCohort[] = [];
   for (const source of ordered) {
     const sourceReadyMen = menOf(source.ready.origins);
-    addOrigins(origins, source.ready.origins);
+    accumulateOrigins(origins, source.ready.origins);
     readyMen += sourceReadyMen;
     fatigueMass += source.ready.fatigue * sourceReadyMen;
     pending.push(...source.pending.map((cohort) => ({ ...cohort, origins: { ...cohort.origins } })));
@@ -289,7 +297,7 @@ export function activateReadyCohorts(detachment: Detachment, turn: number): Deta
   let fatigueMass = detachment.ready.fatigue * total;
   for (const cohort of activating) {
     const cohortMen = menOf(cohort.origins);
-    addOrigins(origins, cohort.origins);
+    accumulateOrigins(origins, cohort.origins);
     total += cohortMen;
     fatigueMass += cohort.fatigue * cohortMen;
   }
@@ -308,7 +316,7 @@ export function activateReadyGarrisonCohorts(
   if (activating.length === 0) return garrison;
 
   const ready: Record<RegionId, number> = { ...garrison.ready };
-  for (const cohort of activating) addOrigins(ready, cohort.origins);
+  for (const cohort of activating) accumulateOrigins(ready, cohort.origins);
   return {
     ready,
     pending: garrison.pending.filter((cohort) => cohort.readyOnTurn > turn),

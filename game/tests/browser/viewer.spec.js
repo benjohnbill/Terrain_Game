@@ -215,7 +215,7 @@ test('a human pours the stack into recruitment and watches the army and treasury
   await page.getByTestId('lock').click();
   await page.getByTestId('viewer').selectOption('realm-a');
 
-  await expect(page.getByTestId('events')).toContainText('recruited');
+  await expect(page.getByTestId('events')).not.toContainText('recruited');
   await expect(page.getByTestId('events')).toContainText('realm-recomputed');
 
   const after = await readEconomy();

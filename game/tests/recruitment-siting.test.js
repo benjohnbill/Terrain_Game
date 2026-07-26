@@ -52,6 +52,15 @@ function economyScaledWorld(multiplier, revision) {
   return world;
 }
 
+function deepKeys(value, keys = new Set()) {
+  if (value === null || typeof value !== 'object') return keys;
+  for (const [key, child] of Object.entries(value)) {
+    keys.add(key);
+    deepKeys(child, keys);
+  }
+  return keys;
+}
+
 test('one point and stacked points retain the sealed one-percent conversion', () => {
   const one = openAtDecision();
   const beforeOne = one.view('realm-a').economy.field;
@@ -117,13 +126,12 @@ test('a recruitment allocation key cannot be rewritten through the front lane', 
   assert.equal(runtime.view('realm-a').recruitmentOrders[0].commit, 20);
 });
 
-test('permuting the same recruitment batch leaves resolution events and state identical', () => {
+test('permuting the same recruitment batch leaves the owning projection identical', () => {
   const run = (requests) => {
     const runtime = openAtDecision();
     for (const request of requests) recruit(runtime, 'realm-a', ...request);
-    const closing = closeTurn(runtime).filter((event) =>
-      ['recruitment-resolved', 'recruited', 'turn-opened'].includes(event.type));
-    return { closing, view: runtime.view('realm-a') };
+    closeTurn(runtime);
+    return runtime.view('realm-a');
   };
   const requests = [
     ['north', 'r2_s0', 2, 'field'],
@@ -134,14 +142,18 @@ test('permuting the same recruitment batch leaves resolution events and state id
 
 test('splitting equal aggregate demand across sectors cannot reduce the authoritative bill', () => {
   const concentrated = openAtDecision();
+  const concentratedBefore = concentrated.view('realm-a').economy;
   recruit(concentrated, 'realm-a', 'all', 'r2_s0', 4);
-  const aEvents = closeTurn(concentrated);
+  closeTurn(concentrated);
+  const concentratedAfter = concentrated.view('realm-a').economy;
   const split = openAtDecision();
+  const splitBefore = split.view('realm-a').economy;
   recruit(split, 'realm-a', 'a', 'r2_s0', 2);
   recruit(split, 'realm-a', 'b', 'r2_s3', 2);
-  const bEvents = closeTurn(split);
-  const bill = (events) => events.find((event) => event.type === 'recruitment-resolved').detail.bill;
-  assert.equal(bill(aEvents), bill(bEvents));
+  closeTurn(split);
+  const splitAfter = split.view('realm-a').economy;
+  const bill = (before, after) => before.treasury + before.income - after.treasury;
+  assert.equal(bill(concentratedBefore, concentratedAfter), bill(splitBefore, splitAfter));
 });
 
 test('province scarcity uses canonical largest remainder, not request submit order', () => {
@@ -159,16 +171,20 @@ test('province scarcity uses canonical largest remainder, not request submit ord
       turn += 1;
     }
     for (const id of ids) recruit(runtime, 'realm-a', id, id === 'a' ? 'r2_s0' : 'r2_s4', 10);
-    return closeTurn(runtime).filter((event) => event.type === 'recruited');
+    closeTurn(runtime);
+    return runtime.view('realm-a');
   };
   assert.deepEqual(run(['a', 'b']), run(['b', 'a']));
 });
 
-test('insufficient treasury fulfills no request and emits no recruited event', () => {
+test('insufficient treasury fulfills no request in the owning projection', () => {
   const runtime = openAtDecision('field-army-0001', economyScaledWorld(0.00001, 'r1-poor-test'));
+  const before = runtime.view('realm-a');
   recruit(runtime, 'realm-a', 'poor', 'r2_s0', 1);
-  const events = closeTurn(runtime);
-  assert.equal(events.some((event) => event.type === 'recruited'), false);
+  closeTurn(runtime);
+  const after = runtime.view('realm-a');
+  assert.equal(after.economy.field, before.economy.field);
+  assert.equal(after.detachments.length, before.detachments.length);
 });
 
 test('field recruits may normal-march and affiliate but remain separately pending for one decision beat', () => {
@@ -182,24 +198,13 @@ test('field recruits may normal-march and affiliate but remain separately pendin
     destinationHex: { q: 8, r: 7 },
     joinDetachmentId: host.id,
   });
-  const raised = closeTurn(runtime);
+  closeTurn(runtime);
   const joined = runtime.view('realm-a').detachments.find((d) => d.id === host.id);
   assert.deepEqual(joined.position, { q: 8, r: 7 });
   assert.ok(joined.pendingMen > 0);
   assert.equal(joined.readyMen, host.readyMen);
   assert.equal(joined.pendingReadyOnTurn, runtime.view('realm-a').turn);
-  const affiliation = raised.find((event) => event.type === 'cohort-affiliated');
-  assert.ok(affiliation);
-  assert.deepEqual(
-    affiliation.detail,
-    {
-      tier: 'payoff',
-      actor: 'realm-a',
-      requestId: 'reinforce',
-      detachmentId: host.id,
-      recruitedDetachmentId: 'detachment:realm-a:2',
-    },
-  );
+  assert.equal(runtime.view('realm-a').detachments.length, 1);
 });
 
 test('recruitment-turn forced march and excess normal reach are rejected', () => {
@@ -219,11 +224,9 @@ test('recruitment-turn forced march and excess normal reach are rejected', () =>
 test('pending recruits activate before the following turn resolves, never in the raising turn', () => {
   const runtime = openAtDecision();
   recruit(runtime, 'realm-a', 'standalone', 'r2_s0', 1, 'field');
-  const raised = closeTurn(runtime);
-  assert.equal(raised.some((event) => event.type === 'cohort-activated'), false);
+  closeTurn(runtime);
   assert.ok(runtime.view('realm-a').detachments.some((d) => d.pendingMen > 0));
-  const next = closeTurn(runtime);
-  assert.equal(next.some((event) => event.type === 'cohort-activated'), true);
+  closeTurn(runtime);
   assert.equal(runtime.view('realm-a').detachments.reduce((n, d) => n + d.pendingMen, 0), 0);
 });
 
@@ -314,4 +317,47 @@ test('mobilization signals do not echo to the drafting realm or observer', () =>
   closeTurn(runtime);
   assert.deepEqual(runtime.view('realm-a').mobilizationSignals, []);
   assert.deepEqual(runtime.view('observer').mobilizationSignals, []);
+});
+
+test('the second locker receives no exact opponent recruitment truth in public events', () => {
+  const closeAgainst = (requestId, commit) => {
+    const runtime = openAtDecision();
+    const enemy = runtime.view('realm-b');
+    const source = enemy.capitals['realm-b'];
+    recruit(runtime, 'realm-b', requestId, source, commit, 'field');
+    runtime.submit({ kind: 'lock-commitment', actor: 'realm-b' });
+    return runtime.submit({ kind: 'lock-commitment', actor: 'realm-a' });
+  };
+
+  const small = closeAgainst('enemy-small-private-id', 1);
+  const large = closeAgainst('enemy-large-private-id', 4);
+
+  assert.deepEqual(small, large);
+  const serialized = JSON.stringify(small);
+  for (const forbidden of [
+    'bill', 'treasury', 'fulfilled', 'requestId', 'detachmentId',
+    'destination', 'destinationHex', 'position', 'posture', 'men', 'income',
+  ]) {
+    assert.equal(deepKeys(small).has(forbidden), false, `events leaked key ${forbidden}`);
+  }
+  assert.equal(serialized.includes('order:recruit:'), false);
+  assert.equal(serialized.includes('enemy-small-private-id'), false);
+});
+
+test('the second locker receives no exact opponent movement truth in public events', () => {
+  const closeAgainst = (destinationHex) => {
+    const runtime = openAtDecision();
+    const enemy = runtime.view('realm-b');
+    runtime.submit({
+      kind: 'move-detachment',
+      actor: 'realm-b',
+      detachmentId: enemy.detachments[0].id,
+      destinationHex,
+      forcedMarch: false,
+    });
+    runtime.submit({ kind: 'lock-commitment', actor: 'realm-b' });
+    return runtime.submit({ kind: 'lock-commitment', actor: 'realm-a' });
+  };
+
+  assert.deepEqual(closeAgainst({ q: 13, r: 15 }), closeAgainst({ q: 19, r: 13 }));
 });

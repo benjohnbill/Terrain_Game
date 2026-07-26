@@ -1,7 +1,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-const { CRADLE_R1, Runtime, preview } = await import('../dist/runtime/index.js');
+const {
+  CRADLE_R1,
+  GARRISON_PER_BORDER_SECTOR,
+  Runtime,
+  preview,
+} = await import('../dist/runtime/index.js');
 
 function openAtDecision(seed = 'field-army-0001', world = CRADLE_R1) {
   const runtime = Runtime.open({ world, seed, actors: ['realm-a', 'realm-b'] });
@@ -13,6 +18,34 @@ function openAtDecision(seed = 'field-army-0001', world = CRADLE_R1) {
 
 const lock = (runtime, actor) => runtime.submit({ kind: 'lock-commitment', actor });
 const closeTurn = (runtime) => [...lock(runtime, 'realm-a'), ...lock(runtime, 'realm-b')];
+
+test('opening formations stay unrevealed until both capitals lock and observer sees no operational arrays', () => {
+  const runtime = Runtime.open({
+    world: CRADLE_R1,
+    seed: 'field-army-0001',
+    actors: ['realm-a', 'realm-b'],
+  });
+  runtime.submit({ kind: 'choose-capital', actor: 'realm-a', sector: 'r2_s0' });
+
+  for (const actor of ['realm-a', 'realm-b']) {
+    const own = runtime.view(actor);
+    assert.deepEqual(own.detachments, []);
+    const held = new Set(own.realms.find((realm) => realm.actor === actor).sectors);
+    const expectedSectors = [...new Set(own.fronts.flatMap((front) =>
+      front.sectors.filter((sectorId) => held.has(sectorId))))].sort();
+    assert.deepEqual(own.garrisons, expectedSectors.map((sectorId) => ({
+      sectorId,
+      men: GARRISON_PER_BORDER_SECTOR,
+      readyMen: GARRISON_PER_BORDER_SECTOR,
+      pendingMen: 0,
+      pendingReadyOnTurn: null,
+    })));
+  }
+
+  const observer = runtime.view('observer');
+  assert.deepEqual(observer.detachments, []);
+  assert.deepEqual(observer.garrisons, []);
+});
 
 test('the opening field army is one positioned detachment at the capital-sector centre-nearest hex', () => {
   const runtime = openAtDecision();

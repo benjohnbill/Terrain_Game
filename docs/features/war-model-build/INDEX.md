@@ -52,8 +52,8 @@ of the model, not of one loop.
 capital-sector opening placement and authored-edge expansion together with the
 positioned movement/division foundation consumed by later war tickets. The
 viewer and durable actor-safe replay cover recruitment, split, merge, movement,
-readiness, economy, and mobilization signals: 146 Node / 17 browser tests, root
-479/479, replay digest `f916f11cc9e3dc53`; Node/browser parity observations are
+readiness, economy, and mobilization signals: 149 Node / 18 browser tests, root
+479/479, actor-safe replay digest `0ca0eb0d6bd4a9d7`; Node/browser parity observations are
 both `29f214a11fc56ef8` and remain PENDING only on gate 10's threshold. Casualty
 mutation remains ticket 06c; capture/register succession remains ticket 06d.
 

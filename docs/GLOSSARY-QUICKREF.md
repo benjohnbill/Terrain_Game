@@ -12,7 +12,9 @@
 > legality = reachability, register succession proportional to the accumulated
 > stock. Same day, R19 authority batch — sector-sited recruitment, persistent
 > province-origin accounting, one-turn readiness, and deterministic edge endpoints
-> (MT-⑥ / WM-④ / ADR 0045). Same day, earlier: L3 ticket-05 seal batch — R10 action-point
+> (MT-⑥ / WM-④ / ADR 0045). The same-session R18 rider marks M13a's coordinates
+> as setup-only; later posture rebalancing uses the existing movement price and
+> adds no separate commitment cost or dial. Same day, earlier: L3 ticket-05 seal batch — R10 action-point
 > recruitment conversion, R11's three adopted 가안, and the M13a board-mismatch
 > rider. Prior: 2026-07-25 (1v1 pivot SPEC leg applied — SPEC now consistent
 with the already-pivoted DOMAIN_MAP; prior 2026-07-24 duel-pivot cascade —

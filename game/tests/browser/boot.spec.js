@@ -12,6 +12,52 @@ const FIXTURE = { seed: 'browser-lane-0001', actors: ['realm-a', 'realm-b'], vie
 
 let server;
 
+function deepKeys(value, keys = new Set()) {
+  if (value === null || typeof value !== 'object') return keys;
+  for (const [key, child] of Object.entries(value)) {
+    keys.add(key);
+    deepKeys(child, keys);
+  }
+  return keys;
+}
+
+async function hiddenOpponentLog({ requestId, commit, destinationIndex }) {
+  const { CRADLE_R1, Runtime } = await import('../../dist/runtime/index.js');
+  const runtime = Runtime.open({ world: CRADLE_R1, seed: FIXTURE.seed, actors: FIXTURE.actors });
+  const setup = runtime.view('observer');
+  const log = [];
+  const append = (...intents) => {
+    for (const intent of intents) {
+      log.push(intent);
+      const rejected = runtime.submit(intent).find((event) => event.type === 'intent-rejected');
+      expect(rejected, rejected?.detail.reason).toBeUndefined();
+    }
+  };
+
+  append(...setup.actors.map((actor) => ({
+    kind: 'choose-capital',
+    actor,
+    sector: setup.realms.find((realm) => realm.actor === actor).sectors[0],
+  })));
+  const enemy = runtime.view('realm-b');
+  const source = enemy.capitals['realm-b'];
+  const destinations = enemy.board.sectors[source].mapUnits;
+  append(
+    {
+      kind: 'allocate-recruitment', actor: 'realm-b', requestId,
+      sectorId: source, commit, posture: 'field',
+    },
+    {
+      kind: 'move-detachment', actor: 'realm-b', detachmentId: enemy.detachments[0].id,
+      destinationHex: destinationIndex === 'last' ? destinations.at(-1) : destinations[destinationIndex],
+      forcedMarch: false,
+    },
+    { kind: 'lock-commitment', actor: 'realm-b' },
+    { kind: 'lock-commitment', actor: 'realm-a' },
+  );
+  return log;
+}
+
 test.beforeAll(async () => {
   server = await startStaticServer();
 });
@@ -109,13 +155,13 @@ test('an ordered intent log replays to the same turn state in both hosts', async
   // (gate 02 § 5). This is that claim across the host boundary: Node and the
   // browser pump the *same* log through the *same* emitted artifact and must land
   // on the same board.
-  const { replayLog, turnSummary } = await import('../../acceptance/replay.js');
+  const { replayForViewer, replayLog, turnSummary } = await import('../../acceptance/replay.js');
   const { CRADLE_R1, Runtime } = await import('../../dist/runtime/index.js');
 
   const open = () => Runtime.open({ world: CRADLE_R1, seed: FIXTURE.seed, actors: FIXTURE.actors });
   const log = replayLog(open());
   const node = open();
-  const nodeResult = { events: log.flatMap((intent) => node.submit(intent)), view: node.view(FIXTURE.viewer) };
+  const nodeResult = replayForViewer(node, FIXTURE.viewer, log);
 
   const browserResult = await page.evaluate(
     ({ fixture, log: intents }) => window.__l3.replay({ ...fixture, log: intents }),
@@ -136,6 +182,39 @@ test('an ordered intent log replays to the same turn state in both hosts', async
   expect(nodeSummary.detachments.reduce((men, detachment) => men + detachment.men, 0))
     .toBe(nodeSummary.economy.field);
   expect(nodeSummary.economy.provinces).toBeDefined();
+});
+
+test('durable Node and browser replay hide varied opponent recruitment and movement truth', async ({ page }) => {
+  const { turnSummary } = await import('../../acceptance/replay.js');
+  const { CRADLE_R1, Runtime } = await import('../../dist/runtime/index.js');
+  const smallLog = await hiddenOpponentLog({
+    requestId: 'enemy-small-private-id', commit: 1, destinationIndex: 0,
+  });
+  const largeLog = await hiddenOpponentLog({
+    requestId: 'enemy-large-private-id', commit: 4, destinationIndex: 'last',
+  });
+
+  const replayNode = (log) => {
+    const runtime = Runtime.open({ world: CRADLE_R1, seed: FIXTURE.seed, actors: FIXTURE.actors });
+    const events = log.flatMap((intent) => runtime.submit(intent));
+    return { events, view: runtime.view(FIXTURE.viewer) };
+  };
+  expect(turnSummary(replayNode(smallLog))).toEqual(turnSummary(replayNode(largeLog)));
+
+  const [smallBrowser, largeBrowser] = await page.evaluate(
+    ({ fixture, logs }) => logs.map((log) => window.__l3.replay({ ...fixture, log })),
+    { fixture: FIXTURE, logs: [smallLog, largeLog] },
+  );
+  expect(smallBrowser).toEqual(largeBrowser);
+  const serialized = JSON.stringify(smallBrowser.events);
+  for (const forbidden of [
+    'bill', 'treasury', 'fulfilled', 'requestId', 'detachmentId',
+    'destination', 'destinationHex', 'position', 'posture', 'men', 'income',
+  ]) {
+    expect(deepKeys(smallBrowser.events)).not.toContain(forbidden);
+  }
+  expect(serialized).not.toContain('order:recruit:');
+  expect(serialized).not.toContain('enemy-small-private-id');
 });
 
 test('the same seed projects identically across two boots in one browser', async ({ page }) => {

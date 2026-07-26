@@ -166,6 +166,7 @@ export type {
   MatchPhase,
   MatchView,
   MergeDetachmentsIntent,
+  MobilizationSignalView,
   MoveDetachmentIntent,
   ProvinceForcesView,
   RealmView,
