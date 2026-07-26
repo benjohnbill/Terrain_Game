@@ -170,3 +170,116 @@ test('insufficient treasury fulfills no request and emits no recruited event', (
   const events = closeTurn(runtime);
   assert.equal(events.some((event) => event.type === 'recruited'), false);
 });
+
+test('field recruits may normal-march and affiliate but remain separately pending for one decision beat', () => {
+  const runtime = openAtDecision();
+  const host = runtime.view('realm-a').detachments[0];
+  runtime.submit({
+    kind: 'move-detachment', actor: 'realm-a', detachmentId: host.id,
+    destinationHex: { q: 8, r: 7 }, forcedMarch: false,
+  });
+  recruit(runtime, 'realm-a', 'reinforce', 'r2_s0', 2, 'field', {
+    destinationHex: { q: 8, r: 7 },
+    joinDetachmentId: host.id,
+  });
+  const raised = closeTurn(runtime);
+  const joined = runtime.view('realm-a').detachments.find((d) => d.id === host.id);
+  assert.deepEqual(joined.position, { q: 8, r: 7 });
+  assert.ok(joined.pendingMen > 0);
+  assert.equal(joined.readyMen, host.readyMen);
+  assert.equal(joined.pendingReadyOnTurn, runtime.view('realm-a').turn);
+  const affiliation = raised.find((event) => event.type === 'cohort-affiliated');
+  assert.ok(affiliation);
+  assert.deepEqual(
+    affiliation.detail,
+    {
+      tier: 'payoff',
+      actor: 'realm-a',
+      requestId: 'reinforce',
+      detachmentId: host.id,
+      recruitedDetachmentId: 'detachment:realm-a:2',
+    },
+  );
+});
+
+test('recruitment-turn forced march and excess normal reach are rejected', () => {
+  const runtime = openAtDecision();
+  for (const extra of [
+    { destinationHex: { q: 5, r: 8 }, forcedMarch: true },
+    { destinationHex: { q: 5, r: 8 } },
+  ]) {
+    const events = runtime.submit({
+      kind: 'allocate-recruitment', actor: 'realm-a', requestId: JSON.stringify(extra),
+      sectorId: 'r2_s0', commit: 1, posture: 'field', ...extra,
+    });
+    assert.equal(events[0].type, 'intent-rejected');
+  }
+});
+
+test('pending recruits activate before the following turn resolves, never in the raising turn', () => {
+  const runtime = openAtDecision();
+  recruit(runtime, 'realm-a', 'standalone', 'r2_s0', 1, 'field');
+  const raised = closeTurn(runtime);
+  assert.equal(raised.some((event) => event.type === 'cohort-activated'), false);
+  assert.ok(runtime.view('realm-a').detachments.some((d) => d.pendingMen > 0));
+  const next = closeTurn(runtime);
+  assert.equal(next.some((event) => event.type === 'cohort-activated'), true);
+  assert.equal(runtime.view('realm-a').detachments.reduce((n, d) => n + d.pendingMen, 0), 0);
+});
+
+test('redirecting an affiliation host invalidates the stored recruitment request at lock', () => {
+  const runtime = openAtDecision();
+  const host = runtime.view('realm-a').detachments[0];
+  runtime.submit({
+    kind: 'move-detachment', actor: 'realm-a', detachmentId: host.id,
+    destinationHex: { q: 8, r: 7 }, forcedMarch: false,
+  });
+  assert.equal(recruit(runtime, 'realm-a', 'redirected-host', 'r2_s0', 1, 'field', {
+    destinationHex: { q: 8, r: 7 },
+    joinDetachmentId: host.id,
+  })[0].type, 'recruitment-allocated');
+  runtime.submit({
+    kind: 'move-detachment', actor: 'realm-a', detachmentId: host.id,
+    destinationHex: { q: 9, r: 5 }, forcedMarch: false,
+  });
+
+  const lock = { kind: 'lock-commitment', actor: 'realm-a' };
+  assert.equal(preview(runtime.view('realm-a'), lock).admissible, false);
+  assert.equal(runtime.submit(lock)[0].type, 'intent-rejected');
+  assert.equal(runtime.view('realm-a').recruitmentOrders[0].requestId, 'redirected-host');
+});
+
+test('standalone field recruits keep a stable id and their own normal-march fatigue through activation', () => {
+  const runtime = openAtDecision();
+  const openingId = runtime.view('realm-a').detachments[0].id;
+  recruit(runtime, 'realm-a', 'marching-standalone', 'r2_s0', 1, 'field', {
+    destinationHex: { q: 8, r: 7 },
+  });
+  closeTurn(runtime);
+  const pending = runtime.view('realm-a').detachments.find((d) => d.id !== openingId);
+  assert.deepEqual(pending.position, { q: 8, r: 7 });
+  assert.equal(pending.readyMen, 0);
+  assert.ok(pending.pendingMen > 0);
+  assert.equal(pending.pendingFatigue, 2);
+  const stableId = pending.id;
+
+  closeTurn(runtime);
+  const activated = runtime.view('realm-a').detachments.find((d) => d.id === stableId);
+  assert.equal(activated.pendingMen, 0);
+  assert.equal(activated.readyMen, pending.pendingMen);
+  assert.equal(activated.fatigue, 2);
+});
+
+test('garrison recruits count toward the local cap while pending and defend only after activation', () => {
+  const runtime = openAtDecision();
+  recruit(runtime, 'realm-a', 'shield', 'r2_s4', 1, 'garrison');
+  closeTurn(runtime);
+  const pending = runtime.view('realm-a').garrisons.find((g) => g.sectorId === 'r2_s4');
+  assert.ok(pending.pendingMen > 0);
+  assert.equal(pending.readyMen, 0);
+
+  closeTurn(runtime);
+  const activated = runtime.view('realm-a').garrisons.find((g) => g.sectorId === 'r2_s4');
+  assert.equal(activated.pendingMen, 0);
+  assert.equal(activated.readyMen, pending.pendingMen);
+});

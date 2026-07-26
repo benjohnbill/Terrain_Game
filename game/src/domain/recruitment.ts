@@ -30,7 +30,8 @@
  */
 
 import { MEN_PER_YIELD } from './economy.js';
-import type { HexPosition, RegionId, SectorId } from '../world/schema.js';
+import { MARCH_SPEED, reachCone, type MovementGraph } from './movement.js';
+import { hexKey, type HexPosition, type RegionId, type SectorId } from '../world/schema.js';
 
 /** One action point's purchase, as a fraction of the force limit (MT-③, R10). */
 export const RECRUIT_FRACTION_PER_POINT = 0.01;
@@ -205,6 +206,12 @@ export interface RecruitmentLegalityContext {
   readonly controlledSectors: readonly SectorId[];
   readonly ownedRegions: readonly RegionId[];
   readonly sectorRegions: Readonly<Record<SectorId, RegionId>>;
+  readonly musterHexes: Readonly<Record<SectorId, HexPosition>>;
+  readonly movementGraph: MovementGraph;
+  readonly detachments: readonly {
+    readonly id: string;
+    readonly turnEndpoint: HexPosition;
+  }[];
 }
 
 /** Validation shared by Runtime mutation and viewer-safe preview. */
@@ -216,6 +223,7 @@ export function recruitmentRequestRefusal(
   posture: unknown,
   destinationHex: unknown,
   joinDetachmentId: unknown,
+  forcedMarch: unknown = undefined,
 ): string | null {
   if (typeof requestId !== 'string' || requestId.length === 0) {
     return 'A recruitment allocation must carry a non-empty stable requestId.';
@@ -236,6 +244,9 @@ export function recruitmentRequestRefusal(
   if (posture === 'garrison' && (destinationHex !== undefined || joinDetachmentId !== undefined)) {
     return 'Garrison recruitment cannot declare a destination or detachment.';
   }
+  if (forcedMarch === true) {
+    return 'Recruitment-turn movement cannot use forced march.';
+  }
   if (destinationHex !== undefined && (
     typeof destinationHex !== 'object' || destinationHex === null ||
     !Number.isInteger((destinationHex as { q?: unknown }).q) ||
@@ -247,6 +258,29 @@ export function recruitmentRequestRefusal(
     typeof joinDetachmentId !== 'string' || joinDetachmentId.length === 0
   )) {
     return 'A field recruitment affiliation must name a stable detachment id.';
+  }
+  if (posture === 'field') {
+    const muster = context.musterHexes[sectorId as SectorId];
+    if (muster === undefined) {
+      return `Recruitment sector "${String(sectorId)}" has no muster hex.`;
+    }
+    const destination = destinationHex === undefined
+      ? muster
+      : destinationHex as HexPosition;
+    if (!reachCone(context.movementGraph, muster, 1, MARCH_SPEED).has(
+      hexKey(destination.q, destination.r),
+    )) {
+      return `Recruitment destination ${hexKey(destination.q, destination.r)} exceeds one normal march from its muster.`;
+    }
+    if (joinDetachmentId !== undefined) {
+      const host = context.detachments.find((detachment) => detachment.id === joinDetachmentId);
+      if (host === undefined) {
+        return `Detachment "${joinDetachmentId}" is not owned by this actor.`;
+      }
+      if (host.turnEndpoint.q !== destination.q || host.turnEndpoint.r !== destination.r) {
+        return `Detachment "${joinDetachmentId}" does not end this turn at the recruitment destination.`;
+      }
+    }
   }
   return null;
 }

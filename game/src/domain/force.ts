@@ -299,3 +299,18 @@ export function activateReadyCohorts(detachment: Detachment, turn: number): Deta
     pending: detachment.pending.filter((cohort) => cohort.readyOnTurn > turn),
   };
 }
+
+export function activateReadyGarrisonCohorts(
+  garrison: GarrisonForce,
+  turn: number,
+): GarrisonForce {
+  const activating = garrison.pending.filter((cohort) => cohort.readyOnTurn <= turn);
+  if (activating.length === 0) return garrison;
+
+  const ready: Record<RegionId, number> = { ...garrison.ready };
+  for (const cohort of activating) addOrigins(ready, cohort.origins);
+  return {
+    ready,
+    pending: garrison.pending.filter((cohort) => cohort.readyOnTurn > turn),
+  };
+}

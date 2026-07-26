@@ -75,6 +75,28 @@ function assignableDetachmentViews(
   });
 }
 
+function recruitmentLegalityContext(
+  view: MatchView,
+  actor: ActorId,
+  graph: ReturnType<typeof buildMovementGraph>,
+) {
+  const sectors = Object.values(view.board.sectors);
+  return {
+    controlledSectors: view.realms.find((realm) => realm.actor === actor)?.sectors ?? [],
+    ownedRegions: Object.keys(view.economy?.provinces ?? {}),
+    sectorRegions: Object.fromEntries(sectors.map((sector) => [sector.id, sector.regionId])),
+    musterHexes: Object.fromEntries(sectors.map((sector) => [
+      sector.id,
+      musterHexOf(view.board, sector.id),
+    ])),
+    movementGraph: graph,
+    detachments: view.detachments.map((detachment) => ({
+      id: detachment.id,
+      turnEndpoint: detachment.turnEndpoint,
+    })),
+  };
+}
+
 /**
  * What a viewer can check without truth. Kept deliberately in step with the
  * Runtime's own guards: a preview that said yes where `submit` says no would
@@ -118,22 +140,20 @@ export function preview(view: MatchView, intent: Intent): PreviewCard {
       posture?: unknown;
       destinationHex?: unknown;
       joinDetachmentId?: unknown;
+      forcedMarch?: unknown;
     };
-    const sectorRegions = Object.fromEntries(
-      Object.values(view.board.sectors).map((sector) => [sector.id, sector.regionId]),
-    );
+    const graph = buildMovementGraph(view.board);
+    const legalityContext = recruitmentLegalityContext(view, intent.actor, graph);
+    const sectorRegions = legalityContext.sectorRegions;
     let refusal = recruitmentRequestRefusal(
-      {
-        controlledSectors: view.realms.find((realm) => realm.actor === intent.actor)?.sectors ?? [],
-        ownedRegions: Object.keys(economy.provinces),
-        sectorRegions,
-      },
+      legalityContext,
       allocation.requestId,
       allocation.sectorId,
       allocation.commit,
       allocation.posture,
       allocation.destinationHex,
       allocation.joinDetachmentId,
+      allocation.forcedMarch,
     );
     const requestId = allocation.requestId as string;
     const key = typeof requestId === 'string' ? recruitmentOrderKeyOf(requestId) : '';
@@ -254,6 +274,24 @@ export function preview(view: MatchView, intent: Intent): PreviewCard {
           break;
         }
         for (const detachmentId of detachmentIds) assigned.add(detachmentId);
+      }
+      if (refusal === null) {
+        const recruitmentContext = recruitmentLegalityContext(view, intent.actor, graph);
+        for (const request of view.recruitmentOrders) {
+          const requestError = recruitmentRequestRefusal(
+            recruitmentContext,
+            request.requestId,
+            request.sectorId,
+            request.commit,
+            request.posture,
+            request.destinationHex,
+            request.joinDetachmentId,
+          );
+          if (requestError !== null) {
+            refusal = `${requestError} Revise this recruitment before locking.`;
+            break;
+          }
+        }
       }
     }
     return refusal === null ? { admissible: true } : no(refusal);

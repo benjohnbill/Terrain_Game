@@ -35,6 +35,8 @@ import {
   startingTreasuryOf,
 } from '../domain/economy.js';
 import {
+  activateReadyCohorts,
+  activateReadyGarrisonCohorts,
   availableCiviliansByOrigin,
   fieldOf,
   mergeDetachments,
@@ -47,6 +49,7 @@ import {
   type ForceCohort,
   type GarrisonForce,
   type OriginComposition,
+  type PendingCohort,
 } from '../domain/force.js';
 import { contestedFronts, isPartyTo } from '../domain/fronts.js';
 import {
@@ -59,13 +62,14 @@ import {
   MARCH_SPEED,
 } from '../domain/movement.js';
 import {
+  compareRecruitmentRequests,
   recruitmentRequestRefusal,
   settleRecruitmentBatch,
   type RecruitmentRequest,
 } from '../domain/recruitment.js';
 import { frontsOf, garrisonOf, holdingsOf, ownerOfSector } from '../domain/state.js';
 import type { MatchState, Realm, RealmForces } from '../domain/state.js';
-import { readFronts, revealTurn } from '../domain/turn.js';
+import { readFronts, revealTurn, type RevealedTurn } from '../domain/turn.js';
 import { project } from '../projection/project.js';
 import { drawPartition } from '../world/partition.js';
 import { loadWorld } from '../world/load.js';
@@ -81,6 +85,14 @@ import type {
   TurnTier,
   ViewerId,
 } from './types.js';
+
+interface RecruitmentAffiliation {
+  readonly actor: ActorId;
+  readonly requestId: string;
+  readonly recruitDetachmentId: string;
+  readonly hostDetachmentId: string;
+  readonly destination: HexPosition;
+}
 
 /** A clock that refuses to be read. Rules must never need one (ADR 0040). */
 const NO_CLOCK: Clock = {
@@ -139,6 +151,7 @@ export class Runtime {
   /** Truth. `#`-private, so it is unreachable from outside even at runtime. */
   readonly #state: MatchState;
   readonly #clock: Clock;
+  readonly #recruitmentAffiliations: RecruitmentAffiliation[] = [];
 
   private constructor(state: MatchState, clock: Clock) {
     this.#state = state;
@@ -376,13 +389,22 @@ export class Runtime {
       )];
     }
     if (intent.kind === 'allocate-recruitment') {
-      const { requestId, sectorId, commit, posture, destinationHex, joinDetachmentId } = intent as {
+      const {
+        requestId,
+        sectorId,
+        commit,
+        posture,
+        destinationHex,
+        joinDetachmentId,
+        forcedMarch,
+      } = intent as {
         requestId?: unknown;
         sectorId?: unknown;
         commit?: unknown;
         posture?: unknown;
         destinationHex?: unknown;
         joinDetachmentId?: unknown;
+        forcedMarch?: unknown;
       };
       return this.#allocateRecruitment(
         intent.actor,
@@ -392,6 +414,7 @@ export class Runtime {
         posture,
         destinationHex,
         joinDetachmentId,
+        forcedMarch,
       );
     }
     if (intent.kind === 'move-detachment') {
@@ -676,6 +699,22 @@ export class Runtime {
     }));
   }
 
+  #recruitmentLegalityContext(actor: ActorId) {
+    const state = this.#state;
+    const sectors = Object.values(state.loadedWorld.artifact.sectors);
+    return {
+      controlledSectors: state.realms[actor]!.sectors,
+      ownedRegions: Object.keys(state.forces[actor]!.registers),
+      sectorRegions: Object.fromEntries(sectors.map((sector) => [sector.id, sector.regionId])),
+      musterHexes: Object.fromEntries(sectors.map((sector) => [
+        sector.id,
+        musterHexOf(state.loadedWorld.artifact, sector.id),
+      ])),
+      movementGraph: state.movementGraph,
+      detachments: this.#assignableDetachments(actor),
+    };
+  }
+
   /** Pour part of the stack onto one front and name any arriving field substance. */
   #allocateCommitment(
     actor: ActorId,
@@ -737,23 +776,18 @@ export class Runtime {
     posture: unknown,
     destinationHex: unknown,
     joinDetachmentId: unknown,
+    forcedMarch: unknown,
   ): GameEvent[] {
     const state = this.#state;
-    const sectorRegions = Object.fromEntries(
-      Object.values(state.loadedWorld.artifact.sectors).map((sector) => [sector.id, sector.regionId]),
-    );
     const refusal = recruitmentRequestRefusal(
-      {
-        controlledSectors: state.realms[actor]!.sectors,
-        ownedRegions: Object.keys(state.forces[actor]!.registers),
-        sectorRegions,
-      },
+      this.#recruitmentLegalityContext(actor),
       requestId,
       sectorId,
       commit,
       posture,
       destinationHex,
       joinDetachmentId,
+      forcedMarch,
     );
     const intent = { kind: 'allocate-recruitment', actor };
     if (refusal !== null) return [this.#reject(intent, refusal)];
@@ -842,6 +876,27 @@ export class Runtime {
       for (const detachmentId of detachmentIds) assigned.add(detachmentId);
     }
 
+    const recruitmentContext = this.#recruitmentLegalityContext(actor);
+    const requests = Object.values(state.recruitmentOrders[actor] ?? {}).sort((a, b) =>
+      compareRecruitmentRequests(recruitmentContext.musterHexes, a, b));
+    for (const request of requests) {
+      const requestError = recruitmentRequestRefusal(
+        recruitmentContext,
+        request.requestId,
+        request.sectorId,
+        request.commit,
+        request.posture,
+        request.destinationHex,
+        request.joinDetachmentId,
+      );
+      if (requestError !== null) {
+        return [this.#reject(
+          { kind: 'lock-commitment', actor },
+          `${requestError} Revise this recruitment before locking.`,
+        )];
+      }
+    }
+
     state.turnLocks.push(actor);
     const events: GameEvent[] = [this.#turnEvent('commitment-locked', 'decision', { actor })];
 
@@ -865,12 +920,6 @@ export class Runtime {
   #resolveTurn(): GameEvent[] {
     const state = this.#state;
     const events: GameEvent[] = [];
-    const turnStartOwners = Object.fromEntries(
-      Object.keys(state.loadedWorld.artifact.sectors).map((sector) => [
-        sector,
-        ownerOfSector(state, sector),
-      ]),
-    ) as Record<SectorId, ActorId | null>;
 
     // ── payoff ────────────────────────────────────────────────────────────────
     const revealed = revealTurn(state.actors, state.commitments, state.frontAssignments);
@@ -881,34 +930,18 @@ export class Runtime {
       }),
     );
 
-    events.push(...this.#resolveRecruitment(turnStartOwners));
-
-    for (const actor of state.actors) {
-      const detachments = state.forces[actor]!.detachments;
-      for (let index = 0; index < detachments.length; index += 1) {
-        const advanced = advanceOneTurn(state.movementGraph, detachments[index]!);
-        detachments[index] = advanced.detachment;
-        if (advanced.travelled === 0) continue;
-        events.push(this.#turnEvent('detachment-moved', 'payoff', {
-          actor,
-          detachmentId: advanced.detachment.id,
-          position: { ...advanced.detachment.position },
-          travelled: advanced.travelled,
-          fatigueAdded: advanced.fatigueAdded,
-        }));
-      }
-    }
-
-    for (const reading of readFronts(revealed, frontsOf(state))) {
-      events.push(this.#turnEvent('front-resolved', 'payoff', { ...reading }));
-    }
+    events.push(...this.#activateCohortsReadyFor(state.turn));
+    events.push(...this.#resolveRecruitment(revealed.commitments));
+    events.push(...this.#resolveMovement());
+    events.push(...this.#resolveRecruitmentAffiliation());
+    events.push(...this.#readReadyFronts(revealed));
+    events.push(...this.#updateMobilizationSignals());
+    events.push(...this.#resolveIncome());
 
     // ── background ────────────────────────────────────────────────────────────
     // Upkeep, income, and the land readings, folded into the reveal's
     // tail (D6.2) — no separate screen, no extra click, and what comes out is
     // turn N+1's opening state.
-    events.push(...this.#recomputeRealms());
-
     // The stack does not carry over: unspent chips are discarded and the pool
     // regenerates whole (D6.3).
     state.commitments = {};
@@ -923,16 +956,62 @@ export class Runtime {
     return events;
   }
 
-  /** Settle and materialize one actor-wide batch before movement and income. */
-  #resolveRecruitment(turnStartOwners: Readonly<Record<SectorId, ActorId | null>>): GameEvent[] {
+  /** Promote due cohorts before any new draft, march, or ready-front reading. */
+  #activateCohortsReadyFor(turn: number): GameEvent[] {
     const state = this.#state;
     const events: GameEvent[] = [];
+    for (const actor of state.actors) {
+      const detachments = state.forces[actor]!.detachments;
+      for (let index = 0; index < detachments.length; index += 1) {
+        const detachment = detachments[index]!;
+        const activatedMen = detachment.pending.reduce(
+          (sum, cohort) => sum + (cohort.readyOnTurn <= turn ? menOf(cohort.origins) : 0),
+          0,
+        );
+        if (activatedMen === 0) continue;
+        detachments[index] = activateReadyCohorts(detachment, turn);
+        events.push(this.#turnEvent('cohort-activated', 'payoff', {
+          actor,
+          posture: 'field',
+          detachmentId: detachment.id,
+          men: activatedMen,
+        }));
+      }
+
+      for (const sectorId of [...state.realms[actor]!.sectors].sort()) {
+        const garrison = state.garrisons[sectorId];
+        if (garrison === undefined) continue;
+        const activatedMen = garrison.pending.reduce(
+          (sum, cohort) => sum + (cohort.readyOnTurn <= turn ? menOf(cohort.origins) : 0),
+          0,
+        );
+        if (activatedMen === 0) continue;
+        state.garrisons[sectorId] = activateReadyGarrisonCohorts(garrison, turn);
+        events.push(this.#turnEvent('cohort-activated', 'payoff', {
+          actor,
+          posture: 'garrison',
+          sectorId,
+          men: activatedMen,
+        }));
+      }
+    }
+    return events;
+  }
+
+  /** Settle and materialize one actor-wide batch before movement and income. */
+  #resolveRecruitment(
+    committed: RevealedTurn['commitments'],
+  ): GameEvent[] {
+    const state = this.#state;
+    const events: GameEvent[] = [];
+    this.#recruitmentAffiliations.splice(0);
 
     for (const actor of state.actors) {
       const forces = state.forces[actor]!;
       const requests = Object.values(state.recruitmentOrders[actor] ?? {}).filter((request) => {
         const region = state.loadedWorld.artifact.sectors[request.sectorId]?.regionId;
-        return turnStartOwners[request.sectorId] === actor &&
+        const committedAmount = committed[actor]?.[recruitmentOrderKeyOf(request.requestId)] ?? 0;
+        return committedAmount === request.commit && ownerOfSector(state, request.sectorId) === actor &&
           region !== undefined && forces.registers[region] !== undefined;
       });
       if (requests.length === 0) continue;
@@ -988,21 +1067,47 @@ export class Runtime {
         if (fulfillment.men === 0) continue;
         const request = requestsById[fulfillment.requestId]!;
         const origin = sectorRegions[request.sectorId]!;
+        const pending: PendingCohort = {
+          origins: { [origin]: fulfillment.men },
+          fatigue: 0,
+          readyOnTurn: state.turn + 1,
+          sourceSector: request.sectorId,
+        };
         if (request.posture === 'field') {
           const ordinal = forces.nextDetachmentOrdinal;
           forces.nextDetachmentOrdinal += 1;
+          const id = `detachment:${actor}:${ordinal}`;
+          const muster = musterHexes[request.sectorId]!;
+          const destination = request.destinationHex ?? muster;
+          const route = minimumCostRoute(state.movementGraph, muster, destination);
+          if (route === null) {
+            throw new Error(`Accepted recruitment request "${request.requestId}" has no route.`);
+          }
           forces.detachments.push({
-            id: `detachment:${actor}:${ordinal}`,
-            position: { ...musterHexes[request.sectorId]! },
-            ready: { origins: { [origin]: fulfillment.men }, fatigue: 0 },
-            pending: [],
-            movement: null,
+            id,
+            position: { ...muster },
+            ready: { origins: {}, fatigue: 0 },
+            pending: [pending],
+            movement: route.length <= 1
+              ? null
+              : {
+                  destination: { ...destination },
+                  route,
+                  forcedMarch: false,
+                },
           });
+          if (request.joinDetachmentId !== undefined) {
+            this.#recruitmentAffiliations.push({
+              actor,
+              requestId: request.requestId,
+              recruitDetachmentId: id,
+              hostDetachmentId: request.joinDetachmentId,
+              destination: { ...destination },
+            });
+          }
         } else {
           const garrison = (state.garrisons[request.sectorId] ??= { ready: {}, pending: [] });
-          const ready: Record<RegionId, number> = { ...garrison.ready };
-          ready[origin] = (ready[origin] ?? 0) + fulfillment.men;
-          garrison.ready = ready;
+          garrison.pending.push(pending);
         }
         events.push(this.#turnEvent('recruited', 'payoff', {
           actor,
@@ -1012,10 +1117,72 @@ export class Runtime {
           requestedMen: fulfillment.requestedMen,
           men: fulfillment.men,
           limitedBy: fulfillment.limitedBy,
+          readyOnTurn: pending.readyOnTurn,
         }));
       }
     }
     return events;
+  }
+
+  #resolveMovement(): GameEvent[] {
+    const state = this.#state;
+    const events: GameEvent[] = [];
+    for (const actor of state.actors) {
+      const detachments = state.forces[actor]!.detachments;
+      for (let index = 0; index < detachments.length; index += 1) {
+        const advanced = advanceOneTurn(state.movementGraph, detachments[index]!);
+        detachments[index] = advanced.detachment;
+        if (advanced.travelled === 0) continue;
+        events.push(this.#turnEvent('detachment-moved', 'payoff', {
+          actor,
+          detachmentId: advanced.detachment.id,
+          position: { ...advanced.detachment.position },
+          travelled: advanced.travelled,
+          fatigueAdded: advanced.fatigueAdded,
+        }));
+      }
+    }
+    return events;
+  }
+
+  #resolveRecruitmentAffiliation(): GameEvent[] {
+    const state = this.#state;
+    const events: GameEvent[] = [];
+    for (const affiliation of this.#recruitmentAffiliations) {
+      const detachments = state.forces[affiliation.actor]!.detachments;
+      const recruitIndex = detachments.findIndex(
+        (detachment) => detachment.id === affiliation.recruitDetachmentId,
+      );
+      const host = detachments.find(
+        (detachment) => detachment.id === affiliation.hostDetachmentId,
+      );
+      const recruit = recruitIndex < 0 ? undefined : detachments[recruitIndex];
+      if (host === undefined || recruit === undefined) continue;
+      const atEndpoint = (position: HexPosition): boolean =>
+        position.q === affiliation.destination.q && position.r === affiliation.destination.r;
+      if (!atEndpoint(host.position) || !atEndpoint(recruit.position)) continue;
+
+      host.pending.push(...recruit.pending);
+      detachments.splice(recruitIndex, 1);
+      events.push(this.#turnEvent('cohort-affiliated', 'payoff', {
+        actor: affiliation.actor,
+        requestId: affiliation.requestId,
+        detachmentId: host.id,
+        recruitedDetachmentId: recruit.id,
+      }));
+    }
+    this.#recruitmentAffiliations.splice(0);
+    return events;
+  }
+
+  #readReadyFronts(revealed: RevealedTurn): GameEvent[] {
+    return readFronts(revealed, frontsOf(this.#state)).map((reading) =>
+      this.#turnEvent('front-resolved', 'payoff', { ...reading }));
+  }
+
+  /** Ticket 07 owns the first mobilization trace; this preserves its sealed slot. */
+  #updateMobilizationSignals(): GameEvent[] {
+    return [];
   }
 
   /**
@@ -1032,7 +1199,7 @@ export class Runtime {
    * turn because the sector simply stops being in `holdings` — there is no decay
    * device, no timer, and nothing to tune.
    */
-  #recomputeRealms(): GameEvent[] {
+  #resolveIncome(): GameEvent[] {
     const state = this.#state;
     const events: GameEvent[] = [];
 

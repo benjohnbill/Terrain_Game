@@ -6,7 +6,7 @@
  * sectors do not happen to touch in the frozen hex layout (ADR 0043, WM-④).
  */
 
-import type { Detachment } from './force.js';
+import { menOf, type Detachment } from './force.js';
 import { hexKey, HEX_NEIGHBOURS } from '../world/schema.js';
 import type {
   HexPosition,
@@ -265,7 +265,16 @@ export function advanceOneTurn(
     detachment: {
       ...detachment,
       position,
-      ready: { ...detachment.ready, fatigue: detachment.ready.fatigue + fatigueAdded },
+      ready: {
+        ...detachment.ready,
+        fatigue: menOf(detachment.ready.origins) === 0
+          ? detachment.ready.fatigue
+          : detachment.ready.fatigue + fatigueAdded,
+      },
+      pending: detachment.pending.map((cohort) => ({
+        ...cohort,
+        fatigue: cohort.fatigue + fatigueAdded,
+      })),
       movement,
     },
     travelled,
