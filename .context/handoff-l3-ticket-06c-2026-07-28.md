@@ -129,9 +129,12 @@ fronts; whether two pressures on one sector merge into one engagement is 06c's.
 - **Worktree gotcha, if you isolate:** a fresh worktree has no `node_modules`, so
   `tsc` is missing and `verify:game` cannot run. Symlink the main checkout's,
   remove it before committing (`.gitignore`'s `node_modules/` does not match a
-  symlink), and only ever `git add` explicit paths. Note `~/dev/Terrain_Game-06b`
-  is still on disk pending the user's cleanup decision, and a stale worktree is
-  precisely what makes `git log` untrustworthy.
+  symlink), and only ever `git add` explicit paths. 06b's worktree was removed
+  after its merge, along with a dead `/tmp` entry, and a bare `git log` started
+  reporting the right HEAD again the moment they went — a stale worktree is
+  precisely what makes it untrustworthy, so remove yours when the ticket lands.
+  `~/dev/Terrain_Game-t07` survives from an older slice-2 session; it is clean and
+  fully merged, and is not yours to reclaim.
 - **When you run `/code-review`, tell the reviewer what is on `main`.** Both axes
   ran well this session, but the Standards agent reported a hard violation —
   "`R16` does not exist" — because R16 was registered on `main` *after* the branch
