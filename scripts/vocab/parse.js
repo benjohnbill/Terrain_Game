@@ -14,6 +14,11 @@ const { birthplaceRowText, splitDomainMapRows, normalizeName, nameSet } = requir
 // definition starts, which the lint's own DM_ROW deliberately does not do.
 const DM_HEAD = /^- (?:✅|❓|⛔) `([^`]+)`\s*(?:\([^)]*\))?\s*[:—-]?\s*/;
 
+// A bolded provenance stamp opening the row, before the definition starts:
+// `**user-confirmed 2026-07-05 (A-3 session)**:`. The trailing colon is what
+// distinguishes it from a definition that merely begins with a bold word.
+const DM_STAMP = /^\*\*[^*]+\*\*\s*:\s*/;
+
 // Index fields are enforced elsewhere (checks 1/2/3/10/11 in audit-lint).
 // parse copies them; it never re-derives or re-validates them.
 const INDEX_FIELDS = [
@@ -54,7 +59,8 @@ function glossFromDomainMapRow(term, domainMapText) {
       .split('\n')
       .map((line) => line.trim())
       .filter(Boolean)
-      .join(' ');
+      .join(' ')
+      .replace(DM_STAMP, '');
     return text ? { text, source: 'excerpt' } : null;
   }
   return null;

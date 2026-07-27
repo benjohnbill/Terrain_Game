@@ -198,6 +198,43 @@ test('parse leaves gloss null when the birthplace is outside the scanned surface
   assert.equal(gloss, null);
 });
 
+// Several DOMAIN_MAP rows open with a bolded provenance stamp before the
+// definition begins — `Land-derived state` starts with **user-confirmed
+// 2026-07-05 (A-3 session)**:. That stamp is metadata about the row, not the
+// term's meaning, and quoting it makes the excerpt look like a date.
+
+test('parse starts a DOMAIN_MAP excerpt after a leading bold provenance stamp', () => {
+  const inventory = inv([term({ canonical: 'Land-derived state', korean: '땅에서 파생된 상태' })]);
+  const surfaces = [{
+    path: 'DOMAIN_MAP.md',
+    text: [
+      '- ✅ `Land-derived state` (땅에서 파생된 상태) — **user-confirmed',
+      '  2026-07-05 (A-3 session)**: substance is never stored where it can be',
+      '  derived from the land the realm holds.',
+      ''
+    ].join('\n')
+  }];
+
+  const { gloss } = parse({ inventory, surfaces }).entries[0];
+
+  assert.equal(
+    gloss.text,
+    'substance is never stored where it can be derived from the land the realm holds.'
+  );
+});
+
+test('parse keeps a definition that legitimately opens in bold', () => {
+  const inventory = inv([term({ canonical: 'Usable value', korean: null })]);
+  const surfaces = [{
+    path: 'DOMAIN_MAP.md',
+    text: '- ✅ `Usable value`: **the** currently usable portion of a captured sector.\n'
+  }];
+
+  const { gloss } = parse({ inventory, surfaces }).entries[0];
+
+  assert.equal(gloss.text, '**the** currently usable portion of a captured sector.');
+});
+
 // -- inline-only terms -----------------------------------------------------
 // 21 registered terms have no entry of their own at their birthplace; they are
 // named inline inside another term's passage (the six value axes live inside

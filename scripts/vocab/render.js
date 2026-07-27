@@ -24,6 +24,19 @@ function esc(value) {
     .replace(/"/g, '&quot;');
 }
 
+// Markdown emphasis and code markers rendered as text. Not an edit to the
+// quotation: `**AGREED**` shown as literal asterisks is unrendered markup, and
+// 108 of the real glosses carry it. The words are untouched.
+function plain(text) {
+  return String(text)
+    .replace(/`([^`]*)`/g, '$1')
+    .replace(/\*\*([^*]*)\*\*/g, '$1')
+    .replace(/(^|[^*])\*([^*]+)\*/g, '$1$2')
+    .replace(/(^|[^\p{L}\p{N}_])_([^_]+)_(?![\p{L}\p{N}])/gu, '$1$2')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 function slug(canonical) {
   return canonical
     .toLowerCase()
@@ -76,7 +89,12 @@ function searchKey(entry) {
 function rowHtml(entry) {
   const id = slug(entry.canonical);
   const korean = entry.korean ? `<span class="ko">${esc(entry.korean)}</span>` : '';
-  const preview = entry.gloss ? esc(entry.gloss.text) : (entry.tier0 ? esc(entry.tier0.summary) : '');
+  // A `context` gloss is the passage that NAMES the term, not its definition.
+  // The row is the one place provenance may not be shown, so an unattributable
+  // quotation stays out of it — a blank slot, which the law permits, rather
+  // than another term's sentence posing as this one's meaning.
+  const own = entry.gloss && entry.gloss.source !== 'context' ? entry.gloss.text : null;
+  const preview = esc(plain(own || (entry.tier0 ? entry.tier0.summary : '')));
   return [
     `<li class="row" data-key="${esc(searchKey(entry))}" data-src="${esc(entry.birthplace)}">`,
     `<a class="pick" href="#t-${id}"><span class="name">${esc(entry.canonical)}</span>${korean}</a>`,
@@ -118,7 +136,7 @@ function detailHtml(entry, root) {
   // it, which is the failure quoting-instead-of-summarising exists to avoid.
   const gloss = entry.gloss || (entry.tier0 ? { text: entry.tier0.summary, source: 'authored' } : null);
   const quote = gloss
-    ? `<blockquote class="quote">${esc(gloss.text)}</blockquote>`
+    ? `<blockquote class="quote">${esc(plain(gloss.text))}</blockquote>`
     : '<p class="noquote">No quotable definition row at its birthplace. Follow the pointer.</p>';
 
   return [
@@ -298,15 +316,25 @@ body{
 .muted{color:var(--muted)}
 
 /* --- structural responsive (not fluid type) ----------------------------- */
+.back{display:none}
+
 @media (max-width:720px){
   .body{grid-template-columns:1fr}
   .listpane{border-right:0}
   .pane{display:none}
   .pane:has(.detail:target){
     display:block; position:fixed; inset:0; background:var(--bg);
-    z-index:calc(var(--z-sticky) + 1); overflow-y:auto;
+    z-index:calc(var(--z-sticky) + 1); overflow-y:auto; padding-top:.6rem;
   }
   .pane:has(.detail:target) .empty{display:none}
+  /* The overlay hides the list, so it must carry its own way out: a touch
+     device has no Escape key. */
+  .pane:has(.detail:target) .back{
+    display:block; margin:0 0 1rem; color:var(--muted);
+    font-size:var(--t-path); text-decoration:none;
+  }
+  .pane:has(.detail:target) .back:hover{color:var(--ink)}
+  .pane:has(.detail:target) .back:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
 }
 @media (max-width:420px){
   .pick{display:block}
@@ -429,6 +457,7 @@ function render(model, opts) {
 <p class="nomatch" hidden></p>
 </section>
 <section class="pane">
+<a class="back" href="#">← all terms</a>
 <div class="empty"><b>${terms.length} terms</b> across ${new Set(terms.map((e) => e.birthplace)).size} files, plus ${plans.length} operation plans. Search, or pick a term — every row links to where its definition actually lives.</div>
 ${terms.concat(plans).map((e) => detailHtml(e, root)).join('')}
 </section>
