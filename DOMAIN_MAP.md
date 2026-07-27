@@ -267,9 +267,13 @@ birthplace's phrasing. Applied to all 56 promoted entries on 2026-07-28
 - ✅ `Standing world rule`: A per-turn world process that reads persistent
   state and applies consequences without consuming any faction's action
   capacity (ADR 0026). Phase-1 instances: usable-value recovery (ADR 0022),
-  fog confidence decay, and supply starvation — a supply-cut sector degrades
-  in staged severity each turn until the route state is repaired (stages/rates
-  are combat-pass dials). Local-garrison replenishment is deliberately absent:
+  fog confidence decay, and supply starvation — a continuous supply-ledger pump
+  whose sole output is convex substance loss, never a capability flip
+  (war-model slice-2 § 2, which **supersedes** D4's staged severity
+  holding → attack-incapable → defenseless; ADR 0026's header carries the stamp).
+  Whether that ledger's subject is a sector's route state or a force's own
+  account is open — `docs/DESIGN-RISKS.md` R16.
+  Local-garrison replenishment is deliberately absent:
   it is paid recruitment or physical transfer (ADR 0045). Plans stamp state once;
   standing rules are how time itself matters. _Avoid_: plan effects that re-apply
   across turns.

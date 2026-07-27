@@ -11,9 +11,13 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
 
 ## Open
 
-- [ ] **Superseded staged starvation survives in two more surfaces**
-  (registered 2026-07-28, found while reading supply authority for build ticket
-  06b). slice-2 § 2 superseded D4's staged severity
+- [x] **Superseded staged starvation survives in two more surfaces — PAID
+  2026-07-28** (registered and paid the same day, found while reading supply
+  authority for build ticket 06b). Both surfaces now state the sealed continuous
+  pump, carry the supersession explicitly, and point at WB-M① for values. Neither
+  rewrite settles the subject question — each says in-line that the sector-versus-
+  force reading belongs to R16 — so paying this debt did not pre-empt the design
+  pass. Original registration below. slice-2 § 2 superseded D4's staged severity
   (holding → attack-incapable → defenseless) in favour of the continuous
   supply-ledger pump, and that supersession **was** stamped where it was looked
   for: ADR 0026's header carries `Amended by slice-2 design spec §2

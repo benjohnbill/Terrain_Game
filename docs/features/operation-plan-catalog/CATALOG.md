@@ -302,10 +302,18 @@ turns anywhere → assault (resolves fully). Two clocks govern the chain.
 estimate, see SPEC): a full strangle chain is a major-operation commitment —
 roughly 2-4 of the match's turns spent on one sector — the correct *feel* for
 a siege centerpiece; the fast-attack family exists for when that time cannot
-be spared. (2) The staged starvation
-curve of a cut sector (holding → attack-incapable → defenseless, UoC-style
-stages rather than one-shot damage) is a magnitude-pass dial, tuned under the
-envelope constraint. Open question parked for the Recovery/Consolidation
+be spared. (2) The starvation clock of a cut sector, whose rate is a
+magnitude-pass dial tuned under the envelope constraint. **Amended 2026-07-28:**
+this paragraph described that clock as a *staged* curve
+(holding → attack-incapable → defenseless, UoC-style stages), which war-model
+slice-2 § 2 **superseded** on 2026-07-14 — the clock is a continuous supply-ledger
+pump whose sole output is convex substance loss, with no stages and no capability
+flip, because combat incapacity is never system-forced and fighting on while
+starving is the player's high-risk right. Values live at
+`war-model-build/MAGNITUDE.md` WB-M①; ADR 0026's header carries the supersession
+stamp. What the pump's subject is — this sector's route state, or the force
+standing on it — is open and belongs to `docs/DESIGN-RISKS.md` R16, so nothing
+here should be read as settling it. Open question parked for the Recovery/Consolidation
 card: does repair consume the defender's primary action, or can it route
 through surplus outlets? (The asymmetry decides how hard a cheap cut can hold
 the enemy's whole turn hostage.)
