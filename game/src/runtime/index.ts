@@ -11,18 +11,26 @@ export { createRng } from './rng.js';
 export type { Rng } from './rng.js';
 export { project } from '../projection/project.js';
 export { preview } from '../preview/preview.js';
-export type { PreviewCard } from '../preview/preview.js';
+export type { PreviewCard, RecruitmentPreview } from '../preview/preview.js';
 export { decideBotIntent } from '../bot/index.js';
 export { capitalChoiceRefusal } from '../domain/capital-choice.js';
 export type { CapitalChoiceContext } from '../domain/capital-choice.js';
 export {
   allocationRefusal,
   commitmentShare,
+  frontAssignmentRefusal,
   lockRefusal,
+  recruitmentCommitOf,
+  recruitmentOrderKeyOf,
   spentOf,
   TURN_COMMITMENT_BUDGET,
 } from '../domain/commitment.js';
-export type { Allocations, CommitmentContext } from '../domain/commitment.js';
+export type {
+  Allocations,
+  AssignableDetachment,
+  CommitmentContext,
+  FrontAssignments,
+} from '../domain/commitment.js';
 export {
   CAP_LAND_FRAC,
   CAP_PER_POP,
@@ -41,16 +49,59 @@ export {
 export type { SectorTable } from '../domain/economy.js';
 export { contestedFronts, isPartyTo } from '../domain/fronts.js';
 export {
+  advanceOneTurn,
+  buildMovementGraph,
+  FORCED_MARCH_EXTRA_CAP,
+  FORCED_MARCH_PREMIUM,
+  MARCH_FATIGUE_PER_HEX,
+  MARCH_SPEED,
+  minimumCostRoute,
+  movementOrderRefusal,
+  musterHexOf,
+  reachCone,
+  terrainMovementCost,
+} from '../domain/movement.js';
+export type { MovementArc, MovementGraph, MovementNode } from '../domain/movement.js';
+export {
   draftBill,
   draftOrder,
   marginalPrice,
-  ORDER_KEYS,
   ORDER_RECRUIT,
-  orderKeyOf,
   RECRUIT_FRACTION_PER_POINT,
+  recruitmentRequestRefusal,
+  settleRecruitmentBatch,
   SURGE,
 } from '../domain/recruitment.js';
-export type { DraftContext, DraftResult } from '../domain/recruitment.js';
+export type {
+  DraftContext,
+  DraftResult,
+  RecruitmentBatchContext,
+  RecruitmentBatchResult,
+  RecruitmentFulfillment,
+  RecruitmentLegalityContext,
+  RecruitmentPosture,
+  RecruitmentRequest,
+} from '../domain/recruitment.js';
+export {
+  activateReadyCohorts,
+  availableCiviliansByOrigin,
+  combatEligibleMen,
+  fieldOf,
+  menOf,
+  mergeDetachments,
+  mergeDetachmentsRefusal,
+  servingByOrigin,
+  splitDetachment,
+  splitDetachmentRefusal,
+} from '../domain/force.js';
+export type {
+  Detachment,
+  ForceCohort,
+  GarrisonForce,
+  MovementOrder,
+  OriginComposition,
+  PendingCohort,
+} from '../domain/force.js';
 export { readFronts, revealTurn } from '../domain/turn.js';
 export type { FrontReading, RevealedTurn } from '../domain/turn.js';
 export {
@@ -84,6 +135,7 @@ export type {
   Choke,
   ChokeClass,
   Edge,
+  HexPosition,
   LoadedWorld,
   MapUnit,
   Partition,
@@ -99,19 +151,27 @@ export type {
   ActorId,
   AllocateCommitmentIntent,
   AllocateOrderIntent,
+  AllocateRecruitmentIntent,
   ChooseCapitalIntent,
   Clock,
   CommitmentView,
+  DetachmentView,
   EconomyView,
   Front,
   GameEvent,
+  GarrisonView,
   Intent,
   LockCommitmentIntent,
   MatchConfig,
   MatchPhase,
   MatchView,
+  MergeDetachmentsIntent,
+  MobilizationSignalView,
+  MoveDetachmentIntent,
+  ProvinceForcesView,
   RealmView,
   RejectedEvent,
+  SplitDetachmentIntent,
   TurnTier,
   ViewerId,
   WorldIdentity,

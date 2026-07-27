@@ -1296,3 +1296,21 @@ decision point's own conclusion event, not an interstate promise; the
 overlay never saws off the branch the match ends on. Implementation
 dependency registered: the truce-lock formalization (CE-⑱) is a
 prerequisite task — the stage table legislates over it.
+
+## MT-⑥ — Sited Recruitment, Origin Accounting, and One-Turn Readiness — SEALED 2026-07-26 · L0
+
+**Verdict source:** user-approved R19 design, 2026-07-26, recorded in
+`docs/superpowers/specs/2026-07-26-recruitment-siting-readiness-design.md`.
+
+Recruitment names a controlled front sector, commit amount, field/garrison
+posture, optional one-normal-march destination, and optional destination
+detachment. Requests settle simultaneously as one integral-priced batch. Serving
+bodies retain province origin; the persistent register remains total living
+bodies by province, recruitment changes civilian to serving, and permanent loss
+alone shrinks it. Recruits may normal-march and affiliate in the raising turn but
+cannot attack or defend until the following turn's resolution. The command pool
+remains 20 and one point remains +1%p of force limit.
+
+Full decision, ordering, rejected alternatives, and implementation contract:
+ADR 0045. Owning values remain in combat-formula M13 and war-model-build
+WB-M①/WB-M②.

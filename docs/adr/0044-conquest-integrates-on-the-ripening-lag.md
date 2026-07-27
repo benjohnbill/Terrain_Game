@@ -3,6 +3,9 @@
 Date: 2026-07-26
 
 Status: Accepted (sealed 2026-07-26, Wayfinder gate C, rulings R16–R17)
+Amended by: ADR 0045 (2026-07-26) — item 4 transfers remaining civilians with
+land; serving province-origin composition remains with its force and permanent
+losses reduce that origin's register share.
 
 - Relationship:
   - **Amends (2 seals, not ADRs):** match-arc `OG-③` — occupied-untransferred

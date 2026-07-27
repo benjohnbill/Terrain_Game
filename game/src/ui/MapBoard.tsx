@@ -22,6 +22,7 @@ import type { SectorId } from '../world/schema.js';
 import {
   boardBounds,
   CHOKE_STYLE,
+  hexCenter,
   hexPolygon,
   ownerOf,
   realmBorderSegments,
@@ -35,6 +36,9 @@ import {
 // does the work of saying whose ground this is.
 const REALM_STROKE = ['#f0cf85', '#7fc0f0'] as const;
 const REALM_WASH = ['rgba(240,207,133,0.14)', 'rgba(127,192,240,0.14)'] as const;
+
+/** SVG needs map precision, not floating-point serialization noise. */
+const svgCoordinate = (value: number): number => Number(value.toFixed(2));
 
 interface Props {
   readonly view: MatchView;
@@ -108,7 +112,6 @@ export function MapBoard({ view, selectable = [], focused = null, onFocus, onPic
       onPointerLeave={() => {
         endDrag();
         setHovered(null);
-        onFocus?.(null);
       }}
     >
       <g data-testid="sectors">
@@ -195,6 +198,35 @@ export function MapBoard({ view, selectable = [], focused = null, onFocus, onPic
               strokeDasharray={style.dash || undefined}
               data-choke={edge.choke.class}
             />
+          );
+        })}
+      </g>
+
+      {/* Own formations only: opposing positions never enter this projection. */}
+      <g data-testid="detachment-markers" pointerEvents="none">
+        {view.detachments.map((detachment) => {
+          const current = hexCenter(detachment.position, hexR);
+          const destination = detachment.destination === null
+            ? null
+            : hexCenter(detachment.destination, hexR);
+          return (
+            <g key={detachment.id} data-detachment={detachment.id}>
+              {destination !== null ? (
+                <line
+                  className="detachment-route"
+                  x1={svgCoordinate(current.x)}
+                  y1={svgCoordinate(current.y)}
+                  x2={svgCoordinate(destination.x)}
+                  y2={svgCoordinate(destination.y)}
+                />
+              ) : null}
+              <circle
+                className="detachment-marker"
+                cx={svgCoordinate(current.x)}
+                cy={svgCoordinate(current.y)}
+                r={svgCoordinate(hexR * 0.32)}
+              />
+            </g>
           );
         })}
       </g>

@@ -39,6 +39,7 @@ const {
   ORDER_RECRUIT,
   preview,
   RECRUIT_FRACTION_PER_POINT,
+  recruitmentOrderKeyOf,
   REGISTER_PER_POP,
   registerOf,
   Runtime,
@@ -70,6 +71,10 @@ const allocate = (runtime, actor, front, chips) =>
   runtime.submit({ kind: 'allocate-commitment', actor, front, chips });
 const order = (runtime, actor, kind, chips) =>
   runtime.submit({ kind: 'allocate-order', actor, order: kind, chips });
+const recruit = (runtime, actor, requestId, sectorId, commit, posture = 'field', extra = {}) =>
+  runtime.submit({
+    kind: 'allocate-recruitment', actor, requestId, sectorId, commit, posture, ...extra,
+  });
 const lock = (runtime, actor) => runtime.submit({ kind: 'lock-commitment', actor });
 
 /** Both realms lock with whatever they have allocated, closing one whole turn. */
@@ -262,13 +267,14 @@ test('income lands in the background tier of the reveal, with no extra submissio
 test('recruitment draws from the same 20-chip stack every other order draws from', () => {
   const runtime = openAtDecision();
   const front = runtime.view('realm-a').fronts[0].key;
+  const sector = runtime.view('realm-a').realms.find((realm) => realm.actor === 'realm-a').sectors[0];
 
   assert.equal(allocate(runtime, 'realm-a', front, 14)[0].type, 'commitment-allocated');
-  assert.equal(order(runtime, 'realm-a', 'recruit', 6)[0].type, 'order-allocated');
+  assert.equal(recruit(runtime, 'realm-a', 'reserve', sector, 6)[0].type, 'recruitment-allocated');
   assert.equal(runtime.view('realm-a').commitment.remaining, 0);
 
   // The 21st chip does not exist, whichever order kind reaches for it.
-  const refused = order(runtime, 'realm-a', 'recruit', 7)[0];
+  const refused = recruit(runtime, 'realm-a', 'reserve', sector, 7)[0];
   assert.equal(refused.type, 'intent-rejected');
   assert.match(refused.detail.reason, /does not stretch/);
 });
@@ -276,7 +282,8 @@ test('recruitment draws from the same 20-chip stack every other order draws from
 test('the whole stack may go into recruitment, and it buys 20% of the force limit', () => {
   const runtime = openAtDecision();
   const before = runtime.view('realm-a').economy;
-  order(runtime, 'realm-a', 'recruit', TURN_COMMITMENT_BUDGET);
+  const sector = runtime.view('realm-a').realms.find((realm) => realm.actor === 'realm-a').sectors[0];
+  recruit(runtime, 'realm-a', 'all-in', sector, TURN_COMMITMENT_BUDGET);
   turn(runtime);
 
   const after = runtime.view('realm-a').economy;
@@ -309,7 +316,8 @@ test('P1 holds: no path adds a man without billing for him', () => {
   assert.equal(quiet.register, start.register);
 
   // And when men do arrive, the treasury pays for exactly them.
-  order(runtime, 'realm-a', 'recruit', 4);
+  const sector = runtime.view('realm-a').realms.find((realm) => realm.actor === 'realm-a').sectors[0];
+  recruit(runtime, 'realm-a', 'paid', sector, 4);
   const before = runtime.view('realm-a').economy;
   turn(runtime);
   const after = runtime.view('realm-a').economy;
@@ -324,7 +332,8 @@ test('P1 holds: no path adds a man without billing for him', () => {
 test('recruitment moves bodies civilian to serving; the register itself does not shrink', () => {
   const runtime = openAtDecision();
   const before = runtime.view('realm-a').economy;
-  order(runtime, 'realm-a', 'recruit', 3);
+  const sector = runtime.view('realm-a').realms.find((realm) => realm.actor === 'realm-a').sectors[0];
+  recruit(runtime, 'realm-a', 'conversion', sector, 3);
   turn(runtime);
   const after = runtime.view('realm-a').economy;
 
@@ -365,20 +374,47 @@ test('a realm reads its own economy exactly and the opponent treasury not at all
   assert.equal(runtime.view('observer').economy, null, 'the observer is not a side door');
 });
 
-test('a recruitment order can be previewed by the realm making it, and only by it', () => {
+test('a sited recruitment request can be previewed by the realm making it, and only by it', () => {
   const runtime = openAtDecision();
   const mine = runtime.view('realm-a');
+  const sector = mine.realms.find((realm) => realm.actor === 'realm-a').sectors[0];
 
-  assert.equal(preview(mine, { kind: 'allocate-order', actor: 'realm-a', order: 'recruit', chips: 5 }).admissible, true);
-  assert.equal(preview(mine, { kind: 'allocate-order', actor: 'realm-a', order: 'recruit', chips: 21 }).admissible, false);
-  assert.equal(preview(mine, { kind: 'allocate-order', actor: 'realm-b', order: 'recruit', chips: 5 }).admissible, false);
-  assert.equal(preview(mine, { kind: 'allocate-order', actor: 'realm-a', order: 'sing', chips: 5 }).admissible, false);
+  const request = { kind: 'allocate-recruitment', actor: 'realm-a', requestId: 'preview', sectorId: sector, commit: 5, posture: 'field' };
+  const card = preview(mine, request);
+  assert.equal(card.admissible, true);
+  assert.equal(card.recruitment.fulfillment.requestId, 'preview');
+  assert.ok(card.recruitment.batch.bill > 0);
+  assert.equal(preview(mine, { ...request, commit: 21 }).admissible, false);
+  assert.equal(preview(mine, { ...request, actor: 'realm-b' }).admissible, false);
+  assert.equal(preview(mine, { ...request, sectorId: 'r1_s0' }).admissible, false);
 });
 
-test('the order key is one namespace with the fronts, so one budget covers both', () => {
+test('recruitment uses stable dynamic keys in the same namespace as fronts', () => {
   assert.equal(ORDER_RECRUIT, 'order:recruit');
+  assert.equal(recruitmentOrderKeyOf('north'), 'order:recruit:north');
   const runtime = openAtDecision();
-  assert.ok(!runtime.view('realm-a').fronts.some((front) => front.key === ORDER_RECRUIT));
+  assert.ok(!runtime.view('realm-a').fronts.some((front) => front.key === recruitmentOrderKeyOf('north')));
+});
+
+test('legacy scalar recruitment is rejected with the replacement intent', () => {
+  const runtime = openAtDecision();
+  const rejected = order(runtime, 'realm-a', 'recruit', 5)[0];
+  assert.equal(rejected.type, 'intent-rejected');
+  assert.match(rejected.detail.reason, /allocate-recruitment/);
+});
+
+test('only the viewer own sorted recruitment plans cross the projection seam', () => {
+  const runtime = openAtDecision();
+  recruit(runtime, 'realm-a', 'z-last', 'r2_s4', 2, 'garrison');
+  recruit(runtime, 'realm-a', 'a-first', 'r2_s0', 1);
+
+  assert.deepEqual(runtime.view('realm-a').recruitmentOrders.map((request) => request.requestId), [
+    'a-first',
+    'z-last',
+  ]);
+  assert.deepEqual(runtime.view('realm-b').recruitmentOrders, []);
+  assert.deepEqual(runtime.view('observer').recruitmentOrders, []);
+  assert.equal(JSON.stringify(runtime.view('realm-b')).includes('z-last'), false);
 });
 
 // ── determinism ──────────────────────────────────────────────────────────────
@@ -386,9 +422,11 @@ test('the order key is one namespace with the fronts, so one budget covers both'
 test('the recompute is deterministic for equal seed and intent log', () => {
   const play = () => {
     const runtime = openAtDecision();
+    const sectorA = runtime.view('realm-a').realms.find((realm) => realm.actor === 'realm-a').sectors[0];
+    const sectorB = runtime.view('realm-b').realms.find((realm) => realm.actor === 'realm-b').sectors[0];
     for (let i = 0; i < 5; i += 1) {
-      order(runtime, 'realm-a', 'recruit', 6);
-      order(runtime, 'realm-b', 'recruit', 11);
+      recruit(runtime, 'realm-a', `a-${i}`, sectorA, 6);
+      recruit(runtime, 'realm-b', `b-${i}`, sectorB, 11);
       turn(runtime);
     }
     return runtime.view('realm-a');

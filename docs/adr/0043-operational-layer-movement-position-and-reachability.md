@@ -3,6 +3,9 @@
 Date: 2026-07-26
 
 Status: Accepted (sealed 2026-07-26, Wayfinder gate C, rulings R12–R15)
+Amended by: ADR 0045 (2026-07-26) — opening placement is the capital sector's
+centre-nearest hex, and every authored sector edge now has deterministic hex
+endpoints.
 
 - Relationship:
   - **Amends (1):** the `DOMAIN_MAP.md` Tier-0 entry ✅ `Position as product` —

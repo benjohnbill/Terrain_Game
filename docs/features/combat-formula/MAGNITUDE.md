@@ -861,6 +861,12 @@ formula, the rest pinned from history:
   21%→7%, Vauban indecisive-war signature) — the tilting devices'
   target, not a reason to unseal.
 
+**R18 setup-coordinate rider (user ruling 2026-07-26):** these are opening
+placement coordinates, not a standing posture constraint. After setup, a player
+may rebalance freely between field and garrison posture subject to the existing
+movement price in turns and fatigue; the transfer adds no separate commitment
+cost or new dial. Authority: `.scratch/l3-playable-build/DECISIONS-OWED.md` R18.
+
 **Rider — these coordinates were calibrated at 15 border sectors per seat,
 and a 1v1 cut of the same terrain gives 3–8 (measured 2026-07-26, ticket 05
 instrumentation; corrected the same day).**

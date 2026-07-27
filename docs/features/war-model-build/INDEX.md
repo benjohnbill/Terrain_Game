@@ -48,6 +48,15 @@ the timer gone, nothing closes a stalemate; ADR 0038's composite fires none of
 own retirement (78.8% `stallPeace` → 72.1% never-ending), so it is a property
 of the model, not of one loop.
 
+**L3 ticket 06a LANDED (2026-07-26).** The Runtime now implements WM-④'s
+capital-sector opening placement and authored-edge expansion together with the
+positioned movement/division foundation consumed by later war tickets. The
+viewer and durable actor-safe replay cover recruitment, split, merge, movement,
+readiness, economy, and mobilization signals: 149 Node / 18 browser tests, root
+479/479, actor-safe replay digest `0ca0eb0d6bd4a9d7`; Node/browser parity observations are
+both `29f214a11fc56ef8` and remain PENDING only on gate 10's threshold. Casualty
+mutation remains ticket 06c; capture/register succession remains ticket 06d.
+
 **One-line.** The front door for building Terrain Game's war model in real
 game code (`js/`) — implementing the sealed sector-resolution combat the L2
 tournament (`mockup/combat-calc/`) only approximated.
@@ -107,6 +116,9 @@ This feature is that build.
   `docs/superpowers/plans/2026-07-13-decisive-battle-spine.md` (executed TDD
   plan) → `js/battle.js` (pure isomorphic calculator) +
   `mockup/decisive-battle/battery.js` (measurement battery).
+- **WM-④ publication (2026-07-26):** `RULINGS.md` + ADR 0045 publish the
+  capital-sector centre-nearest opening placement and deterministic authored-edge
+  hex endpoints consumed by landed ticket 06a.
 
 ## Slice ladder / next steps (2026-07-13, slice 1 landed)
 

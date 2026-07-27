@@ -13,6 +13,7 @@
     -->
     <script type="module">
       import { Runtime, CRADLE_R1, loadWorld } from '/dist/runtime/index.js';
+      import { replayForViewer } from '/acceptance/replay.js';
 
       const open = ({ seed, actors }) => Runtime.open({ world: CRADLE_R1, seed, actors });
 
@@ -64,10 +65,9 @@
          * Pumps an ordered intent log — the canonical durable form (gate 02 § 5).
          * The Node lane replays the same log and the two are compared.
          */
-        replay({ seed, actors, log }) {
+        replay({ seed, actors, viewer = 'observer', log }) {
           const runtime = open({ seed, actors });
-          const events = log.flatMap((intent) => runtime.submit(intent));
-          return { events, view: runtime.view('observer') };
+          return replayForViewer(runtime, viewer, log);
         },
 
         /** The world as the loader sees it, for cross-host integrity comparison. */

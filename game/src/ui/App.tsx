@@ -22,18 +22,23 @@ import { useCallback, useMemo, useState } from 'react';
 import { Runtime } from '../runtime/runtime.js';
 import { CRADLE_R1 } from '../world/index.js';
 import { preview } from '../preview/preview.js';
-import { ORDER_RECRUIT } from '../domain/recruitment.js';
+import { musterHexOf } from '../domain/movement.js';
+import type { RecruitmentPosture } from '../domain/recruitment.js';
 import type { ActorId, GameEvent, Intent, MatchView, SectorId } from '../runtime/types.js';
 import { MapBoard } from './MapBoard.js';
 
 const ACTORS: readonly ActorId[] = ['realm-a', 'realm-b'];
-/** The order kind, as the intent names it — `ORDER_RECRUIT` is its allocation key. */
-const RECRUIT = 'recruit';
+const GREYBOX_RECRUIT_ID = 'greybox-recruit';
 
 export function App() {
   const [seed, setSeed] = useState('duel-0001');
   const [viewer, setViewer] = useState<ActorId>('realm-a');
   const [focused, setFocused] = useState<SectorId | null>(null);
+  const [detachmentChoice, setDetachmentChoice] = useState('');
+  const [forcedMarch, setForcedMarch] = useState(false);
+  const [splitMen, setSplitMen] = useState('1');
+  const [recruitSectorChoice, setRecruitSectorChoice] = useState<SectorId | ''>('');
+  const [recruitPosture, setRecruitPosture] = useState<RecruitmentPosture>('field');
   const [log, setLog] = useState<GameEvent[]>([]);
   // Bumped on every accepted submission, so the view is re-read from the
   // Runtime rather than mirrored in component state. The Runtime stays the only
@@ -56,6 +61,15 @@ export function App() {
   const myRealm = view.realms.find((r) => r.actor === viewer);
   const choosing = view.phase === 'capital-selection' && !view.committed.includes(viewer);
   const selectable = choosing ? (myRealm?.sectors ?? []) : [];
+  const ownedSectors = myRealm?.sectors ?? [];
+  // Keep transient choices local, but derive valid fallbacks during render when
+  // a viewer switch or Runtime mutation makes a stored choice stale.
+  const selectedDetachmentId = view.detachments.some((detachment) => detachment.id === detachmentChoice)
+    ? detachmentChoice
+    : (view.detachments[0]?.id ?? '');
+  const recruitSector = recruitSectorChoice !== '' && ownedSectors.includes(recruitSectorChoice)
+    ? recruitSectorChoice
+    : (ownedSectors[0] ?? '');
 
   // Every player action goes through one door: preview first, submit only what
   // preview admits, and let the Runtime own the outcome. A second copy of this for
@@ -79,8 +93,46 @@ export function App() {
     [submitting, viewer],
   );
 
-  const allocateOrder = useCallback(
-    (order: string, chips: number) => submitting({ kind: 'allocate-order', actor: viewer, order, chips }),
+  const moveSelected = useCallback(() => {
+    if (selectedDetachmentId === '' || focused === null) return;
+    submitting({
+      kind: 'move-detachment',
+      actor: viewer,
+      detachmentId: selectedDetachmentId,
+      destinationHex: musterHexOf(view.board, focused),
+      forcedMarch,
+    });
+  }, [focused, forcedMarch, selectedDetachmentId, submitting, view.board, viewer]);
+
+  const splitSelected = useCallback(() => {
+    if (selectedDetachmentId === '') return;
+    submitting({
+      kind: 'split-detachment',
+      actor: viewer,
+      detachmentId: selectedDetachmentId,
+      men: Number(splitMen),
+    });
+  }, [selectedDetachmentId, splitMen, submitting, viewer]);
+
+  const mergeSelected = useCallback(() => {
+    const selected = view.detachments.find((detachment) => detachment.id === selectedDetachmentId);
+    if (selected === undefined) return;
+    const detachmentIds = view.detachments
+      .filter((detachment) =>
+        detachment.position.q === selected.position.q && detachment.position.r === selected.position.r)
+      .map((detachment) => detachment.id);
+    submitting({ kind: 'merge-detachments', actor: viewer, detachmentIds });
+  }, [selectedDetachmentId, submitting, view.detachments, viewer]);
+
+  const allocateRecruitment = useCallback(
+    (sectorId: SectorId, posture: RecruitmentPosture, commit: number) => submitting({
+      kind: 'allocate-recruitment',
+      actor: viewer,
+      requestId: GREYBOX_RECRUIT_ID,
+      sectorId,
+      posture,
+      commit,
+    }),
     [submitting, viewer],
   );
 
@@ -107,7 +159,7 @@ export function App() {
         </label>
         <label>
           viewing{' '}
-          <select value={viewer} onChange={(e) => setViewer(e.target.value as ActorId)}>
+          <select data-testid="viewer" value={viewer} onChange={(e) => setViewer(e.target.value as ActorId)}>
             {ACTORS.map((a) => (
               <option key={a} value={a}>
                 {a}
@@ -130,8 +182,22 @@ export function App() {
         <TurnStrip
           view={view}
           viewer={viewer}
+          focused={focused}
+          selectedDetachmentId={selectedDetachmentId}
+          forcedMarch={forcedMarch}
+          splitMen={splitMen}
+          recruitSector={recruitSector}
+          recruitPosture={recruitPosture}
           onAllocate={allocateChips}
-          onOrder={allocateOrder}
+          onSelectDetachment={setDetachmentChoice}
+          onForcedMarch={setForcedMarch}
+          onSplitMen={setSplitMen}
+          onMarch={moveSelected}
+          onSplit={splitSelected}
+          onMerge={mergeSelected}
+          onRecruitSector={setRecruitSectorChoice}
+          onRecruitPosture={setRecruitPosture}
+          onRecruit={allocateRecruitment}
           onLock={lockTurn}
         />
       )}
@@ -202,28 +268,70 @@ export function App() {
 function TurnStrip({
   view,
   viewer,
+  focused,
+  selectedDetachmentId,
+  forcedMarch,
+  splitMen,
+  recruitSector,
+  recruitPosture,
   onAllocate,
-  onOrder,
+  onSelectDetachment,
+  onForcedMarch,
+  onSplitMen,
+  onMarch,
+  onSplit,
+  onMerge,
+  onRecruitSector,
+  onRecruitPosture,
+  onRecruit,
   onLock,
 }: {
   view: MatchView;
   viewer: ActorId;
+  focused: SectorId | null;
+  selectedDetachmentId: string;
+  forcedMarch: boolean;
+  splitMen: string;
+  recruitSector: SectorId | '';
+  recruitPosture: RecruitmentPosture;
   onAllocate: (front: string, chips: number) => void;
-  onOrder: (order: string, chips: number) => void;
+  onSelectDetachment: (id: string) => void;
+  onForcedMarch: (forced: boolean) => void;
+  onSplitMen: (men: string) => void;
+  onMarch: () => void;
+  onSplit: () => void;
+  onMerge: () => void;
+  onRecruitSector: (sector: SectorId | '') => void;
+  onRecruitPosture: (posture: RecruitmentPosture) => void;
+  onRecruit: (sector: SectorId, posture: RecruitmentPosture, commit: number) => void;
   onLock: () => void;
 }) {
   const locked = view.committed.includes(viewer);
   const waitingOn = view.actors.filter((actor) => !view.committed.includes(actor));
   const economy = view.economy;
-  const recruitChips = view.commitment.allocations[ORDER_RECRUIT] ?? 0;
-  // The same rule the background tier will resolve the draft with, so the number
-  // shown before locking is the number that arrives after.
-  const draft = preview(view, {
-    kind: 'allocate-order',
-    actor: viewer,
-    order: RECRUIT,
-    chips: recruitChips,
-  }).draft;
+  const ownedSectors = view.realms.find((realm) => realm.actor === viewer)?.sectors ?? [];
+  const selectedDetachment = view.detachments.find((detachment) => detachment.id === selectedDetachmentId);
+  const mergeableIds = selectedDetachment === undefined
+    ? []
+    : view.detachments
+        .filter((detachment) =>
+          detachment.position.q === selectedDetachment.position.q &&
+          detachment.position.r === selectedDetachment.position.r)
+        .map((detachment) => detachment.id);
+  const recruitmentOrder = view.recruitmentOrders.find((order) => order.requestId === GREYBOX_RECRUIT_ID);
+  const recruitChips = recruitmentOrder?.commit ?? 0;
+  // The same sited request the background tier will resolve, priced before lock.
+  const recruitmentCard = recruitSector === ''
+    ? null
+    : preview(view, {
+        kind: 'allocate-recruitment',
+        actor: viewer,
+        requestId: GREYBOX_RECRUIT_ID,
+        sectorId: recruitSector,
+        posture: recruitPosture,
+        commit: recruitChips,
+      }).recruitment;
+  const draft = recruitmentCard?.fulfillment;
 
   return (
     <section className="prompt" data-testid="turn-strip">
@@ -262,23 +370,141 @@ function TurnStrip({
           {(economy.mobilization * 100).toFixed(1)}%
         </p>
       )}
+      <table data-testid="detachments">
+        <tbody>
+          {view.detachments.map((detachment) => (
+            <tr key={detachment.id}>
+              <td>{detachment.id}</td>
+              <td>
+                {formatHex(detachment.position)} →{' '}
+                {detachment.destination === null ? '—' : formatHex(detachment.destination)} ·{' '}
+                {detachment.turnsRemaining}턴
+              </td>
+              <td>{detachment.readyMen.toLocaleString('en-US')}명 준비</td>
+              <td>
+                {detachment.pendingMen.toLocaleString('en-US')}명 다음 전투 가용
+                {detachment.pendingReadyOnTurn === null ? '' : ` (턴 ${detachment.pendingReadyOnTurn})`}
+              </td>
+              <td>피로 {detachment.fatigue}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <div className="operation-controls">
+        <label>
+          detachment{' '}
+          <select
+            data-testid="detachment-select"
+            value={selectedDetachmentId}
+            onChange={(event) => onSelectDetachment(event.target.value)}
+          >
+            {view.detachments.map((detachment) => (
+              <option key={detachment.id} value={detachment.id}>{detachment.id}</option>
+            ))}
+          </select>
+        </label>
+        <label>
+          <input
+            data-testid="forced-march"
+            type="checkbox"
+            checked={forcedMarch}
+            onChange={(event) => onForcedMarch(event.target.checked)}
+          />{' '}
+          forced march
+        </label>
+        <button
+          type="button"
+          data-testid="march-focused"
+          disabled={locked || selectedDetachmentId === '' || focused === null}
+          onClick={onMarch}
+        >
+          focused sector로 행군
+        </button>
+        <label>
+          split men{' '}
+          <input
+            data-testid="split-men"
+            type="number"
+            min="1"
+            step="1"
+            value={splitMen}
+            onChange={(event) => onSplitMen(event.target.value)}
+          />
+        </label>
+        <button type="button" data-testid="split-selected" disabled={locked || selectedDetachmentId === ''} onClick={onSplit}>
+          split selected
+        </button>
+        <button type="button" data-testid="merge-selected" disabled={locked || mergeableIds.length < 2} onClick={onMerge}>
+          merge selected
+        </button>
+      </div>
+      <table data-testid="garrisons">
+        <tbody>
+          {view.garrisons.map((garrison) => (
+            <tr key={garrison.sectorId}>
+              <td>{garrison.sectorId}</td>
+              <td>{garrison.readyMen.toLocaleString('en-US')}명 준비</td>
+              <td>{garrison.pendingMen.toLocaleString('en-US')}명 다음 전투 가용</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <p data-testid="mobilization-signals">
+        {view.mobilizationSignals.length === 0
+          ? '상대 동원 징후 —'
+          : view.mobilizationSignals.map((signal) =>
+              `${signal.actor} · ${signal.sectorId} · 턴 ${signal.observedTurn} · ${signal.band}`).join(' | ')}
+      </p>
       <table data-testid="orders">
         <tbody>
           <tr>
-            <td>모병</td>
+            <td>
+              <label>
+                모병 위치{' '}
+                <select
+                  data-testid="recruit-sector"
+                  value={recruitSector}
+                  disabled={locked}
+                  onChange={(event) => onRecruitSector(event.target.value as SectorId)}
+                >
+                  {ownedSectors.map((sector) => <option key={sector} value={sector}>{sector}</option>)}
+                </select>
+              </label>
+              <label>
+                태세{' '}
+                <select
+                  data-testid="recruit-posture"
+                  value={recruitPosture}
+                  disabled={locked}
+                  onChange={(event) => onRecruitPosture(event.target.value as RecruitmentPosture)}
+                >
+                  <option value="field">field</option>
+                  <option value="garrison">garrison</option>
+                </select>
+              </label>
+            </td>
             <td data-testid="chips-recruit">{recruitChips}</td>
             <td data-testid="draft-preview">
               {draft && draft.men > 0
-                ? `+${draft.men.toLocaleString('en-US')}명 · ${draft.bill.toFixed(2)} 생산${
-                    draft.limitedBy ? ` (${draft.limitedBy} 한계)` : ''
+                ? `${recruitSector} · +${draft.men.toLocaleString('en-US')}명 · ${recruitmentCard!.batch.bill.toFixed(2)} 생산${
+                    draft.limitedBy.length > 0 ? ` (${draft.limitedBy.join('+')} 한계)` : ''
                   }`
-                : '—'}
+                : `${recruitSector || '—'} · —`}
             </td>
             <td>
-              <button type="button" disabled={locked} onClick={() => onOrder(RECRUIT, recruitChips + 1)}>
+              <button
+                type="button"
+                data-testid="recruit-plus"
+                disabled={locked || recruitSector === ''}
+                onClick={() => recruitSector !== '' && onRecruit(recruitSector, recruitPosture, recruitChips + 1)}
+              >
                 +1
               </button>
-              <button type="button" disabled={locked || recruitChips === 0} onClick={() => onOrder(RECRUIT, 0)}>
+              <button
+                type="button"
+                disabled={locked || recruitChips === 0 || recruitSector === ''}
+                onClick={() => recruitSector !== '' && onRecruit(recruitSector, recruitPosture, 0)}
+              >
                 clear
               </button>
             </td>
@@ -290,6 +516,10 @@ function TurnStrip({
       </button>
     </section>
   );
+}
+
+function formatHex(position: { readonly q: number; readonly r: number }): string {
+  return `${position.q},${position.r}`;
 }
 
 function describeSector(view: ReturnType<Runtime['view']>, sectorId: SectorId): string {

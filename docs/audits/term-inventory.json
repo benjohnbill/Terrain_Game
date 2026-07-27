@@ -2602,7 +2602,9 @@
    "status": "AGREED",
    "kind": "mechanism",
    "codeIdentifier": "recruitment",
-   "codeRefs": [],
+   "codeRefs": [
+    "game/src/domain/recruitment.ts"
+   ],
    "verdict": "standard-match",
    "verdictRef": "2026-07-10-terminology-audit.md"
   },
@@ -2617,8 +2619,11 @@
    "tier": 1,
    "status": "AGREED",
    "kind": "mechanism",
-   "codeIdentifier": "registerPerPop",
-   "codeRefs": [],
+   "codeIdentifier": null,
+   "codeRefs": [
+    "game/src/domain/force.ts",
+    "game/src/domain/recruitment.ts"
+   ],
    "verdict": "synonym-exists",
    "verdictRef": "2026-07-10-terminology-audit.md"
   },
@@ -2668,7 +2673,9 @@
    "status": "AGREED",
    "kind": "mechanism",
    "codeIdentifier": null,
-   "codeRefs": [],
+   "codeRefs": [
+    "game/src/domain/recruitment.ts"
+   ],
    "verdict": "justified-coinage",
    "verdictRef": "2026-07-10-terminology-audit.md"
   },

@@ -10,7 +10,11 @@
 > changed lines: `Position as product` amended (a move order now exists),
 > `Limbo` amended (an interval, not an end state), march fatigue per hex, commit
 > legality = reachability, register succession proportional to the accumulated
-> stock. Same day, earlier: L3 ticket-05 seal batch — R10 action-point
+> stock. Same day, R19 authority batch — sector-sited recruitment, persistent
+> province-origin accounting, one-turn readiness, and deterministic edge endpoints
+> (MT-⑥ / WM-④ / ADR 0045). The same-session R18 rider marks M13a's coordinates
+> as setup-only; later posture rebalancing uses the existing movement price and
+> adds no separate commitment cost or dial. Same day, earlier: L3 ticket-05 seal batch — R10 action-point
 > recruitment conversion, R11's three adopted 가안, and the M13a board-mismatch
 > rider. Prior: 2026-07-25 (1v1 pivot SPEC leg applied — SPEC now consistent
 with the already-pivoted DOMAIN_MAP; prior 2026-07-24 duel-pivot cascade —
@@ -318,12 +322,12 @@ condition; supersedes the multi-realm victory model in the next section.
 | Vassalage (복속) | loser survives subordinated; mass counts to the OVERLORD; priced in acceptance currency via sovereignty premium | MA |
 | Sovereignty premium (주권 프리미엄) | vassalage's acceptance-side price: 0.25 × loser remaining value (sealed ⑯; a floor-setter, not a fine dial) | MA |
 | Chain collapse (사슬 붕괴) | overlord falls → all vassals released immediately | MA |
-| Recruitment (모병) | priced by the Surge Draft Model (continuous 동원 강도 curve + commit surge), not a flat rate; garrison regen bills the register too (P1). **R10 (2026-07-26): one 행동력 point = +1%p of the force limit, no per-turn cap** — bounds are headroom/treasury/bodies, never a rate | MA / CF M13 |
+| Recruitment (모병) | sector-sited, simultaneous integral-priced batch; a field/garrison cohort is next-turn-ready, not current-turn combat substance. One 행동력 point = +1%p force limit; no per-turn cap | MA MT-⑥ / ADR 0045 |
 | Force-limit growth (구칭 national cap growth) | conquest/development raises the sustainable cap — the match's ending mechanism (structure sealed ⑮; numbers → A-3) | CF M13 |
-| Conscription register (징집 명부 · 구칭 인력 풀) | total draftable bodies = 1,800 × Σpop (land-derived); only death shrinks it; capPerPop 600 = derived sustain fraction ⅓ | MA MT-② / CF M13 |
+| Conscription register (징집 명부 · 구칭 인력 풀) | persistent total living bodies by province; serving bodies retain origin, recruitment is civilian→serving, permanent loss alone shrinks the same origin share | MA MT-⑥ / ADR 0045 |
 | Aging constitution (노화 헌법) | P1 dual billing (no free healing) · P2 flow never ages · P3 snapshot info — how the world accrues irreversibility | MA MT-① / DM |
 | Mobilization intensity (동원 강도) | serving ÷ current register; prices the draft; bled realm reads higher → next draft costs more (Marie-Louise, emergent) | MA MT-③ |
-| Surge Draft Model (서지 모병) | recruit priced on depth (동원 강도 curve, integral bill) + size (commit surge); start 42% / structural max 58%; multipliers ×2 knee / ×12 full **(가안 R11, 2026-07-26)**. ⚠ measured inert on the duel board — mobilization peaks 41.7% under the 42% knee (SYNC-DEBT) | MA MT-③④ / CF M13a |
+| Surge Draft Model (서지 모병) | one integral bill over a realm's fulfilled simultaneous sited requests; provincial/headroom/treasury shortages prorate deterministically | MA MT-③⑥ / CF M13 |
 | Blinds (블라인드) | undesigned anti-passivity escalation device; owns the untilted-ending tail; duty confirmed load-bearing at L2, quantified ~58% on the real map (2026-07-07). NOTE: blinds-as-economic-device SUPERSEDED (MT-⑤ — freeze is non-economic; now attacked via force-geography + hegemony gate) | MA |
 | Deterrence equilibrium (억지 평형, 별칭 동결 세계) | the failure mode blinds must break: 회복이 상처를 이겨 세계가 대칭 만땅으로 되돌아가 결정점이 영영 안 뜨는 상태 | MA |
 | Opportunism read (기회주의 읽기) | 상대 야전군이 딴 전선에 묶인 순간을 공격창으로 읽기 — parity 판을 억지 너머로 움직이는 하중 기동; "pile-on" 프로브 = 이 읽기 강화판 하네스 실험 | MA |
@@ -409,12 +413,11 @@ the hegemony-freeze sequence; makes defense uneven so weak fronts exist.
 - **Price feel** (income of a 10-sector realm ≈ 생산 10/turn): a full
   recruit batch (600 men) ≈ ⅓ turn's income · walls ≈ ½ turn · a
   legendary fortress ≈ ⅓ of a match saved up.
-- **Force-adjustment stack** (DM 모병 row): ① recruitment — create
-  (player primary) → ② garrison regeneration to local caps — automatic
-  (+10%/turn, ADR 0014) → ③ standing-force stationing — deploy
-  (player) → ④ commit lever + emergency reserve — activate (per-turn).
-  모병 feeds the mobile national mass only; garrisons self-heal and
-  are never recruited.
+- **Force-adjustment stack** (MA MT-⑥ / ADR 0045): ① sector-sited paid
+  recruitment — create (player primary) → ② garrison replenishment — paid
+  recruitment or physical transfer, never a free pulse → ③ standing-force
+  stationing — deploy (player) → ④ commit lever + emergency reserve — activate
+  (per-turn). Full behavior lives at the cited birthplaces.
 - **Raid burn rates** (CF M8/M12): raid −15%p usable base → −30%p
   cap, raider loots 50% of destroyed value (≈ 생산 1.5); pressure
   −5%p per success (recoverable layer); scorched earth (self) econ

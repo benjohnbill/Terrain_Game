@@ -657,7 +657,12 @@ already owns register succession.
 
 ### R19 — Recruitment siting is its own pass, and it opens the turn budget too
 
-**Deferred by user ruling.** Where a realm raises men — and therefore how far they
+**Published 2026-07-26:** the user-approved R19 design is authoritative at
+match-arc MT-⑥ and ADR 0045. The retained command economy is 20 points and one
+point remains +1%p of force limit. The text below preserves the Working-layer
+inputs that led to the published decision; it is no longer an open deferral.
+
+**Historical Working input (superseded by the publication above).** Where a realm raises men — and therefore how far they
 must march to reach a front or a wall — is real design with a UI surface, not
 wiring. It is *not* being decided here.
 
@@ -919,6 +924,52 @@ settlement terminus. The pre-pivot text was never stamped at its birthplace.
 This needs a supersession stamp, not a design decision — but it sits in the same
 file ticket 07 reads as authority, so it should be stamped before that ticket
 runs.
+
+### 1.9 Ticket 06a cannot place the opening army or expand authored edges to hex endpoints
+
+**Status: PAID 2026-07-26.** The Part 3 movement values and both topology rules
+now have normative homes: war-model-build WM-④ and ADR 0045. This section remains
+the Working-layer discovery record.
+
+| Missing rule | Why the build cannot infer it | Repository evidence |
+|---|---|---|
+| Opening field-army hex | M13a fixes how many men start in the field, not where they stand. Choosing a capital, a front, or a setup-placement beat changes the opening strategy; choosing one hex inside a multi-hex sector changes the route metric. | L3 `Sector` carries `mapUnits[]` and no movement anchor. The reference archive alone starts its scripted army at its automatically selected capital hex (`mockup/operational-layer/war-loop.js`); ADR 0041 bars treating that as build authority. |
+| Hex endpoints of an authored edge | ADR 0043 says `hex adjacency ∪ authored edges`, but the checked-in `Edge` joins two **sector ids**. Turning that into a hex-to-hex link requires an endpoint rule. Nearest pair, centroid-nearest pair, or an authored anchor produce different route lengths and therefore different turns, fatigue, reach and fog. | `game/src/world/schema.ts` has `Edge.a/b: SectorId`; each endpoint sector has multiple `mapUnits`. The two r10 straits have no natural hex contact, which is exactly why a hex-only graph fails. |
+
+This is not a missing numeric dial and not archive-port permission. The boundary
+test stops at step (1): implementing either requires a normative statement that
+does not exist. Ticket 06a returns to `needs-info`; do not derive through it.
+
+**User ruling received 2026-07-26:** the opening field army starts on the chosen
+capital sector's centre-nearest hex. Natural hex contact realizes an authored edge
+when contact exists; a non-contact edge (the two r10 straits today) connects the
+nearest endpoint-sector hex pair at movement cost 1, with ties broken in canonical
+coordinate order. Publication landed in the same session: war-model-build WM-④ +
+ADR 0045.
+
+### 1.10 Positioned detachments conflict with recruitment's deliberately absent location
+
+**Status: PAID 2026-07-26.** The conflict is resolved by match-arc MT-⑥ and
+ADR 0045: recruitment is sited, cohorts retain province origin, and readiness
+separates raising-turn movement from combat eligibility. This section remains the
+Working-layer discovery record.
+
+| Side | Sealed requirement |
+|---|---|
+| 06a / ADR 0043 / slice-2 §4 | All mobile field substance exists as positioned detachments; substance at a front is only the detachment(s) present or arriving there. |
+| R19 | Recruitment siting is a separate pass that also reopens the turn budget. This slice must not give recruitment a location. |
+
+Before division, "recruits join the field army directly" can hide the location
+question behind one positionless scalar. After division every possible write is a
+rule: add to one detachment (which one?), distribute across several (by what
+weights?), create a positionless reserve (a new posture that cannot march or
+fight), or disable recruitment while divided (a new restriction). The reference
+operational harness has detachments but no composed recruitment path; the reference
+economy harness has recruitment but a positionless scalar, so neither is accepted
+behavior to carry.
+
+The boundary test stopped at a sealed conflict. MT-⑥/ADR 0045 now provide the
+bounded destination and readiness contract that lets 06a replace `RealmForces.field`.
 
 ---
 

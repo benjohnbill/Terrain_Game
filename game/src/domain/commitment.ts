@@ -18,6 +18,10 @@
  */
 
 import type { ActorId } from '../runtime/types.js';
+import { ORDER_RECRUIT } from './recruitment.js';
+import { reachCone, type MovementGraph } from './movement.js';
+import { hexKey } from '../world/schema.js';
+import type { Front, HexPosition } from '../runtime/types.js';
 
 /**
  * The size of the stack, per realm, per turn.
@@ -34,6 +38,60 @@ export const TURN_COMMITMENT_BUDGET = 20;
 
 /** One realm's allocations for the current turn: front key -> chips. */
 export type Allocations = Readonly<Record<string, number>>;
+
+/** One realm's selected field substance: front key -> own detachment ids. */
+export type FrontAssignments = Readonly<Record<string, readonly string[]>>;
+
+/** One stable request's key in the shared front/order allocation namespace. */
+export const recruitmentOrderKeyOf = (requestId: string): string =>
+  `${ORDER_RECRUIT}:${requestId}`;
+
+/** The share of the one stack currently poured into sited recruitment. */
+export const recruitmentCommitOf = (allocations: Readonly<Record<string, number>>): number =>
+  Object.entries(allocations)
+    .filter(([key]) => key.startsWith(`${ORDER_RECRUIT}:`))
+    .reduce((sum, [, commit]) => sum + commit, 0);
+
+export interface AssignableDetachment {
+  readonly id: string;
+  readonly position: HexPosition;
+  readonly turnEndpoint: HexPosition;
+  readonly reachSpeed: number;
+}
+
+/** Validate selected field substance against its canonical one-turn endpoint. */
+export function frontAssignmentRefusal(
+  graph: MovementGraph,
+  front: Front,
+  detachments: readonly AssignableDetachment[],
+  detachmentIds: unknown,
+  assignedElsewhere: readonly string[] = [],
+): string | null {
+  if (detachmentIds === undefined) return null;
+  if (!Array.isArray(detachmentIds)) return 'A front assignment must list detachment ids.';
+  if (new Set(detachmentIds).size !== detachmentIds.length) {
+    return 'A detachment may be named only once in one front assignment.';
+  }
+  const unavailable = new Set(assignedElsewhere);
+
+  for (const id of detachmentIds) {
+    if (typeof id !== 'string' || id.length === 0) {
+      return 'A front assignment must list valid detachment ids.';
+    }
+    const detachment = detachments.find((candidate) => candidate.id === id);
+    if (detachment === undefined) return `Detachment "${id}" is not owned by this actor.`;
+    if (unavailable.has(id)) return `Detachment "${id}" is already assigned to another front.`;
+    const endpointKey = hexKey(detachment.turnEndpoint.q, detachment.turnEndpoint.r);
+    if (!reachCone(graph, detachment.position, 1, detachment.reachSpeed).has(endpointKey)) {
+      return `Detachment "${id}" cannot reach its claimed endpoint this turn.`;
+    }
+    const endpointSector = graph.nodes[endpointKey]?.sectorId;
+    if (endpointSector === undefined || !front.sectors.includes(endpointSector)) {
+      return `Detachment "${id}" does not end this turn on front "${front.key}".`;
+    }
+  }
+  return null;
+}
 
 /** Everything the spend rules need, and nothing that would leak truth. */
 export interface CommitmentContext {

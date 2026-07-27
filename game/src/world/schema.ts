@@ -23,10 +23,14 @@ export type RegionId = string;
  */
 export type SectorId = string;
 
-/** Hex axial coordinates. Hexes are physical space only — values live on sectors. */
-export interface MapUnit {
+/** A position on the authored world's pointy-top axial hex grid. */
+export interface HexPosition {
   readonly q: number;
   readonly r: number;
+}
+
+/** Hex axial coordinates. Hexes are physical space only — values live on sectors. */
+export interface MapUnit extends HexPosition {
   readonly terrainLayer: TerrainLayer;
 }
 

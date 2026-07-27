@@ -8,9 +8,10 @@
  * own contracts.
  */
 
-import type { RegionId, SectorId, WorldArtifact } from '../world/schema.js';
+import type { HexPosition, RegionId, SectorId, WorldArtifact } from '../world/schema.js';
+import type { RecruitmentRequest } from '../domain/recruitment.js';
 
-export type { RegionId, SectorId } from '../world/schema.js';
+export type { HexPosition, RegionId, SectorId } from '../world/schema.js';
 
 /** A party that can act in a match. In a 1v1 duel there are exactly two. */
 export type ActorId = string;
@@ -82,6 +83,8 @@ export interface CommitmentView {
   readonly budget: number;
   /** Front key -> chips, for this viewer's realm only. */
   readonly allocations: Readonly<Record<string, number>>;
+  /** Front key -> own field detachments explicitly committed there. */
+  readonly assignments: Readonly<Record<string, readonly string[]>>;
   readonly spent: number;
   readonly remaining: number;
 }
@@ -94,6 +97,10 @@ export type Intent =
   | ChooseCapitalIntent
   | AllocateCommitmentIntent
   | AllocateOrderIntent
+  | AllocateRecruitmentIntent
+  | MoveDetachmentIntent
+  | SplitDetachmentIntent
+  | MergeDetachmentsIntent
   | LockCommitmentIntent
   | { readonly kind: string; readonly actor: ActorId };
 
@@ -125,23 +132,24 @@ export interface AllocateCommitmentIntent {
   readonly front: string;
   /** Whole, non-negative chips. Zero clears the front. */
   readonly chips: number;
+  /** Own detachments whose planned turn endpoint supplies field substance. */
+  readonly detachmentIds?: readonly string[];
 }
 
-/**
- * Pour part of this turn's stack into a non-front order.
- *
- * The same free-pour grammar a front takes, against the same budget (D6.3, R2):
- * an order is not a second economy, it is another place to put the same chips.
- * What a point buys is the order kind's own unit — for recruitment, +1%p of the
- * force limit (ruling R10).
- */
+/** Retired scalar order shape, retained so legacy callers receive a reportable refusal. */
 export interface AllocateOrderIntent {
   readonly kind: 'allocate-order';
   readonly actor: ActorId;
-  /** An order kind. `recruit` is the only one wired today. */
+  /** The legacy order kind supplied by the caller. */
   readonly order: string;
   /** Whole, non-negative chips. Zero clears the order. */
   readonly chips: number;
+}
+
+/** Pour part of the shared stack into one sector-sited recruitment request. */
+export interface AllocateRecruitmentIntent extends RecruitmentRequest {
+  readonly kind: 'allocate-recruitment';
+  readonly actor: ActorId;
 }
 
 /**
@@ -153,6 +161,30 @@ export interface AllocateOrderIntent {
 export interface LockCommitmentIntent {
   readonly kind: 'lock-commitment';
   readonly actor: ActorId;
+}
+
+/** Destination-grain field movement; pathing remains Runtime-owned. */
+export interface MoveDetachmentIntent {
+  readonly kind: 'move-detachment';
+  readonly actor: ActorId;
+  readonly detachmentId: string;
+  readonly destinationHex: HexPosition;
+  readonly forcedMarch: boolean;
+}
+
+/** Free division of one positioned detachment. */
+export interface SplitDetachmentIntent {
+  readonly kind: 'split-detachment';
+  readonly actor: ActorId;
+  readonly detachmentId: string;
+  readonly men: number;
+}
+
+/** Free consolidation of co-located own detachments. */
+export interface MergeDetachmentsIntent {
+  readonly kind: 'merge-detachments';
+  readonly actor: ActorId;
+  readonly detachmentIds: readonly string[];
 }
 
 /** Something the Runtime did. Returned by `submit`; never pushed. */
@@ -233,6 +265,46 @@ export interface EconomyView {
   readonly serving: number;
   /** 동원 강도 — serving ÷ register, the axis recruitment is priced along. */
   readonly mobilization: number;
+  readonly provinces: Readonly<Record<RegionId, ProvinceForcesView>>;
+}
+
+/** One own-side positioned field formation, projected exactly. */
+export interface DetachmentView {
+  readonly id: string;
+  readonly position: HexPosition;
+  readonly destination: HexPosition | null;
+  readonly turnEndpoint: HexPosition;
+  readonly turnsRemaining: number;
+  readonly men: number;
+  readonly readyMen: number;
+  readonly pendingMen: number;
+  readonly pendingReadyOnTurn: number | null;
+  readonly fatigue: number;
+  readonly pendingFatigue: number | null;
+}
+
+/** One own-side local shield, including separately visible pending substance. */
+export interface GarrisonView {
+  readonly sectorId: SectorId;
+  readonly men: number;
+  readonly readyMen: number;
+  readonly pendingMen: number;
+  readonly pendingReadyOnTurn: number | null;
+}
+
+/** One categorical report of an opposing realm's recruitment activity. */
+export interface MobilizationSignalView {
+  readonly actor: ActorId;
+  readonly sectorId: SectorId;
+  readonly observedTurn: number;
+  readonly band: 'activity-detected';
+}
+
+/** Exact body conservation for one province origin. */
+export interface ProvinceForcesView {
+  readonly register: number;
+  readonly serving: number;
+  readonly availableCivilians: number;
 }
 
 /**
@@ -300,6 +372,10 @@ export interface MatchView {
   readonly fronts: readonly Front[];
   /** This viewer's own stack. The opponent's is absent until the reveal. */
   readonly commitment: CommitmentView;
+  /** This viewer's own one-turn recruitment plans, in canonical settlement order. */
+  readonly recruitmentOrders: readonly RecruitmentRequest[];
+  /** Opposing recruitment sources visible during this decision beat only. */
+  readonly mobilizationSignals: readonly MobilizationSignalView[];
   /**
    * This viewer's own stocks, or `null` for the observer.
    *
@@ -308,6 +384,10 @@ export interface MatchView {
    * asserting through it.
    */
   readonly economy: EconomyView | null;
+  /** Exact own-side operational substance. Empty for the observer. */
+  readonly detachments: readonly DetachmentView[];
+  /** Exact own-side local shields. Empty for the observer. */
+  readonly garrisons: readonly GarrisonView[];
 }
 
 /** Everything the Runtime needs to open a match. Seed and clock are injected. */

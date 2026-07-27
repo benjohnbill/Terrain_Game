@@ -20,6 +20,7 @@ export type {
   Choke,
   ChokeClass,
   Edge,
+  HexPosition,
   MapUnit,
   Region,
   RegionId,

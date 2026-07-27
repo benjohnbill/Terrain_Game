@@ -7,9 +7,13 @@
  */
 
 import { holdsOf } from './economy.js';
+import { menOf } from './force.js';
 import { contestedFronts } from './fronts.js';
+import type { MovementGraph } from './movement.js';
 import type { LoadedWorld } from '../world/load.js';
-import type { SectorId } from '../world/schema.js';
+import type { Detachment, ForceCohort, GarrisonForce } from './force.js';
+import type { RecruitmentRequest } from './recruitment.js';
+import type { RegionId, SectorId } from '../world/schema.js';
 import type { ActorId, Front, MatchPhase, WorldIdentity } from '../runtime/types.js';
 import type { Rng } from '../runtime/rng.js';
 
@@ -28,22 +32,31 @@ export interface Realm {
  * are recomputed from held sectors every turn and never stored. What genuinely
  * accumulates is treasury (money) and register (blood), plus the men themselves.
  *
- * `field` is the mobile main force the land-derived ceiling caps; `garrisons` are
- * the fortress shields, held per sector because that is how M13a sizes them.
+ * Detachments are the mobile main force the land-derived ceiling caps; garrisons
+ * are the local shields, held per sector because that is how M13a sizes them.
  */
 export interface RealmForces {
-  /** Yield in hand. Spent on drafts; never published to the opponent. */
   treasury: number;
-  /** The field army, in men. Ceilinged by the land-derived force limit. */
-  field: number;
-  /** Total draftable bodies — a stock that only death shrinks (MT-②). */
-  register: number;
+  registers: Record<RegionId, number>;
+  openingField: ForceCohort | null;
+  detachments: Detachment[];
+  nextDetachmentOrdinal: number;
+}
+
+/** Exact recruitment truth retained by the Runtime for the current decision beat. */
+export interface MobilizationTrace {
+  readonly actor: ActorId;
+  readonly sectorId: SectorId;
+  readonly men: number;
+  readonly turn: number;
 }
 
 export interface MatchState {
   readonly world: WorldIdentity;
   /** The validated world plus its derived indexes. Public content, privately held. */
   readonly loadedWorld: LoadedWorld;
+  /** The one canonical hex/adjoining-door graph used by movement and later supply. */
+  readonly movementGraph: MovementGraph;
   /** Hidden. Never projected — see `projection/project.ts`. */
   readonly seed: string;
   /** Hidden. The single draw source; every consumer forks a labelled stream. */
@@ -84,7 +97,7 @@ export interface MatchState {
    * a stock thereafter — nothing in this ticket adds to it, because P1 forbids a
    * free man and the regeneration order lives with ticket 06's damage.
    */
-  readonly garrisons: Record<SectorId, number>;
+  readonly garrisons: Record<SectorId, GarrisonForce>;
 
   turn: number;
   /**
@@ -95,6 +108,12 @@ export interface MatchState {
    * over (D6.3).
    */
   commitments: Record<ActorId, Record<string, number>>;
+  /** Rich one-turn recruitment requests, hidden from every viewer but their owner. */
+  recruitmentOrders: Record<ActorId, Record<string, RecruitmentRequest>>;
+  /** Exact positive recruitment aggregates; projection alone decides who may read them. */
+  mobilizationTraces: MobilizationTrace[];
+  /** Own field detachments explicitly assigned to each committed front. */
+  frontAssignments: Record<ActorId, Record<string, readonly string[]>>;
   /**
    * Realms that have locked this turn's commitment.
    *
@@ -147,9 +166,14 @@ export function holdingsOf(state: MatchState, actor: ActorId): SectorId[] {
   return holdsOf(state.realms[actor]!.sectors, state.homeland, actor);
 }
 
-/** Men manning shields across everything a realm currently controls. */
+/** All serving bodies in garrison posture across the realm's controlled sectors. */
 export function garrisonOf(state: MatchState, actor: ActorId): number {
   let total = 0;
-  for (const sector of state.realms[actor]!.sectors) total += state.garrisons[sector] ?? 0;
+  for (const sector of state.realms[actor]!.sectors) {
+    const garrison = state.garrisons[sector];
+    if (garrison === undefined) continue;
+    total += menOf(garrison.ready);
+    for (const cohort of garrison.pending) total += menOf(cohort.origins);
+  }
   return total;
 }

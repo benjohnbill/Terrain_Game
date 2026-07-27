@@ -40,6 +40,15 @@ test.beforeEach(async ({ page }) => {
   expect(errors).toEqual([]);
 });
 
+async function openDecisionBeat(page, viewer = 'realm-a') {
+  for (const actor of ['realm-a', 'realm-b']) {
+    await page.getByTestId('viewer').selectOption(actor);
+    const own = await page.evaluate(() => document.querySelector('.sector.selectable')?.dataset.sector);
+    await page.locator(`[data-sector="${own}"]`).click();
+  }
+  await page.getByTestId('viewer').selectOption(viewer);
+}
+
 test('the board draws every sector, route, region label, and realm outline', async ({ page }) => {
   const drawn = await page.evaluate(() => ({
     sectors: document.querySelectorAll('[data-sector]').length,
@@ -126,14 +135,7 @@ test('a human can cycle a whole turn: commit, lock, watch it reveal, land on N+1
   // rather than only through the engine. The strip this drives is a grey-box
   // probe — gate 07's commit-first shell is ticket 04's — but the loop under it
   // is the real one.
-  const pickCapital = async (viewer) => {
-    await page.getByRole('combobox').selectOption(viewer);
-    const own = await page.evaluate(() => document.querySelector('.sector.selectable')?.dataset.sector);
-    await page.locator(`[data-sector="${own}"]`).click();
-  };
-
-  await pickCapital('realm-a');
-  await pickCapital('realm-b');
+  await openDecisionBeat(page, 'realm-b');
 
   await expect(page.getByTestId('turn-strip')).toContainText('턴 1');
   await expect(page.getByTestId('turn-strip')).toContainText('20/20 남음');
@@ -148,7 +150,7 @@ test('a human can cycle a whole turn: commit, lock, watch it reveal, land on N+1
   await expect(page.getByTestId('turn-strip')).toContainText('대기 중');
 
   // The opponent's allocation is not readable while the turn is still open.
-  await page.getByRole('combobox').selectOption('realm-a');
+  await page.getByTestId('viewer').selectOption('realm-a');
   await expect(page.getByTestId('turn-strip')).toContainText('20/20 남음');
 
   await page.getByTestId('lock').click();
@@ -185,15 +187,7 @@ test('a human pours the stack into recruitment and watches the army and treasury
   // Ticket 05's player-visible increment through the built viewer: the realm
   // economy is legible, a draft is priced *before* the commit, and the men and
   // the bill land together in the background tier of the reveal.
-  const pickCapital = async (viewer) => {
-    await page.getByRole('combobox').selectOption(viewer);
-    const own = await page.evaluate(() => document.querySelector('.sector.selectable')?.dataset.sector);
-    await page.locator(`[data-sector="${own}"]`).click();
-  };
-
-  await pickCapital('realm-a');
-  await pickCapital('realm-b');
-  await page.getByRole('combobox').selectOption('realm-a');
+  await openDecisionBeat(page);
 
   const readEconomy = () =>
     page.evaluate(() => {
@@ -217,11 +211,11 @@ test('a human pours the stack into recruitment and watches the army and treasury
   expect(promised).toBeGreaterThan(0);
 
   await page.getByTestId('lock').click();
-  await page.getByRole('combobox').selectOption('realm-b');
+  await page.getByTestId('viewer').selectOption('realm-b');
   await page.getByTestId('lock').click();
-  await page.getByRole('combobox').selectOption('realm-a');
+  await page.getByTestId('viewer').selectOption('realm-a');
 
-  await expect(page.getByTestId('events')).toContainText('recruited');
+  await expect(page.getByTestId('events')).not.toContainText('recruited');
   await expect(page.getByTestId('events')).toContainText('realm-recomputed');
 
   const after = await readEconomy();
@@ -229,4 +223,22 @@ test('a human pours the stack into recruitment and watches the army and treasury
   expect(after.field - before.field).toBe(promised);
   // And they were paid for: income landed, but the draft's bill outweighed it.
   expect(after.treasury).toBeLessThan(before.treasury + before.income);
+});
+
+test('the grey-box map shows every own detachment and its planned destination', async ({ page }) => {
+  await openDecisionBeat(page);
+  await expect(page.locator('[data-detachment]')).toHaveCount(1);
+  await page.locator('[data-sector="r10_s2"]').hover();
+  await page.getByTestId('march-focused').click();
+  await expect(page.getByTestId('detachments')).toContainText('→');
+  await expect(page.getByTestId('detachments')).toContainText('턴');
+});
+
+test('a human sites recruitment before committing it', async ({ page }) => {
+  await openDecisionBeat(page);
+  await page.getByTestId('recruit-sector').selectOption('r10_s0');
+  await page.getByTestId('recruit-posture').selectOption('field');
+  await page.getByTestId('recruit-plus').click();
+  await expect(page.getByTestId('draft-preview')).toContainText('r10_s0');
+  await expect(page.getByTestId('chips-recruit')).toHaveText('1');
 });

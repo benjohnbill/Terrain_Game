@@ -22,18 +22,17 @@ naming, promotion, the generated Quick Reference) lives in
   province's route-connected stock (march-worn on arrival); the
   manpower pool travels with territory; usable value is the land's
   current condition. Consequences arrive free of extra rules: conquest
-  raises the cap at a discount (fresh captures are 50/60% usable),
+  raises the cap on its sealed integration lag,
   raids shrink the victim's cap, geography prices power projection.
   The terrain-first thesis (SPEC) made mechanical; the escape-state
   doctrine (도주로 is derived at rout time, never stored) is its
   resolution-layer precedent. **Named exception (deliberate): the
-  command pool.** Attention is realm-size-independent (20 points) —
+  command pool.** Attention is realm-size-independent —
   the land gives the body, the player gives the mind; this is what
   prices expansion break-even and keeps the vassal seat a complete
-  game. **MVP boundary (reserved seat)**: realm-level recruitment
-  abstracts muster geography (recruits join the field army directly);
-  the province-level grammar (M9 awakening + march effect) is the
-  extension point if muster location ever needs to matter.
+  game. **MVP contract:** recruitment is sited at a controlled front
+  sector; the full recruitment, province-origin, readiness, and
+  endpoint contract is authoritative at match-arc MT-⑥ and ADR 0045.
 
 - ✅ `Aging constitution` (노화 헌법 · alias anti-stalemate ratchet) —
   **user-sealed 2026-07-07 (match-tilting pass); purpose re-aimed by the 1v1
@@ -202,8 +201,8 @@ naming, promotion, the generated Quick Reference) lives in
 - ✅ `Operation effect axis`: A normalized kind of change an operation plan can
   produce in the MVP. Six axes, each mapped to a specific front-sector element:
   `controlShift` (controlWeight share / ownership), `garrisonDamage`
-  (`localGarrison` only; temporary, regenerates while economy/population survive,
-  `militaryValue` unchanged), `fortificationDamage` (`fortificationDefense`),
+  (`localGarrison` only; restored by paid recruitment or physical transfer,
+  `militaryValue` unchanged; ADR 0045), `fortificationDamage` (`fortificationDefense`),
   `routeDisruption` (`routeValue` / route access), `usableValueDamage` (actively
   destroys usable economy/population; independent of capture; the permanent-
   weakening path), and `confidenceGain` (information confidence). Preset effects
@@ -259,11 +258,12 @@ naming, promotion, the generated Quick Reference) lives in
 - ✅ `Standing world rule`: A per-turn world process that reads persistent
   state and applies consequences without consuming any faction's action
   capacity (ADR 0026). Phase-1 instances: usable-value recovery (ADR 0022),
-  local-garrison regeneration, fog confidence decay, and supply starvation —
-  a supply-cut sector degrades in staged severity each turn until the route
-  state is repaired (stages/rates are combat-pass dials). Plans stamp state
-  once; standing rules are how time itself matters. _Avoid_: plan effects
-  that re-apply across turns.
+  fog confidence decay, and supply starvation — a supply-cut sector degrades
+  in staged severity each turn until the route state is repaired (stages/rates
+  are combat-pass dials). Local-garrison replenishment is deliberately absent:
+  it is paid recruitment or physical transfer (ADR 0045). Plans stamp state once;
+  standing rules are how time itself matters. _Avoid_: plan effects that re-apply
+  across turns.
 - ✅ `Uncertainty duel`: The information-asymmetric, effectively simultaneous
   commitment exchange that is the game's core pressure engine (ADR 0025). The
   player commits capacity against a banded estimate of enemy force and an
@@ -500,10 +500,11 @@ on any divergence the Production seal is truth (documentation-law conflict rule)
   troops); commitment is the points placed on an action. The 20-point pool
   is split freely across ~1–2 actions; **main/surplus are magnitude labels
   applied by commit size, not fixed roles bound to activity types** — no
-  hard action-count cap (the M2 knee soft-caps), and every force-shaping act
-  (recruit, garrison regen, fort, recovery) is commit-gated, bottom 0
-  (ADR 0027, amends ADR 0020). Both sides use the same grammar (D2/D6). This
-  is the resolution-layer face of `Action capacity`.
+  hard action-count cap (the M2 knee soft-caps). Recruitment, fortification,
+  and recovery are commit-gated, bottom 0 (ADR 0027, amends ADR 0020);
+  garrison replenishment is not a standing regeneration action but follows
+  paid recruitment or physical transfer (ADR 0045). Both sides use the same
+  grammar (D2/D6). This is the resolution-layer face of `Action capacity`.
 - ✅ `Lever` (레버): what commitment buys — an activation/direction multiplier on
   substance, concave (early points buy more than late) with a knee and a
   ceiling; defense holds a baseline lever at zero commit (D8; curve → M2).
@@ -557,8 +558,8 @@ on any divergence the Production seal is truth (documentation-law conflict rule)
   — per-turn world processes that read persistent state: continuous starvation
   (a supply-ledger pump whose sole output is convex substance loss — no stages,
   no capability flips; the D4 staged severity holding→attack-incapable→defenseless
-  is superseded, war-model slice-2 §2), garrison regeneration, recovery (gated by
-  supply and ground — scorched ground denies it). Starvation must outpace an
+  is superseded, war-model slice-2 §2), recovery (gated by supply and ground —
+  scorched ground denies it). Starvation must outpace an
   unsupplied 2–3-sector advance (rates → M-pass; ADR 0026; the emergent siege is
   this pump, war-model slice-2 ticket 06).
 - ✅ `Forecast` (예보) / `Recommendation` (추천) / `Preset pin` (프리셋 핀): the
@@ -771,8 +772,8 @@ rule)._
   Draft Model (2026-07-07): a continuous cost curve over 동원 강도 plus an
   optional commit-point surge — not a flat rate.** The temporary-levy track
   (공세 동원, ADR 0009 role 3) stays a reserved seat. Force-adjustment stack:
-  ① recruitment (create, player) / ② garrison regeneration (**now bills the
-  register + treasury — P1 dual billing, amends ADR 0014**) / ③ standing-force
+  ① recruitment (create, player) / ② garrison replenishment (**paid recruitment
+  or physical transfer; ADR 0045**) / ③ standing-force
   stationing (deploy, player) / ④ commit lever + reserve (activate). Definition
   + history: match-arc GLOSSARY 모병 / RULINGS MT-①③; rates → M13.
 - ✅ `Conscription register` (징집 명부 · 구칭 인력 풀 / manpower pool): "군사력이
