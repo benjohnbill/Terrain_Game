@@ -1,10 +1,83 @@
 # Vocabulary Dashboard — design spec
 
-Date: 2026-07-28
+Date: 2026-07-28 · **amended the same night** — read § Amendment before
+§ Triggers.
 Status: **design agreed, unbuilt.** Working layer — this records a decided
 shape, not a seal. Authority for anything it touches stays with
 `DOCUMENTATION-LAW.md`; where this spec needs the law changed it says so and
 proposes rather than assumes.
+
+## Amendment — 2026-07-28, after the design was agreed
+
+**Automatic rendering is retired before it was built.** Writing happens only
+when the generator is **invoked**, and the invoker is the `doc-audit` skill
+(user, 2026-07-28). This reverses the § Triggers row that read *render —
+automatic, on the existing `write-lint.js` PostToolUse hook* — a row stamped to
+the same user on the same day, reversed by them once the hook's actual behaviour
+was read out of the code.
+
+The reason is in this spec's own § What actually drifts. The always-visible scan
+layer carries term · 한국어 · status · pointer, and every one of those four axes
+is already held by a **blocking** check (1 / 3 / 10 / 11). The only axis that
+drifts ungated is definition TEXT — which appears solely in the detail panel and
+which the law declares non-citable. Automatic rendering was buying freshness for
+the layer that cannot silently go wrong, while the layer that does drift does
+not need it. The QUICKREF family is a convenience surface; the main reference is
+`DOMAIN_MAP.md` / feature `GLOSSARY.md` / `term-inventory.json`, and those are
+enforced (user, 2026-07-28).
+
+What the reversal changes, section by section:
+
+- **§ Triggers** — `render` and `lock` share one trigger: manual, in
+  `doc-audit`. `check` is unchanged (anytime, no side effects). `write-lint.js`
+  stays **read-only**, so its "a hook bug must never stop the edit it reacts to"
+  guarantee stays trivially true, and no tracked file is ever written by a hook.
+- **§ Triggers, Budget** — the 46–68ms hook-fit argument is moot. The
+  measurement stands as a record of the generator's cost, not as a constraint.
+- **§ Law implications 1** — evaporates. Its premise was that an always-current
+  artifact makes a last-regenerated date informationless. With writing bound to
+  invocation the date is meaningful again, and ritual duty 4 needs no change.
+  One fewer Tier-3 proposal.
+- **§ Law implications 2** — repaired rather than retired. `stale-quickref`
+  compares the QUICKREF's date against the newest glossary seal; against an
+  always-current artifact it could never fire, but against a
+  written-on-invocation one it fires exactly when the vocabulary has moved since
+  the last write. That is the reading the spec wanted from it. Keep it, advisory.
+- **§ Law implications 3 / § Open decisions** — the QUICKREF's fate narrows but
+  does not close. Its cadence half dissolves: nothing writes it automatically,
+  so the commit-surface objection goes with it. What remains is only whether the
+  generator emits one format or two. Still the user's call.
+
+**The cost this reversal pays.** Rendered only on invocation, the lock panel
+reads `drift 0` immediately after every render and stays there — so the drift
+number is dead as an always-on-screen reading. It moves instead to **the first
+thing the lock mode reports at invocation**, which is where a review figure
+belongs. `check` was already its own trigger row; this is that row doing the
+work.
+
+### CLI modes
+
+Two, so that re-rendering is never held hostage by a review:
+
+| Mode | Writes outputs | Advances the lock marker |
+|---|---|---|
+| `render` | yes | no |
+| `lock` | yes, after review | yes |
+
+`dist/` is gitignored, so a fresh clone or worktree carries no dashboard until
+something renders one. Recovering the artifact must not require passing a
+review, which is why `render` stands as its own mode. The rendered header
+carries **both** dates — last-regenerated and last-locked — so staleness is read
+rather than inferred.
+
+### What this does not grant `doc-audit`
+
+That skill's charter is explicit: findings are reports, never legislation; it
+never edits `DOCUMENTATION-LAW.md`, never applies a rename, never registers a
+term without sign-off. Hosting the generator gives it its **first write
+action**, and none of those prohibitions loosen. Rendering is derivation from
+committed sources, not legislation; advancing the marker is a review outcome and
+stays the user's (§ Non-goals, "No auto-lock").
 
 Supersedes the generator half of
 `2026-07-26-governance-prevention-over-audit.md` § Stage 3. That section's
@@ -294,23 +367,26 @@ produced the per-batch toll that ritual duty 4 had to retire.
 
 | Action | Judgment | Trigger | Decided |
 |---|---|---|---|
-| **render** — refresh the view | none | **automatic**, on the existing `write-lint.js` PostToolUse hook | user, 2026-07-28 |
+| **render** — write the outputs | none | **manual**, the `doc-audit` skill's `render` mode | user, 2026-07-28 (**amended** — § Amendment) |
 | **check** — report drift since lock | none | anytime; no side effects | — |
 | **lock** — review, then advance the marker | **yes** | **manual, a mode added to the `doc-audit` skill** | user, 2026-07-28 |
 
-`write-lint.js` is the right host: it already fires on this exact governed-path
-set, it **never blocks** (findings are reports, S13), and it fails silently by
-design so a hook bug cannot break the edit it reacts to. Rendering inherits all
-three properties, so the view stays current at zero toll.
+`write-lint.js` hosts nothing here and stays **read-only**. The properties that
+made it look like the right host — it fires on this exact governed-path set, it
+**never blocks** (findings are reports, S13), it fails silently so a hook bug
+cannot break the edit it reacts to — are properties of a hook that writes
+nothing. A hook that writes a tracked file cannot fail as harmlessly, and in a
+checkout shared by parallel sessions an unrequested tracked-file write is a
+collision surface. See § Amendment.
 
-**Budget.** `audit-lint.runAll` — which reads every governed doc *and* walks
-both code trees — measures **46–68ms**. A vocabulary parse reads 1,248 lines of
-markdown plus one JSON and needs no code walk, so it is comfortably inside a
-per-edit hook. Re-measure if the sources grow an order of magnitude.
+**Budget — a record of cost, not a constraint.** `audit-lint.runAll` — which
+reads every governed doc *and* walks both code trees — measures **46–68ms**, and
+a vocabulary parse reads 1,248 lines of markdown plus one JSON with no code
+walk. Kept because it bounds the generator, not because anything runs per-edit.
 
 **Why `doc-audit` rather than a new skill:** it is already the entry point for
-this territory, and two skills would compete for the same reach. The lock mode
-is a curation step appended to its ladder, not a rival to it.
+this territory, and two skills would compete for the same reach. Both modes are
+curation steps appended to its ladder, not rivals to it.
 
 ## Locations
 
@@ -342,35 +418,45 @@ never assert how a function walks a file.
   as an executable test rather than a style note.
 - **`drift`** — given two models, assert new / removed / re-statused / redefined
   classification, and that an unchanged pair yields an empty report.
-- **Not seams:** the CLI shell and the hook wiring, per `write-lint.js`
-  precedent.
+- **Not seams:** the CLI shell, per `write-lint.js` precedent. There is no hook
+  wiring left to leave untested (§ Amendment).
 
 ## Law implications — Tier 3, proposals only
 
-Three clauses in ritual duty 4 stop matching once this lands. Not edited here.
+Three clauses in ritual duty 4 looked like they stopped matching once this
+landed. **The amendment settled two of them; only the third survives as a
+proposal.** Nothing is edited here either way.
 
-1. **"Header carries a last-regenerated date."** With render automatic, that
-   date is always ~now and carries no information. The meaningful stamp becomes
-   **last *locked***. Proposal: duty 4 requires both, and names the lock date as
-   the review anchor.
-2. **`stale-quickref` (advisory).** It compares the QUICKREF's date to the
-   newest glossary seal. Against an always-current artifact it can never fire,
-   so it either retires or is re-aimed at **lock staleness** ("you have not
-   reviewed the vocabulary since N changes ago"), which is the reading that
-   actually has value.
-3. **The fate of `docs/GLOSSARY-QUICKREF.md`.** **Genuinely open — do not
-   settle it inside the build.** The dashboard replaces it for the user. For
+1. **"Header carries a last-regenerated date." — WITHDRAWN, no longer needed.**
+   The proposal rested on render being automatic, which made the date always
+   ~now and therefore informationless. With writing bound to invocation, the
+   date carries real information again and duty 4 stands unchanged. The rendered
+   header still carries the lock date beside it, but as spec detail, not as a
+   law change.
+2. **`stale-quickref` (advisory) — WITHDRAWN, the check is correct as written.**
+   It compares the QUICKREF's date to the newest glossary seal. That comparison
+   is meaningless against an always-current artifact, which is why retirement or
+   re-aiming looked necessary; against a written-on-invocation artifact it fires
+   exactly when the vocabulary has moved since the last write. Keep it, advisory
+   (ritual duty 4's on-demand cadence — advisory, never a gate).
+3. **The fate of `docs/GLOSSARY-QUICKREF.md` — still open, but narrowed.** Do
+   not settle it inside the build. The dashboard replaces it for the user. For
    agents the markdown is greppable and reachable in context while a gitignored
    HTML is not, which is a real argument for keeping a committed form. Note the
    counter-evidence: the law already declares it non-citable, no check scans it,
-   and agents work from birthplaces. Decide separately.
+   and agents work from birthplaces. **What the amendment removed** is the
+   cadence half — with nothing writing automatically, the commit-surface
+   objection to a generated tracked file is gone, so the question reduces to
+   whether the generator emits one format or two, both on the same invocation.
+   Decide separately.
 
 ## Open decisions
 
 - **Whether the term list shows all 254 at once** or paginates/virtualizes.
   Visual design is explicitly deferred (user, 2026-07-28), and this is a design
   question, not an architecture one.
-- **`GLOSSARY-QUICKREF.md`'s fate** (above).
+- **`GLOSSARY-QUICKREF.md`'s fate** (above) — narrowed by the amendment to "one
+  output format or two", both written on the same invocation.
 - **Whether `drift` classifies a *redefinition* by text hash or by diff size** —
   the cheap version is "changed at all"; a threshold would need justification.
 
