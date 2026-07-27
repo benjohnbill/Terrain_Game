@@ -16,7 +16,17 @@
  * implementation choice rather than a caller contract.
  */
 
+import { resolveBattle, type SideBattleOutcome } from '../domain/battle.js';
 import { capitalChoiceRefusal } from '../domain/capital-choice.js';
+import {
+  battleInputOf,
+  bodiesLost,
+  engagementsOf,
+  type BorderFront,
+  type Engagement,
+  type EngagementParty,
+  type SectorStanding,
+} from '../domain/engagement.js';
 import {
   allocationRefusal,
   frontAssignmentRefusal,
@@ -38,6 +48,7 @@ import {
   activateReadyCohorts,
   activateReadyGarrisonCohorts,
   accumulateOrigins,
+  apportionExact,
   apportionOrigins,
   availableCiviliansByOrigin,
   fieldOf,
@@ -51,9 +62,10 @@ import {
   type Detachment,
   type ForceCohort,
   type GarrisonForce,
+  type OriginComposition,
   type PendingCohort,
 } from '../domain/force.js';
-import { turnUpkeep } from '../domain/fatigue.js';
+import { battleAccrual, turnUpkeep } from '../domain/fatigue.js';
 import { contestedFronts, isPartyTo } from '../domain/fronts.js';
 import {
   advanceOneTurn,
@@ -76,6 +88,7 @@ import { readFronts, revealTurn, type RevealedTurn } from '../domain/turn.js';
 import { project } from '../projection/project.js';
 import { drawPartition } from '../world/partition.js';
 import { loadWorld } from '../world/load.js';
+import { edgeKey, hexKey } from '../world/schema.js';
 import type { HexPosition, RegionId, SectorId } from '../world/schema.js';
 import { createRng } from './rng.js';
 import type {
@@ -122,6 +135,26 @@ const FULLY_SUPPLIED = 1;
  * which is what keeps starvation supply-exclusive.
  */
 const UNBURNED_GROUND = 1;
+
+/**
+ * One combat-ready formation standing on a sector: a field detachment, or — when
+ * `detachmentId` is null — the sector's own shield.
+ *
+ * `wear` is the **ledger**, not the effectiveness multiplier; the adapter converts.
+ */
+interface SectorFormation {
+  readonly actor: ActorId;
+  readonly detachmentId: string | null;
+  readonly men: number;
+  readonly wear: number;
+}
+
+/**
+ * A formation's key inside one engagement's apportionment. Namespaced so a shield
+ * and a detachment can never collide, whatever a detachment comes to be called.
+ */
+const formationKey = (formation: SectorFormation): string =>
+  formation.detachmentId === null ? 'shield' : `field:${formation.detachmentId}`;
 
 /** A clock that refuses to be read. Rules must never need one (ADR 0040). */
 const NO_CLOCK: Clock = {
@@ -948,6 +981,40 @@ export class Runtime {
           },
         }];
       }
+      if (event.type === 'battle-resolved') {
+        // The payoff is watched, so a battle both realms fought is reported to
+        // both: the ground, the roles, who took it, who broke, and the blood.
+        //
+        // Named field by field like every other branch here, and for this
+        // function's own stated reason — a later ticket that adds a reading to a
+        // battle must have to *choose* to publish it. Exact pre-battle strength and
+        // the composed power product are absent deliberately: they are what ticket
+        // 08's fog bands and ticket 09's EVAL BAR composes, and letting them out
+        // from here would decide their presentation by accident.
+        return [{
+          type: event.type,
+          turn: event.turn,
+          detail: {
+            tier: detail.tier,
+            sector: detail.sector,
+            fronts: detail.fronts,
+            borderClass: detail.borderClass,
+            terrain: detail.terrain,
+            crossing: detail.crossing,
+            fortification: detail.fortification,
+            defenseMethod: detail.defenseMethod,
+            attacker: detail.attacker,
+            defender: detail.defender,
+            commitments: detail.commitments,
+            winner: detail.winner,
+            sectorFalls: detail.sectorFalls,
+            fortificationDamage: detail.fortificationDamage,
+            routeDisrupted: detail.routeDisrupted,
+            routed: detail.routed,
+            casualties: detail.casualties,
+          },
+        }];
+      }
       if (event.type === 'realm-recomputed' || event.type === 'upkeep-resolved') {
         // Both report *that* a realm's background beat ran. Their numbers — income,
         // force limit, per-force wear — stay behind `view(actor)`, which is the only
@@ -996,7 +1063,14 @@ export class Runtime {
     events.push(...this.#resolveRecruitment(revealed.commitments));
     events.push(...this.#resolveMovement());
     events.push(...this.#resolveRecruitmentAffiliation());
-    events.push(...this.#readReadyFronts(revealed));
+    // Read the board first, then change it: the front reading reports what the
+    // chips met, and the battles are what meeting costs.
+    const engagements = this.#engagementsThisTurn(revealed);
+    events.push(...this.#readReadyFronts(
+      revealed,
+      new Set(engagements.map((engagement) => engagement.sector)),
+    ));
+    events.push(...this.#resolveEngagements(engagements));
     events.push(...this.#updateMobilizationSignals());
     events.push(...this.#resolveIncome());
 
@@ -1240,9 +1314,245 @@ export class Runtime {
     return events;
   }
 
-  #readReadyFronts(revealed: RevealedTurn): GameEvent[] {
-    return readFronts(revealed, frontsOf(this.#state)).map((reading) =>
+  #readReadyFronts(revealed: RevealedTurn, engagedSectors: ReadonlySet<SectorId>): GameEvent[] {
+    return readFronts(revealed, frontsOf(this.#state), engagedSectors).map((reading) =>
       this.#turnEvent('front-resolved', 'payoff', { ...reading }));
+  }
+
+  /** Which sector a hex belongs to, over the one canonical graph. */
+  #sectorAt(position: HexPosition): SectorId {
+    const key = hexKey(position.q, position.r);
+    const node = this.#state.movementGraph.nodes[key];
+    if (node === undefined) {
+      throw new Error(`Hex ${key} carries a force but is outside the authored movement graph.`);
+    }
+    return node.sectorId;
+  }
+
+  /**
+   * The contested borders, carrying the authored class the ground is keyed to.
+   *
+   * A front's key **is** its edge's canonical name (gate 06 D4), which is what
+   * lets the class be looked up rather than threaded through `Front`.
+   */
+  #borderFronts(): readonly BorderFront[] {
+    const state = this.#state;
+    const chokeByEdge = new Map(state.loadedWorld.artifact.edges.map(
+      (edge) => [edgeKey(edge.a, edge.b), edge.choke.class] as const,
+    ));
+    return frontsOf(state).map((front) => {
+      const chokeClass = chokeByEdge.get(front.key);
+      if (chokeClass === undefined) {
+        throw new Error(`Front "${front.key}" names no authored border, so it has no ground.`);
+      }
+      return { key: front.key, sectors: front.sectors, owners: front.owners, chokeClass };
+    });
+  }
+
+  /**
+   * Every combat-ready formation standing on one sector, read **once**.
+   *
+   * The single reader for "who is here", for the same reason `domain/state.ts`
+   * keeps single readers: the power product and the blood price must be taken over
+   * the *same* set. Two copies of this walk is how a force could fight in a battle
+   * it then pays nothing for, or pay for one it never entered.
+   *
+   * Combat-ready substance only. Cohorts still forming were left behind by
+   * `#activateCohortsReadyFor`, so they are not in the product — and therefore not
+   * in the price either. Empty formations are omitted: nobody there is not a side.
+   */
+  #formationsOn(sector: SectorId): readonly SectorFormation[] {
+    const state = this.#state;
+    const formations: SectorFormation[] = [];
+
+    for (const actor of state.actors) {
+      for (const detachment of state.forces[actor]!.detachments) {
+        if (this.#sectorAt(detachment.position) !== sector) continue;
+        const men = menOf(detachment.ready.origins);
+        if (men > 0) formations.push({ actor, detachmentId: detachment.id, men, wear: detachment.ready.fatigue });
+      }
+    }
+
+    // The shield joins its holder's side. It carries **no wear ledger at all**
+    // (`domain/force.ts`) — nothing in this slice marches a garrison — so it enters
+    // at wear 0 and fights at exactly ×1.0, which is M2's "an unattended garrison
+    // fights at its own strength" arriving by construction rather than by a
+    // special case.
+    const holder = ownerOfSector(state, sector);
+    const garrison = state.garrisons[sector];
+    if (holder !== null && garrison !== undefined) {
+      const men = menOf(garrison.ready);
+      if (men > 0) formations.push({ actor: holder, detachmentId: null, men, wear: 0 });
+    }
+
+    return formations;
+  }
+
+  /** The same reading, summed per side — the adapter's input. */
+  #standingAt(sector: SectorId): SectorStanding {
+    const sides: Record<ActorId, { men: number; wearMass: number }> = {};
+    for (const actor of this.#state.actors) sides[actor] = { men: 0, wearMass: 0 };
+    for (const formation of this.#formationsOn(sector)) {
+      const side = sides[formation.actor]!;
+      side.men += formation.men;
+      side.wearMass += formation.men * formation.wear;
+    }
+    return { sides, fortTier: this.#state.loadedWorld.artifact.sectors[sector]!.fortTier };
+  }
+
+  /** Every engagement this turn produced — a reading, with nothing written yet. */
+  #engagementsThisTurn(revealed: RevealedTurn): readonly Engagement[] {
+    return engagementsOf(
+      this.#borderFronts(),
+      revealed.commitments,
+      (sector) => this.#standingAt(sector),
+    );
+  }
+
+  /**
+   * The decisive battle, resolved per sector and landed on the board.
+   *
+   * **Atomic per sector, and order-independent by construction.** Every
+   * engagement's inputs were read before any of them was applied, a detachment
+   * has one position and therefore appears in at most one engagement, and the two
+   * sides of a battle are different realms holding different stocks. So the
+   * canonical sector order fixes the report rather than the arithmetic, and
+   * nothing consults an actor's identity — the whole turn stays equivalent under
+   * relabelling the two realms (ticket 03, ruling TL-①).
+   *
+   * **What it deliberately does not do: take the ground.** `sectorFalls` is
+   * reported and acted on by nobody. Ownership transfer, the homeland record and
+   * the register's re-cut to per-province are 06d's (R18 iii), and a capital
+   * falling is 07's. A battle here changes who is *alive*, never who *holds*.
+   */
+  #resolveEngagements(engagements: readonly Engagement[]): GameEvent[] {
+    const events: GameEvent[] = [];
+
+    for (const engagement of engagements) {
+      const outcome = resolveBattle(battleInputOf(engagement));
+      const casualties = {
+        attacker: this.#resolveCasualties(engagement.sector, engagement.attacker, outcome.attacker),
+        defender: this.#resolveCasualties(engagement.sector, engagement.defender, outcome.defender),
+      };
+
+      events.push(this.#turnEvent('battle-resolved', 'payoff', {
+        sector: engagement.sector,
+        fronts: [...engagement.fronts],
+        borderClass: engagement.chokeClass,
+        terrain: engagement.terrain,
+        crossing: engagement.crossing,
+        fortification: engagement.fortification,
+        defenseMethod: outcome.defenseMethod,
+        attacker: engagement.attacker.actor,
+        defender: engagement.defender.actor,
+        commitments: {
+          attacker: engagement.attacker.commit,
+          defender: engagement.defender.commit,
+        },
+        winner: outcome.winner,
+        sectorFalls: outcome.sectorFalls,
+        fortificationDamage: outcome.fortificationDamage,
+        routeDisrupted: outcome.routeDisrupted,
+        routed: { attacker: outcome.attacker.routed, defender: outcome.defender.routed },
+        casualties,
+        // Private. Exact pre-battle strength and the composed product are the two
+        // readings fog (ticket 08, M10) and the EVAL BAR (ticket 09) own; they are
+        // dropped before this event crosses `submit()`.
+        substance: { attacker: engagement.attacker.men, defender: engagement.defender.men },
+        power: { attacker: outcome.attacker.power, defender: outcome.defender.power },
+      }));
+    }
+
+    return events;
+  }
+
+  /**
+   * One side's blood, taken out of the board and out of the register for good.
+   *
+   * Casualties permanently shrink the **conscription register** as well as the
+   * formation. SPEC's core design principles put it as "blood is permanent
+   * currency", and match-arc **MT-②** has the register as a stock only death
+   * shrinks. Subtracting from the cohort alone would do the opposite:
+   * `availableCivilians` is `register − serving`, so a death that left the
+   * register standing would hand the same body back to the next draft.
+   *
+   * The men are apportioned twice and exactly — first across the formations that
+   * shared the engagement, then across each one's province origins — so the sum
+   * of the parts is the reported figure and no body is lost or invented in the
+   * rounding.
+   *
+   * Battle wear lands on the **ready** cohort only. `battleAccrual` prices the
+   * intensity of the fight a force was in, and a cohort still forming was not in
+   * it; recovery still walks every cohort, because everyone rests.
+   */
+  #resolveCasualties(sector: SectorId, party: EngagementParty, outcome: SideBattleOutcome): number {
+    const forces = this.#state.forces[party.actor]!;
+    const deaths = bodiesLost(party.men, outcome.casualties);
+    const wearAdded = battleAccrual(party.men === 0 ? 0 : outcome.casualties / party.men);
+
+    // The same reading the power product was composed from — see `#formationsOn`.
+    const engaged = this.#formationsOn(sector).filter((formation) => formation.actor === party.actor);
+    const byFormation = apportionExact(
+      deaths,
+      Object.fromEntries(engaged.map((formation) => [formationKey(formation), formation.men])),
+    );
+    const shareOf = (detachmentId: string | null): number | undefined => {
+      const formation = engaged.find((candidate) => candidate.detachmentId === detachmentId);
+      return formation === undefined ? undefined : byFormation[formationKey(formation)];
+    };
+
+    const survivors: Detachment[] = [];
+    for (const detachment of forces.detachments) {
+      const share = shareOf(detachment.id);
+      if (share === undefined) {
+        survivors.push(detachment);
+        continue;
+      }
+      const next: Detachment = {
+        ...detachment,
+        ready: {
+          origins: this.#removeDead(party.actor, detachment.ready.origins, share),
+          fatigue: detachment.ready.fatigue + wearAdded,
+        },
+      };
+      // A formation with nobody left and nothing still forming is gone, rather
+      // than a zero-strength entry the projection would keep drawing.
+      if (menOf(next.ready.origins) === 0 && next.pending.length === 0) continue;
+      survivors.push(next);
+    }
+    forces.detachments = survivors;
+
+    const shieldShare = shareOf(null);
+    const garrison = this.#state.garrisons[sector];
+    if (shieldShare !== undefined && garrison !== undefined) {
+      garrison.ready = this.#removeDead(party.actor, garrison.ready, shieldShare);
+    }
+
+    return deaths;
+  }
+
+  /**
+   * Take `deaths` whole bodies out of one cohort's origins **and** out of the
+   * living registers they were drawn from.
+   *
+   * A body with no register behind it is the conservation break
+   * `availableCiviliansByOrigin` exists to catch, so it is refused here rather
+   * than allowed to surface later as a negative civilian count.
+   */
+  #removeDead(actor: ActorId, origins: OriginComposition, deaths: number): OriginComposition {
+    const registers = this.#state.forces[actor]!.registers;
+    const byRegion = apportionExact(deaths, origins);
+    const survivors: Record<RegionId, number> = {};
+    for (const region of Object.keys(origins).sort()) {
+      const fallen = byRegion[region] ?? 0;
+      survivors[region] = origins[region]! - fallen;
+      if (fallen === 0) continue;
+      if (registers[region] === undefined) {
+        throw new Error(`${actor} lost ${fallen} men of ${region}, which holds no living register.`);
+      }
+      registers[region] -= fallen;
+    }
+    return survivors;
   }
 
   /**

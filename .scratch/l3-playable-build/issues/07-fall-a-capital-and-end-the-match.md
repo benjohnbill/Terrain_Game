@@ -43,3 +43,33 @@ deferred is the fall path built on it, not the vulnerability.
 - [ ] The match ends explicitly and finally with a victory screen that states who won and why play stopped.
 - [ ] A new match can start afterwards, resetting authoritative and interaction state.
 - [ ] A complete match — setup, several turns, a capital fall, the victory screen — is reproducible from `(worldId, revision, seed, ordered intent log)` in Node and browser.
+
+## Comments
+
+### Blocker surfaced by ticket 06c — 2026-07-28
+
+**A capital cannot be attacked in a majority of matches**, so this ticket cannot
+close the loop as written. Measured on `terrain-cradle@r1`:
+
+- A front is an **authored region border** (`contestedFronts` walks the artifact's
+  17 edges), and 06c can only site an engagement on a front sector — because TC-⑬
+  keys the defensive ground to the *door*, and no seal maps a sector's hex
+  `terrainLayer` onto M5's five rungs, so interior ground has no multiplier to be
+  fought over.
+- Those 17 edges have **27 distinct endpoint sectors** out of 56, so **29 sectors
+  can never be a battle site**; over 40 drawn partitions, **44 of 80 capitals were
+  not endpoint sectors**. A player would not site a capital on a border by choice.
+- Capturing a border sector does not open the interior: the edge list is frozen
+  content, so the front set shifts among 17 edges and never grows inward.
+- ADR 0043 item 7's graph is hex adjacency ∪ the authored edges, so an army *can*
+  walk into that interior — it simply meets nothing there.
+
+R1 makes a capital fall an ordinary sector capture, so this is upstream of every
+acceptance item here. Closing it means either **adjacency-derived fronts** or a
+**defensive-ground source for interior sectors**, and the latter is exactly the
+unsealed `terrainLayer` → M5 mapping — both kind 1/3 under the README's four-kind
+workflow. **A user ruling is owed before this ticket is claimed.** Registered in
+`docs/SYNC-DEBT.md`; evidence in ticket 06c § Comments.
+
+Note this is *additional* to the `needs-info` already on this ticket (the capital
+guard magnitude, Part 2 #10, and CP-① item 3's staleness).

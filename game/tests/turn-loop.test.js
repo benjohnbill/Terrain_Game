@@ -348,7 +348,10 @@ test('an uncontested front produces no engagement at all', () => {
   assert.equal(resolved.length, 1, 'fronts nobody committed to were resolved anyway');
   assert.equal(resolved[0].detail.front, front);
   assert.deepEqual(resolved[0].detail.commitments, { 'realm-a': 6, 'realm-b': 0 });
-  assert.equal(resolved[0].detail.outcome, 'pending-operations', 'a stub outcome is claiming to be a result');
+  // Chips buy the lever; an army arriving buys the battle. Nobody marched, so the
+  // pressure met nothing — and no battle is reported, rather than an empty one.
+  assert.equal(resolved[0].detail.outcome, 'no-contact');
+  assert.equal(closing.filter((e) => e.type === 'battle-resolved').length, 0);
 });
 
 test('resolution does not depend on which realm locked first (D6.1a)', () => {
@@ -516,12 +519,11 @@ test('(worldId, revision, seed, ordered intent log) replays the same match', () 
   assert.deepEqual(turnSummary(first), turnSummary(second));
   assert.equal(first.events.some((event) => event.type === 'detachment-split'), true);
   assert.equal(first.events.some((event) => event.type === 'detachments-merged'), true);
-  assert.equal(first.view.turn, 5);
+  assert.equal(first.view.turn, 7);
   assert.equal(first.view.detachments.length, 2);
-  assert.deepEqual(
-    first.view.detachments.find((detachment) => detachment.id === 'detachment:realm-a:1').position,
-    { q: 19, r: 13 },
-  );
+  // The fixture's contact phase (06c) runs the whole loop through a real battle,
+  // so a replay that stopped short of one would no longer be replaying this match.
+  assert.equal(first.events.filter((event) => event.type === 'battle-resolved').length, 1);
   assert.equal(
     first.view.detachments.reduce((men, detachment) => men + detachment.men, 0),
     first.view.economy.field,

@@ -198,3 +198,4 @@ export type {
   WorldIdentity,
 } from './types.js';
 export * from '../domain/battle.js';
+export * from '../domain/engagement.js';

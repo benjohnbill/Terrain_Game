@@ -355,6 +355,66 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   is, complexity argues for it rather than against. **Owed:** its own grill, not a
   value. Do not implement a morale term in the 06 family.
 
+- [ ] **The per-sector merge rule has no birthplace outside code** (registered
+  2026-07-28 by ticket 06c). Ticket 03 deferred its enumerated **case 4** — one
+  realm pressing two borders that share a sector — to combat, and 06c answered it:
+  **the two fronts stay fronts and merge into one engagement**, because resolution
+  is atomic per sector. The reasoning currently lives in `domain/turn.ts`'s header
+  and `domain/engagement.ts`'s, plus that ticket's § Comments — which is the same
+  shape ticket 03 left the resolve-order enumeration in, and the README already
+  owes "a formal feature-doc birthplace for the **turn structure**". **Owed:** fold
+  this ruling into that birthplace when it is created, as a RULINGS row rather than
+  a code comment. Not urgent, and not a conflict — it is an unrecorded decision.
+
+- [ ] **TC-⑬'s frontage half is unimplemented, so a `pass` is priced below what the
+  ruling intends** (registered 2026-07-28 by ticket 06c). TC-⑬ pairs the pass
+  ×2.0 ground with a door that "throttles the assaulting body", and cites the M5
+  validation: "×2.0 is validated only as the residual AFTER a frontage cap; without
+  it, ×2.0 is far too low." M5 assigns that cap's **value** to the frontage/matchup
+  stage, which has not run — so 06c implemented the multiplier and not the throttle,
+  because writing the cap would originate a number. `Edge.frontageHexes` is authored
+  on all 17 edges and read by nothing in `game/src`. **Owed:** the frontage cap's
+  value, then the throttle, whenever the frontage/matchup stage runs. Until then a
+  defile is cheaper to storm than the seal intends — a **known direction of error**,
+  not an unknown one.
+
+- [ ] **A routed force is reported but never displaced** (registered 2026-07-28 by
+  ticket 06c). `battle.ts` computes `routed` and `escaped` — "routed survivors who
+  disperse through an open escape route" — and M4 says the survivors of an open-escape
+  rout "disperse per normal dissolution". Nothing in `game/src` consumes `escaped`:
+  06c takes the pursuit blood (which is inside `casualties`) and reports `routed`,
+  but the survivors stay on the same hex and can fight there again next turn.
+  **Why it was not built:** *where* a routed force goes is undesigned for L3 — stay,
+  fall back a sector, dissolve into a friendly garrison, or leave the board are four
+  different rules and no seal picks one; dissolution is named for Delaying's
+  withdrawal and never specified as a displacement. Kind 3 under the README's
+  four-kind workflow, so out of this slice rather than filled in. **Owed:** a
+  displacement rule, naturally alongside 06d's ownership transfer (which is what
+  makes "fall back" expressible) and ticket 11's Encirclement.
+
+- [ ] **Only 27 of 56 sectors can ever be a battle site, so most capitals cannot
+  be attacked at all** (registered 2026-07-28 by ticket 06c, which is the first
+  ticket that could measure it). A front is an **authored region border**
+  (`contestedFronts` walks `world.edges`, 17 of them), and 06c can only site an
+  engagement on a front sector — because TC-⑬ keys the defensive ground to the
+  *door*, and no seal maps a sector's hex `terrainLayer` onto M5's five rungs, so
+  interior ground has no defensive multiplier to fight over. Measured on
+  `terrain-cradle@r1`: the 17 edges have **27 distinct endpoint sectors**, leaving
+  **29 sectors unreachable by any battle**; over 40 drawn partitions, **44 of 80
+  capitals were not endpoint sectors**. Capturing a border sector does not help —
+  the edge list is frozen content, so the front set can shift among those 17 edges
+  but never grow inward.
+  **Why it matters now:** ticket 07 is "a capital falls and the match ends", and
+  R1 makes that an ordinary sector capture. On today's model a majority of matches
+  have no legal way to attack the capital, and ADR 0043 item 7's graph lets an army
+  walk into that interior unopposed — so the loop cannot close.
+  **Not 06c's to answer** — it is kind 1/3 under the README's four-kind workflow:
+  filling it means either a broader battle-site rule (adjacency-derived fronts) or
+  a terrain source for interior sectors, and the latter is exactly the unsealed
+  `terrainLayer` → M5 mapping. **Owed: a user ruling before ticket 07 is claimed**,
+  with 06d's ownership transfer as the other input. Evidence in
+  `.scratch/l3-playable-build/issues/06c-…md` § Comments.
+
 - [ ] **Interception of a force in transit has no design anywhere**
   (registered 2026-07-26, gate C). Raised by the user while ruling R14 ("그 길목을
   친다는 전략적인 결정도 수비측에"), and it is a real defensive option that
@@ -383,6 +443,29 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   treasury-sink row below; the user parked both as play questions 2026-07-26.
   Rider at `MAGNITUDE.md` M13a; measurement table at
   `.scratch/l3-playable-build/issues/05-…md` § Comments.
+
+  **Re-measured 2026-07-28 by ticket 06c, which landed the deaths. The curve is
+  live, and no user decision is owed — but not for the reason this row predicted.**
+  Three seeds, both realms invading, 20 turns; full table in
+  `.scratch/l3-playable-build/issues/06c-…md` § Comments.
+  - Register erosion is real and far past the 429 the row names: **928–1,021 per
+    realm within four turns**, and the *first* battle alone clears it (a wiped
+    900-man shield plus the attacker's own dead).
+  - **Erosion alone does not reach the knee.** This row's arithmetic held serving
+    at its ceiling while the register fell; measured, the same deaths take serving
+    down too, and a realm refilling only its **field** plateaus at **0.389–0.419**
+    — under 0.42 in every seed, by a hair in one.
+  - **Refilling the shield is what makes the curve live.** Garrison recruitment is
+    an ordinary order in this slice (R18's transfer path), and it restores serving
+    while the register keeps falling: intensity crosses the knee at **turn 7–8**
+    and settles at **0.45–0.49, priced ×1.20–×1.41 of base** — the war ramp,
+    engaged. So the second band is **behaviour-gated, not dial-gated**, and what
+    switches it on is a player choosing to keep re-manning a contested shield —
+    exactly the attrition the curve exists to price. Nothing needs tripling.
+  - Honest caveat: 06d does not exist, so the invader never *takes* the sector and
+    the shield is re-wiped every turn. The **turn 7–8 first crossing** is the
+    robust figure; the 20-turn erosion totals (8,400–9,600) are an artifact of the
+    missing capture and must not be read as an attrition rate. Re-read after 06d.
 
 - [ ] **The realm economy has no sink after the field fills** (registered
   2026-07-26, measured by ticket 05). With recruitment the only spend in the

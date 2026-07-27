@@ -28,6 +28,7 @@ const {
   hexKey,
   MARCH_FATIGUE_PER_HEX,
   MARCH_SPEED,
+  minimumCostRoute,
   musterHexOf,
   RECOVERY_BASE_RATE,
   Runtime,
@@ -52,12 +53,18 @@ function openAtDecision(overrides = {}) {
 }
 
 /**
- * A hex exactly `depth` arcs away, found by breadth-first walk over the same
- * canonical arc order the router uses — so the route the Runtime picks has
- * exactly `depth` arcs while every arc still costs one (the uniform terrain
- * seam 06a left in place).
+ * A hex exactly `depth` arcs away **on this realm's own ground**, found by
+ * breadth-first walk over the same canonical arc order the router uses — so the
+ * route the Runtime picks has exactly `depth` arcs while every arc still costs one
+ * (the uniform terrain seam 06a left in place).
+ *
+ * The whole route is checked for friendly ground, not just its end. These tests
+ * isolate the **march** ledger, and ticket 06c made ending a turn on enemy ground
+ * a battle — which accrues wear of its own (`battle-wiring.test.js` owns that
+ * arithmetic). A march that crossed a border would be measuring both accounts and
+ * calling the sum "per hex".
  */
-function hexAtDepth(from, depth) {
+function hexAtDepth(from, depth, ownGround) {
   let frontier = [hexKey(from.q, from.r)];
   const seen = new Set(frontier);
   for (let step = 0; step < depth; step += 1) {
@@ -71,9 +78,20 @@ function hexAtDepth(from, depth) {
     }
     frontier = next;
   }
-  if (frontier.length === 0) throw new Error(`no hex lies ${depth} arcs from ${hexKey(from.q, from.r)}`);
-  return { ...GRAPH.nodes[frontier[0]].position };
+  for (const key of frontier) {
+    const position = GRAPH.nodes[key].position;
+    const route = minimumCostRoute(GRAPH, from, position);
+    if (route === null || route.length - 1 !== depth) continue;
+    if (route.every((hex) => ownGround.has(GRAPH.nodes[hexKey(hex.q, hex.r)].sectorId))) {
+      return { ...position };
+    }
+  }
+  throw new Error(`no hex lies ${depth} friendly arcs from ${hexKey(from.q, from.r)}`);
 }
+
+/** The sectors a realm holds, so a march fixture can stay inside its own borders. */
+const ownGroundOf = (runtime, actor) =>
+  new Set(runtime.view(actor).realms.find((realm) => realm.actor === actor).sectors);
 
 const submit = (runtime, intent) => {
   const events = runtime.submit(intent);
@@ -132,7 +150,8 @@ test('upkeep runs once per realm at the background tier, and reveals only that i
 test('a marching force accrues per hex every turn and recovers at the turn tail', () => {
   const runtime = openAtDecision();
   const detachment = soleDetachment(runtime, 'realm-a');
-  march(runtime, 'realm-a', detachment.id, hexAtDepth(detachment.position, MARCH_SPEED * 3));
+  march(runtime, 'realm-a', detachment.id,
+    hexAtDepth(detachment.position, MARCH_SPEED * 3, ownGroundOf(runtime, 'realm-a')));
 
   const trail = [];
   for (let turn = 0; turn < 3; turn += 1) {
@@ -149,7 +168,8 @@ test('a marching force accrues per hex every turn and recovers at the turn tail'
 test('the forced-march premium is paid on the hexes past ordinary speed', () => {
   const runtime = openAtDecision();
   const detachment = soleDetachment(runtime, 'realm-a');
-  const far = hexAtDepth(detachment.position, (MARCH_SPEED + FORCED_MARCH_EXTRA_CAP) * 2);
+  const far = hexAtDepth(
+    detachment.position, (MARCH_SPEED + FORCED_MARCH_EXTRA_CAP) * 2, ownGroundOf(runtime, 'realm-a'));
   march(runtime, 'realm-a', detachment.id, far, true);
   endTurn(runtime);
 
@@ -168,8 +188,10 @@ test('a long march costs more than a short one in the same turn (R13)', () => {
   const long = soleDetachment(runtime, 'realm-a');
   const short = soleDetachment(runtime, 'realm-b');
   const preload = MARCH_SPEED + FORCED_MARCH_EXTRA_CAP;
-  march(runtime, 'realm-a', long.id, hexAtDepth(long.position, preload), true);
-  march(runtime, 'realm-b', short.id, hexAtDepth(short.position, preload), true);
+  march(runtime, 'realm-a', long.id,
+    hexAtDepth(long.position, preload, ownGroundOf(runtime, 'realm-a')), true);
+  march(runtime, 'realm-b', short.id,
+    hexAtDepth(short.position, preload, ownGroundOf(runtime, 'realm-b')), true);
   endTurn(runtime);
 
   const before = wearOf(runtime, 'realm-a', long.id);
@@ -178,8 +200,10 @@ test('a long march costs more than a short one in the same turn (R13)', () => {
 
   const longer = detachmentsOf(runtime, 'realm-a')[0];
   const shorter = detachmentsOf(runtime, 'realm-b')[0];
-  march(runtime, 'realm-a', longer.id, hexAtDepth(longer.position, MARCH_SPEED));
-  march(runtime, 'realm-b', shorter.id, hexAtDepth(shorter.position, 1));
+  march(runtime, 'realm-a', longer.id,
+    hexAtDepth(longer.position, MARCH_SPEED, ownGroundOf(runtime, 'realm-a')));
+  march(runtime, 'realm-b', shorter.id,
+    hexAtDepth(shorter.position, 1, ownGroundOf(runtime, 'realm-b')));
   endTurn(runtime);
 
   const longWear = wearOf(runtime, 'realm-a', long.id);
@@ -197,7 +221,8 @@ test('a long march costs more than a short one in the same turn (R13)', () => {
 test('a resting force recovers the base rate each turn and stops at zero', () => {
   const runtime = openAtDecision();
   const detachment = soleDetachment(runtime, 'realm-a');
-  const far = hexAtDepth(detachment.position, MARCH_SPEED + FORCED_MARCH_EXTRA_CAP);
+  const far = hexAtDepth(
+    detachment.position, MARCH_SPEED + FORCED_MARCH_EXTRA_CAP, ownGroundOf(runtime, 'realm-a'));
   march(runtime, 'realm-a', detachment.id, far, true);
   endTurn(runtime);
 
@@ -232,7 +257,7 @@ test('a marching cohort still waiting to be ready recovers on the same terms', (
     sectorId: capital,
     commit: 4,
     posture: 'field',
-    destinationHex: hexAtDepth(muster, MARCH_SPEED),
+    destinationHex: hexAtDepth(muster, MARCH_SPEED, ownGroundOf(runtime, 'realm-a')),
   });
   endTurn(runtime);
 
@@ -263,7 +288,8 @@ test('a force on its own capital sector recovers exactly as one on ordinary grou
   // Wear it deeply, then bring it home, so one force can be on the capital *and*
   // have something to recover.
   const outbound = MARCH_SPEED + FORCED_MARCH_EXTRA_CAP;
-  march(runtime, 'realm-a', opening.id, hexAtDepth(muster, outbound * 2), true);
+  march(runtime, 'realm-a', opening.id,
+    hexAtDepth(muster, outbound * 2, ownGroundOf(runtime, 'realm-a')), true);
   endTurn(runtime);
   march(runtime, 'realm-a', opening.id, muster, true);
   endTurn(runtime);
@@ -279,7 +305,7 @@ test('a force on its own capital sector recovers exactly as one on ordinary grou
     men: Math.floor(soleDetachment(runtime, 'realm-a').men / 2),
   });
   const away = detachmentsOf(runtime, 'realm-a').find((detachment) => detachment.id !== opening.id);
-  march(runtime, 'realm-a', away.id, hexAtDepth(muster, 1));
+  march(runtime, 'realm-a', away.id, hexAtDepth(muster, 1, ownGroundOf(runtime, 'realm-a')));
   endTurn(runtime);
 
   const homeBefore = wearOf(runtime, 'realm-a', opening.id);
@@ -314,7 +340,8 @@ test('upkeep takes no man, turn after turn', () => {
   // this closes the firewall from the wired side.
   const runtime = openAtDecision();
   const detachment = soleDetachment(runtime, 'realm-a');
-  march(runtime, 'realm-a', detachment.id, hexAtDepth(detachment.position, MARCH_SPEED * 4), true);
+  march(runtime, 'realm-a', detachment.id,
+    hexAtDepth(detachment.position, MARCH_SPEED * 4, ownGroundOf(runtime, 'realm-a')), true);
 
   const men = soleDetachment(runtime, 'realm-a').men;
   const field = runtime.view('realm-a').economy.field;
@@ -332,7 +359,8 @@ test('equal inputs produce equal wear, run after run', () => {
   const run = () => {
     const runtime = openAtDecision();
     const detachment = soleDetachment(runtime, 'realm-a');
-    march(runtime, 'realm-a', detachment.id, hexAtDepth(detachment.position, MARCH_SPEED * 2), true);
+    march(runtime, 'realm-a', detachment.id,
+      hexAtDepth(detachment.position, MARCH_SPEED * 2, ownGroundOf(runtime, 'realm-a')), true);
     const trail = [];
     for (let turn = 0; turn < 5; turn += 1) {
       endTurn(runtime);

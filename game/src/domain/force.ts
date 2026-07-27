@@ -118,8 +118,17 @@ export function availableCiviliansByOrigin(
 /**
  * Allocate one exact integer total over integer weights. Floors are filled first;
  * largest fractional remainders win, with canonical key order breaking ties.
+ *
+ * Exported because men are apportioned over more than one kind of key: over
+ * province origins (below), and over the several formations that shared one
+ * engagement when its blood is taken. Both need the *same* exactness — the parts
+ * sum to the total, always — and a second copy of this loop is how the two would
+ * come to lose or invent a man between them.
  */
-function prorate(total: number, weights: Readonly<Record<string, number>>): Record<string, number> {
+export function apportionExact(
+  total: number,
+  weights: Readonly<Record<string, number>>,
+): Record<string, number> {
   const keys = Object.keys(weights).sort();
   const weightTotal = keys.reduce((sum, key) => sum + weights[key]!, 0);
   if (!Number.isInteger(total) || total < 0 || total > weightTotal) {
@@ -151,14 +160,14 @@ export function apportionOrigins(
   total: number,
   weights: Readonly<Record<RegionId, number>>,
 ): Record<RegionId, number> {
-  return prorate(total, weights);
+  return apportionExact(total, weights);
 }
 
 function splitOrigins(
   origins: OriginComposition,
   childMen: number,
 ): readonly [OriginComposition, OriginComposition] {
-  const child = prorate(childMen, origins);
+  const child = apportionExact(childMen, origins);
   const retained: Record<RegionId, number> = {};
   for (const region of Object.keys(origins).sort()) {
     retained[region] = origins[region]! - (child[region] ?? 0);
@@ -179,7 +188,7 @@ export function splitDetachment(
     throw new Error(`A split must move a positive whole number below ${total}; got ${men}.`);
   }
 
-  const childByCohort = prorate(men, cohortWeights);
+  const childByCohort = apportionExact(men, cohortWeights);
   const [retainedReady, childReady] = splitOrigins(source.ready.origins, childByCohort.ready ?? 0);
   const retainedPending: PendingCohort[] = [];
   const childPending: PendingCohort[] = [];
