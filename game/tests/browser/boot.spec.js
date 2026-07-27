@@ -182,9 +182,10 @@ test('an ordered intent log replays to the same turn state in both hosts', async
   expect(nodeResult.view.turn).toBe(5);
   expect(nodeSummary.detachments).toHaveLength(2);
   // The fixture's march finishes early and the force then stands still for the
-  // remaining turns, so ticket 06b's recovery has taken the ledger back to the
-  // floor by turn 5. The cross-host claim is `browserSummary === nodeSummary`
-  // above; this pins the value both hosts must land on.
+  // remaining turns, so ticket 06b's recovery has emptied the wear ledger by turn
+  // 5. (Empty, not the *effectiveness floor* — that registered term is the ×0.5
+  // bound at the other end of the curve.) The cross-host claim is
+  // `browserSummary === nodeSummary` above; this pins the value both must land on.
   expect(nodeSummary.detachments).toContainEqual(expect.objectContaining({
     id: 'detachment:realm-a:1', position: { q: 19, r: 13 }, fatigue: 0,
   }));

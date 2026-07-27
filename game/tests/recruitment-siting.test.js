@@ -13,6 +13,9 @@ const {
   contentHashOf,
   CRADLE_R1,
   draftOrder,
+  MARCH_FATIGUE_PER_HEX,
+  MARCH_SPEED,
+  RECOVERY_BASE_RATE,
   preview,
   recruitmentOrderKeyOf,
   Runtime,
@@ -266,7 +269,11 @@ test('standalone field recruits keep a stable id and their own normal-march fati
   assert.deepEqual(pending.position, { q: 8, r: 8 });
   assert.equal(pending.readyMen, 0);
   assert.ok(pending.pendingMen > 0);
-  assert.equal(pending.pendingFatigue, 3 - 2, 'the recruit did not carry its own march ledger');
+  assert.equal(
+    pending.pendingFatigue,
+    MARCH_SPEED * MARCH_FATIGUE_PER_HEX - RECOVERY_BASE_RATE,
+    'the recruit did not carry its own march ledger',
+  );
   assert.equal(
     runtime.view('realm-a').detachments.find((d) => d.id === openingId).fatigue,
     0,

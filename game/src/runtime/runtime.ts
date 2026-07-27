@@ -41,6 +41,7 @@ import {
   apportionOrigins,
   availableCiviliansByOrigin,
   fieldOf,
+  mapCohortFatigue,
   mergeDetachments,
   mergeDetachmentsRefusal,
   menOf,
@@ -1343,9 +1344,14 @@ export class Runtime {
    *
    * Marching and fighting accrue at the payoff tier; this is where the gauge is
    * read back down again, and it is the only thing standing between a marching
-   * army and the ×0.5 floor. Every cohort of every detachment is upkept — pending
-   * as well as ready — because movement accrues to both (06a), and a one-way
-   * account would let a recruit's march wear stand forever.
+   * army and the ×0.5 effectiveness floor. Accrual and recovery walk the same
+   * cohorts through `mapCohortFatigue`, so the two cannot come to disagree about
+   * where the ledger lives — pending cohorts included, since they march too.
+   *
+   * **Garrisons are absent, and not by exemption:** a `GarrisonForce` carries no
+   * wear account at all (`domain/force.ts`), because nothing in this slice
+   * marches one. When ticket 07 places the capital guard, what must not exempt it
+   * is the **supply** predicate — R16's, and not this pass.
    *
    * **The supply account is absent rather than stored at zero** (user ruling,
    * 2026-07-28). Every force is supplied, and a supplied turn resets the pump, so
@@ -1380,14 +1386,7 @@ export class Runtime {
           wear,
           recovered: detachment.ready.fatigue - wear,
         });
-        detachments[index] = {
-          ...detachment,
-          ready: { ...detachment.ready, fatigue: wear },
-          pending: detachment.pending.map((cohort) => ({
-            ...cohort,
-            fatigue: upkeepOf(cohort.fatigue),
-          })),
-        };
+        detachments[index] = mapCohortFatigue(detachment, upkeepOf);
       }
 
       events.push(this.#turnEvent('upkeep-resolved', 'background', { actor, forces: upkept }));

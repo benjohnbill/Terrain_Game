@@ -36,7 +36,7 @@ const {
 const FIXTURE = { world: CRADLE_R1, seed: 'upkeep-0001', actors: ['realm-a', 'realm-b'] };
 const GRAPH = buildMovementGraph(CRADLE_R1);
 
-/** What a turn of ordinary marching costs, net of the recovery at its tail. */
+/** What a full-speed turn of marching *accrues*, before the tail's recovery. */
 const ORDINARY_MARCH_ACCRUAL = MARCH_SPEED * MARCH_FATIGUE_PER_HEX;
 const FORCED_MARCH_ACCRUAL = ORDINARY_MARCH_ACCRUAL +
   FORCED_MARCH_EXTRA_CAP * MARCH_FATIGUE_PER_HEX * FORCED_MARCH_PREMIUM;

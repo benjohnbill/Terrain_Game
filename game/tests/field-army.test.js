@@ -3,7 +3,10 @@ import assert from 'node:assert/strict';
 
 const {
   CRADLE_R1,
+  FORCED_MARCH_PREMIUM,
   GARRISON_PER_BORDER_SECTOR,
+  MARCH_FATIGUE_PER_HEX,
+  RECOVERY_BASE_RATE,
   Runtime,
   preview,
 } = await import('../dist/runtime/index.js');
@@ -81,9 +84,9 @@ test('a destination order moves three cost units, accrues per-hex fatigue, and s
   const moved = runtime.view('realm-a').detachments[0];
   assert.equal(moved.position.q === 9 && moved.position.r === 9, false);
   // Three hexes at the per-hex rate, less the single recovery the background tail
-  // now pays at the end of the same turn (ticket 06b). Gross accrual, the curve
-  // and the recovery rate are pinned in `fatigue-upkeep.test.js`.
-  assert.equal(moved.fatigue, 3 - 2);
+  // now pays at the end of the same turn (ticket 06b). Composed from the dials
+  // rather than restated, so a re-cut at their birthplace moves this expectation.
+  assert.equal(moved.fatigue, 3 * MARCH_FATIGUE_PER_HEX - RECOVERY_BASE_RATE);
   assert.equal(moved.turnsRemaining, 1);
 });
 
@@ -98,7 +101,10 @@ test('forced march reaches two extra hexes and prices only the extra segment at 
   const moved = runtime.view('realm-a').detachments[0];
   assert.deepEqual(moved.position, { q: 9, r: 9 });
   // Four hexes: three ordinary plus one at the premium, less the turn's recovery.
-  assert.equal(moved.fatigue, 3 + 3 - 2);
+  assert.equal(
+    moved.fatigue,
+    3 * MARCH_FATIGUE_PER_HEX + MARCH_FATIGUE_PER_HEX * FORCED_MARCH_PREMIUM - RECOVERY_BASE_RATE,
+  );
 });
 
 test('the authored strait makes r10 reachable and redirect starts at the current hex', () => {
