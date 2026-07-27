@@ -212,6 +212,12 @@ reason to enter it.
   stated in the row's value column (`가안`), never in the status field.
   Ruled 2026-07-15 (doc-structure ticket 03 Q1); enforced by
   `audit-lint.js`.
+- **Summary column**: every feature `GLOSSARY.md` row carries a one-line
+  `Summary` beside its definition, written by the definition's own author when
+  the row is written or re-sealed — **going-forward only** (user ruling
+  2026-07-27; rows predating the column are not backfilled, because a summary
+  written in bulk by a non-author is the unowned text this law exists to
+  prevent). It is the join column a generated QUICKREF reads.
 - **Promotion**: a Tier-1 term is a promotion candidate once a second
   feature or a root doc needs it; promotion happens in doc-sync
   batches, never silently. Promotion *adds* a Tier-0 summary entry (per

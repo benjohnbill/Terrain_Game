@@ -832,24 +832,22 @@ Cross-cutting skill multiplier (not a seventh archetype): deception/information
 
 ## Resolved Phase 1 Decisions
 
-Previously open, now decided. Pointers show where each decision lives.
+**These are reference-prototype decisions, not current direction.** The
+prototype is an archive (ADR 0041) and the L3 build does not inherit its world:
+the authored cradle map replaced the 30-province draft. This section is a
+pointer list only — folded from seven restated bullets on 2026-07-27, because a
+glossary is not where decisions live and an archive-era decision restated in the
+present tense reads as current.
 
-- ✅ Initial playable map size: 30x30 active area, 50x50 world data
-  (ADR 0003; plan `docs/superpowers/plans/2026-06-29-phase-1-map-command-slice.md`).
-- ✅ Phase 1 terrain taxonomy: fixed to seven types — plains, grain_basin,
-  mountain_pass, river, coast_strait, steppe_highland, frontier_basin
-  (`js/domain-data.js`).
-- ✅ Initial named provinces: 30 provinces drafted in `js/province-data.js`,
-  subject to balancing.
-- ✅ Active archetype regions: all twelve accepted regions are represented by
-  the initial 30 provinces.
-- ✅ Local garrison sustainment: sustained by local front-sector economy and
-  population, not the national treasury (see `Local garrison`; ADR 0014,
-  amended by the front-sector model in ADR 0022).
-- ✅ Strait movement: penalty-based crossing with port mitigation, no Phase 1
-  naval system (see `Strait`).
-- ✅ Province primary function: assigned for all 30 provinces
-  (`js/province-data.js`).
+- **World shape** — map size, the seven-type terrain taxonomy, the 30 named
+  provinces, their archetype coverage, and province primary function: ADR 0003
+  and the archive's own data (`js/domain-data.js`, `js/province-data.js`).
+- **Local garrison sustainment** — ADR 0014, amended by the front-sector model
+  in ADR 0022. Term: `Local garrison`.
+- **Strait movement** — penalty-based crossing, port mitigation, no Phase 1
+  naval system. Term: `Strait`.
+
+What the archive is and is not: ADR 0041. Do not restate it here.
 
 ## Open Questions
 
