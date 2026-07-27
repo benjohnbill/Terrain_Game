@@ -1,8 +1,37 @@
 # 06b — Run the Fatigue and Supply Dual Ledger
 
-**What to build:** the sealed dual ledger, whole. One ledger accrues from marching
-and fighting on a convex curve with a floor; the other is supply, whose failure
-produces starvation as substance loss only. No path inverts capability.
+**What to build:** the sealed dual ledger — **the wear half wired, the supply half
+landed and dormant.** One ledger accrues from marching and fighting on a convex
+curve with a floor; the other is supply, whose failure produces starvation as
+substance loss only. No path inverts capability.
+
+> **RE-CUT 2026-07-28 (user approval, design conversation).** The ticket's
+> original mandate was "the sealed dual ledger, whole". What moved out is the
+> **cause**, not the arithmetic: the supply predicate (item 5) and the starvation
+> half of item 7 are deferred to the supply design pass, registered as **R16** in
+> `docs/DESIGN-RISKS.md`. Item 8's positive half is 06c's by its own SPLIT note.
+>
+> **Why the cause and not the numbers.** What interrupts supply is a *plan*
+> (Supply Interdiction, AGREED — a paid cut with a paid repair) plus a
+> *sustainment* question (can this ground feed this force), and both are R16's
+> agenda, which opens with the plan layer at tickets 10/11. The supply
+> arithmetic — pump, starvation curve, recovery — is derived from § 2 and WB-M①,
+> is landed with tests, and stays in the tree **dormant**: deleting or relocating
+> contract-derived work would be churn.
+>
+> **In this slice supply is a constant: every force is supplied.** That is a
+> consequence of scope rather than a chosen value — the plan that cuts supply is
+> not built, so supply cannot be cut. The same holds for ash ground, since
+> Scorched Earth is also a plan. Both of the two things that can deny recovery
+> therefore live in the plan layer, and the honest consequence is that **wear is
+> a self-managed marching tax in the first slice, not something an opponent can
+> attack.** That is consistent with gate 08's ruling that the supported fall path
+> is the decisive battle alone.
+>
+> Ticket 07's requirement survives intact and is *easier* to satisfy: it needs the
+> negative guarantee that the capital is not a special case (item 7 there), and a
+> uniform supply level with no capital branch anywhere satisfies it by
+> construction — asserted by test rather than by reading.
 
 **Blocked by:** 06a — a ledger of marching needs somewhere to march.
 
@@ -21,10 +50,10 @@ Authority: slice-2 design spec §2 (fatigue system) and the supply predicate;
 - [ ] **March accrual is per hex** (R13), so a long march costs more than a short one in the same turn. The rate composes with the terrain cost seam 06a established.
 - [x] Effectiveness has a **floor of ×0.5**. `DECISIONS-OWED.md` Part 2 #11 recorded this as a conflict — the slice-2 spec calls ×0.5 a 가안 in one place and a sealed anchor 72 lines later — but **both sides state the same number**, so it was a stamp, not a ruling. **The stamp is already paid** at `war-model-build/MAGNITUDE.md` WB-M① dial 6 and its rider (2026-07-26): ×0.5 is SEALED and M9-consonant. Cite that row; do not re-open Part 2 #11. The term is registered as *Effectiveness floor (피로 실효 하한)*, AGREED, in that feature's `GLOSSARY.md`.
 - [x] **Supply failure produces starvation as substance loss only.** It removes men; it never inverts, reverses or improves a capability. A test asserts that no fatigue or supply state makes a force stronger than its rested, supplied self.
-- [ ] The **supply predicate** governs whether a force is supplied, with **no unit and no sector exempted by class — including a capital sector**. It reads connectivity over the same movement graph 06a built (hex adjacency ∪ authored edges), so an island garrison's supply is a real question rather than an accident of the pathfinder.
+- [ ] ~~The **supply predicate** governs whether a force is supplied~~ — **MOVED 2026-07-28 to R16** (`docs/DESIGN-RISKS.md`), because what interrupts supply is a plan effect plus a sustainment ratio, and neither is decided. The clause that **stays and must be satisfied here** is the exemption ban: **no unit and no sector is exempted by class, including a capital sector.** With a uniform supply level and no capital branch in any code path, that holds by construction — assert it with a test so the guarantee is mechanical rather than read off prose. The connectivity reading (over 06a's movement graph, hex adjacency ∪ authored edges, so an island garrison is a real question) is recorded in R16's agenda item (b) as one of the candidate answers, not as settled.
 - [x] Recovery is modelled as sealed, and the open question of whether recovery additionally requires standing still stays **HELD** — it is marked HELD in both the spec and the archive, so implementing either answer would originate a rule. Wire the recovery path so that adding the condition later is a value change, not a redesign.
-- [ ] Starvation entry, loss and recovery are deterministic for equal inputs and identical across Node and browser hosts.
-- [ ] Fatigue enters combat only as the `fatigue` input to the per-side power product — 06c consumes it, and the retired flat march-worn 0.75 default is **not** reintroduced as a hidden constant anywhere.
+- [ ] **Recovery** is deterministic for equal inputs and identical across Node and browser hosts, exercised through a real turn rather than only as a unit call. **Starvation entry and loss** are deterministic already (unit-tested against the emitted artifact) but cannot be exercised through a turn while supply is uniform — that half rides with the predicate to **R16**.
+- [x] The **negative half** holds here: the retired flat march-worn 0.75 default is not reintroduced as a hidden constant anywhere (verified 2026-07-28 — the only `0.75` in `game/src` is `populationValue` in the world artifact). The **positive half** — actually passing the wear ledger's effectiveness into the per-side power product — is **06c's wiring** by that ticket's own SPLIT note, and `battle.ts` already takes `fatigue` as a caller-supplied input.
 
 ## Needs-info
 
