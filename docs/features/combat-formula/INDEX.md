@@ -57,8 +57,10 @@ pass: plan axis magnitudes only gain meaning through this formula.
 - **ADR 0022** — defense is four distinct layers: `terrainDefense`,
   `fortificationDefense`, `localGarrison`, `defenseCommitment`.
 - **ADR 0026** — outputs are one-shot stamps into persistent state; ongoing
-  consequences belong to standing world rules. This pass owns starvation
-  stage counts and rates.
+  consequences belong to standing world rules. This pass owns the starvation
+  rate. *(Its stage counts do not exist any more: ADR 0026's own header records
+  the staged severity as superseded, and starvation is a continuous
+  supply-ledger pump — war-model slice-2 §2.)*
 - **ADR 0024 / catalog** — output is per-axis (six effect axes); fit and
   forecast ordering derive from `effectAxes` vs the sector value profile.
 - **SPEC match envelope** — every rate and stage count is tuned so a match
@@ -69,8 +71,10 @@ pass: plan axis magnitudes only gain meaning through this formula.
 - Plan-vs-plan interaction matrix values.
 - Raid loot conversion (fraction of destroyed usable value returned as
   income; optional late-match decay).
-- Supply starvation stages and rates (UoC shape: holding → attack-incapable
-  → defenseless).
+- Supply starvation rate — the convex substance-loss curve of the supply-ledger
+  pump. *(Re-cut 2026-07-28: the UoC staged shape holding → attack-incapable →
+  defenseless is retired, so there are no stage counts to park. Authority:
+  war-model slice-2 §2; entry-threshold and rate dials are named there.)*
 - Isolated-rout multiplier (Encirclement and Annihilation).
 - Siege wear rate (Deliberate Pressure).
 - Delaying Defense over-selection counterweights.
