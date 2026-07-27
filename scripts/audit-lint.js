@@ -749,8 +749,20 @@ function tally(results) {
 
 if (require.main === module) {
   const results = runAll(process.cwd());
-  console.log(formatReport(results));
-  process.exitCode = tally(results).blocking === 0 ? 0 : 1;
+  const { blocking } = tally(results);
+  // `--quiet`: say nothing unless something blocks. This is for the enforcement
+  // hooks, which run on EVERY commit and push. The advisory tally is expected to
+  // sit non-zero forever (a fuzzy commit match has no way to be marked
+  // dismissed), so printing it each time would be a standing reminder nobody
+  // reads — the alarm fatigue this tool warns about elsewhere, manufactured by
+  // its own gate. Advisories still surface on a bare `npm run lint:docs`, the
+  // session-close path where triaging them is the actual duty.
+  //
+  // This is a verbosity flag, not a second entry point: the checks, the tally,
+  // and the exit status are identical either way.
+  const quiet = process.argv.includes('--quiet');
+  if (!quiet || blocking > 0) console.log(formatReport(results));
+  process.exitCode = blocking === 0 ? 0 : 1;
 }
 
 module.exports = {

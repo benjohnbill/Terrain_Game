@@ -9,5 +9,9 @@
 # The invariant this defends: a GLOSSARY/inventory mismatch cannot enter the
 # REMOTE history. Local history may briefly hold one.
 #
-# Same single entry point as pre-commit. No check logic here either.
-exec npm run --silent lint:docs
+# Same single entry point as pre-commit. No check logic here either, and the
+# same `--quiet` rule: silent unless something blocks.
+#
+# The worktree limit documented in pre-commit applies here too, and is the
+# reason CI is a required rung rather than a nicety.
+exec npm run --silent lint:docs -- --quiet

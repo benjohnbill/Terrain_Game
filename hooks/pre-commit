@@ -11,4 +11,16 @@
 # Budget: lint only, under two seconds (0.51s at writing). Heavier work belongs
 # at pre-push or in CI. A slow pre-commit trains --no-verify, and a trained
 # --no-verify is the end of the whole ladder.
-exec npm run --silent lint:docs
+#
+# `--quiet` prints nothing unless something blocks. The advisory tally is
+# expected to sit non-zero permanently, so echoing it on every commit would be
+# a standing notice nobody reads. Advisories still appear on a bare
+# `npm run lint:docs` — the session-close path where triaging them is the duty.
+#
+# WORKTREE LIMIT, measured 2026-07-27: `core.hooksPath` is relative, so git
+# looks for this file inside the worktree's OWN checkout. A worktree cut from a
+# commit that has `hooks/` is gated (verified: a fresh one blocked correctly);
+# a worktree on a branch predating this directory has no hook at all and is
+# silently ungated (verified against `war-model-slice2-ticket07`). CI is the
+# backstop for exactly that case, which is why it is not optional.
+exec npm run --silent lint:docs -- --quiet
