@@ -75,7 +75,22 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   classification 2026-07-26 and it is settled — Direction, scoped to the
   landing environment. No new doc type or status was created.)*
 
-- [ ] **Enforcement ladder: move governance checks from audit-time to commit-time**
+- [x] **Enforcement ladder: move governance checks from audit-time to commit-time**
+  — **PAID 2026-07-27** for stage 1. `hooks/pre-commit` + `hooks/pre-push` +
+  `.github/workflows/governance.yml`, all invoking `npm run lint:docs` and
+  nothing else; `core.hooksPath` set. Findings now carry their prescription,
+  both legitimate exits, and the `--no-verify` refusal, formatted in
+  `audit-lint.js` so the four consumers share one wording. Verified live: a
+  mismatched commit is rejected in the main checkout and in a fresh worktree;
+  a clean commit passes silently.
+  **One hole left open deliberately:** `core.hooksPath` is relative, so a
+  worktree on a branch predating `hooks/` is ungated (measured against
+  `war-model-slice2-ticket07`). Future Codex worktrees branch from main and are
+  covered; CI is the backstop for the rest, which is why it is a required rung.
+  **Stages 2–4 remain open** and are blocked on the ruling named in the spec's
+  § Prior art (ticket 03's "findings only, never blocking" vs the 2026-07-17
+  gating decision, never stamped onto 03). Original registration below.
+
   (registered 2026-07-26, design conversation after audit run #3 — recorded here
   so the decisions reach the spec rather than dying in session context). The
   problem: `write-lint.js` is bound to a **Claude Code tool call**, so every
