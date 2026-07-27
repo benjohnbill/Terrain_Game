@@ -44,8 +44,6 @@
  */
 
 import {
-  attackPower,
-  defensePower,
   type BattleCrossing,
   type BattleFortification,
   type BattleInput,
@@ -121,6 +119,15 @@ export const STANDING_POSTURE: DefenseMethod = 'STRONGHOLD';
  *
  * M5's `mountains` and `legendaryNaturalSite` rungs have no border class and are
  * therefore unreachable in this slice — absent rather than approximated.
+ *
+ * **What TC-⑬ pairs with `pass` and this does not implement:** the ruling states
+ * that the door also *throttles the assaulting body* — "the frontage half of the
+ * pass ×2.0 package", validated only as the residual after a frontage cap. M5 puts
+ * that cap's **value** with the frontage/matchup stage, which has not run, so
+ * writing one here would originate a number. The consequence is stated rather than
+ * hidden: an unthrottled `pass` is priced at less than TC-⑬ intends, and
+ * `Edge.frontageHexes` is authored and read by nothing. Registered in
+ * `docs/SYNC-DEBT.md`.
  */
 const COMBAT_GROUND: Readonly<Record<
   ChokeClass,
@@ -163,20 +170,31 @@ export function fortificationOf(fortTier: string): BattleFortification {
   return tier;
 }
 
-/** A unit side, used only to read the sealed multipliers back out of `battle.ts`. */
-const UNIT_SIDE = { substance: 1, commit: 0, quality: 1, fatigue: 1 } as const;
-
 /**
- * How much defensive advantage a border class hands the holder, as the sealed
- * ladders themselves compute it — ground gained over attack lost.
+ * The **defensibility order** the fidelity seal fixed: `open < forest/hills <
+ * river < pass < strait`.
  *
- * Derived rather than tabulated so the ranking cannot drift from the values it
- * ranks: re-cutting M5 or ADR 0015 moves this with them.
+ * Cited, not derived. Composing a ranking out of M5 and ADR 0015 by hand looks
+ * equivalent and is not — it puts `pass` above `strait`, where the seal puts it
+ * below — so the ordering is a rule of its own and this is the one place it is
+ * written. Authority: TC-⑬'s combat-terrain binding as exercised in the L2 harness
+ * (`mockup/combat-calc/map-board.js` `CLASS_DEFENSE_RANK`, sealed 2026-07-08 and
+ * pinned by `tests/terrain-fidelity.test.js`, which asserts that a pass beside a
+ * river yields the river). Classified **accepted** under ADR 0041 and
+ * re-implemented from that evidence rather than translated.
+ *
+ * On `terrain-cradle@r1` no sector carries both a pass and a strait, so the one
+ * place a hand-composed order would have differed is unobservable today — recorded
+ * so that using the sealed order stays a choice rather than an accident.
  */
-function defensiveBurdenOf(chokeClass: ChokeClass): number {
-  const { terrain, crossing } = COMBAT_GROUND[chokeClass];
-  return defensePower(UNIT_SIDE, terrain, 'none') / attackPower(UNIT_SIDE, crossing);
-}
+const CLASS_DEFENSE_RANK: Readonly<Record<ChokeClass, number>> = {
+  open: 0,
+  forest: 1,
+  hills: 1,
+  river: 2,
+  pass: 3,
+  strait: 4,
+};
 
 /**
  * TC-⑬'s **reachable-weakest-link**: where several authored borders open onto one
@@ -187,7 +205,7 @@ function defensiveBurdenOf(chokeClass: ChokeClass): number {
  */
 function softestClass(classes: readonly ChokeClass[]): ChokeClass {
   return [...classes].sort((a, b) =>
-    defensiveBurdenOf(a) - defensiveBurdenOf(b) || (a < b ? -1 : a > b ? 1 : 0))[0]!;
+    CLASS_DEFENSE_RANK[a] - CLASS_DEFENSE_RANK[b] || (a < b ? -1 : a > b ? 1 : 0))[0]!;
 }
 
 /** One contested border, as this module needs to read it. */
@@ -199,16 +217,23 @@ export interface BorderFront {
 }
 
 /**
- * What stands on one sector once the turn's movement has resolved.
+ * One realm's combat-ready substance on one sector, as the board reads it after
+ * movement.
  *
- * `men` is **combat-ready** substance only — the ready cohorts, plus the holder's
- * garrison. Cohorts still forming are not in the product, which is why they are
- * also not in the price the caller takes out of it.
+ * **Combat-ready only** — the ready cohorts, plus the holder's garrison. Cohorts
+ * still forming are not in the power product, which is why they are also not in
+ * the blood price the caller takes out of it. The two numbers travel together
+ * because a mean needs both and neither means anything alone.
  */
+export interface SideStanding {
+  readonly men: number;
+  /** Σ (men × wear ledger) — the men-weighted mass `force.ts` combines cohorts by. */
+  readonly wearMass: number;
+}
+
+/** What stands on one sector once the turn's movement has resolved. */
 export interface SectorStanding {
-  readonly men: Readonly<Record<ActorId, number>>;
-  /** Σ (men × wear ledger) per actor — the men-weighted mass `force.ts` combines by. */
-  readonly wearMass: Readonly<Record<ActorId, number>>;
+  readonly sides: Readonly<Record<ActorId, SideStanding>>;
   /** The authored fortification tier standing on the sector. */
   readonly fortTier: string;
 }
@@ -244,12 +269,12 @@ function partyOf(
   fronts: readonly BorderFront[],
   commitments: Readonly<Record<ActorId, Readonly<Record<string, number>>>>,
 ): EngagementParty {
-  const men = standing.men[actor] ?? 0;
+  const side = standing.sides[actor] ?? { men: 0, wearMass: 0 };
   return {
     actor,
-    men,
+    men: side.men,
     // A side with nobody in it is not tired; it simply is not there.
-    wear: men === 0 ? 0 : (standing.wearMass[actor] ?? 0) / men,
+    wear: side.men === 0 ? 0 : side.wearMass / side.men,
     commit: fronts.reduce((sum, front) => sum + (commitments[actor]?.[front.key] ?? 0), 0),
   };
 }
@@ -298,7 +323,7 @@ export function engagementsOf(
     const standing = standingAt(sector);
     // Nobody crossed: there is no engagement to report, and reporting an empty one
     // would make "a sector was fought over" and "a sector exists" indistinguishable.
-    if ((standing.men[site.invader] ?? 0) <= 0) continue;
+    if ((standing.sides[site.invader]?.men ?? 0) <= 0) continue;
 
     const chokeClass = softestClass(site.fronts.map((front) => front.chokeClass));
     const ground = COMBAT_GROUND[chokeClass];

@@ -363,7 +363,10 @@ test('the border class carries the combat terrain and the water (TC-⑬)', () =>
     const [engagement] = engagementsOf(
       [{ key: 'x|y', sectors: ['x', 'y'], owners: ['realm-a', 'realm-b'], chokeClass }],
       {},
-      () => ({ men: { 'realm-a': 4000, 'realm-b': 900 }, wearMass: {}, fortTier: 'none' }),
+      () => ({
+        sides: { 'realm-a': { men: 4000, wearMass: 0 }, 'realm-b': { men: 900, wearMass: 0 } },
+        fortTier: 'none',
+      }),
     );
     assert.equal(engagement.chokeClass, chokeClass);
     assert.equal(engagement.terrain, terrain, `${chokeClass} took the wrong ground`);
@@ -380,7 +383,10 @@ test('an unauthored fortification tier is refused rather than fought at x1.00', 
     () => engagementsOf(
       [{ key: 'x|y', sectors: ['x', 'y'], owners: ['realm-a', 'realm-b'], chokeClass: 'open' }],
       {},
-      () => ({ men: { 'realm-a': 10, 'realm-b': 10 }, wearMass: {}, fortTier: 'townWalls-ish' }),
+      () => ({
+        sides: { 'realm-a': { men: 10, wearMass: 0 }, 'realm-b': { men: 10, wearMass: 0 } },
+        fortTier: 'townWalls-ish',
+      }),
     ),
     /has no M5 rung/,
   );
@@ -396,8 +402,9 @@ test('two borders onto one sector are one engagement, at the softest crossing', 
     ],
     { 'realm-b': { 'a|s': 7, 'b|s': 5 } },
     (sector) => ({
-      men: sector === 's' ? { 'realm-a': 900, 'realm-b': 4000 } : {},
-      wearMass: {},
+      sides: sector === 's'
+        ? { 'realm-a': { men: 900, wearMass: 0 }, 'realm-b': { men: 4000, wearMass: 0 } }
+        : {},
       fortTier: 'none',
     }),
   );
@@ -458,4 +465,32 @@ test('a realm pressing one sector from two real borders fights once (r7_s0)', ()
     return;
   }
   assert.fail('the army never reached r7_s0');
+});
+
+test('the weakest link follows the sealed defensibility order, pass below strait', () => {
+  // `open < forest/hills < river < pass < strait`, fixed by the 2026-07-08 fidelity
+  // seal and pinned in the archive by `tests/terrain-fidelity.test.js`. Composing
+  // the order out of M5 and ADR 0015 instead would put pass *above* strait — the
+  // last pair here is the one that catches it.
+  const weakestOf = (classes) => engagementsOf(
+    classes.map((chokeClass, index) => ({
+      key: `b${index}|s`,
+      sectors: [`b${index}`, 's'],
+      owners: ['realm-b', 'realm-a'],
+      chokeClass,
+    })),
+    {},
+    (sector) => ({
+      sides: sector === 's'
+        ? { 'realm-a': { men: 900, wearMass: 0 }, 'realm-b': { men: 4000, wearMass: 0 } }
+        : {},
+      fortTier: 'none',
+    }),
+  ).find((engagement) => engagement.sector === 's').chokeClass;
+
+  assert.equal(weakestOf(['pass', 'open']), 'open');
+  assert.equal(weakestOf(['pass', 'river']), 'river', 'a pass beside a river must yield the river');
+  assert.equal(weakestOf(['river', 'forest']), 'forest');
+  assert.equal(weakestOf(['strait']), 'strait');
+  assert.equal(weakestOf(['strait', 'pass']), 'pass', 'the sealed order puts a pass below a strait');
 });

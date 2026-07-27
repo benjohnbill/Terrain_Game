@@ -23,7 +23,7 @@ rout, escape, fatigue — land on the board. Ticket 03's stub
 > re-measurement. **Check whether `domain/battle.ts` already exists before building
 > it** — if it does, this ticket is the adapter and the wiring, not the formula.
 
-Status: **claimed** (2026-07-28 — the wiring half; the calculator landed 2026-07-26. Previously ready-for-agent, re-stamped 2026-07-27 — both blocking batches landed
+Status: **resolved** (2026-07-28 — the wiring half landed; the calculator landed 2026-07-26. Previously ready-for-agent, re-stamped 2026-07-27 — both blocking batches landed
 2026-07-26: the delaying dials at `operation-plan-catalog/CATALOG.md` and 06b's
 WB-M① fatigue batch. This header had gone stale against the README waiver table.)
 **Read the SPLIT note above first: `game/src/domain/battle.ts` already exists, so
@@ -36,17 +36,17 @@ core, sector ledger, saturation lever); `MAGNITUDE.md` M2 (lever curve), M4
 WM-①/WM-②; slice-2 spec §1 (equal-mass grammar) and §8 (defence-selection wiring);
 ADR 0015; ADR 0043 (reachability legality).
 
-- [ ] A battle resolves from a **symmetric per-side power product** — `substance × commit lever × quality × fatigue` — and neither side gets an attacker-only or defender-only term the other lacks.
-- [ ] **Substance is what is actually there**: the detachment(s) present or arriving at that front (06a), plus the sector's garrison. Not a realm-level total.
-- [ ] The **defending field army carries its own commit lever.** The retired flat march-worn default is not reintroduced as a hidden constant; where a test needs it, it is passed explicitly as `fatigue: 0.75` so the retirement stays visible.
-- [ ] The **commit lever follows the sealed M2 curve** — 0/4/8/14/20 points → ×1.00/1.25/1.50/1.75/2.00, linear between, two slopes with the knee at 8.
-- [ ] **A front with no field army still fights.** M2 seals `0 points = ×1.00` — "an unattended garrison fights at its own strength" — so a realm whose army has marched elsewhere is defended by its garrison rather than holding an open door. On this board most fronts are garrison-only most turns, so this is the common case, not the edge case.
-- [ ] **Terrain and fortification enter defence through the sealed M5 magnitudes** (terrain ×1.0 plains → ×2.0 pass; fortification ×1.0 none → ×2.4 fortress). **River crossing prices the engagement, not the movement** (ADR 0015) — it must not appear as a movement cost in 06a's graph.
-- [ ] **Rout and escape follow M4**, and **defeat-in-detail appears as an emergent consequence** of the convex casualty exponent plus a thinned ratio. There is no special defeat-in-detail rule, and adding one is a defect.
-- [ ] Defence method is wired per slice-2 §8: `STRONGHOLD` is the default and `DELAYING` is available, with the delaying band's behaviour as recorded.
-- [ ] Resolution is **atomic per sector**, reports its ordered board-changing events, and is deterministic for equal inputs. Fronts resolve in canonical key order and nothing consults an actor's identity, so the whole turn stays equivalent under relabelling the two realms (ticket 03, ruling TL-①).
-- [ ] `turn.ts` enumerated case 4 — one realm pressing two fronts that share a sector (`r7_s0` is a real instance) — is adjudicated here, because ticket 03 deferred to this ticket whether two pressures on one sector merge into a single engagement.
-- [ ] Casualties shrink the **conscription register** permanently (blood is permanent currency, SPEC), and the surge price curve is **re-measured early in this ticket** — `docs/SYNC-DEBT.md` records that the curve never fired in ticket 05 because its designed trigger is register erosion from deaths and ticket 05 had none. At B=5, 429 cumulative casualties clear the 42% knee.
+- [x] A battle resolves from a **symmetric per-side power product** — `substance × commit lever × quality × fatigue` — and neither side gets an attacker-only or defender-only term the other lacks.
+- [x] **Substance is what is actually there**: the detachment(s) present or arriving at that front (06a), plus the sector's garrison. Not a realm-level total.
+- [x] The **defending field army carries its own commit lever.** The retired flat march-worn default is not reintroduced as a hidden constant; where a test needs it, it is passed explicitly as `fatigue: 0.75` so the retirement stays visible.
+- [x] The **commit lever follows the sealed M2 curve** — 0/4/8/14/20 points → ×1.00/1.25/1.50/1.75/2.00, linear between, two slopes with the knee at 8.
+- [x] **A front with no field army still fights.** M2 seals `0 points = ×1.00` — "an unattended garrison fights at its own strength" — so a realm whose army has marched elsewhere is defended by its garrison rather than holding an open door. On this board most fronts are garrison-only most turns, so this is the common case, not the edge case.
+- [x] **Terrain and fortification enter defence through the sealed M5 magnitudes** (terrain ×1.0 plains → ×2.0 pass; fortification ×1.0 none → ×2.4 fortress). **River crossing prices the engagement, not the movement** (ADR 0015) — it must not appear as a movement cost in 06a's graph.
+- [x] **Rout and escape follow M4**, and **defeat-in-detail appears as an emergent consequence** of the convex casualty exponent plus a thinned ratio. There is no special defeat-in-detail rule, and adding one is a defect.
+- [x] Defence method is wired per slice-2 §8: `STRONGHOLD` is the default and `DELAYING` is available, with the delaying band's behaviour as recorded.
+- [x] Resolution is **atomic per sector**, reports its ordered board-changing events, and is deterministic for equal inputs. Fronts resolve in canonical key order and nothing consults an actor's identity, so the whole turn stays equivalent under relabelling the two realms (ticket 03, ruling TL-①).
+- [x] `turn.ts` enumerated case 4 — one realm pressing two fronts that share a sector (`r7_s0` is a real instance) — is adjudicated here, because ticket 03 deferred to this ticket whether two pressures on one sector merge into a single engagement.
+- [x] Casualties shrink the **conscription register** permanently (blood is permanent currency, SPEC), and the surge price curve is **re-measured early in this ticket** — `docs/SYNC-DEBT.md` records that the curve never fired in ticket 05 because its designed trigger is register erosion from deaths and ticket 05 had none. At B=5, 429 cumulative casualties clear the 42% knee.
 
 ## Needs-info
 
@@ -125,7 +125,7 @@ approved as well, since fatigue is an input.
   `r1_s1`, border class **river**, `crossing: riverOpposed`), Node and browser
   summaries identical.
 
-**Acceptance items, and how each is met**
+**Acceptance items, and how each is met** — the eleven checkboxes above, in order
 
 1. **Symmetric per-side product** — `battle.ts`'s `sidePower`, unchanged; the
    adapter composes both sides through the same `participantOf`.
@@ -145,15 +145,25 @@ approved as well, since fatigue is an input.
    so it enters the men-weighted mean at wear 0 and fights at exactly ×1.0 by
    construction rather than by a special case.
 6. **Terrain and fortification through M5; the crossing prices the engagement** —
-   supplied by **TC-⑬**, keyed to the authored border class. Table-tested across
-   all six classes. The crossing never touches 06a's movement graph.
-7. **Rout and escape follow M4** — the calculator's, unchanged. Defeat-in-detail
-   stays emergent; no rule was added.
-8. **Defence method per §8** — `STRONGHOLD` is the standing posture every sector
+   supplied by **TC-⑬**, keyed to the authored border class, table-tested across all
+   six classes. The crossing never touches 06a's movement graph. **Partial, and the
+   gap is registered:** TC-⑬ pairs the `pass` ×2.0 with a frontage cap that
+   *throttles the assaulting body*, and M5 puts that cap's value with the
+   frontage/matchup stage, which has not run — so the multiplier is implemented and
+   the throttle is not, which prices a defile below what the ruling intends.
+   `docs/SYNC-DEBT.md` carries it.
+7. **Rout and escape follow M4** — the calculator's, unchanged; defeat-in-detail
+   stays emergent and no rule was added. **The board half is deliberately absent:**
+   `routed` is reported and the pursuit blood is taken, but `escaped` has no
+   consumer, so a routed force is not displaced — it stands on the same hex. Where a
+   routed force *goes* is undesigned for L3 (stay / fall back / dissolve / leave the
+   board are four rules and no seal picks one), so it is kind 3 rather than
+   something to invent. Registered in `docs/SYNC-DEBT.md`, owed alongside 06d.
+9. **Defence method per §8** — `STRONGHOLD` is the standing posture every sector
    carries. §8 makes *changing* it a turn action, and orders are the plan layer's
    (ticket 10), so DELAYING remains implemented and unit-tested in `battle.ts`
    with no click to select it. The adapter keeps the seam in one named constant.
-9. **Atomic per sector, ordered, deterministic** — every engagement's inputs are
+8. **Atomic per sector, ordered, deterministic** — every engagement's inputs are
    read before any is applied; a detachment has one position and so appears in at
    most one engagement; the two sides hold different stocks. Canonical sector order
    therefore fixes the *report*, not the arithmetic, and nothing reads an actor's
@@ -164,13 +174,20 @@ approved as well, since fatigue is an input.
     into it and TC-⑬'s **reachable-weakest-link** picks the ground. Tested at unit
     grain and on the real board at `r7_s0`; it also fires unbidden in the
     `browser-lane-0001` replay fixture, where `r1_s1` is served by a pass and a
-    river and the river wins as the softer door.
-11. **Casualties shrink the register permanently** — two exact apportionments
+    river and the river wins as the softer door. The **defensibility order** that
+    picks the door (`open < forest/hills < river < pass < strait`) is *cited*, not
+    composed: it exists only in the L2 harness's `CLASS_DEFENSE_RANK` under the
+    2026-07-08 fidelity seal, and a ranking hand-composed from M5 and ADR 0015
+    instead puts `pass` above `strait`. Classified **accepted** under ADR 0041 and
+    re-implemented from that evidence; pinned by a test including the pass/strait
+    pair that catches the difference.
+11. **Casualties shrink the register permanently, and the surge curve is
+    re-measured** — two exact apportionments
     (over the formations that shared the engagement, then over each one's province
     origins) so the parts sum to the reported figure; the men leave the cohort
     **and** the living register, because `availableCivilians = register − serving`
-    would otherwise hand the same body back to the next draft.
-12. **Surge curve re-measured** — below.
+    would otherwise hand the same body back to the next draft. The re-measurement
+    is below, and it landed as a re-runnable tool.
 
 **Structural decision, stated once** (the handoff asked for it): a **pure adapter
 beside `battle.ts`** (`game/src/domain/engagement.ts`), with the Runtime assembling
@@ -199,8 +216,9 @@ engaged sectors, so its `outcome` can stop being a stub: `engaged` / `no-contact
   routed attacker whose only way home is the water it crossed — needs a reading of
   that isolation gate, which is the ticket's forbidden ground. Consumers: 06d, 11.
 
-**Surge price curve, re-measured (item 10)** — three seeds, both realms invading,
-20 turns. Full annotation on the `docs/SYNC-DEBT.md` row; the finding:
+**Surge price curve, re-measured** — `game/tools/surge-remeasure.js`, landed so the
+row's owed re-read after 06d is a re-run rather than a re-derivation. Three seeds,
+both realms invading, 20 turns. Full annotation on the `docs/SYNC-DEBT.md` row; the finding:
 
 | refill behaviour | register eroded | observed intensity | band | price |
 |---|---|---|---|---|

@@ -122,10 +122,15 @@ export function revealTurn(
  * report, and emitting an empty one would make "a front was fought over" and "a
  * front exists" indistinguishable in the event stream.
  */
+/**
+ * `engagedSectors` is required rather than defaulted: an omitted set would report
+ * every pressed border as `no-contact`, which is a wrong *answer* dressed as a
+ * missing argument.
+ */
 export function readFronts(
   revealed: RevealedTurn,
   fronts: readonly Front[],
-  engagedSectors: ReadonlySet<SectorId> = new Set(),
+  engagedSectors: ReadonlySet<SectorId>,
 ): readonly FrontReading[] {
   const readings: FrontReading[] = [];
 

@@ -355,6 +355,43 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   is, complexity argues for it rather than against. **Owed:** its own grill, not a
   value. Do not implement a morale term in the 06 family.
 
+- [ ] **The per-sector merge rule has no birthplace outside code** (registered
+  2026-07-28 by ticket 06c). Ticket 03 deferred its enumerated **case 4** — one
+  realm pressing two borders that share a sector — to combat, and 06c answered it:
+  **the two fronts stay fronts and merge into one engagement**, because resolution
+  is atomic per sector. The reasoning currently lives in `domain/turn.ts`'s header
+  and `domain/engagement.ts`'s, plus that ticket's § Comments — which is the same
+  shape ticket 03 left the resolve-order enumeration in, and the README already
+  owes "a formal feature-doc birthplace for the **turn structure**". **Owed:** fold
+  this ruling into that birthplace when it is created, as a RULINGS row rather than
+  a code comment. Not urgent, and not a conflict — it is an unrecorded decision.
+
+- [ ] **TC-⑬'s frontage half is unimplemented, so a `pass` is priced below what the
+  ruling intends** (registered 2026-07-28 by ticket 06c). TC-⑬ pairs the pass
+  ×2.0 ground with a door that "throttles the assaulting body", and cites the M5
+  validation: "×2.0 is validated only as the residual AFTER a frontage cap; without
+  it, ×2.0 is far too low." M5 assigns that cap's **value** to the frontage/matchup
+  stage, which has not run — so 06c implemented the multiplier and not the throttle,
+  because writing the cap would originate a number. `Edge.frontageHexes` is authored
+  on all 17 edges and read by nothing in `game/src`. **Owed:** the frontage cap's
+  value, then the throttle, whenever the frontage/matchup stage runs. Until then a
+  defile is cheaper to storm than the seal intends — a **known direction of error**,
+  not an unknown one.
+
+- [ ] **A routed force is reported but never displaced** (registered 2026-07-28 by
+  ticket 06c). `battle.ts` computes `routed` and `escaped` — "routed survivors who
+  disperse through an open escape route" — and M4 says the survivors of an open-escape
+  rout "disperse per normal dissolution". Nothing in `game/src` consumes `escaped`:
+  06c takes the pursuit blood (which is inside `casualties`) and reports `routed`,
+  but the survivors stay on the same hex and can fight there again next turn.
+  **Why it was not built:** *where* a routed force goes is undesigned for L3 — stay,
+  fall back a sector, dissolve into a friendly garrison, or leave the board are four
+  different rules and no seal picks one; dissolution is named for Delaying's
+  withdrawal and never specified as a displacement. Kind 3 under the README's
+  four-kind workflow, so out of this slice rather than filled in. **Owed:** a
+  displacement rule, naturally alongside 06d's ownership transfer (which is what
+  makes "fall back" expressible) and ticket 11's Encirclement.
+
 - [ ] **Only 27 of 56 sectors can ever be a battle site, so most capitals cannot
   be attacked at all** (registered 2026-07-28 by ticket 06c, which is the first
   ticket that could measure it). A front is an **authored region border**

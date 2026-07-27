@@ -136,6 +136,26 @@ const FULLY_SUPPLIED = 1;
  */
 const UNBURNED_GROUND = 1;
 
+/**
+ * One combat-ready formation standing on a sector: a field detachment, or — when
+ * `detachmentId` is null — the sector's own shield.
+ *
+ * `wear` is the **ledger**, not the effectiveness multiplier; the adapter converts.
+ */
+interface SectorFormation {
+  readonly actor: ActorId;
+  readonly detachmentId: string | null;
+  readonly men: number;
+  readonly wear: number;
+}
+
+/**
+ * A formation's key inside one engagement's apportionment. Namespaced so a shield
+ * and a detachment can never collide, whatever a detachment comes to be called.
+ */
+const formationKey = (formation: SectorFormation): string =>
+  formation.detachmentId === null ? 'shield' : `field:${formation.detachmentId}`;
+
 /** A clock that refuses to be read. Rules must never need one (ADR 0040). */
 const NO_CLOCK: Clock = {
   now(): number {
@@ -964,14 +984,36 @@ export class Runtime {
       if (event.type === 'battle-resolved') {
         // The payoff is watched, so a battle both realms fought is reported to
         // both: the ground, the roles, who took it, who broke, and the blood.
-        // What stays behind `view(actor)` is exact pre-battle strength and the
-        // composed power product — the two readings ticket 08's fog bands and
-        // ticket 09's EVAL BAR composes. Publishing them here would decide their
-        // presentation by accident.
-        const { substance, power, ...watchable } = detail;
-        void substance;
-        void power;
-        return [{ type: event.type, turn: event.turn, detail: watchable }];
+        //
+        // Named field by field like every other branch here, and for this
+        // function's own stated reason — a later ticket that adds a reading to a
+        // battle must have to *choose* to publish it. Exact pre-battle strength and
+        // the composed power product are absent deliberately: they are what ticket
+        // 08's fog bands and ticket 09's EVAL BAR composes, and letting them out
+        // from here would decide their presentation by accident.
+        return [{
+          type: event.type,
+          turn: event.turn,
+          detail: {
+            tier: detail.tier,
+            sector: detail.sector,
+            fronts: detail.fronts,
+            borderClass: detail.borderClass,
+            terrain: detail.terrain,
+            crossing: detail.crossing,
+            fortification: detail.fortification,
+            defenseMethod: detail.defenseMethod,
+            attacker: detail.attacker,
+            defender: detail.defender,
+            commitments: detail.commitments,
+            winner: detail.winner,
+            sectorFalls: detail.sectorFalls,
+            fortificationDamage: detail.fortificationDamage,
+            routeDisrupted: detail.routeDisrupted,
+            routed: detail.routed,
+            casualties: detail.casualties,
+          },
+        }];
       }
       if (event.type === 'realm-recomputed' || event.type === 'upkeep-resolved') {
         // Both report *that* a realm's background beat ran. Their numbers — income,
@@ -1308,40 +1350,54 @@ export class Runtime {
   }
 
   /**
-   * What stands on one sector, once this turn's movement has resolved.
+   * Every combat-ready formation standing on one sector, read **once**.
+   *
+   * The single reader for "who is here", for the same reason `domain/state.ts`
+   * keeps single readers: the power product and the blood price must be taken over
+   * the *same* set. Two copies of this walk is how a force could fight in a battle
+   * it then pays nothing for, or pay for one it never entered.
    *
    * Combat-ready substance only. Cohorts still forming were left behind by
-   * `#activateCohortsReadyFor`, so they are not in the power product — and
-   * therefore not in the blood price either.
+   * `#activateCohortsReadyFor`, so they are not in the product — and therefore not
+   * in the price either. Empty formations are omitted: nobody there is not a side.
    */
-  #standingAt(sector: SectorId): SectorStanding {
+  #formationsOn(sector: SectorId): readonly SectorFormation[] {
     const state = this.#state;
-    const men: Record<ActorId, number> = {};
-    const wearMass: Record<ActorId, number> = {};
+    const formations: SectorFormation[] = [];
 
     for (const actor of state.actors) {
-      men[actor] = 0;
-      wearMass[actor] = 0;
       for (const detachment of state.forces[actor]!.detachments) {
         if (this.#sectorAt(detachment.position) !== sector) continue;
-        const ready = menOf(detachment.ready.origins);
-        men[actor] += ready;
-        wearMass[actor] += ready * detachment.ready.fatigue;
+        const men = menOf(detachment.ready.origins);
+        if (men > 0) formations.push({ actor, detachmentId: detachment.id, men, wear: detachment.ready.fatigue });
       }
     }
 
     // The shield joins its holder's side. It carries **no wear ledger at all**
-    // (`domain/force.ts`) — nothing in this slice marches a garrison — so it adds
-    // men at wear 0 and enters the combined mean at exactly ×1.0, which is M2's
-    // "an unattended garrison fights at its own strength" arriving by
-    // construction rather than by a special case.
+    // (`domain/force.ts`) — nothing in this slice marches a garrison — so it enters
+    // at wear 0 and fights at exactly ×1.0, which is M2's "an unattended garrison
+    // fights at its own strength" arriving by construction rather than by a
+    // special case.
     const holder = ownerOfSector(state, sector);
     const garrison = state.garrisons[sector];
     if (holder !== null && garrison !== undefined) {
-      men[holder] = (men[holder] ?? 0) + menOf(garrison.ready);
+      const men = menOf(garrison.ready);
+      if (men > 0) formations.push({ actor: holder, detachmentId: null, men, wear: 0 });
     }
 
-    return { men, wearMass, fortTier: state.loadedWorld.artifact.sectors[sector]!.fortTier };
+    return formations;
+  }
+
+  /** The same reading, summed per side — the adapter's input. */
+  #standingAt(sector: SectorId): SectorStanding {
+    const sides: Record<ActorId, { men: number; wearMass: number }> = {};
+    for (const actor of this.#state.actors) sides[actor] = { men: 0, wearMass: 0 };
+    for (const formation of this.#formationsOn(sector)) {
+      const side = sides[formation.actor]!;
+      side.men += formation.men;
+      side.wearMass += formation.men * formation.wear;
+    }
+    return { sides, fortTier: this.#state.loadedWorld.artifact.sectors[sector]!.fortTier };
   }
 
   /** Every engagement this turn produced — a reading, with nothing written yet. */
@@ -1375,8 +1431,8 @@ export class Runtime {
     for (const engagement of engagements) {
       const outcome = resolveBattle(battleInputOf(engagement));
       const casualties = {
-        attacker: this.#takeBlood(engagement.sector, engagement.attacker, outcome.attacker),
-        defender: this.#takeBlood(engagement.sector, engagement.defender, outcome.defender),
+        attacker: this.#resolveCasualties(engagement.sector, engagement.attacker, outcome.attacker),
+        defender: this.#resolveCasualties(engagement.sector, engagement.defender, outcome.defender),
       };
 
       events.push(this.#turnEvent('battle-resolved', 'payoff', {
@@ -1414,11 +1470,11 @@ export class Runtime {
    * One side's blood, taken out of the board and out of the register for good.
    *
    * Casualties permanently shrink the **conscription register** as well as the
-   * formation — blood is permanent currency (SPEC), and MT-② has the register as
-   * a stock only death shrinks. Subtracting from the cohort alone would do the
-   * opposite of that: `availableCivilians` is `register − serving`, so a death
-   * that left the register standing would hand the same body back to the next
-   * draft.
+   * formation. SPEC's core design principles put it as "blood is permanent
+   * currency", and match-arc **MT-②** has the register as a stock only death
+   * shrinks. Subtracting from the cohort alone would do the opposite:
+   * `availableCivilians` is `register − serving`, so a death that left the
+   * register standing would hand the same body back to the next draft.
    *
    * The men are apportioned twice and exactly — first across the formations that
    * shared the engagement, then across each one's province origins — so the sum
@@ -1429,32 +1485,25 @@ export class Runtime {
    * intensity of the fight a force was in, and a cohort still forming was not in
    * it; recovery still walks every cohort, because everyone rests.
    */
-  #takeBlood(sector: SectorId, party: EngagementParty, outcome: SideBattleOutcome): number {
-    const state = this.#state;
-    const forces = state.forces[party.actor]!;
+  #resolveCasualties(sector: SectorId, party: EngagementParty, outcome: SideBattleOutcome): number {
+    const forces = this.#state.forces[party.actor]!;
     const deaths = bodiesLost(party.men, outcome.casualties);
     const wearAdded = battleAccrual(party.men === 0 ? 0 : outcome.casualties / party.men);
 
-    const holdsSector = ownerOfSector(state, sector) === party.actor;
-    const garrison = holdsSector ? state.garrisons[sector] : undefined;
-    const GARRISON = 'garrison';
-
-    const weights: Record<string, number> = {};
-    for (const detachment of forces.detachments) {
-      if (this.#sectorAt(detachment.position) !== sector) continue;
-      const ready = menOf(detachment.ready.origins);
-      if (ready > 0) weights[detachment.id] = ready;
-    }
-    if (garrison !== undefined) {
-      const manned = menOf(garrison.ready);
-      if (manned > 0) weights[GARRISON] = manned;
-    }
-
-    const byFormation = apportionExact(deaths, weights);
+    // The same reading the power product was composed from — see `#formationsOn`.
+    const engaged = this.#formationsOn(sector).filter((formation) => formation.actor === party.actor);
+    const byFormation = apportionExact(
+      deaths,
+      Object.fromEntries(engaged.map((formation) => [formationKey(formation), formation.men])),
+    );
+    const shareOf = (detachmentId: string | null): number | undefined => {
+      const formation = engaged.find((candidate) => candidate.detachmentId === detachmentId);
+      return formation === undefined ? undefined : byFormation[formationKey(formation)];
+    };
 
     const survivors: Detachment[] = [];
     for (const detachment of forces.detachments) {
-      const share = byFormation[detachment.id];
+      const share = shareOf(detachment.id);
       if (share === undefined) {
         survivors.push(detachment);
         continue;
@@ -1462,7 +1511,7 @@ export class Runtime {
       const next: Detachment = {
         ...detachment,
         ready: {
-          origins: this.#bury(party.actor, detachment.ready.origins, share),
+          origins: this.#removeDead(party.actor, detachment.ready.origins, share),
           fatigue: detachment.ready.fatigue + wearAdded,
         },
       };
@@ -1473,8 +1522,10 @@ export class Runtime {
     }
     forces.detachments = survivors;
 
-    if (garrison !== undefined && byFormation[GARRISON] !== undefined) {
-      garrison.ready = this.#bury(party.actor, garrison.ready, byFormation[GARRISON]!);
+    const shieldShare = shareOf(null);
+    const garrison = this.#state.garrisons[sector];
+    if (shieldShare !== undefined && garrison !== undefined) {
+      garrison.ready = this.#removeDead(party.actor, garrison.ready, shieldShare);
     }
 
     return deaths;
@@ -1488,7 +1539,7 @@ export class Runtime {
    * `availableCiviliansByOrigin` exists to catch, so it is refused here rather
    * than allowed to surface later as a negative civilian count.
    */
-  #bury(actor: ActorId, origins: OriginComposition, deaths: number): OriginComposition {
+  #removeDead(actor: ActorId, origins: OriginComposition, deaths: number): OriginComposition {
     const registers = this.#state.forces[actor]!.registers;
     const byRegion = apportionExact(deaths, origins);
     const survivors: Record<RegionId, number> = {};
