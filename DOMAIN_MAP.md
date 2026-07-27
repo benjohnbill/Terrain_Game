@@ -11,6 +11,20 @@ canon. The law itself (definition tiers, single-definition rule,
 naming, promotion, the generated Quick Reference) lives in
 `DOCUMENTATION-LAW.md` § Vocabulary Law.
 
+**Two halves, one rule.** This file *defines* only the terms born here —
+project-native terms with no feature birthplace. A term promoted from a feature
+keeps its definition at that feature, and its entry here is a **summary +
+pointer + why-it-is-canon**, never a second definition or a value restatement.
+Both halves keep the same ``- ✅ `Term` `` header form: the header is what marks a
+term as promoted (ruling 03 Q3) and what `audit-lint`'s header check reads, so an
+entry is re-cut, never deleted.
+
+Which half a term is in is recorded in `docs/audits/term-inventory.json`
+(`birthplace`), and the split is enforced: `audit-lint`'s
+`definitionRestatement` check blocks a promoted entry that reuses its
+birthplace's phrasing. Applied to all 56 promoted entries on 2026-07-28
+(enforcement-ladder stage 4) — a new copy blocks at commit.
+
 ## Design Principle
 
 - ✅ `Land-derived state` (모든 것은 땅에서 파생된다) — **user-confirmed
@@ -34,15 +48,14 @@ naming, promotion, the generated Quick Reference) lives in
   sector; the full recruitment, province-origin, readiness, and
   endpoint contract is authoritative at match-arc MT-⑥ and ADR 0045.
 
-- ✅ `Aging constitution` (노화 헌법 · alias anti-stalemate ratchet) —
-  **user-sealed 2026-07-07 (match-tilting pass); purpose re-aimed by the 1v1
-  pivot Gate 5 (D5.2, 2026-07-24)**: how a match accrues irreversibility — three
-  principles: dual billing, flow never ages, snapshot information. Originally the
-  clock that let the (now-retired) decision point arrive; in the duel it is the
-  buttress of anti-fizzle — **P1 dual billing (no free healing) makes land-loss
-  irreversible**, so losing ground genuinely decays the trailing player (ADR 0042
-  §3, ledger D5.1/D5.2). Mechanics unchanged. Authoritative definition + rulings:
-  match-arc GLOSSARY 노화 헌법 / RULINGS MT-①. _(Re-slimmed 2026-07-10, F-04.)_
+- ✅ `Aging constitution` (노화 헌법 · alias anti-stalemate ratchet) — how a match
+  accrues irreversibility, in three principles (dual billing, flow never ages,
+  snapshot information). Canon because it is the buttress of anti-fizzle: no free
+  healing is what makes land-loss genuinely decay the trailing player. Originally
+  the clock that let the now-retired decision point arrive; **purpose re-aimed by
+  the 1v1 pivot Gate 5 (D5.2, 2026-07-24) with mechanics unchanged** (ADR 0042
+  §3, ledger D5.1/D5.2). Definition + rulings: match-arc `GLOSSARY.md` 노화 헌법 /
+  `RULINGS.md` MT-①. _(Re-slimmed 2026-07-10, F-04.)_
 
 ## Core Terms
 
@@ -214,16 +227,12 @@ naming, promotion, the generated Quick Reference) lives in
   status is derived and recomputed from controlWeight/contact per ADR 0023. _Note_: which element an axis touches
   (mapping) is separate from how strongly a capacity commitment drives it
   (combat-balancing, deferred).
-- ✅ `Operation plan catalog`: The authored set of operation plans, defined
-  schema-first. Each plan is a fixed record: `name`, `availabilityConditions`,
-  `effectAxes` (a magnitude per operation effect axis), and `riskProfile`. There
-  is no authored "target traits" field — fit to a sector is derived by matching
-  `effectAxes` against the sector's value profile, so recommendation ranking
-  surfaces fit automatically. `availabilityConditions` gate on physical
-  applicability only (reachability, target presence, required elements); being
-  ill-advised never hides a plan — advisability is expressed through fit ranking
-  and forecast (ADR 0024). Concrete plan content is authored later; the schema
-  is fixed now (ADR 0024).
+- ✅ `Operation plan catalog` — the authored set of operation plans, defined
+  schema-first. Canon for two rules it fixes project-wide: fit to a sector is
+  *derived* (no authored "target traits" field), and availability gates on
+  physical applicability only, so being ill-advised never hides a plan.
+  Schema authority: ADR 0024; the catalog itself:
+  `docs/features/operation-plan-catalog/CATALOG.md`.
 - ✅ `Under-commitment failure`: A failed contested defense caused by committing
   too little capacity. In the MVP, this causes immediate front-sector loss
   rather than only gradual damage, so deliberate sacrifice and surplus
@@ -417,26 +426,28 @@ naming, promotion, the generated Quick Reference) lives in
 
 ## World Direction
 
-- ✅ The world is fictional and East Asia-inspired.
-- ✅ Real Chinese and East Asian geography should strongly inform terrain
-  placement.
-- ✅ The world should leave expansion slots for straits, islands, maritime
-  powers, northern steppe pressure, and a northern India route.
-- ✅ Large world data such as 50x50 is acceptable if the playable and simulated
-  scope opens progressively.
-- ✅ The first active Phase 1 campaign area is 30x30, centered on central
-  plains, southern grain regions, and northern frontier terrain, within the
-  accepted 25x25 to 30x30 range. World data scale remains 50x50.
-- ✅ The first active Phase 1 area uses 30 named provinces, drafted in
-  `js/province-data.js` and subject to balancing, layered over terrain/map
-  units. They span all twelve accepted archetype regions.
-- ✅ Place naming uses a hybrid policy: large geography may be historically
+Direction, not vocabulary. Most of what this section carried is authoritative
+elsewhere, and on 2026-07-28 it became a pointer list rather than a second copy:
+
+- **What the world is** — East Asia-inspired but fictional, referencing real
+  geographic patterns (northern plains, river basins, mountain passes, southern
+  grain regions, straits, islands, a route toward northern India) without
+  becoming a literal historical simulator, and never at the cost of balance and
+  readability: `SPEC.md` § World Model holds this, and held it already.
+- **Archive-era world scale** — the 50×50 world data, the 25×25–30×30 active
+  area, the 30 named provinces drafted in `js/province-data.js`, and their twelve
+  archetype regions describe the **reference prototype** (ADR 0041), whose world
+  the authored cradle map replaced: 10 regions → 55 sectors → ~292 hexes
+  (§ Terrain Cradle below). Stated in the present tense they read as current
+  direction, which is exactly why they are a pointer now.
+
+**Unhoused — one live rule with no birthplace** (SPEC proposal owed, Tier 3;
+recorded in `docs/SYNC-DEBT.md`):
+
+- ✅ Place naming uses a hybrid policy — large geography may be historically
   legible, while specific provinces generally use fictional East Asian-style
-  names.
-- ✅ Player-facing province names should be natural place/geography names, not
-  meta design labels using terms equivalent to "-inspired" or "-like."
-- ⛔ Do not model a literal historical map so strictly that gameplay balance and
-  readability become secondary.
+  names. Player-facing names are natural place/geography names, never meta design
+  labels using terms equivalent to "-inspired" or "-like."
 
 ## Terrain Cradle (Authored Map)
 
@@ -453,23 +464,22 @@ This section summarizes qualitatively; sealed values and ruling history
 live in the feature docs, and on any divergence the Production seal is
 truth (documentation-law conflict rule)._
 
-- ✅ `Impassable terrain` (공백 지형 · 구칭 void terrain): sea expressed as
-  land — non-sector hexes no one owns; movement, ownership, and vision
-  identical to sea. Exactly one kind of "cannot cross" exists in the world,
-  drawn two ways. (TC-⑧)
-- ✅ `Parity start` (동일 시작 인구): every region starts with an equal total
-  population — an equal lifetime blood budget; divergence comes only from
-  play. Historicity lives in geography, not demographics. (TC-①)
-- ✅ `Emergent asymmetry` (파생 비대칭 · 구칭 derived asymmetry): all
-  playable state (population, fortification, garrison, investment) starts
-  uniform across realms; a playable value may begin unequal only when that
-  inequality is derived from the authored map (geometry + fog) — never
-  baked per-realm.
-  Generalizes parity start beyond population. (SPEC Core Principle #8;
-  terrain-cradle TC-⑭; economy's terrain-fed inequality TC-③.)
-- ✅ `Battle-summoning placement` (전장 소환 배치): the city placement
-  principle — cities are placed where fighting is invited; 서역 is the
-  deliberate opposite pole (max-hermit depth). (TC-⑦)
+- ✅ `Impassable terrain` (공백 지형 · 구칭 void terrain) — the world's single
+  "cannot cross", drawn two ways: sea, and sea expressed as land. Canon because
+  movement, ownership, and vision all read it. Definition: terrain-cradle
+  `GLOSSARY.md` (TC-⑧).
+- ✅ `Parity start` (동일 시작 인구) — every region opens on an equal lifetime
+  blood budget, so historicity lives in geography, not demographics. Definition
+  + sealed populations: terrain-cradle `GLOSSARY.md` (TC-①).
+- ✅ `Emergent asymmetry` (파생 비대칭 · 구칭 derived asymmetry) — the general
+  form of parity start: a starting inequality is legitimate only where the
+  authored map derives it, never baked per-realm. Canon because SPEC Core
+  Principle #8 declares it and the economy, fog, and match-arc passes all read
+  it. Definition: terrain-cradle `GLOSSARY.md` (TC-⑭; economy's terrain-fed
+  inequality TC-③).
+- ✅ `Battle-summoning placement` (전장 소환 배치) — the city-placement
+  principle: cities go where fighting is invited, and 서역 is the deliberate
+  opposite pole. Definition: terrain-cradle `GLOSSARY.md` (TC-⑦).
 
 The battle-resolution layer (turn decision ladder layer 5). One deterministic
 computation used three ways: on true state it is the verdict; on fogged band
@@ -483,73 +493,74 @@ _Last synced from Production 2026-07-05 (A-4 B2), authoritative source
 `docs/features/combat-formula/` GLOSSARY + MAGNITUDE. This section summarizes;
 on any divergence the Production seal is truth (documentation-law conflict rule)._
 
-- ✅ `Resolution pipeline`: `attack power = troop stock × lever(commit) ×
-  quality × plan/matchup mods × water penalty`; `defense power = garrison ×
-  lever × terrain × fortification`; `R = attack ÷ defense`. R past the plan's
-  threshold stamps the headline; casualties are paid both ways regardless of the
-  headline.
-- ✅ `R` (전투비, combat ratio): attack power ÷ defense power; scale-invariant
-  (same odds at any absolute size). The central gauge of the deterministic core
-  (D5).
-- ✅ `Troop stock` (병력) / `Unit` (부대): actual bodies are an integer ledger at
-  the front sector where casualties are written; the unit (부대) is a display
-  quantum only, never used in logic (D2/D3; scale → M1). _Avoid_: fractional
-  bodies in logic, treating 부대 as a compute unit.
-- ✅ `Command pool` (명령 풀) / `Commitment` (커밋): per-turn attention that
-  refills fully and is identical for every realm size (never converts to
-  troops); commitment is the points placed on an action. The 20-point pool
-  is split freely across ~1–2 actions; **main/surplus are magnitude labels
-  applied by commit size, not fixed roles bound to activity types** — no
-  hard action-count cap (the M2 knee soft-caps). Recruitment, fortification,
-  and recovery are commit-gated, bottom 0 (ADR 0027, amends ADR 0020);
-  garrison replenishment is not a standing regeneration action but follows
-  paid recruitment or physical transfer (ADR 0045). Both sides use the same
-  grammar (D2/D6). This is the resolution-layer face of `Action capacity`.
-- ✅ `Lever` (레버): what commitment buys — an activation/direction multiplier on
-  substance, concave (early points buy more than late) with a knee and a
-  ceiling; defense holds a baseline lever at zero commit (D8; curve → M2).
-- ✅ `Quality` (질): the weapons/tech/drill multiplier slot. The MVP fixes
-  quality = 1 (a single troop tier); a quality/tech axis is a reserved post-MVP
-  seat whose arrival voids the single-tier simplification (D4/D8).
-- ✅ `Terrain multiplier` (지형 배수) / `Fortification multiplier` (요새 배수):
-  defense multipliers. Terrain is world-owned and never degrades; fortification
-  is player-built and damageable (a `fortificationDamage` stamp lowers it and
-  widens assault frontage). Ladders and caps → M5. See `Sector defense layers`.
-- ✅ `World product` (세계 곱): terrain × fortification, raw — no engine clamp;
-  the ceiling is the natural product of the authored ladders (M5).
-- ✅ `Water penalty` (도하 페널티): an attack-side multiplier when the attack
-  crosses water; water never strengthens the defender, and port/harbor staging
-  mitigates it (ADR 0015 amended; values → M5). See `Strait`.
-- ✅ `Frontage` (협로/강습 폭): a cap on the engaged attacker body at authored
-  chokes and wall assaults — it classifies, never multiplies, and every choke
-  carries a mandatory removal path (D9; capacities → M5/M11).
-- ❓ `반도이격` (strike at half-crossing): a force whose same-turn flow is
-  crossing water, if intercepted, engages with a split body and the water side
-  counts as blocked escape (candidate; engaged fraction → matchup stage, M4).
-- ✅ `Threshold` (문턱): the per-plan R at which the plan's core intent lands. It
-  gates *stamps only* — never blood, never availability. Attacking below
-  threshold is always legal (priced by the casualty curve, ADR 0021 chosen
-  risk); the system cannot pre-judge failure because it only ever sees the fogged
-  R band. Threshold values are public doctrine; fog hides the enemy's actual
-  strength (D4/D11; values → M7). _Avoid_: threshold as an availability gate.
-- ✅ `Headline` (헤드라인) / `Margin` (마진): the headline is the binary — did the
-  core intent land (sector taken / repulsed). Margin is R − threshold; it buys
-  lower winner casualties and deeper stamps (D4).
-- ✅ `Casualty curve` (사상자 곡선): one shared curve of R applied both directions,
-  success and failure alike — the winner's losses fall as R rises, the loser's
-  climb. Grinding is unprofitable by arithmetic (Lanchester-shaped; base rate and
-  exponent → M4).
-- ✅ `Rout cliff` (궤주 절벽): organizational collapse for the headline loser only,
-  triggered when its losses cross a casualty fraction within the engagement
-  (atomic — no cross-battle accumulation; threshold → M4).
-- ✅ `Escape state` (도주 상태): a derived check at the moment of rout, never
-  stored — OPEN if an adjacent non-water friendly/neutral route exists and the
-  isolation gate is unsatisfied, else BLOCKED. Water never counts as escape; a
-  BLOCKED rout annihilates with no regeneration debt (M4). See `Position as
-  product`.
-- ✅ `Isolation gate` (고립 게이트): supply already cut OR all approaches
-  enemy-held — the availability gate for Encirclement and the escape-blocker.
-  Boolean, read from existing stamps (catalog, D10).
+- ✅ `Resolution pipeline` — the deterministic ratio core: powers multiply out of
+  substance and multipliers, R is their quotient, R past the plan's threshold
+  stamps the headline, and casualties are paid both ways regardless. Formula:
+  combat-formula `GLOSSARY.md` § The pipeline (D5).
+- ✅ `R` (전투비, combat ratio) — the central gauge of the deterministic core, and
+  a pure quotient of the two powers, which is why odds do not shift with absolute
+  army size. Canon because every other resolution term either feeds it or reads
+  it. Definition: combat-formula `GLOSSARY.md` (D5).
+- ✅ `Troop stock` (병력) / `Unit` (부대) — the two are deliberately split: bodies
+  are an integer ledger where casualties are written, 부대 is a display quantum
+  only. Definition: combat-formula `GLOSSARY.md` (D2/D3; scale → M1). _Avoid_:
+  fractional bodies in logic, treating 부대 as a compute unit.
+- ✅ `Command pool` (명령 풀) / `Commitment` (커밋) — per-turn attention that
+  refills fully and is identical for every realm size, never converting to
+  troops; commitment is the points placed on an action. Canon because it is the
+  one realm-size-independent resource, which is what prices expansion break-even
+  — the resolution-layer face of `Action capacity`. Definition: combat-formula
+  `GLOSSARY.md` (D2/D6; pool size → M1, knee → M2). The pool splits freely and
+  main/surplus are magnitude labels rather than roles bound to activity types:
+  ADR 0027 (amends ADR 0020).
+- ✅ `Lever` (레버) — what commitment buys: a concave activation multiplier on
+  substance, with defense holding a baseline at zero commit. Definition:
+  combat-formula `GLOSSARY.md` (D8; curve → M2).
+- ✅ `Quality` (질) — the weapons/tech/drill multiplier slot, fixed at 1 for the
+  MVP; a quality/tech axis is a reserved post-MVP seat whose arrival voids the
+  single-tier simplification. Definition: combat-formula `GLOSSARY.md` (D4/D8).
+- ✅ `Terrain multiplier` (지형 배수) / `Fortification multiplier` (요새 배수) —
+  the two defense multipliers, split by ownership: terrain is world-owned and
+  never degrades, fortification is player-built and damageable. Definition:
+  combat-formula `GLOSSARY.md` (D6; ladders and caps → M5). See `Sector defense
+  layers`.
+- ✅ `World product` (세계 곱) — terrain × fortification, raw: the ceiling is the
+  natural product of the authored ladders, not an engine clamp. Definition:
+  combat-formula `GLOSSARY.md` (M5).
+- ✅ `Water penalty` (도하 페널티) — an attack-side multiplier for crossing water;
+  water never strengthens the defender, and port/harbor staging mitigates it.
+  Definition: combat-formula `GLOSSARY.md` (ADR 0015 amended; values → M5). See
+  `Strait`.
+- ✅ `Frontage` (협로/강습 폭) — a cap on the engaged attacker body at authored
+  chokes and wall assaults: it classifies, never multiplies, and every choke
+  carries a mandatory removal path. Definition: combat-formula `GLOSSARY.md`
+  (D9; capacities → M5/M11).
+- ❓ `반도이격` (strike at half-crossing) — a force caught mid-crossing engages
+  with a split body and counts the water side as blocked escape. Definition:
+  combat-formula `GLOSSARY.md` (engaged fraction → M4).
+- ✅ `Threshold` (문턱) — the per-plan R at which a plan's core intent lands; it
+  gates *stamps only*, never blood and never availability. Canon because the
+  fogged-R rule rests on it: attacking below threshold stays legal precisely
+  because the system never sees the true R. Definition: combat-formula
+  `GLOSSARY.md` (D4/D11; values → M7). _Avoid_: threshold as an availability
+  gate.
+- ✅ `Headline` (헤드라인) / `Margin` (마진) — the binary did-the-intent-land, and
+  R − threshold as its depth. Definition: combat-formula `GLOSSARY.md` (D4).
+- ✅ `Casualty curve` (사상자 곡선) — one shared curve of R applied both
+  directions, success and failure alike, which is what makes grinding
+  unprofitable by arithmetic rather than by rule. Definition: combat-formula
+  `GLOSSARY.md` (Lanchester-shaped; base rate and exponent → M4).
+- ✅ `Rout cliff` (궤주 절벽) — organizational collapse for the headline loser
+  only, triggered inside a single engagement: atomic, no cross-battle
+  accumulation. Definition: combat-formula `GLOSSARY.md` (threshold → M4).
+- ✅ `Escape state` (도주 상태) — a derived OPEN/BLOCKED check at the moment of
+  rout, never stored; water never counts as escape. The land-derived doctrine's
+  resolution-layer precedent. Definition: combat-formula `GLOSSARY.md` (M4). See
+  `Position as product`.
+- ✅ `Isolation gate` (고립 게이트) — one boolean serving two jobs at once: it
+  admits the Encirclement plan and it blocks a rout's escape. Canon because it
+  invents no state, deriving both from stamps that already exist. Definition:
+  combat-formula `GLOSSARY.md` (catalog, D10).
 - ✅ `Effect axes / stamps` (효과 축 / 도장): the six per-axis one-shot effects
   stamped into persistent state on success — the same concept as `Operation
   effect axis` above; ongoing consequences belong to `Standing world rule`, not
@@ -562,37 +573,34 @@ on any divergence the Production seal is truth (documentation-law conflict rule)
   scorched ground denies it). Starvation must outpace an
   unsupplied 2–3-sector advance (rates → M-pass; ADR 0026; the emergent siege is
   this pump, war-model slice-2 ticket 06).
-- ✅ `Forecast` (예보) / `Recommendation` (추천) / `Preset pin` (프리셋 핀): the
-  same computation run on fog. Forecast = R band + expected losses + escape-state
-  line on fogged inputs; recommendation = the formula inverted (threshold →
-  required-commit band); preset pin = where the slider prefills inside that band
-  (safe end). Confidence is capped at 0.90 — no oracle (D1/D7, M3). See
-  `js/intel.js` and the fog-of-war-discovery feature.
-- ✅ `Emergency reserve` (긴급 투입 / 예비대): a third surplus outlet — points
+- ✅ `Forecast` (예보) / `Recommendation` (추천) / `Preset pin` (프리셋 핀) — the
+  same computation run on fog, three ways: read forward as a band, inverted into
+  a required-commit band, and pinned where the slider prefills. Confidence is
+  capped — no oracle. Definition: combat-formula `GLOSSARY.md` (D1/D7; cap and
+  pin → M3). See `js/intel.js` and the fog-of-war-discovery feature.
+- ✅ `Emergency reserve` (긴급 투입 / 예비대) — a third surplus outlet: points
   bound before sealing that auto-answer an own sector attacked without a primary
-  defense. Route-connected stock within the province rushes in, fights this turn
-  at reduced effectiveness (forced-march), and stays garrisoned after (not
-  single-use). Points buy an *awakening fraction* of the stock insurance
-  geography placed there, never absolute bodies (진관 grammar). Dials (awakening
-  rate, forced-march effectiveness, knee) → combat-formula MAGNITUDE M9.
-- ✅ `Mobilization visibility` (동원 가시성): force concentration leaks intent — a
-  massing army raises a banded tension signal with a short lead time, so a
-  first-strike buildup is partly readable rather than a free surprise. Prices the
-  scout-vs-conceal economy over the surprise premium (M10; survey in
-  `docs/features/combat-formula/research/first-strike-and-mobilization-visibility.md`).
-- ✅ `Surrender harvest` (항복 수확): an Encirclement success discounts the
-  winner's *own* casualties — a surrounded army that cannot escape capitulates
-  cheaply (the Ulm effect) instead of selling its life dear. Discount value →
-  combat-formula MAGNITUDE M6/M8.
-- ✅ `Feint follow-up` (양동 후속타): emergent play, not a mechanic — strike sector
-  A to draw a province's reserve toward it, then hit the thinned sector B.
-  Emerges from tension granularity + reserve triage + observable post-hoc troop
-  movement; the skill gate is the attacker's scouting (M10).
-- ✅ `Attack axis as numeraire` (기축통화 원칙): the pricing principle that the
-  attack axis is the game's reserve currency — defense, information, and static
-  investment are priced by what they *save or deny* in attack currency, so they
-  need no independent value survey (combat-formula method principle, M8). The
-  force-side counterpart of the economy's `Yield` unit.
+  defense. Canon for its grammar — points buy an *awakening fraction* of the
+  stock geography already placed there, never absolute bodies (진관 grammar).
+  Definition + dials: combat-formula `MAGNITUDE.md` M9.
+- ✅ `Mobilization visibility` (동원 가시성) — force concentration leaks intent, so
+  a first-strike buildup is partly readable rather than a free surprise. Canon
+  because it is what prices the scout-vs-conceal economy against the surprise
+  premium. Definition + dials: combat-formula `MAGNITUDE.md` M10 (survey:
+  `research/first-strike-and-mobilization-visibility.md`).
+- ✅ `Surrender harvest` (항복 수확) — an Encirclement success discounts the
+  winner's *own* casualties: a surrounded army capitulates cheaply (the Ulm
+  effect) instead of selling its life dear. Definition + discount: combat-formula
+  `MAGNITUDE.md` M6/M8.
+- ✅ `Feint follow-up` (양동 후속타) — emergent play, not a mechanic: draw a
+  province's reserve toward sector A, then hit the thinned sector B. Named
+  because the skill gate is the attacker's scouting. Definition: combat-formula
+  `MAGNITUDE.md` M10.
+- ✅ `Attack axis as numeraire` (기축통화 원칙) — the pricing principle that the
+  attack axis is the game's reserve currency: defense, information, and static
+  investment are priced by what they *save or deny* in attack currency, so none
+  needs an independent value survey. The force-side counterpart of the economy's
+  `Yield` unit. Definition: combat-formula `MAGNITUDE.md` M8 (method principle).
 
 ## Match Arc and Settlement
 
@@ -636,170 +644,133 @@ rule)._
 
 ### Arc ladder (scale layers)
 
-- ✅ `Engagement` (교전): one click, one turn — the resolution layer above.
-- ❓ `Operation` (작전): a shield-break or siege arc — a scale label over an
-  emergent chain of atomic one-turn resolutions (ADR 0026), never a
-  persistent multi-turn operation object.
-- ❓ `War` (전쟁): declaration → settlement, ~8–12 turns. A war is *decided* by
-  field-army destruction (shield-break → decisive battle → cascade), never by
-  grinding occupation to completion.
-- ❓ `Match` (매치): **⛔ Superseded (ADR 0042):** a match is now a 1v1 duel to
-  capital fall — war and match are one, player-paced to the capital's fall, not
-  a pre-war-standoff → hegemony-settlement arc. Target duration + turn band live
-  at the pivot's Gate 6 (D6.4, duel-pivot ledger). _(Historical: pre-war standoff
-  → hegemony settlement. A match, not a campaign.)_
+- ✅ `Engagement` (교전) — one click, one turn: the resolution layer above.
+  Definition: match-arc `GLOSSARY.md` § The arc ladder.
+- ❓ `Operation` (작전) — a shield-break or siege arc, and a scale label only: it
+  names an emergent chain of atomic one-turn resolutions, never a persistent
+  multi-turn operation object (ADR 0026). Definition: match-arc `GLOSSARY.md`.
+- ❓ `War` (전쟁) — declaration → settlement, and *decided* by field-army
+  destruction rather than by grinding occupation to completion. Definition:
+  match-arc `GLOSSARY.md` 전쟁.
+- ❓ `Match` (매치) — **⛔ Superseded (ADR 0042):** a match is now a 1v1 duel to
+  capital fall, so war and match are one and the pre-war-standoff →
+  hegemony-settlement arc is gone. Duration + turn band: pivot Gate 6 (D6.4,
+  duel-pivot ledger). Historical definition: match-arc `GLOSSARY.md` 매치.
 
 ### Match structure (frame decisions, AGREED 2026-07-03)
 
-- ✅ `Full adjacency, no neutral zones`: every realm starts bordering its
-  neighbors; the map is fully partitioned from turn 1. No expand-into-empty-land
-  opening — the envelope has no room for it and the `Uncertainty duel` needs live
-  neighbors immediately (ADR 0025).
-- ✅ `Realm count 4–6 (authoring default 5)`: **⛔ Superseded (ADR 0042):** the
-  duel has EXACTLY TWO realms; realm count is decided, not an authoring
-  variable. _(Historical: the multipolar partition was decided by authored
-  terrain cradles — basin, shielded valley, plain, coast — 4–6 a verification
-  condition on viable cradles, not an imposed cut.)_
-- ✅ `Viability parity, geometry/economy asymmetry`: **⛔ Multipolar geometry
-  superseded (ADR 0042):** the multipolar Warring-States / Three-Kingdoms shape
-  (中原 center + coalition-capable periphery) has no place in a two-realm duel.
-  What SURVIVES is the underlying principle — parity start / emergent asymmetry
-  (terrain-cradle TC-①/TC-⑭, SPEC Core Principle #8), asymmetry living in
-  geometry and economy — which the parallel 1v1 map pass re-expresses for two
-  realms. _(Historical: one multi-front 중원 center, economic-only crown paying
-  in multi-front exposure; periphery shielded and coalition-capable; whoever
-  takes the center inherits its exposure — the anti-snowball loop, a measured L2
-  hypothesis, TC-②. 2026-07-07 parity v4 wording.)_
-- ✅ `Match arc as design budget`: **⛔ Superseded (ADR 0042):** war and match
-  are one in the duel — there is no ~2–3-war budget and no hegemony-settlement
-  terminus. Match length is player-paced to capital fall (pivot Gate 6 D6.4).
-  _(Historical: buildup cost, war length, and the hegemony threshold were tuned
-  so one player's hand fought ~2–3 wars; the arithmetic priced out a fourth war,
-  no rule forbade it.)_
-- ❓ `Mature-state start`: realms begin as functioning states — fortresses
-  standing at historical chokes, armies raised. A from-zero opening would spend
-  the whole envelope on construction (a legendary fortress alone ≈ a third of a
-  match, M5).
+- ✅ `Full adjacency, no neutral zones` — the map is fully partitioned from turn
+  1, so there is no expand-into-empty-land opening: the envelope has no room for
+  it and the `Uncertainty duel` needs live neighbors immediately (ADR 0025).
+  Definition: match-arc `GLOSSARY.md` § Frame decisions.
+- ✅ `Realm count 4–6 (authoring default 5)` — **⛔ Superseded (ADR 0042):** the
+  duel has EXACTLY TWO realms, so realm count is decided rather than an
+  authoring variable. Historical definition: match-arc `GLOSSARY.md` § Frame
+  decisions.
+- ✅ `Viability parity, geometry/economy asymmetry` — **⛔ Multipolar geometry
+  superseded (ADR 0042):** the Warring-States / Three-Kingdoms shape (中原 center
+  + coalition-capable periphery) has no referent in a two-realm duel. What
+  SURVIVES is the underlying principle: parity start / `Emergent asymmetry`, with
+  asymmetry living in geometry and economy — which the parallel 1v1 map pass
+  re-expresses for two realms. Historical definition: match-arc `GLOSSARY.md`
+  § Frame decisions (terrain-cradle TC-①/TC-⑭, SPEC Core Principle #8).
+- ✅ `Match arc as design budget` — **⛔ Superseded (ADR 0042):** war and match
+  are one in the duel, so there is no ~2–3-war budget and no hegemony-settlement
+  terminus; length is player-paced to capital fall (pivot Gate 6 D6.4).
+  Historical definition: match-arc `GLOSSARY.md` § Frame decisions.
+- ❓ `Mature-state start` — realms begin as functioning states, fortresses
+  standing and armies raised, because a from-zero opening would spend the whole
+  envelope on construction. Definition: match-arc `GLOSSARY.md` § Frame
+  decisions (cost comparison → M5).
 
 ### Arc phases and settlement
 
-- ✅ `Match arc` (매치 아크): **⛔ Superseded (ADR 0042):** the duel has no
-  multi-war phase curve and no decision-point/settlement terminus. _(Historical:
-  standoff → buildup → first war → realignment → deciding war → decision point →
-  settlement.)_
-- ✅ `Shield-break` (방패 깨기): the opening operation of a war — reducing the
-  border fortification line that shields a realm's interior (erosion or bypass).
-  The pre-war mass ratio at the shield largely decides the war. (Sealed
-  2026-07-13, war-model-build WM-①; built in `js/battle.js`.)
-- ✅ `Decisive battle` (결전): the field engagement that destroys the defender's
-  field army once the shield is open; after it, the interior cascades. (Sealed
-  2026-07-13, WM-① — atomic same-turn sub-step, open-field by mode.)
-- ✅ `Field army` (야전군): a realm's one mobile main force, repositioning
-  reactively; its reach/pinning switches 결전 vs a front's fall. (Sealed
-  2026-07-13, WM-①; definition at match-arc GLOSSARY.)
-- ❓ `Cascade` (연쇄 붕괴 · 구칭 캐스케이드): the post-decision sweep — ordinary
-  sectors fall in one-turn takes against garrison-only defense. The victory lap
-  that makes winning *felt*; ending grammar must not amputate it. (Renamed
-  2026-07-13, WM-①; sweep mechanic itself is a later build slice.)
-- ✅ `Decision point` (결정점): **⛔ Superseded (ADR 0042):** the duel has no
+- ✅ `Match arc` (매치 아크) — **⛔ Superseded (ADR 0042):** the duel has no
+  multi-war phase curve and no decision-point/settlement terminus. Historical
+  definition: match-arc `GLOSSARY.md` 매치 아크.
+- ✅ `Shield-break` (방패 깨기) — a war's first phase, spent against the
+  fortification belt rather than against an army. Canon because it relocates
+  where wars are won: the mass ratio standing at that belt before the first shot
+  is what largely settles the outcome, which makes the buildup turns part of the
+  war. Definition: match-arc `GLOSSARY.md` 방패 깨기 (sealed 2026-07-13, WM-①;
+  built in `js/battle.js`).
+- ✅ `Decisive battle` (결전) — the second phase, once the belt is open: army
+  against army, with the interior as the prize. Canon because it is where a war
+  is *decided*, as distinct from where its territory is later collected.
+  Definition: match-arc `GLOSSARY.md` 결전 (sealed 2026-07-13, WM-①).
+- ✅ `Field army` (야전군) — a realm's mobile main force and the player's device
+  for controlling R: geometry-bound, freely divisible, its reach/pinning the
+  switch between 결전 and a front's fall. Definition: match-arc `GLOSSARY.md`
+  야전군 (sealed 2026-07-13, WM-①; amended 2026-07-14, WM-②).
+- ❓ `Cascade` (연쇄 붕괴 · 구칭 캐스케이드) — the third phase: collecting the
+  territory a decided war has already earned, cheaply. Canon as a design
+  constraint rather than only a mechanic — it is where winning is *felt*, so no
+  ending grammar may amputate it. Definition: match-arc `GLOSSARY.md` 연쇄 붕괴
+  (renamed 2026-07-13, WM-①).
+- ✅ `Decision point` (결정점) — **⛔ Superseded (ADR 0042):** the duel has no
   irreversibility-check terminus; the match ends ONLY on capital fall (pivot
-  D3.1). Anti-fizzle is structural (mutual-exposure + land-derived decay), not a
-  detected decision point. _(Historical: the first moment the irreversibility
-  check opened settlement negotiation — no remaining realm or coalition could
-  overturn the balance; the ending was a player decision. Operational definition
-  of SPEC's "matches end at decision points.")_
-- ✅ `Hegemony decision point` (패권 결정점): **⛔ Superseded (ADR 0042):** the
-  keystone multi-realm win rule — retired outright. A two-realm duel has no
+  D3.1), and anti-fizzle is structural (mutual exposure + land-derived decay)
+  rather than a detected moment. Historical definition: match-arc `GLOSSARY.md`
+  결정점.
+- ✅ `Hegemony decision point` (패권 결정점) — **⛔ Superseded (ADR 0042):** the
+  keystone multi-realm win rule, retired outright. A two-realm duel has no
   coalition and no "balance" to survey, so leadership + unassailability have no
-  referent; capital fall is the sole win condition. _(Historical: the
-  match-ending decision point — leadership [projectable mass clears the shield
-  ratio vs every in-balance realm] AND unassailability [no in-balance coalition
-  reaches that ratio within a regeneration window]. Dials + history: match-arc
-  GLOSSARY 패권 결정점 / RULINGS ⑨⑪⑮⑰.)_
-- ✅ `Projectable mass` (투사 가능 질량): **⛔ Stale as a victory input (ADR
-  0042):** it existed to feed the retired hegemony arithmetic (leadership /
-  unassailability across realms). The underlying reading — mass a realm can
-  deliver beyond its shield through exit-choke geography (M11 + route graph),
-  never stored; chokes narrow both ways — survives as an operational/combat
-  notion (reach cones), but is no longer a win-condition term. History: match-arc
-  GLOSSARY 투사 가능 질량 / RULINGS ⑩.
-- ✅ `In/out of the balance — hermit clause` (판세 안/밖 · 은둔국 조항):
-  **⛔ Superseded (ADR 0042):** "in/out of the balance" and coalition
-  sums/leadership denominator are multi-realm constructs with no referent in a
-  two-realm duel. _(Historical: a realm whose projectable mass fell below the
-  sealed floor was outside the balance — excluded from coalition sums and the
-  leadership denominator, derived per turn, acknowledged at settlement, never
-  forced to capitulate; a projecting-but-unbreakable realm blocked the decision
-  point, the Parthia pattern. match-arc GLOSSARY hermit row.)_
-- ✅ `Settlement` (정산): **⛔ Superseded as a match-terminus (ADR 0042):** the
-  duel ends ONLY on capital fall (D3.1) — there is no 패권 정산 concluding the
-  match, and with war=match no inter-war 전쟁 정산 either. Whether a reduced
-  concession/surrender affordance survives in a duel is deferred to the capital /
-  turn-structure passes (not resolved here). _(Historical: converted a decided
-  war into gains without occupation grinding — undamaged annexation via preset
-  bundles 관대/표준/최대; bluffing/free terms → Phase 2.)_
-- ✅ `Settlement currencies` (정산 통화): **⛔ Superseded (ADR 0042):** the
-  settlement menu was a war-terminus mechanic; the duel's terminus is capital
-  fall, not a priced bundle. _(Historical: the MVP menu of three — 할양 [cession:
-  named sectors, ceiling = occupation reach], 배상 [indemnity: economy transfer,
-  ceiling = raid-reach loot per M8's rule], 복속 [vassalage: realm survives
-  subordinated, mass leaving the coalition pool to the winner, only when the
-  capital is within reach]. Demilitarization/route access → Phase 2.)_
-- ✅ `Reach` (도달권): **⛔ Stale as a settlement-price base (ADR 0042):** with
-  no priced settlement terminus, reach no longer prices anything. The underlying
-  spatial notion (점령 도달권 = sectors takeable before resistance re-forms via the
-  route graph; 약탈 도달권 = the wider raidable zone) survives as an
-  operational/combat reading (reach cones, occupation-geography), not a
-  settlement currency. _(Historical: the closed-form price base of every
-  settlement, bounded by the regeneration window; "칼이 닿는 곳까지가 청구서다".)_
-- ✅ `Acceptance arithmetic` (수락 산술): **⛔ Superseded (ADR 0042):** there is
-  no settlement bundle for a loser to accept — the duel's terminus is capital
-  fall. _(Historical: a loser-AI accepted a bundle iff bundle value ≤
-  continued-war expected loss × personality coefficient [완고/실리/유화, ADR 0025
-  tendency], deterministic; the settlement card showed a fogged acceptance band.
-  match-arc GLOSSARY 수락 산술 / RULINGS ⑫⑬.)_
-- ✅ `Vassalage / capitulation` (복속): **⛔ Superseded (ADR 0042):** vassalage
-  moved a loser's mass into the hegemony arithmetic (overlord's side of the
-  coalition sum) — a multi-realm currency with no referent in a duel whose sole
-  terminus is capital fall. _(Historical: a settlement outcome — the losing realm
-  survived diminished and subordinated, mass counting to the overlord; MVP terms
-  no in-match defection, chain collapse on overlord fall, 부마국 internal
-  sovereignty; substance–sovereignty exchange axis [할양 trades substance to keep
-  sovereignty, 복속 the reverse]. match-arc GLOSSARY 복속 / RULINGS ⑭⑯.)_
-- ✅ `Recruitment` (모병): the single MVP economy→mass conversion — a primary
-  action moving bodies from the register into serving toward the cap, paid from
-  treasury yield, fighting at full strength (single troop quality). **Priced by the Surge
-  Draft Model (2026-07-07): a continuous cost curve over 동원 강도 plus an
-  optional commit-point surge — not a flat rate.** The temporary-levy track
-  (공세 동원, ADR 0009 role 3) stays a reserved seat. Force-adjustment stack:
-  ① recruitment (create, player) / ② garrison replenishment (**paid recruitment
-  or physical transfer; ADR 0045**) / ③ standing-force
-  stationing (deploy, player) / ④ commit lever + reserve (activate). Definition
-  + history: match-arc GLOSSARY 모병 / RULINGS MT-①③; rates → M13.
-- ✅ `Conscription register` (징집 명부 · 구칭 인력 풀 / manpower pool): "군사력이
-  될 수 있는 모든 신체 인구" — the total living draftable bodies a realm holds,
-  **land-derived** and finite within a match. Total-bodies accounting: the
-  starting army is drawn from it, recruitment moves bodies civilian→serving,
-  only death shrinks it (the dead never return — blood is a permanent
-  currency). Land transfer moves it; development grows it. The sustain
-  fraction and all dial values: MAGNITUDE M13 (owning doc). Definition +
-  history: match-arc GLOSSARY 징집 명부 / RULINGS MT-②. _(Re-slimmed
-  2026-07-10, forensics F-02; dial restatement removed.)_
-- ⛔ `Blinds` (블라인드): the anti-safe-play escalation thread ADR 0025 parked
-  here — **SUPERSEDED as a standalone mechanism (2026-07-08 MT-⑤)**: the
-  escalation duty is carried as an economic device through force-geography +
-  the hegemony bar, not a separate blinds mechanic. Authoritative status +
-  history: match-arc GLOSSARY 블라인드 row / RULINGS MT-⑤. _(Status
-  corrected 2026-07-10, forensics F-01 — this row had lagged its birthplace.)_
-  _(Marker ✅ → ⛔ 2026-07-27: the birthplace status word normalized from the
-  off-dictionary `SUPERSEDED` to `rejected-recorded`, and ⛔ is its marker.)_
-- ✅ `Test-trust ladder` (검증 신뢰 사다리): the four-rung verification
-  epistemology — L0 hand reasoning / L1 decision grids / L2 match tournament /
-  L3 human playtest — with asymmetric proof power (found-at-L2 is real;
-  not-found is nothing; found-against-a-strawman is also nothing —
-  confirmation needs the opponent's response modeled + a baseline for the
-  delta; L2-derived values are never final). Charter:
-  `docs/features/match-arc/TEST-LADDER.md`.
+  referent. Historical definition + dials: match-arc `GLOSSARY.md` 패권 결정점 /
+  `RULINGS.md` ⑨⑪⑮⑰.
+- ✅ `Projectable mass` (투사 가능 질량) — **⛔ Stale as a victory input (ADR
+  0042):** it existed to feed the retired hegemony arithmetic. The underlying
+  reading — mass a realm can actually deliver beyond its own shield, derived
+  through exit-choke geography and never stored — survives as an
+  operational/combat notion (reach cones), but is no longer a win-condition term.
+  Definition: match-arc `GLOSSARY.md` 투사 가능 질량 / `RULINGS.md` ⑩.
+- ✅ `In/out of the balance — hermit clause` (판세 안/밖 · 은둔국 조항) —
+  **⛔ Superseded (ADR 0042):** coalition sums and a leadership denominator are
+  multi-realm constructs with no referent in a two-realm duel. Historical
+  definition: match-arc `GLOSSARY.md` 판세 안/밖 · 은둔국 조항.
+- ✅ `Settlement` (정산) — **⛔ Superseded as a match-terminus (ADR 0042):** the
+  duel ends ONLY on capital fall (D3.1), so there is no 패권 정산 concluding the
+  match and — war being the match — no inter-war 전쟁 정산 either. Whether a
+  reduced concession/surrender affordance survives is deferred to the capital /
+  turn-structure passes. Historical definition: match-arc `GLOSSARY.md` 정산.
+- ✅ `Settlement currencies` (정산 통화) — **⛔ Superseded (ADR 0042):** the
+  settlement menu was a war-terminus mechanic, and the duel's terminus is capital
+  fall rather than a priced bundle. Historical definition: match-arc
+  `GLOSSARY.md` 정산 통화 / `RULINGS.md` ⑭.
+- ✅ `Reach` (도달권) — **⛔ Stale as a settlement-price base (ADR 0042):** with no
+  priced settlement terminus, reach no longer prices anything. The underlying
+  spatial reading (what the army could take before resistance re-forms, and the
+  wider raidable zone) survives as an operational/combat notion — reach cones,
+  occupation-geography — not a settlement currency. Definition: match-arc
+  `GLOSSARY.md` 도달권.
+- ✅ `Acceptance arithmetic` (수락 산술) — **⛔ Superseded (ADR 0042):** there is no
+  settlement bundle for a loser to accept. Historical definition: match-arc
+  `GLOSSARY.md` 수락 산술 / `RULINGS.md` ⑫⑬.
+- ✅ `Vassalage / capitulation` (복속) — **⛔ Superseded (ADR 0042):** vassalage
+  moved a loser's mass into the hegemony arithmetic, a multi-realm currency with
+  no referent in a duel whose sole terminus is capital fall. Historical
+  definition: match-arc `GLOSSARY.md` 복속 / `RULINGS.md` ⑭⑯.
+- ✅ `Recruitment` (모병) — the single MVP economy→mass conversion: a primary
+  action moving bodies from the register into serving, paid from treasury yield
+  and priced by the Surge Draft Model rather than a flat rate. Canon because it
+  is the only channel by which economy becomes force. Definition + the
+  force-adjustment stack: match-arc `GLOSSARY.md` 모병 / `RULINGS.md`
+  MT-①/③/⑥ (garrison replenishment: ADR 0045; rates → M13).
+- ✅ `Conscription register` (징집 명부 · 구칭 인력 풀 / manpower pool) — the total
+  living draftable bodies a realm holds: land-derived, finite within a match, and
+  shrunk only by death, which is what makes blood a permanent currency.
+  Definition + accounting: match-arc `GLOSSARY.md` 징집 명부 / `RULINGS.md`
+  MT-②/⑥ (dials → M13).
+- ⛔ `Blinds` (블라인드) — the anti-safe-play escalation thread ADR 0025 parked
+  here, **retired as a standalone mechanism (2026-07-08 MT-⑤)**: the escalation
+  duty is carried through force-geography + the hegemony bar instead.
+  Authoritative status + history: match-arc `GLOSSARY.md` 블라인드 / `RULINGS.md`
+  MT-⑤. _(Row status corrected 2026-07-10, F-01; marker ✅ → ⛔ 2026-07-27 with
+  the birthplace status word normalized to `rejected-recorded`.)_
+- ✅ `Test-trust ladder` (검증 신뢰 사다리) — the four-rung verification
+  epistemology (L0 hand reasoning → L3 human playtest) whose defining property is
+  asymmetric proof power: found-at-a-rung is real, not-found is nothing. Canon
+  because every feature's seals carry its L-stamp. Charter:
+  `docs/features/match-arc/TEST-LADDER.md`; term row: match-arc `GLOSSARY.md`.
 
 ### Winning archetypes (STRATEGY-SPACE.md — the value-dial checklist)
 
@@ -851,14 +822,20 @@ What the archive is and is not: ADR 0041. Do not restate it here.
 
 ## Open Questions
 
-- ❓ Exact trigger for activating background regions. Deferred by decision:
-  Phase 1 uses a static authored active area; dynamic activation (influence,
-  scouting, diplomatic awareness, campaign scope) is a later-phase concern
-  (ADR 0003).
-- ❓ Secondary function assignments for the initial provinces. Primary functions
-  are assigned; optional secondary functions are deferred to a province
-  content/balancing pass (`secondaryFunction` is currently null).
-- ❓ Concrete numeric balancing of population, economy, garrison, defense, and
-  capacity generation across the 30 provinces.
+A glossary is not a queue. Live work is tracked in `.scratch/<tracker>/` —
+`l3-playable-seam/map.md` for the decision gates, `l3-playable-build/` for the
+tickets — and per-feature questions live in each feature's `INDEX.md`.
+
+Three questions this section carried were **archive-era** and closed with the
+world they asked about: background-region activation triggers (ADR 0003 —
+answered by the authored cradle map, which has no dormant regions), and both
+province questions (secondary functions, numeric balancing across the 30
+provinces) — the 30-province draft is reference-prototype data, ADR 0041.
+
+One is genuinely open and has no owner yet (placement owed, recorded in
+`docs/SYNC-DEBT.md`):
+
 - ❓ Whether a true naval system (naval capacity/force role, blockade, sea
-  movement) is introduced in a later phase.
+  movement) arrives in a later phase. Phase 1's answer is settled — penalty-based
+  crossing with port mitigation and no naval system (ADR 0015, `Strait`) — but
+  whether the full system ever lands is a roadmap question, not a Phase 1 one.

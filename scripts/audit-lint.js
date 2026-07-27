@@ -242,22 +242,19 @@ function checkNumericRestatement(domainMapText) {
 
 const RESTATEMENT_THRESHOLD = 0.25;
 
-// The 19 rows audit run #3 found already in place. Recorded here rather than
-// reported every run: they are fully enumerated in
-// `docs/audits/2026-07-26-audit-run-3.md` and carried as an open row in
-// `docs/SYNC-DEBT.md`, so re-printing them on every lint is the alarm fatigue
-// this file's CLI comment already warns about. This is a ratchet, not an
-// amnesty — NEW restatements block immediately. Delete a name from this set as
-// its entry is re-cut to summary + pointer; the set reaching empty is what pays
-// the debt.
-const RESTATEMENT_GRANDFATHERED = new Set([
-  'Impassable terrain', 'Cascade', 'War', 'Isolation gate', 'Shield-break',
-  'Strike at half-crossing', 'Battle-summoning placement', 'Decisive battle',
-  'Mature-state start', 'R (combat ratio)', 'Threshold',
-  'Full adjacency, no neutral zones', 'World product', 'Conscription register',
-  'Emergent asymmetry', 'Water penalty', 'Escape state', 'Recruitment',
-  'Rout cliff'
-]);
+// EMPTY, and that is the point: the ratchet closed. Audit run #3 found 19
+// restatements already in place (enumerated in
+// `docs/audits/2026-07-26-audit-run-3.md`) and carried them here so a known
+// backlog would not re-print on every lint. Enforcement-ladder stage 4
+// (2026-07-28) re-cut all 56 promoted DOMAIN_MAP entries to summary + pointer,
+// which drained the set and paid the debt.
+//
+// Keep it empty. A name added back is an amnesty for a copy that the re-cut
+// already proved avoidable — rewrite the entry in summary voice instead. Five of
+// the 56 needed exactly that second pass: they had kept the birthplace's own
+// phrasing, this check caught each one, and rephrasing (not exempting) cleared
+// them.
+const RESTATEMENT_GRANDFATHERED = new Set([]);
 
 function wordsOf(s) {
   return s.replace(/[^\p{L}\p{N}\s]/gu, ' ').split(/\s+/).filter((w) => w.length > 1);

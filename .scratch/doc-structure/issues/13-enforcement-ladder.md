@@ -89,21 +89,57 @@ ADR would have dressed archive description as a decision of record. Three
 pointer lines now stand in their place. The label read "relocation, not
 judgment" — reading the content is what made it judgment.
 
+## LANDED — stage 4: DOMAIN_MAP sheds its duplicate half (2026-07-28)
+
+All 56 promoted entries re-cut to summary + pointer + why-it-is-canon; 117
+headers before and after, 61 native / 56 promoted unchanged.
+`RESTATEMENT_GRANDFATHERED` is **empty** — the spec's stated acceptance test —
+and a test now pins empty as the invariant so a name added back fails rather than
+passing quietly. Five entries needed a second pass: they had kept the
+birthplace's phrasing, check 9 caught each, and rephrasing cleared them. Nothing
+was exempted to reach green.
+
+**The finding worth carrying:** a restatement cannot be safely cut until the
+birthplace is verified to hold current truth — sometimes the copy is the fresher
+one. combat-formula's `Standing rules` row still carried the staged starvation
+severity that war-model slice-2 §2 superseded, because the 2026-07-15 correction
+reached DOMAIN_MAP and never reached the birthplace. Cutting the Tier-0 entry to
+a pointer would have pointed at superseded text. Both that row and match-arc
+`모병`'s missing ADR 0045 citation are fixed; full record in `docs/SYNC-DEBT.md`
+§ Paid.
+
+**`## World Direction` resolved the other way from this ticket's label**, for the
+same reason `## Resolved Phase 1 Decisions` did. The diff was run, as the label
+required, and it showed the move was mostly unnecessary: what the world *is*
+(East Asia-inspired but fictional, real geographic patterns, not a literal
+historical simulator, never at the cost of balance) is **already in `SPEC.md`
+§ World Model** — moving it would have created the extra copy the label warned
+about. The world-scale bullets (50×50 data, 25×25–30×30 active area, 30 named
+provinces in `js/province-data.js`, twelve archetypes) are archive-era (ADR 0041),
+so they became a pointer. Section is now 20 lines of pointers, no SPEC edit made.
+
+`## Open Questions` likewise: three of four were archive-era and closed with the
+30-province draft world; one is genuinely open.
+
+**Two residues are Tier 3 and stayed put, both registered in `docs/SYNC-DEBT.md`
+§ Open:** the place-naming rule (live, product-facing, written nowhere else —
+SPEC § World Model proposal owed) and the naval-system question (SPEC § Phase
+Roadmap). Both are marked as unhoused in place rather than silently relocated.
+
 ## `ready-for-human` — needs the user, not an agent
 
 - ~~**Apply the extended status dictionary to the law.**~~ **DONE 2026-07-27**
   (user authorized the Tier-3 edit) — see the LANDED section above.
-- **Strip the copied definitions from DOMAIN_MAP's 56 promoted entries.** The
-  headers STAY (promotion is derived from them, ruling 03 Q3). What replaces
-  each definition is a summary, and deciding what a term's summary *is* is
-  judgment — several of these terms are mid-pivot.
-- **`## World Direction` → `SPEC.md`.** SPEC changes only by explicit user
-  decision. Diff against SPEC's existing `## Core Design Principles` first, or
-  the move creates one more copy.
-- **The rename.** `DOMAIN_MAP.md` → a top-level glossary, once the file does one
-  job. Optional, last, and its blast radius is measured in the spec: 80 inventory
-  birthplace values, 4 script/test files, the registry, the law, the AGENTS.md
-  mirror, 92 markdown files. Buys naming honesty and nothing functional.
+- ~~**Strip the copied definitions from DOMAIN_MAP's 56 promoted entries.**~~
+  **DONE 2026-07-28** — see the stage-4 LANDED section above.
+- ~~**`## World Direction` → `SPEC.md`.**~~ **RESOLVED 2026-07-28 without a SPEC
+  edit** — the required diff showed SPEC already holds it. Two Tier-3 residues
+  are registered in `docs/SYNC-DEBT.md`; see above.
+- **The rename.** `DOMAIN_MAP.md` → a top-level glossary. The file now does one
+  job, so the precondition is met. Still optional, still last, and its blast
+  radius is measured in the spec: 80 inventory birthplace values, 4 script/test
+  files, the registry, the law, the AGENTS.md mirror, 92 markdown files. Buys
+  naming honesty and nothing functional — decide it unbundled.
 
 ## `needs-info` — a decision is missing before anyone starts
 

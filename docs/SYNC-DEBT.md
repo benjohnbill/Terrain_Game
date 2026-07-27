@@ -11,26 +11,28 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
 
 ## Open
 
-- [ ] **The single-definition rule was never swept for in `DOMAIN_MAP.md`**
-  (registered 2026-07-26, audit run #3). Forensics F-04 (adopted 2026-07-10)
-  requires every DOMAIN_MAP entry to be summary + pointer, never a normative
-  copy — but no audit run has ever checked for *restatement*, only for
-  unregistered terms. **19 entries exceed 25% 5-word-shingle overlap with their
-  birthplace row; 15 carry no pointer back.** Worst: `Impassable terrain` 88%
-  (terrain-cradle), `Cascade` 76%, `War` 70%, `Shield-break` 60% (match-arc),
-  `Battle-summoning placement` 57% (terrain-cradle). Two verified by hand —
-  both reproduce the birthplace definition nearly clause for clause. Pay by
-  re-cutting the entries as summary + pointer in a doc-sync batch (the summary
-  wording is real judgment, and several terms are mid-pivot, which is why this
-  run reported rather than repaired). Full table + method:
-  `docs/audits/2026-07-26-audit-run-3.md` § New Ring B sweep.
-  **The detector shipped 2026-07-26** as `audit-lint.js` check 9
-  (`definitionRestatement`, blocking, 6 tests) — so this class of drift is now
-  caught by the `write-lint.js` hook in the turn it is written, not at the next
-  audit. The 19 are a **ratchet**, not an amnesty: they sit in
-  `RESTATEMENT_GRANDFATHERED` so NEW copies block immediately. **Paying this
-  debt = deleting names from that set** as their entries are re-cut; the set
-  reaching empty closes the row.
+- [ ] **`DOMAIN_MAP.md`'s place-naming rule has no birthplace** (registered
+  2026-07-28, enforcement-ladder stage 4). The `## World Direction` section was
+  reduced to pointers, and every bullet resolved somewhere — except one: place
+  naming (large geography may be historically legible, specific provinces use
+  fictional East Asian-style names, player-facing names are never meta design
+  labels). It is a live rule governing what the player reads, and it is written
+  nowhere else: `SPEC.md` § World Model does not carry it, and terrain-cradle
+  `RULINGS.md` has no naming ruling. Its natural home is SPEC § World Model,
+  which is **Tier 3 — a proposal, not an agent edit.** It stays in DOMAIN_MAP
+  marked as unhoused until that decision. Do not "fix" this by inventing a
+  terrain-cradle ruling: the rule is product-facing, and it was never sealed at a
+  feature.
+
+- [ ] **The naval-system question has no owner** (registered 2026-07-28,
+  enforcement-ladder stage 4). `DOMAIN_MAP.md`'s `## Open Questions` held four;
+  three were archive-era and closed with the 30-province draft world they asked
+  about (ADR 0041). The fourth — whether a true naval system (naval capacity /
+  force role, blockade, sea movement) ever arrives — is genuinely open and
+  belongs in a roadmap, not a glossary. Phase 1's answer IS settled (penalty
+  crossing + port mitigation, no naval system: ADR 0015, `Strait`); what is open
+  is the later-phase question, so its home is `SPEC.md` § Phase Roadmap — **Tier
+  3.** Parked in DOMAIN_MAP, marked, until then.
 
 - [ ] **`war-model-build/MAGNITUDE.md` has five unregistered named constructs**
   (registered 2026-07-26, audit run #3). The new model doc is a definition
@@ -1360,6 +1362,32 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   revisit if it occurs (emergence-limit).**
 
 ## Paid
+
+- [x] 2026-07-28 — **The single-definition rule was never swept for in
+  `DOMAIN_MAP.md` — PAID** (registered 2026-07-26, audit run #3). Run #3 found 19
+  entries over the 25% 5-word-shingle threshold against their birthplace row, 15
+  with no pointer back, and reported rather than repaired because the summary
+  wording is real judgment. Paid by enforcement-ladder stage 4: **all 56 promoted
+  entries re-cut to summary + pointer + why-it-is-canon**, not just the detected
+  19 — the 19 were the subset check 9 could see, and an entry below the shingle
+  threshold can still be a divergent second definition, which is worse.
+  `RESTATEMENT_GRANDFATHERED` is now **empty**, which was the stated acceptance
+  test; `tests/audit-lint.test.js` pins empty as the invariant, so a future name
+  added back fails a test rather than passing quietly. Five entries needed a
+  second pass — they had kept the birthplace's phrasing, check 9 caught each, and
+  they were rephrased rather than exempted. Every ``- ✅ `Term` `` header was
+  retained (ruling 03 Q3 derives promotion from it; `checkHeaderDiff` scans it):
+  117 headers before, 117 after, 61 native / 56 promoted unchanged.
+  **Two divergences the re-cut surfaced, both now closed:** combat-formula's
+  `Standing rules` birthplace row still carried the staged starvation severity
+  (holding→attack-incapable→defenseless, stage 2 as an availability gate) that
+  war-model slice-2 §2 superseded, plus garrison regeneration that ADR 0045
+  retired — the 2026-07-15 row below corrected DOMAIN_MAP and never reached the
+  birthplace, so cutting the Tier-0 entry to a pointer would have pointed at
+  superseded text; and match-arc `모병` now cites ADR 0045 for the
+  garrison-replenishment clause it already described. **The lesson worth keeping:
+  a restatement cannot be safely cut until the birthplace is verified to hold the
+  current truth — sometimes the copy is the fresher one.**
 
 - [x] 2026-07-15 — **§2 recovery model — ground/ash gate note — PAID**
   (registered same day, slice-2 ticket 06 board verbs + emergent siege). The

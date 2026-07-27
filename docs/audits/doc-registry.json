@@ -49,15 +49,16 @@
   {
    "path": "DOMAIN_MAP.md",
    "layer": "projection",
-   "role": "tier-0 canon; promoted entries are summary + pointer",
+   "role": "tier-0 canon, two halves: defines the terms born here; promoted entries are summary + pointer",
    "ownerFeature": null,
    "allowedContent": [
+    "definition-body (native terms only)",
     "summary",
     "pointer",
     "status-marks"
    ],
    "forbiddenContent": [
-    "definition-body",
+    "definition-body (promoted terms)",
     "value-restatement"
    ]
   },

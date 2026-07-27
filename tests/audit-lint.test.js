@@ -190,14 +190,16 @@ test('definitionRestatement never fires on a term whose birthplace is DOMAIN_MAP
   assert.deepEqual(findings, []);
 });
 
-// The ratchet: run #3's 19 pre-existing rows are recorded, not re-reported.
-// Deleting a name as its entry is re-cut is what pays the debt down.
-test('definitionRestatement grandfathers the rows audit run #3 recorded', () => {
-  assert.ok(lint.RESTATEMENT_GRANDFATHERED.has('Impassable terrain'));
-  assert.equal(lint.RESTATEMENT_GRANDFATHERED.size, 19);
+// The ratchet closed. Run #3 recorded 19 pre-existing restatements so a known
+// backlog would not re-print every lint; stage 4 (2026-07-28) re-cut all 56
+// promoted entries and drained the set. Empty is now the invariant: a name added
+// back would exempt a copy the re-cut already proved avoidable.
+test('definitionRestatement carries no grandfather exemptions', () => {
+  assert.equal(lint.RESTATEMENT_GRANDFATHERED.size, 0,
+    'stage 4 drained this set — re-cut the entry in summary voice, do not exempt it');
   const real = lint.runAll(process.cwd());
   assert.deepEqual(real.definitionRestatement, [],
-    'the grandfather set must exactly cover the live repo, so NEW copies stand out');
+    'with no exemptions left, the live repo must be clean so NEW copies stand out');
 });
 
 test('shingleOverlap scores reuse of phrasing, not shared vocabulary', () => {
