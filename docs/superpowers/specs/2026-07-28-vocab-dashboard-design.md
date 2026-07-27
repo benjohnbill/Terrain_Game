@@ -275,6 +275,65 @@ predate the ritual, so they were never in a batch to be appended. Generation
 takes 131 → 267 in one step, which is the strongest single argument for building
 this.
 
+## Content envelope — measured 2026-07-28, before composition
+
+Re-measured because the handoff required it, and extended past counts on
+purpose: a designer given totals but not content shapes will design for the
+average row and break on the real ones. Read-only pass over
+`term-inventory.json` plus the glossary tables.
+
+**The split holds exactly.** A/B/C = **14 / 11 / 22**, watched **220 (82%)**,
+term list **254**, plans panel **13**. Nothing to re-cut.
+
+**The four scan-layer fields are not equally informative**, and that is the
+finding that most constrains the layout:
+
+| Field | Distinct | Missing | Shape |
+|---|---|---|---|
+| `canonical` | 267 | 0 | p50 16ch · MAX 45ch |
+| `korean` | — | **91 (34%)** | p50 5ch · MAX 15ch |
+| `status` | 4 | 0 | **246 of 267 are `AGREED`** |
+| `birthplace` | **17** | 0 | MAX 63ch; 80 DOMAIN_MAP + 75 match-arc |
+
+1. **A third of the rows have no 한국어 at all** — and they are
+   disproportionately the foundational terms (`Faction`, `Map unit`,
+   `Terrain-first`, `Region value`, `Sector value`) plus the code-identifier
+   entries, which legitimately never had one. A layout that treats 한국어 as a
+   dependable second line looks broken on 91 rows. Whether some of those are an
+   inventory gap is a separate question for check 10's territory, not a design
+   input: the design must survive the blanks either way.
+2. **Status is nearly constant — 92% `AGREED`.** Status colour therefore cannot
+   carry scanning; painting 246 identical badges buys nothing and is the
+   badge-spam tic besides. The 21 non-`AGREED` rows are the whole signal, so
+   make them **findable** (filter, or a quiet mark on the exceptions) rather
+   than colour-coded across the wall.
+3. **`birthplace` is the field with real grouping power** — 17 values, and "find
+   where it lives" is the encyclopedia's stated job. Paths repeat heavily and
+   run to 63ch, so a short feature label carrying the full path on the pointer
+   is the likely shape. Grouping by birthplace does not touch the law's rule,
+   which forbids sectioning by **gloss presence** specifically.
+
+**Glosses are paragraphs, not lines.** Definition-cell length across the 121
+GLOSSARY table rows: **p50 290ch · p90 649ch · MAX 1331ch**, with 45 of 121 over
+400ch. This spec's recurring phrase "a one-line gloss" does not describe the
+material. The detail layer must be a scrollable region, and an excerpt stays a
+**full** quotation — truncating one to fit a card silently edits it, which is
+exactly what quoting instead of summarizing was meant to avoid.
+
+Measured on those 121 GLOSSARY rows only. `DOMAIN_MAP.md` carries **0** markdown
+table rows despite being the birthplace of 80 terms, so its natives need the
+separate `splitDomainMapRows` path and their length envelope is **unmeasured**
+here. Do not round this up to "measured all 206".
+
+**`aliases` is doing two jobs.** 88 terms carry at least one, 38 carry two or
+more, and the maximum is **12** (`Province archetype region` → twelve region
+names). Several sets are not aliases but enumerated members (`Province status` →
+six values, `Engagement-rule verbs` → six verbs). Inline alias chips break on
+those rows.
+
+Other axes available for filtering: `tier` (83 Tier-0 / 184 Tier-1), `kind` (217
+mechanism / 50 meta), `codeIdentifier` (84 terms carry one).
+
 ## Renderer contract
 
 **Two layers, and the split is what satisfies the law's equal-weight rule
