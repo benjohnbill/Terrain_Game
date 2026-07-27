@@ -1,0 +1,33 @@
+# Governance gate, rung 3 (CI) — the backstop.
+#
+# The git hooks are a guardrail, not a boundary: `--no-verify` bypasses them,
+# and a fresh clone has no hooks until `core.hooksPath` is set. This job is what
+# makes both of those recoverable rather than silent.
+#
+# It runs the SAME command a developer runs. That is a sealed invariant: no
+# check logic lives in any enforcement point, so a CI failure is always
+# reproducible locally with one command and never a CI-only mystery.
+name: governance
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+
+jobs:
+  lint-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # audit-lint's ledger-currency check reads commit subjects to guess
+          # whether a SYNC-DEBT row was paid. With the default shallow clone it
+          # sees almost no history and silently under-reports.
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          # Matches the local toolchain. `package.json` declares no `engines`
+          # range, so this pin is the only place the version is stated — if the
+          # local Node moves, move it here too or CI stops being a mirror.
+          node-version: '26'
+      - run: npm run lint:docs

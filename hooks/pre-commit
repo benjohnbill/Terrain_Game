@@ -1,0 +1,14 @@
+#!/bin/sh
+# Governance gate, rung 3 (commit). See
+# docs/superpowers/specs/2026-07-26-governance-prevention-over-audit.md.
+#
+# This hook invokes ONE command and contains no check logic of its own. That is
+# a sealed invariant, not a style choice: pre-commit, pre-push and CI all call
+# the same entry point, which is what makes "passes locally, fails in CI"
+# structurally impossible. If you are tempted to add a check here, add it to
+# scripts/audit-lint.js instead.
+#
+# Budget: lint only, under two seconds (0.51s at writing). Heavier work belongs
+# at pre-push or in CI. A slow pre-commit trains --no-verify, and a trained
+# --no-verify is the end of the whole ladder.
+exec npm run --silent lint:docs

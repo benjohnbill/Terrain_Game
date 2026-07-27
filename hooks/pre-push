@@ -1,0 +1,13 @@
+#!/bin/sh
+# Governance gate, rung 3 (push) — and the one that actually holds.
+#
+# pre-commit does NOT run on merge commits. Verified by experiment, and it
+# matters here specifically: a merge is how Codex branches reach main, so a
+# commit-only gate leaves the project's real integration path uncovered.
+# Everything reaching the remote passes through here.
+#
+# The invariant this defends: a GLOSSARY/inventory mismatch cannot enter the
+# REMOTE history. Local history may briefly hold one.
+#
+# Same single entry point as pre-commit. No check logic here either.
+exec npm run --silent lint:docs
