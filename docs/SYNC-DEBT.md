@@ -11,6 +11,33 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
 
 ## Open
 
+- [ ] **Superseded staged starvation survives in two more surfaces**
+  (registered 2026-07-28, found while reading supply authority for build ticket
+  06b). slice-2 § 2 superseded D4's staged severity
+  (holding → attack-incapable → defenseless) in favour of the continuous
+  supply-ledger pump, and that supersession **was** stamped where it was looked
+  for: ADR 0026's header carries `Amended by slice-2 design spec §2
+  (2026-07-14)`, and the 2026-07-15 row below corrected DOMAIN_MAP
+  `Standing rules`, with the birthplace divergence closed 2026-07-28. Two
+  neighbours were missed because the paid row named only the similarly-titled
+  entry:
+  (a) **`DOMAIN_MAP.md` `Standing world rule`** still reads "a supply-cut
+  **sector** degrades in **staged severity** each turn until the route state is
+  repaired" — a live ✅ AGREED entry roughly 300 lines from the entry that
+  declares that model superseded, so the file contradicts itself;
+  (b) **`operation-plan-catalog/CATALOG.md` § Supply Interdiction**
+  (Time-economics) still calls the staged curve "a magnitude-pass dial" — and
+  this one is the **birthplace** of the AGREED Tier-1 term `Supply Interdiction`,
+  so a superseded rule sits on an authoritative definition surface, which is the
+  heavier of the two.
+  Both are stamp work, not rulings: the continuous pump is sealed and
+  implemented. Note the shape — this is the same class the 2026-07-15 row's own
+  lesson warns about (verify every surface, not the one that shares a name), and
+  the subject also drifts between the two models (sector-level route state versus
+  a force's ledger), so the rewrite should say which subject it means. Related
+  design work is registered separately as **R16** in `docs/DESIGN-RISKS.md`; this
+  row is only the supersession debt.
+
 - [ ] **QUICKREF gloss coverage — ~61 prose-born terms have no extractable
   gloss** (registered 2026-07-28, after the QUICKREF purpose ruling). The
   equal-weight rule (law ritual duty 4) makes a missing gloss a blank slot rather
