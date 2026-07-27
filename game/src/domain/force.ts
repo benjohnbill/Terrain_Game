@@ -12,6 +12,16 @@ export type OriginComposition = Readonly<Record<RegionId, number>>;
 
 export interface ForceCohort {
   readonly origins: OriginComposition;
+  /**
+   * The **wear** ledger, and only that one: march and battle in, effectiveness
+   * out, floored at ×0.5 (`domain/fatigue.ts`). It never kills.
+   *
+   * The gauge has a *second* account — supply, whose failure removes men and never
+   * touches effectiveness — and the two are deliberately not one number. No supply
+   * account is stored anywhere in match state: every force is supplied in this
+   * slice, so the account would be dead until the supply design pass (R16,
+   * `docs/DESIGN-RISKS.md`) gives it a cause. Do not collapse the two.
+   */
   readonly fatigue: number;
 }
 

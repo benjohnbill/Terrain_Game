@@ -234,6 +234,45 @@ test('the grey-box map shows every own detachment and its planned destination', 
   await expect(page.getByTestId('detachments')).toContainText('턴');
 });
 
+test('a human watches a march tire the army and a rest bring it back', async ({ page }) => {
+  // Ticket 06b's player-visible increment through the built viewer: the 피로
+  // readout is the wear ledger, and it moves in both directions without any new
+  // screen — the upkeep is folded into the reveal's tail (D6.2).
+  await openDecisionBeat(page);
+  const wear = async () => {
+    const text = await page.getByTestId('detachments').textContent();
+    return Number(text.match(/피로\s*([\d.]+)/)[1]);
+  };
+  const closeTurn = async () => {
+    await page.getByTestId('lock').click();
+    await page.getByTestId('viewer').selectOption('realm-b');
+    await page.getByTestId('lock').click();
+    await page.getByTestId('viewer').selectOption('realm-a');
+  };
+
+  expect(await wear()).toBe(0);
+
+  await page.locator('[data-sector="r10_s2"]').hover();
+  await page.getByTestId('march-focused').click();
+  // The order spans several turns, so run it out: every marching turn tires the
+  // army more than its own tail recovers.
+  let marched = 0;
+  for (let turn = 0; turn < 6; turn += 1) {
+    await closeTurn();
+    const now = await wear();
+    expect(now).toBeGreaterThan(marched);
+    marched = now;
+    if (((await page.getByTestId('detachments').textContent()).includes('→ —'))) break;
+  }
+  expect(marched).toBeGreaterThan(0);
+
+  // Standing still, the same readout falls — and the event that did it is in the
+  // reveal, naming only that the beat ran.
+  await closeTurn();
+  await expect(page.getByTestId('events')).toContainText('upkeep-resolved');
+  expect(await wear()).toBeLessThan(marched);
+});
+
 test('a human sites recruitment before committing it', async ({ page }) => {
   await openDecisionBeat(page);
   await page.getByTestId('recruit-sector').selectOption('r10_s0');
