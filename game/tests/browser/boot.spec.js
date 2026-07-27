@@ -179,16 +179,28 @@ test('an ordered intent log replays to the same turn state in both hosts', async
   expect(nodeResult.events.filter((e) => e.type === 'intent-rejected')).toEqual([]);
   expect(nodeResult.events.some((e) => e.type === 'detachment-split')).toBe(true);
   expect(nodeResult.events.some((e) => e.type === 'detachments-merged')).toBe(true);
-  expect(nodeResult.view.turn).toBe(5);
+  expect(nodeResult.view.turn).toBe(7);
   expect(nodeSummary.detachments).toHaveLength(2);
-  // The fixture's march finishes early and the force then stands still for the
-  // remaining turns, so ticket 06b's recovery has emptied the wear ledger by turn
-  // 5. (Empty, not the *effectiveness floor* — that registered term is the ×0.5
-  // bound at the other end of the curve.) The cross-host claim is
-  // `browserSummary === nodeSummary` above; this pins the value both must land on.
-  expect(nodeSummary.detachments).toContainEqual(expect.objectContaining({
-    id: 'detachment:realm-a:1', position: { q: 19, r: 13 }, fatigue: 0,
-  }));
+
+  // Ticket 06c's contact phase. The fixture now crosses a border, so the loop's
+  // most intricate arithmetic is on the wire rather than only in a unit test. The
+  // cross-host claim is `browserSummary === nodeSummary` above; these pin that the
+  // fixture still *reaches* the battle instead of quietly relapsing into the
+  // garrison-only lane it used to end in.
+  const battles = nodeResult.events.filter((e) => e.type === 'battle-resolved');
+  expect(battles).toHaveLength(1);
+  expect(battles[0].detail.sectorFalls).toBe(true);
+  expect(battles[0].detail.casualties.attacker).toBeGreaterThan(0);
+  expect(battles[0].detail.casualties.defender).toBeGreaterThan(0);
+  // Exact pre-battle strength and the composed power product are ticket 08's fog
+  // and ticket 09's EVAL BAR to present; neither may reach a viewer here.
+  expect(deepKeys(nodeResult.events)).not.toContain('substance');
+  expect(deepKeys(nodeResult.events)).not.toContain('power');
+
+  // A force that marched and fought carries wear, and the men still reconcile with
+  // the field reading after the blood was taken.
+  expect(nodeSummary.detachments.find((d) => d.id === 'detachment:realm-a:1').fatigue)
+    .toBeGreaterThan(0);
   expect(nodeSummary.detachments.reduce((men, detachment) => men + detachment.men, 0))
     .toBe(nodeSummary.economy.field);
   expect(nodeSummary.economy.provinces).toBeDefined();

@@ -44,6 +44,10 @@
  *     front is an edge and these are two edges. Whether two pressures on one
  *     sector merge into a single engagement is a *combat* question, and it belongs
  *     to ticket 06's per-sector adjudication rather than to the turn loop.
+ *     **Answered by ticket 06c: they merge**, because resolution is atomic per
+ *     sector and a sector cannot be fought over twice in one turn. The two fronts
+ *     survive as fronts and pour their chips into one engagement
+ *     (`domain/engagement.ts`).
  *
  * Across all four, the same rule does the work: **fronts resolve in canonical key
  * order, and nothing consults an actor's identity or the order anyone submitted
@@ -52,13 +56,16 @@
  *
  * ## What resolution does *not* do here
  *
- * It changes no ownership, kills nothing, and moves nothing. Ticket 03's mandate is
- * the loop, the blind commit, the symmetric reveal, and the budget; combat is
- * ticket 06 and the capital fall is ticket 07. Each reading therefore carries an
- * explicit `pending` outcome, so a placeholder can never be mistaken for a result.
+ * A front reading remains a **reading of the commitment**, not the battle. Ticket
+ * 03's mandate was the loop, the blind commit, the symmetric reveal, and the
+ * budget; ticket 06c added the battle beside this — at the sector, because that is
+ * the atom — and the capital fall is ticket 07's. So this still changes no
+ * ownership, kills nothing and moves nothing; what it now reports honestly is
+ * whether the chips a realm poured onto a border met anybody.
  */
 
 import type { ActorId, Front } from '../runtime/types.js';
+import type { SectorId } from '../world/schema.js';
 import type { Allocations, FrontAssignments } from './commitment.js';
 
 /**
@@ -79,10 +86,16 @@ export interface FrontReading {
   readonly assignments: Readonly<Record<ActorId, readonly string[]>>;
   readonly total: number;
   /**
-   * What the engagement resolved to. `pending-operations` until ticket 06 wires
-   * the per-sector atomic combat that adjudicates a contact point.
+   * Whether the chips poured onto this border met anybody.
+   *
+   * `engaged` means at least one of its two sectors became a battle site, and the
+   * battle itself is reported per sector rather than here — a front can be one end
+   * of two engagements, or share one with another front (case 4 above), so an
+   * outcome field on the *edge* could not carry a result without lying about the
+   * cardinality. `no-contact` is the common reading on this board: pressing a
+   * border buys the lever, and it is an army arriving that buys the battle.
    */
-  readonly outcome: 'pending-operations';
+  readonly outcome: 'engaged' | 'no-contact';
 }
 
 /** The payoff tier's first act: both blind commitments become public together. */
@@ -109,7 +122,11 @@ export function revealTurn(
  * report, and emitting an empty one would make "a front was fought over" and "a
  * front exists" indistinguishable in the event stream.
  */
-export function readFronts(revealed: RevealedTurn, fronts: readonly Front[]): readonly FrontReading[] {
+export function readFronts(
+  revealed: RevealedTurn,
+  fronts: readonly Front[],
+  engagedSectors: ReadonlySet<SectorId> = new Set(),
+): readonly FrontReading[] {
   const readings: FrontReading[] = [];
 
   // Canonical order, decided by the board rather than by either player.
@@ -124,7 +141,13 @@ export function readFronts(revealed: RevealedTurn, fronts: readonly Front[]): re
       total += chips;
     }
     if (total === 0) continue;
-    readings.push({ front: front.key, commitments, assignments, total, outcome: 'pending-operations' });
+    readings.push({
+      front: front.key,
+      commitments,
+      assignments,
+      total,
+      outcome: front.sectors.some((sector) => engagedSectors.has(sector)) ? 'engaged' : 'no-contact',
+    });
   }
 
   return readings;

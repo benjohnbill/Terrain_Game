@@ -12,10 +12,17 @@
  * of a projection.
  */
 
+import { CRADLE_R1, musterHexOf } from '../dist/runtime/index.js';
+
 /**
- * A four-turn log for a freshly opened match: the capital beat, then alternating
- * allocations with the two realms locking in **opposite order each turn**, so a
- * first-mover dependence anywhere in the loop would change the outcome.
+ * A log for a freshly opened match, in two phases.
+ *
+ * First four turns of the **garrison-only lane**: alternating allocations with the
+ * two realms locking in *opposite order each turn*, so a first-mover dependence
+ * anywhere in the loop would change the outcome. Then a **contact phase** that
+ * marches into the nearest enemy front sector and closes turns until the battle
+ * ticket 06c wired actually resolves — because the loop's most intricate arithmetic
+ * would otherwise never cross the host boundary through the Runtime.
  *
  * Pumps the runtime it is handed while deriving the fixture from public projection
  * data. The returned log can then be replayed in a host that never saw the planning
@@ -24,12 +31,15 @@
 export function replayLog(runtime) {
   const setup = runtime.view('observer');
   const log = [];
+  let lastEvents = [];
   const append = (...intents) => {
     for (const intent of intents) {
       log.push(intent);
-      const rejected = runtime.submit(intent).find((event) => event.type === 'intent-rejected');
+      lastEvents = runtime.submit(intent);
+      const rejected = lastEvents.find((event) => event.type === 'intent-rejected');
       if (rejected) throw new Error(`replay fixture rejected: ${rejected.detail.reason}`);
     }
+    return lastEvents;
   };
 
   append(...setup.actors.map((actor) => ({
@@ -87,10 +97,39 @@ export function replayLog(runtime) {
     );
   }
 
-  return log;
+  // ── contact ────────────────────────────────────────────────────────────────
+  // Substance has to be *at* a sector its realm does not hold before anything can
+  // be fought over, so the fixture crosses a border. The target is read off the
+  // public front list rather than hard-coded, so this holds for any seed's
+  // partition; the front is pressed as well, so the M2 lever is on the wire too.
+  const beforeContact = runtime.view(first);
+  const ownGround = new Set(beforeContact.realms.find((realm) => realm.actor === first).sectors);
+  const invaded = beforeContact.fronts
+    .map((front) => ({
+      front: front.key,
+      sector: front.sectors.find((sector) => !ownGround.has(sector)),
+    }))
+    .find((candidate) => candidate.sector !== undefined);
+  if (invaded === undefined) throw new Error('replay fixture found no enemy front sector to enter');
+
+  append({
+    kind: 'move-detachment', actor: first, detachmentId: firstDetachment,
+    destinationHex: musterHexOf(CRADLE_R1, invaded.sector), forcedMarch: true,
+  });
+
+  for (let turn = 0; turn < 10; turn++) {
+    append({
+      kind: 'allocate-commitment', actor: first, front: invaded.front, chips: 6, detachmentIds: [],
+    });
+    append({ kind: 'lock-commitment', actor: second });
+    const closing = append({ kind: 'lock-commitment', actor: first });
+    if (closing.some((event) => event.type === 'battle-resolved')) return log;
+  }
+  throw new Error('replay fixture never reached contact');
 }
 
 const GLOBALLY_SAFE_EVENT_TYPES = new Set([
+  'battle-resolved',
   'capital-locked',
   'capitals-revealed',
   'commitment-locked',
