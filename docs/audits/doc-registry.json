@@ -1757,6 +1757,21 @@
    "forbiddenContent": []
   },
   {
+   "path": "docs/superpowers/specs/2026-07-28-vocab-dashboard-design.md",
+   "layer": "working",
+   "role": "design spec: vocabulary dashboard (parse/render/lock); records a decided shape, never normative",
+   "ownerFeature": null,
+   "allowedContent": [
+    "design-decision",
+    "measurement",
+    "pointer"
+   ],
+   "forbiddenContent": [
+    "normative-definitions",
+    "law-amendment"
+   ]
+  },
+  {
    "path": "mockup/combat-calc/NOTES.md",
    "layer": "working",
    "role": "staging area for verdicts; must sync to Production in same session's doc-sync",
