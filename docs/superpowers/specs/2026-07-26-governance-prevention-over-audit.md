@@ -1,9 +1,11 @@
 # Spec — Documentation governance: prevention over after-the-fact audit
 
-**Status:** stage 1 LANDED 2026-07-27 · stages 2–4 ready-for-agent (their one
-blocking conflict was ruled 2026-07-27 — blocking; see § Prior art). Staged —
-each remaining stage becomes its own ticket under
-`.scratch/doc-structure/issues/`.
+**Status:** stage 1 LANDED 2026-07-27. Stages 2–4 are unblocked (their one
+conflict was ruled 2026-07-27 — blocking; see § Prior art) but are **not
+uniformly ready**: a stage is not a unit of readiness. Two pieces are
+`ready-for-agent`, four need the user, two need a decision first — labelled per
+piece in `.scratch/doc-structure/issues/13-enforcement-ladder.md`, which is the
+authority on what can be picked up.
 **Authored:** 2026-07-26, from the design conversation following audit run #3
 (`docs/audits/2026-07-26-audit-run-3.md`)
 **Revised:** 2026-07-26, same day — the first draft was written without reading
@@ -364,6 +366,23 @@ inventory would make the JSON hold content, recreating "the definition lives in
 two places" in a new file — and it would break ruling 03 Q5's ownership boundary
 (index fields patchable by a sealing session; content nowhere in the JSON). The
 author who writes the definition writes the summary next to it.
+
+**Going-forward only** (user ruling, 2026-07-27). The column is added and filled
+when a definition is written or re-sealed; the ~260 terms already registered are
+**not** backfilled. Backfilling 267 summaries is a larger authoring job than the
+audit that produced this spec, and it is the wrong shape of work — a summary
+written by someone other than the definition's author, in bulk, is exactly the
+kind of unowned text that goes stale, which is the failure this program exists to
+remove.
+
+The consequence is real and lands on stage 3: on day one the generator has
+almost no summaries, so a digest built from the column alone would be **worse**
+than the hand-curated file it replaces. What the generator renders for a term
+with no summary is therefore an open decision (`needs-info` in ticket 13). The
+obvious candidate is a mechanically extracted first sentence from the birthplace
+row plus the pointer — an excerpt cannot drift, because regenerating updates it,
+and the authored `summary` overrides it wherever one exists. Recorded as the
+recommended direction, not settled here.
 
 **The "why it is canon" line is not a field either.** Since promoted entries
 survive as pointers, the reason lives in the retained entry as prose. That is

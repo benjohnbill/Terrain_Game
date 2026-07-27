@@ -90,6 +90,17 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   **Stages 2–4 remain open but are no longer blocked.** Their one conflict was
   ruled 2026-07-27 (user): the enum check is **blocking**, and ticket 03 now
   carries the supersession stamp its handoff had been missing since 2026-07-17.
+  A second ruling the same day: the `summary` column is **going-forward only** —
+  no backfill of the ~260 registered terms, because a bulk summary written by
+  someone other than the definition's author is the unowned text this program
+  exists to remove. It leaves the QUICKREF generator's no-summary fallback as an
+  open decision.
+  Readiness is tracked **per piece, not per stage**, in
+  `.scratch/doc-structure/issues/13-enforcement-ladder.md`: two pieces are
+  `ready-for-agent`, four need the user (three Tier-3, one judgment-heavy), two
+  need a decision first. A stage is not a unit of readiness — this row's earlier
+  wording said "stages 2–4 ready-for-agent", which read *unblocked* as *fully
+  specified* and is corrected here.
   Original registration below.
 
   (registered 2026-07-26, design conversation after audit run #3 — recorded here
