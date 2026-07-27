@@ -490,7 +490,7 @@ function checkFreshness(quickrefText, glossaryDocs) {
   if (newestSeal && regenerated < newestSeal) {
     return [{
       kind: 'stale-quickref', regenerated, newestSeal,
-      detail: `QUICKREF regenerated ${regenerated} but a glossary carries a ${newestSeal} seal (ritual duty 4: same-session freshness)`
+      detail: `QUICKREF regenerated ${regenerated} but a glossary carries a ${newestSeal} seal — it has drifted from canon by that much (advisory: the QUICKREF is a lock point, so this is a re-render prompt, not a duty owed)`
     }];
   }
   return [];
@@ -678,8 +678,11 @@ const PRESCRIPTIONS = {
     'staleness; dates alone are not protection.'
   ],
   'stale-quickref': () => [
-    'Regenerate docs/GLOSSARY-QUICKREF.md including this batch\'s own seals, and',
-    'stamp its "last regenerated" date (ritual duty 4).'
+    'Advisory. The QUICKREF is a lock point, not a per-batch duty (ritual duty 4,',
+    'user ruling 2026-07-28): leaving it stale is a legitimate choice, and this',
+    'line only tells you how far it has drifted. When you DO re-render it, include',
+    'the seals of that session and stamp its "last regenerated" date. Do not',
+    're-render just to silence this line.'
   ],
   'missing-birthplace': (f) => [
     `An inventory row points at ${f.path}, which does not exist. Repoint the row`,
