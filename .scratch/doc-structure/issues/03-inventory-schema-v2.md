@@ -1,7 +1,25 @@
 # Inventory schema v2 — enum discipline, alias typing, promotion state
 
 Type: grilling
-Status: resolved
+Status: resolved · **Handoff amended 2026-07-27 (user ruling)**
+
+> **Amended by the enforcement-ladder ruling (2026-07-27).** One line of this
+> ticket's handoff is superseded: the enum check is **blocking**, not
+> "findings only, never blocking". Everything else here stands — Q1's extended
+> status dictionary, Q2's typed aliases, Q3's derive-don't-store promotion,
+> Q5's index-vs-audit ownership boundary, and the binding condition that the
+> schema is void without the check.
+>
+> Why it needed a ruling rather than a quiet fix: the gating decision recorded
+> in `scripts/audit-lint.js` on **2026-07-17** — two days after this ticket —
+> established blocking for seven of eight checks and argued that blocking does
+> not violate S13 ("S13 is separation of powers: this tool APPLIES user-sealed
+> law and never AMENDS it"). It appeared to supersede this line, but **no
+> stamp was ever placed here**, so a reader of this ticket in isolation would
+> have implemented the older instruction. That gap is the exact failure the
+> ADR supersession protocol exists to prevent, which is why the correction is
+> a stamp and not an edit. Detail: `docs/superpowers/specs/2026-07-26-
+> governance-prevention-over-audit.md` § Prior art.
 
 ## Question
 
@@ -225,7 +243,13 @@ with the other 39.
 - **Ticket 09 (binding)** — enum check over `status`
   (`AGREED|PROPOSED|rejected-recorded|SEALED`), `kind` (`mechanism|meta`),
   `verdict` (S7 set); alias-shape check (`{name, rel}` with `rel` in domain).
-  Findings only, never blocking (S13). Also: `alias-inject.js` should consume
+  ~~Findings only, never blocking (S13).~~ **BLOCKING** — amended 2026-07-27
+  (user ruling; see the header stamp). A check that only reports leaves the
+  defect in the history, which is the whole reason the ladder exists; and this
+  ticket's own binding condition says the schema is *void* without an enforcing
+  check, which advisory output does not deliver. Ship it with a grandfather
+  list, per the ladder's third invariant, so adoption day blocks nobody.
+  Also: `alias-inject.js` should consume
   `rel` — strong nudge on `구칭`/`retired`, soft on `synonym` — since it
   imports `normalizeName` from the lint already. Optional: the derived
   promotion report (Q3).

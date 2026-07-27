@@ -1,7 +1,8 @@
 # Spec — Documentation governance: prevention over after-the-fact audit
 
-**Status:** stage 1 ready-for-agent · stages 2–4 need-info (one open conflict,
-named in § Prior art). Staged — each stage becomes its own ticket under
+**Status:** stage 1 LANDED 2026-07-27 · stages 2–4 ready-for-agent (their one
+blocking conflict was ruled 2026-07-27 — blocking; see § Prior art). Staged —
+each remaining stage becomes its own ticket under
 `.scratch/doc-structure/issues/`.
 **Authored:** 2026-07-26, from the design conversation following audit run #3
 (`docs/audits/2026-07-26-audit-run-3.md`)
@@ -240,17 +241,23 @@ one.** The pattern is already in the tree (`RESTATEMENT_GRANDFATHERED`, check 9)
 Ticket 09's remaining scope (typed aliases, `alias-inject` consuming `rel`, the
 registry wiring) stays blocked and is not claimed here.
 
-**One open conflict that needs the user's ruling.** Ticket 03's handoff specifies
-09's enum check as **"Findings only, never blocking (S13)"**. But the gating
-decision recorded in `audit-lint.js` on **2026-07-17** — two days later —
-established blocking for seven of eight checks, with an explicit argument that
-blocking does not violate S13 ("S13 is separation of powers: this tool APPLIES
-user-sealed law and never AMENDS it"). The later decision appears to supersede
-03's instruction, **but no supersession was ever stamped on ticket 03** — which
-is the same protocol gap the law's ADR-supersession rule exists to prevent.
-Recommendation: **blocking**, consistent with 2026-07-17 and with this spec's
-whole thesis (a check that only reports leaves the defect in the history). But
-this must be ruled, not assumed, and the ruling should stamp ticket 03.
+**The one conflict — RULED 2026-07-27: blocking.** Ticket 03's handoff had
+specified 09's enum check as "findings only, never blocking (S13)", while the
+gating decision recorded in `audit-lint.js` two days later established blocking
+for seven of eight checks with an explicit argument that it does not violate S13
+("S13 is separation of powers: this tool APPLIES user-sealed law and never
+AMENDS it"). The later decision superseded 03's line, but **no stamp had ever
+been placed on 03** — so a reader of that ticket in isolation would have
+implemented the older instruction. The user ruled blocking and the stamp is now
+on ticket 03, in its header and on the superseded line.
+
+Two reasons beyond consistency with 2026-07-17: a check that only reports leaves
+the defect in the history, which is this program's entire thesis; and ticket 03's
+own binding condition declares the schema *void* without an enforcing check,
+which advisory output does not deliver. It ships with a grandfather list per
+invariant 3, so adoption day blocks nobody.
+
+**Stages 2–4 are unblocked by this ruling.**
 
 ### Stage ordering is a hard dependency, not a preference
 

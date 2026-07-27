@@ -87,9 +87,10 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   worktree on a branch predating `hooks/` is ungated (measured against
   `war-model-slice2-ticket07`). Future Codex worktrees branch from main and are
   covered; CI is the backstop for the rest, which is why it is a required rung.
-  **Stages 2–4 remain open** and are blocked on the ruling named in the spec's
-  § Prior art (ticket 03's "findings only, never blocking" vs the 2026-07-17
-  gating decision, never stamped onto 03). Original registration below.
+  **Stages 2–4 remain open but are no longer blocked.** Their one conflict was
+  ruled 2026-07-27 (user): the enum check is **blocking**, and ticket 03 now
+  carries the supersession stamp its handoff had been missing since 2026-07-17.
+  Original registration below.
 
   (registered 2026-07-26, design conversation after audit run #3 — recorded here
   so the decisions reach the spec rather than dying in session context). The
