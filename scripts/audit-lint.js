@@ -219,6 +219,109 @@ function checkNumericRestatement(domainMapText) {
   return findings;
 }
 
+// -- check 9: definition restatement ----------------------------------------
+// The prose half of the single-definition rule. `numericRestatement` (check 4)
+// catches a DOMAIN_MAP row that restates a *value*; this catches one that
+// restates the *definition itself* — the drift forensics F-04 named
+// ("paraphrasing an authoritative definition as if normative is drift") and
+// that no run ever swept for until audit run #3 found 19 live cases.
+//
+// Scope is exactly the rule, no wider: a row is only in scope when its term's
+// birthplace is some OTHER surface. A project-native term whose birthplace IS
+// `DOMAIN_MAP.md` is supposed to be defined there, so it is never a finding.
+//
+// Method: 5-word shingle overlap between the DOMAIN_MAP entry body and the
+// term's birthplace row. Shingles, not substrings, because a legitimate summary
+// reuses the same vocabulary — it is reused *phrasing* that marks a copy.
+
+const RESTATEMENT_THRESHOLD = 0.25;
+
+// The 19 rows audit run #3 found already in place. Recorded here rather than
+// reported every run: they are fully enumerated in
+// `docs/audits/2026-07-26-audit-run-3.md` and carried as an open row in
+// `docs/SYNC-DEBT.md`, so re-printing them on every lint is the alarm fatigue
+// this file's CLI comment already warns about. This is a ratchet, not an
+// amnesty — NEW restatements block immediately. Delete a name from this set as
+// its entry is re-cut to summary + pointer; the set reaching empty is what pays
+// the debt.
+const RESTATEMENT_GRANDFATHERED = new Set([
+  'Impassable terrain', 'Cascade', 'War', 'Isolation gate', 'Shield-break',
+  'Strike at half-crossing', 'Battle-summoning placement', 'Decisive battle',
+  'Mature-state start', 'R (combat ratio)', 'Threshold',
+  'Full adjacency, no neutral zones', 'World product', 'Conscription register',
+  'Emergent asymmetry', 'Water penalty', 'Escape state', 'Recruitment',
+  'Rout cliff'
+]);
+
+function wordsOf(s) {
+  return s.replace(/[^\p{L}\p{N}\s]/gu, ' ').split(/\s+/).filter((w) => w.length > 1);
+}
+
+function shingleOverlap(a, b, n = 5) {
+  const A = wordsOf(a.toLowerCase());
+  const B = wordsOf(b.toLowerCase());
+  if (A.length < n || B.length < n) return 0;
+  const shingles = (X) => {
+    const s = new Set();
+    for (let i = 0; i + n <= X.length; i++) s.add(X.slice(i, i + n).join(' '));
+    return s;
+  };
+  const SA = shingles(A);
+  const SB = shingles(B);
+  let hit = 0;
+  for (const x of SA) if (SB.has(x)) hit++;
+  return hit / SA.size;
+}
+
+// The term's row at its birthplace: a GLOSSARY table row, or a bolded bullet
+// (match-arc's "Frame decisions" section uses bullets) plus its continuation.
+function birthplaceRowText(term, surfaceText) {
+  const names = nameSet(term);
+  const lines = surfaceText.split('\n');
+  for (let i = 0; i < lines.length; i++) {
+    const cell = lines[i].match(GLOSSARY_ROW);
+    if (cell && names.includes(normalizeName(cell[1]))) return lines[i];
+    const bullet = lines[i].match(/^- \*\*([^*]+)\*\*/);
+    if (bullet && names.includes(normalizeName(bullet[1]))) {
+      const body = [lines[i]];
+      for (let j = i + 1; j < lines.length; j++) {
+        if (/^\s+\S/.test(lines[j]) && !/^- /.test(lines[j])) body.push(lines[j]);
+        else break;
+      }
+      return body.join(' ');
+    }
+  }
+  return '';
+}
+
+function checkDefinitionRestatement(inventory, domainMapText, surfaces) {
+  const findings = [];
+  const index = buildNameIndex(inventory);
+  const byPath = new Map(surfaces.map((s) => [s.path, s.text]));
+
+  for (const row of splitDomainMapRows(domainMapText)) {
+    const name = row.match(DM_ROW)[2].trim();
+    const term = lookup(index, name);
+    if (!term || !term.birthplace || term.birthplace === 'DOMAIN_MAP.md') continue;
+    if (RESTATEMENT_GRANDFATHERED.has(term.canonical)) continue;
+    const home = byPath.get(term.birthplace);
+    if (!home) continue; // birthplace not a scanned surface (ADR/model-doc born)
+    const source = birthplaceRowText(term, home);
+    if (!source) continue;
+    const overlap = shingleOverlap(row, source);
+    if (overlap < RESTATEMENT_THRESHOLD) continue;
+    findings.push({
+      kind: 'definition-restatement',
+      term: term.canonical,
+      birthplace: term.birthplace,
+      overlap: Math.round(overlap * 100),
+      detail: 'DOMAIN_MAP entry reuses its birthplace definition\'s phrasing; '
+        + 'a promoted term gets summary + pointer, never a normative copy'
+    });
+  }
+  return findings;
+}
+
 // -- check 8: ADR stamp duty -------------------------------------------------
 // "amends ADR NNNN" in a Production doc requires the target ADR's header
 // (everything before the first section) to carry an "Amended by" stamp.
@@ -431,11 +534,173 @@ function runAll(root) {
     codeContract: checkCodeContract(inventory, jsFiles),
     statusMarkers: checkStatusMarkers(inventory, domainMap),
     numericRestatement: checkNumericRestatement(domainMap),
+    definitionRestatement: checkDefinitionRestatement(inventory, domainMap, surfaces),
     ledgerCurrency: checkLedgerCurrency(read('docs/SYNC-DEBT.md'), commits),
     freshness: checkFreshness(read('docs/GLOSSARY-QUICKREF.md'), glossaries),
     baselineSelf: checkBaselineSelf(inventory, registry, exists),
     adrStampDuty: checkAdrStampDuty(production, adrs)
   };
+}
+
+// -- prescriptions ---------------------------------------------------------------
+//
+// A finding names a defect. An agent blocked by one needs three more things, and
+// these are user-sealed requirements (2026-07-26), not presentation preferences:
+//
+//   1. The FIX, with its BOUNDS — which file to patch and what may not be put in
+//      it. A diagnosis-only message makes an agent guess, and a guessing agent
+//      writes a junk row to get unblocked.
+//   2. The SECOND legitimate exit — not registering. An agent shown only "add the
+//      row" will add any row. Every remedy that could manufacture a bad
+//      registration therefore also offers "remove it and ask the user".
+//   3. A refusal of the bypass. Reaching for `--no-verify` is the natural
+//      response to being blocked mid-task, so the prohibition has to live where
+//      the block is read.
+//
+// This lives here, not in the hooks, for the reason this whole audit exists: the
+// commit hook, the push hook, CI, and `write-lint.js` are four consumers, and
+// writing the wording per-consumer would copy the same prose four times.
+// `write-lint.js` inherits it for free — it captures this CLI's stdout.
+
+const INVENTORY = 'docs/audits/term-inventory.json';
+
+// kind -> (finding) -> remedy lines. Diagnosis is rendered by the caller.
+const PRESCRIPTIONS = {
+  'unregistered-definition': () => [
+    'Choose one:',
+    ` (a) Register it — add a row to ${INVENTORY} (ritual duty 7).`,
+    '     INDEX FIELDS ONLY — never definition text (single-definition rule).',
+    ' (b) Do not register it — if you are unsure the term earns a row, remove',
+    '     the definition and ask the user.'
+  ],
+  'orphaned-inventory-row': (f) => [
+    `Its birthplace (${f.path}) no longer carries the name at all. Either the`,
+    'definition moved (repoint `birthplace`), it was renamed (add the old name',
+    `as an alias), or it was retired (drop the row from ${INVENTORY}).`,
+    'Check every definition surface before dropping — a term promoted to a',
+    'second surface still has a live header there (audit run #2 lesson).'
+  ],
+  'code-contract-violation': (f) => [
+    `The row claims identifier \`${f.identifier}\`, absent from every file it`,
+    'names. Correct the identifier or the refs — or, if the code was retired,',
+    'clear both. Do not rename the code to satisfy the index.'
+  ],
+  'status-marker-mismatch': () => [
+    'The DOMAIN_MAP marker and the inventory status disagree (✅/❓/⛔ ≡',
+    'AGREED/PROPOSED/rejected-recorded). Fix whichever is stale — the seal at',
+    'the birthplace decides which one that is, not this message.'
+  ],
+  'numeric-restatement': () => [
+    'The row points at an owning doc AND restates a value. Delete the number;',
+    'the pointer is the whole job (single-definition rule).'
+  ],
+  'definition-restatement': (f) => [
+    `A promoted term gets summary + pointer. Cut this entry down to one or two`,
+    `lines plus "authoritative: ${f.birthplace}".`,
+    'If the entry is not a copy, say why in the report — do not widen the',
+    'grandfather list to get to green.'
+  ],
+  'unstamped-adr-amendment': (f) => [
+    `Stamp ADR ${f.adr}'s header — "Amended by <ref> (date)" plus a one-line`,
+    'delta — in THIS batch. A stale ADR read in isolation must announce its own',
+    'staleness; dates alone are not protection.'
+  ],
+  'stale-quickref': () => [
+    'Regenerate docs/GLOSSARY-QUICKREF.md including this batch\'s own seals, and',
+    'stamp its "last regenerated" date (ritual duty 4).'
+  ],
+  'missing-birthplace': (f) => [
+    `An inventory row points at ${f.path}, which does not exist. Repoint the row`,
+    'or drop it — the index may not cite a file that is gone.'
+  ],
+  'dead-registry-path': (f) => [
+    `docs/audits/doc-registry.json lists ${f.path}, which does not exist.`,
+    'Drop the row, or restore the file if it was deleted by mistake.'
+  ],
+  'duplicate-canonical': () => [
+    'Two inventory rows answer to one canonical name. Merge them — one row per',
+    'concept (HARVEST step 3, birthplace priority decides which survives).'
+  ],
+  'alias-canonical-collision': () => [
+    'An alias collides with another term\'s canonical name, so name lookup is',
+    'ambiguous. Rename the alias or drop it.'
+  ],
+  'ledger-possibly-paid': () => [
+    'Advisory, and a guess: verify the row against the commit. If genuinely',
+    'paid, mark it [x]; if the match is incidental, LEAVE IT STANDING — a',
+    'verified-spurious advisory is the correct outcome, not a loose end.'
+  ]
+};
+
+// One line naming what and where, from whichever fields the kind carries.
+// `birthplace` is NOT a fallback location: on a restatement finding the defect
+// is in DOMAIN_MAP while `birthplace` names the file being copied FROM, so
+// printing it as "at" would send the fix to the wrong file.
+const DEFECT_SITE = {
+  'definition-restatement': 'DOMAIN_MAP.md',
+  'numeric-restatement': 'DOMAIN_MAP.md',
+  'status-marker-mismatch': 'DOMAIN_MAP.md',
+  'duplicate-canonical': INVENTORY,
+  'alias-canonical-collision': INVENTORY,
+  'code-contract-violation': INVENTORY,
+  'ledger-possibly-paid': 'docs/SYNC-DEBT.md'
+};
+
+function describeFinding(finding) {
+  const subject = finding.term || (finding.adr && `ADR ${finding.adr}`) || finding.row;
+  const where = DEFECT_SITE[finding.kind] || finding.path;
+  const head = [finding.kind, subject && `\`${subject}\``].filter(Boolean).join(': ');
+  return where ? `${head}\n  at ${where}` : head;
+}
+
+function prescriptionFor(finding) {
+  const remedy = PRESCRIPTIONS[finding.kind];
+  // An unknown kind is a new check that shipped without a prescription. Say so
+  // rather than printing nothing — silence would read as "no action needed".
+  return (remedy ? remedy(finding) : [
+    `No prescription is registered for \`${finding.kind}\`. Read the check in`,
+    'scripts/audit-lint.js and add one before relying on this message.'
+  ]).map((l) => `  ${l}`);
+}
+
+function formatFinding(finding) {
+  const lines = [describeFinding(finding)];
+  if (finding.detail) lines.push(`  ${finding.detail}`);
+  return [...lines, '', ...prescriptionFor(finding)].join('\n');
+}
+
+// The bypass refusal is unconditional on blocking findings: a `--no-verify` is
+// reached for from wherever the block was read, including a manual run.
+const BYPASS_REFUSAL =
+  'Do not bypass with --no-verify. CI runs this same check and will catch it.';
+
+// The remedy is a property of the KIND, so N findings of one kind share one
+// prescription: list the sites, then say what to do about them once. Repeating
+// identical advice per finding is the alarm fatigue this tool warns about.
+function formatReport(results) {
+  const { blocking, advisory } = tally(results);
+  const out = [];
+  for (const [check, findings] of Object.entries(results)) {
+    if (!findings.length) continue;
+    out.push(`\n[${check}] ${findings.length} finding(s)${ADVISORY.has(check) ? ' — advisory' : ''}`);
+    const byKind = new Map();
+    for (const f of findings) {
+      if (!byKind.has(f.kind)) byKind.set(f.kind, []);
+      byKind.get(f.kind).push(f);
+    }
+    for (const group of byKind.values()) {
+      for (const f of group) {
+        out.push(describeFinding(f));
+        if (f.detail) out.push(`  ${f.detail}`);
+      }
+      out.push('', ...prescriptionFor(group[0]), '');
+    }
+  }
+  out.push(blocking + advisory === 0
+    ? '\naudit-lint: clean (9 checks, 0 findings)'
+    : `\naudit-lint: ${blocking} blocking, ${advisory} advisory — reports, never legislation; verify before acting.`);
+  if (blocking > 0) out.push(BYPASS_REFUSAL);
+  return out.join('\n');
 }
 
 // -- CLI -------------------------------------------------------------------------
@@ -484,23 +749,17 @@ function tally(results) {
 
 if (require.main === module) {
   const results = runAll(process.cwd());
-  for (const [check, findings] of Object.entries(results)) {
-    if (!findings.length) continue;
-    console.log(`\n[${check}] ${findings.length} finding(s)${ADVISORY.has(check) ? ' — advisory' : ''}`);
-    for (const f of findings) console.log('  -', JSON.stringify(f));
-  }
-  const { blocking, advisory } = tally(results);
-  console.log(blocking + advisory === 0
-    ? '\naudit-lint: clean (8 checks, 0 findings)'
-    : `\naudit-lint: ${blocking} blocking, ${advisory} advisory — reports, never legislation; verify before acting.`);
-  process.exitCode = blocking === 0 ? 0 : 1;
+  console.log(formatReport(results));
+  process.exitCode = tally(results).blocking === 0 ? 0 : 1;
 }
 
 module.exports = {
   checkHeaderDiff, checkCodeContract, checkStatusMarkers,
-  checkNumericRestatement, checkAdrStampDuty,
+  checkNumericRestatement, checkDefinitionRestatement, checkAdrStampDuty,
   checkLedgerCurrency, checkFreshness, checkBaselineSelf,
   parseSurfaceHeaders, splitDomainMapRows, runAll,
   normalizeName, nameSet, buildNameIndex, lookup,
-  tally, ADVISORY
+  shingleOverlap, birthplaceRowText,
+  formatFinding, formatReport, describeFinding,
+  tally, ADVISORY, RESTATEMENT_GRANDFATHERED, PRESCRIPTIONS, BYPASS_REFUSAL
 };

@@ -120,6 +120,82 @@ test('numericRestatement ignores a dial value with NO pointer (single-definition
   assert.deepEqual(lint.checkNumericRestatement(row), []);
 });
 
+// ---------------------------------------------------------------- check 9
+// Definition restatement: a DOMAIN_MAP entry for a term born elsewhere is a
+// summary + pointer. Reused *phrasing* is what marks a copy — a legitimate
+// summary reuses the same vocabulary, so the check measures 5-word shingles.
+
+// The fixture term is deliberately NOT one of the grandfathered names — using a
+// real one would silently exercise the skip path instead of the check.
+const CRADLE = 'docs/features/terrain-cradle/GLOSSARY.md';
+const CRADLE_ROW = '| Marsh belt (습지대) | Sea expressed as land: non-sector '
+  + 'hexes no one owns; movement, ownership and vision identical to sea. Exactly one kind '
+  + 'of "cannot cross" exists in the world. | AGREED |';
+
+function restatementFixture(domainMapText, birthplace = CRADLE) {
+  const inventory = inv([{
+    canonical: 'Marsh belt', korean: '습지대', aliases: [],
+    birthplace, tier: 0, status: 'AGREED'
+  }]);
+  const surfaces = [{ path: CRADLE, text: CRADLE_ROW }];
+  return lint.checkDefinitionRestatement(inventory, domainMapText, surfaces);
+}
+
+test('definitionRestatement flags a DOMAIN_MAP entry that copies its birthplace definition', () => {
+  const findings = restatementFixture(
+    '- ✅ `Marsh belt` (습지대): sea expressed as land — non-sector hexes\n'
+    + '  no one owns; movement, ownership, and vision identical to sea. Exactly one\n'
+    + '  kind of "cannot cross" exists in the world, drawn two ways. (TC-⑧)\n'
+  );
+  assert.equal(findings.length, 1);
+  assert.equal(findings[0].kind, 'definition-restatement');
+  assert.equal(findings[0].term, 'Marsh belt');
+  assert.equal(findings[0].birthplace, CRADLE);
+  assert.ok(findings[0].overlap >= 25, 'overlap should be reported as a percentage');
+});
+
+test('definitionRestatement passes a genuine summary + pointer', () => {
+  const findings = restatementFixture(
+    '- ✅ `Marsh belt` (습지대): the one "cannot cross" kind, drawn two\n'
+    + '  ways. Authoritative: terrain-cradle GLOSSARY (TC-⑧).\n'
+  );
+  assert.deepEqual(findings, []);
+});
+
+// A project-native term IS defined in DOMAIN_MAP — that is its birthplace, so a
+// definition there is correct. Scoping the check to promoted terms is the rule,
+// not a convenience.
+test('definitionRestatement never fires on a term whose birthplace is DOMAIN_MAP', () => {
+  const findings = restatementFixture(
+    '- ✅ `Marsh belt` (습지대): sea expressed as land — non-sector hexes\n'
+    + '  no one owns; movement, ownership, and vision identical to sea. Exactly one\n'
+    + '  kind of "cannot cross" exists in the world, drawn two ways.\n',
+    'DOMAIN_MAP.md'
+  );
+  assert.deepEqual(findings, []);
+});
+
+// The ratchet: run #3's 19 pre-existing rows are recorded, not re-reported.
+// Deleting a name as its entry is re-cut is what pays the debt down.
+test('definitionRestatement grandfathers the rows audit run #3 recorded', () => {
+  assert.ok(lint.RESTATEMENT_GRANDFATHERED.has('Impassable terrain'));
+  assert.equal(lint.RESTATEMENT_GRANDFATHERED.size, 19);
+  const real = lint.runAll(process.cwd());
+  assert.deepEqual(real.definitionRestatement, [],
+    'the grandfather set must exactly cover the live repo, so NEW copies stand out');
+});
+
+test('shingleOverlap scores reuse of phrasing, not shared vocabulary', () => {
+  const source = 'sea expressed as land non sector hexes no one owns movement ownership and vision identical to sea';
+  assert.ok(lint.shingleOverlap(source, source) === 1, 'identical text is total overlap');
+  assert.equal(
+    lint.shingleOverlap('the terrain nobody can enter is drawn in two different ways here', source),
+    0,
+    'a same-topic sentence sharing no 5-word run scores zero'
+  );
+  assert.equal(lint.shingleOverlap('too short', source), 0, 'sub-shingle text is never a finding');
+});
+
 // ---------------------------------------------------------------- check 8
 // ADR stamp duty: a Production doc saying "amends ADR NNNN" requires the
 // target ADR header to carry an "Amended by" stamp.
@@ -224,7 +300,7 @@ test('tally: ledgerCurrency is the only advisory check', () => {
 test('tally: every check that asserts a definite defect gates', () => {
   const definite = [
     'headerDiff', 'codeContract', 'statusMarkers', 'numericRestatement',
-    'freshness', 'baselineSelf', 'adrStampDuty'
+    'definitionRestatement', 'freshness', 'baselineSelf', 'adrStampDuty'
   ];
   for (const check of definite) {
     const t = lint.tally({ [check]: [{ kind: 'x' }] });
@@ -288,15 +364,110 @@ test('baselineSelf flags an alias colliding with another term canonical', () => 
   assert.equal(findings[0].kind, 'alias-canonical-collision');
 });
 
+// ------------------------------------------------------- prescriptions
+// User-sealed 2026-07-26: a rejection message must carry the FIX and its
+// BOUNDS, offer the do-not-register exit, and refuse `--no-verify`. These are
+// requirements on the message, so they are asserted rather than eyeballed.
+
+const UNREGISTERED = {
+  kind: 'unregistered-definition',
+  term: 'Movement graph',
+  path: 'docs/features/war-model-build/GLOSSARY.md',
+  detail: 'definition-surface header matches no inventory row'
+};
+
+test('formatFinding names the defect, its site, and the file to patch', () => {
+  const text = lint.formatFinding(UNREGISTERED);
+  assert.match(text, /unregistered-definition/);
+  assert.match(text, /Movement graph/);
+  assert.match(text, /docs\/features\/war-model-build\/GLOSSARY\.md/, 'names where the defect is');
+  assert.match(text, /docs\/audits\/term-inventory\.json/, 'names the file to patch');
+});
+
+test('formatFinding states the bound on the fix — index fields, never definitions', () => {
+  const text = lint.formatFinding(UNREGISTERED);
+  assert.match(text, /INDEX FIELDS ONLY/);
+  assert.match(text, /single-definition rule/);
+});
+
+// The failure this guards: an agent shown only "add the row" adds any row, and
+// a junk registration is the exact defect the check exists to prevent.
+test('formatFinding offers the do-not-register exit', () => {
+  const text = lint.formatFinding(UNREGISTERED);
+  assert.match(text, /Do not register it/);
+  assert.match(text, /ask the user/);
+});
+
+test('formatReport refuses --no-verify when anything blocks', () => {
+  const text = lint.formatReport({ headerDiff: [UNREGISTERED] });
+  assert.match(text, /--no-verify/);
+  assert.match(text, /CI/);
+});
+
+// A clean run has nothing to bypass; printing the refusal anyway is noise.
+test('formatReport omits the bypass refusal when nothing blocks', () => {
+  const advisoryOnly = lint.formatReport({
+    ledgerCurrency: [{ kind: 'ledger-possibly-paid', row: 'Some debt' }]
+  });
+  assert.doesNotMatch(advisoryOnly, /--no-verify/);
+  assert.match(advisoryOnly, /0 blocking, 1 advisory/);
+  assert.doesNotMatch(lint.formatReport({ headerDiff: [] }), /--no-verify/);
+});
+
+// Repeating identical advice per finding is the alarm fatigue this tool warns
+// about: the remedy belongs to the kind, so it is stated once per group.
+test('formatReport lists every site but states the remedy once per kind', () => {
+  const text = lint.formatReport({
+    headerDiff: [UNREGISTERED, { ...UNREGISTERED, term: 'March speed' }]
+  });
+  assert.match(text, /Movement graph/);
+  assert.match(text, /March speed/);
+  assert.equal(text.match(/Do not register it/g).length, 1);
+});
+
+// `birthplace` names the file being copied FROM. Routing the fix there would
+// send an agent to edit the authoritative source instead of the copy.
+test('formatFinding points a restatement at DOMAIN_MAP, not at the birthplace', () => {
+  const text = lint.formatFinding({
+    kind: 'definition-restatement',
+    term: 'Cascade',
+    birthplace: 'docs/features/match-arc/GLOSSARY.md',
+    overlap: 76
+  });
+  assert.match(text, /at DOMAIN_MAP\.md/, 'the defect site is the copy');
+  assert.match(text, /authoritative: docs\/features\/match-arc\/GLOSSARY\.md/,
+    'the birthplace appears as the pointer to write, not as the place to edit');
+});
+
+// A check that ships without a prescription must say so — printing the bare
+// finding would read as "nothing to do".
+test('formatFinding flags an unprescribed kind instead of falling silent', () => {
+  const text = lint.formatFinding({ kind: 'brand-new-check', term: 'X' });
+  assert.match(text, /No prescription is registered/);
+  assert.match(text, /brand-new-check/);
+});
+
+test('every emitted finding kind has a prescription', () => {
+  const emitted = [...new Set(
+    require('fs').readFileSync(require('path').join(__dirname, '../scripts/audit-lint.js'), 'utf8')
+      .matchAll(/kind: '([a-z-]+)'/g)
+  )].map((m) => m[1]);
+  assert.ok(emitted.length >= 13, `expected the full kind set, saw ${emitted.length}`);
+  for (const kind of emitted) {
+    assert.ok(lint.PRESCRIPTIONS[kind], `${kind} has no prescription`);
+  }
+});
+
 // ---------------------------------------------------------------- runner
-// Integration smoke: runAll on the real repo returns all 8 result sets.
+// Integration smoke: runAll on the real repo returns all 9 result sets.
 
 test('runAll returns a result set per check against the real repo', () => {
   const results = lint.runAll(require('path').join(__dirname, '..'));
   const keys = Object.keys(results).sort();
   assert.deepEqual(keys, [
-    'adrStampDuty', 'baselineSelf', 'codeContract', 'freshness',
-    'headerDiff', 'ledgerCurrency', 'numericRestatement', 'statusMarkers'
+    'adrStampDuty', 'baselineSelf', 'codeContract', 'definitionRestatement',
+    'freshness', 'headerDiff', 'ledgerCurrency', 'numericRestatement',
+    'statusMarkers'
   ]);
   for (const k of keys) assert.ok(Array.isArray(results[k]), `${k} is an array`);
 });
