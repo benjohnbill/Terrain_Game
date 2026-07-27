@@ -714,3 +714,47 @@ test('glossaryStatus is clean against the real repo', () => {
   assert.deepEqual(real.glossaryStatus, [],
     'the birthplaces and the index agreed at 120/120 when this check landed');
 });
+
+// ------------------------------------------- handed-over findings, 2026-07-28
+// Two defects found by an adjacent session that deliberately did NOT edit
+// audit-lint.js while it was being written, and recorded them in ticket 13
+// instead. Verbal handover had already failed once — both were re-measured live
+// hours later and both were still there — so they are pinned here.
+
+// `undetermined` is in the S7 verdict vocabulary and audit run #1 reached it on
+// three rows. Omitting it from a BLOCKING check meant an audit could not commit
+// its own legitimate verdict.
+test('fieldDomains accepts every S7 verdict, including undetermined', () => {
+  const inventory = inv([
+    { canonical: 'A', status: 'AGREED', kind: 'mechanism', verdict: 'undetermined' },
+    { canonical: 'B', status: 'AGREED', kind: 'mechanism', verdict: 'justified-coinage' },
+    { canonical: 'C', status: 'AGREED', kind: 'mechanism', verdict: 'standard-match' },
+    { canonical: 'D', status: 'AGREED', kind: 'mechanism', verdict: 'synonym-exists' },
+    { canonical: 'E', status: 'AGREED', kind: 'mechanism', verdict: null }
+  ]);
+  assert.deepEqual(lint.checkFieldDomains(inventory), [],
+    'a blocking check must not reject a verdict the audit is entitled to reach');
+});
+
+test('fieldDomains still rejects a verdict outside S7', () => {
+  const inventory = inv([
+    { canonical: 'A', status: 'AGREED', kind: 'mechanism', verdict: 'probably-fine' }
+  ]);
+  const findings = lint.checkFieldDomains(inventory);
+  assert.equal(findings.length, 1);
+  assert.equal(findings[0].kind, 'off-domain-field');
+});
+
+// The clean line said "9 checks" while runAll returned ten, and check 11 would
+// have staled it again. Derived from the results object, it cannot drift.
+test('formatReport derives the clean-line check count from the results', () => {
+  assert.match(lint.formatReport({ a: [], b: [], c: [] }), /clean \(3 checks, 0 findings\)/);
+  assert.match(lint.formatReport({ a: [], b: [] }), /clean \(2 checks, 0 findings\)/);
+});
+
+test('the clean line counts every check runAll actually returns', () => {
+  const results = lint.runAll(require('path').join(__dirname, '..'));
+  const n = Object.keys(results).length;
+  const empty = Object.fromEntries(Object.keys(results).map((k) => [k, []]));
+  assert.match(lint.formatReport(empty), new RegExp(`clean \\(${n} checks, 0 findings\\)`));
+});

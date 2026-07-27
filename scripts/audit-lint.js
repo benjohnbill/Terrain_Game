@@ -411,7 +411,17 @@ function checkDefinitionRestatement(inventory, domainMapText, surfaces) {
 const FIELD_DOMAINS = {
   status: new Set(['AGREED', 'PROPOSED', 'rejected-recorded', 'SEALED']),
   kind: new Set(['mechanism', 'meta']),
-  verdict: new Set(['justified-coinage', 'standard-match', 'synonym-exists'])
+  // `undetermined` restored 2026-07-28 (finding handed over from an adjacent
+  // session, ticket 13). It is in the S7 vocabulary
+  // (`docs/superpowers/specs/2026-07-10-doc-audit-and-forensics.md`) and audit
+  // run #1 actually reached it on three rows, so omitting it from a BLOCKING
+  // check meant the lint would reject a verdict the audit is entitled to record.
+  // No live row uses it today, which is exactly why the gap stayed invisible:
+  // the next audit that judged a row undetermined would have been unable to
+  // commit its own finding.
+  verdict: new Set([
+    'justified-coinage', 'standard-match', 'synonym-exists', 'undetermined'
+  ])
 };
 
 const FIELD_NULLABLE = new Set(['verdict']);
@@ -854,8 +864,11 @@ function formatReport(results) {
       out.push('', ...prescriptionFor(group[0]), '');
     }
   }
+  // Derived, not hand-maintained: the literal said 9 while runAll returned 10,
+  // and check 11 would have staled it again. Counting the results object means
+  // the number cannot drift from the checks that produced it.
   out.push(blocking + advisory === 0
-    ? '\naudit-lint: clean (9 checks, 0 findings)'
+    ? `\naudit-lint: clean (${Object.keys(results).length} checks, 0 findings)`
     : `\naudit-lint: ${blocking} blocking, ${advisory} advisory — reports, never legislation; verify before acting.`);
   if (blocking > 0) out.push(BYPASS_REFUSAL);
   return out.join('\n');

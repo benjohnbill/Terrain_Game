@@ -217,17 +217,28 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
      the bypass. Reaching for the bypass is the natural response to being
      blocked mid-task; the prohibition has to be where the block is read.
 
-- [ ] **Candidate lint check: field-vocabulary validation on the baselines**
-  (registered 2026-07-26, audit run #3). Run #3 corrected 13 inventory field
-  values that were outside the baseline's own vocabulary (`kind` = mechanic /
-  state / strategy ×8, `verdict` = standard-term ×5), every one of them
-  invisible to `lint:docs`. The failure mode is silent and consequential: `kind`
-  routes the Ring B reference dictionary, so an unroutable value skips judging
-  without saying so. Proposed check: `kind ∈ {mechanism, meta}` and `verdict ∈
-  {justified-coinage, standard-match, synonym-exists, null}`, blocking (it
-  asserts a defect and has a reachable green state). **Proposal only** —
-  `ADVISORY` in `scripts/audit-lint.js` records that which checks gate is a
-  decided question, not an audit action.
+- [x] **Candidate lint check: field-vocabulary validation on the baselines** —
+  **PAID 2026-07-27/28** (registered 2026-07-26, audit run #3). Run #3 corrected
+  13 inventory field values outside the baseline's own vocabulary (`kind` =
+  mechanic / state / strategy ×8, `verdict` = standard-term ×5), all invisible to
+  `lint:docs`; the failure mode is silent because `kind` routes the Ring B
+  reference dictionary, so an unroutable value skips judging without saying so.
+  Delivered as `audit-lint.js` **check 10 `fieldDomains`** (blocking, user-ruled
+  2026-07-27, grandfather list empty because the batch normalized every
+  off-domain row at its birthplace first), and extended 2026-07-28 by **check 11
+  `glossaryStatus`**, which closes the adjacent hole the proposal did not see:
+  field *values* were validated against a dictionary, but nothing compared a
+  GLOSSARY's declared status to the inventory row indexing it.
+  **One correction to this row's own proposal, worth keeping.** It specified
+  `verdict ∈ {justified-coinage, standard-match, synonym-exists, null}` — and the
+  check implemented that faithfully, which is how it shipped **missing
+  `undetermined`**, a real S7 value that audit run #1 had already reached on three
+  rows. A blocking check would therefore have rejected a verdict the audit is
+  entitled to record, invisibly, until the next audit tried to use it. Restored
+  2026-07-28 from a finding handed over in writing by an adjacent session
+  (`.scratch/doc-structure/issues/13-enforcement-ladder.md`). The lesson: a
+  proposal's enum is not automatically the spec's enum — check the vocabulary's
+  own source (S7) before making a check blocking on it.
 
 - [x] **Gate C's movement model has no Production birthplace** — **PAID
   2026-07-26**, the same day it was registered, by the Part 3 approval landing.
