@@ -201,3 +201,34 @@ happen — which is what that pin was built for. The argument is written into th
 test beside it.
 
 This ticket is a pointer. Read the spec, not this file.
+
+## Findings handed over from an adjacent session — 2026-07-28
+
+Recorded rather than fixed: `scripts/audit-lint.js` was being actively written by
+another session while these were found, and editing it concurrently would have
+silently overwritten one side's work. Verbal handover was tried first and **it
+failed** — both findings were re-measured on `main` hours later and both were
+still live, which is why they are written here instead.
+
+Both belong to the field-vocabulary check (`checkFieldDomains`, check 10).
+
+- **`verdict` is enforced narrower than the S7 set** —
+  `scripts/audit-lint.js:414` allows `justified-coinage | standard-match |
+  synonym-exists`. The S7 vocabulary is
+  `null | standard-match | synonym-exists | justified-coinage | **undetermined**`
+  (`docs/superpowers/specs/2026-07-10-doc-audit-and-forensics.md:80`), and both
+  ticket 03's handoff and this ticket specify `verdict ∈` that set. The check is
+  **blocking**, so as written it would reject an audit's own legitimate verdict:
+  audit run #1 did judge rows `undetermined`, so the value is real and not
+  hypothetical. No live row uses it today, which is exactly why this is invisible
+  until it bites. Fix is one set member; the reason it matters is that the check
+  enforces a domain it does not fully carry.
+
+- **The clean-report line undercounts the checks** —
+  `scripts/audit-lint.js:858` prints `clean (9 checks, 0 findings)` while
+  `runAll` now returns ten result sets (`fieldDomains` joined them). Deriving it
+  from `Object.keys(results).length` removes a hand-maintained number that has
+  now gone stale once, rather than bumping it to 10 and waiting for check 11.
+
+Neither is a ruling and neither needs the user: the domains are settled in ticket
+03 Q1/Q5 and the count is arithmetic.
