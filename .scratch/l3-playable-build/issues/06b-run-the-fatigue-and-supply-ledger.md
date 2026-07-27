@@ -6,10 +6,17 @@ produces starvation as substance loss only. No path inverts capability.
 
 **Blocked by:** 06a — a ledger of marching needs somewhere to march.
 
-Status: **ready-for-agent** (re-stamped 2026-07-27 — the blocking Part 3 batch
-landed 2026-07-26 at `war-model-build/MAGNITUDE.md` WB-M①; this header had gone
-stale against the README waiver table, which recomputed test (ii) on the same day.
-See § Needs-info for the payment record.)
+Status: **claimed and re-cut — the live copy is on branch
+`l3/ticket-06b-fatigue-supply`** (worktree `~/dev/Terrain_Game-06b`, commits
+`0ee7612` + `6b0fde2`). **Read the branch copy before working this ticket:** the
+2026-07-28 re-cut narrows the mandate to the wear half and moves the supply
+predicate to R16 (`docs/DESIGN-RISKS.md`), and the ledger arithmetic is already
+landed. Handoff: `.context/handoff-l3-ticket-06b-2026-07-28.md` on that branch.
+
+Re-stamped `ready-for-agent` 2026-07-27 — the blocking Part 3 batch landed
+2026-07-26 at `war-model-build/MAGNITUDE.md` WB-M①; this header had gone stale
+against the README waiver table, which recomputed test (ii) on the same day.
+See § Needs-info for the payment record.
 
 Specification gates: Wayfinder 10, 12.
 Authority: slice-2 design spec §2 (fatigue system) and the supply predicate;
