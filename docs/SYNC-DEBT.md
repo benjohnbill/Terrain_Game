@@ -11,6 +11,111 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
 
 ## Open
 
+- [ ] **The single-definition rule was never swept for in `DOMAIN_MAP.md`**
+  (registered 2026-07-26, audit run #3). Forensics F-04 (adopted 2026-07-10)
+  requires every DOMAIN_MAP entry to be summary + pointer, never a normative
+  copy — but no audit run has ever checked for *restatement*, only for
+  unregistered terms. **19 entries exceed 25% 5-word-shingle overlap with their
+  birthplace row; 15 carry no pointer back.** Worst: `Impassable terrain` 88%
+  (terrain-cradle), `Cascade` 76%, `War` 70%, `Shield-break` 60% (match-arc),
+  `Battle-summoning placement` 57% (terrain-cradle). Two verified by hand —
+  both reproduce the birthplace definition nearly clause for clause. Pay by
+  re-cutting the entries as summary + pointer in a doc-sync batch (the summary
+  wording is real judgment, and several terms are mid-pivot, which is why this
+  run reported rather than repaired). Full table + method:
+  `docs/audits/2026-07-26-audit-run-3.md` § New Ring B sweep.
+  **The detector shipped 2026-07-26** as `audit-lint.js` check 9
+  (`definitionRestatement`, blocking, 6 tests) — so this class of drift is now
+  caught by the `write-lint.js` hook in the turn it is written, not at the next
+  audit. The 19 are a **ratchet**, not an amnesty: they sit in
+  `RESTATEMENT_GRANDFATHERED` so NEW copies block immediately. **Paying this
+  debt = deleting names from that set** as their entries are re-cut; the set
+  reaching empty closes the row.
+
+- [ ] **`war-model-build/MAGNITUDE.md` has five unregistered named constructs**
+  (registered 2026-07-26, audit run #3). The new model doc is a definition
+  surface with zero inventory rows. Most of its content supplies values for
+  already-registered GLOSSARY terms, which is correct — but `Operational
+  distance`, `March speed (S)`, `Effectiveness floor`, `Capability inversion`,
+  and `Movement graph` have no row anywhere. Not registered by the audit
+  (S13: never auto-register without user sign-off). Two user calls owed:
+  (a) a 한국어 표시어 for each — coining is a user act, and the
+  intuitive-over-compact ruling makes it a real choice; (b) **`Movement graph`'s
+  birthplace** — its authority is ADR 0043 item 7, and the law says ADRs never
+  define, so registering it ADR-born would repeat the known-weak ADR-0019
+  pattern. Clean fix is a `war-model-build/GLOSSARY.md` row the ADR then cites,
+  which is a seal rather than an index patch.
+
+- [ ] **The status dictionary contradicts itself — RULED 2026-07-15, unapplied**
+  (registered 2026-07-26, audit run #3; **corrected the same day** — see the
+  rider). Vocabulary Law names `AGREED/PROPOSED/rejected-recorded`, the Conflict
+  rule separately names `SEALED/AGREED/CONFIRMED`, and the documents have grown
+  past both (`AGREED-concept`, `AGREED-structure`, `가안`, `SUPERSEDED` all appear
+  at birthplaces). The inventory indexes them faithfully; the divergence is in
+  the law, not the baseline.
+  **Rider — correcting this row's first wording (2026-07-26).** It was first
+  registered as an open law-wording question needing a user decision. **That was
+  wrong: the question was already ruled**, at
+  `.scratch/doc-structure/issues/03-inventory-schema-v2.md` § Q1 (resolved
+  2026-07-15, and the 2026-07-15 adversarial review recomputed every one of that
+  ticket's measurements as exact). The ruling: **EXTEND** the dictionary —
+  register `SEALED` as a fourth value, defined as the strong form of `AGREED`
+  (`SEALED` implies `AGREED`), because the law contradicts *itself* here and
+  normalizing would suppress a real distinction that re-drifted within 5 days
+  when only prose forbade it. Remaining strays (`AGREED-concept` ×2,
+  `AGREED-structure`, `가안`) normalize; `SUPERSEDED` routes through Q2's typed
+  aliases. What is actually outstanding is therefore **application, not
+  decision**: the Vocabulary Law line gains a fourth value (Tier-3, user seal)
+  and `HARVEST.md` §4 gains the SEALED-implies-AGREED rule, batched together per
+  ticket 03's handoff. Recorded as a correction rather than a silent edit because
+  presenting a ruled question as open is the precise failure `AGENTS.md` § Read
+  Order warns about ("a decision recorded here and never cited is how the project
+  has actually gone wrong before").
+  *(`PRODUCT.md`'s layer was the other half of this row; user delegated the
+  classification 2026-07-26 and it is settled — Direction, scoped to the
+  landing environment. No new doc type or status was created.)*
+
+- [ ] **Enforcement ladder: move governance checks from audit-time to commit-time**
+  (registered 2026-07-26, design conversation after audit run #3 — recorded here
+  so the decisions reach the spec rather than dying in session context). The
+  problem: `write-lint.js` is bound to a **Claude Code tool call**, so every
+  other editing path — the user's editor, a Codex worktree, any script — bypasses
+  it, and there is currently no git hook and no CI. Measured this session:
+  `npm run lint:docs` takes **0.51s**; worktrees share the main repo's hooks
+  (`/tmp/terrain-game-ticket-06a` resolves `--git-common-dir` to the main `.git`),
+  so **one installed hook covers every Codex worktree**. Proven by isolated
+  experiment: a normal commit and a **worktree** commit are both blocked, while
+  **`--no-verify` bypasses** and — the finding that matters here — **`pre-commit`
+  does NOT fire on merge commits at all**, which is exactly how Codex branches
+  reach `main` (`5ce1cbc Merge branch 'codex/ticket-06c-battle-calculator'`).
+  Proposed ladder: `pre-commit` (fast authorship feedback) → **`pre-push` (the
+  real gate — covers merge commits)** → CI (backstop for `--no-verify` and for
+  clones with no hooks installed). Resulting invariant, stated precisely:
+  **"a GLOSSARY/inventory mismatch cannot enter the REMOTE history"** — local
+  history may briefly hold one.
+  **Sealed constraints (user, 2026-07-26)** — these are requirements on the spec,
+  not suggestions:
+  1. **The rejection message must carry the prescription, not just the
+     diagnosis.** Naming the defect is not enough; a blocked agent needs the fix
+     and its bounds — which file, which duty, and that only index fields may be
+     touched (single-definition rule). A diagnosis-only message makes agents
+     guess, and a guessing agent writes a junk row to get unblocked.
+  2. **The message must forbid `--no-verify` explicitly** and say CI will catch
+     the bypass. Reaching for the bypass is the natural response to being
+     blocked mid-task; the prohibition has to be where the block is read.
+
+- [ ] **Candidate lint check: field-vocabulary validation on the baselines**
+  (registered 2026-07-26, audit run #3). Run #3 corrected 13 inventory field
+  values that were outside the baseline's own vocabulary (`kind` = mechanic /
+  state / strategy ×8, `verdict` = standard-term ×5), every one of them
+  invisible to `lint:docs`. The failure mode is silent and consequential: `kind`
+  routes the Ring B reference dictionary, so an unroutable value skips judging
+  without saying so. Proposed check: `kind ∈ {mechanism, meta}` and `verdict ∈
+  {justified-coinage, standard-match, synonym-exists, null}`, blocking (it
+  asserts a defect and has a reachable green state). **Proposal only** —
+  `ADVISORY` in `scripts/audit-lint.js` records that which checks gate is a
+  decided question, not an audit action.
+
 - [x] **Gate C's movement model has no Production birthplace** — **PAID
   2026-07-26**, the same day it was registered, by the Part 3 approval landing.
   `docs/features/war-model-build/MAGNITUDE.md` is new and is the owning model doc:

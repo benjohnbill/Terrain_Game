@@ -1,6 +1,6 @@
 {
- "regenerated": "2026-07-10",
- "auditRun": 2,
+ "regenerated": "2026-07-26",
+ "auditRun": 3,
  "terms": [
   {
    "canonical": "Land-derived state",
@@ -2256,8 +2256,8 @@
    "codeRefs": [
     "js/battle.js"
    ],
-   "verdict": null,
-   "verdictRef": null
+   "verdict": "standard-match",
+   "verdictRef": "2026-07-26-audit-run-3.md"
   },
   {
    "canonical": "Cascade",
@@ -3176,8 +3176,8 @@
    "kind": "meta",
    "codeIdentifier": null,
    "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
+   "verdict": "synonym-exists",
+   "verdictRef": "2026-07-26-audit-run-3.md"
   },
   {
    "canonical": "Mature-state start",
@@ -3189,8 +3189,8 @@
    "kind": "meta",
    "codeIdentifier": null,
    "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
+   "verdict": "synonym-exists",
+   "verdictRef": "2026-07-26-audit-run-3.md"
   },
   {
    "canonical": "capital",
@@ -3199,11 +3199,11 @@
    "birthplace": "docs/features/capital/GLOSSARY.md",
    "tier": 1,
    "status": "AGREED-concept",
-   "kind": "mechanic",
+   "kind": "mechanism",
    "codeIdentifier": null,
    "codeRefs": [],
-   "verdict": "standard-term",
-   "verdictRef": "docs/features/capital/RULINGS.md#CP-1"
+   "verdict": "standard-match",
+   "verdictRef": "2026-07-26-audit-run-3.md"
   },
   {
    "canonical": "capital guard",
@@ -3212,11 +3212,11 @@
    "birthplace": "docs/features/capital/GLOSSARY.md",
    "tier": 1,
    "status": "AGREED-concept",
-   "kind": "mechanic",
+   "kind": "mechanism",
    "codeIdentifier": null,
    "codeRefs": [],
-   "verdict": "standard-term",
-   "verdictRef": "docs/features/capital/RULINGS.md#CP-1"
+   "verdict": "standard-match",
+   "verdictRef": "2026-07-26-audit-run-3.md"
   },
   {
    "canonical": "capital fall",
@@ -3225,11 +3225,11 @@
    "birthplace": "docs/features/capital/GLOSSARY.md",
    "tier": 1,
    "status": "AGREED",
-   "kind": "mechanic",
+   "kind": "mechanism",
    "codeIdentifier": null,
    "codeRefs": [],
-   "verdict": "standard-term",
-   "verdictRef": "docs/features/capital/RULINGS.md#CP-2"
+   "verdict": "standard-match",
+   "verdictRef": "2026-07-26-audit-run-3.md"
   },
   {
    "canonical": "forward / rear capital",
@@ -3238,11 +3238,11 @@
    "birthplace": "docs/features/capital/GLOSSARY.md",
    "tier": 1,
    "status": "AGREED",
-   "kind": "mechanic",
+   "kind": "mechanism",
    "codeIdentifier": null,
    "codeRefs": [],
-   "verdict": "standard-term",
-   "verdictRef": "docs/features/capital/RULINGS.md#CP-2"
+   "verdict": "standard-match",
+   "verdictRef": "2026-07-26-audit-run-3.md"
   },
   {
    "canonical": "capital relocation",
@@ -3251,11 +3251,11 @@
    "birthplace": "docs/features/capital/GLOSSARY.md",
    "tier": 1,
    "status": "AGREED",
-   "kind": "mechanic",
+   "kind": "mechanism",
    "codeIdentifier": null,
    "codeRefs": [],
-   "verdict": "standard-term",
-   "verdictRef": "docs/features/capital/RULINGS.md#CP-2"
+   "verdict": "standard-match",
+   "verdictRef": "2026-07-26-audit-run-3.md"
   },
   {
    "canonical": "Sector world",
@@ -3267,8 +3267,8 @@
    "kind": "mechanism",
    "codeIdentifier": null,
    "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
+   "verdict": "justified-coinage",
+   "verdictRef": "2026-07-26-audit-run-3.md"
   },
   {
    "canonical": "Holdings",
@@ -3282,8 +3282,8 @@
    "kind": "mechanism",
    "codeIdentifier": "holds",
    "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
+   "verdict": "standard-match",
+   "verdictRef": "2026-07-26-audit-run-3.md"
   },
   {
    "canonical": "Named capture",
@@ -3297,8 +3297,8 @@
    "kind": "mechanism",
    "codeIdentifier": "occupiedIds",
    "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
+   "verdict": "justified-coinage",
+   "verdictRef": "2026-07-26-audit-run-3.md"
   },
   {
    "canonical": "Occupation frontier",
@@ -3310,8 +3310,8 @@
    "kind": "mechanism",
    "codeIdentifier": null,
    "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
+   "verdict": "synonym-exists",
+   "verdictRef": "2026-07-26-audit-run-3.md"
   },
   {
    "canonical": "Resistance proxy",
@@ -3323,8 +3323,8 @@
    "kind": "mechanism",
    "codeIdentifier": null,
    "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
+   "verdict": "justified-coinage",
+   "verdictRef": "2026-07-26-audit-run-3.md"
   },
   {
    "canonical": "Limbo",
@@ -3338,8 +3338,8 @@
    "kind": "mechanism",
    "codeIdentifier": null,
    "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
+   "verdict": "synonym-exists",
+   "verdictRef": "2026-07-26-audit-run-3.md"
   },
   {
    "canonical": "Possessor-keeps",
@@ -3351,8 +3351,8 @@
    "kind": "mechanism",
    "codeIdentifier": null,
    "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
+   "verdict": "synonym-exists",
+   "verdictRef": "2026-07-26-audit-run-3.md"
   },
   {
    "canonical": "capLandFrac",
@@ -3364,8 +3364,8 @@
    "kind": "mechanism",
    "codeIdentifier": "capLandFrac",
    "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
+   "verdict": "justified-coinage",
+   "verdictRef": "2026-07-26-audit-run-3.md"
   },
   {
    "canonical": "Per-sector ripening",
@@ -3377,8 +3377,8 @@
    "kind": "mechanism",
    "codeIdentifier": null,
    "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
+   "verdict": "synonym-exists",
+   "verdictRef": "2026-07-26-audit-run-3.md"
   },
   {
    "canonical": "Affordability bound",
@@ -3392,8 +3392,8 @@
    "kind": "mechanism",
    "codeIdentifier": "affordabilityBound",
    "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
+   "verdict": "justified-coinage",
+   "verdictRef": "2026-07-26-audit-run-3.md"
   },
   {
    "canonical": "Affordability-bind rate",
@@ -3407,8 +3407,8 @@
    "kind": "meta",
    "codeIdentifier": "affordBindRate",
    "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
+   "verdict": "justified-coinage",
+   "verdictRef": "2026-07-26-audit-run-3.md"
   },
   {
    "canonical": "World of record",
@@ -3423,8 +3423,8 @@
    "kind": "meta",
    "codeIdentifier": null,
    "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
+   "verdict": "synonym-exists",
+   "verdictRef": "2026-07-26-audit-run-3.md"
   },
   {
    "canonical": "Sudden-death crisis ending",
@@ -3438,8 +3438,8 @@
    "kind": "mechanism",
    "codeIdentifier": null,
    "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
+   "verdict": "synonym-exists",
+   "verdictRef": "2026-07-26-audit-run-3.md"
   },
   {
    "canonical": "Uprising fuel",
@@ -3453,8 +3453,8 @@
    "kind": "mechanism",
    "codeIdentifier": null,
    "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
+   "verdict": "synonym-exists",
+   "verdictRef": "2026-07-26-audit-run-3.md"
   },
   {
    "canonical": "Scar ledger",
@@ -3466,11 +3466,11 @@
    "birthplace": "docs/features/match-arc/GLOSSARY.md",
    "tier": 1,
    "status": "AGREED",
-   "kind": "state",
+   "kind": "mechanism",
    "codeIdentifier": null,
    "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
+   "verdict": "justified-coinage",
+   "verdictRef": "2026-07-26-audit-run-3.md"
   },
   {
    "canonical": "Standing rebels",
@@ -3482,11 +3482,11 @@
    "birthplace": "docs/features/match-arc/GLOSSARY.md",
    "tier": 1,
    "status": "AGREED",
-   "kind": "state",
+   "kind": "mechanism",
    "codeIdentifier": null,
    "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
+   "verdict": "standard-match",
+   "verdictRef": "2026-07-26-audit-run-3.md"
   },
   {
    "canonical": "Soil-and-crop model",
@@ -3500,8 +3500,8 @@
    "kind": "meta",
    "codeIdentifier": null,
    "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
+   "verdict": "justified-coinage",
+   "verdictRef": "2026-07-26-audit-run-3.md"
   },
   {
    "canonical": "Rolling assessment",
@@ -3515,8 +3515,8 @@
    "kind": "mechanism",
    "codeIdentifier": null,
    "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
+   "verdict": "synonym-exists",
+   "verdictRef": "2026-07-26-audit-run-3.md"
   },
   {
    "canonical": "Crisis arc",
@@ -3530,8 +3530,8 @@
    "kind": "mechanism",
    "codeIdentifier": null,
    "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
+   "verdict": "synonym-exists",
+   "verdictRef": "2026-07-26-audit-run-3.md"
   },
   {
    "canonical": "Suppression",
@@ -3545,8 +3545,8 @@
    "kind": "mechanism",
    "codeIdentifier": null,
    "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
+   "verdict": "standard-match",
+   "verdictRef": "2026-07-26-audit-run-3.md"
   },
   {
    "canonical": "Secession by neglect",
@@ -3560,8 +3560,8 @@
    "kind": "mechanism",
    "codeIdentifier": null,
    "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
+   "verdict": "synonym-exists",
+   "verdictRef": "2026-07-26-audit-run-3.md"
   },
   {
    "canonical": "Pacification condition",
@@ -3575,8 +3575,8 @@
    "kind": "mechanism",
    "codeIdentifier": null,
    "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
+   "verdict": "standard-match",
+   "verdictRef": "2026-07-26-audit-run-3.md"
   },
   {
    "canonical": "Total-war overlay",
@@ -3590,8 +3590,8 @@
    "kind": "mechanism",
    "codeIdentifier": null,
    "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
+   "verdict": "synonym-exists",
+   "verdictRef": "2026-07-26-audit-run-3.md"
   },
   {
    "canonical": "Westphalian draw",
@@ -3606,8 +3606,8 @@
    "kind": "mechanism",
    "codeIdentifier": null,
    "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
+   "verdict": "synonym-exists",
+   "verdictRef": "2026-07-26-audit-run-3.md"
   },
   {
    "canonical": "Burn-and-rush",
@@ -3618,11 +3618,11 @@
    "birthplace": "docs/features/match-arc/GLOSSARY.md",
    "tier": 1,
    "status": "PROPOSED",
-   "kind": "strategy",
+   "kind": "meta",
    "codeIdentifier": null,
    "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
+   "verdict": "synonym-exists",
+   "verdictRef": "2026-07-26-audit-run-3.md"
   },
   {
    "canonical": "Truce lock",
@@ -3637,8 +3637,8 @@
    "kind": "mechanism",
    "codeIdentifier": "truceTurns",
    "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
+   "verdict": "standard-match",
+   "verdictRef": "2026-07-26-audit-run-3.md"
   },
   {
    "canonical": "White peace",
@@ -3654,8 +3654,8 @@
    "codeRefs": [
     "js/bot-exit.js"
    ],
-   "verdict": null,
-   "verdictRef": null
+   "verdict": "standard-match",
+   "verdictRef": "2026-07-26-audit-run-3.md"
   },
   {
    "canonical": "Fatigue",
@@ -3667,8 +3667,8 @@
    "kind": "mechanism",
    "codeIdentifier": null,
    "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
+   "verdict": "standard-match",
+   "verdictRef": "2026-07-26-audit-run-3.md"
   },
   {
    "canonical": "Fatigue ledger",
@@ -3680,8 +3680,8 @@
    "kind": "mechanism",
    "codeIdentifier": null,
    "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
+   "verdict": "justified-coinage",
+   "verdictRef": "2026-07-26-audit-run-3.md"
   },
   {
    "canonical": "Forced march",
@@ -3693,8 +3693,8 @@
    "kind": "mechanism",
    "codeIdentifier": null,
    "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
+   "verdict": "standard-match",
+   "verdictRef": "2026-07-26-audit-run-3.md"
   },
   {
    "canonical": "Reach cone",
@@ -3706,8 +3706,8 @@
    "kind": "mechanism",
    "codeIdentifier": null,
    "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
+   "verdict": "synonym-exists",
+   "verdictRef": "2026-07-26-audit-run-3.md"
   },
   {
    "canonical": "Border alarm",
@@ -3722,8 +3722,8 @@
    "kind": "mechanism",
    "codeIdentifier": null,
    "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
+   "verdict": "synonym-exists",
+   "verdictRef": "2026-07-26-audit-run-3.md"
   },
   {
    "canonical": "Commit budget",
@@ -3735,8 +3735,8 @@
    "kind": "mechanism",
    "codeIdentifier": null,
    "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
+   "verdict": "synonym-exists",
+   "verdictRef": "2026-07-26-audit-run-3.md"
   },
   {
    "canonical": "Window",
@@ -3748,8 +3748,8 @@
    "kind": "mechanism",
    "codeIdentifier": null,
    "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
+   "verdict": "standard-match",
+   "verdictRef": "2026-07-26-audit-run-3.md"
   },
   {
    "canonical": "Dark market",
@@ -3761,8 +3761,8 @@
    "kind": "meta",
    "codeIdentifier": null,
    "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
+   "verdict": "synonym-exists",
+   "verdictRef": "2026-07-26-audit-run-3.md"
   },
   {
    "canonical": "Present / predictive reconnaissance",
@@ -3774,8 +3774,66 @@
    "kind": "mechanism",
    "codeIdentifier": null,
    "codeRefs": [],
-   "verdict": null,
-   "verdictRef": null
+   "verdict": "synonym-exists",
+   "verdictRef": "2026-07-26-audit-run-3.md"
+  },
+  {
+   "canonical": "Movement graph",
+   "korean": "이동 연결망",
+   "aliases": [],
+   "birthplace": "docs/features/war-model-build/GLOSSARY.md",
+   "tier": 1,
+   "status": "AGREED",
+   "kind": "mechanism",
+   "codeIdentifier": "buildGraph",
+   "codeRefs": [
+    "js/movement.js"
+   ],
+   "verdict": "standard-match",
+   "verdictRef": "2026-07-26-audit-run-3.md"
+  },
+  {
+   "canonical": "March speed",
+   "korean": "행군 속도",
+   "aliases": [],
+   "birthplace": "docs/features/war-model-build/GLOSSARY.md",
+   "tier": 1,
+   "status": "AGREED",
+   "kind": "mechanism",
+   "codeIdentifier": "SPEED_HEXES_PER_TURN",
+   "codeRefs": [
+    "js/movement.js"
+   ],
+   "verdict": "standard-match",
+   "verdictRef": "2026-07-26-audit-run-3.md"
+  },
+  {
+   "canonical": "Effectiveness floor",
+   "korean": "피로 실효 하한",
+   "aliases": [],
+   "birthplace": "docs/features/war-model-build/GLOSSARY.md",
+   "tier": 1,
+   "status": "AGREED",
+   "kind": "mechanism",
+   "codeIdentifier": "EFFECTIVENESS_FLOOR",
+   "codeRefs": [
+    "js/fatigue.js"
+   ],
+   "verdict": "standard-match",
+   "verdictRef": "2026-07-26-audit-run-3.md"
+  },
+  {
+   "canonical": "Capability inversion",
+   "korean": "능력 역전",
+   "aliases": [],
+   "birthplace": "docs/features/war-model-build/GLOSSARY.md",
+   "tier": 1,
+   "status": "AGREED",
+   "kind": "meta",
+   "codeIdentifier": null,
+   "codeRefs": [],
+   "verdict": "justified-coinage",
+   "verdictRef": "2026-07-26-audit-run-3.md"
   }
  ]
 }
