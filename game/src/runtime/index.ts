@@ -47,6 +47,27 @@ export {
   TREASURY_START_TURNS,
 } from '../domain/economy.js';
 export type { SectorTable } from '../domain/economy.js';
+export {
+  BATTLE_FATIGUE_COEF,
+  battleAccrual,
+  CONVERSION_CONVEXITY_EXP,
+  CONVERSION_TERMINAL_LEDGER,
+  effectiveness,
+  EFFECTIVENESS_FLOOR,
+  isStarving,
+  RECOVERY_BASE_RATE,
+  RECOVERY_REQUIRES_STATIONARY,
+  RECOVERY_SUPPLY_CURVE_EXP,
+  recoveryPerTurn,
+  STARVATION_ENTRY_THRESHOLD,
+  STARVATION_LOSS_COEF,
+  STARVATION_LOSS_EXP,
+  starvationLossFraction,
+  SUPPLY_PUMP_PER_CUT_TURN,
+  supplyTick,
+  turnUpkeep,
+} from '../domain/fatigue.js';
+export type { FatigueLedgers, UpkeepResult } from '../domain/fatigue.js';
 export { contestedFronts, isPartyTo } from '../domain/fronts.js';
 export {
   advanceOneTurn,
