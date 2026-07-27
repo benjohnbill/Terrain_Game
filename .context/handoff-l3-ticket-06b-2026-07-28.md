@@ -1,5 +1,11 @@
 # Handoff — close L3 build ticket 06b, then run the loop to capital fall
 
+> **DISCHARGED 2026-07-28.** Ticket 06b is `resolved` (`fdaa1ec` + `a842c57`);
+> every item under § What is left is done, and the evidence is in the ticket's
+> § Implementation evidence. What is still live in this document is § Then the
+> loop closes (06c → 06d → 07) and § What was deliberately deferred (R16). Read
+> it for those; do not re-execute the closing work.
+
 Written 2026-07-28. The previous session landed 06b's ledger arithmetic and
 re-cut the ticket's scope with user approval. This document carries only what is
 **not** already in the repo; everything else is referenced by path.
