@@ -182,6 +182,74 @@ function checkStatusMarkers(inventory, domainMapText) {
   return findings;
 }
 
+// -- check 11: GLOSSARY status vs inventory status ---------------------------
+// Check 3 cross-checks DOMAIN_MAP's ✅/❓/⛔ markers against the inventory, and
+// nothing cross-checked the FEATURE GLOSSARY status cells — where 187 of 267
+// terms actually declare their status. Measured 2026-07-28 before this check
+// existed: 115/115 agreed, so it lands with an EMPTY grandfather list. That is
+// the stage-4 lesson applied deliberately — turn the check on while the surface
+// is clean and you owe no exemptions; turn it on later and you carry a list.
+
+// Extracting the status WORD is the whole difficulty, and getting it wrong is
+// not hypothetical: a scripted pass over these cells on 2026-07-28 reported four
+// mismatches and ALL FOUR were the reader's bugs, not the docs'. The instructive
+// one was
+//
+//   capLandFrac | ... | **AGREED** (value 1 SEALED 2026-07-11, AB-② · ...)
+//
+// read as SEALED because a naive scan found that word first. The cell is
+// correct: `status` carries the NAME axis only, and a value's seal rides in the
+// parenthetical (documentation-law Vocabulary Law, ruled 2026-07-15). So the
+// rule is structural, not a word search — **strip every parenthetical first**,
+// then take the first dictionary word that remains. A checker that ignores the
+// name/value split will manufacture findings against docs that obey it.
+function statusWordOf(cell) {
+  const bare = cell
+    .replace(/\([^)]*\)/g, ' ')   // parentheticals hold VALUE state, never status
+    .replace(/[*`_]/g, ' ')
+    .replace(/\s+/g, ' ');
+  // Longest-first so `rejected-recorded` is not shadowed by a substring, and
+  // word-bounded so `UNSEALED` never reads as `SEALED`.
+  for (const w of ['rejected-recorded', 'PROPOSED', 'SEALED', 'AGREED']) {
+    if (new RegExp(`(^|[^\\w-])${w}([^\\w-]|$)`).test(bare)) return w;
+  }
+  return null;
+}
+
+function checkGlossaryStatus(inventory, glossaryDocs) {
+  const findings = [];
+  const index = buildNameIndex(inventory);
+  for (const doc of glossaryDocs) {
+    for (const line of doc.text.split('\n')) {
+      if (!GLOSSARY_ROW.test(line)) continue;
+      const cells = line.split('|').map((s) => s.trim());
+      if (cells.length < 5) continue;               // not a full row
+      const nameCell = cells[1];
+      const statusCell = cells[cells.length - 2];   // trailing empty cell after final |
+      if (/^-+$/.test(nameCell) || /^(Term|Definition|Status)/i.test(nameCell)) continue;
+      const term = index.get(normalizeName(nameCell).toLowerCase());
+      if (!term || !term.status) continue;
+      const declared = statusWordOf(statusCell);
+      if (!declared) continue;                     // no status word to compare
+      if (declared === term.status) continue;
+      findings.push({
+        kind: 'glossary-status-drift',
+        term: term.canonical,
+        path: doc.path,
+        glossary: declared,
+        inventory: term.status,
+        detail: `${doc.path} declares ${declared} but the inventory row says `
+          + `${term.status}`
+          + (declared === 'SEALED' && term.status === 'AGREED'
+            ? ' — an understatement, not a contradiction (SEALED implies AGREED), '
+              + 'but the index must mirror the birthplace'
+            : '')
+      });
+    }
+  }
+  return findings;
+}
+
 // -- check 4: numeric restatement (narrowed) --------------------------------
 // Flag a DOMAIN_MAP row only when it BOTH points at an owning doc AND still
 // carries a dial-pattern number (dates / ADR numbers / ruling refs excluded).
@@ -589,11 +657,13 @@ function runAll(root) {
     headerDiff: checkHeaderDiff(inventory, surfaces),
     codeContract: checkCodeContract(inventory, jsFiles),
     statusMarkers: checkStatusMarkers(inventory, domainMap),
+    glossaryStatus: checkGlossaryStatus(inventory, glossaries),
     numericRestatement: checkNumericRestatement(domainMap),
     definitionRestatement: checkDefinitionRestatement(inventory, domainMap, surfaces),
     ledgerCurrency: checkLedgerCurrency(read('docs/SYNC-DEBT.md'), commits),
     freshness: checkFreshness(read('docs/GLOSSARY-QUICKREF.md'), glossaries),
     fieldDomains: checkFieldDomains(inventory),
+    glossaryStatus: checkGlossaryStatus(inventory, glossaries),
     baselineSelf: checkBaselineSelf(inventory, registry, exists),
     adrStampDuty: checkAdrStampDuty(production, adrs)
   };
@@ -676,6 +746,19 @@ const PRESCRIPTIONS = {
     `Stamp ADR ${f.adr}'s header — "Amended by <ref> (date)" plus a one-line`,
     'delta — in THIS batch. A stale ADR read in isolation must announce its own',
     'staleness; dates alone are not protection.'
+  ],
+  'glossary-status-drift': (f) => [
+    `The birthplace and its index disagree about ${f.term}'s status. The`,
+    `birthplace wins: ${f.path} is where the status is DECIDED, and`,
+    '`docs/audits/term-inventory.json` only indexes it. So patch the inventory',
+    'row (an index field, HARVEST step 4) — do NOT edit the GLOSSARY cell to',
+    'match the index.',
+    'Two exceptions worth checking first. (1) If the GLOSSARY cell is the stale',
+    'one — a status the feature has since moved past — fix it THERE and say so in',
+    'the commit; that is a seal correction, not an index patch. (2) `status`',
+    'carries the NAME axis only: if the cell reads `AGREED (value 1 SEALED ...)`',
+    'the status is AGREED and the seal belongs to the value, so nothing is wrong',
+    'and this finding is a reader bug — report it rather than "fixing" the cell.'
   ],
   'stale-quickref': () => [
     'Advisory. The QUICKREF is a lock point, not a per-batch duty (ritual duty 4,',
@@ -850,6 +933,7 @@ module.exports = {
   checkHeaderDiff, checkCodeContract, checkStatusMarkers,
   checkNumericRestatement, checkDefinitionRestatement, checkAdrStampDuty,
   checkFieldDomains, FIELD_DOMAINS, DOMAIN_GRANDFATHERED,
+  checkGlossaryStatus, statusWordOf,
   checkLedgerCurrency, checkFreshness, checkBaselineSelf,
   parseSurfaceHeaders, splitDomainMapRows, runAll,
   normalizeName, nameSet, buildNameIndex, lookup,

@@ -498,8 +498,8 @@ test('runAll returns a result set per check against the real repo', () => {
   const keys = Object.keys(results).sort();
   assert.deepEqual(keys, [
     'adrStampDuty', 'baselineSelf', 'codeContract', 'definitionRestatement',
-    'fieldDomains', 'freshness', 'headerDiff', 'ledgerCurrency',
-    'numericRestatement', 'statusMarkers'
+    'fieldDomains', 'freshness', 'glossaryStatus', 'headerDiff',
+    'ledgerCurrency', 'numericRestatement', 'statusMarkers'
   ]);
   for (const k of keys) assert.ok(Array.isArray(results[k]), `${k} is an array`);
 });
@@ -641,4 +641,76 @@ test('fieldDomains grandfathers a named row but never a new one', () => {
   ]);
   const findings = lint.checkFieldDomains(inventory, new Set(['Old stray|status']));
   assert.deepEqual(findings.map((f) => f.term), ['New stray']);
+});
+
+// ---------------------------------------------------------------- check 11
+// GLOSSARY status vs inventory status. Check 3 only ever cross-checked
+// DOMAIN_MAP's markers, leaving the feature GLOSSARY status cells — where most
+// terms actually declare status — unwatched. Landed 2026-07-28 with an EMPTY
+// grandfather list because the surface measured 120/120 clean first.
+
+const GS = 'docs/features/match-arc/GLOSSARY.md';
+const gsRow = (name, status) => `| ${name} | some definition |  | ${status} |`;
+
+test('glossaryStatus flags a row whose status word contradicts the inventory', () => {
+  const inventory = inv([{ canonical: 'Field army', korean: '야전군', aliases: [], birthplace: GS, status: 'PROPOSED' }]);
+  const findings = lint.checkGlossaryStatus(inventory, [
+    { path: GS, text: gsRow('야전군 (field army)', '**AGREED** (2026-07-13, WM-①)') }
+  ]);
+  assert.equal(findings.length, 1);
+  assert.equal(findings[0].kind, 'glossary-status-drift');
+  assert.equal(findings[0].term, 'Field army');
+  assert.equal(findings[0].path, GS);
+  assert.equal(findings[0].glossary, 'AGREED');
+  assert.equal(findings[0].inventory, 'PROPOSED');
+});
+
+test('glossaryStatus passes when the birthplace and the index agree', () => {
+  const inventory = inv([{ canonical: 'Field army', korean: '야전군', aliases: [], birthplace: GS, status: 'AGREED' }]);
+  assert.deepEqual(lint.checkGlossaryStatus(inventory, [
+    { path: GS, text: gsRow('야전군 (field army)', '**AGREED** (2026-07-13, WM-①)') }
+  ]), []);
+});
+
+// The regression this check was almost born with. A scripted sweep on
+// 2026-07-28 reported four mismatches and every one was the reader's bug; the
+// instructive case is a status cell whose PARENTHETICAL mentions a sealed VALUE.
+// `status` carries the name axis only (ruled 2026-07-15), so a word search finds
+// SEALED and manufactures a finding against a row that obeys the rule.
+test('glossaryStatus does not read a value seal in a parenthetical as the status', () => {
+  const inventory = inv([{ canonical: 'capLandFrac', korean: null, aliases: [], birthplace: GS, status: 'AGREED' }]);
+  assert.deepEqual(lint.checkGlossaryStatus(inventory, [
+    { path: GS, text: gsRow('capLandFrac (땅-상한 결합 다이얼)',
+      '**AGREED** (value 1 SEALED 2026-07-11, AB-② · L2 config — was 0, OG-⑤)') }
+  ]), [], 'the status is AGREED; the seal belongs to the value');
+});
+
+test('glossaryStatus skips a row that declares no dictionary status word', () => {
+  const inventory = inv([{ canonical: 'estimate band', korean: null, aliases: [], birthplace: GS, status: 'AGREED' }]);
+  assert.deepEqual(lint.checkGlossaryStatus(inventory, [
+    { path: GS, text: gsRow('estimate band — USE ONLY', 'pointer') }
+  ]), [], 'a pointer row has no status to contradict');
+});
+
+test('statusWordOf strips parentheticals, then takes the dictionary word', () => {
+  assert.equal(lint.statusWordOf('**AGREED** (value 1 SEALED 2026-07-11)'), 'AGREED');
+  assert.equal(lint.statusWordOf('AGREED 2026-07-07 · TC-⑧ · renamed 2026-07-10'), 'AGREED');
+  assert.equal(lint.statusWordOf('rejected-recorded (as an economic device) → force-geography'), 'rejected-recorded');
+  assert.equal(lint.statusWordOf('**SEALED** (2026-07-24)'), 'SEALED');
+  assert.equal(lint.statusWordOf('PROPOSED (구 표기 candidate)'), 'PROPOSED');
+  assert.equal(lint.statusWordOf('pointer'), null);
+});
+
+// Word-bounded, or the C-loop table's UNSEALED rows would every one read SEALED.
+test('statusWordOf does not read UNSEALED as SEALED', () => {
+  assert.equal(lint.statusWordOf('UNSEALED 가안'), null);
+  assert.equal(lint.statusWordOf('rejected-recorded'), 'rejected-recorded');
+});
+
+// The live surface was measured clean BEFORE the check was written, which is why
+// it needs no grandfather list. Pinning that keeps the ratchet closed.
+test('glossaryStatus is clean against the real repo', () => {
+  const real = lint.runAll(process.cwd());
+  assert.deepEqual(real.glossaryStatus, [],
+    'the birthplaces and the index agreed at 120/120 when this check landed');
 });
