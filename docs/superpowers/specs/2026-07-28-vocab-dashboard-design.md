@@ -70,6 +70,35 @@ review, which is why `render` stands as its own mode. The rendered header
 carries **both** dates — last-regenerated and last-locked — so staleness is read
 rather than inferred.
 
+### Output division — two formats, two audiences (user, 2026-07-28)
+
+**Format count is decided: two**, both written on the same invocation. They are
+not two views of one surface; they have different readers and different duties.
+
+- **HTML — the user's only surface, and it must be designed.** User's words, and
+  stated as fixed: "내가 보는 것은 반드시 디자인화/시각적으로 보기 좋게 꾸며진
+  HTML이야." Visual quality is a **requirement of the artifact**, not a
+  nice-to-have and not something density-for-a-dev-tool may trade away. The
+  composition step therefore has a mandate, not merely latitude. Its only hard
+  bounds are the law's uniform-weight rule and pointer-is-citable rule — every
+  other choice is the designer's.
+- **Markdown (`docs/GLOSSARY-QUICKREF.md`) — agents only, never a user
+  surface.** Tracked, so it is greppable and reaches context; that is its whole
+  job. It does **not** mirror the HTML's layout. The two-layer scan/detail split
+  is a *device* for satisfying uniform weight on a screen, not the law itself —
+  in markdown, one line per term with the same fields and an optional trailing
+  gloss satisfies the law directly ("a blank slot, never a demotion").
+
+Note what this makes the markdown's real competitor: **`term-inventory.json`**,
+not the HTML. The JSON is already tracked, greppable, enforced by blocking
+checks 1/3/10/11, and already carries `canonical` / `korean` / `status` /
+`birthplace` — the dashboard's entire scan layer. The markdown's only addition
+over it is gloss text, which the law declares non-citable. So the markdown
+earns its place mainly by turning a hand-written 49%-coverage file into a
+generated one covering every registered term, at zero law cost. **Retiring it is
+re-asked once the dashboard is in daily use** — not at build time, because that
+retirement is a cascade, not a delete (§ Law implications 3).
+
 ### What this does not grant `doc-audit`
 
 That skill's charter is explicit: findings are reports, never legislation; it
@@ -439,24 +468,37 @@ proposal.** Nothing is edited here either way.
    re-aiming looked necessary; against a written-on-invocation artifact it fires
    exactly when the vocabulary has moved since the last write. Keep it, advisory
    (ritual duty 4's on-demand cadence — advisory, never a gate).
-3. **The fate of `docs/GLOSSARY-QUICKREF.md` — still open, but narrowed.** Do
-   not settle it inside the build. The dashboard replaces it for the user. For
-   agents the markdown is greppable and reachable in context while a gitignored
-   HTML is not, which is a real argument for keeping a committed form. Note the
-   counter-evidence: the law already declares it non-citable, no check scans it,
-   and agents work from birthplaces. **What the amendment removed** is the
-   cadence half — with nothing writing automatically, the commit-surface
-   objection to a generated tracked file is gone, so the question reduces to
-   whether the generator emits one format or two, both on the same invocation.
-   Decide separately.
+3. **The fate of `docs/GLOSSARY-QUICKREF.md` — the build-time half is DECIDED;
+   retirement is deferred, not open.** The generator emits **two** formats,
+   markdown included (user, 2026-07-28 — § Output division). So no law change is
+   needed for this build: the file keeps its Working-layer row and its
+   `(generated)` label finally becomes true.
+
+   **Retirement stays a later question**, and it is a cascade rather than a
+   delete. Measured: `scripts/audit-lint.js:674` feeds
+   `read('docs/GLOSSARY-QUICKREF.md')` into `checkFreshness`, and `read` is a
+   bare `fs.readFileSync` with no existence guard (`:610`) — removing the file
+   throws ENOENT and takes `npm run lint:docs` down with it, which is wired to
+   the `write-lint.js` hook and the pre-commit / pre-push / CI ladder. So
+   retirement means: guard the read and re-aim `stale-quickref` first, then two
+   Tier-3 law edits (`DOCUMENTATION-LAW.md:30` Working-layer row, `:197` ritual
+   duty 4), then `doc-registry.json`'s row, `HARVEST.md`'s Ring A sweep, and two
+   pointers (`docs/C-LOOP.md:14`, `docs/features/terrain-cradle/INDEX.md:38`).
+   Re-ask it once the dashboard is in daily use.
+
+   **Coupling to note:** implication 2's withdrawal above assumes the markdown
+   continues to exist. If it is ever retired, `stale-quickref` loses the file it
+   reads and that withdrawal reverses — the check must then be re-aimed at the
+   lock marker.
 
 ## Open decisions
 
 - **Whether the term list shows all 254 at once** or paginates/virtualizes.
   Visual design is explicitly deferred (user, 2026-07-28), and this is a design
   question, not an architecture one.
-- **`GLOSSARY-QUICKREF.md`'s fate** (above) — narrowed by the amendment to "one
-  output format or two", both written on the same invocation.
+- **`GLOSSARY-QUICKREF.md`'s fate — no longer open for this build.** Decided:
+  two output formats (user, 2026-07-28). Retirement deferred to after the
+  dashboard is in use; § Law implications 3 carries the cascade it would cost.
 - **Whether `drift` classifies a *redefinition* by text hash or by diff size** —
   the cheap version is "changed at all"; a threshold would need justification.
 
@@ -465,6 +507,8 @@ proposal.** Nothing is edited here either way.
 - No auto-**lock**. Advancing the marker is a review, and a review is the user's.
 - No backfilled authored summaries (2026-07-27 ruling).
 - No separate repository (user, 2026-07-28).
-- No visual design in this spec.
+- No visual design **in this spec** — but visual quality is a stated requirement
+  of the HTML artifact, fixed by the user (§ Output division). It is owned by the
+  composition step, not deferred indefinitely and not tradeable for density.
 - No schema validation for the plans panel — named as A's right instrument, but
   out of scope.
