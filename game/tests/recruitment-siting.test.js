@@ -13,6 +13,9 @@ const {
   contentHashOf,
   CRADLE_R1,
   draftOrder,
+  MARCH_FATIGUE_PER_HEX,
+  MARCH_SPEED,
+  RECOVERY_BASE_RATE,
   preview,
   recruitmentOrderKeyOf,
   Runtime,
@@ -255,22 +258,37 @@ test('redirecting an affiliation host invalidates the stored recruitment request
 test('standalone field recruits keep a stable id and their own normal-march fatigue through activation', () => {
   const runtime = openAtDecision();
   const openingId = runtime.view('realm-a').detachments[0].id;
+  // A full normal march, so the recruit's own ledger stays legible after the
+  // recovery ticket 06b folded into every turn's tail: three hexes accrued, one
+  // recovery paid, and the opening detachment that never marched still reads 0.
   recruit(runtime, 'realm-a', 'marching-standalone', 'r2_s0', 1, 'field', {
-    destinationHex: { q: 8, r: 7 },
+    destinationHex: { q: 8, r: 8 },
   });
   closeTurn(runtime);
   const pending = runtime.view('realm-a').detachments.find((d) => d.id !== openingId);
-  assert.deepEqual(pending.position, { q: 8, r: 7 });
+  assert.deepEqual(pending.position, { q: 8, r: 8 });
   assert.equal(pending.readyMen, 0);
   assert.ok(pending.pendingMen > 0);
-  assert.equal(pending.pendingFatigue, 2);
+  assert.equal(
+    pending.pendingFatigue,
+    MARCH_SPEED * MARCH_FATIGUE_PER_HEX - RECOVERY_BASE_RATE,
+    'the recruit did not carry its own march ledger',
+  );
+  assert.equal(
+    runtime.view('realm-a').detachments.find((d) => d.id === openingId).fatigue,
+    0,
+    'the ledger is per cohort: a detachment that never marched was worn anyway',
+  );
   const stableId = pending.id;
 
   closeTurn(runtime);
   const activated = runtime.view('realm-a').detachments.find((d) => d.id === stableId);
   assert.equal(activated.pendingMen, 0);
   assert.equal(activated.readyMen, pending.pendingMen);
-  assert.equal(activated.fatigue, 2);
+  // Activation carries the cohort's own ledger into `ready`, and the same turn's
+  // rest then recovers it to the floor — one arriving turn of standing still is
+  // enough to erase one normal march.
+  assert.equal(activated.fatigue, 0);
 });
 
 test('garrison recruits count toward the local cap while pending and defend only after activation', () => {

@@ -41,6 +41,7 @@ import {
   apportionOrigins,
   availableCiviliansByOrigin,
   fieldOf,
+  mapCohortFatigue,
   mergeDetachments,
   mergeDetachmentsRefusal,
   menOf,
@@ -52,6 +53,7 @@ import {
   type GarrisonForce,
   type PendingCohort,
 } from '../domain/force.js';
+import { turnUpkeep } from '../domain/fatigue.js';
 import { contestedFronts, isPartyTo } from '../domain/fronts.js';
 import {
   advanceOneTurn,
@@ -95,6 +97,32 @@ interface RecruitmentAffiliation {
   readonly destination: HexPosition;
 }
 
+/**
+ * How well every force is fed in this slice: completely.
+ *
+ * **Not a dial.** It is a consequence of scope (ticket 06b, RE-CUT 2026-07-28):
+ * what interrupts supply is a *plan* — Supply Interdiction, Scorched Earth — and
+ * the plan layer is not built, so supply cannot be cut. The supply **predicate**
+ * (what a force must be connected to, over which graph) is the supply design
+ * pass's agenda, registered as R16 in `docs/DESIGN-RISKS.md`; it is not decided
+ * here and must not be answered in passing.
+ *
+ * The honest consequence, recorded so nobody reads more into the ledger than it
+ * does: **wear is a self-managed marching tax in the first slice**, not something
+ * an opponent can attack, because both recovery-denial tools are plan-layer.
+ */
+const FULLY_SUPPLIED = 1;
+
+/**
+ * The ground's gate on recovery: open everywhere, for the same reason.
+ *
+ * Ash ground — a province burned so a force cannot dig in — is Scorched Earth's
+ * effect, and Scorched Earth is a plan too. Nothing burns yet, so nothing denies
+ * recovery. `fatigue.ts` gates the wear ledger with this and never substance,
+ * which is what keeps starvation supply-exclusive.
+ */
+const UNBURNED_GROUND = 1;
+
 /** A clock that refuses to be read. Rules must never need one (ADR 0040). */
 const NO_CLOCK: Clock = {
   now(): number {
@@ -110,6 +138,15 @@ export class Runtime {
   readonly #state: MatchState;
   readonly #clock: Clock;
   readonly #recruitmentAffiliations: RecruitmentAffiliation[] = [];
+  /**
+   * Which detachments actually moved during this turn's payoff.
+   *
+   * Read by upkeep for one reason: WB-M① dial 9 — *does recovery additionally
+   * require standing still* — is recorded **HELD**, so today it changes nothing.
+   * Passing the real fact anyway is what makes answering it a value change at the
+   * birthplace rather than a re-plumbing here (ticket 06b item 6).
+   */
+  readonly #marchedThisTurn = new Set<string>();
 
   private constructor(state: MatchState, clock: Clock) {
     this.#state = state;
@@ -911,7 +948,10 @@ export class Runtime {
           },
         }];
       }
-      if (event.type === 'realm-recomputed') {
+      if (event.type === 'realm-recomputed' || event.type === 'upkeep-resolved') {
+        // Both report *that* a realm's background beat ran. Their numbers — income,
+        // force limit, per-force wear — stay behind `view(actor)`, which is the only
+        // surface entitled to an actor's own truth.
         return [{
           type: event.type,
           turn: event.turn,
@@ -964,6 +1004,7 @@ export class Runtime {
     // Upkeep, income, and the land readings, folded into the reveal's
     // tail (D6.2) — no separate screen, no extra click, and what comes out is
     // turn N+1's opening state.
+    events.push(...this.#resolveUpkeep());
     // The stack does not carry over: unspent chips are discarded and the pool
     // regenerates whole (D6.3).
     state.commitments = {};
@@ -1149,12 +1190,14 @@ export class Runtime {
   #resolveMovement(): GameEvent[] {
     const state = this.#state;
     const events: GameEvent[] = [];
+    this.#marchedThisTurn.clear();
     for (const actor of state.actors) {
       const detachments = state.forces[actor]!.detachments;
       for (let index = 0; index < detachments.length; index += 1) {
         const advanced = advanceOneTurn(state.movementGraph, detachments[index]!);
         detachments[index] = advanced.detachment;
         if (advanced.travelled === 0) continue;
+        this.#marchedThisTurn.add(advanced.detachment.id);
         events.push(this.#turnEvent('detachment-moved', 'payoff', {
           actor,
           detachmentId: advanced.detachment.id,
@@ -1274,6 +1317,79 @@ export class Runtime {
           holdings: holdings.length,
         }),
       );
+    }
+
+    return events;
+  }
+
+  /**
+   * How well one force is supplied, in [0, 1].
+   *
+   * Uniform today — see {@link FULLY_SUPPLIED} for why that is scope rather than
+   * a chosen value. It takes the detachment it is asked about so that R16's real
+   * predicate arrives as a body change instead of a re-plumbing.
+   *
+   * Note what it deliberately does **not** consult: the sector a force stands on,
+   * or that sector's class. No unit and no sector is exempted, **including a
+   * capital sector** — the clause ticket 06b keeps from the moved predicate, and
+   * the negative guarantee ticket 07 item 7 needs. Because no branch exists, the
+   * guarantee holds by construction; `fatigue-upkeep.test.js` is the tripwire.
+   */
+  #supplyLevelOf(_detachment: Detachment): number {
+    return FULLY_SUPPLIED;
+  }
+
+  /**
+   * The wear ledger's one pass per turn, folded into the background tail.
+   *
+   * Marching and fighting accrue at the payoff tier; this is where the gauge is
+   * read back down again, and it is the only thing standing between a marching
+   * army and the ×0.5 effectiveness floor. Accrual and recovery walk the same
+   * cohorts through `mapCohortFatigue`, so the two cannot come to disagree about
+   * where the ledger lives — pending cohorts included, since they march too.
+   *
+   * **Garrisons are absent, and not by exemption:** a `GarrisonForce` carries no
+   * wear account at all (`domain/force.ts`), because nothing in this slice
+   * marches one. When ticket 07 places the capital guard, what must not exempt it
+   * is the **supply** predicate — R16's, and not this pass.
+   *
+   * **The supply account is absent rather than stored at zero** (user ruling,
+   * 2026-07-28). Every force is supplied, and a supplied turn resets the pump, so
+   * no force can hold a supply ledger, nothing enters starvation, and there is no
+   * substance-loss path to run. A `supply` field on match state would be dead
+   * until R16 gives supply a cause; the account arrives with its consumer.
+   */
+  #resolveUpkeep(): GameEvent[] {
+    const state = this.#state;
+    const events: GameEvent[] = [];
+
+    for (const actor of state.actors) {
+      const detachments = state.forces[actor]!.detachments;
+      const upkept: { readonly detachmentId: string; readonly wear: number; readonly recovered: number }[] = [];
+
+      for (let index = 0; index < detachments.length; index += 1) {
+        const detachment = detachments[index]!;
+        const supplyLevel = this.#supplyLevelOf(detachment);
+        const stationary = !this.#marchedThisTurn.has(detachment.id);
+        // `supply: 0` is not an assumption about the world — it is the reading a
+        // supplied turn always produces, which is why nothing stores it.
+        const upkeepOf = (wear: number): number => turnUpkeep(
+          { wear, supply: 0 },
+          supplyLevel,
+          UNBURNED_GROUND,
+          stationary,
+        ).wear;
+
+        const wear = upkeepOf(detachment.ready.fatigue);
+        upkept.push({
+          detachmentId: detachment.id,
+          wear,
+          recovered: detachment.ready.fatigue - wear,
+        });
+        detachments[index] = mapCohortFatigue(detachment, upkeepOf);
+      }
+
+      events.push(this.#turnEvent('upkeep-resolved', 'background', { actor, forces: upkept }));
     }
 
     return events;

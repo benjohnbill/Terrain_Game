@@ -132,6 +132,9 @@ test('a turn commits, reveals and resolves in a browser, from the same artifact'
     // Ticket 05's realm economy, folded into the same tail — one per realm.
     'realm-recomputed',
     'realm-recomputed',
+    // Ticket 06b's wear ledger, in the same tail and on the same terms.
+    'upkeep-resolved',
+    'upkeep-resolved',
     'turn-opened',
   ]);
   expect(events.map((e) => e.detail.tier)).toEqual([
@@ -141,6 +144,8 @@ test('a turn commits, reveals and resolves in a browser, from the same artifact'
     'decision',
     'payoff',
     'payoff',
+    'background',
+    'background',
     'background',
     'background',
     'background',
@@ -176,8 +181,13 @@ test('an ordered intent log replays to the same turn state in both hosts', async
   expect(nodeResult.events.some((e) => e.type === 'detachments-merged')).toBe(true);
   expect(nodeResult.view.turn).toBe(5);
   expect(nodeSummary.detachments).toHaveLength(2);
+  // The fixture's march finishes early and the force then stands still for the
+  // remaining turns, so ticket 06b's recovery has emptied the wear ledger by turn
+  // 5. (Empty, not the *effectiveness floor* — that registered term is the ×0.5
+  // bound at the other end of the curve.) The cross-host claim is
+  // `browserSummary === nodeSummary` above; this pins the value both must land on.
   expect(nodeSummary.detachments).toContainEqual(expect.objectContaining({
-    id: 'detachment:realm-a:1', position: { q: 19, r: 13 }, fatigue: 2,
+    id: 'detachment:realm-a:1', position: { q: 19, r: 13 }, fatigue: 0,
   }));
   expect(nodeSummary.detachments.reduce((men, detachment) => men + detachment.men, 0))
     .toBe(nodeSummary.economy.field);

@@ -1139,7 +1139,35 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
 - [ ] **Stationary requirement for fatigue recovery — HELD dial**
   (2026-07-14, WM-②). Whether recovery requires not moving/fighting that
   turn, beyond the supply coupling (spec §2). Revisit at the magnitude pass
-  or measurement.
+  or measurement. **Recorded HELD rather than valued at its birthplace**
+  (`war-model-build/MAGNITUDE.md` WB-M① dial 9) and **wired 2026-07-28** by L3
+  ticket 06b: `RECOVERY_REQUIRES_STATIONARY` is consulted by `turnUpkeep`, and
+  the Runtime passes the real per-detachment fact, so answering the dial is a
+  one-constant value change rather than a redesign.
+
+  **What the wiring exposed, for whoever answers it.** Upkeep runs at the
+  background tail of the same turn a march accrues in (D6.2), so at WB-M①'s L1
+  values an ordinary full-speed march nets **+1 wear per turn** (3 accrued, 2
+  recovered) and **one resting turn erases a whole normal march**. Wear
+  therefore bites only under forced march or sustained pursuit. That follows
+  from the accrual/recovery *ratio* rather than from dial 9 — but it is the
+  measurement anyone re-cutting either dial will want, and it is the kind of L1
+  relationship the "no L2 rung under the L3 build's values" row above says play
+  can only falsify grossly.
+
+- [ ] **Two inherited supply-ledger rulings have no birthplace**
+  (registered 2026-07-28, L3 ticket 06b). Both ran in the archive while WB-M①'s
+  values were being exercised, so changing them would invalidate those numbers
+  rather than honour them; both are now carried forward in
+  `game/src/domain/fatigue.ts`, pinned by test, and sealed nowhere: **(1)** any
+  supplied turn resets the pump to zero — §2 says only that restoring the route
+  ends the tick and is silent on residual depth, and a partial trickle resets too
+  (the level only modulates recovery); **(2)** on a cut turn the pump runs first
+  and the bleed is taken at the new depth, so turn N of a siege bleeds at depth
+  N. Pay them on the same surface the **supply-base question** lands on — R16
+  agenda item (b), "define the kitchen", where ticket 06b's BLOCKED note is
+  homed. Both are inert while supply is uniform, which is why 06b closed without
+  them.
 
 - [ ] **Crisis dial table — sweep + co-analysis: RAN, PARKED
   2026-07-13** (registered 2026-07-11; LANDED 2026-07-12

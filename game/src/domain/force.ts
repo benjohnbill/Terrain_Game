@@ -12,6 +12,16 @@ export type OriginComposition = Readonly<Record<RegionId, number>>;
 
 export interface ForceCohort {
   readonly origins: OriginComposition;
+  /**
+   * The **wear** ledger, and only that one: march and battle in, effectiveness
+   * out, floored at ×0.5 (`domain/fatigue.ts`). It never kills.
+   *
+   * The gauge has a *second* account — supply, whose failure removes men and never
+   * touches effectiveness — and the two are deliberately not one number. No supply
+   * account is stored anywhere in match state: every force is supplied in this
+   * slice, so the account would be dead until the supply design pass (R16,
+   * `docs/DESIGN-RISKS.md`) gives it a cause. Do not collapse the two.
+   */
   readonly fatigue: number;
 }
 
@@ -279,6 +289,35 @@ export function mergeDetachmentsRefusal(
     return 'Detachments must occupy the same hex to merge.';
   }
   return null;
+}
+
+/**
+ * Rewrite the wear ledger of **every cohort** a detachment holds.
+ *
+ * The ledger's *subject set* lives here, once. March accrual (`movement.ts`) and
+ * the turn's upkeep (the Runtime) have to agree about which cohorts the wear
+ * ledger lives in, and two copies of this walk is how they would come to
+ * disagree — a cohort that accrues but is never recovered would hold its wear
+ * forever, and would then average that phantom into `ready` on activation.
+ *
+ * `men` is handed to the caller because accrual and recovery treat an empty
+ * cohort differently: a cohort with nobody in it cannot tire.
+ */
+export function mapCohortFatigue(
+  detachment: Detachment,
+  nextFatigue: (fatigue: number, men: number) => number,
+): Detachment {
+  return {
+    ...detachment,
+    ready: {
+      ...detachment.ready,
+      fatigue: nextFatigue(detachment.ready.fatigue, menOf(detachment.ready.origins)),
+    },
+    pending: detachment.pending.map((cohort) => ({
+      ...cohort,
+      fatigue: nextFatigue(cohort.fatigue, menOf(cohort.origins)),
+    })),
+  };
 }
 
 export function combatEligibleMen(detachment: Detachment, turn: number): number {

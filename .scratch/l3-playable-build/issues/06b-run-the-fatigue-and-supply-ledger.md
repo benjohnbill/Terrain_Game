@@ -1,35 +1,61 @@
 # 06b — Run the Fatigue and Supply Dual Ledger
 
-**What to build:** the sealed dual ledger, whole. One ledger accrues from marching
-and fighting on a convex curve with a floor; the other is supply, whose failure
-produces starvation as substance loss only. No path inverts capability.
+**What to build:** the sealed dual ledger — **the wear half wired, the supply half
+landed and dormant.** One ledger accrues from marching and fighting on a convex
+curve with a floor; the other is supply, whose failure produces starvation as
+substance loss only. No path inverts capability.
+
+> **RE-CUT 2026-07-28 (user approval, design conversation).** The ticket's
+> original mandate was "the sealed dual ledger, whole". What moved out is the
+> **cause**, not the arithmetic: the supply predicate (item 5) and the starvation
+> half of item 7 are deferred to the supply design pass, registered as **R16** in
+> `docs/DESIGN-RISKS.md`. Item 8's positive half is 06c's by its own SPLIT note.
+>
+> **Why the cause and not the numbers.** What interrupts supply is a *plan*
+> (Supply Interdiction, AGREED — a paid cut with a paid repair) plus a
+> *sustainment* question (can this ground feed this force), and both are R16's
+> agenda, which opens with the plan layer at tickets 10/11. The supply
+> arithmetic — pump, starvation curve, recovery — is derived from § 2 and WB-M①,
+> is landed with tests, and stays in the tree **dormant**: deleting or relocating
+> contract-derived work would be churn.
+>
+> **In this slice supply is a constant: every force is supplied.** That is a
+> consequence of scope rather than a chosen value — the plan that cuts supply is
+> not built, so supply cannot be cut. The same holds for ash ground, since
+> Scorched Earth is also a plan. Both of the two things that can deny recovery
+> therefore live in the plan layer, and the honest consequence is that **wear is
+> a self-managed marching tax in the first slice, not something an opponent can
+> attack.** That is consistent with gate 08's ruling that the supported fall path
+> is the decisive battle alone.
+>
+> Ticket 07's requirement survives intact and is *easier* to satisfy: it needs the
+> negative guarantee that the capital is not a special case (item 7 there), and a
+> uniform supply level with no capital branch anywhere satisfies it by
+> construction — asserted by test rather than by reading.
 
 **Blocked by:** 06a — a ledger of marching needs somewhere to march.
 
-Status: **claimed and re-cut — the live copy is on branch
-`l3/ticket-06b-fatigue-supply`** (worktree `~/dev/Terrain_Game-06b`, commits
-`0ee7612` + `6b0fde2`). **Read the branch copy before working this ticket:** the
-2026-07-28 re-cut narrows the mandate to the wear half and moves the supply
-predicate to R16 (`docs/DESIGN-RISKS.md`), and the ledger arithmetic is already
-landed. Handoff: `.context/handoff-l3-ticket-06b-2026-07-28.md` on that branch.
-
-Re-stamped `ready-for-agent` 2026-07-27 — the blocking Part 3 batch landed
-2026-07-26 at `war-model-build/MAGNITUDE.md` WB-M①; this header had gone stale
-against the README waiver table, which recomputed test (ii) on the same day.
-See § Needs-info for the payment record.
+Status: **resolved** 2026-07-28 — built on branch `l3/ticket-06b-fatigue-supply`
+(worktree `~/dev/Terrain_Game-06b`, based on `d7be9ae`) and merged to `main`. The
+branch-pointer this line used to carry is discharged by that merge. Re-stamped
+`ready-for-agent` 2026-07-27: the blocking Part 3 batch landed 2026-07-26 at
+`war-model-build/MAGNITUDE.md` WB-M①, and the header had gone stale against the
+README waiver table, which recomputed test (ii) the same day. See § Needs-info for
+the payment record and § Comments for the evidence and the two authority gaps
+found while reading.
 
 Specification gates: Wayfinder 10, 12.
 Authority: slice-2 design spec §2 (fatigue system) and the supply predicate;
 `DECISIONS-OWED.md` R13 (per-hex march accrual) and Part 3; ADR 0043.
 
-- [ ] Fatigue is **one ledger with two sources**: march and battle accrue on the sealed convex curve; supply failure is the second source and behaves differently (below). 06a wired the raw march accrual only; the conversion, the floor and the curve land here.
-- [ ] **March accrual is per hex** (R13), so a long march costs more than a short one in the same turn. The rate composes with the terrain cost seam 06a established.
-- [ ] Effectiveness has a **floor of ×0.5**. `DECISIONS-OWED.md` Part 2 #11 recorded this as a conflict — the slice-2 spec calls ×0.5 a 가안 in one place and a sealed anchor 72 lines later — but **both sides state the same number**, so it was a stamp, not a ruling. **The stamp is already paid** at `war-model-build/MAGNITUDE.md` WB-M① dial 6 and its rider (2026-07-26): ×0.5 is SEALED and M9-consonant. Cite that row; do not re-open Part 2 #11. The term is registered as *Effectiveness floor (피로 실효 하한)*, AGREED, in that feature's `GLOSSARY.md`.
-- [ ] **Supply failure produces starvation as substance loss only.** It removes men; it never inverts, reverses or improves a capability. A test asserts that no fatigue or supply state makes a force stronger than its rested, supplied self.
-- [ ] The **supply predicate** governs whether a force is supplied, with **no unit and no sector exempted by class — including a capital sector**. It reads connectivity over the same movement graph 06a built (hex adjacency ∪ authored edges), so an island garrison's supply is a real question rather than an accident of the pathfinder.
-- [ ] Recovery is modelled as sealed, and the open question of whether recovery additionally requires standing still stays **HELD** — it is marked HELD in both the spec and the archive, so implementing either answer would originate a rule. Wire the recovery path so that adding the condition later is a value change, not a redesign.
-- [ ] Starvation entry, loss and recovery are deterministic for equal inputs and identical across Node and browser hosts.
-- [ ] Fatigue enters combat only as the `fatigue` input to the per-side power product — 06c consumes it, and the retired flat march-worn 0.75 default is **not** reintroduced as a hidden constant anywhere.
+- [x] Fatigue is **one ledger with two sources**: march and battle accrue on the sealed convex curve; supply failure is the second source and behaves differently (below). 06a wired the raw march accrual only; the conversion, the floor and the curve land here.
+- [x] **March accrual is per hex** (R13), so a long march costs more than a short one in the same turn. The rate composes with the terrain cost seam 06a established. *(06a wired the accrual; verified and pinned here through real turns — the gap between a three-hex and a one-hex march in the same turn is exactly the per-hex rate times the extra hexes, and the budget is spent by arc cost while the ledger counts hexes, which is the separation the non-uniform cost table will need.)*
+- [x] Effectiveness has a **floor of ×0.5**. `DECISIONS-OWED.md` Part 2 #11 recorded this as a conflict — the slice-2 spec calls ×0.5 a 가안 in one place and a sealed anchor 72 lines later — but **both sides state the same number**, so it was a stamp, not a ruling. **The stamp is already paid** at `war-model-build/MAGNITUDE.md` WB-M① dial 6 and its rider (2026-07-26): ×0.5 is SEALED and M9-consonant. Cite that row; do not re-open Part 2 #11. The term is registered as *Effectiveness floor (피로 실효 하한)*, AGREED, in that feature's `GLOSSARY.md`.
+- [x] **Supply failure produces starvation as substance loss only.** It removes men; it never inverts, reverses or improves a capability. A test asserts that no fatigue or supply state makes a force stronger than its rested, supplied self.
+- [x] ~~The **supply predicate** governs whether a force is supplied~~ — **MOVED 2026-07-28 to R16** (`docs/DESIGN-RISKS.md`), because what interrupts supply is a plan effect plus a sustainment ratio, and neither is decided. The clause that **stays and must be satisfied here** is the exemption ban: **no unit and no sector is exempted by class, including a capital sector.** With a uniform supply level and no capital branch in any code path, that holds by construction — assert it with a test so the guarantee is mechanical rather than read off prose. The connectivity reading (over 06a's movement graph, hex adjacency ∪ authored edges, so an island garrison is a real question) is recorded in R16's agenda item (b) as one of the candidate answers, not as settled.
+- [x] Recovery is modelled as sealed, and the open question of whether recovery additionally requires standing still stays **HELD** — it is marked HELD in both the spec and the archive, so implementing either answer would originate a rule. Wire the recovery path so that adding the condition later is a value change, not a redesign.
+- [x] **Recovery** is deterministic for equal inputs and identical across Node and browser hosts, exercised through a real turn rather than only as a unit call. **Starvation entry and loss** are deterministic already (unit-tested against the emitted artifact) but cannot be exercised through a turn while supply is uniform — that half rides with the predicate to **R16**.
+- [x] The **negative half** holds here: the retired flat march-worn 0.75 default is not reintroduced as a hidden constant anywhere (verified 2026-07-28 — the only `0.75` in `game/src` is `populationValue` in the world artifact). The **positive half** — actually passing the wear ledger's effectiveness into the per-side power product — is **06c's wiring** by that ticket's own SPLIT note, and `battle.ts` already takes `fatigue` as a caller-supplied input.
 
 ## Needs-info
 
@@ -68,3 +94,140 @@ confirm-or-edit against a derivation, never origination.
 **Recompute readiness at claim time** (R6 test ii). This ticket goes
 `ready-for-agent` the moment that batch is approved; nothing else here is unlanded,
 and the fatigue floor is a stamp rather than a blocker.
+
+## Comments
+
+### Ledger half implemented — 2026-07-28
+
+The state-free arithmetic of both ledgers landed as a pure module. *(The
+turn-upkeep wiring that this note left open landed later the same day — see
+§ Implementation evidence below. The supply predicate did not: it moved to R16.)*
+
+- Module: `game/src/domain/fatigue.ts`, exported through
+  `game/src/runtime/index.ts`. Pure by construction — it imports no match state,
+  the same discipline `battle.ts` runs on, so it composes with the wiring later
+  without a redesign.
+- **No dial has two homes.** The march dials (accrual per hex, forced-march
+  premium, speed) stay in `movement.ts` where 06a put them; this module owns
+  only § 2's conversion, supply and recovery dials, matching WB-M①'s numbering.
+- Tests: `game/tests/fatigue-ledger.test.js`, **23 pass**, run against the
+  emitted artifact rather than the source (gate 05 D6). The firewall is pinned
+  from both sides: no wear depth produces a body loss or opens starvation, and
+  no supply depth changes effectiveness. Convexity, the flat ×0.5 saturation,
+  the no-step continuity, ash denying recovery, and immutability of inputs are
+  each asserted rather than assumed.
+- Shared gates (`npm run verify:game`): typecheck / build:runtime / build:viewer
+  / test:node **184** / test:browser **19** all PASS; **parity PENDING by
+  design** — gate 10 owns the bit-exact-versus-epsilon threshold, and the two
+  hosts produced identical projections (`29f214a11fc56ef8`). Root `npm test`
+  **493/493**. `npm run lint:docs` 0 blocking.
+- The retired flat march-worn 0.75 is **not** reintroduced: the only `0.75` in
+  `game/src` is `populationValue` in the world artifact.
+- Legacy evidence disposition: `js/fatigue.js` was read as evidence after the
+  contract. Its arithmetic is dictated by § 2 plus WB-M①, so the numbers agree
+  by derivation rather than by translation; nothing was imported, and its
+  CommonJS/browser export shape was incidental.
+
+### What counts as a supply base is unstated — HOMED at R16 (b), not blocking
+
+> **Disposition 2026-07-28:** this stopped being a blocker when the same day's
+> re-cut moved the predicate out. It is now **R16 agenda item (b)** — "define the
+> kitchen: what a force on unfeeding ground reaches toward (the capital,
+> contiguous own territory, or any locally-sustaining friendly sector)". The
+> reading below is kept because it is the sharpest statement of why the choice is
+> material, and because it names the consequence — how often a siege happens at
+> all — that R16 will have to price.
+
+The predicate's *shape* is specified and its *inputs* are not. The acceptance
+item says the predicate reads connectivity over 06a's movement graph and that
+**no unit and no sector is exempted by class, including a capital sector** — that
+governs exemptions, not the base set. Nothing in the ticket's authority (slice-2
+§ 2, `DECISIONS-OWED.md` R13/Part 3, ADR 0043, WB-M①) says **what a force must
+be connected TO**.
+
+The archive left the same hole open deliberately: `js/movement.js`'s
+`isSupplied(graph, positionKey, baseKeys, isFriendlyHex)` takes the base set and
+the control surface from its caller, and its own comment flags the surrounding
+rulings as open for the magnitude pass. So there is no inherited answer to carry
+forward here, unlike the two rulings below.
+
+The choice is material rather than cosmetic — it decides whether sieges happen at
+all:
+
+- **capital-only** — a force is supplied while a friendly-held path reaches its
+  own capital sector. Cutting that path is the siege, and the emergent siege
+  clock § 2 describes fires often.
+- **any friendly sector** — own ground supplies itself, so the ledger only ever
+  pumps under full encirclement, and the siege clock is rare.
+
+Both readings are consistent with every sealed source I found; they produce
+different games. Recorded rather than chosen, because choosing would originate a
+rule. The ledger arithmetic above is unaffected either way — it takes a supply
+*level*, and the predicate that produces that level is the open question.
+
+### Two inherited implementation rulings, carried forward and owed a stamp
+
+Both ran in the archive while WB-M①'s values were being exercised, so changing
+them now would invalidate the numbers rather than honour them. Carried forward
+verbatim, pinned by tests so a later re-cut is a visible change, and registered
+here because neither has a birthplace:
+
+1. **Any supplied turn resets the pump to zero.** § 2 says restoring the route
+   ends the tick and is silent on residual depth. A partial trickle also resets;
+   the level only modulates recovery (dial 8).
+2. **On a cut turn the pump runs first and the bleed is taken at the new depth**,
+   so turn N of a siege bleeds at depth N.
+
+Owed: a birthplace stamp for both, alongside dial 9's HELD record. Not paid in
+this pass because the sealing surface for them is the same one the supply-base
+ruling will land on. **Registered 2026-07-28 in `docs/SYNC-DEBT.md`** as its own
+row, pointing at R16 (b) — a debt recorded only in a Working-layer ticket file is
+not recorded (law duty 6).
+
+### Implementation evidence — 2026-07-28
+
+- Commit: `fdaa1ec` (the wiring) + `a842c57` (two-axis review fixes), on
+  `0ee7612`'s ledger. Branch `l3/ticket-06b-fatigue-supply`.
+- Production authority: slice-2 operational-layer design § 2 (fatigue system,
+  recovery = supply × ground factor, the two-ledger firewall);
+  `docs/features/war-model-build/MAGNITUDE.md` **WB-M①** dials 3–9 (values, L1 —
+  playtest-provisional by their own stamp) and **WB-M②** (march speed, L2);
+  `DECISIONS-OWED.md` R13 (per-hex accrual); ADR 0042/0043; ticket 07 item 7 for
+  the negative guarantee this ticket owes it.
+- Narrow tests: `node --test game/tests/fatigue-upkeep.test.js` **9 pass** (the
+  wired half) beside `fatigue-ledger.test.js` **23 pass** (the arithmetic);
+  `game/tests/browser/fatigue-upkeep.spec.js` **1 pass** (cross-host, through an
+  ordered intent log).
+- Shared gates (`npm run verify:game`): typecheck / build:runtime / build:viewer
+  / test:node **193** / test:browser **21** all PASS; **parity PENDING by
+  design** — gate 10 owns the bit-exact-versus-epsilon threshold, and the two
+  hosts produced identical projections (`29f214a11fc56ef8`). Root `npm test`
+  **493/493**. `npm run lint:docs` **0 blocking**, 10 advisory (all pre-existing
+  `ledger-possibly-paid` guesses on unrelated SYNC-DEBT rows).
+- Browser/runtime check: the built viewer (`dist-viewer/index.html`, static
+  server), seed `duel-0001` on `cradle-r1`, viewer `realm-a` — a human marches a
+  detachment to `r10_s2`, watches the 피로 readout climb every marching turn, and
+  watches it fall on the first resting turn, with `upkeep-resolved` in the event
+  strip. Cross-host: seed `upkeep-parity-0001`, Node and Chromium replaying one
+  log to identical per-detachment wear.
+- Legacy evidence disposition: none consulted this pass. `js/fatigue.js` was read
+  as evidence during `0ee7612` **after** the contract, and its disposition is
+  recorded there; nothing was imported.
+- Follow-up: `docs/SYNC-DEBT.md` — the two inherited supply rulings (new row) and
+  dial 9's HELD row, now amended with what the wiring exposed: at WB-M①'s L1
+  values an ordinary march nets **+1 wear/turn** and one resting turn erases a
+  whole march, so wear bites only under forced march or sustained pursuit. That
+  ratio is a value question for R16 / the L2-rung debt, not a wiring defect.
+
+**Two boundaries stated rather than left to be discovered.**
+
+1. **Garrisons carry no wear account.** `#resolveUpkeep` walks detachments only,
+   because a `GarrisonForce` has no fatigue field — nothing in this slice marches
+   one. That is 06a's force model, not an exemption invented here. When ticket 07
+   places the capital guard, the guarantee it needs (item 2, "not auto-declared a
+   supply base… obeys the same supply predicate as any force") is about the
+   **supply** predicate, which is R16's; the wear pass has nothing to exempt.
+2. **Wear is a self-managed marching tax in this slice.** Both tools that could
+   deny an opponent recovery — cutting supply, burning ground — are plan-layer,
+   so no opponent can attack the ledger. Consistent with gate 08's ruling that
+   the supported fall path is the decisive battle alone.

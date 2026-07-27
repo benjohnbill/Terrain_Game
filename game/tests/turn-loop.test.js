@@ -214,6 +214,9 @@ test('both locks close the turn in one submit: reveal, resolve, then turn N+1', 
     // Ticket 05's realm economy folded into this same tail — one per realm.
     'realm-recomputed',
     'realm-recomputed',
+    // Ticket 06b's wear ledger, in the same tail and on the same terms.
+    'upkeep-resolved',
+    'upkeep-resolved',
     'turn-opened',
   ]);
 
@@ -242,7 +245,10 @@ test('every event names the tier it belongs to, and there is no phase ③', () =
     'decision',
     'payoff',
     'payoff',
-    // The recompute and the renewal are one background tier, not two stages.
+    // The recompute, the upkeep and the renewal are one background tier, not
+    // three stages.
+    'background',
+    'background',
     'background',
     'background',
     'background',

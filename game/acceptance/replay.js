@@ -98,6 +98,7 @@ const GLOBALLY_SAFE_EVENT_TYPES = new Set([
   'front-resolved',
   'realm-recomputed',
   'turn-opened',
+  'upkeep-resolved',
 ]);
 
 /**
