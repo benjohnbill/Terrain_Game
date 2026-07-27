@@ -23,7 +23,11 @@ rout, escape, fatigue — land on the board. Ticket 03's stub
 > re-measurement. **Check whether `domain/battle.ts` already exists before building
 > it** — if it does, this ticket is the adapter and the wiring, not the formula.
 
-Status: needs-info — see § Needs-info.
+Status: **ready-for-agent** (re-stamped 2026-07-27 — both blocking batches landed
+2026-07-26: the delaying dials at `operation-plan-catalog/CATALOG.md` and 06b's
+WB-M① fatigue batch. This header had gone stale against the README waiver table.)
+**Read the SPLIT note above first: `game/src/domain/battle.ts` already exists, so
+this ticket's remaining scope is the wiring and the adapter, not the formula.**
 
 Specification gates: Wayfinder 10, 12.
 Authority: `docs/features/combat-formula/FORMULA.md` D1–D11 (deterministic ratio
@@ -45,6 +49,21 @@ ADR 0015; ADR 0043 (reachability legality).
 - [ ] Casualties shrink the **conscription register** permanently (blood is permanent currency, SPEC), and the surge price curve is **re-measured early in this ticket** — `docs/SYNC-DEBT.md` records that the curve never fired in ticket 05 because its designed trigger is register erosion from deaths and ticket 05 had none. At B=5, 429 cumulative casualties clear the 42% knee.
 
 ## Needs-info
+
+> **PAID 2026-07-26 — `docs/features/operation-plan-catalog/CATALOG.md`**
+> § Delaying Defense *Bands* (APPROVED, user Part 3 bulk batch, **L1**). That doc
+> declares itself the owning model doc for the two values: **breakthrough R 2.0**
+> and **erosion 0.15 per turn**. Both stay **가안 by design** — the *shape* (cheap
+> contest, no repulsion, erosion clock, dissolution on final failure) is what is
+> sealed, and the numbers are the shape's current calibration, expected to move in
+> L3. Cite that row rather than `js/battle.js`.
+>
+> **06b's prerequisite is also paid** — `war-model-build/MAGNITUDE.md` WB-M①
+> (2026-07-26, L1) — so the `fatigue` input this ticket consumes now has a
+> birthplace. 06b remains the *implementation* blocker; it is no longer a value
+> blocker.
+>
+> The Encirclement paragraph below still stands and is still out of scope.
 
 **One Part 3 batch:** the delaying-defence dials in `js/battle.js` — breakthrough
 R 2.0 and erosion 0.15 per turn, both recorded 가안.
