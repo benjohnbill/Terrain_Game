@@ -46,7 +46,42 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   pattern. Clean fix is a `war-model-build/GLOSSARY.md` row the ADR then cites,
   which is a seal rather than an index patch.
 
-- [ ] **The status dictionary contradicts itself — RULED 2026-07-15, unapplied**
+- [x] **The status dictionary contradicts itself — PAID 2026-07-27.** The
+  Vocabulary Law line now carries the fourth value (`SEALED`, strong form of
+  `AGREED`) and the rule that status is the NAME axis only; `HARVEST.md` step 4
+  gains the same, worded as a harvest instruction (*do not transcribe a
+  birthplace's local status word*). Ten birthplace rows across capital /
+  match-arc / terrain-cradle / combat-formula were normalized (status word
+  only — every date, ruling ref, and `가안` parenthetical kept), combat-formula's
+  local status dictionary retired, the five off-enum inventory rows patched, and
+  `audit-lint.js` check 10 (`fieldDomains`) now enforces all three field domains
+  as a **blocking** check. It ships with an EMPTY grandfather list because the
+  normalization ran first. Residuals below. Original row and its correction
+  rider follow, kept because they record why this was application, not decision.
+
+- [ ] **`CONFIRMED` is still unreconciled with the term-status dictionary.**
+  Carried from ticket 03's own unresolved list and unchanged by the 2026-07-27
+  application. The Conflict rule's seal triad names `SEALED/AGREED/CONFIRMED` as
+  *seal* status words; the Vocabulary Law dictionary types a *term's* status.
+  The 2026-07-15 review's reading is that these are different fields, which
+  would make the pairing a non-issue — but no ruling says so, so "the law
+  resolves its own conflict" stays half-true. Decide the reading, then either
+  reconcile or record that no reconciliation is owed.
+
+- [ ] **Typed aliases (ticket 03 Q2) are still unimplemented, and one row was
+  routed around them.** `aliases` remains a flat string array, so the ruled
+  destination for `SUPERSEDED` — "routes through Q2's typed aliases" — did not
+  exist on 2026-07-27. `Blinds` was normalized to `rejected-recorded` instead:
+  its birthplace records a mechanism evaluated and retired with the record kept,
+  which is what `⛔`/`rejected-recorded` means, and DOMAIN_MAP's marker moved
+  `✅ → ⛔` to match. Revisit when the typed-alias migration lands; if `Blinds`
+  belongs in the retired-name form instead, this is the row that says so.
+  The other three pieces of the ruled `HARVEST.md` §4 amendment — typed-alias
+  shape, derive-don't-store promotion, index-vs-audit ownership — are still
+  owed with ticket 10's batch, as ticket 03's handoff sequenced them.
+
+  *(The original row, kept verbatim below for its record — not a live debt.)*
+  **The status dictionary contradicts itself — RULED 2026-07-15, unapplied**
   (registered 2026-07-26, audit run #3; **corrected the same day** — see the
   rider). Vocabulary Law names `AGREED/PROPOSED/rejected-recorded`, the Conflict
   rule separately names `SEALED/AGREED/CONFIRMED`, and the documents have grown

@@ -785,12 +785,14 @@ rule)._
   fraction and all dial values: MAGNITUDE M13 (owning doc). Definition +
   history: match-arc GLOSSARY 징집 명부 / RULINGS MT-②. _(Re-slimmed
   2026-07-10, forensics F-02; dial restatement removed.)_
-- ✅ `Blinds` (블라인드): the anti-safe-play escalation thread ADR 0025 parked
+- ⛔ `Blinds` (블라인드): the anti-safe-play escalation thread ADR 0025 parked
   here — **SUPERSEDED as a standalone mechanism (2026-07-08 MT-⑤)**: the
   escalation duty is carried as an economic device through force-geography +
   the hegemony bar, not a separate blinds mechanic. Authoritative status +
   history: match-arc GLOSSARY 블라인드 row / RULINGS MT-⑤. _(Status
   corrected 2026-07-10, forensics F-01 — this row had lagged its birthplace.)_
+  _(Marker ✅ → ⛔ 2026-07-27: the birthplace status word normalized from the
+  off-dictionary `SUPERSEDED` to `rejected-recorded`, and ⛔ is its marker.)_
 - ✅ `Test-trust ladder` (검증 신뢰 사다리): the four-rung verification
   epistemology — L0 hand reasoning / L1 decision grids / L2 match tournament /
   L3 human playtest — with asymmetric proof power (found-at-L2 is real;

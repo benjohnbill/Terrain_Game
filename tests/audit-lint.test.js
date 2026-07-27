@@ -86,6 +86,21 @@ test('statusMarkers flags a ❓ row whose inventory status is not PROPOSED (the 
   assert.equal(findings[0].status, 'SUPERSEDED');
 });
 
+test('statusMarkers flags ✅ over a rejected-recorded row (the marker hole closed 2026-07-27)', () => {
+  const inventory = inv([{ canonical: 'Blinds', aliases: [], status: 'rejected-recorded' }]);
+  const domainMap = '- \u2705 `Blinds`: the escalation thread.\n';
+  const findings = lint.checkStatusMarkers(inventory, domainMap);
+  assert.equal(findings.length, 1);
+  assert.equal(findings[0].kind, 'status-marker-mismatch');
+  assert.equal(findings[0].term, 'Blinds');
+});
+
+test('statusMarkers accepts \u2705 over a SEALED row (SEALED implies AGREED)', () => {
+  const inventory = inv([{ canonical: 'Force geography', aliases: [], status: 'SEALED' }]);
+  const domainMap = '- \u2705 `Force geography`: the sealed board.\n';
+  assert.deepEqual(lint.checkStatusMarkers(inventory, domainMap), []);
+});
+
 test('statusMarkers accepts matching pairs (✅/AGREED, ❓/PROPOSED)', () => {
   const inventory = inv([
     { canonical: 'Force limit', aliases: [], status: 'AGREED' },
@@ -459,15 +474,15 @@ test('every emitted finding kind has a prescription', () => {
 });
 
 // ---------------------------------------------------------------- runner
-// Integration smoke: runAll on the real repo returns all 9 result sets.
+// Integration smoke: runAll on the real repo returns all 10 result sets.
 
 test('runAll returns a result set per check against the real repo', () => {
   const results = lint.runAll(require('path').join(__dirname, '..'));
   const keys = Object.keys(results).sort();
   assert.deepEqual(keys, [
     'adrStampDuty', 'baselineSelf', 'codeContract', 'definitionRestatement',
-    'freshness', 'headerDiff', 'ledgerCurrency', 'numericRestatement',
-    'statusMarkers'
+    'fieldDomains', 'freshness', 'headerDiff', 'ledgerCurrency',
+    'numericRestatement', 'statusMarkers'
   ]);
   for (const k of keys) assert.ok(Array.isArray(results[k]), `${k} is an array`);
 });
@@ -550,4 +565,63 @@ test('headerDiff skips parenthesized table captions like "Term (한국어)"', ()
   const inventory = inv([{ canonical: 'Anything', aliases: [], birthplace: 'g.md' }]);
   const surfaces = [{ path: 'g.md', text: '| Term (한국어) | Definition | Status |\n| Anything | def | AGREED |\n' }];
   assert.deepEqual(lint.checkHeaderDiff(inventory, surfaces).filter((f) => f.kind === 'unregistered-definition'), []);
+});
+
+// ---------------------------------------------------------------- check 10
+// Inventory field domains. Completes ticket 03's binding condition: the
+// schema v2 ruling declares itself void without a check that enforces the
+// enum. Blocking (user ruling 2026-07-27), so the false-positive bar is a
+// rejected commit, not a noisy report.
+
+test('fieldDomains flags an off-dictionary status', () => {
+  const inventory = inv([{ canonical: 'Frontage', status: '가안', kind: 'mechanism', verdict: 'standard-match' }]);
+  const findings = lint.checkFieldDomains(inventory);
+  assert.equal(findings.length, 1);
+  assert.equal(findings[0].kind, 'off-domain-field');
+  assert.equal(findings[0].term, 'Frontage');
+  assert.equal(findings[0].field, 'status');
+  assert.equal(findings[0].value, '가안');
+  assert.equal(findings[0].path, 'docs/audits/term-inventory.json');
+});
+
+test('fieldDomains flags an off-dictionary kind and verdict', () => {
+  const inventory = inv([
+    { canonical: 'Screen', status: 'AGREED', kind: 'mechanic', verdict: 'standard-match' },
+    { canonical: 'Tempo', status: 'AGREED', kind: 'meta', verdict: 'standard-term' }
+  ]);
+  const findings = lint.checkFieldDomains(inventory);
+  assert.deepEqual(findings.map((f) => [f.term, f.field]), [['Screen', 'kind'], ['Tempo', 'verdict']]);
+});
+
+test('fieldDomains accepts every in-domain value, SEALED included', () => {
+  const inventory = inv([
+    { canonical: 'A', status: 'AGREED', kind: 'mechanism', verdict: 'justified-coinage' },
+    { canonical: 'B', status: 'PROPOSED', kind: 'meta', verdict: 'synonym-exists' },
+    { canonical: 'C', status: 'rejected-recorded', kind: 'mechanism', verdict: 'standard-match' },
+    { canonical: 'D', status: 'SEALED', kind: 'meta', verdict: 'justified-coinage' }
+  ]);
+  assert.deepEqual(lint.checkFieldDomains(inventory), []);
+});
+
+test('fieldDomains accepts a null or absent verdict (HARVEST step 6 judging queue)', () => {
+  const inventory = inv([
+    { canonical: 'Fresh', status: 'AGREED', kind: 'mechanism', verdict: null },
+    { canonical: 'Fresher', status: 'AGREED', kind: 'mechanism' }
+  ]);
+  assert.deepEqual(lint.checkFieldDomains(inventory), []);
+});
+
+test('fieldDomains flags a row with no status or kind at all', () => {
+  const inventory = inv([{ canonical: 'Nameless', verdict: 'standard-match' }]);
+  const findings = lint.checkFieldDomains(inventory);
+  assert.deepEqual(findings.map((f) => f.field), ['status', 'kind']);
+});
+
+test('fieldDomains grandfathers a named row but never a new one', () => {
+  const inventory = inv([
+    { canonical: 'Old stray', status: 'legacy-status', kind: 'mechanism', verdict: 'standard-match' },
+    { canonical: 'New stray', status: 'legacy-status', kind: 'mechanism', verdict: 'standard-match' }
+  ]);
+  const findings = lint.checkFieldDomains(inventory, new Set(['Old stray|status']));
+  assert.deepEqual(findings.map((f) => f.term), ['New stray']);
 });

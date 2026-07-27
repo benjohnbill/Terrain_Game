@@ -1,7 +1,18 @@
 # Inventory schema v2 — enum discipline, alias typing, promotion state
 
 Type: grilling
-Status: resolved · **Handoff amended 2026-07-27 (user ruling)**
+Status: resolved · **Handoff amended 2026-07-27 (user ruling)** ·
+**binding condition SATISFIED 2026-07-27 — schema v2 is no longer void**
+
+> **Binding condition discharged (2026-07-27).** `audit-lint.js` check 10
+> (`fieldDomains`) enforces all three domains — `status`, `kind`, `verdict` —
+> as a blocking check, with an empty grandfather list because the batch
+> normalized every off-domain row at its birthplace first. Q1's fourth value
+> is in the Vocabulary Law and in `HARVEST.md` step 4. What this ticket ruled
+> and this batch did NOT apply: Q2's typed aliases (so `SUPERSEDED` could not
+> route through them — `Blinds` became `rejected-recorded` instead), Q3's
+> promotion rule, and Q5's ownership boundary. Those stay with ticket 10's
+> batch and are registered in `docs/SYNC-DEBT.md`.
 
 > **Amended by the enforcement-ladder ruling (2026-07-27).** One line of this
 > ticket's handoff is superseded: the enum check is **blocking**, not

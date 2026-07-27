@@ -29,9 +29,12 @@ casualties (both directions, headline-blind):
 
 ## Terms
 
-Status: **AGREED** = definition + value sealed; **가안** = definition
-AGREED, value provisional (pending the named stage); **candidate** =
-definition itself still provisional.
+Status: the documentation-law dictionary (`AGREED` / `PROPOSED` /
+`rejected-recorded` / `SEALED`) and nothing local — it carries the **name**
+axis only. A provisional value rides in the cell's parenthetical as `가안`
+(`AGREED (values 가안 → matchup stage)`); a term whose *definition* is still
+provisional is `PROPOSED`. The former local values `가안` and `candidate`
+were retired 2026-07-27 — status is now one dictionary, project-wide.
 
 | Term (한국어) | Definition | Value / range | Source | Status |
 |---|---|---|---|---|
@@ -45,7 +48,7 @@ definition itself still provisional.
 | Fortification multiplier (요새 배수) | Player-built works; damageable — `fortificationDamage` stamps lower it AND widen assault frontage | none 1.0 / field works 1.3 / town walls 1.8 / fortress 2.4 / legendary 3.0 (wonder-class build) | D6, M5 | AGREED |
 | World product (세계 곱) | terrain × fortification, raw — no engine clamp; ceiling is the natural product | buildable max 2.0×3.0=6.0; authored max 2.5×3.0=7.5 | M5 | AGREED |
 | Water penalty (도하 페널티) | Attack-side multiplier when the attack crosses water; water never strengthens the defender | river 0.85 (uncontested) / 0.70 (opposed bank); strait 0.70 / 0.55 (opposed) | ADR 0015 (amended), M5 | AGREED (strait opposed 0.55 confirmed 2026-07-05, ruling ⑦) |
-| Frontage (협로/강습 폭) | Cap on the engaged attacker body — classifies, never multiplies; mandatory removal paths | authored per choke sector and per fort tier; values → matchup stage | D9, M5 | 가안 (values → matchup stage) |
+| Frontage (협로/강습 폭) | Cap on the engaged attacker body — classifies, never multiplies; mandatory removal paths | authored per choke sector and per fort tier; values → matchup stage | D9, M5 | AGREED (values 가안 → matchup stage) |
 | 반도이격 (strike at half-crossing) | A force whose same-turn flow crosses water, if intercepted, engages with a split body and the water side counts as blocked escape | engaged fraction 가안 50% → matchup stage | M4 | PROPOSED (구 표기 candidate — status normalized 2026-07-10, lint run #1) |
 | R (전투비) | attack power ÷ defense power; scale-invariant | same odds at any absolute size | D5 | AGREED |
 | Threshold (문턱) | Per-plan required R for the plan's core intent to land; gates stamps ONLY, never blood. **Never an availability gate**: attacking below threshold is always legal (priced by the casualty curve, ADR 0021 chosen risk) — availability checks physical state only (ADR 0024), and the system cannot pre-judge failure because it only ever sees the fogged R band. Threshold values are public doctrine ("storming needs 1.5:1"); what fog hides is the enemy's actual strength | per-plan, all < 3.0; under decision (magnitude stage 3) | D4/D11 | AGREED (per-plan values → M7) |
@@ -55,8 +58,8 @@ definition itself still provisional.
 | Rout cliff (궤주 절벽) | Organizational collapse conversion; loser-only (the headline winner's organization held by definition) | 30% of engaged stock lost within the engagement (atomic — no cross-battle accumulation) | D10, M4 | AGREED |
 | Escape state (도주 상태) | Derived check at the moment of rout — never stored: OPEN iff ≥1 adjacent non-water friendly/neutral route AND isolation gate unsatisfied; water never counts as escape | OPEN → rout conversion 50% of remainder; BLOCKED → 100%, no regeneration debt | M4 | AGREED |
 | Isolation gate (고립 게이트) | Supply already cut OR all approaches enemy-held; Encirclement's availability gate and the escape-blocker | boolean, read from existing stamps | catalog, D10 | AGREED |
-| Effect axes / stamps (효과 축/도장) | Six per-axis one-shot effects stamped into persistent state on success; ongoing consequences belong to standing world rules | magnitudes → stage 3 | ADR 0024/0026 | 가안 (magnitudes → stage 3) |
-| Standing rules (상비 규칙) | World rules that tick each turn reading persistent state: starvation stages (holding → attack-incapable → defenseless; stage 2 is an availability gate — attack cards vanish), garrison regeneration, recovery | rates → stage 5; constraint: starvation must outpace an unsupplied 2–3-sector advance | ADR 0026, M4 | 가안 (rates → stage 5) |
+| Effect axes / stamps (효과 축/도장) | Six per-axis one-shot effects stamped into persistent state on success; ongoing consequences belong to standing world rules | magnitudes → stage 3 | ADR 0024/0026 | AGREED (magnitudes 가안 → stage 3) |
+| Standing rules (상비 규칙) | World rules that tick each turn reading persistent state: starvation stages (holding → attack-incapable → defenseless; stage 2 is an availability gate — attack cards vanish), garrison regeneration, recovery | rates → stage 5; constraint: starvation must outpace an unsupplied 2–3-sector advance | ADR 0026, M4 | AGREED (rates 가안 → stage 5) |
 | Forecast (예보) | The same computation on fogged band inputs: R band, expected losses, escape-state line | confidence-capped 0.90 | D1/D7 | AGREED |
 | Recommendation (추천) | The computation inverted: threshold → required-commit band over the fog band | band, e.g. "8 if weak, 15 if strong" | D7 | AGREED |
 | Preset pin (프리셋 핀) | Where the slider prefills inside the recommended band | safe end (band top) | M3 | AGREED |

@@ -149,9 +149,15 @@ function checkCodeContract(inventory, jsFiles) {
 
 // -- check 3: status-marker cross-check -------------------------------------
 
-// status dictionary (documentation-law): ✅/❓/⛔ ≡ AGREED/PROPOSED/rejected
+// Status dictionary (documentation-law): ✅ ≡ AGREED or SEALED (SEALED is the
+// strong form and implies AGREED) · ❓ ≡ PROPOSED · ⛔ ≡ rejected-recorded.
+//
+// `✅` was `s !== 'PROPOSED'` until 2026-07-27, which passed a ⛔-worthy row
+// silently — the "too lax" half of the 2026-07-15 review's marker finding.
+// Naming the accepted values is only safe now that `fieldDomains` (check 10)
+// guarantees the status is inside the dictionary at all.
 const MARKER_OK = {
-  '✅': (s) => s !== 'PROPOSED',
+  '✅': (s) => s === 'AGREED' || s === 'SEALED',
   '❓': (s) => s === 'PROPOSED',
   '⛔': (s) => /reject/i.test(s)
 };
@@ -318,6 +324,59 @@ function checkDefinitionRestatement(inventory, domainMapText, surfaces) {
       detail: 'DOMAIN_MAP entry reuses its birthplace definition\'s phrasing; '
         + 'a promoted term gets summary + pointer, never a normative copy'
     });
+  }
+  return findings;
+}
+
+// -- check 10: inventory field domains ---------------------------------------
+// The enum half of inventory schema v2 (doc-structure ticket 03, ruled
+// 2026-07-15), which declares itself VOID without an enforcing check: the same
+// drift was reported on 2026-07-10 and had recurred and worsened five days
+// later, because nothing but prose forbade it.
+//
+// `status` carries the NAME axis and nothing else. A settled name whose values
+// are still provisional is `AGREED`, with the provisionality written in the
+// row's value column (`가안`) — that separation is what the 2026-07-27
+// normalization applied to ten birthplace rows across four features.
+//
+// `verdict` is audit-owned and null until a run judges it (HARVEST step 6), so
+// absent and null both pass. Blocking on them would gate every newly sealed
+// term behind the next audit run.
+
+const FIELD_DOMAINS = {
+  status: new Set(['AGREED', 'PROPOSED', 'rejected-recorded', 'SEALED']),
+  kind: new Set(['mechanism', 'meta']),
+  verdict: new Set(['justified-coinage', 'standard-match', 'synonym-exists'])
+};
+
+const FIELD_NULLABLE = new Set(['verdict']);
+
+// Empty by design (2026-07-27). The batch that landed this check normalized
+// every off-domain row at its birthplace first, so there was nothing left to
+// exempt. It stays because the ladder's third invariant requires every blocking
+// check to ship with one: a later domain change adds `Canonical|field` entries
+// here instead of blocking work that predates the change.
+const DOMAIN_GRANDFATHERED = new Set();
+
+function checkFieldDomains(inventory, grandfathered = DOMAIN_GRANDFATHERED) {
+  const findings = [];
+  for (const t of inventory.terms) {
+    for (const [field, domain] of Object.entries(FIELD_DOMAINS)) {
+      const value = t[field] === undefined ? null : t[field];
+      if (FIELD_NULLABLE.has(field) && value === null) continue;
+      if (domain.has(value)) continue;
+      if (grandfathered.has(`${t.canonical}|${field}`)) continue;
+      findings.push({
+        kind: 'off-domain-field',
+        term: t.canonical,
+        field,
+        value,
+        path: INVENTORY,
+        detail: value === null
+          ? `${field} is missing; it must be one of (${[...domain].join(' | ')})`
+          : `${field} "${value}" is outside its domain (${[...domain].join(' | ')})`
+      });
+    }
   }
   return findings;
 }
@@ -537,6 +596,7 @@ function runAll(root) {
     definitionRestatement: checkDefinitionRestatement(inventory, domainMap, surfaces),
     ledgerCurrency: checkLedgerCurrency(read('docs/SYNC-DEBT.md'), commits),
     freshness: checkFreshness(read('docs/GLOSSARY-QUICKREF.md'), glossaries),
+    fieldDomains: checkFieldDomains(inventory),
     baselineSelf: checkBaselineSelf(inventory, registry, exists),
     adrStampDuty: checkAdrStampDuty(production, adrs)
   };
@@ -586,9 +646,24 @@ const PRESCRIPTIONS = {
     'clear both. Do not rename the code to satisfy the index.'
   ],
   'status-marker-mismatch': () => [
-    'The DOMAIN_MAP marker and the inventory status disagree (✅/❓/⛔ ≡',
-    'AGREED/PROPOSED/rejected-recorded). Fix whichever is stale — the seal at',
-    'the birthplace decides which one that is, not this message.'
+    'The DOMAIN_MAP marker and the inventory status disagree (✅ ≡ AGREED or',
+    'SEALED · ❓ ≡ PROPOSED · ⛔ ≡ rejected-recorded). Fix whichever is stale —',
+    'the seal at the birthplace decides which one that is, not this message.'
+  ],
+  'off-domain-field': (f) => [
+    `Legal values for \`${f.field}\`: ${[...(FIELD_DOMAINS[f.field] || [])].join(' | ')}`
+      + (FIELD_NULLABLE.has(f.field) ? ' — or null, pending the next audit run.' : '.'),
+    ...(f.field === 'status' ? [
+      'Status is the NAME axis only. A settled name whose VALUES are still',
+      'provisional is `AGREED`, with the provisionality in the row\'s value',
+      'column (`가안`) — never as a status word.'
+    ] : []),
+    'Fix it in BOTH the inventory row and the birthplace that produced the',
+    'value — the index transcribes the birthplace, so patching one alone',
+    're-drifts at the next harvest (HARVEST.md step 4).',
+    'If the value expresses something the dictionary genuinely cannot, do NOT',
+    'invent a fifth — the dictionary is documentation-law (Tier 3). Ask the',
+    'user, as ticket 03 Q1 did for `SEALED`.'
   ],
   'numeric-restatement': () => [
     'The row points at an owning doc AND restates a value. Delete the number;',
@@ -768,6 +843,7 @@ if (require.main === module) {
 module.exports = {
   checkHeaderDiff, checkCodeContract, checkStatusMarkers,
   checkNumericRestatement, checkDefinitionRestatement, checkAdrStampDuty,
+  checkFieldDomains, FIELD_DOMAINS, DOMAIN_GRANDFATHERED,
   checkLedgerCurrency, checkFreshness, checkBaselineSelf,
   parseSurfaceHeaders, splitDomainMapRows, runAll,
   normalizeName, nameSet, buildNameIndex, lookup,

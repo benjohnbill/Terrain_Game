@@ -204,7 +204,14 @@ reason to enter it.
   hook (live since 2026-07-10; advisory-only, never blocks — the
   exploration-exemption judgment stays with the agent).
 - **Status dictionary**: DOMAIN_MAP `✅/❓/⛔` ≡ GLOSSARY
-  `AGREED/PROPOSED/rejected-recorded`.
+  `AGREED/PROPOSED/rejected-recorded`, plus `SEALED` = the strong form
+  of `AGREED` (the name is settled **and** its ruling carries a dated
+  seal with a verdict source); `SEALED` implies `AGREED`, and `✅`
+  covers both. Status is the **name** axis only — a settled name whose
+  values are still provisional is `AGREED`, with the provisionality
+  stated in the row's value column (`가안`), never in the status field.
+  Ruled 2026-07-15 (doc-structure ticket 03 Q1); enforced by
+  `audit-lint.js`.
 - **Promotion**: a Tier-1 term is a promotion candidate once a second
   feature or a root doc needs it; promotion happens in doc-sync
   batches, never silently. Promotion *adds* a Tier-0 summary entry (per

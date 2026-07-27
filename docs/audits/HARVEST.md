@@ -53,10 +53,20 @@ Harvest procedure (what audit run #1 did; repeat to regenerate):
 3. Deduplicate: one row per concept. Birthplace priority: feature GLOSSARY >
    DOMAIN_MAP > model doc > RULINGS. tier 0 only when DOMAIN_MAP is the
    birthplace.
-4. `kind`: mechanism (in-game concept, genre precedent plausible) vs meta
-   (design-discussion language). Routing decides the reference dictionary:
-   mechanism → genre conventions (4X/grand strategy/wargame), meta →
-   game-design theory vocabulary.
+4. **Field domains.** `kind`: mechanism (in-game concept, genre precedent
+   plausible) vs meta (design-discussion language). Routing decides the
+   reference dictionary: mechanism → genre conventions (4X/grand
+   strategy/wargame), meta → game-design theory vocabulary.
+   `status`: the documentation-law dictionary and nothing else —
+   `AGREED | PROPOSED | rejected-recorded | SEALED`, where `SEALED` is the
+   strong form of `AGREED` (implies it) and `✅` covers both. **Do not
+   transcribe a birthplace's local status word.** Status carries the *name*
+   axis only; a settled name whose values are provisional harvests as
+   `AGREED`, and the provisionality stays where it is written — the row's
+   value column or prose (`가안`), never this field. A birthplace using an
+   off-dictionary status word is a defect to fix at the birthplace, not a
+   value to import (2026-07-27: ten such rows, four features, all one
+   concept). `scripts/audit-lint.js` enforces both domains.
 5. `codeIdentifier`: explicit doc statement first, else derived camelCase
    grepped against js/. codeRefs = js/ files containing it (mockup/ excluded).
 6. **Carry verdicts forward**: preserve `verdict`/`verdictRef` for rows whose

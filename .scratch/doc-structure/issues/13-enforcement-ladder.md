@@ -28,27 +28,42 @@ Known hole, deliberately left: `core.hooksPath` is relative, so a worktree on a
 branch predating `hooks/` is ungated. CI is the backstop, which is why it is a
 required rung.
 
+## LANDED 2026-07-27 — the inventory enum check, and the law it enforces
+
+`audit-lint.js` check 10 (`fieldDomains`): `status ∈ {AGREED, PROPOSED,
+rejected-recorded, SEALED}`, `kind ∈ {mechanism, meta}`, `verdict ∈
+{justified-coinage, standard-match, synonym-exists}` or null — null is legal
+because HARVEST step 6 gives every newly sealed term a null verdict until an
+audit run judges it, and blocking on that would gate sealing behind auditing.
+Blocking, and the grandfather list ships **empty**.
+
+The ordering question below was answered by taking the law first, and it paid
+better than expected. `SEALED` entering the dictionary made ten off-domain rows
+legal-or-fixable rather than exemptible, so instead of grandfathering fifteen
+rows the batch normalized their birthplaces: `AGREED-concept`,
+`AGREED-structure`, and `가안` were one concept — *name settled, values
+provisional* — and every one of those rows already wrote its provisionality in
+its value column, so the status word was the only thing that had to move.
+combat-formula's local status dictionary, which had legislated `가안` as a
+status value in its own header, is retired.
+
+Two riders. `Blinds` could not take its ruled route (Q2's typed aliases do not
+exist yet) and became `rejected-recorded`, with DOMAIN_MAP's marker `✅ → ⛔`;
+both are registered in `docs/SYNC-DEBT.md`. And the ✅ predicate, which had been
+`s !== 'PROPOSED'` — the "too lax" half of the 2026-07-15 marker finding — was
+tightened to name its two values, which is only safe now that the enum check
+guarantees the status is in the dictionary at all.
+
 ## `ready-for-agent` — an agent can finish these without the user
 
-- **The inventory enum check.** `status ∈ {AGREED, PROPOSED, rejected-recorded,
-  SEALED}`, `kind ∈ {mechanism, meta}`, `verdict ∈` the S7 set. **Blocking**
-  (ruled 2026-07-27), shipping with a grandfather list per the ladder's third
-  invariant. This is the completion of ticket 03's binding condition — that
-  ticket declares schema v2 *void* without it — not a new proposal. Domains are
-  all settled in 03 Q1/Q5; the grandfather pattern is already in the tree
-  (`RESTATEMENT_GRANDFATHERED`). **Note the ordering below.**
 - **`## Resolved Phase 1 Decisions` → ADR.** Recording an already-made decision
   in `docs/adr/` is Tier 2, autonomous. The decisions exist and carry pointers;
   this is relocation, not judgment.
 
 ## `ready-for-human` — needs the user, not an agent
 
-- **Apply the extended status dictionary to the law.** `DOCUMENTATION-LAW.md`
-  still reads three-valued at its status-dictionary line; 03 Q1 ruled a fourth
-  value (`SEALED`, the strong form of `AGREED` — SEALED implies AGREED). Law
-  edit = Tier 3. **Ordering:** doing this before the enum check means the check
-  needs no grandfather entries for the 10 `SEALED` rows; doing it after means it
-  does. Either is fine, but pick one deliberately.
+- ~~**Apply the extended status dictionary to the law.**~~ **DONE 2026-07-27**
+  (user authorized the Tier-3 edit) — see the LANDED section above.
 - **Strip the copied definitions from DOMAIN_MAP's 56 promoted entries.** The
   headers STAY (promotion is derived from them, ruling 03 Q3). What replaces
   each definition is a summary, and deciding what a term's summary *is* is
