@@ -54,11 +54,40 @@ both are registered in `docs/SYNC-DEBT.md`. And the ✅ predicate, which had bee
 tightened to name its two values, which is only safe now that the enum check
 guarantees the status is in the dictionary at all.
 
-## `ready-for-agent` — an agent can finish these without the user
+## LANDED — stage 2 closes: the `Summary` column
 
-- **`## Resolved Phase 1 Decisions` → ADR.** Recording an already-made decision
-  in `docs/adr/` is Tier 2, autonomous. The decisions exist and carry pointers;
-  this is relocation, not judgment.
+The column is open across all seven feature GLOSSARYs (7 tables, 121 rows,
+inserted after `Definition` so `Status` stays last), cells empty by design, and
+the authoring duty is in the Vocabulary Law: the definition's own author fills
+it when the row is written or re-sealed, **going-forward only, no backfill**.
+Rolled out eagerly on the user's decision — an absent column makes the duty
+invisible, and an empty cell asks to be filled.
+
+`summary` is a GLOSSARY column, **not** an inventory field: the JSON holding
+content would break ruling 03 Q5's ownership boundary. Nothing was added to
+`term-inventory.json`.
+
+Note for stage 3: `DOMAIN_MAP.md` has no table, so it took no column. Its
+entries are already summary-and-pointer *prose* — supplying the real summaries
+for the 56 promoted entries IS stage 4, which is why stage 4 should run before
+or alongside stage 3 rather than after it (it turns the generator's day-one
+summary count from ~0 into ~56).
+
+**Not delivered from stage 2:** the optional *promotion-consistency report
+line*. The spec calls it "worth taking" with the reviewer's caveat attached
+(`seenTerms` is a flat set across DOMAIN_MAP plus every GLOSSARY, so the
+derivation is cheap but not a by-product of the existing finding stream). No
+check enforces that a NEW row arrives with a filled `Summary` either; the spec
+specified only one new check for this stage, and that one landed.
+
+## LANDED — `## Resolved Phase 1 Decisions`, folded to pointers
+
+Resolved the other way from this ticket's own label. Opening the section showed
+seven reference-prototype decisions restated in the present tense; the prototype
+is an archive (ADR 0041) and the cradle map replaced that world, so minting an
+ADR would have dressed archive description as a decision of record. Three
+pointer lines now stand in their place. The label read "relocation, not
+judgment" — reading the content is what made it judgment.
 
 ## `ready-for-human` — needs the user, not an agent
 
