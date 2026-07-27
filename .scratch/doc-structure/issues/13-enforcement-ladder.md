@@ -135,25 +135,69 @@ Roadmap). Both are marked as unhoused in place rather than silently relocated.
 - ~~**`## World Direction` → `SPEC.md`.**~~ **RESOLVED 2026-07-28 without a SPEC
   edit** — the required diff showed SPEC already holds it. Two Tier-3 residues
   are registered in `docs/SYNC-DEBT.md`; see above.
-- **The rename.** `DOMAIN_MAP.md` → a top-level glossary. The file now does one
-  job, so the precondition is met. Still optional, still last, and its blast
-  radius is measured in the spec: 80 inventory birthplace values, 4 script/test
-  files, the registry, the law, the AGENTS.md mirror, 92 markdown files. Buys
-  naming honesty and nothing functional — decide it unbundled.
+- ~~**The rename.**~~ **DECLINED 2026-07-28 (user), indefinitely deferred.** The
+  precondition was met — the file does one job now — and the decision still went
+  against it, on value rather than on readiness. Re-measured cost: 80 inventory
+  birthplace values, 4 script/test files, the registry, the law, the AGENTS.md
+  mirror, and **102** markdown files; functional gain zero. A new argument
+  surfaced at decision time that the spec's cost measurement never had: a
+  top-level `GLOSSARY.md` **collides with the seven Tier-1 feature
+  `GLOSSARY.md` files**, and the natural misreading — top as superset of the
+  others — is the exact inverse of the law, where the top is pointers and the
+  features are authoritative. Buying name honesty at the price of a hierarchy
+  misread is a bad trade. If this is ever reopened, the name must not be
+  `GLOSSARY.md`.
 
-## `needs-info` — a decision is missing before anyone starts
+## LANDED — the QUICKREF's purpose, defined (2026-07-28)
 
-- **The QUICKREF generator's fallback.** `summary` is **going-forward only**
-  (user ruling, 2026-07-27): the column exists, an author fills it when writing
-  or re-sealing a definition, and the ~260 existing terms are not backfilled.
-  That leaves the generator with almost no summaries on day one, which would
-  make the generated digest *worse* than the hand-curated file it replaces.
-  Owed: what the generator renders for a term with no `summary`. The obvious
-  candidate is a mechanically extracted first sentence from the birthplace row
-  plus the pointer — an excerpt cannot drift, because regenerating updates it —
-  but that is a design call for the generator, not something this ticket settles.
-- **Where the C-loop translation table goes.** It must leave
-  `GLOSSARY-QUICKREF.md` **before** any generator exists, or the generator
-  overwrites hand-authored content on its first run. Its destination is unnamed.
+Both `needs-info` items were blocked on a premise nobody had written down: **what
+the QUICKREF is for.** The user named it, and the two questions resolved as
+consequences rather than as separate design calls.
+
+**Purpose (user ruling 2026-07-28), now in the law at ritual duty 4:** an
+*encyclopedia* to look a term up, and a *lock point* — re-rendered deliberately
+when the demand "let us tidy the vocabulary now" arises. Three rules follow:
+cadence is on demand (**not** per seal batch), every term renders at **equal
+weight**, and the header carries a last-regenerated date.
+
+- ~~**The QUICKREF generator's fallback.**~~ **Reframed, and the ratio is
+  measured.** The question was "what renders for a term with no `summary`", which
+  assumed the problem was coverage. The user's objection is different and
+  sharper: a visual split makes gloss-presence read as *importance*, and
+  summarised rows dominate the page. Coverage cannot fix that. Measured with
+  `audit-lint`'s existing `birthplaceRowText`: **126 of 267** terms yield a
+  mechanical gloss today; the 80 DOMAIN_MAP-native entries are cheap to add
+  (their bullet form has its own existing reader, `splitDomainMapRows`), which
+  reaches **~206/267**. The residual **~61** are born in prose model docs
+  (CATALOG 14, force-geography RULINGS 9, STRATEGY-SPACE 6, MAGNITUDE 5, MATCHUP
+  3, ADR 0019 3, match-arc frame-decision bullets 19) and have no row to extract.
+  So 100% is not reachable mechanically, and 56:211 would merely become 206:61.
+  **The answer is layout, not data: the pointer is the primary content and the
+  gloss is secondary**, so every row's primary content is identical and a missing
+  gloss is a blank slot. This is safe *because* no gloss here is citable —
+  rendering an authored summary and a mechanical excerpt alike hides nothing,
+  since the pointer carries the authority. Sealed as the equal-weight rule in the
+  law. **Still open, and now a small separate call:** whether to spend effort
+  extracting the 80 natives (cheap) and whether the ~61 prose-born terms ever get
+  hand-written glosses — note that hand-writing them is backfill, which the
+  2026-07-27 going-forward-only ruling refused. Registered in `docs/SYNC-DEBT.md`.
+- ~~**Where the C-loop translation table goes.**~~ **DONE 2026-07-28** — it is
+  `docs/C-LOOP.md`, Working layer. Its stale "Birthplace: terrain-cradle"
+  preamble was corrected in the move: rows now reach match-arc (DT-①②③, ET-①),
+  force-geography (FG-①…⑨), 서지 모병, and the crisis pass, so no single feature
+  could have hosted it. The law's ritual duty 4 no longer names the QUICKREF as
+  its carrier.
+
+**The gate moved with the model.** `stale-quickref` is **advisory** now, not
+blocking — a blocking staleness check contradicts a lock point outright, since it
+charges every sealing session a manual re-render, which is the exact cost the
+lock-point model removes. That also retires the handoff's loudest trip-wire: the
+three-step authoring loop is two steps again (GLOSSARY row + inventory row), and
+it turns out the recurring cost stage 3 existed to remove was removable **by
+defining a purpose, without building a generator at all.**
+
+The demotion had to break `tests/audit-lint.test.js`'s pinned ADVISORY set to
+happen — which is what that pin was built for. The argument is written into the
+test beside it.
 
 This ticket is a pointer. Read the spec, not this file.

@@ -11,6 +11,24 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
 
 ## Open
 
+- [ ] **QUICKREF gloss coverage — ~61 prose-born terms have no extractable
+  gloss** (registered 2026-07-28, after the QUICKREF purpose ruling). The
+  equal-weight rule (law ritual duty 4) makes a missing gloss a blank slot rather
+  than a demotion, so this is no longer blocking anything — it is a quality
+  question about how full the encyclopedia is. Measured with `audit-lint`'s
+  `birthplaceRowText`: **126/267** terms yield a mechanical gloss today.
+  Two separable pieces: (a) the **80 DOMAIN_MAP-native** entries are cheap —
+  their bullet form already has a reader (`splitDomainMapRows`), taking coverage
+  to ~206/267 — worth doing whenever the QUICKREF is next re-rendered at a lock
+  point; (b) the residual **~61** are born in prose model docs (CATALOG 14,
+  force-geography RULINGS 9, STRATEGY-SPACE 6, MAGNITUDE 5, MATCHUP 3, ADR 0019
+  3, match-arc frame-decision bullets 19) with no row to extract, so they would
+  need hand-written glosses — which is **backfill, and the 2026-07-27
+  going-forward-only ruling refused backfill.** Do not quietly reverse that
+  ruling to fill the file; if the coverage matters more than the ruling, that is
+  a user call. Cheapest honest path is (a) only, and (b) fills in naturally as
+  those terms are re-sealed.
+
 - [ ] **`DOMAIN_MAP.md`'s place-naming rule has no birthplace** (registered
   2026-07-28, enforcement-ladder stage 4). The `## World Direction` section was
   reduced to pointers, and every bullet resolved somewhere — except one: place

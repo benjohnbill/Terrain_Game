@@ -1510,11 +1510,26 @@
   {
    "path": "docs/GLOSSARY-QUICKREF.md",
    "layer": "working",
-   "role": "generated convenience digest; pointers only, never citable as definition; may lag canon",
+   "role": "encyclopedia + lock point (ritual duty 4); re-rendered on demand, equal weight per term; pointers only, never citable as definition",
    "ownerFeature": null,
    "allowedContent": [],
    "forbiddenContent": [
     "normative-definitions"
+   ]
+  },
+  {
+   "path": "docs/C-LOOP.md",
+   "layer": "working",
+   "role": "user-audit surface: user design statement -> dial/scale -> checking instrument; hand-written, 가안/UNSEALED, pointers only",
+   "ownerFeature": null,
+   "allowedContent": [
+    "user-statement",
+    "pointer",
+    "checking-instrument"
+   ],
+   "forbiddenContent": [
+    "normative-definitions",
+    "sealed-value-restatement"
    ]
   },
   {

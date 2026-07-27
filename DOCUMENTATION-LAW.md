@@ -194,16 +194,45 @@ these):
    promotion until the user caught it).
 3. Refresh `INDEX.md` of every touched feature (status, pointers,
    open questions).
-4. Regenerate `docs/GLOSSARY-QUICKREF.md` after any seal batch — an
-   agent-curated digest (no generator script yet). Extended role (user
-   ruling 2026-07-07): it also carries the **C-loop translation table**
-   (user statement → dial → checking scale), the user-audit surface;
-   가안 rows marked UNSEALED, always pointers: convenience surface
-   only, never cited as definition; header must carry "last
-   regenerated" date. Regeneration MUST include the batch's own seals
-   (same-session freshness, adopted 2026-07-10 — forensics M-07):
-   "may lag canon" covers only content older than the current session,
-   and the "last regenerated" date is the lint's freshness target.
+4. Keep `docs/GLOSSARY-QUICKREF.md` fit for its two purposes (**purpose
+   defined by user ruling 2026-07-28** — it had never been stated, which
+   is what made this duty's cadence and content repeatedly contentious):
+   (a) an **encyclopedia** — look a term up and find where it lives; and
+   (b) a **lock point** — as terms drift under hooks, lint, and ordinary
+   commits, the QUICKREF is the baseline you re-render deliberately when
+   the demand "let us tidy the vocabulary now" arises. It is a
+   convenience surface only, never cited as a definition; every gloss in
+   it is non-citable and the pointer is the citable part.
+
+   Three rules follow, all adopted 2026-07-28:
+
+   - **Cadence is on demand, not per batch.** Re-render at lock points.
+     A seal batch does not oblige a re-render, and the `stale-quickref`
+     lint finding is **advisory** — a prompt, never a gate. (This
+     supersedes the 2026-07-10 same-session-freshness duty, forensics
+     M-07, which made every sealing session pay a manual re-render;
+     that cost is what the lock-point model removes. The header's "last
+     regenerated" date is still the freshness target, and a re-render
+     MUST still include the seals of the session that performs it —
+     "may lag canon" covers only content older than the re-render.)
+   - **Uniform weight.** Every term renders with the same primary
+     content — term, 한국어, status, and where its definition lives — so
+     that a term with a hand-written `Summary` and one without are
+     visually equal. A gloss is secondary and optional; its absence is a
+     blank slot, never a demotion. This is safe precisely because no
+     gloss here is citable: rendering an authored summary and a
+     mechanical excerpt alike hides nothing, since the pointer carries
+     the authority. Never sort, tier, badge, or section the file by
+     whether a gloss exists.
+   - **The header carries a "last regenerated" date**, whoever or
+     whatever produced the file.
+
+   The **C-loop translation table** (user statement → dial → checking
+   scale — the user-audit surface, user ruling 2026-07-07) is **no
+   longer carried here**. Its home is `docs/C-LOOP.md`, Working layer,
+   hand-written, 가안 rows marked UNSEALED. It left because it had grown
+   cross-feature and because hand-authored content inside a re-rendered
+   file is content a re-render destroys.
 5. Stamp superseded/amended ADRs per the protocol above — including
    the seal-amends-ADR duty.
 6. Record any duty left unpaid (and any Projection/Production

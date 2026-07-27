@@ -422,6 +422,35 @@ artifacts and the declaration stays true.
 
 ### Stage 3 — QUICKREF as a generated artifact
 
+> **AMENDED 2026-07-28 — the purpose ruling, and what it settled.** Both of this
+> stage's `needs-info` blockers were waiting on a premise nobody had written
+> down: what the QUICKREF is *for*. The user defined it — an **encyclopedia** to
+> look a term up, and a **lock point** re-rendered deliberately on demand — and
+> it is now law (ritual duty 4), with three rules: on-demand cadence, **equal
+> visual weight for every term**, and a last-regenerated date.
+>
+> This *confirms* what the two paragraphs below already reasoned ("run on demand
+> rather than automatically"; staleness is safe at the leaf of the derivation
+> chain) and goes further: `stale-quickref` is now **advisory, not blocking**,
+> because a gate charges every sealing session a manual re-render — the very cost
+> this stage existed to remove. That cost is therefore **already removed, without
+> a generator being built.** Whether to build one is now a convenience question,
+> not a debt.
+>
+> Two corrections to what follows. (1) The `summary` join column is **not** the
+> answer to day-one emptiness: 121 GLOSSARY rows carry 0 filled summaries by
+> design (going-forward only, 2026-07-27), and measurement with
+> `birthplaceRowText` gives **126/267** mechanically extractable glosses —
+> ~206/267 if the 80 DOMAIN_MAP natives are added via `splitDomainMapRows`, with
+> ~61 prose-born terms unreachable. (2) Coverage was never the real problem. The
+> user's objection is that a visual split makes gloss-presence read as
+> *importance*; raising coverage only changes the ratio. **The answer is layout:
+> the pointer is primary content, the gloss secondary** — safe precisely because
+> no gloss here is citable, so rendering an authored summary and a mechanical
+> excerpt alike hides nothing. The C-loop sequencing requirement below is
+> **discharged**: the table now lives at `docs/C-LOOP.md`. Residual coverage
+> question: `docs/SYNC-DEBT.md`.
+
 QUICKREF is **inventory ⋈ birthplace summaries**, not a render of the inventory
 alone: the inventory holds no definition text by design, so rendering it alone
 produces a phone book. `summary` (stage 2) is the join column. Until it exists,

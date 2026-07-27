@@ -310,14 +310,21 @@ test('tally: a definite check (codeContract) is blocking', () => {
 // default. Pinning the whole set means a future session cannot quietly demote a
 // check to advisory to get to green — it has to break this test and argue for it.
 // Rationale per check: docs/SYNC-DEBT.md.
-test('tally: ledgerCurrency is the only advisory check', () => {
-  assert.deepEqual([...lint.ADVISORY].sort(), ['ledgerCurrency']);
+// `freshness` was demoted 2026-07-28 and this test is where the argument had to
+// be made, exactly as the note above intends. The argument is not "to get to
+// green": the QUICKREF's purpose was defined for the first time that day (user
+// ruling) as a re-renderable LOCK POINT rather than a per-batch obligation, and a
+// blocking staleness gate contradicts that model — it charges every sealing
+// session a manual re-render, the precise cost the lock-point model removes.
+// A stale QUICKREF is now a prompt, not a defect. Documentation-law ritual duty 4.
+test('tally: ledgerCurrency and freshness are the advisory checks', () => {
+  assert.deepEqual([...lint.ADVISORY].sort(), ['freshness', 'ledgerCurrency']);
 });
 
 test('tally: every check that asserts a definite defect gates', () => {
   const definite = [
     'headerDiff', 'codeContract', 'statusMarkers', 'numericRestatement',
-    'definitionRestatement', 'freshness', 'baselineSelf', 'adrStampDuty'
+    'definitionRestatement', 'baselineSelf', 'adrStampDuty'
   ];
   for (const check of definite) {
     const t = lint.tally({ [check]: [{ kind: 'x' }] });
@@ -333,6 +340,14 @@ test('tally: advisory findings do not gate a run that is otherwise clean', () =>
     freshness: []
   });
   assert.deepEqual(t, { blocking: 0, advisory: 2 });
+});
+
+// The lock-point model's whole point: a stale QUICKREF must not stop a commit.
+// The check still RUNS and still reports — it just does not toll.
+test('tally: a stale QUICKREF reports without gating', () => {
+  const t = lint.tally({ freshness: [{ kind: 'stale-quickref' }] });
+  assert.deepEqual(t, { blocking: 0, advisory: 1 },
+    'a re-render is a prompt at a lock point, not a per-session obligation');
 });
 
 // ---------------------------------------------------------------- check 6

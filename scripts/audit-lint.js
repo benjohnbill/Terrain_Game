@@ -803,7 +803,13 @@ function formatReport(results) {
 // (it returns early at exit 0), so advisory findings surface on a manual
 // `npm run lint:docs` — the duty-7 session-close path — and stay out of the
 // per-edit hook, where a standing reminder would be alarm fatigue by design.
-const ADVISORY = new Set(['ledgerCurrency']);
+// `freshness` joined 2026-07-28 by user ruling. The QUICKREF's purpose was
+// defined that day for the first time: it is a re-renderable LOCK POINT, not a
+// per-batch obligation. A blocking staleness gate contradicted that model
+// outright — it made every sealing session pay a manual re-render, which is the
+// precise cost the lock-point model exists to remove. Advisory keeps the prompt
+// and drops the toll. See documentation-law ritual duty 4.
+const ADVISORY = new Set(['ledgerCurrency', 'freshness']);
 
 // Split a results object into blocking vs advisory tallies. The exit status keys
 // off `blocking` only, so this decision — not the console output around it — is
