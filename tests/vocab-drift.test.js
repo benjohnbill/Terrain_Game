@@ -106,6 +106,36 @@ test('drift reports a changed Tier-0 summary as redefined', () => {
   assert.deepEqual(drift(before, after).redefined, ['Front sector']);
 });
 
+// -- renames ---------------------------------------------------------------
+// § Lock panel's format carries `renamed R`, and a rename is detectable rather
+// than lost: the Vocabulary Law requires the old name to survive as a `구칭`
+// alias at the birthplace, so a rename is an added term that answers to a
+// removed one. Without that rule it would be indistinguishable from
+// remove-plus-add, which is what it looks like to a naive diff.
+
+test('drift reads a rename from the 구칭 alias instead of calling it two events', () => {
+  const before = model([entry({ canonical: 'Void terrain', aliases: [] })]);
+  const after = model([entry({ canonical: 'Impassable terrain', aliases: ['Void terrain'] })]);
+
+  const report = drift(before, after);
+
+  assert.deepEqual(report.renamed, [{ from: 'Void terrain', to: 'Impassable terrain' }]);
+  assert.deepEqual(report.added, [], 'a rename is not also an addition');
+  assert.deepEqual(report.removed, [], 'nor a withdrawal');
+  assert.equal(report.total, 1);
+});
+
+test('drift still reports a genuine add and a genuine withdrawal separately', () => {
+  const before = model([entry({ canonical: 'Gone' })]);
+  const after = model([entry({ canonical: 'Fresh' })]);
+
+  const report = drift(before, after);
+
+  assert.deepEqual(report.renamed, []);
+  assert.deepEqual(report.added, ['Fresh']);
+  assert.deepEqual(report.removed, ['Gone']);
+});
+
 test('drift counts one term once even when several axes moved', () => {
   const before = model([entry({ status: 'PROPOSED', gloss: { text: 'old.', source: 'excerpt' } })]);
   const after = model([entry({ status: 'AGREED', gloss: { text: 'new.', source: 'excerpt' } })]);

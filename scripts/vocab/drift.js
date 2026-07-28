@@ -34,11 +34,29 @@ function drift(before, after) {
 
   const added = [];
   const removed = [];
+  const renamed = [];
   const restatused = [];
   const redefined = [];
 
-  for (const canonical of now.keys()) if (!was.has(canonical)) added.push(canonical);
-  for (const canonical of was.keys()) if (!now.has(canonical)) removed.push(canonical);
+  const appeared = [...now.keys()].filter((c) => !was.has(c));
+  const vanished = [...was.keys()].filter((c) => !now.has(c));
+
+  // A rename is recoverable only because the Vocabulary Law requires the old
+  // name to stay on as a `구칭` alias at the birthplace. Without that rule this
+  // is indistinguishable from a withdrawal plus an unrelated registration.
+  const claimed = new Set();
+  for (const canonical of appeared) {
+    const aliases = now.get(canonical).aliases || [];
+    const old = vanished.find((gone) => !claimed.has(gone) && aliases.includes(gone));
+    if (old) {
+      renamed.push({ from: old, to: canonical });
+      claimed.add(old);
+      claimed.add(canonical);
+    }
+  }
+
+  added.push(...appeared.filter((c) => !claimed.has(c)));
+  removed.push(...vanished.filter((c) => !claimed.has(c)));
 
   for (const [canonical, then] of was) {
     const nowEntry = now.get(canonical);
@@ -52,9 +70,10 @@ function drift(before, after) {
   return {
     added,
     removed,
+    renamed,
     restatused,
     redefined,
-    total: added.length + removed.length + restatused.length + redefined.length
+    total: added.length + removed.length + renamed.length + restatused.length + redefined.length
   };
 }
 

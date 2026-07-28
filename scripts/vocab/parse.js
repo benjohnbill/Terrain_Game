@@ -7,6 +7,7 @@
 'use strict';
 
 const { birthplaceRowText, splitDomainMapRows, normalizeName, nameSet } = require('../audit-lint');
+const { namesOf } = require('./entry');
 
 // DOMAIN_MAP bullet: - ✅ `Term` (표시어): definition …   (markers ✅ ❓ ⛔)
 // Kept local rather than exported from audit-lint: this one also has to reach
@@ -33,12 +34,23 @@ function entryFromRow(row) {
   return entry;
 }
 
-// A GLOSSARY table row: | Term | Definition | Summary | Status |
-// The `Summary` column is going-forward only (user ruling 2026-07-27), so it
-// is usually blank — which is why the definition cell is the fallback and why
-// the fallback is labelled a quotation rather than dressed up as a summary.
+// `| Term | Definition | Summary | Status |` -> the trimmed cells.
+function tableCells(line) {
+  return line.startsWith('|') ? line.split('|').slice(1, -1).map((c) => c.trim()) : null;
+}
+
+// A bullet block flattened to one line: the head's own text plus its indented
+// continuation, blank lines dropped.
+function flatten(block) {
+  return block.split('\n').map((line) => line.trim()).filter(Boolean).join(' ');
+}
+
+// A GLOSSARY table row. The `Summary` column is going-forward only (user ruling
+// 2026-07-27), so it is usually blank — which is why the definition cell is the
+// fallback, and why that fallback is labelled a quotation rather than dressed up
+// as a summary.
 function glossFromTableRow(rowText) {
-  const cells = rowText.split('|').slice(1, -1).map((c) => c.trim());
+  const cells = tableCells(rowText) || [];
   if (cells.length < 2) return null;
   const [, definition, summary] = cells;
   if (summary) return { text: summary, source: 'authored' };
@@ -54,13 +66,7 @@ function glossFromDomainMapRow(term, domainMapText) {
   for (const row of splitDomainMapRows(domainMapText)) {
     const head = row.match(DM_HEAD);
     if (!head || !names.includes(normalizeName(head[1]))) continue;
-    const text = row
-      .slice(head[0].length)
-      .split('\n')
-      .map((line) => line.trim())
-      .filter(Boolean)
-      .join(' ')
-      .replace(DM_STAMP, '');
+    const text = flatten(row.slice(head[0].length)).replace(DM_STAMP, '');
     return text ? { text, source: 'excerpt' } : null;
   }
   return null;
@@ -136,18 +142,10 @@ function escapeRe(s) {
   return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-// Every string this term might be written as inside prose: its registered
-// names plus its code identifier, which is how the value axes actually appear.
-function inlineNeedles(term) {
-  const raw = [term.canonical, term.korean, term.codeIdentifier, ...(term.aliases || [])]
-    .filter(Boolean)
-    .map((n) => n.replace(/\s*\([^)]*\)\s*$/, '').trim())
-    .filter(Boolean);
-  return [...new Set(raw)];
-}
-
+// `namesOf` is every string this term answers to, including its code
+// identifier — which is how the six value axes actually appear in prose.
 function mentions(text, term) {
-  return inlineNeedles(term).some((needle) =>
+  return namesOf(term).some((needle) =>
     new RegExp(`(^|[^\\p{L}\\p{N}_])${escapeRe(needle)}($|[^\\p{L}\\p{N}_])`, 'iu').test(text));
 }
 
@@ -174,14 +172,14 @@ function glossFromContainingPassage(term, text) {
     const head = row.match(DM_HEAD);
     if (!head) continue;
     if (nameSet(term).includes(normalizeName(head[1]))) continue; // its own row
-    const body = row.slice(head[0].length).split('\n').map((l) => l.trim()).filter(Boolean).join(' ');
+    const body = flatten(row.slice(head[0].length));
     if (body && mentions(body, term)) {
       return { text: body, source: 'context', contextOf: head[1] };
     }
   }
 
   for (const line of text.split('\n')) {
-    const cells = line.startsWith('|') ? line.split('|').slice(1, -1).map((c) => c.trim()) : null;
+    const cells = tableCells(line);
     if (!cells || cells.length < 2) continue;
     const [owner, definition] = cells;
     if (!definition || nameSet(term).includes(normalizeName(owner))) continue;

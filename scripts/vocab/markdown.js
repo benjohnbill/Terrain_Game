@@ -12,9 +12,12 @@
 // Composition: docs/superpowers/specs/2026-07-28-vocab-dashboard-composition.md
 'use strict';
 
-// `Last regenerated:` is the string `audit-lint`'s checkFreshness reads
-// (scripts/audit-lint.js `checkFreshness`). Changing its shape breaks the
-// `stale-quickref` advisory, so it stays verbatim.
+const { displayGloss } = require('./entry');
+
+// `Last regenerated:` is the shape `audit-lint`'s `checkFreshness` looks for.
+// It reads ONLY `docs/GLOSSARY-QUICKREF.md` (audit-lint.js:674), so today this
+// header is not what the lint measures — the string is kept in that form so it
+// already fits if the user ever rules that this output takes over that path.
 function header(opts) {
   const lock = opts.lock;
   const lockLine = lock
@@ -43,7 +46,7 @@ function header(opts) {
 // One line, same fields for every term, in model order.
 function line(entry) {
   const korean = entry.korean ? ` (${entry.korean})` : '';
-  const gloss = entry.gloss || (entry.tier0 ? { text: entry.tier0.summary, source: 'authored' } : null);
+  const gloss = displayGloss(entry);
 
   // Provenance is named for the one case where the quotation is NOT the term's
   // own definition. Naming it is what keeps the excerpt strategy honest.

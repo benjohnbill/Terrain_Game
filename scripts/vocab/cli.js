@@ -19,18 +19,26 @@ const { parse } = require('./parse');
 const { drift } = require('./drift');
 const { render } = require('./render');
 const { renderMarkdown } = require('./markdown');
+const { parsePlans } = require('./plans');
 
 const ROOT = path.resolve(__dirname, '..', '..');
 const INVENTORY = 'docs/audits/term-inventory.json';
 const LOCK = 'docs/audits/vocab-lock.json';
 const HTML_OUT = 'dist/vocab/index.html';
 
-// Default markdown target is a NEW path, not `docs/GLOSSARY-QUICKREF.md`.
-// That file is not the flat term list it was assumed to be: it carries
-// hand-authored digest sections (`## Economy flows — reader's digest`) that a
-// generator would destroy — the same hazard that moved the C-loop table out to
-// `docs/C-LOOP.md`. Overwriting it is a user decision, not a default.
-const MD_OUT = 'docs/vocab-index.md';
+// The markdown output lands in gitignored `dist/` until its destination is
+// ruled on, and the reason is not caution for its own sake:
+//   - `docs/GLOSSARY-QUICKREF.md` is NOT the flat term list it was assumed to
+//     be. It carries hand-authored digest sections (`## Economy flows —
+//     reader's digest`) that a generator would destroy, which is the same
+//     hazard that moved the C-loop table out to `docs/C-LOOP.md`.
+//   - a fresh `docs/` path would enter the governed set with no row in
+//     `docs/audits/doc-registry.json` and no mention in the law's Working-layer
+//     enumeration, and amending that taxonomy is Tier 3 (the user's).
+// So the default writes, honouring the two-format decision, but not into a
+// governed path. `--markdown=<path>` aims it once the destination is settled.
+const MD_OUT = 'dist/vocab/vocab-index.md';
+const CATALOG = 'docs/features/operation-plan-catalog/CATALOG.md';
 
 // Definition surfaces, in the order the gloss ladder should see them. The first
 // two groups are today's enforced scan scope (checks 1/3/10/11); the rest are
@@ -104,6 +112,7 @@ function lockReading(model) {
     ...marker,
     added: report.added.length,
     removed: report.removed.length,
+    renamed: report.renamed.length,
     restatused: report.restatused.length,
     redefined: report.redefined.length
   };
@@ -125,17 +134,21 @@ function doRender(argv) {
   const model = modelNow();
   const lock = lockReading(model);
   const generatedAt = today(argv);
+  const plans = fs.existsSync(path.join(ROOT, CATALOG)) ? parsePlans(readAt(CATALOG)) : [];
+  const sourceCommit = (() => {
+    try { return git(['rev-parse', 'HEAD']); } catch (e) { return null; }
+  })();
   const mdTarget = (argv.find((a) => a.startsWith('--markdown=')) || `--markdown=${MD_OUT}`)
     .slice('--markdown='.length);
 
   const written = [
-    writeOut(HTML_OUT, render(model, { lock, generatedAt })),
+    writeOut(HTML_OUT, render(model, { lock, generatedAt, sourceCommit, plans })),
     mdTarget === 'none' ? null : writeOut(mdTarget, renderMarkdown(model, { lock, generatedAt }))
   ].filter(Boolean);
 
   const glossed = model.entries.filter((e) => e.gloss || e.tier0).length;
   console.log(`vocab render: ${model.entries.length} terms, ${glossed} glossed (${
-    ((glossed / model.entries.length) * 100).toFixed(1)}%)`);
+    ((glossed / model.entries.length) * 100).toFixed(1)}%), ${plans.length} plan records`);
   for (const line of written) console.log(`  wrote ${line}`);
   if (lock && lock.unreadable) console.log(`  lock marker unreadable: ${lock.unreadable}`);
   return 0;
@@ -161,12 +174,15 @@ function doLock(argv) {
     } else {
       const say = (label, list) => {
         if (!list.length) return;
-        const names = list.map((x) => (typeof x === 'string' ? x : `${x.canonical} ${x.from}→${x.to}`));
+        const names = list.map((x) => (typeof x === 'string'
+          ? x
+          : `${x.canonical || x.from} ${x.from}→${x.to}`));
         console.log(`  ${list.length} ${label}: ${names.slice(0, 8).join(', ')}${
           names.length > 8 ? `, … +${names.length - 8}` : ''}`);
       };
       say('new', report.added);
       say('withdrawn', report.removed);
+      say('renamed', report.renamed);
       say('re-statused', report.restatused);
       say('redefined', report.redefined);
     }
@@ -195,4 +211,5 @@ function main(argv) {
 
 if (require.main === module) process.exit(main(process.argv.slice(2)));
 
-module.exports = { surfacePaths, modelNow, lockReading };
+// Only what an ad-hoc measurement run needs. The rest is shell.
+module.exports = { modelNow };

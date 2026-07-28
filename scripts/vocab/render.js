@@ -12,9 +12,12 @@
 //   2. provenance appears only in the detail markup.
 'use strict';
 
+const { displayGloss, namesOf } = require('./entry');
+
 // Plans leave the term list: each is a schema'd record (ADR 0024), not a word
 // whose meaning you look up. The umbrella term stays behind.
 const PLAN_UMBRELLA = 'Operation plan catalog';
+const PLAN_CATALOG = 'docs/features/operation-plan-catalog/CATALOG.md';
 
 function esc(value) {
   return String(value == null ? '' : value)
@@ -37,7 +40,7 @@ function plain(text) {
     .trim();
 }
 
-function slug(canonical) {
+function termId(canonical) {
   return canonical
     .toLowerCase()
     .replace(/[^\p{L}\p{N}]+/gu, '-')
@@ -76,10 +79,7 @@ function markOf(status) {
 // The searchable string: canonical, 한국어, aliases, code identifier. NOT the
 // gloss — matching prose would make results unpredictable.
 function searchKey(entry) {
-  return [entry.canonical, entry.korean, entry.codeIdentifier, ...(entry.aliases || [])]
-    .filter(Boolean)
-    .join(' ')
-    .toLowerCase();
+  return namesOf(entry).join(' ').toLowerCase();
 }
 
 // The row. Its shape is fixed: name, 한국어, exception mark, source, preview.
@@ -87,7 +87,7 @@ function searchKey(entry) {
 // terms have none, and a third of the list must not look broken. A missing
 // gloss leaves the preview element empty: a blank slot, never a demotion.
 function rowHtml(entry) {
-  const id = slug(entry.canonical);
+  const id = termId(entry.canonical);
   const korean = entry.korean ? `<span class="ko">${esc(entry.korean)}</span>` : '';
   // A `context` gloss is the passage that NAMES the term, not its definition.
   // The row is the one place provenance may not be shown, so an unattributable
@@ -122,7 +122,7 @@ function provenanceHtml(gloss) {
 }
 
 function detailHtml(entry, root) {
-  const id = slug(entry.canonical);
+  const id = termId(entry.canonical);
   const korean = entry.korean ? ` <span class="ko">${esc(entry.korean)}</span>` : '';
   const meta = [entry.status, `Tier ${entry.tier}`, entry.kind].filter(Boolean).map(esc).join(' · ');
   const aliases = (entry.aliases || []).length
@@ -134,7 +134,7 @@ function detailHtml(entry, root) {
 
   // Full text, never trimmed. Cutting a quotation to fit a card silently edits
   // it, which is the failure quoting-instead-of-summarising exists to avoid.
-  const gloss = entry.gloss || (entry.tier0 ? { text: entry.tier0.summary, source: 'authored' } : null);
+  const gloss = displayGloss(entry);
   const quote = gloss
     ? `<blockquote class="quote">${esc(plain(gloss.text))}</blockquote>`
     : '<p class="noquote">No quotable definition row at its birthplace. Follow the pointer.</p>';
@@ -152,10 +152,24 @@ function detailHtml(entry, root) {
   ].join('');
 }
 
-function lockHtml(lock) {
-  if (!lock) return '<footer class="lock"><span class="muted">no lock marker yet</span></footer>';
+function lockHtml(lock, generatedAt, sourceCommit) {
+  // One bar carries all of the page's provenance: when it was rendered, what
+  // revision it was rendered from, when the vocabulary was last REVIEWED, and
+  // what has moved since. Rendered-vs-locked is the distinction the whole
+  // lock-point model rests on, so both dates are stated rather than inferred.
+  const stamp = [
+    generatedAt ? `rendered <b>${esc(generatedAt)}</b>` : '',
+    sourceCommit ? `from <code>${esc(String(sourceCommit).slice(0, 7))}</code>` : ''
+  ].filter(Boolean).join(' ');
+
+  if (!lock) {
+    return `<footer class="lock">${stamp}<span class="sep">—</span>` +
+      '<span class="muted">no lock marker yet: nothing has been reviewed as a baseline</span></footer>';
+  }
+
   const figures = [
     ['new', lock.added],
+    ['renamed', lock.renamed],
     ['re-statused', lock.restatused],
     ['redefined', lock.redefined],
     ['withdrawn', lock.removed]
@@ -166,17 +180,59 @@ function lockHtml(lock) {
     ? figures
       .map(([label, n]) => `<span class="fig${n > 0 ? ' moved' : ''}">${n} ${label}</span>`)
       .join('<span class="dot">·</span>')
-    : `<span class="muted">no drift since this lock</span>`;
+    : `<span class="muted">no drift since ${esc(lock.date)}</span>`;
 
   return [
     '<footer class="lock">',
-    `<span class="lockat">last locked <b>${esc(lock.date)}</b>`,
+    stamp,
+    stamp ? '<span class="sep">—</span>' : '',
+    `<span class="lockat">locked <b>${esc(lock.date)}</b>`,
     lock.auditRun != null ? ` (auditRun ${esc(lock.auditRun)})` : '',
-    lock.commit ? ` <code>${esc(String(lock.commit).slice(0, 7))}</code>` : '',
     '</span>',
     '<span class="sep">—</span>',
     reading,
     '</footer>'
+  ].join('');
+}
+
+// A plan is a record, so it renders as aligned columns rather than as a term
+// row with a gloss. Availability and identity are prose and belong in the
+// detail; the list carries what columns can hold.
+function planRowHtml(plan) {
+  const id = termId(plan.name);
+  const axes = plan.effectAxes.core.concat(plan.effectAxes.secondary);
+  return [
+    `<li class="row prow" data-key="${esc([plan.name, plan.korean].filter(Boolean).join(' ').toLowerCase())}" data-src="${esc(PLAN_CATALOG)}">`,
+    `<a class="pick" href="#p-${id}"><span class="name">${esc(plan.name)}</span>`,
+    plan.korean ? `<span class="ko">${esc(plan.korean)}</span>` : '',
+    '</a>',
+    `<span class="col risk">${plan.risk ? esc(plain(plan.risk).split(/(?<=\.)\s/)[0]) : ''}</span>`,
+    `<span class="col axes">${axes.length ? axes.map((a) => `<code>${esc(a)}</code>`).join(' ') : ''}</span>`,
+    '</li>'
+  ].join('');
+}
+
+function planDetailHtml(plan, root) {
+  const id = termId(plan.name);
+  const field = (label, text) => (text
+    ? `<p class="pfield"><span class="lbl">${label}</span> ${esc(plain(text))}</p>`
+    : '');
+  const axisList = (label, list) => (list.length
+    ? `<p class="pfield"><span class="lbl">${label}</span> ${list.map((a) => `<code>${esc(a)}</code>`).join(' · ')}</p>`
+    : '');
+
+  return [
+    `<article class="detail" id="p-${id}">`,
+    `<h2>${esc(plan.name)}${plan.korean ? ` <span class="ko">${esc(plan.korean)}</span>` : ''}</h2>`,
+    '<p class="meta">operation plan · a schema\'d record, not vocabulary (ADR 0024)</p>',
+    field('identity', plan.identity),
+    axisList('core', plan.effectAxes.core),
+    axisList('secondary', plan.effectAxes.secondary),
+    axisList('no effect', plan.effectAxes.none),
+    field('risk', plan.risk),
+    field('availability', plan.availability),
+    `<a class="ptr" href="${esc(root + PLAN_CATALOG)}">→ ${esc(PLAN_CATALOG)}</a>`,
+    '</article>'
   ].join('');
 }
 
@@ -224,9 +280,8 @@ body{
 .mode:focus-visible{outline:2px solid var(--accent); outline-offset:1px}
 
 .filter{
-  display:flex; align-items:center; gap:.5rem;
-  padding:.35rem .75rem; font-size:var(--t-meta); color:var(--muted);
-  background:var(--surface); border-bottom:1px solid var(--line);
+  display:inline-flex; align-items:center; gap:.35rem; flex:none;
+  font-size:var(--t-meta); color:var(--muted);
 }
 .filter b{color:var(--primary); font-family:var(--mono); font-weight:400}
 .filter button{
@@ -236,7 +291,13 @@ body{
 .filter button:hover{color:var(--ink)}
 
 /* --- two panes ---------------------------------------------------------- */
-.body{display:grid; grid-template-columns:340px minmax(0,1fr); min-height:0}
+/* Reads as a panel rather than a stretched page: the list keeps its width and
+   the detail keeps its measure, so a wide window adds margin, not sprawl. */
+.body{
+  display:grid; grid-template-columns:340px minmax(0,1fr);
+  min-height:0; width:100%; max-width:1100px; margin:0 auto;
+  border-inline:1px solid var(--line);
+}
 .listpane{overflow-y:auto; border-right:1px solid var(--line)}
 .list{list-style:none; margin:0; padding:0}
 
@@ -300,6 +361,37 @@ body{
 .ptr:hover{border-bottom-color:var(--primary)}
 .ptr:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
 
+/* --- plan records ------------------------------------------------------- */
+/* Columns, not a gloss: a plan is a record with a schema (ADR 0024). */
+.prow{display:block}
+/* Three stacked lines, not four side-by-side columns. Measured: a 340px list
+   cannot seat a name beside a risk clause: Encirclement and Annihilation is
+   29 characters, so anything sharing its line wraps it, and wrapped names
+   destroy the alignment a column view exists to provide. Each field therefore
+   gets its own full-width line and every row is the same height. Risk and
+   availability are prose (7 of 12 records state risk as a sentence, not a
+   level); the detail carries them whole. */
+.prow .pick{display:flex; gap:.4rem; align-items:baseline; min-width:0}
+.prow .risk,.prow .axes{
+  display:block; margin-top:.1rem;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.prow .risk{color:var(--muted); font-size:var(--t-meta)}
+/* Three records state their axes in a form no parser should guess at, so their
+   line comes out empty. It keeps its height anyway: an uneven list reads as a
+   rendering fault rather than as what it is, a record that says something else. */
+.prow .axes{min-height:1.15em}
+.prow .axes code{
+  font:var(--t-meta) var(--mono); color:var(--primary);
+  margin-right:.4rem;
+}
+.pfield{margin:.35rem 0; font-size:var(--t-path); color:var(--ink); line-height:1.55}
+.pfield .lbl{
+  display:inline-block; min-width:5.5rem; color:var(--muted);
+  font-size:var(--t-meta); vertical-align:baseline;
+}
+.pfield code{font-family:var(--mono); color:var(--primary)}
+
 .nomatch{padding:1rem .75rem; color:var(--muted); font-size:var(--t-path)}
 
 /* --- lock bar ----------------------------------------------------------- */
@@ -360,6 +452,8 @@ const JS = `
            &&(!srcFilter||row.dataset.src===srcFilter);
       row.hidden=!ok; if(ok) shown++;
     });
+    var badge=document.querySelector('[data-count="'+mode+'"]');
+    if(badge) badge.textContent=(needle||srcFilter)?shown+'/'+list.children.length:list.children.length;
     nomatch.hidden=shown>0;
     nomatch.textContent=needle
       ? 'No term matches "'+needle+'". '+list.children.length+' registered.'
@@ -408,6 +502,11 @@ const JS = `
       if(location.hash){ location.hash=''; mark(); }
       return;
     }
+    if(e.key==='Enter'&&e.target!==q){
+      var open=document.querySelector('.detail:target .ptr');
+      if(open){ e.preventDefault(); open.click(); }
+      return;
+    }
     if(e.key!=='ArrowDown'&&e.key!=='ArrowUp') return;
     var visible=Array.prototype.filter.call((lists[mode]||{children:[]}).children,function(r){return !r.hidden});
     if(!visible.length) return;
@@ -424,14 +523,22 @@ const JS = `
 function render(model, opts) {
   const options = opts || {};
   const root = options.root == null ? '../../' : options.root;
-  const umbrella = options.umbrella == null ? PLAN_UMBRELLA : options.umbrella;
   const all = model.entries || [];
 
-  const plans = all.filter((e) => /CATALOG\.md$/.test(e.birthplace) && e.canonical !== umbrella);
-  const planNames = new Set(plans.map((e) => e.canonical));
+  // Plans leave the term list whether or not their records were parsed: the
+  // disposition is that they are not vocabulary, not that they are optional.
+  const planTerms = all.filter((e) => /CATALOG\.md$/.test(e.birthplace) && e.canonical !== PLAN_UMBRELLA);
+  const planNames = new Set(planTerms.map((e) => e.canonical));
   const terms = all.filter((e) => !planNames.has(e.canonical));
 
-  const generated = options.generatedAt ? esc(options.generatedAt) : '';
+  // Records when the catalog was parsed; otherwise the registered names alone,
+  // so the panel is never empty and never silently claims columns it lacks.
+  const records = (options.plans && options.plans.length)
+    ? options.plans
+    : planTerms.map((e) => ({
+      name: e.canonical, korean: e.korean, identity: null, availability: null,
+      risk: null, effectAxes: { core: [], secondary: [], none: [] }
+    }));
 
   return `<!doctype html>
 <html lang="en">
@@ -445,29 +552,29 @@ function render(model, opts) {
 <header class="top">
 <input id="q" type="search" placeholder="Search a term, 한국어, alias, or identifier…" autofocus autocomplete="off" spellcheck="false" aria-label="Search terms">
 <nav class="modes" aria-label="View">
-<button class="mode on" type="button" data-mode="terms">Terms <b>${terms.length}</b></button>
-<button class="mode" type="button" data-mode="plans">Plans <b>${plans.length}</b></button>
+<button class="mode on" type="button" data-mode="terms">Terms <b data-count="terms">${terms.length}</b></button>
+<button class="mode" type="button" data-mode="plans">Plans <b data-count="plans">${records.length}</b></button>
 </nav>
+<span class="filter" id="filter" hidden></span>
 </header>
-<div class="filter" id="filter" hidden></div>
 <main class="body">
 <section class="listpane">
 <ul class="list" id="terms">${terms.map(rowHtml).join('')}</ul>
-<ul class="list" id="plans" hidden>${plans.map(rowHtml).join('')}</ul>
+<ul class="list" id="plans" hidden>${records.map(planRowHtml).join('')}</ul>
 <p class="nomatch" hidden></p>
 </section>
 <section class="pane">
 <a class="back" href="#">← all terms</a>
-<div class="empty"><b>${terms.length} terms</b> across ${new Set(terms.map((e) => e.birthplace)).size} files, plus ${plans.length} operation plans. Search, or pick a term — every row links to where its definition actually lives.</div>
-${terms.concat(plans).map((e) => detailHtml(e, root)).join('')}
+<div class="empty"><b>${terms.length} terms</b> across ${new Set(terms.map((e) => e.birthplace)).size} files, plus ${records.length} operation plans. Search, or pick a term — every row links to where its definition actually lives.</div>
+${terms.map((e) => detailHtml(e, root)).join('')}
+${records.map((r) => planDetailHtml(r, root)).join('')}
 </section>
 </main>
-${lockHtml(options.lock)}
-${generated ? `<!-- rendered ${generated} -->` : ''}
+${lockHtml(options.lock, options.generatedAt, options.sourceCommit)}
 <script>${JS}</script>
 </body>
 </html>
 `;
 }
 
-module.exports = { render, shortSource, slug, PLAN_UMBRELLA };
+module.exports = { render, shortSource, termId, PLAN_UMBRELLA };
