@@ -228,10 +228,32 @@ One entry per registered term. Fields are either indexed (from
 }
 ```
 
-`gloss.source` is one of `authored` (a filled `Summary` column, or a Tier-0
-summary written by the definition's author) or `excerpt` (mechanically quoted
-from the birthplace). It is a **provenance** field, and § Renderer contract
-bounds where it may be shown.
+`gloss.source` is one of **three** values, and it is a **provenance** field that
+§ Renderer contract bounds to the detail layer:
+
+| Value | What it is |
+|---|---|
+| `authored` | a filled `Summary` column, or a Tier-0 summary written by the definition's author |
+| `excerpt` | the term's own row, bullet, or ruling heading, quoted from the birthplace |
+| `context` | the passage that NAMES the term, quoted — **not** its definition. Carries `contextOf`, the term whose passage it is |
+
+**Amended 2026-07-28 (build), from two values to three.** The third was forced
+by measurement, twice over. 21 registered terms have no entry of their own at
+their birthplace — the six value axes and their kin are named inline inside
+`Front sector value profile`, which is exactly the state check 1's inline-name
+suppression makes legitimate rather than orphaned. Quoting the containing
+passage reaches them, but calling that quotation an `excerpt` would claim it is
+the term's definition when it is not: rendered, `Realm` showed the shield-break
+passage and six axes all showed their parent's sentence. Labelling the weaker
+claim is what keeps the excerpt strategy honest, and the renderer withholds a
+`context` gloss from the row precisely because the row is the one place
+provenance may not be shown.
+
+**Gloss coverage, measured on the real sources** (267 terms): 247 from the
+birthplace, 10 from a Tier-0 summary, 10 blank — **96.3%** in the detail layer.
+The row preview, which excludes `context`, carries 199. Reached in three steps:
+one extraction path covers 71.2%, adding `context` reaches 88.0%, adding ruling
+headings reaches 96.3%.
 
 ## Excerpt over authored summary — and why that is not a loophole
 
@@ -476,6 +498,11 @@ walk. Kept because it bounds the generator, not because anything runs per-edit.
 this territory, and two skills would compete for the same reach. Both modes are
 curation steps appended to its ladder, not rivals to it.
 
+**Landed 2026-07-28** as § Layer 1.5 of `.claude/skills/doc-audit/SKILL.md`,
+with `npm run vocab:render` / `npm run vocab:lock`. The skill's own charter
+still binds it: rendering is derivation from committed sources, and advancing
+the marker stays a user review — `vocab:lock` without `--advance` only reports.
+
 ## Locations
 
 Repo conventions decide these; none is a fresh choice.
@@ -558,8 +585,22 @@ proposal.** Nothing is edited here either way.
 - **`GLOSSARY-QUICKREF.md`'s fate — no longer open for this build.** Decided:
   two output formats (user, 2026-07-28). Retirement deferred to after the
   dashboard is in use; § Law implications 3 carries the cascade it would cost.
-- **Whether `drift` classifies a *redefinition* by text hash or by diff size** —
-  the cheap version is "changed at all"; a threshold would need justification.
+- **How `drift` classifies a redefinition — DECIDED in the build: binary,
+  "changed at all".** A threshold would need a
+  justification nobody has. Implemented as a string comparison rather than a
+  digest — both texts are in memory and the baseline stores no content, so a
+  hash would buy nothing.
+- **Built and not in this spec's original list:** `drift` also reports
+  `renamed`, which § Lock panel's format always asked for. It is recoverable
+  only because the Vocabulary Law requires a renamed term to keep its old name
+  as a `구칭` alias; without that rule a rename is indistinguishable from a
+  withdrawal plus an unrelated registration.
+- **Plans panel: records built, one field refused.** `scripts/vocab/plans.js`
+  parses name, 한국어, identity, availability, and effect axes for all 13. Risk
+  is carried as the **author's text, not a normalised level** — measured, five
+  of twelve records open with a bare level word and seven are prose, so an enum
+  would have been invention. Three records state their axes in a form no parser
+  should guess at and come out empty rather than filled in.
 
 ## Non-goals
 

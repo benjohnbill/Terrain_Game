@@ -266,15 +266,64 @@ is computed here but must be verified in the rendered page.
 
 ## 10. Open questions
 
-Two, both genuinely unresolved. Everything else is decided above.
+Both of the questions this brief opened are now **closed by the build**. One new
+one took their place, and it is the user's.
 
-1. **`drift`'s redefinition test** — text hash (cheap, binary) or diff size
-   (needs a justified threshold). Recommendation stands at text hash; it is
-   recorded in the design spec's § Open decisions and is a build decision, not a
-   composition one.
-2. **Gloss coverage at row level.** The one-line preview assumes near-total
-   coverage; at ~206 of 254 today it is 81%. If the B/C excerpt work does not
-   close the gap, the preview line becomes a blank slot on ~48 rows — permitted
-   by law ("a blank slot, never a demotion") but weaker as a design. Measure
-   coverage in the build before committing the preview line; the fallback is the
-   design spec's original no-gloss scan layer.
+1. **`drift`'s redefinition test — CLOSED: binary.** "Changed at all", not a
+   diff-size threshold, because a threshold would need a justification nobody
+   has. Settled as a direct string comparison rather than a digest: both texts
+   are in memory and no baseline file stores content, so hashing would have been
+   ceremony.
+2. **Gloss coverage at row level — CLOSED: the preview line stays.** Measured on
+   the real sources, not estimated: 96.3% of terms carry a gloss in the detail
+   layer, and 199 of 254 rows carry a preview. The gap is not the ~48 unglossed
+   rows this brief feared; it is the 47 `context` glosses the renderer withholds
+   from the row on purpose, because a quotation that is not the term's own
+   definition may not appear where provenance cannot be shown. The fallback (a
+   no-gloss scan layer) is not needed.
+3. **NEW, and the user's — where the markdown output lands.** § Output division
+   names `docs/GLOSSARY-QUICKREF.md`, and the build found two reasons that is
+   not a decision code may take on its own:
+   - **That file is not the flat term list this brief assumed.** It is 481 lines
+     of sectioned digest, with term tables under 15 feature headings AND
+     hand-authored synthesis (`## Economy flows — reader's digest`, "sealed
+     canon, intuition glosses") that a generator would destroy — the same hazard
+     that moved the C-loop table out to `docs/C-LOOP.md`.
+   - **A fresh `docs/` path is not free either.** It would enter the governed set
+     with no row in `docs/audits/doc-registry.json` and no mention in the law's
+     Working-layer enumeration; amending that taxonomy is Tier 3.
+
+   Until it is ruled, the generator writes to gitignored
+   `dist/vocab/vocab-index.md` — the two-format decision is honoured, no
+   governed path is squatted, and `--markdown=<path>` aims it in one flag. Note
+   also that the generated file quotes definitions **in full**, where the
+   QUICKREF precedent the law permits is short hand-written glosses; whether
+   that difference matters is part of the same ruling.
+
+## 11. What the build changed in this brief
+
+Recorded rather than silently absorbed, because each was a decision.
+
+- **Accent also carries focus rings and the `context` caution.** § 3's table
+  said accent was for `PROPOSED` and a non-zero drift figure only. Focus
+  indication needs the highest-contrast token on the page and is a different
+  axis from status; the caution ("*Not this term's own definition*") is a
+  warning, not a status. Both are correct uses the table did not anticipate.
+- **Search also matches `codeIdentifier`.** § 7 named canonical, 한국어, and
+  aliases. 84 terms carry an identifier and it is how the value axes are written
+  in prose, so excluding it made those terms unfindable by the name a reader
+  actually has.
+- **The status bar carries both dates and the source commit**, rather than the
+  header. One bar holds all of the page's provenance; splitting it across two
+  regions would have made rendered-vs-locked harder to read, not easier.
+- **Plan rows stack three lines instead of four side-by-side columns.**
+  Measured: a 340px list cannot seat a name beside a risk clause —
+  `Encirclement and Annihilation` is 29 characters, and anything sharing its
+  line wraps it. Wrapped names destroy the alignment a column view exists for.
+- **Plan `risk` is prose, not a level.** Of twelve records, five open with a
+  bare level word and seven are sentences ("The highest in the catalog…").
+  Normalising that would be invention, so the author's text is carried through
+  and the list column ellipsizes it.
+- **The detail overlay gained a back control.** § 5 promised one at narrow
+  width and the first build omitted it, so the overlay trapped a touch device
+  with no Escape key. It is a plain fragment link, working with JS disabled.
