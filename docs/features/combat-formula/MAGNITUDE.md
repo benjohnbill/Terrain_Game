@@ -856,8 +856,13 @@ formula, the rest pinned from history:
 - Derived: **start intensity ≈ 42%, structural max ≈ 58%** (the
   Surge Draft Model knees, MT-③). Harness carrier: BOARD_GAAN in
   `mockup/combat-calc/map-board.js` (startFieldFrac 0.5,
-  garrisonPerBorderSector 900, capitalGarrison 1500, registerPerPop
-  1800). First L2 data: sealed physique deepens the freeze (decided
+  garrisonPerBorderSector 900, ~~capitalGarrison 1500~~, registerPerPop
+  1800). **`capitalGarrison` is not sealed here** — this is the L2 harness's
+  own inventory, and the capital guard's birthplace is `capital/RULINGS.md`
+  CP-① item 2, which retired the flat 1500 by name on 2026-07-10 and was
+  re-cut to 가안 2,500/pop by **CP-⑤** (2026-07-31). Struck rather than deleted
+  because `DECISIONS-OWED.md` Part 2 row #10 read this line as a competing
+  seal for four days. First L2 data: sealed physique deepens the freeze (decided
   21%→7%, Vauban indecisive-war signature) — the tilting devices'
   target, not a reason to unseal.
 

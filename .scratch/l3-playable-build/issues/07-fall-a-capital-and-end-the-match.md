@@ -11,7 +11,8 @@ game rather than an open-ended one.
 06a–06d by gate C, 2026-07-26. R1 makes a capital fall an ordinary sector capture,
 so the capture path is the real blocker, not the battle alone.)
 
-Status: needs-info
+Status: **ready-for-agent** (2026-07-31 — both needs-info items closed; see § Comments.
+Still **blocked by 06d**, which is the next executable ticket.)
 
 Specification gates: Wayfinder 10, 12.
 
@@ -92,9 +93,34 @@ had to be:
   unfightable.
 
 **Implementation is owed by the new ticket `06e`**, which this ticket therefore
-stands on through 06d. This resolves only the reachability blocker — the
-`needs-info` above (capital guard magnitude, Part 2 #10, and CP-① item 3's
-staleness) is untouched.
+stands on through 06d. This resolved only the reachability blocker; the other two
+items are closed separately, below.
 
-Note this is *additional* to the `needs-info` already on this ticket (the capital
-guard magnitude, Part 2 #10, and CP-① item 3's staleness).
+Note this was *additional* to the `needs-info` already on this ticket (the capital
+guard magnitude, Part 2 #10, and CP-① item 3's staleness) — both of which closed
+2026-07-31; see below.
+
+### Both remaining needs-info items closed — 2026-07-31
+
+**1. Capital guard magnitude (Part 2 #10) — RULED.** `capital/RULINGS.md` **CP-⑤**
+re-cuts CP-① item 2's coefficient to **가안 2,500/pop** (user). The row's framing
+was wrong: `MAGNITUDE.md`'s `capitalGarrison 1500` was never a seal — a
+parenthetical harness inventory with no status word — and CP-① item 2 had retired
+the flat 1500 by name in 2026-07-10. The live question was the coefficient's
+**size**, which no register asked: at 350 the strongest guard this board can carry
+is 840, below one 900-man border shield and 9.3% of the 9,000 opening field, which
+makes CP-② item 7 ("larger magnitude") and item 8 (early-rush prevented because
+"guard magnitude needs a big army") both false. The value is **가안** and settles
+at playtest; a later change is a value change at CP-⑤, not a redesign.
+
+**2. CP-① staleness — STAMPED, and it was two items rather than one.** CP-①'s
+header now carries both. Item 3's forced-vassalage trigger is retired by ADR 0042
+(the known one). **Item 1's designation rule is also stale** and nobody had recorded
+it: ruling R3 (2026-07-25) made capital eligibility *ownership* — any owned sector —
+while item 1 still says "one of the seat's main city sectors". This ticket reads
+item 1 as authority for its first acceptance item, so the miss was load-bearing.
+`DECISIONS-OWED.md` § 1.8 files this under "item 3", which is how it stayed
+invisible.
+
+**Status is therefore `ready-for-agent` on its own account** — but the `Blocked by`
+line still governs: 06d must land first.

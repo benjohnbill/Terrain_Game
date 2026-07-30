@@ -583,13 +583,20 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   ADRs — but now alongside or after the build rather than in front of it. This
   row is the record that the debt is deliberate.
 
-- [ ] **Capital candidate set widened to any owned sector — birthplace seal owed**
-  (registered 2026-07-25, user ruling R3). CP-① item 3 seals "the player picks
-  one of the **seat's main city sectors**"; the user replaced that with free
-  choice across every sector the realm owns, prompted at match start. Owed: a
-  seal row at `docs/features/capital/` amending CP-① item 3, recording that
-  `CRADLE_META`'s `capitals` / `cities` tables become **advisory** (recommendation
-  material, deferred) rather than the eligibility constraint. Ruling text:
+- [x] **Capital candidate set widened to any owned sector — PAID 2026-07-31**
+  (registered 2026-07-25, user ruling R3). The user replaced "the player picks one
+  of the **seat's main city sectors**" with free choice across every sector the
+  realm owns, prompted at match start, and `CRADLE_META`'s `capitals` / `cities`
+  tables became **advisory** (recommendation material, deferred) rather than the
+  eligibility constraint. Paid by an `Amended by ruling R3` stamp on CP-①'s header
+  (`docs/features/capital/RULINGS.md`).
+  **Correction carried by the payment: it is CP-① item *1*, not item 3.** This row
+  and `DECISIONS-OWED.md` § 1.8 both said item 3 — which is the *forced-vassalage*
+  item, retired separately by ADR 0042 — so the designation staleness was filed
+  under the wrong number and ticket 07's blocker list recorded only one stale item
+  where there were two. 07 reads item 1 as the authority for its first acceptance
+  item, so the misfiling was load-bearing rather than cosmetic. Found 2026-07-31 by
+  the capital-guard investigation. Ruling text:
   `.scratch/l3-playable-build/DECISIONS-OWED.md` § R3.
 
 - [ ] **L3 Wayfinder gate 08 — first-slice DEFINITION sealed; build + promotions

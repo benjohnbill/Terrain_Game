@@ -4,6 +4,23 @@ Feature-local decision record (Record layer, birthplace tier). Append-only.
 
 ## CP-① Capital concept package — SEALED 2026-07-10 · L0 (user, occupation-geography brainstorm session)
 
+> **Amended by CP-⑤ (2026-07-31):** item 2's **coefficient** is re-cut from 가안
+> 350/pop to 가안 2,500/pop. The guard's shape — land-derived, garrison-class,
+> register-backed, one stock with the last stand — is untouched, and so is item 2's
+> retirement of the flat abstract 1500.
+>
+> **Amended by ruling R3 (2026-07-25):** item 1's **designation** rule is retired —
+> capital eligibility is *ownership*, so a player may place their capital on any
+> sector their realm owns, and the authored `capitals`/`cities` markers are advisory
+> map content that may not gate placement (`world/schema.ts` carries the same note).
+> Item 1's "main city sectors" wording predates the duel pivot.
+>
+> **Amended by ADR 0042 (2026-07-24):** item 3's **forced-vassalage / collapse
+> cascade** trigger is retired. Capital fall is the sole win condition and the match
+> ends the instant it happens, so there is no regime state after it for a cascade to
+> act on. What survives is item 3's substance — a capital's fall differs in KIND from
+> an ordinary city's.
+
 **Decision.** The capital is a political designation on one of a realm's main
 city sectors, needed because land and sovereignty are different currencies:
 settlement moves land (economic/military substance, sector-resolution), while
@@ -162,3 +179,78 @@ rump to exist), NOT because the capital is physically the last thing standing.
 - L3 watch: does capital fall arrive at a FUN pace (not a death spiral, not
   fizzle)? The anti-fizzle decay that induces it lives in match-arc income + force
   limit (D5.1), not in capital/ — pointer, not a copy.
+
+## CP-⑤ Guard coefficient, re-cut for the duel — SEALED 2026-07-31 (user) · L0
+
+**Amends CP-① item 2's coefficient: 가안 350/pop → 가안 2,500/pop.** Everything
+else about the guard is untouched — land-derived from the capital sector's
+`populationValue`, garrison-class, place-bound, outside `fieldCap`,
+register-backed, no special supply rule (CP-② item 7), one stock with the
+last-stand garrison. Numbered ⑤ because ④ is taken by CP-②'s rump amendment.
+
+**What forced it.** Measured on `terrain-cradle@r1` against the sealed opening
+coordinates, the 350 coefficient makes the capital guard *weaker than an ordinary
+border town*:
+
+| quantity | value | source |
+|---|---|---|
+| highest sector `populationValue` on the board | 2.4 | `cradle-r1` artifact |
+| ⇒ strongest possible guard at 350/pop | **840** | derived |
+| ⇒ weakest possible guard (pop 0.5) | 175 | derived |
+| one ordinary border shield | **900** | `garrisonPerBorderSector`, M13a |
+| opening field army (f₀ 0.5 × force limit 18,000) | **9,000** | M13a, R9 |
+
+So the strongest guard on this board is **0.93 of one border shield** and **9.3%
+of the opening field army**. Two CP-② items rest on the opposite being true:
+item 7 seals the guard as "an ordinary garrison class **at larger magnitude**",
+and item 8 rests the whole early-rush defence on "guard magnitude needs a big
+(late-game) army" with no hard floor behind it. At 840 against 9,000 both are
+false, and turn-3 decapitation is available to a fraction of the opening army.
+
+**Why CP-① is not at fault.** It sealed 350 on 2026-07-10 for a five-seat world
+where the guard's job was *front reinforcement* — item 4's 天子守國門 arithmetic.
+ADR 0042 then made capital fall the **sole win condition** and CP-② loaded the
+guard with that duty on 2026-07-23/24 **without re-cutting the coefficient**. This
+ruling is that re-cut, owed since the pivot and recorded nowhere until now.
+
+**The floor is derived; the value above it is the user's.** CP-② item 7 requires
+"larger magnitude" than an ordinary garrison, and M13a puts that at 900. The
+weakest capital a player may legally pick carries `populationValue` 0.5 (R3 allows
+any owned sector), so honouring item 7 at *every* legal capital requires a
+coefficient of at least **1,800**. That is the floor, and it is arithmetic.
+**2,500 is the user's choice above it**, for the reason below.
+
+**Why above the floor — the forward capital** (user, this ruling). A forward
+capital is normally a liability: easy to reach, easy to lose. CP-① item 4 already
+answers that with an **emergent** reward — the guard thickens the realm's busiest
+gate and frees the field army — and explicitly forbids granting it a multiplier
+("No multiplier grants"). Raising the coefficient makes that *existing* reward
+larger without adding a device, so the intent is served through the lever CP-① ①
+already sanctioned rather than through a new one.
+
+**What 2,500 does.** Army an attacker must bring to take the capital, at full
+commitment on both sides (M2's lever) and ordinary march wear; multipliers cited
+from M5 and M2, none restated here:
+
+| capital | guard | army needed | against a 9,000 opening field |
+|---|---|---|---|
+| strongest, plains (pop 2.4) | 6,000 | 7,500 | 83% |
+| weakest, plains (pop 0.5) | 1,250 | 1,563 | 17% |
+| mountain, e.g. 관중 `r6_s5` (pop 2.1) | 5,250 | 9,844 | **109% — needs growth first** |
+
+Taking a capital therefore costs most of a field army, and a mountain seat cannot
+be taken with opening strength at all — which is the match arc D6.4 asks for, and
+which only became true when ADR 0046/TC-⑮ made a sector defend on its own ground.
+
+Status **AGREED**, value **가안**, validation **L0** (hand reasoning against
+sealed coordinates; no grid, no battery). **What would settle it: playtest.** The
+user's framing was explicitly provisional — try 2,500, move it while playing.
+Ticket 07 builds against this row, and a later change is a **value change here**,
+not a redesign.
+
+**Discharges** `DECISIONS-OWED.md` Part 2 row #10 ("capital guard magnitude"), which
+recorded this as a live conflict between 350×pop and `MAGNITUDE.md`'s
+`capitalGarrison 1500`. That framing was wrong twice over: CP-① item 2 had already
+retired the flat 1500 by name on 2026-07-10, and M13a's line is a parenthetical
+harness inventory carrying no status word — so there were never two seals, only an
+unstamped one. The real question was the coefficient's *size*, which no row asked.
