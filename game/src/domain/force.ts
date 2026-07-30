@@ -187,6 +187,28 @@ export function subtractOrigins(origins: OriginComposition, men: number): Origin
   return splitOrigins(origins, men)[0];
 }
 
+/**
+ * Take `men` out of a detachment's **ready** cohort, or report the formation gone.
+ *
+ * WM-⑤'s leaving-service law as formation surgery rather than orchestration: it
+ * belongs beside `splitDetachment` and `mergeDetachments`, which own every other
+ * way a formation changes shape, and it says nothing at all about the register —
+ * that is the half a casualty pays and this one does not.
+ *
+ * Returns `null` when there is no longer a formation to keep. Cohorts still
+ * forming were not in the battle and did not rout, so they stay, and a detachment
+ * that still carries one survives at zero ready men — the same rule 06c's casualty
+ * path applies for the same reason: it is still a body of men, just not a
+ * combat-ready one.
+ */
+export function withdrawFromDetachment(detachment: Detachment, men: number): Detachment | null {
+  const next: Detachment = {
+    ...detachment,
+    ready: { ...detachment.ready, origins: subtractOrigins(detachment.ready.origins, men) },
+  };
+  return menOf(next.ready.origins) === 0 && next.pending.length === 0 ? null : next;
+}
+
 export function splitDetachment(
   source: Detachment, men: number, childId: string,
 ): readonly [Detachment, Detachment] {

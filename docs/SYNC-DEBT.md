@@ -488,6 +488,22 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
     sector pairs exist, 15 of them authored as edges), leaving 23 interior sectors
     still unfightable. Recorded so it is not proposed again.
 
+- [ ] **What a front's commitment *is*, once no quantity is stored against it**
+  (registered 2026-07-31 by ticket 06e's code review, spec axis). ADR 0046 item 4
+  moved the stack's key from the front to the sector and left the front its
+  territory reading, but no ruling says what `front-resolved` should then report as
+  that border's commitment. 06e implemented the **sum over the front's two endpoint
+  sectors**, which means a sector serving two borders is reported under both. That
+  is a reading the ticket chose, not one it cited — kind 1 under the README's
+  four-kind workflow, surfaced rather than settled.
+  **Inert today:** `front-resolved` is a display event, nothing downstream computes
+  from it, and the two obvious alternatives (report the endpoint sectors separately,
+  or drop the field and let a front report contact only) are equally unsealed.
+  **Owed:** a ruling when ticket 04's commit-first shell or ticket 09's EVAL BAR
+  first needs a border-level number — those are the surfaces that would give the
+  question a consumer. Code comment carries the same warning
+  (`game/src/domain/turn.ts`, `FrontReading`).
+
 - [ ] **Interception of a force in transit has no design anywhere**
   (registered 2026-07-26, gate C). Raised by the user while ruling R14 ("그 길목을
   친다는 전략적인 결정도 수비측에"), and it is a real defensive option that

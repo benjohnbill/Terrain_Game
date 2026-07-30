@@ -90,11 +90,18 @@ export interface RevealedTurn {
  * and it no longer gates or receives anything.
  *
  * Two consequences worth stating rather than rediscovering. Chips on a sector that
- * serves two borders are reported under *both* — correctly, since the attention is
- * genuinely in play at both, and nothing sums these readings into a total that
- * could double-count. And chips poured onto an **interior** sector produce no front
- * reading at all, because no border is involved; that battle is reported by
- * `battle-resolved` alone.
+ * serves two borders are reported under *both* — the attention is genuinely in play
+ * at both, and nothing sums these readings into a total that could double-count.
+ * And chips poured onto an **interior** sector produce no front reading at all,
+ * because no border is involved; that battle is reported by `battle-resolved` alone.
+ *
+ * **The sum itself is UNSEALED.** ADR 0046 re-keyed the stack and left the front
+ * its territory reading; no ruling says what a border's commitment *is* once no
+ * quantity is stored against it, and summing its two endpoints is a reading this
+ * ticket chose rather than cited. It is inert — `front-resolved` is a display
+ * event and nothing downstream computes from it — and the alternatives (report the
+ * two sectors separately, or drop the field) are equally unsealed, which is why
+ * this was recorded instead of decided. Registered in `docs/SYNC-DEBT.md`.
  */
 export interface FrontReading {
   readonly front: string;

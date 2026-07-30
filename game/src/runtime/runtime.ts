@@ -61,6 +61,7 @@ import {
   splitDetachment,
   splitDetachmentRefusal,
   subtractOrigins,
+  withdrawFromDetachment,
   type Detachment,
   type ForceCohort,
   type GarrisonForce,
@@ -687,7 +688,7 @@ export class Runtime {
     return {
       windowOpen: state.phase === 'decision',
       alreadyLocked: state.turnLocks.includes(actor),
-      sectorKeys: Object.keys(state.loadedWorld.artifact.sectors),
+      sectorKeys: this.#sectorIds(),
       orderKeys: [...new Set([
         ...Object.keys(state.recruitmentOrders[actor] ?? {}).map(recruitmentOrderKeyOf),
         ...candidateOrderKeys,
@@ -953,7 +954,7 @@ export class Runtime {
       // the reveal (D6.1). What must not is the order half of the shared namespace:
       // a recruitment key names a sector, a posture and a request, and publishing it
       // would decide ticket 08's fog surface by accident.
-      const publicCommitKeys = new Set(Object.keys(state.loadedWorld.artifact.sectors));
+      const publicCommitKeys = new Set(this.#sectorIds());
       events.push(...this.#globallySafeResolutionEvents(this.#resolveTurn(), publicCommitKeys));
     }
 
@@ -1346,6 +1347,18 @@ export class Runtime {
       this.#turnEvent('front-resolved', 'payoff', { ...reading }));
   }
 
+  /**
+   * Every sector of the authored world.
+   *
+   * One reader, because it is one concept wearing three hats: the legal commit-key
+   * set (ADR 0046 item 4), the set published at the reveal, and the candidate-site
+   * list `engagementsOf` filters. Three copies of this walk is how they would come
+   * to disagree about which sectors a realm may act on.
+   */
+  #sectorIds(): SectorId[] {
+    return Object.keys(this.#state.loadedWorld.artifact.sectors);
+  }
+
   /** Which sector a hex belongs to, over the one canonical graph. */
   #sectorAt(position: HexPosition): SectorId {
     const key = hexKey(position.q, position.r);
@@ -1459,7 +1472,7 @@ export class Runtime {
   /** Every engagement this turn produced — a reading, with nothing written yet. */
   #engagementsThisTurn(revealed: RevealedTurn): readonly Engagement[] {
     return engagementsOf(
-      Object.keys(this.#state.loadedWorld.artifact.sectors),
+      this.#sectorIds(),
       this.#borderFronts(),
       revealed.commitments,
       (sector) => this.#standingAt(sector),
@@ -1597,15 +1610,20 @@ export class Runtime {
           );
 
       const fallBack = approach !== undefined && detachment !== undefined &&
-        this.#isStandableHex(approach.from);
+        this.#isStandableHex(approach.fromHex);
       if (!fallBack) {
         this.#leaveService(sector, actor, formation.detachmentId, formation.men);
         continue;
       }
 
-      // R12 prices movement in turns and fatigue, never commit. A fall-back that
-      // paid nothing would be a teleport, so it pays the march rate an ordered march
-      // pays for the boundary step it is undoing.
+      // R12 prices movement in **turns and fatigue**, never commit, and a fall-back
+      // that paid nothing would be a teleport. Both halves are charged here, and the
+      // second is easy to miss because it is a deletion rather than an addition:
+      //
+      // - *fatigue* — the march rate for the boundary step being undone;
+      // - *turns* — clearing the standing march order below. The plan the rout just
+      //   refuted does not survive it, so the force stands still until it is ordered
+      //   again, which is the turn an ordered march would have cost it.
       //
       // One step, not the retrace: WM-⑤ is a **sector**-grain rule ("one sector, the
       // way they came"), and a force that crossed and then walked deeper into the
@@ -1620,7 +1638,7 @@ export class Runtime {
       );
       state.forces[actor]!.detachments[index] = {
         ...worn,
-        position: { ...approach!.from },
+        position: { ...approach!.fromHex },
         // A standing march order is a plan the rout just refuted, and its route
         // starts from ground this force no longer holds. Carrying it would walk the
         // survivors straight back into the sector they broke in.
@@ -1632,11 +1650,16 @@ export class Runtime {
   /**
    * Whether the arc's origin is still somewhere a force can actually stand.
    *
-   * The ticket's "if the arc's origin is no longer a legal destination, the force
-   * leaves service" — and deliberately nothing more. Whether the ground behind is
-   * now hostile, cut off, or occupied are questions the manoeuvre pass owns;
-   * answering any of them here would be the second destination rule the ticket
-   * forbids inventing.
+   * **Inert in this slice, and not by oversight.** The arc's origin is a hex the
+   * force marched off this turn, so it is always a node of the frozen graph and
+   * this can only return `true` today. It is written because the ticket states the
+   * clause — "if the arc's origin is no longer a legal destination, the force
+   * leaves service" — and because what would *make* an origin illegal is the
+   * manoeuvre pass's subject: ground gone hostile, cut off, or occupied. Answering
+   * any of those here would be the second destination rule the ticket forbids
+   * inventing, so the branch is wired and left unreachable, the way `OPEN_ESCAPE`
+   * and dial 9 are. A later answer is then a change of *this predicate*, not a new
+   * code path.
    */
   #isStandableHex(hex: HexPosition): boolean {
     return this.#state.movementGraph.nodes[hexKey(hex.q, hex.r)] !== undefined;
@@ -1672,19 +1695,9 @@ export class Runtime {
     const detachments = state.forces[actor]!.detachments;
     const index = detachments.findIndex((candidate) => candidate.id === detachmentId);
     if (index < 0) return;
-    const detachment = detachments[index]!;
-    const next: Detachment = {
-      ...detachment,
-      ready: { ...detachment.ready, origins: subtractOrigins(detachment.ready.origins, men) },
-    };
-    // Cohorts still forming were not in the battle and did not rout, so they stay —
-    // and a formation reduced to nothing but them is kept for the same reason 06c
-    // keeps it: it is still a body of men, just not a combat-ready one.
-    if (menOf(next.ready.origins) === 0 && next.pending.length === 0) {
-      detachments.splice(index, 1);
-      return;
-    }
-    detachments[index] = next;
+    const next = withdrawFromDetachment(detachments[index]!, men);
+    if (next === null) detachments.splice(index, 1);
+    else detachments[index] = next;
   }
 
   /**

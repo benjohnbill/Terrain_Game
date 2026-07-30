@@ -50,8 +50,8 @@ export interface MovementArc {
  * approach is meant to cost something again.
  */
 export interface MovementApproach {
-  readonly from: HexPosition;
-  readonly to: HexPosition;
+  readonly fromHex: HexPosition;
+  readonly toHex: HexPosition;
 }
 
 export interface MovementNode {
@@ -320,7 +320,7 @@ function lastSectorCrossing(
   for (let index = travelled; index > 0; index -= 1) {
     const from = route[index - 1]!;
     const to = route[index]!;
-    if (sectorAt(from) !== sectorAt(to)) return { from: { ...from }, to: { ...to } };
+    if (sectorAt(from) !== sectorAt(to)) return { fromHex: { ...from }, toHex: { ...to } };
   }
   return null;
 }

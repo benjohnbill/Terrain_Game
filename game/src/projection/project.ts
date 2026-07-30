@@ -273,7 +273,7 @@ function visibleCommitment(state: MatchState, viewer: ViewerId): CommitmentView 
   const assignments = viewer === 'observer'
     ? {}
     : Object.fromEntries(
-        Object.entries(state.sectorAssignments[viewer] ?? {}).map(([front, ids]) => [front, [...ids]]),
+        Object.entries(state.sectorAssignments[viewer] ?? {}).map(([sector, ids]) => [sector, [...ids]]),
       );
   const spent = spentOf(own);
   return {

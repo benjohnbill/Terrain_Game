@@ -22,6 +22,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { Runtime } from '../runtime/runtime.js';
 import { CRADLE_R1 } from '../world/index.js';
 import { preview } from '../preview/preview.js';
+import { isPartyTo } from '../domain/fronts.js';
 import { musterHexOf } from '../domain/movement.js';
 import type { RecruitmentPosture } from '../domain/recruitment.js';
 import type { ActorId, GameEvent, Intent, MatchView, SectorId } from '../runtime/types.js';
@@ -326,7 +327,7 @@ function TurnStrip({
   // anything already committed, so a pour is always visible and always clearable.
   // Ticket 04's commit-first shell replaces this whole affordance.
   const commitTargets = [...new Set([
-    ...view.fronts.filter((front) => front.owners.includes(viewer)).flatMap((front) => front.sectors),
+    ...view.fronts.filter((front) => isPartyTo(front, viewer)).flatMap((front) => front.sectors),
     ...(focused === null ? [] : [focused]),
     ...Object.keys(view.commitment.allocations).filter((key) => key in view.board.sectors),
   ])].sort();

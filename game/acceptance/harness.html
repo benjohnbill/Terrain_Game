@@ -13,7 +13,7 @@
     -->
     <script type="module">
       import { Runtime, CRADLE_R1, loadWorld } from '/dist/runtime/index.js';
-      import { replayForViewer } from '/acceptance/replay.js';
+      import { replayForViewer, singleBorderSites } from '/acceptance/replay.js';
 
       const open = ({ seed, actors }) => Runtime.open({ world: CRADLE_R1, seed, actors });
 
@@ -50,16 +50,10 @@
             });
           }
 
-          // Both realms pour onto the same sector — the key since ADR 0046 item 4.
-          // Deliberately one that serves a single border, so this fixture produces
-          // exactly one front reading; a sector serving two is reported under both,
-          // which `battle-wiring.test.js` pins on its own.
-          const fronts = runtime.view('observer').fronts;
-          const served = new Map();
-          for (const front of fronts) {
-            for (const id of front.sectors) served.set(id, (served.get(id) ?? 0) + 1);
-          }
-          const sector = fronts.flatMap((front) => front.sectors).find((id) => served.get(id) === 1);
+          // Both realms pour onto the same sector — the key since ADR 0046 item 4,
+          // and deliberately one that serves a single border so this fixture produces
+          // exactly one front reading.
+          const { sector } = singleBorderSites(runtime.view('observer'))[0];
           const events = [];
           for (const actor of actors) {
             events.push(...runtime.submit({ kind: 'allocate-commitment', actor, sector, chips: 4 }));

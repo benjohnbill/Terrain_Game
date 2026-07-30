@@ -85,12 +85,10 @@ export function replayLog(runtime) {
   // The fronts are known only after the partition, and they do not move while
   // resolution is stubbed — so reading them once here is enough for the fixture.
   const probe = runtime.view('observer');
-  const fronts = probe.fronts.map((f) => f.key);
 
   // Chips key on the sector now (ADR 0046 item 4), so the lane pours onto the
   // sectors those borders are made of rather than onto the border names.
   const laneSectors = [...new Set(probe.fronts.flatMap((front) => front.sectors))].sort();
-  void fronts;
 
   for (let turn = 0; turn < 4; turn++) {
     const near = laneSectors[turn % laneSectors.length];
@@ -193,6 +191,31 @@ export function replayLog(runtime) {
     throw new Error('replay fixture never fought over interior ground');
   }
   return log;
+}
+
+/**
+ * Front sectors that serve exactly one contested border, each paired with it.
+ *
+ * Since ADR 0046 item 4 the commit key is a sector, so a fixture that wants one
+ * allocation to produce one front reading has to pick its target deliberately:
+ * `r7_s0` serves two borders and its chips are correctly reported under both.
+ * Fixtures that are about something else filter that real behaviour out here —
+ * `battle-wiring.test.js` pins it head-on instead.
+ *
+ * Lives beside the log rather than in either host's fixture, because both hosts
+ * need it and two copies is how the Node lane and the browser lane would come to
+ * exercise different sectors.
+ */
+export function singleBorderSites(view) {
+  const served = new Map();
+  for (const front of view.fronts) {
+    for (const sector of front.sectors) served.set(sector, (served.get(sector) ?? 0) + 1);
+  }
+  return view.fronts
+    .flatMap((front) => front.sectors
+      .filter((sector) => served.get(sector) === 1)
+      .map((sector) => ({ front: front.key, sector })))
+    .sort((a, b) => (a.sector < b.sector ? -1 : a.sector > b.sector ? 1 : 0));
 }
 
 const GLOBALLY_SAFE_EVENT_TYPES = new Set([

@@ -19,7 +19,7 @@ import assert from 'node:assert/strict';
 const { commitmentShare, CRADLE_R1, Runtime, preview, TURN_COMMITMENT_BUDGET } = await import(
   '../dist/runtime/index.js'
 );
-const { replayForViewer, replayLog, turnSummary } = await import('../acceptance/replay.js');
+const { replayForViewer, replayLog, singleBorderSites, turnSummary } = await import('../acceptance/replay.js');
 
 const FIXTURE = { world: CRADLE_R1, seed: 'turn-0001', actors: ['realm-a', 'realm-b'] };
 
@@ -36,27 +36,8 @@ function openAtDecision(overrides = {}) {
 
 const frontsOf = (runtime, actor) => runtime.view(actor).fronts.map((f) => f.key);
 
-/**
- * Where chips may be poured, paired with the border each site reports under.
- *
- * Since ADR 0046 item 4 the key is a **sector**, so a fixture that wants one
- * allocation to produce one front reading has to pick sites that serve exactly one
- * contested border — `r7_s0` serves two, and its chips are correctly reported under
- * both. Filtering here keeps that real behaviour out of fixtures that are about
- * something else; `battle-wiring.test.js` pins it directly.
- */
-function commitSites(runtime, actor) {
-  const fronts = runtime.view(actor).fronts;
-  const served = new Map();
-  for (const front of fronts) {
-    for (const sector of front.sectors) served.set(sector, (served.get(sector) ?? 0) + 1);
-  }
-  return fronts
-    .flatMap((front) => front.sectors
-      .filter((sector) => served.get(sector) === 1)
-      .map((sector) => ({ front: front.key, sector })))
-    .sort((a, b) => (a.sector < b.sector ? -1 : a.sector > b.sector ? 1 : 0));
-}
+/** Where chips may be poured, paired with the border each site reports under. */
+const commitSites = (runtime, actor) => singleBorderSites(runtime.view(actor));
 
 const allocate = (runtime, actor, sector, chips) =>
   runtime.submit({ kind: 'allocate-commitment', actor, sector, chips, detachmentIds: [] });
