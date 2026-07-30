@@ -93,6 +93,23 @@ doors** — sectors average **5.2 hexes** against march speed **3**; only strait
   avoidable);
 - D9 names three removal-path kinds — **bypass, timing/condition windows, tech** — and
   this map has only the first, free. The other two do not exist anywhere.
+  > **Corrected 2026-07-31 by survey** —
+  > `docs/features/combat-formula/research/choke-removal-economy.md`. The second
+  > sentence is accurate only about *D9's own three kinds*, and as a statement that
+  > removal paths are missing it is wrong: **M11 authored a removal path for every
+  > capped archetype**, discharging D9's obligation on paper. The majority of them
+  > (road building, the Crossing plan's bridging, port staging) are **paid
+  > construction** — a fourth kind D9's taxonomy never names — while timing windows
+  > and tech are used by **zero** M11 rows. Tech is unbuilt with a known seat
+  > (`UNIFORM_QUALITY`); timing windows are genuinely undesigned, and the one adjacent
+  > deferral routed season through **supply**, which cannot carry a crossing-term
+  > effect. The bullet above it — terrain chokes have no erosion link — is the real
+  > asymmetry, and the survey quantifies it: the wall family got an exchange rate, the
+  > terrain family got nouns. **Then the door-share reading sharpens it again** — the
+  > terrain family's rate is *detour cost buys uncapped force*, which is degenerate
+  > rather than missing, because the detour is free. Survey and measurement compose:
+  > the paths exist **and** they are free. **The zero is the subject, not their
+  > absence.**
 
 Two upstreams can change that zero, and both are registered: **R14 interception**
 (price the transit) and **map depth** (price the distance, TC-⑪ froze the grid so it is

@@ -115,7 +115,17 @@ amendment protocol with a TC-⑮ stamp, not forbidden.
 - **TC-⑬'s survivors** — the crossing column (river 0.70, strait 0.55 · ADR 0015) and
   reachable-weakest-link **among doors**.
 - **D9** — frontage is a cap, never a multiplier, because its impact is unbounded. Not
-  abolished; deferred here.
+  abolished; deferred here. **Surveyed 2026-07-31, before any gate was written:**
+  `docs/features/combat-formula/research/choke-removal-economy.md`. Read it before the
+  removal-economy gate — it corrects this pass's opening handoff. D9's obligation is
+  *already discharged on paper* (M11 authored a removal path for every capped
+  archetype); the majority of what M11 authored is **paid construction**, a kind D9's
+  taxonomy does not name; and the only *quantified* removal economy (erosion widens the
+  cap +500) sits on the **wall** family. Under § Bypass B's door-share reading the
+  terrain family does have a rate — detour cost buys uncapped force — and it is
+  **degenerate rather than absent**, because the detour costs 0 turns. The survey and
+  the 24/24-at-zero measurement compose: the paths exist *and* they are free. **The zero
+  is the subject, not their absence.**
 - **D10** — Encirclement's isolated-rout multiplier is already designed; `escape` is a
   named constant awaiting it.
 - **WM-⑤** — rout displacement. Fall-back exists; where a *cut-off* force goes does not.
