@@ -119,6 +119,8 @@ export {
   servingByOrigin,
   splitDetachment,
   splitDetachmentRefusal,
+  transferToFieldRefusal,
+  transferToGarrisonRefusal,
 } from '../domain/force.js';
 export type {
   Detachment,
@@ -127,6 +129,7 @@ export type {
   MovementOrder,
   OriginComposition,
   PendingCohort,
+  PostureSite,
 } from '../domain/force.js';
 export { readFronts, revealTurn } from '../domain/turn.js';
 export type { FrontReading, RevealedTurn } from '../domain/turn.js';
@@ -194,10 +197,12 @@ export type {
   MergeDetachmentsIntent,
   MobilizationSignalView,
   MoveDetachmentIntent,
-  SectorForcesView,
   RealmView,
+  SectorForcesView,
   RejectedEvent,
   SplitDetachmentIntent,
+  TransferToFieldIntent,
+  TransferToGarrisonIntent,
   TurnTier,
   ViewerId,
   WorldIdentity,

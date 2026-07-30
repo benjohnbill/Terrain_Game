@@ -20,7 +20,12 @@ import {
   type CommitmentContext,
 } from '../domain/commitment.js';
 import { GARRISON_PER_BORDER_SECTOR } from '../domain/economy.js';
-import { mergeDetachmentsRefusal, splitDetachmentRefusal } from '../domain/force.js';
+import {
+  mergeDetachmentsRefusal,
+  splitDetachmentRefusal,
+  transferToFieldRefusal,
+  transferToGarrisonRefusal,
+} from '../domain/force.js';
 import {
   buildMovementGraph,
   FORCED_MARCH_EXTRA_CAP,
@@ -330,6 +335,50 @@ export function preview(view: MatchView, intent: Intent): PreviewCard {
           (intent as { detachmentIds?: unknown }).detachmentIds,
         );
     return refusal === null ? { admissible: true } : no(refusal);
+  }
+
+  if (intent.kind === 'transfer-to-garrison' || intent.kind === 'transfer-to-field') {
+    if (intent.actor !== view.viewer) {
+      return no(`A posture transfer is previewed by the realm making it; "${view.viewer}" cannot preview "${intent.actor}"'s.`);
+    }
+    const windowRefusal = lockRefusal(commitmentContext(view, intent.actor), intent.actor);
+    if (windowRefusal !== null) return no(windowRefusal);
+
+    // The same sites the Runtime reads, rebuilt from the view: a realm sees its own
+    // holdings, its own shields and its own formations exactly, so this needs no truth
+    // the projection withholds.
+    const shields = new Map(view.garrisons.map((garrison) => [garrison.sectorId, garrison]));
+    const controlled = view.realms.find((realm) => realm.actor === intent.actor)?.sectors ?? [];
+    const sites = [...controlled].sort().map((sectorId) => {
+      const shield = shields.get(sectorId);
+      const garrisonMen = shield?.men ?? 0;
+      return {
+        sectorId,
+        musterHex: musterHexOf(view.board, sectorId),
+        garrisonMen,
+        garrisonHeadroom: Math.max(0, GARRISON_PER_BORDER_SECTOR - garrisonMen),
+        readyShieldMen: shield?.readyMen ?? 0,
+      };
+    });
+
+    const postureRefusal = intent.kind === 'transfer-to-garrison'
+      ? transferToGarrisonRefusal(
+          view.detachments.map((detachment) => ({
+            id: detachment.id,
+            position: detachment.position,
+            men: detachment.men,
+            readyMen: detachment.readyMen,
+          })),
+          sites,
+          (intent as { detachmentId?: unknown }).detachmentId,
+          (intent as { men?: unknown }).men,
+        )
+      : transferToFieldRefusal(
+          sites,
+          (intent as { sector?: unknown }).sector,
+          (intent as { men?: unknown }).men,
+        );
+    return postureRefusal === null ? { admissible: true } : no(postureRefusal);
   }
 
   return no(`No resolution is wired for intent kind "${intent.kind}" yet.`);

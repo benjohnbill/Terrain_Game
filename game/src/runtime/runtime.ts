@@ -62,12 +62,15 @@ import {
   splitDetachment,
   splitDetachmentRefusal,
   subtractOrigins,
+  transferToFieldRefusal,
+  transferToGarrisonRefusal,
   withdrawFromDetachment,
   type Detachment,
   type ForceCohort,
   type GarrisonForce,
   type OriginComposition,
   type PendingCohort,
+  type PostureSite,
 } from '../domain/force.js';
 import { battleAccrual, turnUpkeep } from '../domain/fatigue.js';
 import { contestedFronts } from '../domain/fronts.js';
@@ -505,6 +508,14 @@ export class Runtime {
       const { detachmentIds } = intent as { detachmentIds?: unknown };
       return this.#mergeDetachments(intent.actor, detachmentIds);
     }
+    if (intent.kind === 'transfer-to-garrison') {
+      const { detachmentId, men } = intent as { detachmentId?: unknown; men?: unknown };
+      return this.#transferToGarrison(intent.actor, detachmentId, men);
+    }
+    if (intent.kind === 'transfer-to-field') {
+      const { sector, men } = intent as { sector?: unknown; men?: unknown };
+      return this.#transferToField(intent.actor, sector, men);
+    }
     if (intent.kind === 'lock-commitment') {
       return this.#lockCommitment(intent.actor);
     }
@@ -601,6 +612,148 @@ export class Runtime {
       detachmentId: retained.id,
       childDetachmentId: child.id,
       men,
+    })];
+  }
+
+  /**
+   * The sectors this actor controls, as a posture transfer reads them.
+   *
+   * One reader for the Runtime and the preview alike — `preview` builds the same
+   * shape from a view, and two copies of "where may men change posture" is how the
+   * two would come to answer it differently.
+   */
+  #postureSites(actor: ActorId): PostureSite[] {
+    const state = this.#state;
+    return [...state.realms[actor]!.sectors].sort().map((sectorId) => {
+      const garrison = state.garrisons[sectorId];
+      const readyShieldMen = garrison === undefined ? 0 : menOf(garrison.ready);
+      const forming = garrison === undefined ? 0 : garrison.pending.reduce(
+        (sum, cohort) => sum + menOf(cohort.origins),
+        0,
+      );
+      const garrisonMen = readyShieldMen + forming;
+      return {
+        sectorId,
+        musterHex: musterHexOf(state.loadedWorld.artifact, sectorId),
+        garrisonMen,
+        garrisonHeadroom: Math.max(0, GARRISON_PER_BORDER_SECTOR - garrisonMen),
+        readyShieldMen,
+      };
+    });
+  }
+
+  /**
+   * Move field men into the shield they are standing on — **R18 (ii)**.
+   *
+   * Garrison and field are the same men in different postures, so filling a shield is
+   * a transfer rather than a regeneration pulse: M12's automatic +10% was retired by
+   * its own 2026-07-08 amendment (MT-⑤ / ADR 0027), and R18 replaced the search for a
+   * rate with this.
+   *
+   * **Priced by movement and nothing else** — "zero new pricing devices" (R18 ii).
+   * Turns and fatigue, never 행동력, because changing posture *is* moving men: the
+   * cost is the march that brought them to this sector, which is why standing on the
+   * muster hex is the legality rule and why there is no transfer delay to invent. The
+   * men carry their wear across unchanged; a shield holds no wear ledger of its own
+   * (06c), so what arrives is bodies.
+   *
+   * `GARRISON_PER_BORDER_SECTOR` bounds it (M13a, ADR 0014 keeping garrison ceilings
+   * local), which is what stops a realm parking its army behind M5's ×4.8.
+   */
+  #transferToGarrison(actor: ActorId, detachmentId: unknown, men: unknown): GameEvent[] {
+    const state = this.#state;
+    const intent = { kind: 'transfer-to-garrison', actor };
+    const windowRefusal = this.#formationWindowRefusal(actor);
+    if (windowRefusal !== null) return [this.#reject(intent, windowRefusal)];
+
+    const forces = state.forces[actor]!;
+    const sites = this.#postureSites(actor);
+    const refusal = transferToGarrisonRefusal(
+      forces.detachments.map((detachment) => ({
+        id: detachment.id,
+        position: detachment.position,
+        men: menOf(detachment.ready.origins),
+        readyMen: menOf(detachment.ready.origins),
+      })),
+      sites,
+      detachmentId,
+      men,
+    );
+    if (refusal !== null) return [this.#reject(intent, refusal)];
+
+    const index = forces.detachments.findIndex((detachment) => detachment.id === detachmentId);
+    const source = forces.detachments[index]!;
+    const site = sites.find((candidate) =>
+      candidate.musterHex.q === source.position.q && candidate.musterHex.r === source.position.r)!;
+    const moved = men as number;
+
+    // The men leave the formation by WM-⑤'s leaving-service surgery — the register is
+    // untouched, because nobody died and nobody was raised.
+    const leaving = subtractOrigins(source.ready.origins, menOf(source.ready.origins) - moved);
+    const next = withdrawFromDetachment(source, moved);
+    if (next === null) forces.detachments.splice(index, 1);
+    else forces.detachments.splice(index, 1, next);
+
+    const garrison = state.garrisons[site.sectorId] ?? { ready: {}, pending: [] };
+    const ready: Record<SectorId, number> = { ...garrison.ready };
+    accumulateOrigins(ready, leaving);
+    state.garrisons[site.sectorId] = { ready, pending: garrison.pending };
+
+    return [this.#turnEvent('posture-transferred', 'decision', {
+      actor,
+      sector: site.sectorId,
+      into: 'garrison',
+      men: moved,
+    })];
+  }
+
+  /**
+   * Take ready shield men back into the field at their own sector — R18 (ii)'s other
+   * direction, and the one the gamble is about.
+   *
+   * A free instant transfer was rejected because "an action with no cost is not a
+   * decision": stripping a border to mass a decisive field army must be a gamble.
+   * The cost is still movement and still nothing new — the men appear as a formation
+   * standing on that sector's muster hex, so every turn they spend marching to
+   * wherever they are wanted is a turn the border is bare and the enemy can read it.
+   *
+   * They arrive rested. A garrison keeps no wear ledger (06c: an unattended shield
+   * fights at the unattended baseline), so there is no wear to carry out — and
+   * inventing one here would be a new dial.
+   */
+  #transferToField(actor: ActorId, sectorId: unknown, men: unknown): GameEvent[] {
+    const state = this.#state;
+    const intent = { kind: 'transfer-to-field', actor };
+    const windowRefusal = this.#formationWindowRefusal(actor);
+    if (windowRefusal !== null) return [this.#reject(intent, windowRefusal)];
+
+    const sites = this.#postureSites(actor);
+    const refusal = transferToFieldRefusal(sites, sectorId, men);
+    if (refusal !== null) return [this.#reject(intent, refusal)];
+
+    const forces = state.forces[actor]!;
+    const site = sites.find((candidate) => candidate.sectorId === sectorId)!;
+    const garrison = state.garrisons[site.sectorId]!;
+    const moved = men as number;
+
+    const leaving = subtractOrigins(garrison.ready, menOf(garrison.ready) - moved);
+    garrison.ready = subtractOrigins(garrison.ready, moved);
+
+    const ordinal = forces.nextDetachmentOrdinal;
+    forces.nextDetachmentOrdinal += 1;
+    forces.detachments.push({
+      id: `detachment:${actor}:${ordinal}`,
+      position: { ...site.musterHex },
+      ready: { origins: leaving, fatigue: 0 },
+      pending: [],
+      movement: null,
+    });
+
+    return [this.#turnEvent('posture-transferred', 'decision', {
+      actor,
+      sector: site.sectorId,
+      into: 'field',
+      men: moved,
     })];
   }
 

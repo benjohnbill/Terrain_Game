@@ -299,6 +299,71 @@ export function splitDetachmentRefusal(
   return null;
 }
 
+/**
+ * One sector, as a posture transfer needs to read it.
+ *
+ * Plain values rather than state, so the Runtime and `preview` validate a transfer
+ * against exactly the same question and cannot come to disagree about it.
+ */
+export interface PostureSite {
+  readonly sectorId: SectorId;
+  readonly musterHex: HexPosition;
+  /** Men already manning the shield, ready and forming alike — M13a's local cap. */
+  readonly garrisonMen: number;
+  /** `GARRISON_PER_BORDER_SECTOR − garrisonMen`, floored at zero. */
+  readonly garrisonHeadroom: number;
+  /** Ready shield men, the only ones a transfer out may take. */
+  readonly readyShieldMen: number;
+}
+
+/**
+ * Shared refusal for moving field men into the shield they are standing on.
+ *
+ * **Why standing on it is the whole legality rule** (R18 ii): a transfer is priced
+ * by movement and nothing else — "zero new pricing devices" — so the turns it costs
+ * are the turns of the march that brought the men here. There is no separate
+ * transfer delay to invent, and no way to fill a shield from a distance.
+ */
+export function transferToGarrisonRefusal(
+  detachments: readonly (FormationDetachment & { readonly readyMen: number })[],
+  sites: readonly PostureSite[],
+  detachmentId: unknown,
+  men: unknown,
+): string | null {
+  if (typeof detachmentId !== 'string' || detachmentId.length === 0) {
+    return 'A posture transfer must name a detachment.';
+  }
+  const source = detachments.find((detachment) => detachment.id === detachmentId);
+  if (source === undefined) return `Detachment "${detachmentId}" is not owned by this actor.`;
+  const site = sites.find((candidate) =>
+    candidate.musterHex.q === source.position.q && candidate.musterHex.r === source.position.r);
+  if (site === undefined) {
+    return `Detachment "${detachmentId}" is not standing on a controlled sector's muster hex.`;
+  }
+  if (typeof men !== 'number' || !Number.isInteger(men) || men <= 0 || men > source.readyMen) {
+    return `A transfer must move a positive whole number up to ${source.readyMen}; got ${String(men)}.`;
+  }
+  if (men > site.garrisonHeadroom) {
+    return `${site.sectorId}'s shield has room for ${site.garrisonHeadroom} more men, not ${men}.`;
+  }
+  return null;
+}
+
+/** Shared refusal for taking ready shield men back into the field at their sector. */
+export function transferToFieldRefusal(
+  sites: readonly PostureSite[],
+  sectorId: unknown,
+  men: unknown,
+): string | null {
+  if (typeof sectorId !== 'string') return 'A posture transfer must name a sector.';
+  const site = sites.find((candidate) => candidate.sectorId === sectorId);
+  if (site === undefined) return `Sector "${sectorId}" is not controlled by this actor.`;
+  if (typeof men !== 'number' || !Number.isInteger(men) || men <= 0 || men > site.readyShieldMen) {
+    return `A transfer must move a positive whole number up to ${site.readyShieldMen}; got ${String(men)}.`;
+  }
+  return null;
+}
+
 export function mergeDetachments(
   sources: readonly Detachment[], mergedId: string,
 ): Detachment {

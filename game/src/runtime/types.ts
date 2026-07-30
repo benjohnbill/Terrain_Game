@@ -101,6 +101,8 @@ export type Intent =
   | MoveDetachmentIntent
   | SplitDetachmentIntent
   | MergeDetachmentsIntent
+  | TransferToGarrisonIntent
+  | TransferToFieldIntent
   | LockCommitmentIntent
   | { readonly kind: string; readonly actor: ActorId };
 
@@ -189,6 +191,27 @@ export interface MergeDetachmentsIntent {
   readonly kind: 'merge-detachments';
   readonly actor: ActorId;
   readonly detachmentIds: readonly string[];
+}
+
+/**
+ * Move ready field men into the shield of the sector they stand on (R18 ii).
+ *
+ * Priced by movement alone — turns and fatigue, never 행동력 — so the legality rule
+ * is that the detachment is already there.
+ */
+export interface TransferToGarrisonIntent {
+  readonly kind: 'transfer-to-garrison';
+  readonly actor: ActorId;
+  readonly detachmentId: string;
+  readonly men: number;
+}
+
+/** Take ready shield men back into the field at their own sector (R18 ii). */
+export interface TransferToFieldIntent {
+  readonly kind: 'transfer-to-field';
+  readonly actor: ActorId;
+  readonly sector: SectorId;
+  readonly men: number;
 }
 
 /** Something the Runtime did. Returned by `submit`; never pushed. */
