@@ -224,7 +224,19 @@ before intercepting it is a decision).
 >   manoeuvre and could not" would come from a match without a reacting opponent —
 >   which is a weaker source for exactly the sentence step 3 exists to protect.
 >
-> Until this is ruled, step 2 ("no design") still governs and the pass stays
+> **DEFERRED by user ruling, 2026-07-31, with a trigger: rule this when ticket 09
+> lands.** Not "later" — 09 is the last ticket before the loop binds, since 10 is
+> where it first has teeth. Two reasons the wait is worth something rather than
+> merely cheap: by then 06e/06d/07 have closed the match loop and 08/09 have added
+> fog and the EVAL BAR, so the ruling is made against a game that runs instead of
+> against three paper shapes; and the choice between (b) and (c) turns on *how much
+> evidence a match actually yields*, which is exactly what 07 through 09 reveal.
+>
+> **Whoever claims ticket 10 must not claim it before this is ruled** — the ⛔ above
+> is that ticket's real gate, not its `Blocked by: 09` line. A session that lands 09
+> should raise this ruling as the next order of business.
+>
+> Until it is ruled, step 2 ("no design") still governs and the pass stays
 > scoped-not-designed. Registered in `docs/SYNC-DEBT.md`.
 
 ## Not this pass

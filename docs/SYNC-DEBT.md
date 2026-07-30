@@ -1680,9 +1680,11 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   files, with no session holding both. **Owed: a user ruling**, not a mechanism. The
   tracker's § Ordering carries the three candidate shapes (split the pass · run 13
   with the four plans absent · fire the gates on ticket 07's match instead), recorded
-  unranked. Until it is ruled, the pass's step 2 ("no design") still governs. Note the
-  practical urgency is low — the frontier is ticket 06e and the loop only binds at
-  ticket 10 — but the cost of finding it late is a pass that cannot start.
+  unranked. Until it is ruled, the pass's step 2 ("no design") still governs.
+  **Deferred by user ruling the same day, with a trigger: rule it when ticket 09
+  lands** — 09 is the last ticket before the loop binds, and by then the ruling is
+  made against a running game rather than three paper shapes. The row stays open
+  until then, and a session that lands 09 raises it as the next order of business.
 
 ## Paid
 
