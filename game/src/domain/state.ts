@@ -119,6 +119,23 @@ export interface MatchState {
    */
   homeland: Record<SectorId, ActorId>;
 
+  /**
+   * Acquired ground's integration clock — stable turns completed since it
+   * integrated (ADR 0022/0029, given its transfer channel by ADR 0044).
+   *
+   * **Sparse on purpose.** An absent key means "not ripening": native ground, and
+   * acquired ground that has reached its authored usable value and had its entry
+   * dropped. So the opening state is `{}` rather than 56 rows saying nothing is
+   * happening, and every reader degrades to the authored value.
+   *
+   * Occupied-but-unintegrated ground has no entry either — limbo is read off
+   * `homeland` instead (controlled by one realm, homeland of the other, so it pays
+   * neither). The entry appears the moment integration flips `homeland`, which is
+   * why these two records are separate: one says *whose it counts as*, this one says
+   * *how far along it is*.
+   */
+  ripening: Record<SectorId, number>;
+
   /** The two stored stocks, per realm (M14). Everything else is recomputed. */
   readonly forces: Readonly<Record<ActorId, RealmForces>>;
 

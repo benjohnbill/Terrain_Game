@@ -41,6 +41,7 @@ import {
   forceLimitOf,
   GARRISON_PER_BORDER_SECTOR,
   incomeOf,
+  fullyRipened,
   registerOf,
   START_FIELD_FRACTION,
   startingTreasuryOf,
@@ -152,6 +153,13 @@ interface SectorFormation {
   readonly detachmentId: string | null;
   readonly men: number;
   readonly wear: number;
+}
+
+/** One sector changing hands, as ADR 0044's transfer reads it. */
+interface SectorCapture {
+  readonly sector: SectorId;
+  readonly taker: ActorId;
+  readonly loser: ActorId;
 }
 
 /**
@@ -274,6 +282,10 @@ export class Runtime {
       phase: 'capital-selection',
       capitals: {},
       homeland,
+      // Empty, and honestly so: at the opening every realm stands on its own ground,
+      // which is already whole. The first entry appears when the first capture
+      // integrates.
+      ripening: {},
       forces,
       garrisons,
       turn: 1,
@@ -1042,6 +1054,46 @@ export class Runtime {
           },
         }];
       }
+      if (event.type === 'sector-captured') {
+        // Ground changing hands is public: it is the map, and geography sits in the
+        // open on the sealed information ladder.
+        //
+        // `civilians` is **not** published, and that is the whole point of naming
+        // fields here. It is the exact body count the loser ceded, so publishing it
+        // would hand both the winner and an observer an exact reading of the loser's
+        // register at that sector — precisely the truth ticket 08's bands are for.
+        // Each realm reads its own side of the transfer through `view(actor).economy`.
+        return [{
+          type: event.type,
+          turn: event.turn,
+          detail: {
+            tier: detail.tier,
+            sector: detail.sector,
+            taker: detail.taker,
+            loser: detail.loser,
+            recaptured: detail.recaptured,
+          },
+        }];
+      }
+      if (event.type === 'shield-dissolved') {
+        // *That* the shield on fallen ground stopped existing is public — the map
+        // shows an unmanned sector either way. The counts are not: `leftService` and
+        // `forming` are exact strength readings, which is ticket 08's to band.
+        return [{
+          type: event.type,
+          turn: event.turn,
+          detail: { tier: detail.tier, sector: detail.sector, actor: detail.actor },
+        }];
+      }
+      if (event.type === 'sector-integrated') {
+        // Limbo ending is equally public: it says whose the ground now counts as, not
+        // what it is worth. The worth is the owner's own reading.
+        return [{
+          type: event.type,
+          turn: event.turn,
+          detail: { tier: detail.tier, sector: detail.sector, actor: detail.actor },
+        }];
+      }
       if (event.type === 'realm-recomputed' || event.type === 'upkeep-resolved') {
         // Both report *that* a realm's background beat ran. Their numbers — income,
         // force limit, per-force wear — stay behind `view(actor)`, which is the only
@@ -1099,6 +1151,13 @@ export class Runtime {
     ));
     events.push(...this.#resolveEngagements(engagements));
     events.push(...this.#updateMobilizationSignals());
+    // Between the battles and the income, and in that order for a reason: a sector
+    // taken *this* turn was the target of attack resolution, so ADR 0022's stable
+    // turn excludes it and it integrates no earlier than next turn. Income then reads
+    // holdings that still exclude it — which is limbo, computed rather than flagged.
+    events.push(...this.#integrateOccupied(
+      new Set(engagements.map((engagement) => engagement.sector)),
+    ));
     events.push(...this.#resolveIncome());
 
     // ── background ────────────────────────────────────────────────────────────
@@ -1202,7 +1261,7 @@ export class Runtime {
       }));
       const result = settleRecruitmentBatch({
         requests,
-        forceLimit: forceLimitOf(state.loadedWorld.artifact.sectors, holdings),
+        forceLimit: forceLimitOf(state.loadedWorld.artifact.sectors, holdings, state.ripening),
         field: fieldOf(forces),
         garrison: garrisonOf(state, actor),
         register: Object.values(forces.registers).reduce((sum, men) => sum + men, 0),
@@ -1507,6 +1566,10 @@ export class Runtime {
       readonly actor: ActorId;
       readonly formations: readonly SectorFormation[];
     }[] = [];
+    // Deferred for the same reason, one step further: a capture reads the loser's
+    // settled register, so it must not run while another engagement's casualties are
+    // still to be taken.
+    const captures: SectorCapture[] = [];
 
     for (const engagement of engagements) {
       const outcome = resolveBattle(battleInputOf(engagement));
@@ -1525,6 +1588,14 @@ export class Runtime {
           actor,
           formations: this.#formationsOn(engagement.sector)
             .filter((formation) => formation.actor === actor),
+        });
+      }
+
+      if (outcome.sectorFalls) {
+        captures.push({
+          sector: engagement.sector,
+          taker: engagement.attacker.actor,
+          loser: engagement.defender.actor,
         });
       }
 
@@ -1557,6 +1628,188 @@ export class Runtime {
     }
 
     for (const rout of routs) this.#displaceRouted(rout.sector, rout.actor, rout.formations);
+    // Last, and after the routs for the same reason the routs come after the loop:
+    // the transfer reads the loser's *settled* books. Casualties have been taken and
+    // survivors have left service, so the civilians standing on this ground are known.
+    // Displacement cannot disturb it — moving a formation changes where men are, never
+    // which register they answer to.
+    for (const capture of captures) events.push(...this.#captureSector(capture));
+
+    return events;
+  }
+
+  /**
+   * Ground changes hands — **ADR 0044**, and the record written is `homeland`'s
+   * companion rather than `homeland` itself.
+   *
+   * Three things happen at once, and the third is the one with a seal behind every
+   * clause:
+   *
+   * 1. **control moves now.** ADR 0022: "control and route effects apply
+   *    immediately". The taker's `realms.sectors` gains it, the loser's loses it.
+   * 2. **`homeland` does not move yet**, so for the rest of this turn the sector is
+   *    controlled by one realm and homeland of the other, and `holdsOf` gives it to
+   *    neither. That is OG-③'s limbo as ADR 0044 re-read it: an interval, not an end
+   *    state, ended by `#integrateOccupied`.
+   * 3. **the civilians transfer, unripened.** ADR 0044 item 3 keeps bodies out of the
+   *    ripening lag (ADR 0029 names yield and the ceiling, not people), and ADR 0045
+   *    item 4 says which bodies: *remaining civilians* travel with the land while
+   *    serving men keep their realm and their origin. So the loser is left holding
+   *    exactly the share still standing in its own ranks.
+   *
+   * What this deliberately is **not** is R17's `register × (pop ÷ total pop)`. At
+   * sector grain there is nothing to apportion — the sector's own civilians are the
+   * answer, which is the whole reason the grain moved. The edge R17 guarded is
+   * guarded by construction rather than by formula: a sector bled dry has few
+   * civilians left, so it cannot hand its taker fresh men.
+   */
+  #captureSector({ sector, taker, loser }: SectorCapture): GameEvent[] {
+    const state = this.#state;
+    const events: GameEvent[] = [];
+    const takerForces = state.forces[taker]!;
+    const loserForces = state.forces[loser]!;
+
+    const loserSectors = state.realms[loser]!.sectors;
+    const at = loserSectors.indexOf(sector);
+    if (at !== -1) loserSectors.splice(at, 1);
+    if (!state.realms[taker]!.sectors.includes(sector)) state.realms[taker]!.sectors.push(sector);
+    events.push(...this.#emptyCapturedShield(sector, loser));
+
+    // Serving men originating here, across every posture and both ready and pending —
+    // the same reader recruitment and the projection use, so the three cannot come to
+    // disagree about what "still in the ranks" means.
+    const loserGarrisons = state.realms[loser]!.sectors.flatMap((held) => {
+      const garrison = state.garrisons[held];
+      return garrison === undefined ? [] : [garrison];
+    });
+    const stillServing = servingByOrigin(loserForces, loserGarrisons)[sector] ?? 0;
+    const civilians = Math.max(0, (loserForces.registers[sector] ?? 0) - stillServing);
+
+    if (stillServing === 0) delete loserForces.registers[sector];
+    else loserForces.registers[sector] = stillServing;
+    if (civilians > 0) {
+      takerForces.registers[sector] = (takerForces.registers[sector] ?? 0) + civilians;
+    }
+
+    // A recapture is not a conquest: ground returning to its own homeland is whole
+    // again, which is what `homeland` surviving a capture is for.
+    if (state.homeland[sector] === taker) delete state.ripening[sector];
+
+    events.push(this.#turnEvent('sector-captured', 'payoff', {
+      sector,
+      taker,
+      loser,
+      civilians,
+      recaptured: state.homeland[sector] === taker,
+    }));
+    return events;
+  }
+
+  /**
+   * A shield on ground that just fell — the case every other seal forbids an answer
+   * to, leaving exactly one.
+   *
+   * **It is reachable.** `sectorFalls` is `attackerWins`, while `defenderRouted`
+   * additionally needs losses past `ROUT_FRACTION` and a non-DELAYING method. So a
+   * narrow win, or a broken DELAYING defense, takes the ground while part of the
+   * shield still stands. 06e's rout path never sees those men.
+   *
+   * Left alone, `state.garrisons` is keyed by sector, so the taker's `garrisonOf`
+   * would count the loser's survivors as its own — men changing sides for free — and
+   * the taker's `register − serving` would go negative at that sector and throw.
+   *
+   * Every alternative is closed by a seal, which is why this is assembly rather than
+   * a new rule:
+   *
+   * - **the taker keeps them** is barred outright by ADR 0045 item 4, "serving bodies
+   *   retain their present realm and origin composition" on land transfer;
+   * - **the loser keeps them where they stand** needs a garrison detached from its
+   *   locality, and a mobile garrison is the system 06b and 06c explicitly refused;
+   * - **they withdraw to somewhere** needs a destination, and the only candidate is
+   *   the capital guard, which is ticket 07's `needs-info` and unbuilt.
+   *
+   * So WM-⑤ (v) applies, and by its own stated reasoning rather than by extension:
+   * it covers "a locality-fixed shield with no locality left", and gives that
+   * reasoning — not the rout — as why keeping them in service is impossible. They
+   * **leave service and stay on the register**, becoming civilians on this ground a
+   * moment before it changes hands, which is the consequence the geography/battle
+   * grill ruled knowingly when it chose (v).
+   *
+   * Cohorts still forming are the one exception, and it is sealed separately: ADR
+   * 0045 item 7 makes a captured not-yet-ready cohort "a match-permanent loss: its
+   * origin components and the same register shares are removed, without refund,
+   * prisoners, or captor-owned substance."
+   */
+  #emptyCapturedShield(sector: SectorId, loser: ActorId): GameEvent[] {
+    const state = this.#state;
+    const garrison = state.garrisons[sector];
+    if (garrison === undefined) return [];
+
+    const leftService = menOf(garrison.ready);
+    const forming = garrison.pending.reduce((sum, cohort) => sum + menOf(cohort.origins), 0);
+    if (leftService === 0 && forming === 0) return [];
+
+    // The forming cohorts are destroyed, register and all — the only path here that
+    // takes bodies out of the world rather than out of service.
+    for (const cohort of garrison.pending) {
+      this.#removeDead(loser, cohort.origins, menOf(cohort.origins));
+    }
+    state.garrisons[sector] = { ready: {}, pending: [] };
+
+    return [this.#turnEvent('shield-dissolved', 'payoff', {
+      sector,
+      actor: loser,
+      leftService,
+      forming,
+    })];
+  }
+
+  /**
+   * Limbo ends and acquired ground starts paying — **ADR 0022's stable turn**.
+   *
+   * Its three clauses are all here: the sector must end the turn under the same
+   * faction (it is in this realm's `sectors` when this runs), must not have been
+   * contested during the turn, and must not have been the target of attack/defense
+   * resolution — the last two being why `battleSites` is a parameter and why this
+   * runs after the engagements rather than before them.
+   *
+   * Integration is `homeland` flipping. From that moment the ground pays its taker,
+   * and `ripening` starts the clock at zero so the first payment is the sealed
+   * 50%/60%. Every later stable turn adds ten points until the authored value is
+   * reached, at which point the entry is dropped and the ground is ordinary.
+   *
+   * A contested turn does not *reset* the clock, it only fails to advance it: ADR
+   * 0022 says recovery happens per stable turn, and nothing anywhere says an
+   * interrupted occupation starts over.
+   */
+  #integrateOccupied(battleSites: ReadonlySet<SectorId>): GameEvent[] {
+    const state = this.#state;
+    const events: GameEvent[] = [];
+    const sectors = state.loadedWorld.artifact.sectors;
+
+    for (const actor of state.actors) {
+      for (const sector of [...state.realms[actor]!.sectors].sort()) {
+        if (battleSites.has(sector)) continue;
+        const sectorData = sectors[sector];
+        if (sectorData === undefined) continue;
+
+        if (state.homeland[sector] !== actor) {
+          state.homeland[sector] = actor;
+          state.ripening[sector] = 0;
+          events.push(this.#turnEvent('sector-integrated', 'background', { sector, actor }));
+          continue;
+        }
+
+        const stableTurns = state.ripening[sector];
+        if (stableTurns === undefined) continue;
+        const next = stableTurns + 1;
+        // No event when ripening finishes. Nothing consumes one, and its effect is
+        // already legible where it belongs — in the owner's own income and ceiling.
+        // Dropping the key *is* the completion.
+        if (fullyRipened(sectorData, next)) delete state.ripening[sector];
+        else state.ripening[sector] = next;
+      }
+    }
 
     return events;
   }
@@ -1846,8 +2099,8 @@ export class Runtime {
     for (const actor of state.actors) {
       const forces = state.forces[actor]!;
       const holdings = holdingsOf(state, actor);
-      const forceLimit = forceLimitOf(state.loadedWorld.artifact.sectors, holdings);
-      const income = incomeOf(state.loadedWorld.artifact.sectors, holdings);
+      const forceLimit = forceLimitOf(state.loadedWorld.artifact.sectors, holdings, state.ripening);
+      const income = incomeOf(state.loadedWorld.artifact.sectors, holdings, state.ripening);
       forces.treasury += income;
 
       events.push(

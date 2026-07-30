@@ -439,7 +439,7 @@ test('fronts resolve in a canonical order that no actor decides', () => {
   assert.deepEqual(order, [...order].sort(), 'resolution order followed submission order');
 });
 
-test('standalone movement spends no commitment and changes no ownership', () => {
+test('standalone movement spends no commitment, and moves a border only by battle', () => {
   const runtime = openAtDecision();
   const id = runtime.view('realm-a').detachments[0].id;
   const allocationBefore = runtime.view('realm-a').commitment;
@@ -452,9 +452,30 @@ test('standalone movement spends no commitment and changes no ownership', () => 
   assert.equal(movement[0].type, 'movement-planned');
   assert.deepEqual(runtime.view('realm-a').commitment, allocationBefore);
 
-  lock(runtime, 'realm-a');
-  lock(runtime, 'realm-b');
-  assert.deepEqual(runtime.view('observer').realms.map((r) => [...r.sectors]), before);
+  const closing = [...lock(runtime, 'realm-a'), ...lock(runtime, 'realm-b')];
+
+  // The commitment claim above is this test's subject and is unchanged. The ownership
+  // clause is re-aimed: it used to read "changes no ownership", true while nothing
+  // could take ground. Since 06e an army ending its turn on hostile ground fights
+  // there, and since 06d winning takes the sector — so the honest claim is that every
+  // border that moved is accounted for by a capture, not that none moved.
+  const captured = new Set(closing
+    .filter((event) => event.type === 'sector-captured')
+    .map((event) => event.detail.sector));
+  const after = runtime.view('observer').realms.map((r) => [...r.sectors]);
+  for (const [index, sectors] of after.entries()) {
+    const held = new Set(sectors);
+    const wasHeld = new Set(before[index]);
+    const moved = [
+      ...sectors.filter((sectorId) => !wasHeld.has(sectorId)),
+      ...before[index].filter((sectorId) => !held.has(sectorId)),
+    ];
+    assert.deepEqual(
+      moved.filter((sectorId) => !captured.has(sectorId)),
+      [],
+      'a border moved without a battle taking it',
+    );
+  }
 });
 
 test('submit returns immediately and never sleeps', () => {

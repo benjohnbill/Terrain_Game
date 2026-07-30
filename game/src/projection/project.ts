@@ -74,8 +74,8 @@ function realmView(state: MatchState, actor: ActorId): RealmView {
     population,
     economy,
     landValue: landValueOf(sectors, holdings),
-    yield: incomeOf(sectors, holdings),
-    forceLimit: forceLimitOf(sectors, holdings),
+    yield: incomeOf(sectors, holdings, state.ripening),
+    forceLimit: forceLimitOf(sectors, holdings, state.ripening),
   };
 }
 
@@ -117,8 +117,8 @@ function visibleEconomy(state: MatchState, viewer: ViewerId): EconomyView | null
   return {
     actor: viewer,
     treasury: forces.treasury,
-    income: incomeOf(sectors, holdings),
-    forceLimit: forceLimitOf(sectors, holdings),
+    income: incomeOf(sectors, holdings, state.ripening),
+    forceLimit: forceLimitOf(sectors, holdings, state.ripening),
     field,
     garrison,
     register,
