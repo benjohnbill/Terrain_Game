@@ -15,8 +15,8 @@ Status: **resolved, with two items reported open** (2026-07-31, branch
 The open items are the economy re-measurement, whose trigger is ticket 13, and
 garrison → field posture transfer, which is HELD pending a user ruling on the wear
 ledger across a posture change. Both are marked in the list below and registered on
-`docs/SYNC-DEBT.md`. Was `ready-for-agent` the same day: the
-register moves to **sector** grain, MT-② amended, and 06e cleared.)
+`docs/SYNC-DEBT.md`. It was `ready-for-agent` earlier the same day, once the
+register moved to **sector** grain with MT-② amended and 06e cleared.)
 
 **A second grain ruling was owed and is taken (user, 2026-07-31).** The register's
 move to sector grain does not stand alone: `OriginComposition` is keyed by the same
