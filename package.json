@@ -17,7 +17,9 @@
     "metrics:slice2": "node mockup/operational-layer/metrics.js",
     "metrics:fizzle": "node mockup/operational-layer/fizzle.js",
     "lint:docs": "node scripts/sync-docs-law.js --check && node scripts/audit-lint.js",
-    "sync:docs-law": "node scripts/sync-docs-law.js"
+    "sync:docs-law": "node scripts/sync-docs-law.js",
+    "vocab:render": "node scripts/vocab/cli.js render",
+    "vocab:lock": "node scripts/vocab/cli.js lock"
   },
   "devDependencies": {
     "@playwright/test": "^1.62.0",

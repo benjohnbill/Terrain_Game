@@ -1,6 +1,6 @@
 ---
 name: doc-audit
-description: Run and triage this repo's documentation-governance audit — the term-inventory.json / doc-registry.json baselines and npm run lint:docs. Use when closing a session that touched docs/DOMAIN_MAP.md/GLOSSARY files/SYNC-DEBT.md (documentation-law ritual duty 7), when npm run lint:docs reports findings that need triage, or when a periodic full re-harvest is due (several terms registered without an inventory patch, or it's been a while since the last dated report in docs/audits/).
+description: Run and triage this repo's documentation-governance audit — the term-inventory.json / doc-registry.json baselines, npm run lint:docs, and the vocabulary dashboard. Use when closing a session that touched docs/DOMAIN_MAP.md/GLOSSARY files/SYNC-DEBT.md (documentation-law ritual duty 7), when npm run lint:docs reports findings that need triage, when a periodic full re-harvest is due (several terms registered without an inventory patch, or it's been a while since the last dated report in docs/audits/), or when the vocabulary needs rendering or locking — "tidy the vocabulary", "re-render the glossary dashboard", "how far has the vocabulary drifted since we last reviewed it". This skill is the only invoker of vocab:render / vocab:lock; nothing renders them from a hook.
 ---
 
 # doc-audit
@@ -18,7 +18,8 @@ candidates as recommendations for the user to seal.
 ## Escalation ladder (S8)
 
 Always start at Layer 0. Only climb when Layer 0 leaves something
-unresolved.
+unresolved. Layer 1.5 is the exception to the ladder: it is a curation
+step, invoked on demand rather than reached by escalation.
 
 ### Layer 0 — script, no LLM
 
@@ -78,6 +79,41 @@ to get a run green.
   reports are the shape to match (headline, corrections, gaps closed,
   what was deliberately left alone, next). Update `docs/SYNC-DEBT.md` if
   the run pays or discovers a debt.
+
+### Layer 1.5 — the vocabulary dashboard (render, and the lock review)
+
+The generated encyclopedia of every registered term, plus the lock marker
+that says how far the vocabulary has drifted since it was last reviewed.
+**This skill is its only invoker** — nothing renders it from a hook, so
+the outputs are never a side effect of an edit (user, 2026-07-28).
+
+```bash
+npm run vocab:render    # write the outputs; the lock marker is untouched
+npm run vocab:lock      # report drift since the marker; --advance to move it
+```
+
+Rendering carries **no judgement** — run it freely, including just to get
+the artifact back after a clean checkout (`dist/` is gitignored, so a
+fresh worktree has no dashboard until something renders one). Output lands
+in `dist/vocab/index.html`; open it from `file://`.
+
+**Locking is a review, and the review is the user's.** `vocab:lock`
+without `--advance` only reports; it never moves the marker. Read the
+drift, decide whether the vocabulary is in a state worth making a
+baseline, and only then re-run with `--advance`. There is no auto-lock —
+advancing the marker is the one judgement in this territory, and it is
+Tier 3 (see § Separation of powers at the top: this skill checks and
+recommends; it does not legislate).
+
+What drift reports, and what it cannot: term existence, status agreement,
+inventory field vocabulary, and code-identifier drift are already held by
+**blocking** checks 1/2/3/10/11, so the marker exists for the two axes
+nothing gates — **definition text** and **arrival order**. A large
+`redefined` count is not a defect; it is prose moving, which is by design
+ungated. It is a prompt to read, not a finding to clear.
+
+Design: `docs/superpowers/specs/2026-07-28-vocab-dashboard-design.md` ·
+composition: `…-vocab-dashboard-composition.md`.
 
 ### Layer 2 — history, only when Layer 1 can't resolve it from current file content alone
 
