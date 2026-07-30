@@ -43,6 +43,12 @@ attrition") means **A and C**. Bypass B is not required by D9 or M11; it entered
 the design as part of an earlier reading of the approach rule and is now retired
 (ruling 3 below).
 
+> ⚠ **RETRACTED 2026-07-31** — see § Final-check closeout, item 1. Only one
+> *implementation* of bypass B was retired (an undoored approach lowering the
+> defender's terrain, TC-⑮). The **capability** was never retired and the user
+> wants all three bypasses; its consequence belongs to **frontage** under the
+> door-share reading, not to terrain.
+
 Measured on `terrain-cradle@r1`, all 15 legal partitions: contested edges 4–9,
 distinct contact sectors **7–16**, partitions with a single contact sector **0**.
 Bypass A therefore always exists on this map — a property of the authored map,
@@ -276,6 +282,15 @@ combat behaviour), with the registration on `docs/SYNC-DEBT.md`.
 Recorded because each was stated before it was checked, and the corrections are
 load-bearing.
 
+> **This section is not the whole list — one more correction landed after it.**
+> The manoeuvre handoff sends readers here as "the part that saves time", so the
+> forward pointer belongs here rather than only at the bottom of the file:
+> **bypass B's "retirement" was itself retracted** two days later. See
+> § Final-check closeout — 2026-07-31, item 1. The body of this record still
+> teaches the retracted version in several places (§ The vocabulary this session
+> needed, § The Wayfinder pass being opened, § Debts to register); each is stamped
+> where it stands, but read the closeout item before acting on any of them.
+
 - **"A majority of capitals cannot be attacked" (06c's registered finding) is
   backwards.** They cannot be *defended*: 41 of 45 are reachable with zero
   battles. The direction of the error matters for what the fix is.
@@ -344,6 +359,15 @@ D9's three removal-path kinds are **bypass / timing-condition windows / tech**.
 This map has only the first, free. That is the defect to fix, and it is upstream
 of any cap value.
 
+> **Amended 2026-07-31 by survey** —
+> `docs/features/combat-formula/research/choke-removal-economy.md`. The last
+> sentence stands and is the subject. The first two do not survive unqualified:
+> **M11 authored a removal path for every capped archetype**, so D9's obligation
+> is discharged on paper, and most of what M11 used is **paid construction** — a
+> kind D9's three do not name. Timing windows and tech are used by *zero* M11
+> rows. Under the door-share reading the terrain family's rate is **degenerate,
+> not absent**: the paths exist *and* they are free.
+
 ## The Wayfinder pass being opened — operational manoeuvre
 
 Seven registered debts are one subject. Each currently says "owed: its own pass",
@@ -358,6 +382,11 @@ which is the signature of a missing pass rather than seven missing values:
 | rout displacement (this session) | — |
 | map resolution / intra-sector terrain (this session) | the price of bypass |
 | bypass B's retirement (this session) | 우회 B |
+
+> ⚠ The last row's wording is **retracted** (2026-07-31, § Final-check closeout
+> item 1): what this pass inherits is not "bypass B's retirement" but **bypass B's
+> deferral into frontage** — the capability stands, and only the terrain-softening
+> implementation of it was retired.
 
 They share one sentence: **the relationship between where a force is and where
 the fighting is.** Position currently exists only as adjacency. D10 already
@@ -412,6 +441,9 @@ New this session:
 4. **Bypass B retired; approach no longer softens terrain** — the amendment
    record for TC-⑬, and the note that TC-⑬'s reachable-weakest-link survives for
    door selection.
+   > ⚠ **Half retracted 2026-07-31** (§ Final-check closeout, item 1). "Approach
+   > no longer softens terrain" stands — that is TC-⑮. "Bypass B retired" does
+   > not: the capability was never retired, only that one implementation of it.
 5. **ADR 0044 has no reader in `game/src`, and two code comments contradict it.**
    `git grep` finds zero citations of 0044 in `game/src` (0045 is cited once, in
    `force.ts`). Meanwhile `economy.ts`'s `holdsOf` says there is "no seal saying
