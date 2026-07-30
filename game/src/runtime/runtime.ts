@@ -40,6 +40,8 @@ import {
 import {
   forceLimitOf,
   GARRISON_PER_BORDER_SECTOR,
+  garrisonHeadroomOf,
+  NOTHING_RIPENING,
   incomeOf,
   fullyRipened,
   registerOf,
@@ -62,7 +64,6 @@ import {
   splitDetachment,
   splitDetachmentRefusal,
   subtractOrigins,
-  transferToFieldRefusal,
   transferToGarrisonRefusal,
   withdrawFromDetachment,
   type Detachment,
@@ -365,7 +366,7 @@ export class Runtime {
         }
       }
       const openingFieldMen = Math.floor(
-        forceLimitOf(artifact.sectors, held) * START_FIELD_FRACTION,
+        forceLimitOf(artifact.sectors, held, NOTHING_RIPENING) * START_FIELD_FRACTION,
       );
       const openingField: ForceCohort = {
         origins: apportionOrigins(openingFieldMen, remaining),
@@ -376,7 +377,7 @@ export class Runtime {
       }
 
       forces[actor] = {
-        treasury: startingTreasuryOf(incomeOf(artifact.sectors, held)),
+        treasury: startingTreasuryOf(incomeOf(artifact.sectors, held, NOTHING_RIPENING)),
         registers,
         openingField,
         detachments: [],
@@ -512,10 +513,8 @@ export class Runtime {
       const { detachmentId, men } = intent as { detachmentId?: unknown; men?: unknown };
       return this.#transferToGarrison(intent.actor, detachmentId, men);
     }
-    if (intent.kind === 'transfer-to-field') {
-      const { sector, men } = intent as { sector?: unknown; men?: unknown };
-      return this.#transferToField(intent.actor, sector, men);
-    }
+    // No `transfer-to-field` branch: it is HELD, so it falls through to the
+    // unwired-intent rejection rather than doing half the job silently.
     if (intent.kind === 'lock-commitment') {
       return this.#lockCommitment(intent.actor);
     }
@@ -636,8 +635,7 @@ export class Runtime {
         sectorId,
         musterHex: musterHexOf(state.loadedWorld.artifact, sectorId),
         garrisonMen,
-        garrisonHeadroom: Math.max(0, GARRISON_PER_BORDER_SECTOR - garrisonMen),
-        readyShieldMen,
+        garrisonHeadroom: garrisonHeadroomOf(garrisonMen),
       };
     });
   }
@@ -669,11 +667,11 @@ export class Runtime {
     const forces = state.forces[actor]!;
     const sites = this.#postureSites(actor);
     const refusal = transferToGarrisonRefusal(
-      forces.detachments.map((detachment) => ({
-        id: detachment.id,
-        position: detachment.position,
-        men: menOf(detachment.ready.origins),
-        readyMen: menOf(detachment.ready.origins),
+      this.#formationInputs(forces.detachments).map((formation, at) => ({
+        ...formation,
+        // Ready men only: a transfer moves combat-ready substance, while
+        // `FormationDetachment.men` counts cohorts still forming too.
+        readyMen: menOf(forces.detachments[at]!.ready.origins),
       })),
       sites,
       detachmentId,
@@ -687,10 +685,11 @@ export class Runtime {
       candidate.musterHex.q === source.position.q && candidate.musterHex.r === source.position.r)!;
     const moved = men as number;
 
-    // The men leave the formation by WM-⑤'s leaving-service surgery — the register is
-    // untouched, because nobody died and nobody was raised.
-    const leaving = subtractOrigins(source.ready.origins, menOf(source.ready.origins) - moved);
-    const next = withdrawFromDetachment(source, moved);
+    // One surgery, both halves. The men leave the formation by WM-⑤'s leaving-service
+    // rule — the register is untouched, because nobody died and nobody was raised —
+    // and asking for the departing composition separately would have drifted a man
+    // between origins (see `partitionOrigins`).
+    const { detachment: next, withdrawn: leaving } = withdrawFromDetachment(source, moved);
     if (next === null) forces.detachments.splice(index, 1);
     else forces.detachments.splice(index, 1, next);
 
@@ -708,54 +707,31 @@ export class Runtime {
   }
 
   /**
-   * Take ready shield men back into the field at their own sector — R18 (ii)'s other
-   * direction, and the one the gamble is about.
+   * **HELD: taking shield men back into the field is not implemented here.**
    *
-   * A free instant transfer was rejected because "an action with no cost is not a
-   * decision": stripping a border to mass a decisive field army must be a gamble.
-   * The cost is still movement and still nothing new — the men appear as a formation
-   * standing on that sector's muster hex, so every turn they spend marching to
-   * wherever they are wanted is a turn the border is bare and the enemy can read it.
+   * R18 (ii) grants both directions, and this is the one its gamble is about —
+   * stripping a border to mass a decisive field army. It is held because
+   * implementing it needs a rule that no seal supplies: **what happens to the wear
+   * ledger across a posture change.**
    *
-   * They arrive rested. A garrison keeps no wear ledger (06c: an unattended shield
-   * fights at the unattended baseline), so there is no wear to carry out — and
-   * inventing one here would be a new dial.
+   * The naive reading is a wear-laundering machine. A garrison keeps no wear ledger
+   * (06c: an unattended shield fights at the unattended baseline), so men entering a
+   * shield have nowhere to carry wear and men leaving one have nothing to carry out —
+   * they would be minted at zero. Both transfers sit in the same decision window and
+   * headroom reopens after each move out, so an exhausted army standing on any of its
+   * own muster hexes could round-trip its whole wear away, free and repeatedly. That
+   * defeats 06b's convex wear curve, and R18 (ii) rejected a free transfer in as many
+   * words: "an action with no cost is not a decision."
+   *
+   * The three candidate fixes each need a normative statement that does not exist:
+   * give the garrison a wear ledger (the state 06c refused), charge the transfer a
+   * wear price (a new dial R18 forbids — "zero new pricing devices"), or forbid the
+   * round trip inside one window (a new rule). So this is a seam, not a gap: it is
+   * registered on `docs/SYNC-DEBT.md` and named in ticket 06d's § Comments.
+   *
+   * Filling a shield **from** the field is landed and safe on its own: wear stops
+   * mattering the moment men join a shield, because a shield never reads it.
    */
-  #transferToField(actor: ActorId, sectorId: unknown, men: unknown): GameEvent[] {
-    const state = this.#state;
-    const intent = { kind: 'transfer-to-field', actor };
-    const windowRefusal = this.#formationWindowRefusal(actor);
-    if (windowRefusal !== null) return [this.#reject(intent, windowRefusal)];
-
-    const sites = this.#postureSites(actor);
-    const refusal = transferToFieldRefusal(sites, sectorId, men);
-    if (refusal !== null) return [this.#reject(intent, refusal)];
-
-    const forces = state.forces[actor]!;
-    const site = sites.find((candidate) => candidate.sectorId === sectorId)!;
-    const garrison = state.garrisons[site.sectorId]!;
-    const moved = men as number;
-
-    const leaving = subtractOrigins(garrison.ready, menOf(garrison.ready) - moved);
-    garrison.ready = subtractOrigins(garrison.ready, moved);
-
-    const ordinal = forces.nextDetachmentOrdinal;
-    forces.nextDetachmentOrdinal += 1;
-    forces.detachments.push({
-      id: `detachment:${actor}:${ordinal}`,
-      position: { ...site.musterHex },
-      ready: { origins: leaving, fatigue: 0 },
-      pending: [],
-      movement: null,
-    });
-
-    return [this.#turnEvent('posture-transferred', 'decision', {
-      actor,
-      sector: site.sectorId,
-      into: 'field',
-      men: moved,
-    })];
-  }
 
   /** Consolidate co-located detachments under the canonical-lowest stable id. */
   #mergeDetachments(actor: ActorId, detachmentIds: unknown): GameEvent[] {
@@ -1410,7 +1386,7 @@ export class Runtime {
               (sum, cohort) => sum + menOf(cohort.origins),
               0,
             );
-        return [request.sectorId, Math.max(0, GARRISON_PER_BORDER_SECTOR - men)];
+        return [request.sectorId, garrisonHeadroomOf(men)];
       }));
       const result = settleRecruitmentBatch({
         requests,
@@ -1836,7 +1812,16 @@ export class Runtime {
       return garrison === undefined ? [] : [garrison];
     });
     const stillServing = servingByOrigin(loserForces, loserGarrisons)[sector] ?? 0;
-    const civilians = Math.max(0, (loserForces.registers[sector] ?? 0) - stillServing);
+    const held = loserForces.registers[sector] ?? 0;
+    // Not clamped at zero. `availableCiviliansByOrigin` treats serving-beyond-register
+    // as fatal, and a second reader of the same question that quietly returned 0
+    // instead would hide the very break that guard exists to catch.
+    if (stillServing > held) {
+      throw new Error(
+        `${loser} serves ${stillServing} men of ${sector} against a register of ${held}.`,
+      );
+    }
+    const civilians = held - stillServing;
 
     if (stillServing === 0) delete loserForces.registers[sector];
     else loserForces.registers[sector] = stillServing;
@@ -1844,16 +1829,24 @@ export class Runtime {
       takerForces.registers[sector] = (takerForces.registers[sector] ?? 0) + civilians;
     }
 
-    // A recapture is not a conquest: ground returning to its own homeland is whole
-    // again, which is what `homeland` surviving a capture is for.
-    if (state.homeland[sector] === taker) delete state.ripening[sector];
+    // **No special case for a recapture, and that is deliberate.** ADR 0029 makes the
+    // integration lag uniform across ALL acquired land, and the one seal that says
+    // ground returns "at pre-war usable" — OG-③ — scopes that to *stall / white-peace*,
+    // channels ADR 0042 retired. So there is nothing to cite for exempting a military
+    // recapture, and it takes the ordinary lag.
+    //
+    // What still happens for free is narrower and needs no rule: ground retaken
+    // *before* it integrated never lost its `homeland`, so the moment its own owner
+    // controls it again `holdsOf` counts it and it pays in full. That is `homeland`
+    // surviving a capture, exactly as `state.ts` describes it.
+    const recaptured = state.homeland[sector] === taker;
 
     events.push(this.#turnEvent('sector-captured', 'payoff', {
       sector,
       taker,
       loser,
       civilians,
-      recaptured: state.homeland[sector] === taker,
+      recaptured,
     }));
     return events;
   }
@@ -1920,16 +1913,30 @@ export class Runtime {
   /**
    * Limbo ends and acquired ground starts paying — **ADR 0022's stable turn**.
    *
-   * Its three clauses are all here: the sector must end the turn under the same
-   * faction (it is in this realm's `sectors` when this runs), must not have been
-   * contested during the turn, and must not have been the target of attack/defense
-   * resolution — the last two being why `battleSites` is a parameter and why this
-   * runs after the engagements rather than before them.
+   * ADR 0022's clause 1 — "ends the turn under the same faction" — is the
+   * `realms.sectors` membership this loop walks. Its clauses 2 and 3, "was not
+   * contested during that turn" and "was not the target of active attack/defense
+   * resolution", **collapse into one `battleSites` test**, and the collapse is a
+   * reading worth stating: `contestedFronts` calls every realm border contested, and
+   * a border sector is one permanently, so reading clause 2 that way would mean
+   * frontier ground never ripens at all. The narrow reading — contested *this turn*
+   * means a battle happened here — is the only one that leaves clause 2 any content.
    *
    * Integration is `homeland` flipping. From that moment the ground pays its taker,
    * and `ripening` starts the clock at zero so the first payment is the sealed
    * 50%/60%. Every later stable turn adds ten points until the authored value is
    * reached, at which point the entry is dropped and the ground is ordinary.
+   *
+   * **Where limbo's length comes from, stated honestly.** Nothing keys *integration*
+   * to a stable turn; ADR 0022 says a capture "starts at" 50/60 and ADR 0044 item 2
+   * repeats that unchanged. What forces a limbo interval is the other side: the
+   * ticket and OG-③ require occupied-but-unintegrated ground to pay **neither** side,
+   * and `economy.ts`'s landed `holdsOf` comment already says which turn that is —
+   * "the turn a sector changes hands it stops paying its old owner and does not yet
+   * pay its new one". A capture turn also fails all three of ADR 0022's clauses, so
+   * the first turn that can integrate is the next one. That is a *reading assembled
+   * from three statements*, not a deduction from ADR 0022 alone, and the cost is
+   * visible: the 50/60 payment lands one turn later than "at capture" read literally.
    *
    * A contested turn does not *reset* the clock, it only fails to advance it: ADR
    * 0022 says recovery happens per stable turn, and nothing anywhere says an
@@ -2098,7 +2105,7 @@ export class Runtime {
     const detachments = state.forces[actor]!.detachments;
     const index = detachments.findIndex((candidate) => candidate.id === detachmentId);
     if (index < 0) return;
-    const next = withdrawFromDetachment(detachments[index]!, men);
+    const { detachment: next } = withdrawFromDetachment(detachments[index]!, men);
     if (next === null) detachments.splice(index, 1);
     else detachments[index] = next;
   }

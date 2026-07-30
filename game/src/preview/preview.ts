@@ -19,11 +19,10 @@ import {
   recruitmentOrderKeyOf,
   type CommitmentContext,
 } from '../domain/commitment.js';
-import { GARRISON_PER_BORDER_SECTOR } from '../domain/economy.js';
+import { garrisonHeadroomOf } from '../domain/economy.js';
 import {
   mergeDetachmentsRefusal,
   splitDetachmentRefusal,
-  transferToFieldRefusal,
   transferToGarrisonRefusal,
 } from '../domain/force.js';
 import {
@@ -194,7 +193,7 @@ export function preview(view: MatchView, intent: Intent): PreviewCard {
     );
     const garrisonHeadroom = Object.fromEntries(requests.map((stored) => [
       stored.sectorId,
-      Math.max(0, GARRISON_PER_BORDER_SECTOR - (currentGarrisons[stored.sectorId] ?? 0)),
+      garrisonHeadroomOf(currentGarrisons[stored.sectorId] ?? 0),
     ]));
     const batch = settleRecruitmentBatch({
       requests,
@@ -337,7 +336,7 @@ export function preview(view: MatchView, intent: Intent): PreviewCard {
     return refusal === null ? { admissible: true } : no(refusal);
   }
 
-  if (intent.kind === 'transfer-to-garrison' || intent.kind === 'transfer-to-field') {
+  if (intent.kind === 'transfer-to-garrison') {
     if (intent.actor !== view.viewer) {
       return no(`A posture transfer is previewed by the realm making it; "${view.viewer}" cannot preview "${intent.actor}"'s.`);
     }
@@ -356,28 +355,21 @@ export function preview(view: MatchView, intent: Intent): PreviewCard {
         sectorId,
         musterHex: musterHexOf(view.board, sectorId),
         garrisonMen,
-        garrisonHeadroom: Math.max(0, GARRISON_PER_BORDER_SECTOR - garrisonMen),
-        readyShieldMen: shield?.readyMen ?? 0,
+        garrisonHeadroom: garrisonHeadroomOf(garrisonMen),
       };
     });
 
-    const postureRefusal = intent.kind === 'transfer-to-garrison'
-      ? transferToGarrisonRefusal(
-          view.detachments.map((detachment) => ({
-            id: detachment.id,
-            position: detachment.position,
-            men: detachment.men,
-            readyMen: detachment.readyMen,
-          })),
-          sites,
-          (intent as { detachmentId?: unknown }).detachmentId,
-          (intent as { men?: unknown }).men,
-        )
-      : transferToFieldRefusal(
-          sites,
-          (intent as { sector?: unknown }).sector,
-          (intent as { men?: unknown }).men,
-        );
+    const postureRefusal = transferToGarrisonRefusal(
+      view.detachments.map((detachment) => ({
+        id: detachment.id,
+        position: detachment.position,
+        men: detachment.men,
+        readyMen: detachment.readyMen,
+      })),
+      sites,
+      (intent as { detachmentId?: unknown }).detachmentId,
+      (intent as { men?: unknown }).men,
+    );
     return postureRefusal === null ? { admissible: true } : no(postureRefusal);
   }
 

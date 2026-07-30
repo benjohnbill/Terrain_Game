@@ -185,7 +185,24 @@ export function apportionOrigins(
   return apportionExact(total, weights);
 }
 
-function splitOrigins(
+/**
+ * Divide one composition into the part that stays and the part that goes, from a
+ * **single** apportionment.
+ *
+ * Exported because that singleness is the whole contract. `apportionExact`'s own
+ * docstring gives the reason — "a second copy of this loop is how the two would come
+ * to lose or invent a man between them" — and calling it twice on the same
+ * composition is exactly that second copy: the two halves each round exactly, so
+ * their *totals* conserve, while per origin they need not. `{A:3,B:3}` split at 1
+ * gives `{A:0,B:1}` and `{A:2,B:3}`, which sums to `{A:2,B:4}` — a man teleported
+ * from A to B. Origin composition is accounting state joined to the register by
+ * `register − serving`, so that drift eventually pushes a sector's civilians
+ * negative and `availableCiviliansByOrigin` throws mid-match.
+ *
+ * So: any caller that needs *both* halves must take them from here, together.
+ * `subtractOrigins` is for callers that genuinely only want the remainder.
+ */
+export function partitionOrigins(
   origins: OriginComposition,
   childMen: number,
 ): readonly [OriginComposition, OriginComposition] {
@@ -206,7 +223,7 @@ function splitOrigins(
  * body it did not have.
  */
 export function subtractOrigins(origins: OriginComposition, men: number): OriginComposition {
-  return splitOrigins(origins, men)[0];
+  return partitionOrigins(origins, men)[0];
 }
 
 /**
@@ -223,12 +240,22 @@ export function subtractOrigins(origins: OriginComposition, men: number): Origin
  * path applies for the same reason: it is still a body of men, just not a
  * combat-ready one.
  */
-export function withdrawFromDetachment(detachment: Detachment, men: number): Detachment | null {
+export function withdrawFromDetachment(
+  detachment: Detachment,
+  men: number,
+): { readonly detachment: Detachment | null; readonly withdrawn: OriginComposition } {
+  // Both halves from **one** `partitionOrigins`, never two subtractions. A caller that
+  // needed the withdrawn men and asked for them separately would get a composition
+  // that agrees on the total and disagrees per origin — see `partitionOrigins`.
+  const [remaining, withdrawn] = partitionOrigins(detachment.ready.origins, men);
   const next: Detachment = {
     ...detachment,
-    ready: { ...detachment.ready, origins: subtractOrigins(detachment.ready.origins, men) },
+    ready: { ...detachment.ready, origins: remaining },
   };
-  return menOf(next.ready.origins) === 0 && next.pending.length === 0 ? null : next;
+  return {
+    detachment: menOf(remaining) === 0 && next.pending.length === 0 ? null : next,
+    withdrawn,
+  };
 }
 
 export function splitDetachment(
@@ -245,11 +272,11 @@ export function splitDetachment(
   }
 
   const childByCohort = apportionExact(men, cohortWeights);
-  const [retainedReady, childReady] = splitOrigins(source.ready.origins, childByCohort.ready ?? 0);
+  const [retainedReady, childReady] = partitionOrigins(source.ready.origins, childByCohort.ready ?? 0);
   const retainedPending: PendingCohort[] = [];
   const childPending: PendingCohort[] = [];
   source.pending.forEach((cohort, index) => {
-    const [retained, child] = splitOrigins(
+    const [retained, child] = partitionOrigins(
       cohort.origins,
       childByCohort[`pending:${index}`] ?? 0,
     );
@@ -310,10 +337,8 @@ export interface PostureSite {
   readonly musterHex: HexPosition;
   /** Men already manning the shield, ready and forming alike — M13a's local cap. */
   readonly garrisonMen: number;
-  /** `GARRISON_PER_BORDER_SECTOR − garrisonMen`, floored at zero. */
+  /** `garrisonHeadroomOf(garrisonMen)`, computed beside the cap it reads. */
   readonly garrisonHeadroom: number;
-  /** Ready shield men, the only ones a transfer out may take. */
-  readonly readyShieldMen: number;
 }
 
 /**
@@ -345,21 +370,6 @@ export function transferToGarrisonRefusal(
   }
   if (men > site.garrisonHeadroom) {
     return `${site.sectorId}'s shield has room for ${site.garrisonHeadroom} more men, not ${men}.`;
-  }
-  return null;
-}
-
-/** Shared refusal for taking ready shield men back into the field at their sector. */
-export function transferToFieldRefusal(
-  sites: readonly PostureSite[],
-  sectorId: unknown,
-  men: unknown,
-): string | null {
-  if (typeof sectorId !== 'string') return 'A posture transfer must name a sector.';
-  const site = sites.find((candidate) => candidate.sectorId === sectorId);
-  if (site === undefined) return `Sector "${sectorId}" is not controlled by this actor.`;
-  if (typeof men !== 'number' || !Number.isInteger(men) || men <= 0 || men > site.readyShieldMen) {
-    return `A transfer must move a positive whole number up to ${site.readyShieldMen}; got ${String(men)}.`;
   }
   return null;
 }

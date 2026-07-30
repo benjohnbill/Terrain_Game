@@ -57,6 +57,19 @@ export const START_FIELD_FRACTION = 0.5;
 export const GARRISON_PER_BORDER_SECTOR = 900;
 
 /**
+ * Room left in one sector's shield, given what already mans it.
+ *
+ * Beside the constant rather than at each caller, because four surfaces ask this
+ * question — recruitment's garrison headroom, the Runtime's posture sites, the
+ * preview's copy of them, and the tests — and the cap is local by seal (ADR 0014
+ * keeps garrison ceilings local, M13a sizes them), so a caller that clamped
+ * differently would be quietly re-cutting the ceiling.
+ */
+export function garrisonHeadroomOf(manned: number): number {
+  return Math.max(0, GARRISON_PER_BORDER_SECTOR - manned);
+}
+
+/**
  * What freshly taken ground is worth, and how fast it ripens — **ADR 0022 / ADR
  * 0029, unchanged**, supplied a transfer channel by ADR 0044.
  *
@@ -159,6 +172,18 @@ function sumOver(sectors: SectorTable, ids: readonly SectorId[], read: (sector: 
  */
 export type RipeningTurns = Readonly<Record<SectorId, number>>;
 
+/**
+ * The empty ripening state, named so a caller has to say it means nothing is
+ * settling rather than leave the argument off.
+ *
+ * `incomeOf` and `forceLimitOf` take `ripening` as a **required** parameter for the
+ * same reason the retired flat `0.75` became an explicit `fatigue:` input in
+ * ticket 03: a forgotten argument here would silently return full authored value,
+ * which is exactly the instant-full-value transfer `AGENTS.md` guards against. A
+ * default would have made the guardrail's own failure mode the easy path.
+ */
+export const NOTHING_RIPENING: RipeningTurns = Object.freeze({});
+
 /** How much of a sector's authored economy is usable now (ADR 0022). */
 export function usableEconomyOf(sector: Sector, stableTurns: number | undefined): number {
   if (stableTurns === undefined) return sector.usableEconomy;
@@ -233,7 +258,7 @@ export function holdsOf(
 export function incomeOf(
   sectors: SectorTable,
   holds: readonly SectorId[],
-  ripening: RipeningTurns = {},
+  ripening: RipeningTurns,
 ): number {
   return sumOver(sectors, holds, (sector, id) =>
     sector.economyValue * usableEconomyOf(sector, ripening[id]));
@@ -250,7 +275,7 @@ export function incomeOf(
 export function forceLimitOf(
   sectors: SectorTable,
   holds: readonly SectorId[],
-  ripening: RipeningTurns = {},
+  ripening: RipeningTurns,
 ): number {
   const derived = CAP_PER_POP * sumOver(sectors, holds, (s, id) =>
     s.populationValue * usablePopOf(s, ripening[id]));

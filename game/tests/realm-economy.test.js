@@ -36,6 +36,7 @@ const {
   landValueOf,
   marginalPrice,
   MEN_PER_YIELD,
+  NOTHING_RIPENING,
   ORDER_RECRUIT,
   preview,
   RECRUIT_FRACTION_PER_POINT,
@@ -89,8 +90,8 @@ function turn(runtime) {
 test('income is the sum of economyValue x usableEconomy over held sectors', () => {
   const held = [A, B];
   const expected = held.reduce((sum, id) => sum + SECTORS[id].economyValue * SECTORS[id].usableEconomy, 0);
-  assert.equal(incomeOf(SECTORS, held), expected);
-  assert.equal(incomeOf(SECTORS, []), 0);
+  assert.equal(incomeOf(SECTORS, held, NOTHING_RIPENING), expected);
+  assert.equal(incomeOf(SECTORS, [], NOTHING_RIPENING), 0);
 });
 
 test('the force limit is land-derived through capLandFrac at its sealed value 1', () => {
@@ -99,7 +100,7 @@ test('the force limit is land-derived through capLandFrac at its sealed value 1'
   assert.equal(CAP_LAND_FRAC, 1);
   // Whole men: authored populations are thirds, so the float sum misses the
   // arithmetic by 4e-12 and a fractional soldier is not a ceiling.
-  assert.equal(forceLimitOf(SECTORS, held), Math.round(expected));
+  assert.equal(forceLimitOf(SECTORS, held, NOTHING_RIPENING), Math.round(expected));
 });
 
 test('the register is land-derived at registerPerPop, and register:cap is exactly the sealed 3.0', () => {
@@ -111,7 +112,7 @@ test('the register is land-derived at registerPerPop, and register:cap is exactl
     Math.round(REGISTER_PER_POP * held.reduce((s, id) => s + SECTORS[id].populationValue, 0)),
   );
   // The sustain fraction is a third (MT-②) — the derived relationship, not a dial.
-  assert.ok(Math.abs(registerOf(SECTORS, held) / forceLimitOf(SECTORS, held) - 3) < 1e-9);
+  assert.ok(Math.abs(registerOf(SECTORS, held) / forceLimitOf(SECTORS, held, NOTHING_RIPENING) - 3) < 1e-9);
 });
 
 test('occupied land is limbo: it pays neither the holder nor the homeland (OG-③)', () => {
@@ -130,7 +131,7 @@ test('a realm losing sectors turn after turn shows monotonically falling income 
   const readings = [];
   while (controlled.length > 0) {
     const holds = holdsOf(controlled, homeland, 'realm-a');
-    readings.push({ income: incomeOf(SECTORS, holds), limit: forceLimitOf(SECTORS, holds) });
+    readings.push({ income: incomeOf(SECTORS, holds, NOTHING_RIPENING), limit: forceLimitOf(SECTORS, holds, NOTHING_RIPENING) });
     controlled = controlled.slice(0, -1); // one sector lost each turn, never recaptured
   }
 
@@ -228,13 +229,13 @@ test('a match opens with substance derived from the sealed start-state coordinat
   const view = runtime.view('realm-a');
   const realm = view.realms.find((r) => r.actor === 'realm-a');
 
-  const limit = forceLimitOf(SECTORS, realm.sectors);
+  const limit = forceLimitOf(SECTORS, realm.sectors, NOTHING_RIPENING);
   assert.equal(view.economy.forceLimit, limit);
   assert.equal(view.economy.field, Math.floor(limit * START_FIELD_FRACTION));
   assert.equal(view.economy.register, registerOf(SECTORS, realm.sectors));
   // TC-⑭: the war chest is derived from the realm's own land, not a flat
   // constant — a per-realm baked value is what that seal forbids.
-  assert.equal(view.economy.income, incomeOf(SECTORS, realm.sectors));
+  assert.equal(view.economy.income, incomeOf(SECTORS, realm.sectors, NOTHING_RIPENING));
   assert.equal(view.economy.treasury, startingTreasuryOf(view.economy.income));
   assert.equal(TREASURY_START_TURNS, 3);
 
@@ -369,8 +370,8 @@ test('a realm reads its own economy exactly and the opponent treasury not at all
   // Land-derived public figures cross for both sides — they are readable off the
   // board and the territory, both of which are public by seal.
   for (const realm of mine.realms) {
-    assert.equal(realm.yield, incomeOf(SECTORS, realm.sectors));
-    assert.equal(realm.forceLimit, forceLimitOf(SECTORS, realm.sectors));
+    assert.equal(realm.yield, incomeOf(SECTORS, realm.sectors, NOTHING_RIPENING));
+    assert.equal(realm.forceLimit, forceLimitOf(SECTORS, realm.sectors, NOTHING_RIPENING));
   }
 
   // What does not cross: any figure of the opponent's stocks.

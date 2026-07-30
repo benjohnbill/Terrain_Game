@@ -35,6 +35,7 @@ const {
   FRESH_CAPTURE_USABLE_ECONOMY,
   FRESH_CAPTURE_USABLE_POP,
   GARRISON_PER_BORDER_SECTOR,
+  garrisonHeadroomOf,
   MARCH_SPEED,
   RIPENING_PER_TURN,
   REGISTER_PER_POP,
@@ -501,41 +502,50 @@ test('control sums and holdings sums finally diverge, and both stay right', () =
 
 // ── garrison and field are the same men in two postures (R18 ii) ─────────────
 
-/** Walk the opening army onto one of its own border sectors' muster hexes. */
-function armyOnOwnShield(runtime = openAtDecision()) {
+/**
+ * Walk the opening army onto one of its own **interior** sectors' muster hexes.
+ *
+ * Interior rather than border on purpose: M13a seeds shields on border sectors at
+ * g₀ = 1.0, i.e. already **at** the local cap, so a border sector has no room to
+ * fill and could only be topped up after something drew it down. An interior sector
+ * carries no shield at all, which is both the honest place to test filling one and
+ * the path where the transfer has to create the garrison record.
+ */
+function armyOnOwnInterior(runtime = openAtDecision()) {
   const view = runtime.view('realm-a');
-  const shield = view.garrisons[0];
+  const manned = new Set(view.garrisons.map((garrison) => garrison.sectorId));
+  const own = view.realms.find((realm) => realm.actor === 'realm-a').sectors;
   const detachment = view.detachments[0];
-  const destination = musterHexOf(CRADLE_R1, shield.sectorId);
-  accepted(runtime, {
-    kind: 'move-detachment', actor: 'realm-a', detachmentId: detachment.id,
-    destinationHex: destination, forcedMarch: false,
-  });
-  for (let turn = 0; turn < 10; turn += 1) {
-    closeTurn(runtime);
-    const standing = runtime.view('realm-a').detachments
-      .find((d) => d.id === detachment.id);
-    if (standing !== undefined &&
-        standing.position.q === destination.q && standing.position.r === destination.r) {
-      return { runtime, detachmentId: detachment.id, sectorId: shield.sectorId };
+
+  for (const sectorId of own) {
+    if (manned.has(sectorId)) continue;
+    const destination = musterHexOf(CRADLE_R1, sectorId);
+    if (minimumCostRoute(GRAPH, detachment.position, destination) === null) continue;
+    accepted(runtime, {
+      kind: 'move-detachment', actor: 'realm-a', detachmentId: detachment.id,
+      destinationHex: destination, forcedMarch: false,
+    });
+    for (let turn = 0; turn < 10; turn += 1) {
+      closeTurn(runtime);
+      const standing = runtime.view('realm-a').detachments.find((d) => d.id === detachment.id);
+      if (standing !== undefined &&
+          standing.position.q === destination.q && standing.position.r === destination.r) {
+        return { runtime, detachmentId: detachment.id, sectorId };
+      }
     }
+    assert.fail(`the army never reached ${sectorId}`);
   }
-  assert.fail('the army never reached its own border sector');
+  assert.fail('this fixture leaves realm-a no reachable unmanned interior sector');
 }
 
 test('field men move into the shield they stand on, and the register never notices', () => {
-  const { runtime, detachmentId, sectorId } = armyOnOwnShield();
-  // A border shield opens **at** its cap (M13a's g₀ = 1.0), so there is nothing to
-  // fill until something is drawn out of it. Stripping it first is not a workaround —
-  // it is the very gamble R18 (ii) exists to price, and it makes this a round trip.
-  accepted(runtime, {
-    kind: 'transfer-to-field', actor: 'realm-a', sector: sectorId, men: 200,
-  });
-
+  const { runtime, detachmentId, sectorId } = armyOnOwnInterior();
   const before = runtime.view('realm-a');
-  const shieldBefore = before.garrisons.find((g) => g.sectorId === sectorId).men;
-  const headroom = GARRISON_PER_BORDER_SECTOR - shieldBefore;
-  assert.equal(headroom, 200, 'stripping the shield did not open exactly its own room');
+  assert.equal(
+    before.garrisons.find((g) => g.sectorId === sectorId),
+    undefined,
+    'this fixture was supposed to pick an unmanned sector',
+  );
 
   const men = 50;
   assert.equal(
@@ -545,7 +555,7 @@ test('field men move into the shield they stand on, and the register never notic
   accepted(runtime, { kind: 'transfer-to-garrison', actor: 'realm-a', detachmentId, men });
 
   const after = runtime.view('realm-a');
-  assert.equal(after.garrisons.find((g) => g.sectorId === sectorId).men, shieldBefore + men);
+  assert.equal(after.garrisons.find((g) => g.sectorId === sectorId).men, men);
   assert.equal(after.economy.field, before.economy.field - men);
   assert.equal(after.economy.garrison, before.economy.garrison + men);
   // Posture is not birth or death: the men were already serving, so `serving` and the
@@ -555,16 +565,67 @@ test('field men move into the shield they stand on, and the register never notic
   assert.equal(after.economy.register, before.economy.register);
 });
 
+test('a transfer moves origin composition exactly, not just the headcount', () => {
+  // The opening field army is apportioned across every held sector, so it carries a
+  // many-origin composition — which is what makes this checkable at all. Taking the
+  // departing and remaining halves from two separate apportionments conserves the
+  // *total* while drifting men between origins ({A:3,B:3} split at 1 sums to
+  // {A:2,B:4}), and origin composition is joined to the register by
+  // `register − serving`, so that drift ends as a negative civilian count.
+  const { runtime, detachmentId, sectorId } = armyOnOwnInterior();
+  const before = runtime.view('realm-a').economy;
+  const servingBefore = Object.fromEntries(
+    Object.entries(before.sectors).map(([id, row]) => [id, row.serving]),
+  );
+
+  accepted(runtime, { kind: 'transfer-to-garrison', actor: 'realm-a', detachmentId, men: 137 });
+  const after = runtime.view('realm-a').economy;
+
+  // A posture change moves men between field and shield, and both are `serving`. So
+  // every sector's serving count must be *identical*, origin by origin — the men
+  // answer to the same registers they did a moment ago.
+  for (const [id, row] of Object.entries(after.sectors)) {
+    assert.equal(
+      row.serving,
+      servingBefore[id],
+      `${id}'s serving count moved: a man changed which register he answers to`,
+    );
+    assert.equal(row.register, row.serving + row.availableCivilians, `${id} no longer balances`);
+  }
+  assert.equal(after.serving, before.serving);
+  assert.notEqual(after.garrison, before.garrison, 'the transfer did not actually happen');
+});
+
 test('a transfer is refused past the local shield cap, so no army hides behind M5', () => {
-  const { runtime, detachmentId, sectorId } = armyOnOwnShield();
+  const { runtime, detachmentId, sectorId } = armyOnOwnInterior();
   const view = runtime.view('realm-a');
-  const shield = view.garrisons.find((g) => g.sectorId === sectorId).men;
-  const tooMany = GARRISON_PER_BORDER_SECTOR - shield + 1;
+  const manned = view.garrisons.find((g) => g.sectorId === sectorId)?.men ?? 0;
+  const tooMany = garrisonHeadroomOf(manned) + 1;
   const over = { kind: 'transfer-to-garrison', actor: 'realm-a', detachmentId, men: tooMany };
 
   assert.equal(preview(view, over).admissible, false, 'preview allowed an over-cap transfer');
   assert.equal(runtime.submit(over)[0].type, 'intent-rejected');
-  assert.equal(runtime.view('realm-a').garrisons.find((g) => g.sectorId === sectorId).men, shield);
+  assert.equal(
+    runtime.view('realm-a').garrisons.find((g) => g.sectorId === sectorId)?.men ?? 0,
+    manned,
+  );
+});
+
+test('taking shield men back into the field is HELD, and refused rather than half-done', () => {
+  // R18 (ii) grants the direction; implementing it needs a rule for the wear ledger
+  // across a posture change that no seal supplies, and the naive reading launders wear
+  // for free. So the intent is unwired on purpose — see the Runtime's held docstring
+  // and `docs/SYNC-DEBT.md`. This test exists so the hole cannot close by accident.
+  const runtime = openAtDecision();
+  const shield = runtime.view('realm-a').garrisons[0];
+  const held = { kind: 'transfer-to-field', actor: 'realm-a', sector: shield.sectorId, men: 100 };
+
+  assert.equal(runtime.submit(held)[0].type, 'intent-rejected');
+  assert.equal(
+    runtime.view('realm-a').garrisons.find((g) => g.sectorId === shield.sectorId).men,
+    shield.men,
+    'a held intent moved men anyway',
+  );
 });
 
 test('a transfer needs the men to be standing there — distance is the price', () => {
@@ -578,40 +639,52 @@ test('a transfer needs the men to be standing there — distance is the price', 
   assert.equal(runtime.submit(away)[0].type, 'intent-rejected');
 });
 
-test('shield men come back out as a formation standing on that sector', () => {
-  const runtime = openAtDecision();
-  const before = runtime.view('realm-a');
-  const shield = before.garrisons[0];
-  const men = 100;
-  const order = { kind: 'transfer-to-field', actor: 'realm-a', sector: shield.sectorId, men };
-
-  assert.equal(preview(before, order).admissible, true);
-  accepted(runtime, order);
-  const after = runtime.view('realm-a');
-
-  assert.equal(after.garrisons.find((g) => g.sectorId === shield.sectorId).men, shield.men - men);
-  assert.equal(after.economy.field, before.economy.field + men);
-  assert.equal(after.economy.serving, before.economy.serving);
-  assert.equal(after.economy.register, before.economy.register);
-
-  // They are somewhere, and it is the sector they were manning — so every turn spent
-  // marching them to where they are wanted is a turn that border is bare.
-  const raised = after.detachments.find((d) => !before.detachments.some((old) => old.id === d.id));
-  assert.notEqual(raised, undefined, 'the shield men left service instead of taking the field');
-  assert.equal(raised.men, men);
-  assert.deepEqual(raised.position, musterHexOf(CRADLE_R1, shield.sectorId));
-  // A shield holds no wear ledger (06c), so there is none to carry out.
-  assert.equal(raised.fatigue, 0);
-});
-
-test('a posture transfer spends no 행동력, in either direction', () => {
-  const runtime = openAtDecision();
+test('a posture transfer spends no 행동력', () => {
+  const { runtime, detachmentId } = armyOnOwnInterior();
   const before = runtime.view('realm-a').commitment;
-  const shield = runtime.view('realm-a').garrisons[0];
-  accepted(runtime, {
-    kind: 'transfer-to-field', actor: 'realm-a', sector: shield.sectorId, men: 100,
-  });
+  accepted(runtime, { kind: 'transfer-to-garrison', actor: 'realm-a', detachmentId, men: 40 });
   assert.deepEqual(runtime.view('realm-a').commitment, before, 'a transfer billed the stack');
 });
 
-export { openAtDecision, ownerOf, sectorsByProvince };
+// ── ADR 0045 item 7: a cohort still forming when its sector falls ─────────────
+
+test('a garrison cohort still forming when its sector falls is a permanent loss', () => {
+  // ADR 0045 item 7: "A captured not-yet-ready cohort is a match-permanent loss: its
+  // origin components and the same register shares are removed, without refund,
+  // prisoners, or captor-owned substance." Distinct from every other path here — it is
+  // the only place a capture *destroys* bodies rather than moving them, so the
+  // register shrinks on both sides of the ledger.
+  const runtime = openAtDecision();
+  const invasion = nearestInvasion(runtime, 'realm-a');
+  const sector = invasion.theirs;
+
+  // Raise into the doomed shield on the very turn it is taken. Garrison posture keeps
+  // the recruits at that sector, and they are not ready until the next boundary.
+  accepted(runtime, {
+    kind: 'allocate-recruitment', actor: 'realm-b', requestId: 'doomed',
+    sectorId: sector, commit: 1, posture: 'garrison',
+  });
+  accepted(runtime, {
+    kind: 'move-detachment', actor: 'realm-a', detachmentId: invasion.detachmentId,
+    destinationHex: invasion.destination, forcedMarch: false,
+  });
+  const closing = closeTurn(runtime);
+  const battle = closing.find((event) => event.type === 'battle-resolved');
+  assert.ok(battle !== undefined && battle.detail.sectorFalls, 'the fixture did not take the sector');
+  assert.equal(ownerOf(runtime, sector), 'realm-a');
+
+  // Nothing that was forming survives, on either side's books.
+  const takerShield = runtime.view('realm-a').garrisons.find((g) => g.sectorId === sector);
+  assert.equal(takerShield.pendingMen, 0, 'the taker inherited a cohort it never raised');
+  assert.equal(takerShield.men, 0);
+  assert.equal(runtime.view('realm-b').garrisons.find((g) => g.sectorId === sector), undefined);
+
+  // And every sector still balances on both sides — the assertion a destroyed cohort
+  // whose register share was left standing would break first.
+  for (const actor of ['realm-a', 'realm-b']) {
+    for (const [id, row] of Object.entries(runtime.view(actor).economy.sectors)) {
+      assert.equal(row.register, row.serving + row.availableCivilians, `${actor}/${id}`);
+      assert.ok(row.availableCivilians >= 0, `${actor}/${id} owes civilians`);
+    }
+  }
+});
