@@ -313,9 +313,28 @@ export class Runtime {
    * ceiling, **g₀ = 1.0** mans every border shield at cap, and the register is
    * land-derived once (MT-②) and a stock from then on.
    *
-   * What is deliberately absent: the **capital guard**. Its magnitude is in live
-   * conflict (350 × population against a flat 1500) and ticket 07 carries that
-   * conflict; seeding a number here would import it and decide it by accident.
+   * What is deliberately absent: the **capital guard**. Its *magnitude* is settled —
+   * **CP-⑤** (2026-07-31) re-cut CP-① item 2's coefficient to 가안 **2,500/pop**, and
+   * `MAGNITUDE.md`'s flat `capitalGarrison 1500` turned out never to have been a seal.
+   * Placing the guard is **ticket 07's**, together with the ceiling it needs:
+   * `garrisonHeadroomOf` is uniform at `GARRISON_PER_BORDER_SECTOR`, while CP-① item 2
+   * gives the guard its **own local ceiling** (ADR 0014 keeps garrison ceilings local),
+   * and at 2,500/pop the guard reaches 6,000 on this board's largest sector.
+   *
+   * **But a settled magnitude is not a buildable guard, and 06d is why.** CP-① item 2
+   * also calls the guard *register-backed*, and since 2026-07-31 the register is
+   * **1,800/pop stored per sector** (MT-② amended, ADR 0047). Those two coefficients
+   * never meet: 2500/1800 is a fixed **1.389**, so **no** sector's own register can
+   * back its own guard — pop 2.4 wants 6,000 against a register of 4,320, and the
+   * ratio makes that universal rather than a board artifact. Seating the guard the way
+   * the loop below seats a border shield ("drawn from the ground it stands on") would
+   * make `availableCiviliansByOrigin` throw at every legal capital.
+   *
+   * So which register backs it is a **ruling**, not a derivation: locally, like every
+   * other garrison, or apportioned across the realm the way the opening *field* army
+   * is seated below. Neither is written down, because CP-① sealed 350/pop while
+   * origins were per province and a province's register covered it either way. Do not
+   * pick one here — `DECISIONS-OWED.md` Part 2 row **16**.
    */
   static #seatSubstance(
     artifact: MatchState['loadedWorld']['artifact'],

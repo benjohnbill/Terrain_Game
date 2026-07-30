@@ -7,12 +7,18 @@ explicit victory screen. **After this ticket a complete match can be played from
 setup to victory** — thin, but closed. Every later ticket thickens a terminating
 game rather than an open-ended one.
 
-**Blocked by:** 06d — Capture a Sector and Integrate It. (Ticket 06 was re-cut into
+**Blocked by:** nothing — 06d merged 2026-07-31 (`34d728d`). (Ticket 06 was re-cut into
 06a–06d by gate C, 2026-07-26. R1 makes a capital fall an ordinary sector capture,
 so the capture path is the real blocker, not the battle alone.)
 
-Status: **ready-for-agent** (2026-07-31 — both needs-info items closed; see § Comments.
-Still **blocked by 06d**, which is the next executable ticket.)
+Status: **needs-info** (2026-07-31 — this line read `ready-for-agent, unblocked`
+earlier today and that was right on the evidence then: both prior `needs-info` items
+did close, and **06d merged the same day** (`34d728d`) so the capture a capital fall
+*is* now exists. Then R6's claim-time recompute was actually run, and found a **third
+item underneath them**: *which register backs the capital guard.* One user ruling; no
+other acceptance item is affected, and 06d/06e's work is untouched. See § Comments →
+"A third item, found by the claim-time recompute" and `DECISIONS-OWED.md` Part 2
+row **16**. This is still the frontier and the loop still closes here.)
 
 Specification gates: Wayfinder 10, 12.
 
@@ -124,3 +130,46 @@ invisible.
 
 **Status is therefore `ready-for-agent` on its own account** — but the `Blocked by`
 line still governs: 06d must land first.
+
+### A third item, found by the claim-time recompute — 2026-07-31
+
+**Which register backs the capital guard?** Registered as `DECISIONS-OWED.md`
+Part 2 row **16**. This is a **user ruling**, one question, and it blocks only
+acceptance item 1.
+
+CP-① item 2 (as CP-⑤ re-cuts it) calls the guard **register-backed**, and CP-⑤
+lists that among the properties it leaves untouched. Since 2026-07-31 the register
+is **1,800/pop stored per sector** (MT-② amended) and origin composition is per
+sector (ADR 0047). The two coefficients never meet:
+
+| capital pop | guard at 2,500/pop | that sector's own register | short by |
+|---|---|---|---|
+| 2.4 (board's largest) | 6,000 | 4,320 | 1,680 |
+| 1.0 | 2,500 | 1,800 | 700 |
+| 0.5 (weakest legal) | 1,250 | 900 | 350 |
+
+`2500 / 1800` is a fixed **1.389**, so this is structural rather than a board
+artifact: **0 of 56 sectors** can back their own guard. Seating the guard the way
+06d seats a border shield — "drawn from the ground it stands on" — makes
+`availableCiviliansByOrigin` throw at **every** legal capital, so the match could
+not be seated at all.
+
+**Both readings are coherent and neither is written down:**
+
+- **(a) local backing** — the guard originates in its own sector, like every other
+  garrison. Needs either a coefficient at or below `registerPerPop`, an exemption
+  for the capital sector, or a rule for a shield outgrowing its own bodies.
+- **(b) realm backing** — the guard's origins are apportioned across the realm's
+  held sectors, exactly how `Runtime.open` already seats the opening **field** army.
+  Works today, changes no value, but makes the capital guard the one garrison not
+  drawn from the ground it stands on, against ADR 0047's reading.
+
+**Why nobody was wrong.** CP-① sealed 350/pop on 2026-07-10, when origins were per
+province and a province's register (1,800 × Σ pop over ~5.6 sectors) covered the
+guard under either reading. CP-⑤, MT-②'s amendment and ADR 0047 all landed on
+2026-07-31 from two different sessions, each correct on its own account. The
+collision is visible only where they meet — which is here, and which is what a
+claim-time recompute is for.
+
+**Nothing is broken today.** `Runtime.#seatSubstance` seats no guard and says why,
+now including this; the guard does not exist until this ticket builds it.

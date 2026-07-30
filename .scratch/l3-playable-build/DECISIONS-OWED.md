@@ -915,15 +915,29 @@ remains is (a) which λ ships as "balanced" — nowhere assigned; code defaults 
 QUICKREF — and (b) the ladder's rungs re-cut for a single-terminus duel. Both are
 user calls; neither invents a new mechanism.
 
-### 1.8 One stale seal at the capital birthplace
+### 1.8 Stale seals at the capital birthplace
 
-CP-① item 3 still reads "capital fall = regime event: **collapse cascade /
-forced-vassalage trigger**". ADR 0042 ends the match the instant the capital
-falls, so a cascade has nowhere to run and vassalage was retired with the
-settlement terminus. The pre-pivot text was never stamped at its birthplace.
-This needs a supersession stamp, not a design decision — but it sits in the same
-file ticket 07 reads as authority, so it should be stamped before that ticket
-runs.
+**Status: PAID 2026-07-31.** CP-①'s header now carries all three amendment
+banners — ADR 0042, ruling R3, and CP-⑤. This section remains the Working-layer
+discovery record.
+
+**It was two stale items, not one, and this heading said "One".** That miscount is
+the whole reason the second one stayed invisible for six days, so it is corrected
+here rather than quietly overwritten:
+
+- **item 3** (the known one) — "capital fall = regime event: **collapse cascade /
+  forced-vassalage trigger**". ADR 0042 ends the match the instant the capital falls,
+  so a cascade has nowhere to run and vassalage was retired with the settlement
+  terminus. Stamped.
+- **item 1** (missed until 2026-07-31) — its **designation** rule still said the
+  capital is "one of the seat's main city sectors", while ruling R3 (2026-07-25) had
+  made eligibility *ownership*: any owned sector. Ticket 07 reads item 1 as authority
+  for its first acceptance item, so the miss was load-bearing — and filing the whole
+  entry under "item 3" is what hid it. Stamped.
+
+Both needed a supersession stamp rather than a design decision, which is why this was
+never a Part 2 conflict. The lesson is narrower than "stamp things": **a register row
+that names *which* item is stale will hide any other stale item in the same seal.**
 
 ### 1.9 Ticket 06a cannot place the opening army or expand authored edges to hex endpoints
 
@@ -995,6 +1009,36 @@ Both sides are sealed; the agent stops. Ordered by how early each bites.
 | 14 | **Does the operational layer track armies and move them?** — **CLOSED by R12–R15** (2026-07-26, gate C) | `DOMAIN_MAP.md` ✅ `Position as product`: the MVP has **no standalone move action and no tracked army counters** — position is a *product* of operations, and the runbook's own diff review (§ Implementation loop 7) lists "standalone movement" as forbidden scope | slice-2 design spec §3 movement contract + gate 08's full-compound-depth slice: armies hold hex positions, forced march is an explicit toggle, field armies divide and merge — which is army counters and standalone movement | ticket 06 |
 
 | 15 | **Does conquered land ever start paying its taker?** — **CLOSED by R16–R17** (2026-07-26, gate C) | `MAGNITUDE.md` M14 + ruling ⑮: "conquest raises the national cap", at a usable discount (fresh capture 50/60%) — sealed as the match-closure lever; ADR 0022/0029 supply the ripening that integrates it | OG-③: occupied-untransferred land "counts toward NEITHER side's derived quantities", and the transfer channel that ended limbo was **settlement**, which ADR 0042 retired for the duel — leaving no path from occupied to integrated | ticket 06 |
+
+| 16 | **Which register backs the capital guard?** — OPEN, found 2026-07-31 by ticket 07's claim-time recompute | Capital **CP-⑤** (SEALED 2026-07-31): guard = **가안 2,500 × capital sector `populationValue`**, and "register-backed" is listed among the properties it leaves untouched | Match-arc **MT-②** (amended 2026-07-31) + **ADR 0047**: the register is **1,800/pop** and is stored **per sector**, and origin composition is per sector — so a shield "drawn from the ground it stands on" (how 06d seats every border shield) cannot back this guard at **any** legal capital: the ratio is a fixed 2500/1800 = **1.389**, and **0 of 56** sectors can back their own guard (measured: pop 2.4 → guard 6,000 against a register of 4,320). `availableCiviliansByOrigin` treats that as fatal, so the match could not be seated | ticket 07 |
+
+Row 16 was **found 2026-07-31** by ticket 07's claim-time recompute — the check R6
+exists for, catching exactly what it is meant to catch. Three seals landed the same
+day from two sessions and none was checked against the others: CP-⑤ re-cut the guard
+coefficient, MT-② moved the register to sector grain, and ADR 0047 moved origin
+composition with it. Neither side was wrong on its own account; the collision is
+only visible where they meet.
+
+**Nothing is broken today** — the guard does not exist until ticket 07 builds it, and
+`Runtime.#seatSubstance` deliberately seats no guard. What the row blocks is claiming
+07, because its first acceptance item ("guard magnitude is land-derived from the
+capital sector per its sealed birthplace") cannot be implemented until this is ruled.
+
+**Why it is a ruling and not a derivation.** Both readings are coherent and neither
+is written down:
+
+- **(a) local backing** — the guard originates in its own sector, like every other
+  garrison (ADR 0047's principle, and how 06d seats opening shields). Requires either
+  a coefficient at or below `registerPerPop`, or an exemption for the capital sector,
+  or a rule for what happens when a sector's shield outgrows its own bodies.
+- **(b) realm backing** — the guard's origins are apportioned across the realm's held
+  sectors, the way `Runtime.open` already seats the opening **field** army. Works
+  today with no change to CP-⑤'s value, but makes the capital guard the one garrison
+  not drawn from the ground it stands on, which cuts against ADR 0047's reading.
+
+CP-① sealed 350/pop on 2026-07-10, when origins were per province and a province's
+register (1,800 × Σ pop over ~5.6 sectors) covered the guard comfortably under either
+reading. The question is new because the grain is.
 
 Row 15 was **found 2026-07-26** by the ticket-05 code review, which caught the
 implementation answering it by accident (a frozen homeland record made limbo
