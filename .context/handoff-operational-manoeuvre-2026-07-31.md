@@ -64,9 +64,13 @@ Conflating them cost most of a session. The tracker carries the table; the short
 - **Bypass A — target substitution.** Attack a *different* sector. Free today, needs
   no mechanism. This is what the user means by 우회.
 - **Bypass B — approach substitution.** Attack the *same* sector from a different
-  neighbour. **Retired** by TC-⑮ — it let a hex-grain fact decide a sector-grain
-  outcome. **Watch for it returning under another name; that is this pass's most
-  likely self-inflicted regression.**
+  neighbour. **Deferred here together with frontage — not abolished.** TC-⑮ retired one
+  *implementation* of it (arriving undoored lowering the defender's terrain), because
+  the detour is free and 100 flanking men moved R from 0.56 to 2.22. The **capability**
+  was never retired and the user wants all three bypasses. Its consequence belongs in
+  frontage, under the door-share reading M11's wording already implies. The tracker's
+  § Bypass B is deferred, not abolished carries the full correction — **read it before
+  designing against B.**
 - **Bypass C — transit past.** March past and continue. Possible today and **nothing
   can stop it** (R14).
 

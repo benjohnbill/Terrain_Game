@@ -489,3 +489,44 @@ This record is written on `vocab/dashboard-build`, which does **not** contain
 there). The seal writes in the batch above touch `docs/SYNC-DEBT.md` and the
 06c-era ticket files, so they must be made on top of `main` — editing them here
 would conflict with rows `main` already carries.
+
+## Final-check closeout — 2026-07-31
+
+A coverage audit at session close found four open items. Three were record-keeping and
+one was a user ruling; all four are closed, and one of the three turned out to be a
+genuine discovery rather than a missing note.
+
+1. **Bypass B's status was recorded against the user's decision.** The tracker called it
+   "retired" and named its return a regression, while the user had said all three
+   bypasses are wanted. Two things carried the name: the **capability** (never retired)
+   and one **implementation** of it (approach lowering the defender's terrain — what
+   TC-⑮ actually retired). Corrected in the tracker and in the manoeuvre handoff, with
+   the reconciliation stated: bypass B's consequence belongs to **frontage**, under the
+   door-share reading, not to terrain. Left as it was, the next session would have
+   treated what the user wants as forbidden ground.
+
+2. **안2 weakened the gate, in the direction the user had just argued against — and
+   nobody checked.** TC-⑬ validated `pass ×2.0` and the frontage cap as a pair; 안2
+   retires the first and the second was never built, so the gate has neither. Troops
+   needed to break a 900 garrison: **1,850** before, **1,400** on 관중's mountain side
+   after, **950** on the far side. One turn earlier the user had asked whether gate
+   defence was *too easy*. Accepted deliberately — raising it without a cap means
+   reverting 안2, and one played match will say whether 950 feels cheap where numbers
+   cannot. Recorded on the frontage debt row so the pass inherits the direction.
+
+3. **The two baseline measurement tables existed only in this session's scratch.** The
+   troops-needed table above and the commit table (garrison 900 → 16 of 20 chips; the
+   equal-commit diagonal flat at R 0.83) are what "how strong should the gate be" will
+   be measured against. Both now sit on the frontage row. The user's stated requirement
+   — commit must be eaten heavily — is already structural, and that is now on the record
+   rather than in a transcript.
+
+4. **The register moves to sector grain** (user ruling). MT-② amended at its birthplace;
+   R18 iii's grain clause amended; R17 superseded *for real*, since at sector grain a
+   captured sector carries its own register and succession needs no formula. 06d returns
+   to `ready-for-agent`, still blocked by 06e.
+
+Process note: this closeout was written from a **separate worktree**
+(`Terrain_Game-records`), because the 06e session held the main checkout with live edits
+in `game/src` and the manoeuvre session held a second worktree. Neither session's files
+were touched.

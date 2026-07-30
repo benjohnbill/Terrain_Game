@@ -9,9 +9,8 @@ an engagement must be sited on an interior sector before an interior sector can 
 captured. Until 06e lands, only authored-border endpoints can change hands — 27 of
 56 sectors.
 
-Status: **needs-info** (re-statused 2026-07-31 — one ruling is owed; see
-§ Needs-info. Was `ready-for-agent` from 2026-07-26, when R18/R19 closed the
-garrison-regen question.)
+Status: **ready-for-agent** (2026-07-31 — the owed ruling was taken the same day:
+the register moves to **sector** grain, MT-② amended. Still blocked by 06e.)
 
 Specification gates: Wayfinder 10, 12.
 Authority: **ADR 0044** + `DECISIONS-OWED.md` R16–R17. ADR 0022 (usable-value
@@ -38,7 +37,7 @@ by 0044 and are the mechanism. Match-arc OG-③ governs the limbo interval;
 - [ ] **`DOMAIN_MAP`'s `Standing world rule` entry is stale and must be corrected in this ticket's doc-sync** (R18 i): it still lists local-garrison regeneration as a Phase-1 instance consuming no action capacity, which `MAGNITUDE.md` M12's 2026-07-08 amendment (MT-⑤ / ADR 0027) retired. Projection against an amended Production seal is a **sync debt** — the seal wins. ADR 0014's header stamp is owed in the same batch; M12 itself records it as unpaid.
 - [ ] The economy's re-measurement is re-run once capture exists: `docs/SYNC-DEBT.md` parks "the economy has no sink once the field fills" as a play question, and conquest is the first mechanism that changes both sides of it.
 
-## Needs-info — one ruling owed (2026-07-31)
+## Needs-info — none. The one owed ruling was taken 2026-07-31
 
 **The register-succession checkbox above contains a hole, found by the user asking
 why the register is held per *province*.** That checkbox rules R17's proportional
@@ -52,10 +51,21 @@ carry "its own register" without a within-province apportionment — which is ex
 what R17 was for. MT-② also *derives* the register from `Σ populationValue`, a
 **sector** field, while R18 iii stores it per province.
 
-So either R17 stands after all, or the register moves to **sector** grain. It decides
-whether an accepted simplification survives, which makes it a **user ruling, not a
-value**. WM-⑤'s register return (rout survivors leaving service) lands at a sector
-too, so it shares the answer. Registered in `docs/SYNC-DEBT.md`.
+**RULED: the register moves to sector grain** (user, 2026-07-31). MT-② carries the
+amendment at its birthplace; R18 iii's grain clause is amended and its other content
+stands. Succession becomes exact with **no formula** — a captured sector carries its
+own register — so R17's proportional formula is superseded *for real* this time rather
+than by an argument that did not hold. Rewrite the two checkboxes above accordingly:
+`RealmForces.register` becomes **per sector**, `registerOf` returns per-sector values,
+and `draftOrder`'s bodies bound reads the sector a levy draws on.
+
+This is the same edit you were already making — ticket 05 flattened the register to one
+realm-level scalar and this ticket had to unflatten it regardless; one grain finer is
+the same code. WM-⑤'s register return (rout survivors leaving service, at a sector) is
+consistent with it for the first time.
+
+What R17 protected is still owed a test: a sector already bled dry carries few bodies,
+so it cannot hand its taker fresh men and resurrect the dead as the enemy's draftees.
 
 Everything below still holds, and nothing else is owed.
 

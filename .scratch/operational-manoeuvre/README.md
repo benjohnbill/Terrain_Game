@@ -50,7 +50,7 @@ preconditions, and the pass must keep them separate.
 | name | meaning | precondition | state |
 |---|---|---|---|
 | **Bypass A — target substitution** | attack a *different* sector instead | the realms touch at ≥2 sectors | already free; needs no mechanism |
-| **Bypass B — approach substitution** | attack the *same* sector from a different neighbouring sector | the *target* has ≥2 reachable neighbours | **retired** by TC-⑮ — it let a hex-grain fact decide a sector-grain outcome |
+| **Bypass B — approach substitution** | attack the *same* sector from a different neighbouring sector | the *target* has ≥2 reachable neighbours | **deferred here together with frontage** — the *capability* stands; only one implementation of it was retired. Read § Bypass B below before designing against it |
 | **Bypass C — transit past** | do not attack it; march past and continue | a route exists | possible today, and **nothing can stop it** (R14) |
 
 D9's `Removability` obligation ("chokes historically fail by **deletion**, not
@@ -64,6 +64,45 @@ guarantee the rules make. Blocking a door's arcs still reaches the target on
 **24/24** doors, but at **0 extra turns on 20/20 land doors** (straits cost 2–3).
 **That zero is the defect the pass exists to fix.**
 
+### Bypass B is deferred, not abolished
+
+**Corrected 2026-07-31 by final-check.** An earlier draft of this file called bypass B
+"retired" and named its return "this pass's most likely self-inflicted regression".
+That reads as a prohibition, and it is **not what the user decided**. Their words, in
+the exchange that opened this pass: *"우회 A, 우회 B, 우회 C … 나는 결국 전부 다 구현하고
+싶은 거잖아."* All three are wanted.
+
+Two different things carried the one name:
+
+- **(a) the capability** — an attacker *chooses* to enter a sector from a different
+  neighbour. **Never retired.** Possible today, and the user wants it to matter.
+- **(b) one implementation of it** — arriving by an undoored neighbour *lowers the
+  defender's terrain multiplier*. **This** is what TC-⑮ retired, because it let a
+  hex-grain fact decide a sector-grain outcome: the detour is free (0 extra turns on
+  20/20 land doors) and 100 flanking men moved R from 0.56 to 2.22.
+
+So the accurate state is that **(a) has no consequence in either direction right now** —
+free *and* inert. Before TC-⑮ it was free with an enormous effect; now free with none.
+Neither is what this pass wants.
+
+**Where (a)'s consequence belongs: frontage, not terrain.** The reading measured during
+the grill — the *door-share* reading, which matches M11's own wording
+("engaged-**attacker-body** caps") — is:
+
+```
+engaged attacking substance = min(force that came through the door, that door's cap)
+                            + force that arrived by any other approach
+```
+
+Under it, coming round buys a real advantage — escaping the cap — **without touching
+the defender's ground**, and it is smooth rather than cliffed: at cap 1,000 against a
+900 garrison, 100 flanking men give R 0.81 and 600 give R 1.19, where treating the cap
+as an engagement ceiling jumps straight to 2.22.
+
+**Therefore** bypass B's cost and benefit are this pass's to design, inside frontage.
+What must not silently return is **(b)** — and even that is reversible through the
+amendment protocol with a TC-⑮ stamp, not forbidden.
+
 ## Inherited seals — the pass may build on these, not silently revert them
 
 - **ADR 0046** — an engagement is sited wherever a hostile force stands; the approach
@@ -71,8 +110,8 @@ guarantee the rules make. Blocking a door's arcs still reaches the target on
   decisional.
 - **TC-⑮** — a sector's defensive terrain is its own, always. The pass **may** add
   approach-dependence on top of this, but reverting it needs the amendment protocol
-  and a TC-⑮ stamp. Bypass B returning under another name is the specific regression
-  to watch for.
+  and a TC-⑮ stamp. What that protects is the *terrain* rule; it is **not** a ban on
+  bypass B as a capability — see § Bypass B is deferred, not abolished.
 - **TC-⑬'s survivors** — the crossing column (river 0.70, strait 0.55 · ADR 0015) and
   reachable-weakest-link **among doors**.
 - **D9** — frontage is a cap, never a multiplier, because its impact is unbounded. Not

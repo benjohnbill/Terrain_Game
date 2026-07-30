@@ -297,8 +297,35 @@ exhaustion — blood runs out before money).
 
 ### MT-② 징집 명부 re-founding — SEALED 2026-07-07 · L1
 
+> **AMENDED 2026-07-31 (user ruling, geography-battle grill final-check).** Delta:
+> the register's **storage grain moves from province to sector**. Its derivation is
+> unchanged — `registerPerPop × Σ populationValue` — and that is precisely the reason:
+> `populationValue` is a **sector** field, so storing the sum per province discarded
+> per-sector variation (measured: 관중 carries pop 0.5 and 0.97 inside one province).
+> Nothing else here moves — `registerPerPop = 1,800`, the register:cap ratio 3.0,
+> `capPerPop 600` as the derived constant, and the sustain fraction ⅓ all stand, none
+> of them being grain-dependent.
+>
+> **What it fixes.** Ground changes hands **per sector** (`Realm.sectors: SectorId[]`),
+> and a province split across the front line is the normal case rather than an edge
+> case. R18 iii moved the register to per-province so that R17's proportional
+> succession could be retired as "exact" — but a partial capture cannot carry "the
+> province's own register", so the apportionment R17 supplied was still required. At
+> sector grain succession is exact with no formula at all: **a captured sector carries
+> its own register**. R17's proportional formula is therefore **superseded for real**,
+> and R18 iii's grain clause is amended (its other content stands).
+>
+> What R17 protected still holds and is still owed a test: a sector already bled dry
+> carries **few bodies**, so it cannot hand its taker fresh men and resurrect the dead
+> as the enemy's draftees (blood is permanent currency, SPEC).
+>
+> Implementation: ticket **06d**, which was already rewriting ticket 05's realm-level
+> flattening — moving one grain finer is the same edit. WM-⑤'s register return (rout
+> survivors leaving service, at a sector) is consistent with it for the first time.
+
 The register is re-founded **land-derived**: 명부 = registerPerPop ×
-Σ populationValue, per province, at match start; thereafter a pure
+Σ populationValue, **per sector** (amended 2026-07-31; was per province), at match
+start; thereafter a pure
 stock (deaths −, land transfer ±, development + via the same formula).
 **Accounting = total-bodies (b)** (user: "군사력이 될 수 있는 모든
 신체 인구") — the starting army is already drawn from it; recruitment

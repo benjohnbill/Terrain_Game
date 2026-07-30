@@ -400,6 +400,40 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   cap needs. **Not abolished:** D9 argues the cap deliberately ("a cap, never a
   multiplier … it *classifies* sectors rather than scaling them", with Thermopylae and
   Myeongnyang as anchors).
+  **The gate got weaker, and the user's stated direction was the opposite** (found
+  2026-07-31 by final-check, after 안2 was adopted — nobody had checked what 안2 did to
+  gate strength). TC-⑬ validated `pass ×2.0` and the cap as a **pair**; 안2 retires the
+  first and the second was never built, so the gate now has **neither**. Troops needed
+  to break a 900 garrison, commit 0/0:
+
+  | design state | troops needed |
+  |---|---|
+  | TC-⑬ `pass 2.0` + cap 1,000 (the intended pair) | **impossible** — R pins at 0.556 |
+  | TC-⑬ `pass 2.0`, no cap (state through 2026-07-30) | **1,850** |
+  | 안2 `Mountains 1.5` — the 관중 side | **1,400** |
+  | 안2 `Plains 1.0` — the far side | **950** |
+
+  One turn before adopting 안2 the user had asked the opposite — *"관문 방어가 너무
+  쉬워지는 것 아닌가 … 거의 무조건 이기는 상한이 조금 높아야 하지 않을까"*. 안2 is
+  right structurally (a plains sector has no geographic claim to a defile bonus) and
+  went the wrong way in magnitude. **Accepted deliberately, 2026-07-31:** raising it
+  without a cap would mean raising terrain, i.e. reverting 안2; and one played match will
+  say whether 950 *feels* too cheap, which numbers cannot. Recorded so the pass inherits
+  the direction rather than rediscovering it.
+
+  **The commit axis, measured the same day**, because it is the other half of the
+  baseline and it is what the user actually asked to be preserved. Attacker at the cap
+  (1,000) against `pass 2.0`, defender commit 0 — chips the attacker must pour, out of
+  the 20-chip stack:
+
+  | garrison | 300 | 500 | 600 | 700 | 900 | 1,200 |
+  |---|---|---|---|---|---|---|
+  | chips needed to win | 0 | 1 | 4 | 7 | **16** | never |
+
+  And with both sides pouring, **the diagonal is flat at R 0.83** — equal commit
+  cancels, so commit is a pure contest and a defender's 4 chips force the attacker to 8
+  to stand still. The user's requirement ("최소한 커밋양이라도 많이 갉아먹어야") is
+  therefore already structural rather than owed.
 
 - [x] **A routed force is reported but never displaced — RULED 2026-07-31**
   (registered 2026-07-28 by ticket 06c). `battle.ts` computes `routed` and `escaped`
@@ -1587,8 +1621,9 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   directional-terrain idea (river current) has its seat reserved by ADR 0046 item 3's
   hex-arc contract.
 
-- [ ] **06d's register succession has a hole its own checklist hides** (registered
-  2026-07-31; found by the user asking why the register is held per *province*).
+- [x] **06d's register succession had a hole its own checklist hid — RULED 2026-07-31**
+  (registered and ruled the same day; found by the user asking why the register is held
+  per *province*).
   Ticket 06d rules that R17's proportional formula is "**superseded rather than
   implemented**, because per-province accounting makes it exact: a captured province
   carries its own register to the taker". But **provinces are not captured — sectors
@@ -1598,9 +1633,13 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   apportionment — which is what R17 was for. MT-② also *derives* the register from
   `Σ populationValue`, a **sector** field, while storing it per province (R18 iii).
   WM-⑤'s register return lands at a sector too, so it shares the answer.
-  **Owed: a user ruling before ticket 06d is claimed** — either R17 stands after all,
-  or the register moves to sector grain. It decides whether an accepted
-  simplification survives, so it is a ruling, not a value.
+  **RULED: the register moves to sector grain.** MT-② carries the amendment at its
+  birthplace (match-arc `RULINGS.md`), R18 iii's grain clause is amended with its other
+  content standing, and R17's proportional formula is superseded *for real* — at sector
+  grain a captured sector carries its own register and succession needs no formula.
+  Ticket 06d returns to `ready-for-agent` (still blocked by 06e) and its two register
+  checkboxes are rewritten. Residual test owed there, not here: a bled-dry sector must
+  carry few bodies, so it cannot resurrect the dead as its taker's draftees.
 
 - [ ] **Rout survivors all leave service, and that is scope rather than judgement**
   (registered 2026-07-31 alongside WM-⑤). The user's judgement is that *some* routed
