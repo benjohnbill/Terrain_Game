@@ -443,10 +443,12 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   open-escape clause becomes a lie. **Ruled at war-model-build `RULINGS.md` WM-⑤**:
   anyone with an approach arc falls back along it one sector; anyone without one
   (structurally, every garrison) leaves service and stays on the register.
-  Implementation is owed by ticket **06e**. The residue is registered separately
-  below (the military/civilian fraction).
+  **Implemented and landed 2026-07-31 by ticket 06e** (`Runtime.#displaceRouted`;
+  the arc is `advanceOneTurn`'s, the price is R12's `MARCH_FATIGUE_PER_HEX`, and
+  leaving service goes through `subtractOrigins` so the register is untouched).
+  The residue is registered separately below (the military/civilian fraction).
 
-- [ ] **Only 27 of 56 sectors can ever be a battle site, so most capitals cannot
+- [x] **Only 27 of 56 sectors can ever be a battle site, so most capitals cannot
   be attacked at all** (registered 2026-07-28 by ticket 06c, which is the first
   ticket that could measure it). A front is an **authored region border**
   (`contestedFronts` walks `world.edges`, 17 of them), and 06c can only site an
@@ -468,11 +470,13 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   `terrainLayer` → M5 mapping. **Owed: a user ruling before ticket 07 is claimed**,
   with 06d's ownership transfer as the other input. Evidence in
   `.scratch/l3-playable-build/issues/06c-…md` § Comments.
-  **DESIGN DISCHARGED 2026-07-31 (ADR 0046 + TC-⑮); implementation owed by ticket
-  06e, so this row stays open pointing there.** The user ruling was taken in the
-  geography-battle grill, along the *second* path above — a terrain source for
-  interior sectors — which raises battle-capable sectors from 27 to **all 56**. Two
-  corrections to the text above, both load-bearing:
+  **DESIGN DISCHARGED 2026-07-31 (ADR 0046 + TC-⑮), and the implementation LANDED
+  the same day by ticket 06e** — `engagementsOf` takes the world's sector list and
+  applies the sector predicate, and `combatTerrainOf` supplies interior ground from
+  TC-⑮'s binding. The user ruling was taken in the geography-battle grill, along the
+  *second* path above — a terrain source for interior sectors — which raises
+  battle-capable sectors from 27 to **all 56**. Two corrections to the text above,
+  both load-bearing:
   - **The direction was reversed.** Re-measured over all 15 legal partitions
     (30 realm-seats): **30 of 30** seats could enter enemy ground without standing on
     a single fightable sector, mean **21.2** enemy sectors reachable with zero
