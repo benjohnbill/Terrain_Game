@@ -81,8 +81,8 @@ leaves this table by having its blocking value landed at a birthplace.
 | 07 | ✅ | ❌ capital guard magnitude (Part 2 #10); CP-① item 3 stale (§ 1.8). **The battle-site reachability blocker registered 2026-07-28 is RESOLVED 2026-07-31** (ADR 0046 + TC-⑮ — battle-capable sectors 27/56 → 56/56; implementation owed by 06e). The two items above are untouched | needs-info |
 | 08 | ✅ | ❌ Part 2 #1, #4, #5, #6 — the whole fog band | needs-info |
 | 09 | ✅ | ❌ Part 2 #3; the tactical-R composition | needs-info |
-| 10 | ✅ | ❌ Part 2 #7; the fit-ranking function (§ 1.5) | needs-info |
-| 11 | ✅ | ❌ Part 2 #2, #8, #9 | needs-info |
+| 10 | ✅ | ❌ Part 2 #7; the fit-ranking function (§ 1.5). **Also downstream of the operational-manoeuvre pass** (recorded 2026-07-31) — four of the twelve catalog plans it would expose are that pass's subject | needs-info |
+| 11 | ✅ | ❌ Part 2 #2, #8, #9. **Also downstream of the operational-manoeuvre pass** (recorded 2026-07-31) — Part 2 #2 (Encirclement) is that pass's own item, and this ticket clearing is its deletion trigger | needs-info |
 | 12 | ✅ | ❌ Part 2 #12; R4's three axes are unvalued | needs-info |
 | 13 | ✅ | ❌ every acceptance threshold belongs to gate 10 | needs-info |
 

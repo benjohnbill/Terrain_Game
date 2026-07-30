@@ -5,7 +5,11 @@ zero archive code behind it. When two revealed plans meet, the matchup does not
 apply an abstract advantage multiplier; it changes **which formula terms engage**,
 through a small closed verb vocabulary over a sparse matrix.
 
-**Blocked by:** 10 — Select Differentiated Operation Plans.
+**Blocked by:** 10 — Select Differentiated Operation Plans; and the
+**operational-manoeuvre pass** (`.scratch/operational-manoeuvre/`, § The junction with
+the build), which inherits 10's reason and adds its own: Part 2 **#2 (Encirclement)** on
+this ticket's blocker list is that pass's item. This ticket clearing is that tracker's
+own deletion trigger, so the two cannot be read independently.
 
 Status: needs-info
 

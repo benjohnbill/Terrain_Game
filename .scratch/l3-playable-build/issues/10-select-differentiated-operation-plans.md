@@ -5,7 +5,12 @@ player actually chooses between. Each plan carries its own threshold, its own
 six-axis character, and its own availability conditions, so committing to a front
 becomes "which plan, at what commitment" instead of a single generic attack.
 
-**Blocked by:** 09 — Build the EVAL BAR.
+**Blocked by:** 09 — Build the EVAL BAR; and the **operational-manoeuvre pass**
+(`.scratch/operational-manoeuvre/`, § The junction with the build). Four of the twelve
+catalog plans this ticket would expose — Flanking Breakthrough, Supply Interdiction,
+Encirclement and Annihilation, Crossing / Landing Securement — are that pass's subject:
+shape COMPLETE in the catalog, with nothing on the board behind them. Building them from
+this ticket would originate the mechanisms rather than read them.
 
 Status: needs-info
 
