@@ -9,3 +9,11 @@ coverage/
 game/dist-viewer/
 game/test-results/
 game/playwright-report/
+
+# hookify rules (Claude Code only) — deliberately untracked.
+# They are the FAST PATH for a fresh lesson, not a governance surface: their
+# messages paraphrase the documentation law, which a tracked Tier-2 file may not
+# do (single-definition rule), and Codex does not read them at all. A rule that
+# proves itself gets promoted into scripts/audit-lint.js instead — host-neutral,
+# already run by `npm run lint:docs`, already wired into pre-commit and CI.
+.claude/hookify.*.local.md
