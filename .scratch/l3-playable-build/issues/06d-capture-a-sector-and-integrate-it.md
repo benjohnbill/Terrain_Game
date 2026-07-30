@@ -4,10 +4,14 @@
 the ticket gate C's ruling R16/R17 was made for, and the one ticket 07 (capital
 fall) stands on — R1 makes a capital fall an ordinary sector capture.
 
-**Blocked by:** 06c — a capture is a battle outcome.
+**Blocked by:** 06c — a capture is a battle outcome. **And 06e** (added 2026-07-31):
+an engagement must be sited on an interior sector before an interior sector can be
+captured. Until 06e lands, only authored-border endpoints can change hands — 27 of
+56 sectors.
 
-Status: **ready-for-agent** (2026-07-26 — R18/R19 closed the last question; see
-§ Needs-info for why the garrison-regen rate became moot rather than filled in).
+Status: **needs-info** (re-statused 2026-07-31 — one ruling is owed; see
+§ Needs-info. Was `ready-for-agent` from 2026-07-26, when R18/R19 closed the
+garrison-regen question.)
 
 Specification gates: Wayfinder 10, 12.
 Authority: **ADR 0044** + `DECISIONS-OWED.md` R16–R17. ADR 0022 (usable-value
@@ -34,7 +38,28 @@ by 0044 and are the mechanism. Match-arc OG-③ governs the limbo interval;
 - [ ] **`DOMAIN_MAP`'s `Standing world rule` entry is stale and must be corrected in this ticket's doc-sync** (R18 i): it still lists local-garrison regeneration as a Phase-1 instance consuming no action capacity, which `MAGNITUDE.md` M12's 2026-07-08 amendment (MT-⑤ / ADR 0027) retired. Projection against an amended Production seal is a **sync debt** — the seal wins. ADR 0014's header stamp is owed in the same batch; M12 itself records it as unpaid.
 - [ ] The economy's re-measurement is re-run once capture exists: `docs/SYNC-DEBT.md` parks "the economy has no sink once the field fills" as a play question, and conquest is the first mechanism that changes both sides of it.
 
-## Needs-info — none. Zero unlanded values (recomputed 2026-07-26)
+## Needs-info — one ruling owed (2026-07-31)
+
+**The register-succession checkbox above contains a hole, found by the user asking
+why the register is held per *province*.** That checkbox rules R17's proportional
+formula "**superseded rather than implemented**, because per-province accounting
+makes it exact: a captured province carries its own register to the taker."
+
+But **provinces are not captured — sectors are** (`Realm.sectors: SectorId[]`), and a
+province split across the front line is the normal case, not an edge case. Measured:
+관중 carries pop **0.5** and **0.97** in one province, so a partial capture cannot
+carry "its own register" without a within-province apportionment — which is exactly
+what R17 was for. MT-② also *derives* the register from `Σ populationValue`, a
+**sector** field, while R18 iii stores it per province.
+
+So either R17 stands after all, or the register moves to **sector** grain. It decides
+whether an accepted simplification survives, which makes it a **user ruling, not a
+value**. WM-⑤'s register return (rout survivors leaving service) lands at a sector
+too, so it shares the answer. Registered in `docs/SYNC-DEBT.md`.
+
+Everything below still holds, and nothing else is owed.
+
+## Zero unlanded values (recomputed 2026-07-26)
 
 **The garrison regeneration rate was owed and is now moot, not filled in.** This
 ticket was blocked on it: `MAGNITUDE.md` M5 exports "garrison regeneration rates" to

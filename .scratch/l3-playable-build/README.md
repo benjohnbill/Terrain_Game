@@ -2,7 +2,7 @@
 
 Layer: Working (local issue-tracker operations)
 Current state: **building** — tickets 01, 02 and 03 landed 2026-07-25 under the R6
-waiver; **05 and 06a landed 2026-07-26**; **06b and 06c landed 2026-07-28** (06b's
+waiver; **05 and 06a landed 2026-07-26**; **06b and 06c landed 2026-07-28**; **06e created 2026-07-31** (the geography-battle grill's implementation home, and 06d's new blocker) (06b's
 supply half deferred to R16 by the same day's re-cut); every other ticket retains
 its recorded status behind the values in `DECISIONS-OWED.md`
 Ticket set: **re-cut 2026-07-25** against the 1v1 duel pivot (ADR 0042) and the
@@ -76,8 +76,9 @@ leaves this table by having its blocking value landed at a birthplace.
 | 06a | ✅ | ✅ **R19 authority batch and implementation landed 2026-07-26** — ADR 0045 + match-arc MT-⑥ resolve recruitment siting, province-origin accounting, readiness, and the retained 20-point/+1%p command economy; war-model-build WM-④ publishes opening placement and authored-edge endpoints. Cross-host replay: 149 Node / 18 browser, actor-safe summary `0ca0eb0d6bd4a9d7`, identical `29f214a11fc56ef8` parity observations; gate-10 threshold remains PENDING | **LANDED 2026-07-26** |
 | 06b | ✅ | ✅ **the fourteen fatigue/movement/supply dials landed at `war-model-build/MAGNITUDE.md` WB-M①** (2026-07-26, user bulk approval; L1 — exercised in the L2 harness, never the subject of a sweep). Part 2 #11 was a **stamp** and is paid there: both sides always said ×0.5. Dial 9 stays deliberately **HELD** and is wired so a later answer is a value change | **LANDED 2026-07-28** — re-cut the same day to the wear half: the supply **predicate** moved to R16 (`docs/DESIGN-RISKS.md`), the supply arithmetic stays landed and dormant, and supply is uniform because the plans that would cut it are not built. Ticket 07's negative guarantee is satisfied by construction and asserted by test |
 | 06c | ✅ | ✅ 06b's batch landed, and the delaying 가안 (breakthrough R 2.0, erosion 0.15) landed at `operation-plan-catalog/CATALOG.md`. M2/M4/M5 were already sealed. Part 2 #2 (Encirclement) is **not** in scope here and must not be resolved by implication | **LANDED 2026-07-28** — the wiring half; the calculator half landed 2026-07-26. Encirclement stays unresolved: escape is a named constant, not a derivation. Three gaps registered rather than filled (TC-⑬'s frontage throttle, rout displacement, and the battle-site limit that blocks 07) |
-| 06d | ✅ | ✅ **the last question dissolved rather than being answered** (R18, 2026-07-26). The garrison-regen rate *was* landed all along — M5 exported it and **M12 received it**, twice amended — and then R18 removed the need for it: garrison regeneration is recruitment plus a destination, and a garrison fills by **transfer** at the movement price R12 already sealed. The register also returns to **per-province** (R18 iii), which restores MT-②'s wording and makes R17's proportional succession exact rather than approximate. R19 recruitment siting is now the upstream MT-⑥ / ADR 0045 authority batch, not an unlanded 06d concern | **ready-for-agent** |
-| 07 | ✅ | ❌ capital guard magnitude (Part 2 #10); CP-① item 3 stale (§ 1.8) | needs-info |
+| 06e | ✅ | ✅ **created 2026-07-31 by the geography-battle grill; zero unlanded values.** ADR 0046 (siting on presence, the hex-arc approach contract, the per-sector commit key), terrain-cradle TC-⑮ (the `terrainLayer` → M5 binding, amending TC-⑬'s terrain column), war-model-build WM-⑤ (rout displacement). Every terrain value is cited from M5; nothing is originated. Frontage, interception and Encirclement are explicitly forbidden ground | **ready-for-agent** |
+| 06d | ✅ | ✅ **the last question dissolved rather than being answered** (R18, 2026-07-26). The garrison-regen rate *was* landed all along — M5 exported it and **M12 received it**, twice amended — and then R18 removed the need for it: garrison regeneration is recruitment plus a destination, and a garrison fills by **transfer** at the movement price R12 already sealed. The register also returns to **per-province** (R18 iii), which restores MT-②'s wording and makes R17's proportional succession exact rather than approximate. R19 recruitment siting is now the upstream MT-⑥ / ADR 0045 authority batch, not an unlanded 06d concern. **Re-statused 2026-07-31: one ruling owed** — the register-succession checkbox rules R17 superseded "because a captured province carries its own register", but provinces are not captured, sectors are; a split province needs the within-province apportionment R17 supplied. Also now **blocked by 06e** | **needs-info** |
+| 07 | ✅ | ❌ capital guard magnitude (Part 2 #10); CP-① item 3 stale (§ 1.8). **The battle-site reachability blocker registered 2026-07-28 is RESOLVED 2026-07-31** (ADR 0046 + TC-⑮ — battle-capable sectors 27/56 → 56/56; implementation owed by 06e). The two items above are untouched | needs-info |
 | 08 | ✅ | ❌ Part 2 #1, #4, #5, #6 — the whole fog band | needs-info |
 | 09 | ✅ | ❌ Part 2 #3; the tactical-R composition | needs-info |
 | 10 | ✅ | ❌ Part 2 #7; the fit-ranking function (§ 1.5) | needs-info |
@@ -125,7 +126,8 @@ actionable — it re-cut their *shapes*, not their authority.
 | 06a | a field army stands somewhere, marches, divides and merges | 03, 05 |
 | 06b | marching and fighting tire an army; a cut supply line starves it | 06a |
 | 06c | a real decisive battle resolves | 06b |
-| 06d | ground changes hands and starts paying its taker | 06c |
+| 06e | the sector becomes the atom of combat — siting, ground, approach, commit key | 06c |
+| 06d | ground changes hands and starts paying its taker | 06c, **06e** |
 | 07 | **a capital falls and the match ends — the loop closes** | 06d |
 | 08 | reconnaissance changes what the player knows | 07 |
 | 09 | the EVAL BAR reads the engagement and the commitment | 08 |

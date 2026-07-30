@@ -71,5 +71,30 @@ unsealed `terrainLayer` → M5 mapping — both kind 1/3 under the README's four
 workflow. **A user ruling is owed before this ticket is claimed.** Registered in
 `docs/SYNC-DEBT.md`; evidence in ticket 06c § Comments.
 
+### Blocker RESOLVED — 2026-07-31 (geography-battle grill)
+
+**The user ruling was taken, along the second path: a defensive-ground source for
+interior sectors.** An engagement is now sited wherever a hostile force stands
+(**ADR 0046** item 1), and a sector's defensive terrain is its own authored terrain
+(**TC-⑮**, binding the seven `terrainLayer` values onto M5's rungs). Battle-capable
+sectors go from 27 of 56 to **all 56**, and a capital falls to a fight rather than to
+a walk.
+
+Two corrections to the reading above, both recorded because they change what the fix
+had to be:
+
+- **The direction was reversed.** Re-measured over all 15 legal partitions
+  (30 realm-seats): **30 of 30** could enter enemy ground without standing on a single
+  fightable sector; **41 of 45** authored-marker capitals were reachable with **zero
+  battles**. Capitals could not be *defended*, not "not attacked".
+- **The first path would not have worked.** Adjacency-derived fronts raise
+  battle-capable sectors only from 27 to **33** of 56, leaving 23 interior sectors
+  unfightable.
+
+**Implementation is owed by the new ticket `06e`**, which this ticket therefore
+stands on through 06d. This resolves only the reachability blocker — the
+`needs-info` above (capital guard magnitude, Part 2 #10, and CP-① item 3's
+staleness) is untouched.
+
 Note this is *additional* to the `needs-info` already on this ticket (the capital
 guard magnitude, Part 2 #10, and CP-① item 3's staleness).
