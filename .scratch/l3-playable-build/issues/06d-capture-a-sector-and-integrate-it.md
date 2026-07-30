@@ -4,13 +4,14 @@
 the ticket gate C's ruling R16/R17 was made for, and the one ticket 07 (capital
 fall) stands on — R1 makes a capital fall an ordinary sector capture.
 
-**Blocked by:** 06c — a capture is a battle outcome. **And 06e** (added 2026-07-31):
-an engagement must be sited on an interior sector before an interior sector can be
-captured. Until 06e lands, only authored-border endpoints can change hands — 27 of
-56 sectors.
+**Blocked by:** nothing. 06c — a capture is a battle outcome — and 06e are both
+`resolved`. 06e was added as a blocker on 2026-07-31 because an engagement must be
+sited on an interior sector before an interior sector can be captured; it **landed
+the same day** (`b591f4e`), taking battle-capable sectors from 27 of 56 to all 56.
+This is the next executable ticket.
 
 Status: **ready-for-agent** (2026-07-31 — the owed ruling was taken the same day:
-the register moves to **sector** grain, MT-② amended. Still blocked by 06e.)
+the register moves to **sector** grain, MT-② amended. 06e cleared 2026-07-31.)
 
 Specification gates: Wayfinder 10, 12.
 Authority: **ADR 0044** + `DECISIONS-OWED.md` R16–R17. ADR 0022 (usable-value
