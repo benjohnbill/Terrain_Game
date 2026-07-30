@@ -216,7 +216,7 @@ test('an ordered intent log replays to the same turn state in both hosts', async
     .toBeGreaterThan(0);
   expect(nodeSummary.detachments.reduce((men, detachment) => men + detachment.men, 0))
     .toBe(nodeSummary.economy.field);
-  expect(nodeSummary.economy.provinces).toBeDefined();
+  expect(nodeSummary.economy.sectors).toBeDefined();
 });
 
 test('durable Node and browser replay hide varied opponent recruitment and movement truth', async ({ page }) => {

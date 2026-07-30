@@ -35,19 +35,25 @@ export type {
 export {
   CAP_LAND_FRAC,
   CAP_PER_POP,
+  CONQUEST_DAMAGE,
   forceLimitOf,
+  FRESH_CAPTURE_USABLE_ECONOMY,
+  FRESH_CAPTURE_USABLE_POP,
   GARRISON_PER_BORDER_SECTOR,
+  garrisonHeadroomOf,
   holdsOf,
   incomeOf,
   landValueOf,
   MEN_PER_YIELD,
+  NOTHING_RIPENING,
   REGISTER_PER_POP,
   registerOf,
+  RIPENING_PER_TURN,
   START_FIELD_FRACTION,
   startingTreasuryOf,
   TREASURY_START_TURNS,
 } from '../domain/economy.js';
-export type { SectorTable } from '../domain/economy.js';
+export type { RipeningTurns, SectorTable } from '../domain/economy.js';
 export {
   BATTLE_FATIGUE_COEF,
   battleAccrual,
@@ -110,11 +116,13 @@ export {
   combatEligibleMen,
   fieldOf,
   menOf,
+  partitionOrigins,
   mergeDetachments,
   mergeDetachmentsRefusal,
   servingByOrigin,
   splitDetachment,
   splitDetachmentRefusal,
+  transferToGarrisonRefusal,
 } from '../domain/force.js';
 export type {
   Detachment,
@@ -123,6 +131,7 @@ export type {
   MovementOrder,
   OriginComposition,
   PendingCohort,
+  PostureSite,
 } from '../domain/force.js';
 export { readFronts, revealTurn } from '../domain/turn.js';
 export type { FrontReading, RevealedTurn } from '../domain/turn.js';
@@ -190,10 +199,12 @@ export type {
   MergeDetachmentsIntent,
   MobilizationSignalView,
   MoveDetachmentIntent,
-  ProvinceForcesView,
   RealmView,
+  SectorForcesView,
   RejectedEvent,
   SplitDetachmentIntent,
+  TransferToFieldIntent,
+  TransferToGarrisonIntent,
   TurnTier,
   ViewerId,
   WorldIdentity,

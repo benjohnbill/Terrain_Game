@@ -19,8 +19,12 @@ import {
   recruitmentOrderKeyOf,
   type CommitmentContext,
 } from '../domain/commitment.js';
-import { GARRISON_PER_BORDER_SECTOR } from '../domain/economy.js';
-import { mergeDetachmentsRefusal, splitDetachmentRefusal } from '../domain/force.js';
+import { garrisonHeadroomOf } from '../domain/economy.js';
+import {
+  mergeDetachmentsRefusal,
+  splitDetachmentRefusal,
+  transferToGarrisonRefusal,
+} from '../domain/force.js';
 import {
   buildMovementGraph,
   FORCED_MARCH_EXTRA_CAP,
@@ -82,8 +86,7 @@ function recruitmentLegalityContext(
   const sectors = Object.values(view.board.sectors);
   return {
     controlledSectors: view.realms.find((realm) => realm.actor === actor)?.sectors ?? [],
-    ownedRegions: Object.keys(view.economy?.provinces ?? {}),
-    sectorRegions: Object.fromEntries(sectors.map((sector) => [sector.id, sector.regionId])),
+    registeredSectors: Object.keys(view.economy?.sectors ?? {}),
     musterHexes: Object.fromEntries(sectors.map((sector) => [
       sector.id,
       musterHexOf(view.board, sector.id),
@@ -143,7 +146,6 @@ export function preview(view: MatchView, intent: Intent): PreviewCard {
     };
     const graph = buildMovementGraph(view.board);
     const legalityContext = recruitmentLegalityContext(view, intent.actor, graph);
-    const sectorRegions = legalityContext.sectorRegions;
     let refusal = recruitmentRequestRefusal(
       legalityContext,
       allocation.requestId,
@@ -191,7 +193,7 @@ export function preview(view: MatchView, intent: Intent): PreviewCard {
     );
     const garrisonHeadroom = Object.fromEntries(requests.map((stored) => [
       stored.sectorId,
-      Math.max(0, GARRISON_PER_BORDER_SECTOR - (currentGarrisons[stored.sectorId] ?? 0)),
+      garrisonHeadroomOf(currentGarrisons[stored.sectorId] ?? 0),
     ]));
     const batch = settleRecruitmentBatch({
       requests,
@@ -201,9 +203,8 @@ export function preview(view: MatchView, intent: Intent): PreviewCard {
       register: economy.register,
       treasury: economy.treasury,
       availableCivilians: Object.fromEntries(
-        Object.entries(economy.provinces).map(([region, province]) => [region, province.availableCivilians]),
+        Object.entries(economy.sectors).map(([sector, row]) => [sector, row.availableCivilians]),
       ),
-      sectorRegions,
       garrisonHeadroom,
       musterHexes,
     });
@@ -333,6 +334,43 @@ export function preview(view: MatchView, intent: Intent): PreviewCard {
           (intent as { detachmentIds?: unknown }).detachmentIds,
         );
     return refusal === null ? { admissible: true } : no(refusal);
+  }
+
+  if (intent.kind === 'transfer-to-garrison') {
+    if (intent.actor !== view.viewer) {
+      return no(`A posture transfer is previewed by the realm making it; "${view.viewer}" cannot preview "${intent.actor}"'s.`);
+    }
+    const windowRefusal = lockRefusal(commitmentContext(view, intent.actor), intent.actor);
+    if (windowRefusal !== null) return no(windowRefusal);
+
+    // The same sites the Runtime reads, rebuilt from the view: a realm sees its own
+    // holdings, its own shields and its own formations exactly, so this needs no truth
+    // the projection withholds.
+    const shields = new Map(view.garrisons.map((garrison) => [garrison.sectorId, garrison]));
+    const controlled = view.realms.find((realm) => realm.actor === intent.actor)?.sectors ?? [];
+    const sites = [...controlled].sort().map((sectorId) => {
+      const shield = shields.get(sectorId);
+      const garrisonMen = shield?.men ?? 0;
+      return {
+        sectorId,
+        musterHex: musterHexOf(view.board, sectorId),
+        garrisonMen,
+        garrisonHeadroom: garrisonHeadroomOf(garrisonMen),
+      };
+    });
+
+    const postureRefusal = transferToGarrisonRefusal(
+      view.detachments.map((detachment) => ({
+        id: detachment.id,
+        position: detachment.position,
+        men: detachment.men,
+        readyMen: detachment.readyMen,
+      })),
+      sites,
+      (intent as { detachmentId?: unknown }).detachmentId,
+      (intent as { men?: unknown }).men,
+    );
+    return postureRefusal === null ? { admissible: true } : no(postureRefusal);
   }
 
   return no(`No resolution is wired for intent kind "${intent.kind}" yet.`);

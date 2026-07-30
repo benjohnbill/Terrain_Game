@@ -555,6 +555,36 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
     the shield is re-wiped every turn. The **turn 7–8 first crossing** is the
     robust figure; the 20-turn erosion totals (8,400–9,600) are an artifact of the
     missing capture and must not be read as an attrition rate. Re-read after 06d.
+  - **06d landed 2026-07-31, so the caveat's premise is discharged and the
+    re-measurement is now owed rather than blocked.** An invader takes the sector,
+    and the shield does not survive to be re-wiped: a captured sector's shield is
+    emptied on capture (WM-⑤ (v) for whatever is still standing, ADR 0045 item 7 for
+    cohorts still forming). The 20-turn erosion totals should therefore be re-read
+    against a run where ground actually changes hands — which is ticket **13**'s
+    first full-depth match, since gate **10** owns the thresholds.
+
+- [ ] **What happens to the wear ledger across a posture change — HELD, needs a
+  user ruling** (registered 2026-07-31 by ticket 06d, found by its own code review).
+  R18 (ii) grants transfers in **both** directions between field and garrison and
+  prices them by movement alone: "turns and fatigue, never commit … Zero new pricing
+  devices," with a free instant transfer rejected because "an action with no cost is
+  not a decision." Filling a shield **from** the field is landed. Taking shield men
+  **back out** is not, and the reason is a genuine hole rather than scope: no seal
+  says what a man's wear is after he has been standing in a shield.
+  - The naive reading is a **wear-laundering machine**. A garrison keeps no wear
+    ledger (06c: an unattended shield fights at the unattended baseline), so men
+    entering have nowhere to carry wear and men leaving would be minted at zero. Both
+    transfers sit in one decision window and headroom reopens after each move out, so
+    an exhausted army standing on any of its own muster hexes could round-trip its
+    whole wear away, free and repeatedly — defeating 06b's convex wear curve, which
+    is a core balance device.
+  - **Each candidate fix needs a statement that does not exist:** give the garrison a
+    wear ledger (the state 06c refused); charge the transfer a wear price (a new dial
+    R18's "zero new pricing devices" forbids); or forbid the round trip inside one
+    window (a new rule). So it is a seam, not a gap.
+  - Meanwhile the intent is **unwired rather than half-implemented** — it falls
+    through to the ordinary unwired-intent rejection, and a test pins that so the
+    hole cannot close by accident. Ticket 06d § Comments carries the same note.
 
 - [ ] **The realm economy has no sink after the field fills** (registered
   2026-07-26, measured by ticket 05). With recruitment the only spend in the
@@ -567,6 +597,13 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   impose depends on how much a player actually spends executing strategies and
   how much they recruit, which only real play shows. Re-measure once 06 lands;
   nothing to decide before then.
+  - **Trigger fixed 2026-07-31 by ticket 06d.** "Once 06 lands" is now specific:
+    conquest is the first mechanism that moves **both** sides of this question — it
+    raises the force limit the treasury has to chase, and it gives money a reason to
+    exist beyond recruitment. 06d carried this as an acceptance item and left it
+    deliberately unticked, because the sink only opens over a played match and every
+    threshold that would judge it belongs to gate **10**. So the re-measurement fires
+    with ticket **13**'s first full-depth run, not before.
 
 - [ ] **R6 per-ticket authority waiver — gate-12 publication deferred behind the
   build** (registered 2026-07-25, user ruling). The L3 build's readiness rule

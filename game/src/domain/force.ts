@@ -1,14 +1,36 @@
 /**
- * Positioned military substance and its province-origin accounting.
+ * Positioned military substance and its **sector**-origin accounting.
  *
  * Authority: match-arc MT-⑥, war-model-build WM-④, and ADR 0045. Origin is
  * accounting state rather than a formation attribute: movement never changes
  * it, while every serving body remains traceable to one living register.
+ *
+ * **The grain is the sector, and it moved here on 2026-07-31** — a user ruling
+ * that amends ADR 0045's title and its items 2, 4 and 5, whose text still reads
+ * "province". Two reasons, and the second is the load-bearing one:
+ *
+ * - the register moved the same day (MT-② amended), because its own derivation
+ *   `registerPerPop × Σ populationValue` reads a **sector** field, so storing the
+ *   sum per province discarded per-sector variation;
+ * - and these two cannot sit at different grains. `availableCivilians =
+ *   register − serving` joins them on one key. Province-keyed origin against a
+ *   sector-keyed register makes every casualty a lookup miss, and a capture could
+ *   not value one taken sector's civilians without re-deriving the apportionment
+ *   (R17) that sector grain exists to supersede.
  */
 
-import type { HexPosition, RegionId, SectorId } from '../world/schema.js';
+import type { HexPosition, SectorId } from '../world/schema.js';
 
-export type OriginComposition = Readonly<Record<RegionId, number>>;
+/**
+ * Serving bodies by the sector whose living register they were drawn from.
+ *
+ * Not a position and not a formation attribute: a cohort raised in one sector and
+ * marched across the board still answers to that sector's register. That is what
+ * makes `register − serving` a conservation law rather than a coincidence, and it
+ * is why a captured sector's *civilians* transfer while its serving men stay with
+ * their realm (ADR 0045 item 4, at this grain).
+ */
+export type OriginComposition = Readonly<Record<SectorId, number>>;
 
 export interface ForceCohort {
   readonly origins: OriginComposition;
@@ -60,11 +82,11 @@ type ForceCollection = {
 };
 
 export function accumulateOrigins(
-  destination: Record<RegionId, number>,
+  destination: Record<SectorId, number>,
   origins: OriginComposition,
 ): void {
-  for (const [region, men] of Object.entries(origins)) {
-    destination[region] = (destination[region] ?? 0) + men;
+  for (const [sector, men] of Object.entries(origins)) {
+    destination[sector] = (destination[sector] ?? 0) + men;
   }
 }
 
@@ -81,12 +103,12 @@ export function fieldOf(forces: ForceCollection): number {
   );
 }
 
-/** Serving bodies by province origin across field and local-garrison posture. */
+/** Serving bodies by sector origin across field and local-garrison posture. */
 export function servingByOrigin(
   forces: ForceCollection,
   garrisons: readonly GarrisonForce[],
-): Record<RegionId, number> {
-  const serving: Record<RegionId, number> = {};
+): Record<SectorId, number> {
+  const serving: Record<SectorId, number> = {};
   if (forces.openingField !== null) accumulateOrigins(serving, forces.openingField.origins);
   for (const detachment of forces.detachments) {
     accumulateOrigins(serving, detachment.ready.origins);
@@ -101,16 +123,16 @@ export function servingByOrigin(
 
 /** Living civilians still available to serve, derived exactly rather than stored. */
 export function availableCiviliansByOrigin(
-  registers: Readonly<Record<RegionId, number>>,
-  serving: Readonly<Record<RegionId, number>>,
-): Record<RegionId, number> {
-  const available: Record<RegionId, number> = {};
-  for (const region of Object.keys(registers).sort()) {
-    const civilians = registers[region]! - (serving[region] ?? 0);
+  registers: Readonly<Record<SectorId, number>>,
+  serving: Readonly<Record<SectorId, number>>,
+): Record<SectorId, number> {
+  const available: Record<SectorId, number> = {};
+  for (const sector of Object.keys(registers).sort()) {
+    const civilians = registers[sector]! - (serving[sector] ?? 0);
     if (civilians < 0) {
-      throw new Error(`Serving bodies from ${region} exceed its living register.`);
+      throw new Error(`Serving bodies from ${sector} exceed its living register.`);
     }
-    available[region] = civilians;
+    available[sector] = civilians;
   }
   return available;
 }
@@ -120,7 +142,7 @@ export function availableCiviliansByOrigin(
  * largest fractional remainders win, with canonical key order breaking ties.
  *
  * Exported because men are apportioned over more than one kind of key: over
- * province origins (below), and over the several formations that shared one
+ * sector origins (below), and over the several formations that shared one
  * engagement when its blood is taken. Both need the *same* exactness — the parts
  * sum to the total, always — and a second copy of this loop is how the two would
  * come to lose or invent a man between them.
@@ -155,22 +177,39 @@ export function apportionExact(
   return allocated;
 }
 
-/** Canonical integer apportionment over province-origin capacity. */
+/** Canonical integer apportionment over sector-origin capacity. */
 export function apportionOrigins(
   total: number,
-  weights: Readonly<Record<RegionId, number>>,
-): Record<RegionId, number> {
+  weights: Readonly<Record<SectorId, number>>,
+): Record<SectorId, number> {
   return apportionExact(total, weights);
 }
 
-function splitOrigins(
+/**
+ * Divide one composition into the part that stays and the part that goes, from a
+ * **single** apportionment.
+ *
+ * Exported because that singleness is the whole contract. `apportionExact`'s own
+ * docstring gives the reason — "a second copy of this loop is how the two would come
+ * to lose or invent a man between them" — and calling it twice on the same
+ * composition is exactly that second copy: the two halves each round exactly, so
+ * their *totals* conserve, while per origin they need not. `{A:3,B:3}` split at 1
+ * gives `{A:0,B:1}` and `{A:2,B:3}`, which sums to `{A:2,B:4}` — a man teleported
+ * from A to B. Origin composition is accounting state joined to the register by
+ * `register − serving`, so that drift eventually pushes a sector's civilians
+ * negative and `availableCiviliansByOrigin` throws mid-match.
+ *
+ * So: any caller that needs *both* halves must take them from here, together.
+ * `subtractOrigins` is for callers that genuinely only want the remainder.
+ */
+export function partitionOrigins(
   origins: OriginComposition,
   childMen: number,
 ): readonly [OriginComposition, OriginComposition] {
   const child = apportionExact(childMen, origins);
-  const retained: Record<RegionId, number> = {};
-  for (const region of Object.keys(origins).sort()) {
-    retained[region] = origins[region]! - (child[region] ?? 0);
+  const retained: Record<SectorId, number> = {};
+  for (const sector of Object.keys(origins).sort()) {
+    retained[sector] = origins[sector]! - (child[sector] ?? 0);
   }
   return [retained, child];
 }
@@ -184,7 +223,7 @@ function splitOrigins(
  * body it did not have.
  */
 export function subtractOrigins(origins: OriginComposition, men: number): OriginComposition {
-  return splitOrigins(origins, men)[0];
+  return partitionOrigins(origins, men)[0];
 }
 
 /**
@@ -201,12 +240,22 @@ export function subtractOrigins(origins: OriginComposition, men: number): Origin
  * path applies for the same reason: it is still a body of men, just not a
  * combat-ready one.
  */
-export function withdrawFromDetachment(detachment: Detachment, men: number): Detachment | null {
+export function withdrawFromDetachment(
+  detachment: Detachment,
+  men: number,
+): { readonly detachment: Detachment | null; readonly withdrawn: OriginComposition } {
+  // Both halves from **one** `partitionOrigins`, never two subtractions. A caller that
+  // needed the withdrawn men and asked for them separately would get a composition
+  // that agrees on the total and disagrees per origin — see `partitionOrigins`.
+  const [remaining, withdrawn] = partitionOrigins(detachment.ready.origins, men);
   const next: Detachment = {
     ...detachment,
-    ready: { ...detachment.ready, origins: subtractOrigins(detachment.ready.origins, men) },
+    ready: { ...detachment.ready, origins: remaining },
   };
-  return menOf(next.ready.origins) === 0 && next.pending.length === 0 ? null : next;
+  return {
+    detachment: menOf(remaining) === 0 && next.pending.length === 0 ? null : next,
+    withdrawn,
+  };
 }
 
 export function splitDetachment(
@@ -223,11 +272,11 @@ export function splitDetachment(
   }
 
   const childByCohort = apportionExact(men, cohortWeights);
-  const [retainedReady, childReady] = splitOrigins(source.ready.origins, childByCohort.ready ?? 0);
+  const [retainedReady, childReady] = partitionOrigins(source.ready.origins, childByCohort.ready ?? 0);
   const retainedPending: PendingCohort[] = [];
   const childPending: PendingCohort[] = [];
   source.pending.forEach((cohort, index) => {
-    const [retained, child] = splitOrigins(
+    const [retained, child] = partitionOrigins(
       cohort.origins,
       childByCohort[`pending:${index}`] ?? 0,
     );
@@ -277,6 +326,54 @@ export function splitDetachmentRefusal(
   return null;
 }
 
+/**
+ * One sector, as a posture transfer needs to read it.
+ *
+ * Plain values rather than state, so the Runtime and `preview` validate a transfer
+ * against exactly the same question and cannot come to disagree about it.
+ */
+export interface PostureSite {
+  readonly sectorId: SectorId;
+  readonly musterHex: HexPosition;
+  /** Men already manning the shield, ready and forming alike — M13a's local cap. */
+  readonly garrisonMen: number;
+  /** `garrisonHeadroomOf(garrisonMen)`, computed beside the cap it reads. */
+  readonly garrisonHeadroom: number;
+}
+
+/**
+ * Shared refusal for moving field men into the shield they are standing on.
+ *
+ * **Why standing on it is the whole legality rule** (R18 ii): a transfer is priced
+ * by movement and nothing else — "zero new pricing devices" — so the turns it costs
+ * are the turns of the march that brought the men here. There is no separate
+ * transfer delay to invent, and no way to fill a shield from a distance.
+ */
+export function transferToGarrisonRefusal(
+  detachments: readonly (FormationDetachment & { readonly readyMen: number })[],
+  sites: readonly PostureSite[],
+  detachmentId: unknown,
+  men: unknown,
+): string | null {
+  if (typeof detachmentId !== 'string' || detachmentId.length === 0) {
+    return 'A posture transfer must name a detachment.';
+  }
+  const source = detachments.find((detachment) => detachment.id === detachmentId);
+  if (source === undefined) return `Detachment "${detachmentId}" is not owned by this actor.`;
+  const site = sites.find((candidate) =>
+    candidate.musterHex.q === source.position.q && candidate.musterHex.r === source.position.r);
+  if (site === undefined) {
+    return `Detachment "${detachmentId}" is not standing on a controlled sector's muster hex.`;
+  }
+  if (typeof men !== 'number' || !Number.isInteger(men) || men <= 0 || men > source.readyMen) {
+    return `A transfer must move a positive whole number up to ${source.readyMen}; got ${String(men)}.`;
+  }
+  if (men > site.garrisonHeadroom) {
+    return `${site.sectorId}'s shield has room for ${site.garrisonHeadroom} more men, not ${men}.`;
+  }
+  return null;
+}
+
 export function mergeDetachments(
   sources: readonly Detachment[], mergedId: string,
 ): Detachment {
@@ -289,7 +386,7 @@ export function mergeDetachments(
     throw new Error('Detachments must occupy the same hex to merge.');
   }
 
-  const origins: Record<RegionId, number> = {};
+  const origins: Record<SectorId, number> = {};
   let readyMen = 0;
   let fatigueMass = 0;
   const pending: PendingCohort[] = [];
@@ -374,7 +471,7 @@ export function activateReadyCohorts(detachment: Detachment, turn: number): Deta
   const activating = detachment.pending.filter((cohort) => cohort.readyOnTurn <= turn);
   if (activating.length === 0) return detachment;
 
-  const origins: Record<RegionId, number> = { ...detachment.ready.origins };
+  const origins: Record<SectorId, number> = { ...detachment.ready.origins };
   let total = menOf(detachment.ready.origins);
   let fatigueMass = detachment.ready.fatigue * total;
   for (const cohort of activating) {
@@ -397,7 +494,7 @@ export function activateReadyGarrisonCohorts(
   const activating = garrison.pending.filter((cohort) => cohort.readyOnTurn <= turn);
   if (activating.length === 0) return garrison;
 
-  const ready: Record<RegionId, number> = { ...garrison.ready };
+  const ready: Record<SectorId, number> = { ...garrison.ready };
   for (const cohort of activating) accumulateOrigins(ready, cohort.origins);
   return {
     ready,

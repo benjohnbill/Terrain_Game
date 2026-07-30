@@ -57,6 +57,66 @@ export const START_FIELD_FRACTION = 0.5;
 export const GARRISON_PER_BORDER_SECTOR = 900;
 
 /**
+ * Room left in one sector's shield, given what already mans it.
+ *
+ * Beside the constant rather than at each caller, because four surfaces ask this
+ * question — recruitment's garrison headroom, the Runtime's posture sites, the
+ * preview's copy of them, and the tests — and the cap is local by seal (ADR 0014
+ * keeps garrison ceilings local, M13a sizes them), so a caller that clamped
+ * differently would be quietly re-cutting the ceiling.
+ */
+export function garrisonHeadroomOf(manned: number): number {
+  return Math.max(0, GARRISON_PER_BORDER_SECTOR - manned);
+}
+
+/**
+ * What freshly taken ground is worth, and how fast it ripens — **ADR 0022 / ADR
+ * 0029, unchanged**, supplied a transfer channel by ADR 0044.
+ *
+ * A capture starts at half its economy and three fifths of its population and
+ * recovers ten percentage points per stable turn — so against fully-authored land
+ * the population is whole after four stable turns and the economy after five.
+ * (ADR 0029 calls it "the ~4-turn ripening transient"; the two fractions simply do
+ * not finish together.) `AGENTS.md`'s standing guardrail against instant full-value
+ * transfer is what forbids shortening this.
+ *
+ * A **stable turn** is ADR 0022's own test, and all three clauses matter: the sector
+ * "ends the turn under the same faction, was not contested during that turn, and was
+ * not the target of active attack/defense resolution". The turn of the capture fails
+ * every one of them, which is what makes limbo an interval rather than a formality.
+ *
+ * **Productivity only.** ADR 0044 item 3: ADR 0029 names "yield AND military
+ * ceiling", so income and the force limit ripen — the register is a body count and
+ * transfers unripened. Do not compose these with `REGISTER_PER_POP`.
+ *
+ * ADR 0044 item 5 also records what these are *not*: a risk device. The lag is the
+ * fruit arriving slowly. Reading ADR 0029's "the ~4-turn ripening transient is the
+ * counterattack window" as an anti-runaway mechanism was proposed and rejected.
+ */
+export const FRESH_CAPTURE_USABLE_ECONOMY = 0.5;
+export const FRESH_CAPTURE_USABLE_POP = 0.6;
+export const RIPENING_PER_TURN = 0.1;
+
+/**
+ * `conquest damage` — a **named seam at identity**, not a live dial.
+ *
+ * The phrase is used by ADR 0029 and by the match-arc `정산` GLOSSARY row ("vs
+ * conquest damage + M6 inheritance cost"), and **no rule or value anywhere defines
+ * it**. Its only contrast was settlement, which ADR 0042 retired, so it currently
+ * floats. It is also a live candidate device for the deferred snowball-counterweight
+ * session, where "freshly taken ground is weakly held" is exactly what ADR 0044
+ * item 6's directions (a) and (b) want.
+ *
+ * So it goes in at 1.0, multiplying nothing, so that session lands a **value change
+ * rather than a redesign** — the discipline 06b applies to its HELD recovery
+ * condition. The tension it will have to resolve is recorded and deliberately not
+ * resolved here: 노화 헌법 P2 allows permanent damage only through identity acts
+ * (초토화, out of scope by R9), so conquest damage cannot be permanent and would
+ * have to act on recovery speed — which is what the ripening lag already does.
+ */
+export const CONQUEST_DAMAGE = 1;
+
+/**
  * The opening war chest, counted in **turns of the realm's own income**.
  *
  * Two seals speak here and the later one governs. `MAGNITUDE.md` **M14 ruling ㉑**
@@ -94,13 +154,65 @@ export function startingTreasuryOf(income: number): number {
 export const MEN_PER_YIELD = 200;
 
 /** Σ over the given sectors, of one numeric reading. */
-function sumOver(sectors: SectorTable, ids: readonly SectorId[], read: (sector: Sector) => number): number {
+function sumOver(sectors: SectorTable, ids: readonly SectorId[], read: (sector: Sector, id: SectorId) => number): number {
   let total = 0;
   for (const id of ids) {
     const sector = sectors[id];
-    if (sector !== undefined) total += read(sector);
+    if (sector !== undefined) total += read(sector, id);
   }
   return total;
+}
+
+/**
+ * Stable turns each still-ripening sector has completed since it integrated.
+ *
+ * Absent means "not ripening" — either native ground, or acquired ground that has
+ * reached its authored usable value and had its entry dropped. So the empty map is
+ * the honest opening state and every reader below degrades to the authored value.
+ */
+export type RipeningTurns = Readonly<Record<SectorId, number>>;
+
+/**
+ * The empty ripening state, named so a caller has to say it means nothing is
+ * settling rather than leave the argument off.
+ *
+ * `incomeOf` and `forceLimitOf` take `ripening` as a **required** parameter for the
+ * same reason the retired flat `0.75` became an explicit `fatigue:` input in
+ * ticket 03: a forgotten argument here would silently return full authored value,
+ * which is exactly the instant-full-value transfer `AGENTS.md` guards against. A
+ * default would have made the guardrail's own failure mode the easy path.
+ */
+export const NOTHING_RIPENING: RipeningTurns = Object.freeze({});
+
+/** How much of a sector's authored economy is usable now (ADR 0022). */
+export function usableEconomyOf(sector: Sector, stableTurns: number | undefined): number {
+  if (stableTurns === undefined) return sector.usableEconomy;
+  return Math.min(
+    sector.usableEconomy,
+    FRESH_CAPTURE_USABLE_ECONOMY + RIPENING_PER_TURN * stableTurns,
+  );
+}
+
+/** How much of a sector's authored population is usable now (ADR 0022). */
+export function usablePopOf(sector: Sector, stableTurns: number | undefined): number {
+  if (stableTurns === undefined) return sector.usablePop;
+  return Math.min(
+    sector.usablePop,
+    FRESH_CAPTURE_USABLE_POP + RIPENING_PER_TURN * stableTurns,
+  );
+}
+
+/**
+ * Whether a sector has finished ripening, so its entry can be dropped.
+ *
+ * The record is kept sparse on purpose: a permanent entry per conquered sector
+ * would make "is this ground still settling" a value comparison at every reader
+ * instead of a key lookup, and would leave the opening state carrying 56 rows that
+ * all say "nothing is happening".
+ */
+export function fullyRipened(sector: Sector, stableTurns: number): boolean {
+  return usableEconomyOf(sector, stableTurns) >= sector.usableEconomy &&
+    usablePopOf(sector, stableTurns) >= sector.usablePop;
 }
 
 /**
@@ -136,9 +248,20 @@ export function holdsOf(
   return controlled.filter((id) => homeland[id] === actor);
 }
 
-/** Yield per turn — Σ economyValue × usableEconomy over holds (M14, OG-①). */
-export function incomeOf(sectors: SectorTable, holds: readonly SectorId[]): number {
-  return sumOver(sectors, holds, (sector) => sector.economyValue * sector.usableEconomy);
+/**
+ * Yield per turn — Σ economyValue × usableEconomy over holds (M14, OG-①).
+ *
+ * `ripening` is what makes acquired land pay in slowly rather than at once: it is
+ * the ADR 0022/0029 lag, and `AGENTS.md`'s guardrail against instant full-value
+ * transfer is why it is a parameter here rather than an optional refinement.
+ */
+export function incomeOf(
+  sectors: SectorTable,
+  holds: readonly SectorId[],
+  ripening: RipeningTurns,
+): number {
+  return sumOver(sectors, holds, (sector, id) =>
+    sector.economyValue * usableEconomyOf(sector, ripening[id]));
 }
 
 /**
@@ -149,8 +272,13 @@ export function incomeOf(sectors: SectorTable, holds: readonly SectorId[]): numb
  * ceiling on men that is not a whole number of men is not a ceiling anyone can
  * state. The rounding is the reading, not a dial.
  */
-export function forceLimitOf(sectors: SectorTable, holds: readonly SectorId[]): number {
-  const derived = CAP_PER_POP * sumOver(sectors, holds, (s) => s.populationValue * s.usablePop);
+export function forceLimitOf(
+  sectors: SectorTable,
+  holds: readonly SectorId[],
+  ripening: RipeningTurns,
+): number {
+  const derived = CAP_PER_POP * sumOver(sectors, holds, (s, id) =>
+    s.populationValue * usablePopOf(s, ripening[id]));
   // capLandFrac blends a frozen build ceiling toward the derived one. At its
   // sealed 1 the blend is the identity, and the frozen term has no referent in a
   // duel — written out so the sealed dial is visible rather than assumed away.
@@ -158,12 +286,21 @@ export function forceLimitOf(sectors: SectorTable, holds: readonly SectorId[]): 
 }
 
 /**
- * The conscription register — total draftable bodies (MT-②).
+ * The conscription register — draftable bodies on a given stretch of land (MT-②).
  *
- * Land-derived **at match start** and a pure stock thereafter: recruitment moves
- * bodies civilian→serving and only death shrinks it. Losing land does not (D5.3:
- * the bodies are real people under occupation — unreachable, not gone), which is
- * why this is called once at setup and never recomputed from holdings.
+ * Land-derived **at match start** and a stock thereafter, moved by exactly two
+ * things: death takes bodies out of the world, and **land transfer moves them
+ * between realms** (ADR 0044). It is still never *recomputed from holdings* — a
+ * realm that loses ground does not have its register re-derived — but the older
+ * reading of that, "losing land does not shrink the register at all" (ledger D5.3),
+ * is **dissolved**: ADR 0044 § Context found D5.3's corollary was a deduction from
+ * permanent limbo, and permanent limbo is what ADR 0042 removed.
+ *
+ * So the distinction this comment has to keep straight is: not recomputed, but
+ * moved. Called per sector at setup, and thereafter only as the transfer's input —
+ * the *nominal* reading a sector would carry, which a capture deliberately does not
+ * use (ADR 0044 item 4: handing over the nominal register would resurrect the dead
+ * as the enemy's draftees). What a capture moves is the civilians standing there.
  */
 export function registerOf(sectors: SectorTable, sectorIds: readonly SectorId[]): number {
   // Whole bodies, for the same reason the force limit is whole men.

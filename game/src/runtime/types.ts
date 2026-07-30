@@ -101,6 +101,8 @@ export type Intent =
   | MoveDetachmentIntent
   | SplitDetachmentIntent
   | MergeDetachmentsIntent
+  | TransferToGarrisonIntent
+  | TransferToFieldIntent
   | LockCommitmentIntent
   | { readonly kind: string; readonly actor: ActorId };
 
@@ -191,6 +193,27 @@ export interface MergeDetachmentsIntent {
   readonly detachmentIds: readonly string[];
 }
 
+/**
+ * Move ready field men into the shield of the sector they stand on (R18 ii).
+ *
+ * Priced by movement alone — turns and fatigue, never 행동력 — so the legality rule
+ * is that the detachment is already there.
+ */
+export interface TransferToGarrisonIntent {
+  readonly kind: 'transfer-to-garrison';
+  readonly actor: ActorId;
+  readonly detachmentId: string;
+  readonly men: number;
+}
+
+/** Take ready shield men back into the field at their own sector (R18 ii). */
+export interface TransferToFieldIntent {
+  readonly kind: 'transfer-to-field';
+  readonly actor: ActorId;
+  readonly sector: SectorId;
+  readonly men: number;
+}
+
 /** Something the Runtime did. Returned by `submit`; never pushed. */
 export interface GameEvent {
   readonly type: string;
@@ -263,13 +286,24 @@ export interface EconomyView {
   readonly forceLimit: number;
   readonly field: number;
   readonly garrison: number;
-  /** Total draftable bodies — a stock only death shrinks (MT-②). */
+  /**
+   * Total draftable bodies — a stock that death shrinks and that transfer moves
+   * (MT-②, as ADR 0044 re-based it: land loss is no longer weightless).
+   */
   readonly register: number;
   /** Men under arms: field plus manned shields. */
   readonly serving: number;
   /** 동원 강도 — serving ÷ register, the axis recruitment is priced along. */
   readonly mobilization: number;
-  readonly provinces: Readonly<Record<RegionId, ProvinceForcesView>>;
+  /**
+   * Exact body accounting per **sector** — the grain the register is stored at
+   * (MT-② amended 2026-07-31) and the grain origin composition joins it on.
+   *
+   * Not the same key set as `RealmView.sectors`: a realm keeps the register share
+   * still standing in its own ranks at a sector it has lost, because what a capture
+   * moves is the *civilians*.
+   */
+  readonly sectors: Readonly<Record<SectorId, SectorForcesView>>;
 }
 
 /** One own-side positioned field formation, projected exactly. */
@@ -304,8 +338,15 @@ export interface MobilizationSignalView {
   readonly band: 'activity-detected';
 }
 
-/** Exact body conservation for one province origin. */
-export interface ProvinceForcesView {
+/**
+ * Exact body conservation for one sector origin: `register = serving + civilians`.
+ *
+ * The identity is the whole point of the row — it is what makes the three register
+ * laws checkable at a glance. Casualties shrink `register` and `serving` together;
+ * leaving service moves men from `serving` to `availableCivilians` and leaves
+ * `register` alone; a capture moves `availableCivilians` between realms.
+ */
+export interface SectorForcesView {
   readonly register: number;
   readonly serving: number;
   readonly availableCivilians: number;

@@ -31,7 +31,7 @@
 
 import { MEN_PER_YIELD } from './economy.js';
 import { MARCH_SPEED, reachCone, type MovementGraph } from './movement.js';
-import { hexKey, type HexPosition, type RegionId, type SectorId } from '../world/schema.js';
+import { hexKey, type HexPosition, type SectorId } from '../world/schema.js';
 
 /** One action point's purchase, as a fraction of the force limit (MT-③, R10). */
 export const RECRUIT_FRACTION_PER_POINT = 0.01;
@@ -141,7 +141,6 @@ export function draftOrder(context: DraftContext): DraftResult {
   const serving = field + garrison;
   const bodies = Math.max(0, Math.floor(register - serving));
   const sectorId = 'legacy-draft-sector' as SectorId;
-  const regionId = 'legacy-draft-region' as RegionId;
   const batch = settleRecruitmentBatch({
     requests: [{ requestId: 'legacy-draft', sectorId, commit: chips, posture: 'field' }],
     forceLimit,
@@ -149,8 +148,7 @@ export function draftOrder(context: DraftContext): DraftResult {
     garrison,
     register,
     treasury,
-    availableCivilians: { [regionId]: bodies },
-    sectorRegions: { [sectorId]: regionId },
+    availableCivilians: { [sectorId]: bodies },
     garrisonHeadroom: { [sectorId]: 0 },
     musterHexes: { [sectorId]: { q: 0, r: 0 } },
   });
@@ -180,7 +178,7 @@ export interface RecruitmentFulfillment {
   readonly requestId: string;
   readonly requestedMen: number;
   readonly men: number;
-  readonly limitedBy: readonly ('province' | 'field-headroom' | 'garrison-headroom' | 'treasury')[];
+  readonly limitedBy: readonly ('sector' | 'field-headroom' | 'garrison-headroom' | 'treasury')[];
 }
 
 export interface RecruitmentBatchContext {
@@ -190,8 +188,8 @@ export interface RecruitmentBatchContext {
   readonly garrison: number;
   readonly register: number;
   readonly treasury: number;
-  readonly availableCivilians: Readonly<Record<RegionId, number>>;
-  readonly sectorRegions: Readonly<Record<SectorId, RegionId>>;
+  /** Draftable civilians at each recruiting sector — `register − serving`, per sector. */
+  readonly availableCivilians: Readonly<Record<SectorId, number>>;
   readonly garrisonHeadroom: Readonly<Record<SectorId, number>>;
   readonly musterHexes: Readonly<Record<SectorId, HexPosition>>;
 }
@@ -204,8 +202,8 @@ export interface RecruitmentBatchResult {
 
 export interface RecruitmentLegalityContext {
   readonly controlledSectors: readonly SectorId[];
-  readonly ownedRegions: readonly RegionId[];
-  readonly sectorRegions: Readonly<Record<SectorId, RegionId>>;
+  /** The sectors whose living register this actor holds (MT-② at sector grain). */
+  readonly registeredSectors: readonly SectorId[];
   readonly musterHexes: Readonly<Record<SectorId, HexPosition>>;
   readonly movementGraph: MovementGraph;
   readonly detachments: readonly {
@@ -231,9 +229,8 @@ export function recruitmentRequestRefusal(
   if (typeof sectorId !== 'string' || !context.controlledSectors.includes(sectorId)) {
     return `Recruitment sector "${String(sectorId)}" is not controlled by this actor.`;
   }
-  const region = context.sectorRegions[sectorId];
-  if (region === undefined || !context.ownedRegions.includes(region)) {
-    return `Recruitment sector "${sectorId}" does not have an owned province register.`;
+  if (!context.registeredSectors.includes(sectorId)) {
+    return `Recruitment sector "${sectorId}" does not have an owned register.`;
   }
   if (typeof commit !== 'number' || !Number.isInteger(commit) || commit < 0) {
     return 'A recruitment allocation must commit a whole, non-negative number of points.';
@@ -368,17 +365,19 @@ export function settleRecruitmentBatch(context: RecruitmentBatchContext): Recrui
     return { request, requestedMen, men: requestedMen, limitedBy: [] };
   });
 
-  const byProvince = new Map<RegionId, WorkingFulfillment[]>();
+  // Civilian scarcity is local to the sector drafted from (MT-② at sector grain).
+  // Still a grouping rather than a per-request bound: two requests may name the same
+  // sector, and they share the one pool of bodies standing there.
+  const byScarcity = new Map<SectorId, WorkingFulfillment[]>();
   for (const request of working) {
-    const region = context.sectorRegions[request.request.sectorId];
-    if (region === undefined) throw new Error(`Unknown recruiting sector "${request.request.sectorId}".`);
-    const province = byProvince.get(region) ?? [];
-    province.push(request);
-    byProvince.set(region, province);
+    const sector = request.request.sectorId;
+    const atSector = byScarcity.get(sector) ?? [];
+    atSector.push(request);
+    byScarcity.set(sector, atSector);
   }
-  for (const [region, requests] of [...byProvince].sort(([a], [b]) =>
+  for (const [sector, requests] of [...byScarcity].sort(([a], [b]) =>
     a < b ? -1 : a > b ? 1 : 0)) {
-    limit(requests, context.availableCivilians[region] ?? 0, 'province', compare);
+    limit(requests, context.availableCivilians[sector] ?? 0, 'sector', compare);
   }
 
   const garrisons = new Map<SectorId, WorkingFulfillment[]>();

@@ -270,22 +270,34 @@ test('battle blood leaves the formation and the conscription register for good',
   assert.ok(defender > 0, 'the garrison paid nothing at all');
   assert.ok(attacker > 0, 'the attacker walked in free');
 
+  // **Two laws move the register, and this test is about only one of them.** Blood
+  // destroys bodies; a capture *moves* them (06d, ADR 0044). This fixture takes the
+  // sector, so the transfer has to be subtracted out before the casualty law is
+  // legible — netting the two together is exactly the mistake the ticket warned
+  // would "look like a transfer bug".
+  // Read the ceded count from the **taker's own** register at the sector it took —
+  // it held none there before. The capture event deliberately does not publish the
+  // number, because that would be an exact reading of the loser's stock.
+  const taken = run.battle.detail.sector;
+  const ceded = run.runtime.view('realm-a').economy.sectors[taken]?.register ?? 0;
+  const transferred = { 'realm-a': ceded, 'realm-b': -ceded };
+
   for (const [actor, dead] of [['realm-a', attacker], ['realm-b', defender]]) {
     const economy = run.runtime.view(actor).economy;
     assert.equal(
       economy.register,
-      run.registersBefore[actor] - dead,
-      `${actor}'s register did not shrink by exactly its dead`,
+      run.registersBefore[actor] - dead + transferred[actor],
+      `${actor}'s register did not shrink by exactly its dead, net of the transfer`,
     );
     // The conservation `availableCiviliansByOrigin` guards: a death that left the
     // register standing would hand the same body back to the next draft.
-    for (const [region, province] of Object.entries(economy.provinces)) {
+    for (const [sectorId, row] of Object.entries(economy.sectors)) {
       assert.equal(
-        province.register,
-        province.serving + province.availableCivilians,
-        `${actor}/${region} no longer balances`,
+        row.register,
+        row.serving + row.availableCivilians,
+        `${actor}/${sectorId} no longer balances`,
       );
-      assert.ok(province.availableCivilians >= 0, `${actor}/${region} owes civilians`);
+      assert.ok(row.availableCivilians >= 0, `${actor}/${sectorId} owes civilians`);
     }
   }
 
@@ -293,9 +305,18 @@ test('battle blood leaves the formation and the conscription register for good',
   const survivors = run.runtime.view('realm-a').detachments
     .find((detachment) => detachment.id === run.invasion.detachmentId);
   assert.equal(survivors.men, run.attackerMen - attacker);
+  // The defender's side of that is no longer a garrison reading: the sector fell, so
+  // realm-b holds no shield there at all and the taker inherited an empty one. What
+  // the shield cost is asserted through the register above.
   assert.equal(
-    run.runtime.view('realm-b').garrisons.find((g) => g.sectorId === run.invasion.theirs).men,
-    run.garrisonMen - defender,
+    run.runtime.view('realm-b').garrisons.find((g) => g.sectorId === taken),
+    undefined,
+    'realm-b still mans a shield on ground it lost',
+  );
+  assert.equal(
+    run.runtime.view('realm-a').garrisons.find((g) => g.sectorId === taken).men,
+    0,
+    'the taker inherited the loser\'s surviving shield',
   );
 });
 
@@ -320,17 +341,30 @@ test('a battle wears the survivors, and the same turn gives them one recovery', 
   );
 });
 
-// ── the boundary 06d owns ───────────────────────────────────────────────────
+// ── the boundary 06d closed ─────────────────────────────────────────────────
 
-test('a fallen sector is reported and taken by nobody (06d owns the ground)', () => {
+test('a fallen sector is taken, and nothing else on the board moves', () => {
+  // This replaces 06e's "reported and taken by nobody (06d owns the ground)". That
+  // test asserted the gap deliberately, so its inversion is the seam closing rather
+  // than a regression. What is still worth pinning is the *narrowness*: a battle
+  // moves exactly the border it was fought on.
   const run = oneTurnInvasion();
   assert.equal(run.battle.detail.sectorFalls, true, 'this fixture never breaks the shield');
 
-  const held = run.runtime.view('observer').realms
-    .map((realm) => [realm.actor, [...realm.sectors].sort()]);
-  const fresh = openAtDecision().view('observer').realms
-    .map((realm) => [realm.actor, [...realm.sectors].sort()]);
-  assert.deepEqual(held, fresh, 'a battle moved a border, which is 06d\'s to do');
+  const held = new Map(run.runtime.view('observer').realms
+    .map((realm) => [realm.actor, new Set(realm.sectors)]));
+  const fresh = new Map(openAtDecision().view('observer').realms
+    .map((realm) => [realm.actor, new Set(realm.sectors)]));
+
+  const taken = run.battle.detail.sector;
+  for (const [actor, after] of held) {
+    const before = fresh.get(actor);
+    const gained = [...after].filter((sector) => !before.has(sector));
+    const lost = [...before].filter((sector) => !after.has(sector));
+    const expected = actor === run.battle.detail.attacker ? { gained: [taken], lost: [] }
+      : { gained: [], lost: [taken] };
+    assert.deepEqual({ gained, lost }, expected, `${actor}'s holdings moved by more than the battle`);
+  }
 });
 
 test('the watchable battle publishes no exact strength and no composed power', () => {
@@ -649,23 +683,37 @@ test('a routed garrison has no arc, so it leaves service and stays on the regist
   assert.ok(dead < shield, 'the shield was annihilated, so nothing was left to leave service');
 
   const after = run.runtime.view('realm-b');
+  // The shield is gone from realm-b's books entirely, and since 06d that is because
+  // the *ground* is gone: a routed garrison is by definition one that lost its sector,
+  // and the sector now belongs to the winner.
   assert.equal(
-    after.garrisons.find((garrison) => garrison.sectorId === run.invasion.theirs).men,
-    0,
-    'routed survivors stayed in the shield they lost',
+    after.garrisons.find((garrison) => garrison.sectorId === run.invasion.theirs),
+    undefined,
+    'realm-b still holds a shield on ground it lost',
   );
 
-  // The two laws, stated and checked separately. Death takes a body out of the
-  // register for good; leaving service takes it out of `serving` only, and hands it
-  // back to the draft as a civilian.
+  // **All three laws are live in this one fixture, and they must be stated apart.**
+  // Death takes a body out of the world. Leaving service takes it out of `serving`
+  // only and hands it back to the draft as a civilian. And then 06d's transfer hands
+  // *those very civilians* to the taker, because they are standing on ground that
+  // just changed hands — the consequence the geography/battle grill ruled knowingly
+  // when it chose (v) over returning survivors to their origin (record § ruling 6).
+  const ceded = run.runtime.view('realm-a').economy.sectors[run.invasion.theirs]?.register ?? 0;
   const fresh = openAtDecision().view('realm-b').economy;
-  assert.equal(after.economy.register, fresh.register - dead, 'leaving service shrank the register');
+  assert.equal(
+    after.economy.register,
+    fresh.register - dead - ceded,
+    'the register moved by something other than its dead and its ceded civilians',
+  );
   assert.equal(after.economy.serving, fresh.serving - shield, 'the whole shield did not leave service');
-  for (const [region, province] of Object.entries(after.economy.provinces)) {
+  // The survivors did leave service rather than die — that is the law under test, and
+  // it is visible in `ceded` exceeding what a merely-drained sector could have given.
+  assert.ok(ceded > 0, 'the routed survivors vanished instead of becoming civilians');
+  for (const [sectorId, row] of Object.entries(after.economy.sectors)) {
     assert.equal(
-      province.register,
-      province.serving + province.availableCivilians,
-      `${region} no longer balances`,
+      row.register,
+      row.serving + row.availableCivilians,
+      `${sectorId} no longer balances`,
     );
   }
 });
@@ -732,10 +780,26 @@ test('a realm pressing one sector from two real borders fights once (r7_s0)', ()
     assert.equal(detail.commitments.attacker, 12, 'the sector\'s chips did not reach the battle');
     // open (x1.0 ground) beside river (x0.70 attack) — the softer door wins.
     assert.equal(detail.borderClass, 'open');
-    // Both fronts still exist as fronts; only the engagement merged.
+    // The claim "both borders were carried into ONE engagement" is the assertion two
+    // lines up (`detail.fronts` === both keys) — that is where front-merging is pinned,
+    // and it reads the board as the battle found it.
+    //
+    // Afterwards the two fronts are **gone**, and since 06d that is the correct
+    // reading rather than a lost invariant: realm-b took r7_s0, so it now owns both
+    // sides of both edges and neither is contested any more. A front is a *contested*
+    // border, so winning the ground is exactly how one stops existing.
+    const owner = (sectorId) => runtime.view('observer').realms
+      .find((realm) => realm.sectors.includes(sectorId)).actor;
+    assert.equal(owner('r7_s0'), 'realm-b', 'the fixture did not actually take the sector');
+    for (const key of shared) {
+      for (const sectorId of key.split('|')) {
+        assert.equal(owner(sectorId), 'realm-b', `${sectorId} is not on the winner's side`);
+      }
+    }
     assert.deepEqual(
-      runtime.view('realm-b').fronts.filter((f) => f.sectors.includes('r7_s0')).map((f) => f.key).sort(),
-      [...shared].sort(),
+      runtime.view('realm-b').fronts.filter((f) => f.sectors.includes('r7_s0')).map((f) => f.key),
+      [],
+      'an edge inside one realm is still being reported as a front',
     );
     return;
   }
