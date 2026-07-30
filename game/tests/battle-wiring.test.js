@@ -279,13 +279,13 @@ test('battle blood leaves the formation and the conscription register for good',
     );
     // The conservation `availableCiviliansByOrigin` guards: a death that left the
     // register standing would hand the same body back to the next draft.
-    for (const [region, province] of Object.entries(economy.provinces)) {
+    for (const [sectorId, row] of Object.entries(economy.sectors)) {
       assert.equal(
-        province.register,
-        province.serving + province.availableCivilians,
-        `${actor}/${region} no longer balances`,
+        row.register,
+        row.serving + row.availableCivilians,
+        `/ no longer balances`,
       );
-      assert.ok(province.availableCivilians >= 0, `${actor}/${region} owes civilians`);
+      assert.ok(row.availableCivilians >= 0, `/ owes civilians`);
     }
   }
 
@@ -661,11 +661,11 @@ test('a routed garrison has no arc, so it leaves service and stays on the regist
   const fresh = openAtDecision().view('realm-b').economy;
   assert.equal(after.economy.register, fresh.register - dead, 'leaving service shrank the register');
   assert.equal(after.economy.serving, fresh.serving - shield, 'the whole shield did not leave service');
-  for (const [region, province] of Object.entries(after.economy.provinces)) {
+  for (const [sectorId, row] of Object.entries(after.economy.sectors)) {
     assert.equal(
-      province.register,
-      province.serving + province.availableCivilians,
-      `${region} no longer balances`,
+      row.register,
+      row.serving + row.availableCivilians,
+      `${sectorId} no longer balances`,
     );
   }
 });

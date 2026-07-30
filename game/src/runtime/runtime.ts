@@ -94,7 +94,7 @@ import { project } from '../projection/project.js';
 import { drawPartition } from '../world/partition.js';
 import { loadWorld } from '../world/load.js';
 import { edgeKey, hexKey } from '../world/schema.js';
-import type { HexPosition, RegionId, SectorId, TerrainLayer } from '../world/schema.js';
+import type { HexPosition, SectorId, TerrainLayer } from '../world/schema.js';
 import { createRng } from './rng.js';
 import type {
   ActorId,
@@ -315,9 +315,12 @@ export class Runtime {
     for (const front of contestedFronts(artifact.edges, (sector) => ownerOfSector(seated, sector))) {
       for (const sectorId of front.sectors) {
         if (garrisons[sectorId] !== undefined) continue;
-        const region = artifact.sectors[sectorId]!.regionId;
+        // A shield is drawn from the ground it stands on — ADR 0045 item 5 at the
+        // sector grain the 2026-07-31 ruling moved origin to. It said "containing
+        // province"; the containing sector is the same statement one grain finer,
+        // and it is the grain the shield's own local cap (M13a) already used.
         garrisons[sectorId] = {
-          ready: { [region]: GARRISON_PER_BORDER_SECTOR },
+          ready: { [sectorId]: GARRISON_PER_BORDER_SECTOR },
           pending: [],
         };
       }
@@ -326,26 +329,24 @@ export class Runtime {
     const forces: Record<ActorId, RealmForces> = {};
     for (const actor of actors) {
       const held = realms[actor]!.sectors;
-      const heldByRegion: Record<RegionId, SectorId[]> = {};
-      for (const sectorId of held) {
-        const region = artifact.sectors[sectorId]!.regionId;
-        (heldByRegion[region] ??= []).push(sectorId);
-      }
-      const registers: Record<RegionId, number> = {};
-      for (const region of Object.keys(heldByRegion).sort()) {
-        registers[region] = registerOf(artifact.sectors, heldByRegion[region]!);
+      // One entry per held sector, each its own land-derived reading. No province
+      // grouping: MT-②'s derivation reads a sector field, so grouping first and
+      // summing second is what discarded the variation (2026-07-31).
+      const registers: Record<SectorId, number> = {};
+      for (const sectorId of [...held].sort()) {
+        registers[sectorId] = registerOf(artifact.sectors, [sectorId]);
       }
 
-      const openingGarrisonOrigins: Record<RegionId, number> = {};
+      const openingGarrisonOrigins: Record<SectorId, number> = {};
       for (const sectorId of held) {
         const garrison = garrisons[sectorId];
         if (garrison !== undefined) accumulateOrigins(openingGarrisonOrigins, garrison.ready);
       }
-      const remaining: Record<RegionId, number> = {};
-      for (const region of Object.keys(registers).sort()) {
-        remaining[region] = registers[region]! - (openingGarrisonOrigins[region] ?? 0);
-        if (remaining[region]! < 0) {
-          throw new Error(`Opening garrison exceeds ${region}'s living register.`);
+      const remaining: Record<SectorId, number> = {};
+      for (const sectorId of Object.keys(registers).sort()) {
+        remaining[sectorId] = registers[sectorId]! - (openingGarrisonOrigins[sectorId] ?? 0);
+        if (remaining[sectorId]! < 0) {
+          throw new Error(`Opening garrison exceeds ${sectorId}'s living register.`);
         }
       }
       const openingFieldMen = Math.floor(
@@ -762,8 +763,10 @@ export class Runtime {
     const sectors = Object.values(state.loadedWorld.artifact.sectors);
     return {
       controlledSectors: state.realms[actor]!.sectors,
-      ownedRegions: Object.keys(state.forces[actor]!.registers),
-      sectorRegions: Object.fromEntries(sectors.map((sector) => [sector.id, sector.regionId])),
+      // ADR 0045 item 2 read "own its parent province register". At sector grain the
+      // parent is gone: the sector *is* the register, so legality is one membership
+      // test instead of a sector -> province -> register hop.
+      registeredSectors: Object.keys(state.forces[actor]!.registers),
       musterHexes: Object.fromEntries(sectors.map((sector) => [
         sector.id,
         musterHexOf(state.loadedWorld.artifact, sector.id),
@@ -1170,10 +1173,9 @@ export class Runtime {
     for (const actor of state.actors) {
       const forces = state.forces[actor]!;
       const requests = Object.values(state.recruitmentOrders[actor] ?? {}).filter((request) => {
-        const region = state.loadedWorld.artifact.sectors[request.sectorId]?.regionId;
         const committedAmount = committed[actor]?.[recruitmentOrderKeyOf(request.requestId)] ?? 0;
         return committedAmount === request.commit && ownerOfSector(state, request.sectorId) === actor &&
-          region !== undefined && forces.registers[region] !== undefined;
+          forces.registers[request.sectorId] !== undefined;
       });
       if (requests.length === 0) continue;
 
@@ -1184,10 +1186,6 @@ export class Runtime {
       const servingOrigins = servingByOrigin(forces, controlledGarrisons);
       const availableCivilians = availableCiviliansByOrigin(forces.registers, servingOrigins);
       const holdings = holdingsOf(state, actor);
-      const sectorRegions = Object.fromEntries(requests.map((request) => [
-        request.sectorId,
-        state.loadedWorld.artifact.sectors[request.sectorId]!.regionId,
-      ]));
       const musterHexes = Object.fromEntries(requests.map((request) => [
         request.sectorId,
         musterHexOf(state.loadedWorld.artifact, request.sectorId),
@@ -1210,7 +1208,6 @@ export class Runtime {
         register: Object.values(forces.registers).reduce((sum, men) => sum + men, 0),
         treasury: forces.treasury,
         availableCivilians,
-        sectorRegions,
         garrisonHeadroom,
         musterHexes,
       });
@@ -1227,9 +1224,9 @@ export class Runtime {
       for (const fulfillment of result.fulfilled) {
         if (fulfillment.men === 0) continue;
         const request = requestsById[fulfillment.requestId]!;
-        const origin = sectorRegions[request.sectorId]!;
+        // The recruiting sector *is* the origin now, so this stamp needs no lookup.
         const pending: PendingCohort = {
-          origins: { [origin]: fulfillment.men },
+          origins: { [request.sectorId]: fulfillment.men },
           fatigue: 0,
           readyOnTurn: state.turn + 1,
           sourceSector: request.sectorId,
@@ -1775,16 +1772,16 @@ export class Runtime {
    */
   #removeDead(actor: ActorId, origins: OriginComposition, deaths: number): OriginComposition {
     const registers = this.#state.forces[actor]!.registers;
-    const byRegion = apportionExact(deaths, origins);
-    const survivors: Record<RegionId, number> = {};
-    for (const region of Object.keys(origins).sort()) {
-      const fallen = byRegion[region] ?? 0;
-      survivors[region] = origins[region]! - fallen;
+    const bySector = apportionExact(deaths, origins);
+    const survivors: Record<SectorId, number> = {};
+    for (const sector of Object.keys(origins).sort()) {
+      const fallen = bySector[sector] ?? 0;
+      survivors[sector] = origins[sector]! - fallen;
       if (fallen === 0) continue;
-      if (registers[region] === undefined) {
-        throw new Error(`${actor} lost ${fallen} men of ${region}, which holds no living register.`);
+      if (registers[sector] === undefined) {
+        throw new Error(`${actor} lost ${fallen} men of ${sector}, which holds no living register.`);
       }
-      registers[region] -= fallen;
+      registers[sector] -= fallen;
     }
     return survivors;
   }

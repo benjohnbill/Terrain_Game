@@ -59,13 +59,13 @@ test('the opening field army is one positioned detachment at the capital-sector 
   assert.equal(mine.detachments[0].pendingMen, 0);
 });
 
-test('opening province registers equal serving plus available civilians', () => {
+test('opening sector registers equal serving plus available civilians', () => {
   const economy = openAtDecision().view('realm-a').economy;
-  for (const row of Object.values(economy.provinces)) {
-    assert.equal(row.register, row.serving + row.availableCivilians);
+  for (const [sectorId, row] of Object.entries(economy.sectors)) {
+    assert.equal(row.register, row.serving + row.availableCivilians, `${sectorId} does not balance`);
   }
   assert.equal(
-    Object.values(economy.provinces).reduce((sum, row) => sum + row.register, 0),
+    Object.values(economy.sectors).reduce((sum, row) => sum + row.register, 0),
     economy.register,
   );
 });

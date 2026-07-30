@@ -45,9 +45,8 @@ import type {
   GarrisonView,
   MatchView,
   MobilizationSignalView,
-  ProvinceForcesView,
   RealmView,
-  RegionId,
+  SectorForcesView,
   SectorId,
   ViewerId,
 } from '../runtime/types.js';
@@ -105,12 +104,12 @@ function visibleEconomy(state: MatchState, viewer: ViewerId): EconomyView | null
   });
   const servingOrigins = servingByOrigin(forces, ownedGarrisons);
   const available = availableCiviliansByOrigin(forces.registers, servingOrigins);
-  const provinces: Record<RegionId, ProvinceForcesView> = {};
-  for (const region of Object.keys(forces.registers).sort()) {
-    provinces[region] = {
-      register: forces.registers[region]!,
-      serving: servingOrigins[region] ?? 0,
-      availableCivilians: available[region]!,
+  const sectorForces: Record<SectorId, SectorForcesView> = {};
+  for (const sector of Object.keys(forces.registers).sort()) {
+    sectorForces[sector] = {
+      register: forces.registers[sector]!,
+      serving: servingOrigins[sector] ?? 0,
+      availableCivilians: available[sector]!,
     };
   }
   const register = Object.values(forces.registers).reduce((sum, men) => sum + men, 0);
@@ -125,7 +124,7 @@ function visibleEconomy(state: MatchState, viewer: ViewerId): EconomyView | null
     register,
     serving,
     mobilization: register === 0 ? 0 : serving / register,
-    provinces,
+    sectors: sectorForces,
   };
 }
 

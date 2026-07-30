@@ -82,8 +82,7 @@ function recruitmentLegalityContext(
   const sectors = Object.values(view.board.sectors);
   return {
     controlledSectors: view.realms.find((realm) => realm.actor === actor)?.sectors ?? [],
-    ownedRegions: Object.keys(view.economy?.provinces ?? {}),
-    sectorRegions: Object.fromEntries(sectors.map((sector) => [sector.id, sector.regionId])),
+    registeredSectors: Object.keys(view.economy?.sectors ?? {}),
     musterHexes: Object.fromEntries(sectors.map((sector) => [
       sector.id,
       musterHexOf(view.board, sector.id),
@@ -143,7 +142,6 @@ export function preview(view: MatchView, intent: Intent): PreviewCard {
     };
     const graph = buildMovementGraph(view.board);
     const legalityContext = recruitmentLegalityContext(view, intent.actor, graph);
-    const sectorRegions = legalityContext.sectorRegions;
     let refusal = recruitmentRequestRefusal(
       legalityContext,
       allocation.requestId,
@@ -201,9 +199,8 @@ export function preview(view: MatchView, intent: Intent): PreviewCard {
       register: economy.register,
       treasury: economy.treasury,
       availableCivilians: Object.fromEntries(
-        Object.entries(economy.provinces).map(([region, province]) => [region, province.availableCivilians]),
+        Object.entries(economy.sectors).map(([sector, row]) => [sector, row.availableCivilians]),
       ),
-      sectorRegions,
       garrisonHeadroom,
       musterHexes,
     });

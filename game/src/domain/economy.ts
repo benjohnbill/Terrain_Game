@@ -57,6 +57,46 @@ export const START_FIELD_FRACTION = 0.5;
 export const GARRISON_PER_BORDER_SECTOR = 900;
 
 /**
+ * What freshly taken ground is worth, and how fast it ripens — **ADR 0022 / ADR
+ * 0029, unchanged**, supplied a transfer channel by ADR 0044.
+ *
+ * A capture starts at half its economy and three fifths of its population and
+ * recovers ten percentage points per stable turn, so full value arrives four turns
+ * after the ground does. `AGENTS.md`'s standing guardrail against instant
+ * full-value transfer is what forbids shortening this.
+ *
+ * **Productivity only.** ADR 0044 item 3: ADR 0029 names "yield AND military
+ * ceiling", so income and the force limit ripen — the register is a body count and
+ * transfers unripened. Do not compose these with `REGISTER_PER_POP`.
+ *
+ * ADR 0044 item 5 also records what these are *not*: a risk device. The lag is the
+ * fruit arriving slowly. Reading ADR 0029's "the ~4-turn ripening transient is the
+ * counterattack window" as an anti-runaway mechanism was proposed and rejected.
+ */
+export const FRESH_CAPTURE_USABLE_ECONOMY = 0.5;
+export const FRESH_CAPTURE_USABLE_POP = 0.6;
+export const RIPENING_PER_TURN = 0.1;
+
+/**
+ * `conquest damage` — a **named seam at identity**, not a live dial.
+ *
+ * The phrase is used by ADR 0029 and by the match-arc `정산` GLOSSARY row ("vs
+ * conquest damage + M6 inheritance cost"), and **no rule or value anywhere defines
+ * it**. Its only contrast was settlement, which ADR 0042 retired, so it currently
+ * floats. It is also a live candidate device for the deferred snowball-counterweight
+ * session, where "freshly taken ground is weakly held" is exactly what ADR 0044
+ * item 6's directions (a) and (b) want.
+ *
+ * So it goes in at 1.0, multiplying nothing, so that session lands a **value change
+ * rather than a redesign** — the discipline 06b applies to its HELD recovery
+ * condition. The tension it will have to resolve is recorded and deliberately not
+ * resolved here: 노화 헌법 P2 allows permanent damage only through identity acts
+ * (초토화, out of scope by R9), so conquest damage cannot be permanent and would
+ * have to act on recovery speed — which is what the ripening lag already does.
+ */
+export const CONQUEST_DAMAGE = 1;
+
+/**
  * The opening war chest, counted in **turns of the realm's own income**.
  *
  * Two seals speak here and the later one governs. `MAGNITUDE.md` **M14 ruling ㉑**

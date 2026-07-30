@@ -82,7 +82,6 @@ test('one point and stacked points retain the sealed one-percent conversion', ()
 
 test('stacked conversion floors the one-point unit before multiplying', () => {
   const sectorId = 'fractional-sector';
-  const regionId = 'fractional-region';
   const settle = (commit) => settleRecruitmentBatch({
     requests: [{ requestId: `fractional-${commit}`, sectorId, commit, posture: 'field' }],
     forceLimit: 12_345,
@@ -90,8 +89,7 @@ test('stacked conversion floors the one-point unit before multiplying', () => {
     garrison: 0,
     register: 1_000_000,
     treasury: 1_000_000,
-    availableCivilians: { [regionId]: 1_000_000 },
-    sectorRegions: { [sectorId]: regionId },
+    availableCivilians: { [sectorId]: 1_000_000 },
     garrisonHeadroom: { [sectorId]: 0 },
     musterHexes: { [sectorId]: { q: 0, r: 0 } },
   });
@@ -172,10 +170,15 @@ test('splitting equal aggregate demand across sectors cannot reduce the authorit
   assert.equal(bill(concentratedBefore, concentratedAfter), bill(splitBefore, splitAfter));
 });
 
-test('province scarcity uses canonical largest remainder, not request submit order', () => {
+test('sector scarcity uses canonical largest remainder, not request submit order', () => {
+  // Civilian scarcity became **sector**-local when the register moved to sector grain
+  // (MT-② amended 2026-07-31), so two requests contend for one pool only when they
+  // name the same sector. Both raise at r2_s0 for exactly that reason: at this grain
+  // r2_s0 and r2_s4 draw on two independent pools, and the test would no longer be
+  // about a shared shortage at all.
   const run = (ids) => {
     const runtime = openAtDecision('field-army-0001', economyScaledWorld(100, 'r1-rich-test'));
-    const available = runtime.view('realm-a').economy.provinces.r2.availableCivilians;
+    const available = runtime.view('realm-a').economy.sectors.r2_s0.availableCivilians;
     const perPoint = Math.floor(runtime.view('realm-a').economy.forceLimit * 0.01);
     let pointsToDrain = Math.max(0, Math.floor(available / perPoint) - 5);
     let turn = 0;
@@ -186,7 +189,7 @@ test('province scarcity uses canonical largest remainder, not request submit ord
       pointsToDrain -= commit;
       turn += 1;
     }
-    for (const id of ids) recruit(runtime, 'realm-a', id, id === 'a' ? 'r2_s0' : 'r2_s4', 10);
+    for (const id of ids) recruit(runtime, 'realm-a', id, 'r2_s0', 10);
     closeTurn(runtime);
     return runtime.view('realm-a');
   };

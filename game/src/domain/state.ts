@@ -13,7 +13,7 @@ import type { MovementGraph } from './movement.js';
 import type { LoadedWorld } from '../world/load.js';
 import type { Detachment, ForceCohort, GarrisonForce } from './force.js';
 import type { RecruitmentRequest } from './recruitment.js';
-import type { RegionId, SectorId } from '../world/schema.js';
+import type { SectorId } from '../world/schema.js';
 import type { ActorId, Front, MatchPhase, WorldIdentity } from '../runtime/types.js';
 import type { Rng } from '../runtime/rng.js';
 
@@ -37,7 +37,26 @@ export interface Realm {
  */
 export interface RealmForces {
   treasury: number;
-  registers: Record<RegionId, number>;
+  /**
+   * Living draftable bodies, **per sector** (MT-② amended 2026-07-31).
+   *
+   * The grain is the sector because the derivation always was one:
+   * `registerPerPop × Σ populationValue` reads a *sector* field, so a per-province
+   * total discarded variation inside a province — and ground changes hands per
+   * sector, with a province split across the front line the normal case. At this
+   * grain succession on capture is exact with no apportionment formula: a captured
+   * sector's civilians are `registers[sector] − servingFrom(sector)`.
+   *
+   * The key is the same one `OriginComposition` uses, and deliberately so — the two
+   * are joined by `availableCivilians = register − serving` and cannot sit at
+   * different grains. That is the ruling's second half (2026-07-31), which amends
+   * ADR 0045.
+   *
+   * A realm may hold a register entry for a sector it no longer controls: what a
+   * capture moves is the *civilians*, so the loser keeps exactly the share still
+   * standing in its own ranks, and those bodies leave only by dying.
+   */
+  registers: Record<SectorId, number>;
   openingField: ForceCohort | null;
   detachments: Detachment[];
   nextDetachmentOrdinal: number;

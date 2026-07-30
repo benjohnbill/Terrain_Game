@@ -282,7 +282,7 @@ export function turnSummary({ events, view }) {
       field: view.economy.field,
       garrison: view.economy.garrison,
       register: view.economy.register,
-      provinces: view.economy.provinces,
+      sectors: view.economy.sectors,
     },
     mobilizationSignals: view.mobilizationSignals,
   };

@@ -292,14 +292,21 @@ test('the whole stack may go into recruitment, and it buys 20% of the force limi
   assert.ok(recruited > 0);
   // Whatever bound bit, it was money, bodies or headroom — never a rate cap.
   assert.ok(recruited <= ordered);
-  // A short draft means one of the affordability mins bit. On the opening turn it
-  // is money — so the test for "no rate cap fired" is that the treasury could not
-  // have bought even one more man before this turn's income landed.
+  // A short draft means one of the affordability mins bit, and this test's job is to
+  // name which — a rate cap would be none of them (M13's struck-through "+10% of cap
+  // per turn" is not a live rule; MT-③ replaced it with the price curve).
+  //
+  // **Which min bites changed with the register's grain.** This used to read "on the
+  // opening turn it is money", true while a levy drew on a whole province's bodies.
+  // Since 2026-07-31 the register is per **sector** (MT-② amended) and a sited levy
+  // draws only on the sector it names, so the opening bound is now that one sector's
+  // civilians — which is the siting decision working, not a regression.
   const leftBeforeIncome = after.treasury - before.income;
   const served = before.serving + recruited;
   const oneMoreMan = draftBill(before.register, served / before.register, (served + 1) / before.register);
+  const bodiesAtSector = before.sectors[sector].availableCivilians;
   assert.ok(
-    recruited === ordered || leftBeforeIncome < oneMoreMan,
+    recruited === ordered || recruited === bodiesAtSector || leftBeforeIncome < oneMoreMan,
     'a short draft means an affordability min bit, not that a rate cap fired',
   );
 });

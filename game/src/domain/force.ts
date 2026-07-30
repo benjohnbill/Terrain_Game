@@ -1,14 +1,36 @@
 /**
- * Positioned military substance and its province-origin accounting.
+ * Positioned military substance and its **sector**-origin accounting.
  *
  * Authority: match-arc MT-⑥, war-model-build WM-④, and ADR 0045. Origin is
  * accounting state rather than a formation attribute: movement never changes
  * it, while every serving body remains traceable to one living register.
+ *
+ * **The grain is the sector, and it moved here on 2026-07-31** — a user ruling
+ * that amends ADR 0045's title and its items 2, 4 and 5, whose text still reads
+ * "province". Two reasons, and the second is the load-bearing one:
+ *
+ * - the register moved the same day (MT-② amended), because its own derivation
+ *   `registerPerPop × Σ populationValue` reads a **sector** field, so storing the
+ *   sum per province discarded per-sector variation;
+ * - and these two cannot sit at different grains. `availableCivilians =
+ *   register − serving` joins them on one key. Province-keyed origin against a
+ *   sector-keyed register makes every casualty a lookup miss, and a capture could
+ *   not value one taken sector's civilians without re-deriving the apportionment
+ *   (R17) that sector grain exists to supersede.
  */
 
-import type { HexPosition, RegionId, SectorId } from '../world/schema.js';
+import type { HexPosition, SectorId } from '../world/schema.js';
 
-export type OriginComposition = Readonly<Record<RegionId, number>>;
+/**
+ * Serving bodies by the sector whose living register they were drawn from.
+ *
+ * Not a position and not a formation attribute: a cohort raised in one sector and
+ * marched across the board still answers to that sector's register. That is what
+ * makes `register − serving` a conservation law rather than a coincidence, and it
+ * is why a captured sector's *civilians* transfer while its serving men stay with
+ * their realm (ADR 0045 item 4, at this grain).
+ */
+export type OriginComposition = Readonly<Record<SectorId, number>>;
 
 export interface ForceCohort {
   readonly origins: OriginComposition;
@@ -60,11 +82,11 @@ type ForceCollection = {
 };
 
 export function accumulateOrigins(
-  destination: Record<RegionId, number>,
+  destination: Record<SectorId, number>,
   origins: OriginComposition,
 ): void {
-  for (const [region, men] of Object.entries(origins)) {
-    destination[region] = (destination[region] ?? 0) + men;
+  for (const [sector, men] of Object.entries(origins)) {
+    destination[sector] = (destination[sector] ?? 0) + men;
   }
 }
 
@@ -81,12 +103,12 @@ export function fieldOf(forces: ForceCollection): number {
   );
 }
 
-/** Serving bodies by province origin across field and local-garrison posture. */
+/** Serving bodies by sector origin across field and local-garrison posture. */
 export function servingByOrigin(
   forces: ForceCollection,
   garrisons: readonly GarrisonForce[],
-): Record<RegionId, number> {
-  const serving: Record<RegionId, number> = {};
+): Record<SectorId, number> {
+  const serving: Record<SectorId, number> = {};
   if (forces.openingField !== null) accumulateOrigins(serving, forces.openingField.origins);
   for (const detachment of forces.detachments) {
     accumulateOrigins(serving, detachment.ready.origins);
@@ -101,16 +123,16 @@ export function servingByOrigin(
 
 /** Living civilians still available to serve, derived exactly rather than stored. */
 export function availableCiviliansByOrigin(
-  registers: Readonly<Record<RegionId, number>>,
-  serving: Readonly<Record<RegionId, number>>,
-): Record<RegionId, number> {
-  const available: Record<RegionId, number> = {};
-  for (const region of Object.keys(registers).sort()) {
-    const civilians = registers[region]! - (serving[region] ?? 0);
+  registers: Readonly<Record<SectorId, number>>,
+  serving: Readonly<Record<SectorId, number>>,
+): Record<SectorId, number> {
+  const available: Record<SectorId, number> = {};
+  for (const sector of Object.keys(registers).sort()) {
+    const civilians = registers[sector]! - (serving[sector] ?? 0);
     if (civilians < 0) {
-      throw new Error(`Serving bodies from ${region} exceed its living register.`);
+      throw new Error(`Serving bodies from ${sector} exceed its living register.`);
     }
-    available[region] = civilians;
+    available[sector] = civilians;
   }
   return available;
 }
@@ -120,7 +142,7 @@ export function availableCiviliansByOrigin(
  * largest fractional remainders win, with canonical key order breaking ties.
  *
  * Exported because men are apportioned over more than one kind of key: over
- * province origins (below), and over the several formations that shared one
+ * sector origins (below), and over the several formations that shared one
  * engagement when its blood is taken. Both need the *same* exactness — the parts
  * sum to the total, always — and a second copy of this loop is how the two would
  * come to lose or invent a man between them.
@@ -155,11 +177,11 @@ export function apportionExact(
   return allocated;
 }
 
-/** Canonical integer apportionment over province-origin capacity. */
+/** Canonical integer apportionment over sector-origin capacity. */
 export function apportionOrigins(
   total: number,
-  weights: Readonly<Record<RegionId, number>>,
-): Record<RegionId, number> {
+  weights: Readonly<Record<SectorId, number>>,
+): Record<SectorId, number> {
   return apportionExact(total, weights);
 }
 
@@ -168,9 +190,9 @@ function splitOrigins(
   childMen: number,
 ): readonly [OriginComposition, OriginComposition] {
   const child = apportionExact(childMen, origins);
-  const retained: Record<RegionId, number> = {};
-  for (const region of Object.keys(origins).sort()) {
-    retained[region] = origins[region]! - (child[region] ?? 0);
+  const retained: Record<SectorId, number> = {};
+  for (const sector of Object.keys(origins).sort()) {
+    retained[sector] = origins[sector]! - (child[sector] ?? 0);
   }
   return [retained, child];
 }
@@ -289,7 +311,7 @@ export function mergeDetachments(
     throw new Error('Detachments must occupy the same hex to merge.');
   }
 
-  const origins: Record<RegionId, number> = {};
+  const origins: Record<SectorId, number> = {};
   let readyMen = 0;
   let fatigueMass = 0;
   const pending: PendingCohort[] = [];
@@ -374,7 +396,7 @@ export function activateReadyCohorts(detachment: Detachment, turn: number): Deta
   const activating = detachment.pending.filter((cohort) => cohort.readyOnTurn <= turn);
   if (activating.length === 0) return detachment;
 
-  const origins: Record<RegionId, number> = { ...detachment.ready.origins };
+  const origins: Record<SectorId, number> = { ...detachment.ready.origins };
   let total = menOf(detachment.ready.origins);
   let fatigueMass = detachment.ready.fatigue * total;
   for (const cohort of activating) {
@@ -397,7 +419,7 @@ export function activateReadyGarrisonCohorts(
   const activating = garrison.pending.filter((cohort) => cohort.readyOnTurn <= turn);
   if (activating.length === 0) return garrison;
 
-  const ready: Record<RegionId, number> = { ...garrison.ready };
+  const ready: Record<SectorId, number> = { ...garrison.ready };
   for (const cohort of activating) accumulateOrigins(ready, cohort.origins);
   return {
     ready,
