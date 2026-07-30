@@ -10,8 +10,24 @@ sited on an interior sector before an interior sector can be captured; it **land
 the same day** (`b591f4e`), taking battle-capable sectors from 27 of 56 to all 56.
 This is the next executable ticket.
 
-Status: **ready-for-agent** (2026-07-31 — the owed ruling was taken the same day:
-the register moves to **sector** grain, MT-② amended. 06e cleared 2026-07-31.)
+Status: **claimed** (2026-07-31, branch `l3/ticket-06d-capture-a-sector` off `c37dfdc`
+— was `ready-for-agent` the same day: the register moves to **sector** grain, MT-②
+amended, and 06e cleared.)
+
+**A second grain ruling was owed and is taken (user, 2026-07-31).** The register's
+move to sector grain does not stand alone: `OriginComposition` is keyed by the same
+type, and `availableCivilians = register − serving` joins the two on one key. Moving
+only the register makes `#removeDead` throw on **every** casualty
+(`runtime.ts` indexes `registers[region]` with a key taken from `origins`), so the
+ticket could not be built either way without the answer. **RULED: origin composition
+moves to sector grain with the register.** That is the reading under which the
+sector ruling's own stated benefit — succession exact with no formula — is real:
+`civilians(sector) = registers[sector] − servingFrom(sector)`, and a capture
+transfers exactly that. The rejected alternative (origins stay per province and the
+join rolls up) requires a within-province apportionment to value one captured
+sector's civilians, which is R17 restored — the formula this ruling supersedes.
+This **amends ADR 0045** (its title and items 2, 4, 5) and carries the
+seal-amends-ADR stamp duty; see § Comments for the batch.
 
 Specification gates: Wayfinder 10, 12.
 Authority: **ADR 0044** + `DECISIONS-OWED.md` R16–R17. ADR 0022 (usable-value
