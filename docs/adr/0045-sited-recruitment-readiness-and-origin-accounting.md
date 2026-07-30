@@ -2,7 +2,20 @@
 
 Date: 2026-07-26
 
-Status: Accepted (sealed 2026-07-26, R19 user-approved design)
+Status: Accepted (sealed 2026-07-26, R19 user-approved design) — **Amended by
+ADR 0047 (2026-07-31)**
+
+> **Delta (ADR 0047):** **province-origin accounting becomes sector-origin
+> accounting.** Items 2, 3, 4 and 5 move grain — origin composition is keyed by
+> sector, civilian availability is `livingRegister(sector) −
+> livingServingBodiesOriginatingIn(sector)`, recruitment scarcity is sector-local,
+> legality reads the sector's own register rather than "its parent province
+> register", and the opening derivation allocates over sector capacities. Land
+> transfer still moves the **civilian remainder** and still leaves serving bodies
+> with their force — item 4's rule survives verbatim at the finer grain. Everything
+> else here stands, including the total-bodies principle, which 0047 exists to keep
+> true: leaving origin at province grain while match-arc MT-② moved the register to
+> sector grain made `register − serving` go negative on a normal partial capture.
 
 - Relationship:
   - **Amends ADR 0043:** completes opening placement and sector-edge expansion to

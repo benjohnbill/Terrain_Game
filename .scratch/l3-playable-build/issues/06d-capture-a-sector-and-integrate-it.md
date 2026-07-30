@@ -64,6 +64,44 @@ the window in which this ticket said "province" at the top and "sector" here. Th
 had stood contradictory since the ruling landed, and an implementer reading
 top-down would have built the wrong grain.
 
+### The grain ruling reaches origin composition too — ADR 0047, 2026-07-31
+
+**Read this before planning the register work; it changes this ticket's size.**
+
+Moving the register alone was not implementable. The register and
+`OriginComposition` were keyed by the same type and joined by one subtraction —
+`availableCivilians = register − serving` — which `game/src/domain/force.ts`
+enforces with a **throw**. Measured: at MT-③'s structural-maximum mobilization
+(58%), a realm that loses `r6_s5` and `r6_s1` of 관중 has 5,280 register against
+6,264 serving, and the Runtime refuses. ADR 0046 made that reachable by turning
+every interior sector into a battle site.
+
+Three readings were put to the user. Transferring the whole sector register would
+have demoted the invariant to a clamp and abandoned total-bodies accounting;
+apportioning a province's serving bodies across its sectors would have restored
+R17 hours after MT-② retired it. **The user ruled the third: origin composition
+moves to sector grain as well** (ADR 0047), on the ground that population,
+civilians, the register and origin are facts about the same object.
+
+What that adds to this ticket:
+
+- `OriginComposition` becomes `Record<SectorId, number>` — 68 `RegionId`-keyed
+  sites across 11 files, though **not all of them move**: `Realm.regions`,
+  `Sector.regionId`, the partition and the world schema stay region-keyed, because
+  what moved is *population accounting*, not the region concept.
+- `ProvinceForcesView` is sector-keyed and renamed — a **public projection
+  contract change**, so its callers move with it.
+- Recruitment scarcity is sector-local, and legality reads the sector's own
+  register rather than ADR 0045 item 2's "parent province register", which has no
+  referent for a split province.
+- The opening origin derivation allocates over sector capacities with canonical
+  sector-id remainders (ADR 0045 item 5 at the finer grain).
+
+The positive result is that **nothing needs a within-province apportionment
+anywhere**: R17 stays superseded, MT-②'s "no formula at all" holds, and WM-⑤'s
+rout survivors return to a sector register that exists. Authority: **ADR 0047**;
+ADR 0045 and MT-⑥ carry its stamps.
+
 This is the same edit you were already making — ticket 05 flattened the register to one
 realm-level scalar and this ticket had to unflatten it regardless; one grain finer is
 the same code. WM-⑤'s register return (rout survivors leaving service, at a sector) is

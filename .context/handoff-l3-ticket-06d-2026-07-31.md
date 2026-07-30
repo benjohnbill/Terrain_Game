@@ -60,7 +60,32 @@ Verify both yourself before planning around them; both were true when written.
    (`Runtime.open` walks `heldByRegion`). Moving to sector grain may not need to
    change this function at all — only its callers.
 
-## The seam the ticket does not know about
+## The seam is RULED — read ADR 0047 first (superseding the section below)
+
+**Settled 2026-07-31, after this handoff's first draft.** The section below states
+the seam as an open question and asks the builder to run the boundary test. It is
+kept because its evidence is still the best statement of *why* the question was
+hard, but **do not run that test — the answer exists**:
+
+**`docs/adr/0047-the-sector-is-the-unit-of-population-accounting.md`** — origin
+composition moves to **sector** grain along with the register. ADR 0045 items
+2/3/4/5 are amended and stamped; MT-⑥ carries the same banner; ticket 06d's
+§ Needs-info carries the scope delta.
+
+It was a **SEAL CONFLICT** (an independent read-only agent's verdict, verified
+against the sources), and the user ruled it. Two options were rejected and the
+reasons are recorded in the ADR: transferring the whole sector register would have
+demoted a conservation throw to a clamp and abandoned total-bodies accounting, and
+apportioning a province's serving bodies would have restored R17 hours after MT-②
+retired it.
+
+**What it costs this ticket:** 68 `RegionId`-keyed sites across 11 files — though
+`Realm.regions`, `Sector.regionId`, the partition and the world schema stay
+region-keyed, because what moved is population accounting, not the region concept —
+plus `ProvinceForcesView`, which is a public projection shape and moves with its
+callers.
+
+## The seam the ticket does not know about *(historical — now ADR 0047)*
 
 **The register and `OriginComposition` are keyed by the same type, and the
 sector-grain ruling only moves one of them.**

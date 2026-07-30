@@ -1326,6 +1326,15 @@ prerequisite task — the stage table legislates over it.
 
 ## MT-⑥ — Sited Recruitment, Origin Accounting, and One-Turn Readiness — SEALED 2026-07-26 · L0
 
+> **AMENDED 2026-07-31 by ADR 0047.** Delta: **origin accounting moves from
+> province grain to sector grain**, completing MT-②'s same-day amendment of the
+> register. Civilian availability becomes `livingRegister(sector) −
+> livingServingBodiesOriginatingIn(sector)`, recruitment scarcity is sector-local,
+> and the opening derivation allocates over sector capacities. Land transfer still
+> moves the **civilian remainder** and leaves serving bodies with their force.
+> Everything else here — siting, one-turn readiness, batch determinism, the
+> command economy — stands unchanged.
+
 **Verdict source:** user-approved R19 design, 2026-07-26, recorded in
 `docs/superpowers/specs/2026-07-26-recruitment-siting-readiness-design.md`.
 
