@@ -6,6 +6,10 @@ Status: Accepted (sealed 2026-07-26, Wayfinder gate C, rulings R12–R15)
 Amended by: ADR 0045 (2026-07-26) — opening placement is the capital sector's
 centre-nearest hex, and every authored sector edge now has deterministic hex
 endpoints.
+Amended by: ADR 0046 (2026-07-31) — the movement graph of item 7 is unchanged, but
+combat is no longer reachable only at authored region borders: an engagement is
+sited wherever a hostile force stands, and the commit allocation key follows the
+engagement's sector rather than the border.
 
 - Relationship:
   - **Amends (1):** the `DOMAIN_MAP.md` Tier-0 entry ✅ `Position as product` —
