@@ -152,6 +152,13 @@ edges intact, no empty/split sectors, min-3 band).
 
 ## TC-⑬ Border class carries combat terrain — SEALED 2026-07-08 (user grill) · L2
 
+> **Amended by TC-⑮ (2026-07-31, ADR 0046):** the **terrain** column below is
+> retired — a sector's defensive terrain is its own authored terrain, not its
+> door's. The **crossing** column (river 0.70, strait 0.55) and the
+> **reachable-weakest-link** rule for choosing among doors both stand unchanged.
+> The frontage half remains unimplemented and is now owned by the
+> operational-manoeuvre pass.
+
 A border's INTENT crossing class sets not only its **door** (frontage,
 M11) but the L2 combat site's **terrain / water / choke**, keying defense
 to the authored geography instead of the previously hardcoded constant.
@@ -222,3 +229,62 @@ Debt (not a defect): population and the economy ladder are authored as
 literals in `map-gen.js sectorSpec`, not recomputed from geometry at load
 time — so "derived, not baked" is doc-enforced, not machine-checked. A
 load-time assertion is the optional hardening (see `docs/SYNC-DEBT.md`).
+
+## TC-⑮ Terrain is a property of the ground — SEALED 2026-07-28/31 (user grill) · L0
+
+**Amends TC-⑬'s terrain column.** Recorded by **ADR 0046**; the decision is the
+user's, from the geography-battle grill on ticket 06c's registered gaps.
+
+A sector's defensive terrain is **its own authored terrain, always**. It does not
+depend on which neighbour the attacker arrived from. The door contributes the
+**attacker-side** terms only — the crossing multiplier, and frontage if and when
+that is built. This follows the calculator's own split: `defensePower(side,
+terrain, fortification)` is the ground the defender stands on, `attackPower(side,
+crossing)` is what the attacker did to reach it.
+
+Like TC-⑬, this ruling fixes only the **binding**. Every multiplier is sealed at
+combat-formula M5 and is cited, never restated normatively:
+
+| authored `terrainLayer` | sectors | M5 rung | value home | derivation |
+|---|---|---|---|---|
+| plains | 24 | Plains | 1.0 · M5 | same name |
+| steppe | 8 | Plains | 1.0 · M5 | open ground; M5 has no steppe rung |
+| desert | 9 | Plains | 1.0 · M5 | a desert's price is logistics, not defence (R16 owns it) |
+| oasis | 1 | Plains | 1.0 · M5 | an economic feature, not a defensive one |
+| river-valley | 5 | Plains | 1.0 · M5 | **not** the `river` border class's 0.70 — that prices an opposed crossing, not the ground stood on |
+| highland | 6 | Forest / hills | 1.2 · M5 | same archetype as M5's `hills` rung |
+| mountain | 3 | **Mountains** | **1.5 · M5** | same name; M5's rung since 2026-07-03, unused until now because nothing read a sector's terrain |
+
+Status **AGREED**, values **가안**, validation **L0** (hand reasoning; no grid, no
+battery). M5's own `†` on Mountains ×1.5 — "interpolation … keep flagged for
+playtest attention" — already carries the provisionality. What would settle the
+table: the queued map re-authoring (intra-sector terrain) and playtest.
+
+**What makes the binding possible now.** Every one of the 56 sectors is
+**terrain-uniform** (measured: 0 sectors carry more than one layer), so a sector
+has one well-defined terrain. TC-⑬ was sealed 2026-07-08 to replace a *hardcoded
+constant* — its own words — and the door was then the only authored geography
+available; the door's terrain was a proxy for a sector terrain source that did not
+exist. It exists now.
+
+**What TC-⑬ keeps.** Its **crossing** column is untouched (river `riverOpposed`
+0.70, strait `straitOpposed` 0.55 · ADR 0015), so a river-door battle is
+numerically unchanged. Its **reachable-weakest-link** rule survives for what it was
+sealed for — choosing among **doors** when one seat-front spans several region
+borders. What is retired is the extension of that rule *over approaches*, which let
+an undoored arrival soften the defender's ground: measured, that route costs **0
+extra turns on 20 of 20 land doors**, and 100 flanking men moved R from 0.56 to
+2.22 — a hex-grain fact deciding a sector-grain outcome.
+
+**`mountain` is not 태산.** Taishan's 4 hexes and the 52 `rangeHexes` belong to no
+sector at all, so they are not nodes of the movement graph and carry no adjacency —
+impassability by construction, not by multiplier (TC-⑩). The three `mountain`
+sectors are all in 관중 (r6) and are exactly its three pass endpoints (r6_s0,
+r6_s3, r6_s5), so under this ruling 관중's passes become **asymmetric**: the
+mountain side defends at ×1.5 and the plains/desert side at ×1.0. 四塞之地 now comes
+out of the ground rather than out of the door.
+
+Frontage stays unimplemented and moves to the operational-manoeuvre pass. TC-⑬'s
+note that "×2.0 is validated only as the residual AFTER a frontage cap" concerns a
+`pass` **terrain** value this ruling stops using; see `docs/SYNC-DEBT.md`.
+Implementation home: ticket **06e**.

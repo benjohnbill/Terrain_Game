@@ -365,32 +365,52 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   owes "a formal feature-doc birthplace for the **turn structure**". **Owed:** fold
   this ruling into that birthplace when it is created, as a RULINGS row rather than
   a code comment. Not urgent, and not a conflict — it is an unrecorded decision.
+  **Amended 2026-07-31 (ADR 0046):** the ruling itself is unchanged and now has a
+  recorded home in ADR 0046 item 1, so what is still owed is the *turn-structure
+  birthplace*, not the ruling.
 
-- [ ] **TC-⑬'s frontage half is unimplemented, so a `pass` is priced below what the
-  ruling intends** (registered 2026-07-28 by ticket 06c). TC-⑬ pairs the pass
-  ×2.0 ground with a door that "throttles the assaulting body", and cites the M5
-  validation: "×2.0 is validated only as the residual AFTER a frontage cap; without
-  it, ×2.0 is far too low." M5 assigns that cap's **value** to the frontage/matchup
-  stage, which has not run — so 06c implemented the multiplier and not the throttle,
-  because writing the cap would originate a number. `Edge.frontageHexes` is authored
-  on all 17 edges and read by nothing in `game/src`. **Owed:** the frontage cap's
-  value, then the throttle, whenever the frontage/matchup stage runs. Until then a
-  defile is cheaper to storm than the seal intends — a **known direction of error**,
-  not an unknown one.
+- [ ] **TC-⑬'s frontage half is unimplemented — re-pointed at the
+  operational-manoeuvre pass** (registered 2026-07-28 by ticket 06c; re-scoped
+  2026-07-31 by the geography-battle grill). TC-⑬ pairs the pass ×2.0 ground with a
+  door that "throttles the assaulting body", citing the M5 validation "×2.0 is
+  validated only as the residual AFTER a frontage cap; without it, ×2.0 is far too
+  low." Four findings from the grill re-scope this row:
+  - **The values are not missing.** M11 authors them (pass 1,000 · river 1,000 ·
+    forest trail 1,500 · strait 500 · legendary 300–500) as **가안 sealed
+    2026-07-03**, keyed on archetype — which the artifact already carries as
+    `choke.class`.
+  - **`choke.cap` is not that cap.** `schema.ts` calls it a "Projectable-mass
+    ceiling", and `Projectable mass` is **⛔ stale** under ADR 0042 — it fed the
+    retired hegemony arithmetic. Its numbers mostly coincide with M11 because the
+    author read M11, but `hills 1300` and `strait 800` appear in no M11 row. Reading
+    it as the frontage cap would be origination dressed as assembly. `Edge.frontageHexes`
+    is likewise authored on all 17 edges and read by nothing.
+  - **Implementing it today would be inert.** Measured: with cap 1,000 against a 900
+    garrison at `pass` 2.0, R pins at **0.556** for any force from 1,500 to 5,000 —
+    terrain chokes carry no erosion link (M11's `+500 per −0.3` is on the
+    *wall-assault* table only), so the door becomes frontally unforceable. Its escape
+    valve is D9's `Removability`, which this map honours geometrically on **24/24**
+    doors but at **0 extra turns on 20/20 land doors** (straits alone cost 2–3).
+    D9 names three removal-path kinds — bypass, timing/condition windows, tech — and
+    this map has only the first, free. The defect is the removal economy, not the cap.
+  - **Its stated justification weakened.** TC-⑮ (ADR 0046) retires the `pass`
+    **terrain** value that "×2.0 as the residual" refers to.
+  **Owed:** the whole question moves to `.scratch/operational-manoeuvre/`, whose
+  subject includes R14 interception and the map-resolution row — the two upstreams a
+  cap needs. **Not abolished:** D9 argues the cap deliberately ("a cap, never a
+  multiplier … it *classifies* sectors rather than scaling them", with Thermopylae and
+  Myeongnyang as anchors).
 
-- [ ] **A routed force is reported but never displaced** (registered 2026-07-28 by
-  ticket 06c). `battle.ts` computes `routed` and `escaped` — "routed survivors who
-  disperse through an open escape route" — and M4 says the survivors of an open-escape
-  rout "disperse per normal dissolution". Nothing in `game/src` consumes `escaped`:
-  06c takes the pursuit blood (which is inside `casualties`) and reports `routed`,
-  but the survivors stay on the same hex and can fight there again next turn.
-  **Why it was not built:** *where* a routed force goes is undesigned for L3 — stay,
-  fall back a sector, dissolve into a friendly garrison, or leave the board are four
-  different rules and no seal picks one; dissolution is named for Delaying's
-  withdrawal and never specified as a displacement. Kind 3 under the README's
-  four-kind workflow, so out of this slice rather than filled in. **Owed:** a
-  displacement rule, naturally alongside 06d's ownership transfer (which is what
-  makes "fall back" expressible) and ticket 11's Encirclement.
+- [x] **A routed force is reported but never displaced — RULED 2026-07-31**
+  (registered 2026-07-28 by ticket 06c). `battle.ts` computes `routed` and `escaped`
+  and nothing consumed `escaped`, so a routed force stood on the same hex. ADR 0046
+  turned this from a gap into a defect: with engagements sited on hostile presence, a
+  force that stays is re-engaged every turn, so "stay" becomes annihilation and M4's
+  open-escape clause becomes a lie. **Ruled at war-model-build `RULINGS.md` WM-⑤**:
+  anyone with an approach arc falls back along it one sector; anyone without one
+  (structurally, every garrison) leaves service and stays on the register.
+  Implementation is owed by ticket **06e**. The residue is registered separately
+  below (the military/civilian fraction).
 
 - [ ] **Only 27 of 56 sectors can ever be a battle site, so most capitals cannot
   be attacked at all** (registered 2026-07-28 by ticket 06c, which is the first
@@ -414,6 +434,21 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   `terrainLayer` → M5 mapping. **Owed: a user ruling before ticket 07 is claimed**,
   with 06d's ownership transfer as the other input. Evidence in
   `.scratch/l3-playable-build/issues/06c-…md` § Comments.
+  **DESIGN DISCHARGED 2026-07-31 (ADR 0046 + TC-⑮); implementation owed by ticket
+  06e, so this row stays open pointing there.** The user ruling was taken in the
+  geography-battle grill, along the *second* path above — a terrain source for
+  interior sectors — which raises battle-capable sectors from 27 to **all 56**. Two
+  corrections to the text above, both load-bearing:
+  - **The direction was reversed.** Re-measured over all 15 legal partitions
+    (30 realm-seats): **30 of 30** seats could enter enemy ground without standing on
+    a single fightable sector, mean **21.2** enemy sectors reachable with zero
+    battles, and **41 of 45** authored-marker capitals reachable with zero battles.
+    Capitals could not be *defended*, not "not attacked". `movementOrderRefusal` has
+    no ownership check and there is no zone of control.
+  - **The first path would not have worked.** Adjacency-derived fronts raise
+    battle-capable sectors only from 27 to **33** of 56 (37 cross-region hex-adjacent
+    sector pairs exist, 15 of them authored as edges), leaving 23 interior sectors
+    still unfightable. Recorded so it is not proposed again.
 
 - [ ] **Interception of a force in transit has no design anywhere**
   (registered 2026-07-26, gate C). Raised by the user while ruling R14 ("그 길목을
@@ -1531,6 +1566,66 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   verdicts / generated digests / planning scratch / risk register
   inside the Working layer. **User deferred: no misfiling observed —
   revisit if it occurs (emergence-limit).**
+
+- [ ] **The map cannot express terrain inside a sector, and that is what makes a
+  frontage cap inert** (registered 2026-07-31 by the geography-battle grill, at the
+  user's instruction). What the map *cannot* express is terrain **variation inside**
+  a sector; hard barriers already exist and work — Taishan's 4 hexes plus 52
+  `rangeHexes`, **56 hexes belonging to no sector at all**, so they are not nodes of
+  the movement graph and carry no adjacency (TC-⑩, and impassability by construction
+  rather than by multiplier). Every one of the 56 sectors is terrain-**uniform**,
+  which is exactly why TC-⑮'s binding needed no re-authoring.
+  **Why it matters, measured:** sectors average **5.2 hexes** against march speed
+  **3**, so routing around a door costs **0 extra turns on 20 of 20 land doors** and
+  ≤2 extra fatigue (straits alone cost 2–3 turns). Any frontage cap is therefore
+  removable for free, and D9's `Removability` obligation is satisfied in the letter
+  and voided in the economy. Depth in the map is one of the two ways that changes;
+  R14 interception is the other.
+  **Owed:** intra-sector features (rivers, ravines, ridges) need per-hex or
+  per-boundary authoring, and **TC-⑪ froze the grid resolution** — this is seed
+  re-authoring tier, kind 3. Consumed by `.scratch/operational-manoeuvre/`; the
+  directional-terrain idea (river current) has its seat reserved by ADR 0046 item 3's
+  hex-arc contract.
+
+- [ ] **06d's register succession has a hole its own checklist hides** (registered
+  2026-07-31; found by the user asking why the register is held per *province*).
+  Ticket 06d rules that R17's proportional formula is "**superseded rather than
+  implemented**, because per-province accounting makes it exact: a captured province
+  carries its own register to the taker". But **provinces are not captured — sectors
+  are** (`Realm.sectors: SectorId[]`), and a province split across the front line is
+  the normal case. Measured: 관중 carries pop **0.5 and 0.97** in one province, so a
+  partial capture cannot carry "its own register" without a within-province
+  apportionment — which is what R17 was for. MT-② also *derives* the register from
+  `Σ populationValue`, a **sector** field, while storing it per province (R18 iii).
+  WM-⑤'s register return lands at a sector too, so it shares the answer.
+  **Owed: a user ruling before ticket 06d is claimed** — either R17 stands after all,
+  or the register moves to sector grain. It decides whether an accepted
+  simplification survives, so it is a ruling, not a value.
+
+- [ ] **Rout survivors all leave service, and that is scope rather than judgement**
+  (registered 2026-07-31 alongside WM-⑤). The user's judgement is that *some* routed
+  survivors should stay soldiers, at a lower fraction — but a fraction needs a
+  **destination**, and every candidate is an undesigned system: the capital guard
+  (Part 2 #10, still ticket 07's `needs-info`) or a garrison that can retreat (the
+  mobile-garrison system 06b/06c refused). **Morale is not available as the basis** —
+  R13 (2026-07-26, the user's own ruling) parks it with "do not implement a morale
+  term in the 06 family". **Owed:** the fraction, once a destination lands. The
+  capital guard landing is the trigger that wakes this row.
+
+- [ ] **ADR 0044 has no reader in `game/src`, and two code comments contradict it**
+  (registered 2026-07-31; the comments are fixed in the same batch, the *pattern* is
+  what this row keeps). `git grep` finds **zero** citations of ADR 0044 under
+  `game/src` (0045 is cited once, in `force.ts`), while `economy.ts`'s `holdsOf` said
+  there is "no seal saying whether one is needed" and `state.ts`'s `homeland` called
+  conversion "an open question owned by the ticket that first takes a sector". Both
+  landed in `c44c98a`, **hours before ADR 0044 landed in `1593c32`** — same day,
+  comment first, and nobody returned. Tickets 06d and 06e are the ones that read
+  them, and this session argued a ruling from the stale reading before catching it.
+  This is the failure `AGENTS.md` § Read Order names outright ("a decision recorded
+  here and never cited is how the project has actually gone wrong before", ADR 0041
+  § Context). **Owed:** nothing mechanical is proposed — the row exists so the
+  same-day ordering that made it invisible is on the record. A code-comment-versus-ADR
+  cross-check is a candidate `audit-lint` check if it recurs.
 
 ## Paid
 

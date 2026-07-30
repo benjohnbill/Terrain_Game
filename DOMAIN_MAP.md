@@ -57,6 +57,18 @@ birthplace's phrasing. Applied to all 56 promoted entries on 2026-07-28
   §3, ledger D5.1/D5.2). Definition + rulings: match-arc `GLOSSARY.md` 노화 헌법 /
   `RULINGS.md` MT-①. _(Re-slimmed 2026-07-10, F-04.)_
 
+- ✅ `Hex is physical, sector is decisional` (헥스는 물리, 구역은 결정) —
+  **user-promoted 2026-07-31**: which grain a new field is keyed on is decided by
+  asking whether it is a fact about matter or an object of judgement. Movement
+  destinations and approach arcs are hex-keyed because marching and crossing are
+  physical acts; terrain interpretation, commit allocation, and engagement
+  resolution are sector-keyed because they are judgement and its object. This is the
+  operating rule beneath ADR 0032 (the front sector is the operational atom) and
+  `world/schema.ts`'s invariant that hexes are physical space while values live on
+  sectors. Promoted because it decided two independent questions in one session —
+  the approach-arc contract and the commit key. Definition + grounds: ADR 0046
+  § Decision item 5.
+
 ## Core Terms
 
 - ✅ `Map unit`: A playable geographic unit. Currently rendered as a hex, but

@@ -81,11 +81,22 @@ export interface MatchState {
    * only when the controller is also its homeland, so the turn ground changes
    * hands it pays neither side, and recapture restores the original claim.
    *
-   * **Mutable on purpose, and unwritten so far.** Whether conquered land ever
-   * converts — the ADR 0022/0029 ripening path, which M14 ⑮ seals as "conquest
-   * raises the cap" but which reached the board through a settlement channel ADR
-   * 0042 retired — is an open question owned by the ticket that first takes a
-   * sector. Freezing this record would have answered it silently.
+   * **Mutable on purpose, and unwritten so far — but the rule is not open.**
+   * **ADR 0044** (2026-07-26) settles what a taken sector does: acquired land
+   * transfers everything it carries on the ADR 0022/0029 ripening lag, with the
+   * conscription register transferring unripened (ripening applies to productivity,
+   * not to bodies), and ADR 0045 keeps a serving force's province-origin composition
+   * with the force while remaining civilians travel with the land. Limbo is the
+   * interval before integration, not a terminal state.
+   *
+   * So what is unwritten is the **writer**, which is ticket 06d — not the decision.
+   * Freezing this record would still be wrong, for the reason it always was: it would
+   * make limbo permanent, which ADR 0044 explicitly amends OG-③ to forbid.
+   *
+   * An earlier version of this comment called the conversion an "open question owned
+   * by the ticket that first takes a sector". It landed hours before ADR 0044 did, on
+   * the same day, and was never revisited; a grill later argued from the stale reading
+   * before catching it. See `docs/SYNC-DEBT.md`.
    */
   homeland: Record<SectorId, ActorId>;
 

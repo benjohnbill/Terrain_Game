@@ -228,3 +228,62 @@ otherwise it expands to the nearest pair of endpoint-sector hexes at movement
 cost 1. Exact ties use canonical coordinate order. These rules complete ADR 0043's
 hex-adjacency-plus-authored-edges graph without changing its route, cost, or
 reachability contracts.
+
+## WM-⑤ — Rout displacement: fall back along the arc, or leave service — SEALED 2026-07-31 (user grill) · L0
+
+Recorded by **ADR 0046**'s session; the decision is the user's, from the
+geography-battle grill on ticket 06c's registered gaps. Implementation home:
+ticket **06e**.
+
+`battle.ts` computes `routed` and `escaped` — the open-escape survivors that M4
+lets slip away, `OPEN_ESCAPE_REMAINDER_LOSS = 0.5` — and **nothing consumes
+`escaped`**, so a routed force stands on the same hex it lost on. ADR 0046 turns
+that from a gap into a defect: with engagements sited on hostile presence, a force
+that stays is re-engaged every turn, so "stay" becomes annihilation and M4's escape
+clause becomes a lie.
+
+**The axis is not attacker/defender. It is who entered this sector this turn.**
+
+| who | has an approach arc |
+|---|---|
+| an invader | always, by definition |
+| a defending field army that reinforced this turn | yes |
+| a defending field army that was already standing there | no |
+| **a garrison** | **never, structurally** — nothing marches one (06b: `GarrisonForce` carries no wear ledger) |
+
+Garrison-only defence is *the common case on this board* (06c acceptance item 5),
+so the no-arc branch is the main path, not a fallback.
+
+1. **Anyone with an arc falls back along it** — one sector, the way they came, using
+   the arc ADR 0046 item 3 records.
+2. **Anyone without an arc leaves service and stays on the register** — they drop
+   out of `serving`, the register itself is unchanged, and they become draftable
+   civilians again.
+
+**Why (2) rather than a retreating garrison.** `defenderRouted` requires
+`attackerWins`, so a routed garrison is **by definition a garrison that lost its
+sector** — a locality-fixed shield with no locality left. Keeping it in service
+needs somewhere to belong, and every candidate is an undesigned system: the capital
+guard (Part 2 #10, still ticket 07's `needs-info`) or a garrison that can retreat,
+which is the mobile-garrison system 06b and 06c explicitly refused. Ruling (2) also
+keeps **rout distinct from death**: 06c item 11 removes the dead from the register
+permanently, because blood is permanent currency (SPEC).
+
+**What (2) costs, stated so it is not discovered later.** Under **ADR 0044**
+acquired land transfers the conscription-register share it carries, **unripened**
+(item 3), and **ADR 0045** transfers remaining civilians with the land while a
+serving force's province-origin composition stays with its force. So (2) moves
+routed survivors into the civilian body count of ground about to change hands, and a
+proportional share of them becomes the conqueror's draftable population. The
+alternative — returning survivors to their **origin** province's register, which
+06c item 11's per-formation province origins already make expressible — was
+considered and **not** taken: it would carve an exception into ADR 0044's principle
+that quantities derived from land travel with it. The conqueror still pays the draft
+price and the action capacity, and ADR 0044 item 4's proportional succession already
+blocks the sharp edge (a bled-dry province cannot hand its taker fresh men).
+
+**Registered, not ruled.** That *every* survivor leaves service is a consequence of
+scope. The user's judgement that some should stay soldiers is recorded; the fraction
+can only become a value once a destination exists, and **morale is not available as
+its basis** — R13 (2026-07-26, the user's own ruling) parks morale with "do not
+implement a morale term in the 06 family". See `docs/SYNC-DEBT.md`.

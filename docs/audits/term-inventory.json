@@ -33,6 +33,19 @@
    "verdictRef": "2026-07-10-terminology-audit.md"
   },
   {
+   "canonical": "Hex is physical, sector is decisional",
+   "korean": "헥스는 물리, 구역은 결정",
+   "aliases": [],
+   "birthplace": "DOMAIN_MAP.md",
+   "tier": 0,
+   "status": "AGREED",
+   "kind": "meta",
+   "codeIdentifier": null,
+   "codeRefs": [],
+   "verdict": "justified-coinage",
+   "verdictRef": "docs/adr/0046-the-sector-is-the-atom-of-combat.md"
+  },
+  {
    "canonical": "Map unit",
    "korean": null,
    "aliases": [

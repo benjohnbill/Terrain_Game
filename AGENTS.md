@@ -405,6 +405,14 @@ Live trackers:
 - `.scratch/l3-playable-build/` — the nine L3 implementation tickets. All
   `needs-info` until their gates close; `README.md` carries the execution
   protocol.
+- `.scratch/operational-manoeuvre/` — the manoeuvre pass: bypass, interception,
+  supply interdiction, encirclement, and frontage's removal economy. Parallel to
+  the build and **non-blocking**; its design gates wait on ticket 13's match
+  report. **Front door: `README.md`.**
+  *Delete this line when ticket 11 leaves `needs-info`* — Part 2 #2
+  (Encirclement) is on 11's blocker list and is this pass's own item, so that is
+  the pass's exit criterion, after which the tracker is a record rather than live
+  work.
 - `.scratch/doc-structure/` — documentation-governance work.
 - `.scratch/war-model-slice2/` — landed (tickets 01–11); kept as record.
 
