@@ -22,6 +22,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { Runtime } from '../runtime/runtime.js';
 import { CRADLE_R1 } from '../world/index.js';
 import { preview } from '../preview/preview.js';
+import { isPartyTo } from '../domain/fronts.js';
 import { musterHexOf } from '../domain/movement.js';
 import type { RecruitmentPosture } from '../domain/recruitment.js';
 import type { ActorId, GameEvent, Intent, MatchView, SectorId } from '../runtime/types.js';
@@ -88,8 +89,8 @@ export function App() {
   );
 
   const allocateChips = useCallback(
-    (front: string, chips: number) =>
-      submitting({ kind: 'allocate-commitment', actor: viewer, front, chips }),
+    (sector: SectorId, chips: number) =>
+      submitting({ kind: 'allocate-commitment', actor: viewer, sector, chips }),
     [submitting, viewer],
   );
 
@@ -252,7 +253,7 @@ export function App() {
  * Ticket 04 owns how the game is actually operated, against gate 07's sealed
  * interaction skeleton (three zones, a commit bar, information summoned rather than
  * displayed). This strip exists only so the turn cycle ticket 03 built is visible to
- * a human rather than only to tests: allocate chips to a front, lock, watch the
+ * a human rather than only to tests: allocate chips to a sector, lock, watch the
  * reveal land in the event log, and see turn N+1 open. It is meant to be deleted.
  *
  * Ticket 05 added two rows to the same probe rather than a second surface: the
@@ -294,7 +295,7 @@ function TurnStrip({
   splitMen: string;
   recruitSector: SectorId | '';
   recruitPosture: RecruitmentPosture;
-  onAllocate: (front: string, chips: number) => void;
+  onAllocate: (sector: SectorId, chips: number) => void;
   onSelectDetachment: (id: string) => void;
   onForcedMarch: (forced: boolean) => void;
   onSplitMen: (men: string) => void;
@@ -318,6 +319,18 @@ function TurnStrip({
           detachment.position.q === selectedDetachment.position.q &&
           detachment.position.r === selectedDetachment.position.r)
         .map((detachment) => detachment.id);
+  // Chips are poured onto sectors now (ADR 0046 item 4), and every sector is a legal
+  // target — so a probe has to *choose* which to offer rather than enumerate a
+  // border list. Three sources, because each is a thing a player is already looking
+  // at: the sectors of the borders this realm touches, whatever is focused on the
+  // map (the only way to reach the interior, which is the point of the re-key), and
+  // anything already committed, so a pour is always visible and always clearable.
+  // Ticket 04's commit-first shell replaces this whole affordance.
+  const commitTargets = [...new Set([
+    ...view.fronts.filter((front) => isPartyTo(front, viewer)).flatMap((front) => front.sectors),
+    ...(focused === null ? [] : [focused]),
+    ...Object.keys(view.commitment.allocations).filter((key) => key in view.board.sectors),
+  ])].sort();
   const recruitmentOrder = view.recruitmentOrders.find((order) => order.requestId === GREYBOX_RECRUIT_ID);
   const recruitChips = recruitmentOrder?.commit ?? 0;
   // The same sited request the background tier will resolve, priced before lock.
@@ -337,29 +350,27 @@ function TurnStrip({
     <section className="prompt" data-testid="turn-strip">
       <p>
         턴 {view.turn} · 행동력 {view.commitment.remaining}/{view.commitment.budget} 남음
-        {locked ? ` · 잠금 완료, ${waitingOn.join(', ')} 대기 중` : ' · 전선에 커밋하고 잠그세요'}
+        {locked ? ` · 잠금 완료, ${waitingOn.join(', ')} 대기 중` : ' · 구역에 커밋하고 잠그세요'}
       </p>
-      <table data-testid="fronts">
+      <table data-testid="commit-sectors">
         <tbody>
-          {view.fronts
-            .filter((front) => front.owners.includes(viewer))
-            .map((front) => {
-              const chips = view.commitment.allocations[front.key] ?? 0;
-              return (
-                <tr key={front.key}>
-                  <td>{front.sectors.join(' ↔ ')}</td>
-                  <td data-testid={`chips-${front.key}`}>{chips}</td>
-                  <td>
-                    <button type="button" disabled={locked} onClick={() => onAllocate(front.key, chips + 1)}>
-                      +1
-                    </button>
-                    <button type="button" disabled={locked || chips === 0} onClick={() => onAllocate(front.key, 0)}>
-                      clear
-                    </button>
-                  </td>
-                </tr>
-              );
-            })}
+          {commitTargets.map((sector) => {
+            const chips = view.commitment.allocations[sector] ?? 0;
+            return (
+              <tr key={sector}>
+                <td>{sector}</td>
+                <td data-testid={`chips-${sector}`}>{chips}</td>
+                <td>
+                  <button type="button" disabled={locked} onClick={() => onAllocate(sector, chips + 1)}>
+                    +1
+                  </button>
+                  <button type="button" disabled={locked || chips === 0} onClick={() => onAllocate(sector, 0)}>
+                    clear
+                  </button>
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
       {economy && (

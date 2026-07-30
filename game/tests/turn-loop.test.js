@@ -19,7 +19,7 @@ import assert from 'node:assert/strict';
 const { commitmentShare, CRADLE_R1, Runtime, preview, TURN_COMMITMENT_BUDGET } = await import(
   '../dist/runtime/index.js'
 );
-const { replayForViewer, replayLog, turnSummary } = await import('../acceptance/replay.js');
+const { replayForViewer, replayLog, singleBorderSites, turnSummary } = await import('../acceptance/replay.js');
 
 const FIXTURE = { world: CRADLE_R1, seed: 'turn-0001', actors: ['realm-a', 'realm-b'] };
 
@@ -35,8 +35,12 @@ function openAtDecision(overrides = {}) {
 }
 
 const frontsOf = (runtime, actor) => runtime.view(actor).fronts.map((f) => f.key);
-const allocate = (runtime, actor, front, chips) =>
-  runtime.submit({ kind: 'allocate-commitment', actor, front, chips, detachmentIds: [] });
+
+/** Where chips may be poured, paired with the border each site reports under. */
+const commitSites = (runtime, actor) => singleBorderSites(runtime.view(actor));
+
+const allocate = (runtime, actor, sector, chips) =>
+  runtime.submit({ kind: 'allocate-commitment', actor, sector, chips, detachmentIds: [] });
 const lock = (runtime, actor) => runtime.submit({ kind: 'lock-commitment', actor });
 const types = (events) => events.map((e) => e.type);
 
@@ -85,43 +89,45 @@ test('the fronts a realm may commit to are its contested borders', () => {
 
 test('one stack, one sum: allocations cannot exceed the turn budget', () => {
   const runtime = openAtDecision();
-  const fronts = frontsOf(runtime, 'realm-a');
+  const sites = commitSites(runtime, 'realm-a');
 
-  assert.equal(types(allocate(runtime, 'realm-a', fronts[0], TURN_COMMITMENT_BUDGET))[0], 'commitment-allocated');
+  assert.equal(types(allocate(runtime, 'realm-a', sites[0].sector, TURN_COMMITMENT_BUDGET))[0], 'commitment-allocated');
   assert.equal(runtime.view('realm-a').commitment.remaining, 0);
 
-  // A second front cannot be funded from a pool that is already spent — there is
+  // A second sector cannot be funded from a pool that is already spent — there is
   // no per-order budget anywhere, which is what makes exposure real (D6.3).
-  const over = allocate(runtime, 'realm-a', fronts[1], 1);
+  const over = allocate(runtime, 'realm-a', sites[1].sector, 1);
   assert.equal(over[0].type, 'intent-rejected');
   assert.match(over[0].detail.reason, /행동력/);
   assert.equal(runtime.view('realm-a').commitment.spent, TURN_COMMITMENT_BUDGET);
 });
 
-test('an allocation replaces its front rather than accumulating', () => {
+test('an allocation replaces its sector rather than accumulating', () => {
   const runtime = openAtDecision();
-  const [front] = frontsOf(runtime, 'realm-a');
+  const { sector } = commitSites(runtime, 'realm-a')[0];
 
-  allocate(runtime, 'realm-a', front, 12);
-  allocate(runtime, 'realm-a', front, 5);
+  allocate(runtime, 'realm-a', sector, 12);
+  allocate(runtime, 'realm-a', sector, 5);
   assert.equal(runtime.view('realm-a').commitment.spent, 5, 'the second allocation stacked instead of replacing');
 
-  allocate(runtime, 'realm-a', front, 0);
-  assert.deepEqual(runtime.view('realm-a').commitment.allocations, {}, 'zero did not clear the front');
+  allocate(runtime, 'realm-a', sector, 0);
+  assert.deepEqual(runtime.view('realm-a').commitment.allocations, {}, 'zero did not clear the sector');
 });
 
 test('a malformed or foreign allocation is refused without a transition', () => {
   const runtime = openAtDecision();
-  const [front] = frontsOf(runtime, 'realm-a');
+  const { sector } = commitSites(runtime, 'realm-a')[0];
   const before = runtime.view('observer');
 
   for (const intent of [
-    { kind: 'allocate-commitment', actor: 'realm-a', front, chips: -1 },
-    { kind: 'allocate-commitment', actor: 'realm-a', front, chips: 1.5 },
-    { kind: 'allocate-commitment', actor: 'realm-a', front, chips: 'lots' },
-    { kind: 'allocate-commitment', actor: 'realm-a', front },
-    { kind: 'allocate-commitment', actor: 'realm-a', front: 'r1_s0|r1_s1', chips: 3 },
-    { kind: 'allocate-commitment', actor: 'realm-a', front: 'nonsense', chips: 3 },
+    { kind: 'allocate-commitment', actor: 'realm-a', sector, chips: -1 },
+    { kind: 'allocate-commitment', actor: 'realm-a', sector, chips: 1.5 },
+    { kind: 'allocate-commitment', actor: 'realm-a', sector, chips: 'lots' },
+    { kind: 'allocate-commitment', actor: 'realm-a', sector },
+    // An edge key is no longer a commit key: the front was the *old* namespace, so
+    // a caller that never updated is refused rather than quietly funding nothing.
+    { kind: 'allocate-commitment', actor: 'realm-a', sector: 'r1_s0|r1_s1', chips: 3 },
+    { kind: 'allocate-commitment', actor: 'realm-a', sector: 'nonsense', chips: 3 },
   ]) {
     const events = runtime.submit(intent);
     assert.equal(events[0].type, 'intent-rejected', `accepted ${JSON.stringify(intent)}`);
@@ -131,10 +137,10 @@ test('a malformed or foreign allocation is refused without a transition', () => 
 
 test('commitments are secret until both realms have locked', () => {
   const runtime = openAtDecision();
-  const [front] = frontsOf(runtime, 'realm-a');
-  allocate(runtime, 'realm-a', front, 7);
+  const { sector } = commitSites(runtime, 'realm-a')[0];
+  allocate(runtime, 'realm-a', sector, 7);
 
-  assert.deepEqual(runtime.view('realm-a').commitment.allocations, { [front]: 7 });
+  assert.deepEqual(runtime.view('realm-a').commitment.allocations, { [sector]: 7 });
   assert.deepEqual(runtime.view('realm-b').commitment.allocations, {}, 'the opponent read an unrevealed allocation');
   assert.deepEqual(
     runtime.view('observer').commitment.allocations,
@@ -146,8 +152,8 @@ test('commitments are secret until both realms have locked', () => {
 
 test('the fact of a lock crosses; its content does not (R7)', () => {
   const runtime = openAtDecision();
-  const [front] = frontsOf(runtime, 'realm-a');
-  allocate(runtime, 'realm-a', front, 9);
+  const { sector } = commitSites(runtime, 'realm-a')[0];
+  allocate(runtime, 'realm-a', sector, 9);
 
   const locked = lock(runtime, 'realm-a');
   assert.equal(types(locked)[0], 'commitment-locked');
@@ -165,21 +171,21 @@ test('both realms are legal callers at the same moment (R8)', () => {
   for (const first of ['realm-a', 'realm-b']) {
     const runtime = openAtDecision();
     const second = first === 'realm-a' ? 'realm-b' : 'realm-a';
-    const [frontFirst] = frontsOf(runtime, first);
-    const [frontSecond] = frontsOf(runtime, second);
+    const siteFirst = commitSites(runtime, first)[0].sector;
+    const siteSecond = commitSites(runtime, second)[1].sector;
 
-    assert.equal(types(allocate(runtime, first, frontFirst, 4))[0], 'commitment-allocated');
-    assert.equal(types(allocate(runtime, second, frontSecond, 4))[0], 'commitment-allocated');
+    assert.equal(types(allocate(runtime, first, siteFirst, 4))[0], 'commitment-allocated');
+    assert.equal(types(allocate(runtime, second, siteSecond, 4))[0], 'commitment-allocated');
     assert.equal(types(lock(runtime, first))[0], 'commitment-locked');
   }
 });
 
 test('a locked realm cannot allocate or lock again this turn (R8)', () => {
   const runtime = openAtDecision();
-  const [front] = frontsOf(runtime, 'realm-a');
+  const { sector } = commitSites(runtime, 'realm-a')[0];
   lock(runtime, 'realm-a');
 
-  const late = allocate(runtime, 'realm-a', front, 3);
+  const late = allocate(runtime, 'realm-a', sector, 3);
   assert.equal(late[0].type, 'intent-rejected');
   assert.match(late[0].detail.reason, /already locked this turn/);
 
@@ -190,16 +196,16 @@ test('a locked realm cannot allocate or lock again this turn (R8)', () => {
 
 test('commitments cannot be made outside the decision tier', () => {
   const runtime = Runtime.open(FIXTURE); // still in the capital beat
-  const events = runtime.submit({ kind: 'allocate-commitment', actor: 'realm-a', front: 'x|y', chips: 1 });
+  const events = runtime.submit({ kind: 'allocate-commitment', actor: 'realm-a', sector: 'r1_s0', chips: 1 });
   assert.equal(events[0].type, 'intent-rejected');
   assert.match(events[0].detail.reason, /commit window/);
 });
 
 test('both locks close the turn in one submit: reveal, resolve, then turn N+1', () => {
   const runtime = openAtDecision();
-  const [front] = frontsOf(runtime, 'realm-a');
-  allocate(runtime, 'realm-a', front, 8);
-  allocate(runtime, 'realm-b', front, 4);
+  const { sector } = commitSites(runtime, 'realm-a')[0];
+  allocate(runtime, 'realm-a', sector, 8);
+  allocate(runtime, 'realm-b', sector, 4);
 
   lock(runtime, 'realm-a');
   const closing = lock(runtime, 'realm-b');
@@ -222,8 +228,8 @@ test('both locks close the turn in one submit: reveal, resolve, then turn N+1', 
 
   const revealed = closing.find((e) => e.type === 'commitments-revealed');
   assert.deepEqual(revealed.detail.commitments, {
-    'realm-a': { [front]: 8 },
-    'realm-b': { [front]: 4 },
+    'realm-a': { [sector]: 8 },
+    'realm-b': { [sector]: 4 },
   });
 
   const opened = closing.find((e) => e.type === 'turn-opened');
@@ -235,8 +241,8 @@ test('both locks close the turn in one submit: reveal, resolve, then turn N+1', 
 
 test('every event names the tier it belongs to, and there is no phase ③', () => {
   const runtime = openAtDecision();
-  const [front] = frontsOf(runtime, 'realm-a');
-  allocate(runtime, 'realm-a', front, 2);
+  const { sector } = commitSites(runtime, 'realm-a')[0];
+  allocate(runtime, 'realm-a', sector, 2);
   lock(runtime, 'realm-a');
   const closing = lock(runtime, 'realm-b');
 
@@ -264,8 +270,8 @@ test('the payoff is structurally non-demotable: no turn advances without a revea
   let opened = 0;
 
   for (let turn = 1; turn <= 6; turn++) {
-    const fronts = frontsOf(runtime, 'realm-a');
-    allocate(runtime, 'realm-a', fronts[turn % fronts.length], 3);
+    const sites = commitSites(runtime, 'realm-a');
+    allocate(runtime, 'realm-a', sites[turn % sites.length].sector, 3);
     const events = [...lock(runtime, 'realm-a'), ...lock(runtime, 'realm-b')];
     revealed += events.filter((e) => e.type === 'commitments-revealed').length;
     opened += events.filter((e) => e.type === 'turn-opened').length;
@@ -283,9 +289,9 @@ test('the payoff is structurally non-demotable: no turn advances without a revea
 
 test('unspent budget is discarded at renewal — the stack never hoards', () => {
   const runtime = openAtDecision();
-  const [front] = frontsOf(runtime, 'realm-a');
+  const { sector } = commitSites(runtime, 'realm-a')[0];
 
-  allocate(runtime, 'realm-a', front, 1);
+  allocate(runtime, 'realm-a', sector, 1);
   lock(runtime, 'realm-a');
   lock(runtime, 'realm-b'); // realm-b spent nothing at all
 
@@ -298,24 +304,27 @@ test('unspent budget is discarded at renewal — the stack never hoards', () => 
 });
 
 test('spreading the stack thins each front’s relative share (D6.3)', () => {
-  const fronts = frontsOf(openAtDecision(), 'realm-a');
-  assert.ok(fronts.length >= 2, 'this fixture cannot express spreading');
-  const [x, y] = fronts;
+  const sites = commitSites(openAtDecision(), 'realm-a');
+  assert.ok(sites.length >= 2, 'this fixture cannot express spreading');
+  const [x, y] = sites;
 
-  const readingAt = (allocations, front) => {
+  const readingAt = (allocations, site) => {
     const runtime = openAtDecision();
-    for (const [actor, byFront] of Object.entries(allocations)) {
-      for (const [key, chips] of Object.entries(byFront)) allocate(runtime, actor, key, chips);
+    for (const [actor, bySector] of Object.entries(allocations)) {
+      for (const [key, chips] of Object.entries(bySector)) allocate(runtime, actor, key, chips);
     }
     lock(runtime, 'realm-a');
     const closing = lock(runtime, 'realm-b');
-    return closing.find((e) => e.type === 'front-resolved' && e.detail.front === front).detail;
+    return closing.find((e) => e.type === 'front-resolved' && e.detail.front === site.front).detail;
   };
 
-  // realm-b concentrates 20 on front x in both runs. realm-a concentrates, then
-  // spreads the same stack across two fronts.
-  const concentrated = readingAt({ 'realm-a': { [x]: 20 }, 'realm-b': { [x]: 20 } }, x);
-  const spread = readingAt({ 'realm-a': { [x]: 10, [y]: 10 }, 'realm-b': { [x]: 20 } }, x);
+  // realm-b concentrates 20 on site x in both runs. realm-a concentrates, then
+  // spreads the same stack across two confrontations.
+  const concentrated = readingAt({ 'realm-a': { [x.sector]: 20 }, 'realm-b': { [x.sector]: 20 } }, x);
+  const spread = readingAt(
+    { 'realm-a': { [x.sector]: 10, [y.sector]: 10 }, 'realm-b': { [x.sector]: 20 } },
+    x,
+  );
 
   // The event carries integers; the share is the reading a display makes of them.
   assert.deepEqual(concentrated.commitments, { 'realm-a': 20, 'realm-b': 20 });
@@ -331,16 +340,19 @@ test('spreading the stack thins each front’s relative share (D6.3)', () => {
   // spending more, which is the whole of "commitment is a ratio" (D6.3).
   assert.equal(commitmentShare(spread.commitments, 'realm-b') > 0.5, true);
 
-  // The other front is where realm-a's other ten chips went, and realm-b is absent
+  // The other site is where realm-a's other ten chips went, and realm-b is absent
   // there — spreading buys presence somewhere at the price of thinness here.
-  const other = readingAt({ 'realm-a': { [x]: 10, [y]: 10 }, 'realm-b': { [x]: 20 } }, y);
+  const other = readingAt(
+    { 'realm-a': { [x.sector]: 10, [y.sector]: 10 }, 'realm-b': { [x.sector]: 20 } },
+    y,
+  );
   assert.deepEqual(other.commitments, { 'realm-a': 10, 'realm-b': 0 });
 });
 
 test('an uncontested front produces no engagement at all', () => {
   const runtime = openAtDecision();
-  const [front] = frontsOf(runtime, 'realm-a');
-  allocate(runtime, 'realm-a', front, 6);
+  const { front, sector } = commitSites(runtime, 'realm-a')[0];
+  allocate(runtime, 'realm-a', sector, 6);
   lock(runtime, 'realm-a');
   const closing = lock(runtime, 'realm-b');
 
@@ -356,10 +368,10 @@ test('an uncontested front produces no engagement at all', () => {
 
 test('resolution does not depend on which realm locked first (D6.1a)', () => {
   const plan = (runtime) => {
-    const fronts = frontsOf(runtime, 'realm-a');
-    allocate(runtime, 'realm-a', fronts[0], 11);
-    allocate(runtime, 'realm-b', fronts[0], 6);
-    allocate(runtime, 'realm-b', fronts[1], 5);
+    const sites = commitSites(runtime, 'realm-a');
+    allocate(runtime, 'realm-a', sites[0].sector, 11);
+    allocate(runtime, 'realm-b', sites[0].sector, 6);
+    allocate(runtime, 'realm-b', sites[1].sector, 5);
   };
 
   const first = openAtDecision();
@@ -398,7 +410,7 @@ test('resolution is symmetric under relabelling the realms (D6.1a)', () => {
 
   const run = (actors) => {
     const runtime = openAtDecision({ actors });
-    const [x, y] = frontsOf(runtime, actors[0]);
+    const [x, y] = commitSites(runtime, actors[0]).map((site) => site.sector);
     allocate(runtime, actors[0], x, 13);
     allocate(runtime, actors[1], x, 7);
     allocate(runtime, actors[1], y, 4);
@@ -415,10 +427,10 @@ test('resolution is symmetric under relabelling the realms (D6.1a)', () => {
 
 test('fronts resolve in a canonical order that no actor decides', () => {
   const runtime = openAtDecision();
-  const fronts = frontsOf(runtime, 'realm-a');
+  const sites = commitSites(runtime, 'realm-a');
   // Allocate in reverse order, from alternating sides.
-  for (const [i, front] of [...fronts].reverse().entries()) {
-    allocate(runtime, i % 2 === 0 ? 'realm-b' : 'realm-a', front, 2);
+  for (const [i, site] of [...sites].reverse().entries()) {
+    allocate(runtime, i % 2 === 0 ? 'realm-b' : 'realm-a', site.sector, 2);
   }
   lock(runtime, 'realm-b');
   const closing = lock(runtime, 'realm-a');
@@ -447,8 +459,8 @@ test('standalone movement spends no commitment and changes no ownership', () => 
 
 test('submit returns immediately and never sleeps', () => {
   const runtime = openAtDecision();
-  const [front] = frontsOf(runtime, 'realm-a');
-  const returned = allocate(runtime, 'realm-a', front, 3);
+  const { sector } = commitSites(runtime, 'realm-a')[0];
+  const returned = allocate(runtime, 'realm-a', sector, 3);
   assert.ok(Array.isArray(returned), 'submit returned something other than an event array');
   assert.equal(typeof returned.then, 'undefined', 'submit returned a promise; pacing belongs to the UI');
 
@@ -458,14 +470,14 @@ test('submit returns immediately and never sleeps', () => {
 
 test('preview and the Runtime agree on every commitment case', () => {
   const runtime = openAtDecision();
-  const [front, other] = frontsOf(runtime, 'realm-a');
+  const [{ sector }, other] = commitSites(runtime, 'realm-a');
 
   const cases = [
-    { kind: 'allocate-commitment', actor: 'realm-a', front, chips: 5 },
-    { kind: 'allocate-commitment', actor: 'realm-a', front, chips: TURN_COMMITMENT_BUDGET + 1 },
-    { kind: 'allocate-commitment', actor: 'realm-a', front, chips: -2 },
-    { kind: 'allocate-commitment', actor: 'realm-a', front: 'not-a-front', chips: 1 },
-    { kind: 'allocate-commitment', actor: 'stranger', front, chips: 1 },
+    { kind: 'allocate-commitment', actor: 'realm-a', sector, chips: 5 },
+    { kind: 'allocate-commitment', actor: 'realm-a', sector, chips: TURN_COMMITMENT_BUDGET + 1 },
+    { kind: 'allocate-commitment', actor: 'realm-a', sector, chips: -2 },
+    { kind: 'allocate-commitment', actor: 'realm-a', sector: 'not-a-sector', chips: 1 },
+    { kind: 'allocate-commitment', actor: 'stranger', sector, chips: 1 },
     { kind: 'lock-commitment', actor: 'realm-a' },
   ];
 
@@ -482,19 +494,22 @@ test('preview and the Runtime agree on every commitment case', () => {
 
   // Once locked, the previously-admissible allocation must read as refused too.
   const locked = runtime.view('realm-a');
-  assert.equal(preview(locked, { kind: 'allocate-commitment', actor: 'realm-a', front: other, chips: 1 }).admissible, false);
+  assert.equal(
+    preview(locked, { kind: 'allocate-commitment', actor: 'realm-a', sector: other.sector, chips: 1 }).admissible,
+    false,
+  );
 });
 
 test('preview never sees more than the projection it was handed', () => {
   const runtime = openAtDecision();
-  const [front] = frontsOf(runtime, 'realm-a');
-  allocate(runtime, 'realm-a', front, 9);
+  const { sector } = commitSites(runtime, 'realm-a')[0];
+  allocate(runtime, 'realm-a', sector, 9);
 
   // realm-b's own budget looks untouched from realm-b's view, so preview cannot
   // learn realm-a's spend by asking about it.
   const asB = runtime.view('realm-b');
   assert.equal(asB.commitment.remaining, TURN_COMMITMENT_BUDGET);
-  assert.equal(preview(asB, { kind: 'allocate-commitment', actor: 'realm-b', front, chips: 20 }).admissible, true);
+  assert.equal(preview(asB, { kind: 'allocate-commitment', actor: 'realm-b', sector, chips: 20 }).admissible, true);
 });
 
 test('(worldId, revision, seed, ordered intent log) replays the same match', () => {
@@ -519,11 +534,28 @@ test('(worldId, revision, seed, ordered intent log) replays the same match', () 
   assert.deepEqual(turnSummary(first), turnSummary(second));
   assert.equal(first.events.some((event) => event.type === 'detachment-split'), true);
   assert.equal(first.events.some((event) => event.type === 'detachments-merged'), true);
-  assert.equal(first.view.turn, 7);
-  assert.equal(first.view.detachments.length, 2);
-  // The fixture's contact phase (06c) runs the whole loop through a real battle,
-  // so a replay that stopped short of one would no longer be replaying this match.
-  assert.equal(first.events.filter((event) => event.type === 'battle-resolved').length, 1);
+  assert.equal(first.view.turn, 11);
+  assert.equal(first.view.detachments.length, 3);
+
+  // The fixture runs the whole loop through real battles, so a replay that stopped
+  // short of one would no longer be replaying this match. Three, one per phase.
+  const battles = first.events.filter((event) => event.type === 'battle-resolved');
+  assert.equal(battles.length, 3);
+
+  // 06e's headline, crossing `submit()`: a sector no authored border touches was
+  // fought over. Before this ticket the candidate sites were seeded from the front
+  // list, so this battle could not exist at any seed.
+  const inland = battles.filter((battle) => battle.detail.fronts.length === 0);
+  assert.equal(inland.length, 1, 'the interior phase produced no interior battle');
+  assert.equal(inland[0].detail.borderClass, null, 'an interior sector claimed a door');
+
+  // And WM-⑤, likewise crossing it: the forlorn hope broke. The count above is what
+  // says it was *displaced* rather than discharged — a routed formation with an arc
+  // falls back and survives, while one without leaves service and, carrying no
+  // pending cohort, stops being a formation at all. Two detachments here would mean
+  // the no-arc branch ran. The fixture itself checks where it landed.
+  const broken = battles.find((battle) => battle.detail.routed.attacker);
+  assert.ok(broken !== undefined, 'the rout phase produced no rout');
   assert.equal(
     first.view.detachments.reduce((men, detachment) => men + detachment.men, 0),
     first.view.economy.field,

@@ -14,14 +14,13 @@
 import { capitalChoiceRefusal } from '../domain/capital-choice.js';
 import {
   allocationRefusal,
-  frontAssignmentRefusal,
+  sectorAssignmentRefusal,
   lockRefusal,
   recruitmentOrderKeyOf,
   type CommitmentContext,
 } from '../domain/commitment.js';
 import { GARRISON_PER_BORDER_SECTOR } from '../domain/economy.js';
 import { mergeDetachmentsRefusal, splitDetachmentRefusal } from '../domain/force.js';
-import { isPartyTo } from '../domain/fronts.js';
 import {
   buildMovementGraph,
   FORCED_MARCH_EXTRA_CAP,
@@ -227,25 +226,24 @@ export function preview(view: MatchView, intent: Intent): PreviewCard {
       : allocationRefusal(
           { ...context, orderKeys: [] },
           intent.actor,
-          (intent as { front?: unknown }).front,
+          (intent as { sector?: unknown }).sector,
           (intent as { chips?: unknown }).chips,
         );
     if (refusal === null && intent.kind === 'allocate-commitment') {
       const allocation = intent as {
-        front?: unknown;
+        sector?: unknown;
         chips?: unknown;
         detachmentIds?: unknown;
       };
       if (allocation.chips !== 0) {
-        const front = view.fronts.find((candidate) => candidate.key === allocation.front)!;
         const graph = buildMovementGraph(view.board);
-        refusal = frontAssignmentRefusal(
+        refusal = sectorAssignmentRefusal(
           graph,
-          front,
+          allocation.sector as SectorId,
           assignableDetachmentViews(graph, view.detachments),
           allocation.detachmentIds,
           Object.entries(view.commitment.assignments)
-            .filter(([assignedFront]) => assignedFront !== allocation.front)
+            .filter(([assigned]) => assigned !== allocation.sector)
             .flatMap(([, ids]) => ids),
         );
       }
@@ -256,15 +254,10 @@ export function preview(view: MatchView, intent: Intent): PreviewCard {
       const assigned = new Set<string>();
       const assignments = Object.entries(view.commitment.assignments)
         .sort(([a], [b]) => a.localeCompare(b));
-      for (const [frontKey, detachmentIds] of assignments) {
-        const front = view.fronts.find((candidate) => candidate.key === frontKey);
-        if (front === undefined) {
-          refusal = `Front "${frontKey}" is no longer contested; revise this commitment before locking.`;
-          break;
-        }
-        const assignmentError = frontAssignmentRefusal(
+      for (const [sector, detachmentIds] of assignments) {
+        const assignmentError = sectorAssignmentRefusal(
           graph,
-          front,
+          sector,
           detachments,
           detachmentIds,
           [...assigned],
@@ -349,8 +342,8 @@ export function preview(view: MatchView, intent: Intent): PreviewCard {
  * The spend context, assembled from a projection.
  *
  * Every field is available to a viewer by seal: the phase, who has committed (R7),
- * the fronts (territory is public), and the viewer's *own* stack. Nothing here
- * needs the opponent's allocation — which is exactly why a blind commit can be
+ * the board's sectors (geography is public), and the viewer's *own* stack. Nothing
+ * here needs the opponent's allocation — which is exactly why a blind commit can be
  * previewed at all.
  */
 function commitmentContext(
@@ -361,7 +354,7 @@ function commitmentContext(
   return {
     windowOpen: view.phase === 'decision',
     alreadyLocked: view.committed.includes(actor),
-    frontKeys: view.fronts.filter((front) => isPartyTo(front, actor)).map((front) => front.key),
+    sectorKeys: Object.keys(view.board.sectors),
     orderKeys: [...new Set([
       ...view.recruitmentOrders.map((request) => recruitmentOrderKeyOf(request.requestId)),
       ...candidateOrderKeys,

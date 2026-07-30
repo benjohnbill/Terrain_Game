@@ -443,10 +443,12 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   open-escape clause becomes a lie. **Ruled at war-model-build `RULINGS.md` WM-⑤**:
   anyone with an approach arc falls back along it one sector; anyone without one
   (structurally, every garrison) leaves service and stays on the register.
-  Implementation is owed by ticket **06e**. The residue is registered separately
-  below (the military/civilian fraction).
+  **Implemented and landed 2026-07-31 by ticket 06e** (`Runtime.#displaceRouted`;
+  the arc is `advanceOneTurn`'s, the price is R12's `MARCH_FATIGUE_PER_HEX`, and
+  leaving service goes through `subtractOrigins` so the register is untouched).
+  The residue is registered separately below (the military/civilian fraction).
 
-- [ ] **Only 27 of 56 sectors can ever be a battle site, so most capitals cannot
+- [x] **Only 27 of 56 sectors can ever be a battle site, so most capitals cannot
   be attacked at all** (registered 2026-07-28 by ticket 06c, which is the first
   ticket that could measure it). A front is an **authored region border**
   (`contestedFronts` walks `world.edges`, 17 of them), and 06c can only site an
@@ -468,11 +470,13 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   `terrainLayer` → M5 mapping. **Owed: a user ruling before ticket 07 is claimed**,
   with 06d's ownership transfer as the other input. Evidence in
   `.scratch/l3-playable-build/issues/06c-…md` § Comments.
-  **DESIGN DISCHARGED 2026-07-31 (ADR 0046 + TC-⑮); implementation owed by ticket
-  06e, so this row stays open pointing there.** The user ruling was taken in the
-  geography-battle grill, along the *second* path above — a terrain source for
-  interior sectors — which raises battle-capable sectors from 27 to **all 56**. Two
-  corrections to the text above, both load-bearing:
+  **DESIGN DISCHARGED 2026-07-31 (ADR 0046 + TC-⑮), and the implementation LANDED
+  the same day by ticket 06e** — `engagementsOf` takes the world's sector list and
+  applies the sector predicate, and `combatTerrainOf` supplies interior ground from
+  TC-⑮'s binding. The user ruling was taken in the geography-battle grill, along the
+  *second* path above — a terrain source for interior sectors — which raises
+  battle-capable sectors from 27 to **all 56**. Two corrections to the text above,
+  both load-bearing:
   - **The direction was reversed.** Re-measured over all 15 legal partitions
     (30 realm-seats): **30 of 30** seats could enter enemy ground without standing on
     a single fightable sector, mean **21.2** enemy sectors reachable with zero
@@ -483,6 +487,22 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
     battle-capable sectors only from 27 to **33** of 56 (37 cross-region hex-adjacent
     sector pairs exist, 15 of them authored as edges), leaving 23 interior sectors
     still unfightable. Recorded so it is not proposed again.
+
+- [ ] **What a front's commitment *is*, once no quantity is stored against it**
+  (registered 2026-07-31 by ticket 06e's code review, spec axis). ADR 0046 item 4
+  moved the stack's key from the front to the sector and left the front its
+  territory reading, but no ruling says what `front-resolved` should then report as
+  that border's commitment. 06e implemented the **sum over the front's two endpoint
+  sectors**, which means a sector serving two borders is reported under both. That
+  is a reading the ticket chose, not one it cited — kind 1 under the README's
+  four-kind workflow, surfaced rather than settled.
+  **Inert today:** `front-resolved` is a display event, nothing downstream computes
+  from it, and the two obvious alternatives (report the endpoint sectors separately,
+  or drop the field and let a front report contact only) are equally unsealed.
+  **Owed:** a ruling when ticket 04's commit-first shell or ticket 09's EVAL BAR
+  first needs a border-level number — those are the surfaces that would give the
+  question a consumer. Code comment carries the same warning
+  (`game/src/domain/turn.ts`, `FrontReading`).
 
 - [ ] **Interception of a force in transit has no design anywhere**
   (registered 2026-07-26, gate C). Raised by the user while ruling R14 ("그 길목을

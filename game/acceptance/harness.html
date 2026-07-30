@@ -13,7 +13,7 @@
     -->
     <script type="module">
       import { Runtime, CRADLE_R1, loadWorld } from '/dist/runtime/index.js';
-      import { replayForViewer } from '/acceptance/replay.js';
+      import { replayForViewer, singleBorderSites } from '/acceptance/replay.js';
 
       const open = ({ seed, actors }) => Runtime.open({ world: CRADLE_R1, seed, actors });
 
@@ -50,10 +50,13 @@
             });
           }
 
-          const front = runtime.view('observer').fronts[0].key;
+          // Both realms pour onto the same sector — the key since ADR 0046 item 4,
+          // and deliberately one that serves a single border so this fixture produces
+          // exactly one front reading.
+          const { sector } = singleBorderSites(runtime.view('observer'))[0];
           const events = [];
           for (const actor of actors) {
-            events.push(...runtime.submit({ kind: 'allocate-commitment', actor, front, chips: 4 }));
+            events.push(...runtime.submit({ kind: 'allocate-commitment', actor, sector, chips: 4 }));
           }
           for (const actor of actors) {
             events.push(...runtime.submit({ kind: 'lock-commitment', actor }));

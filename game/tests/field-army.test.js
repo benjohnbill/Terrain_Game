@@ -136,12 +136,15 @@ test('a destination outside the authored movement graph is rejected without muta
   assert.deepEqual(runtime.view('realm-a'), before);
 });
 
-test('front commitment names the arriving detachment and rejects one outside this-turn reach', () => {
+test('sector commitment names the arriving detachment and rejects one outside this-turn reach', () => {
   const runtime = openAtDecision();
   const id = runtime.view('realm-a').detachments[0].id;
-  const front = 'r1_s0|r2_s3';
+  // (9,9) is r2_s3's ground. Since ADR 0046 item 4 the assignment names the sector
+  // the detachment must actually end on, where the front key accepted either end of
+  // the border and so could not tell an arriving attacker from a defender at home.
+  const sector = 'r2_s3';
   assert.equal(runtime.submit({
-    kind: 'allocate-commitment', actor: 'realm-a', front, chips: 4,
+    kind: 'allocate-commitment', actor: 'realm-a', sector, chips: 4,
     detachmentIds: [id],
   })[0].type, 'intent-rejected');
   runtime.submit({
@@ -149,22 +152,28 @@ test('front commitment names the arriving detachment and rejects one outside thi
     destinationHex: { q: 9, r: 9 }, forcedMarch: true,
   });
   assert.equal(runtime.submit({
-    kind: 'allocate-commitment', actor: 'realm-a', front, chips: 4,
+    kind: 'allocate-commitment', actor: 'realm-a', sector, chips: 4,
     detachmentIds: [id],
   })[0].type, 'commitment-allocated');
-  assert.deepEqual(runtime.view('realm-a').commitment.assignments[front], [id]);
+  assert.deepEqual(runtime.view('realm-a').commitment.assignments[sector], [id]);
+
+  // The other end of the same border is no longer the same key, and the detachment
+  // does not end its turn there — the test the front-keyed version could not run.
+  assert.equal(runtime.submit({
+    kind: 'allocate-commitment', actor: 'realm-a', sector: 'r1_s0', chips: 4,
+    detachmentIds: [id],
+  })[0].type, 'intent-rejected');
 });
 
-test('a locked front assignment cannot be redirected before the other realm locks', () => {
+test('a locked sector assignment cannot be redirected before the other realm locks', () => {
   const runtime = openAtDecision();
   const id = runtime.view('realm-a').detachments[0].id;
-  const front = 'r1_s0|r2_s3';
   runtime.submit({
     kind: 'move-detachment', actor: 'realm-a', detachmentId: id,
     destinationHex: { q: 9, r: 9 }, forcedMarch: true,
   });
   runtime.submit({
-    kind: 'allocate-commitment', actor: 'realm-a', front, chips: 4,
+    kind: 'allocate-commitment', actor: 'realm-a', sector: 'r2_s3', chips: 4,
     detachmentIds: [id],
   });
   assert.equal(lock(runtime, 'realm-a')[0].type, 'commitment-locked');

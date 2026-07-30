@@ -18,10 +18,11 @@ export type { CapitalChoiceContext } from '../domain/capital-choice.js';
 export {
   allocationRefusal,
   commitmentShare,
-  frontAssignmentRefusal,
+  isOrderKey,
   lockRefusal,
   recruitmentCommitOf,
   recruitmentOrderKeyOf,
+  sectorAssignmentRefusal,
   spentOf,
   TURN_COMMITMENT_BUDGET,
 } from '../domain/commitment.js';
@@ -29,7 +30,7 @@ export type {
   Allocations,
   AssignableDetachment,
   CommitmentContext,
-  FrontAssignments,
+  SectorAssignments,
 } from '../domain/commitment.js';
 export {
   CAP_LAND_FRAC,
@@ -82,7 +83,7 @@ export {
   reachCone,
   terrainMovementCost,
 } from '../domain/movement.js';
-export type { MovementArc, MovementGraph, MovementNode } from '../domain/movement.js';
+export type { MovementApproach, MovementArc, MovementGraph, MovementNode } from '../domain/movement.js';
 export {
   draftBill,
   draftOrder,

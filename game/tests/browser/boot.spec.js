@@ -179,19 +179,32 @@ test('an ordered intent log replays to the same turn state in both hosts', async
   expect(nodeResult.events.filter((e) => e.type === 'intent-rejected')).toEqual([]);
   expect(nodeResult.events.some((e) => e.type === 'detachment-split')).toBe(true);
   expect(nodeResult.events.some((e) => e.type === 'detachments-merged')).toBe(true);
-  expect(nodeResult.view.turn).toBe(7);
-  expect(nodeSummary.detachments).toHaveLength(2);
+  expect(nodeResult.view.turn).toBe(11);
+  // Three, not two: the forlorn hope of ticket 06e's rout phase broke and *fell
+  // back*, so it is still a formation. Had it left service instead it would carry
+  // no pending cohort and would have stopped existing.
+  expect(nodeSummary.detachments).toHaveLength(3);
 
-  // Ticket 06c's contact phase. The fixture now crosses a border, so the loop's
-  // most intricate arithmetic is on the wire rather than only in a unit test. The
+  // The contact phase (06c) and, since 06e, the rout and interior phases. The
+  // fixture now crosses a border, breaks, and marches inland, so the loop's most
+  // intricate arithmetic is on the wire rather than only in a unit test. The
   // cross-host claim is `browserSummary === nodeSummary` above; these pin that the
-  // fixture still *reaches* the battle instead of quietly relapsing into the
+  // fixture still *reaches* each battle instead of quietly relapsing into the
   // garrison-only lane it used to end in.
   const battles = nodeResult.events.filter((e) => e.type === 'battle-resolved');
-  expect(battles).toHaveLength(1);
-  expect(battles[0].detail.sectorFalls).toBe(true);
-  expect(battles[0].detail.casualties.attacker).toBeGreaterThan(0);
-  expect(battles[0].detail.casualties.defender).toBeGreaterThan(0);
+  expect(battles).toHaveLength(3);
+  expect(battles.some((b) => b.detail.sectorFalls)).toBe(true);
+  expect(battles.some((b) => b.detail.casualties.attacker > 0)).toBe(true);
+  expect(battles.some((b) => b.detail.casualties.defender > 0)).toBe(true);
+
+  // ADR 0046's headline, across the host boundary: a sector no authored border
+  // touches was fought over. Before 06e the candidate sites were seeded from the
+  // front list, so this battle could not exist at any seed.
+  const inland = battles.filter((b) => b.detail.fronts.length === 0);
+  expect(inland).toHaveLength(1);
+  expect(inland[0].detail.borderClass).toBeNull();
+  // And WM-⑤: a side broke, and both hosts agree on where its survivors stand.
+  expect(battles.some((b) => b.detail.routed.attacker)).toBe(true);
   // Exact pre-battle strength and the composed power product are ticket 08's fog
   // and ticket 09's EVAL BAR to present; neither may reach a viewer here.
   expect(deepKeys(nodeResult.events)).not.toContain('substance');

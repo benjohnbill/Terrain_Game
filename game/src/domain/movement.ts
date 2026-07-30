@@ -25,6 +25,35 @@ export interface MovementArc {
   readonly cost: number;
 }
 
+/**
+ * The **approach arc** — the boundary a force actually crossed to arrive
+ * (ADR 0046 item 3).
+ *
+ * Hex-keyed, because crossing a boundary is a physical act and the design
+ * principle keys physical facts to hexes (`DOMAIN_MAP.md`, *Hex is physical,
+ * sector is decisional*). Carrying it at hex grain is what leaves room for the
+ * directional terrain the design wants later — river current, ravine axis, ridge
+ * facing — without a contract change.
+ *
+ * It is specifically the last step of this turn's march that left one sector and
+ * entered another, not merely the last step marched. Both of the reads the ADR
+ * sanctions need that: "which authored door, if any, did this arc cross" is a
+ * question about a *sector* pair, and WM-⑤'s fall-back is "one sector, the way
+ * they came". A force that marched three hexes inside its own sector crossed
+ * nothing and therefore has no approach.
+ *
+ * What must **not** be read from it: which approach was softest. TC-⑮ retired the
+ * *terrain implementation* of approach substitution — an undoored arrival costs 0
+ * extra turns on 20 of 20 land doors, so a defensive term it selected would be
+ * free to dodge. The capability itself is not abolished: its consequence is
+ * deferred to frontage in the operational-manoeuvre pass, which is where an
+ * approach is meant to cost something again.
+ */
+export interface MovementApproach {
+  readonly fromHex: HexPosition;
+  readonly toHex: HexPosition;
+}
+
 export interface MovementNode {
   readonly position: HexPosition;
   readonly sectorId: SectorId;
@@ -232,13 +261,20 @@ function routeArc(graph: MovementGraph, from: HexPosition, to: HexPosition): Mov
 export function advanceOneTurn(
   graph: MovementGraph,
   detachment: Detachment,
-): { readonly detachment: Detachment; readonly travelled: number; readonly fatigueAdded: number } {
+): {
+  readonly detachment: Detachment;
+  readonly travelled: number;
+  readonly fatigueAdded: number;
+  /** The sector boundary this march ended up crossing, or `null` if none was. */
+  readonly approach: MovementApproach | null;
+} {
   const order = detachment.movement;
   if (order === null || order.route.length <= 1) {
     return {
       detachment: order === null ? detachment : { ...detachment, movement: null },
       travelled: 0,
       fatigueAdded: 0,
+      approach: null,
     };
   }
 
@@ -269,7 +305,24 @@ export function advanceOneTurn(
     detachment: { ...worn, position, movement },
     travelled,
     fatigueAdded,
+    approach: lastSectorCrossing(graph, order.route, travelled),
   };
+}
+
+/** The last step of the traversed prefix whose two hexes lie in different sectors. */
+function lastSectorCrossing(
+  graph: MovementGraph,
+  route: readonly HexPosition[],
+  travelled: number,
+): MovementApproach | null {
+  const sectorAt = (hex: HexPosition): SectorId | undefined =>
+    graph.nodes[hexKey(hex.q, hex.r)]?.sectorId;
+  for (let index = travelled; index > 0; index -= 1) {
+    const from = route[index - 1]!;
+    const to = route[index]!;
+    if (sectorAt(from) !== sectorAt(to)) return { fromHex: { ...from }, toHex: { ...to } };
+  }
+  return null;
 }
 
 /** Cost-bounded reachable hexes, including the start. */
