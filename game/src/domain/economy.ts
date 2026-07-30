@@ -111,16 +111,22 @@ function sumOver(sectors: SectorTable, ids: readonly SectorId[], read: (sector: 
  * and does not yet pay its new one. That is the half of D5.1's decay that bites
  * immediately: the loser's income and ceiling both fall the same turn.
  *
- * **What this deliberately does not decide: whether conquered land ever converts.**
- * In the L2 world, occupation was resolved at settlement, after which ADR 0022 /
- * ADR 0029 ripening integrated it (fresh capture at 50/60% usable, +10pp per stable
- * turn) — and M14 ruling ⑮ seals that "conquest raises the national cap". ADR 0042
- * retired settlement for the duel, which leaves no channel between "occupied" and
- * "integrated" and no seal saying whether one is needed. Nothing in this ticket
- * captures a sector, so nothing here needs the answer; `homeland` is therefore an
- * ordinary mutable record rather than a frozen one, and the question is registered
- * for the ticket that first takes ground. Encoding permanence here would have ruled
- * on it by accident.
+ * **Limbo is an interval, not an end state — and that is settled.** ADR 0044
+ * (2026-07-26) supplies the transfer channel ADR 0042 removed when it retired
+ * settlement: acquired land transfers everything it carries — population, economy,
+ * the conscription-register share, the mobilization base — on the ADR 0022 / ADR 0029
+ * ripening lag (fresh capture at 50/60% usable, +10pp per stable turn), with the
+ * register transferring **unripened** because ripening applies to productivity, not
+ * to bodies. ADR 0045 amends its item 4: remaining civilians travel with the land,
+ * while a serving force's province-origin composition stays with that force.
+ *
+ * So `homeland` is a mutable record whose *writer* is ticket 06d, not an open design
+ * question. This function stays exactly as it is either way — it reads the interval,
+ * and 06d ends it.
+ *
+ * An earlier version of this comment said the conversion question had "no seal saying
+ * whether one is needed". That was true when written and false four hours later:
+ * ADR 0044 landed the same day, and nobody returned here. See `docs/SYNC-DEBT.md`.
  */
 export function holdsOf(
   controlled: readonly SectorId[],
