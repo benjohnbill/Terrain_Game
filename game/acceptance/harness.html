@@ -50,10 +50,19 @@
             });
           }
 
-          const front = runtime.view('observer').fronts[0].key;
+          // Both realms pour onto the same sector — the key since ADR 0046 item 4.
+          // Deliberately one that serves a single border, so this fixture produces
+          // exactly one front reading; a sector serving two is reported under both,
+          // which `battle-wiring.test.js` pins on its own.
+          const fronts = runtime.view('observer').fronts;
+          const served = new Map();
+          for (const front of fronts) {
+            for (const id of front.sectors) served.set(id, (served.get(id) ?? 0) + 1);
+          }
+          const sector = fronts.flatMap((front) => front.sectors).find((id) => served.get(id) === 1);
           const events = [];
           for (const actor of actors) {
-            events.push(...runtime.submit({ kind: 'allocate-commitment', actor, front, chips: 4 }));
+            events.push(...runtime.submit({ kind: 'allocate-commitment', actor, sector, chips: 4 }));
           }
           for (const actor of actors) {
             events.push(...runtime.submit({ kind: 'lock-commitment', actor }));

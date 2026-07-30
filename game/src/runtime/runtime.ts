@@ -29,9 +29,10 @@ import {
 } from '../domain/engagement.js';
 import {
   allocationRefusal,
-  frontAssignmentRefusal,
+  isOrderKey,
   lockRefusal,
   recruitmentOrderKeyOf,
+  sectorAssignmentRefusal,
   spentOf,
   TURN_COMMITMENT_BUDGET,
   type CommitmentContext,
@@ -59,6 +60,7 @@ import {
   servingByOrigin,
   splitDetachment,
   splitDetachmentRefusal,
+  subtractOrigins,
   type Detachment,
   type ForceCohort,
   type GarrisonForce,
@@ -66,7 +68,7 @@ import {
   type PendingCohort,
 } from '../domain/force.js';
 import { battleAccrual, turnUpkeep } from '../domain/fatigue.js';
-import { contestedFronts, isPartyTo } from '../domain/fronts.js';
+import { contestedFronts } from '../domain/fronts.js';
 import {
   advanceOneTurn,
   buildMovementGraph,
@@ -74,7 +76,9 @@ import {
   movementOrderRefusal,
   musterHexOf,
   FORCED_MARCH_EXTRA_CAP,
+  MARCH_FATIGUE_PER_HEX,
   MARCH_SPEED,
+  type MovementApproach,
 } from '../domain/movement.js';
 import {
   compareRecruitmentRequests,
@@ -89,7 +93,7 @@ import { project } from '../projection/project.js';
 import { drawPartition } from '../world/partition.js';
 import { loadWorld } from '../world/load.js';
 import { edgeKey, hexKey } from '../world/schema.js';
-import type { HexPosition, RegionId, SectorId } from '../world/schema.js';
+import type { HexPosition, RegionId, SectorId, TerrainLayer } from '../world/schema.js';
 import { createRng } from './rng.js';
 import type {
   ActorId,
@@ -180,6 +184,17 @@ export class Runtime {
    * birthplace rather than a re-plumbing here (ticket 06b item 6).
    */
   readonly #marchedThisTurn = new Set<string>();
+  /**
+   * The sector boundary each detachment crossed during this turn's payoff.
+   *
+   * The **approach arc** of ADR 0046 item 3, recorded here because WM-⑤'s axis is
+   * *who entered this sector this turn* rather than attacker/defender: an invader
+   * always has one, a defender that reinforced this turn does too, a defender that
+   * was already standing there does not, and a garrison never does — nothing
+   * marches one, and `GarrisonForce` carries no wear ledger to march it with (06b).
+   * Absence from this map is therefore a real answer, not a missing lookup.
+   */
+  readonly #approachThisTurn = new Map<string, MovementApproach>();
 
   private constructor(state: MatchState, clock: Clock) {
     this.#state = state;
@@ -213,6 +228,17 @@ export class Runtime {
 
     // Fail-closed. `loadWorld` throws `WorldLoadError` listing every finding.
     const loadedWorld = loadWorld(world);
+    // One stack, one namespace (D6.3), and since ADR 0046 item 4 sector ids share
+    // it with the order kinds. `allocationRefusal` resolves a sector key first, so
+    // a collision would silently turn an order into a battle commitment; the check
+    // belongs here rather than in `loadWorld`, which knows nothing of orders.
+    const colliding = Object.keys(loadedWorld.artifact.sectors).filter(isOrderKey);
+    if (colliding.length > 0) {
+      throw new Error(
+        `Sector ids ${colliding.join(', ')} collide with the order-key namespace; ` +
+          'the shared 행동력 stack cannot tell them apart.',
+      );
+    }
     const rng = createRng(seed);
     const partition = drawPartition(loadedWorld, rng);
 
@@ -224,9 +250,12 @@ export class Runtime {
         regions: partition.regions[side]!,
         sectors: [...partition.sectors[side]!],
       };
-      // The opening partition *is* the homeland map, and it never moves again:
-      // a duel has no settlement channel, so conquered ground stays in OG-③'s
-      // limbo rather than being integrated into the taker's holdings.
+      // The opening partition *is* the opening homeland map. It is not frozen:
+      // **ADR 0044** (2026-07-26) amends OG-③ so limbo is the interval before
+      // integration rather than a terminal state, and ticket 06d is the writer.
+      // An earlier version of this comment said conquered ground stays in limbo
+      // permanently — it landed hours before ADR 0044 did, on the same day, and
+      // nobody returned. See `docs/SYNC-DEBT.md`.
       for (const sector of realms[actor]!.sectors) homeland[sector] = actor;
     });
 
@@ -250,7 +279,7 @@ export class Runtime {
       commitments: {},
       recruitmentOrders: {},
       mobilizationTraces: [],
-      frontAssignments: {},
+      sectorAssignments: {},
       turnLocks: [],
     };
 
@@ -404,12 +433,12 @@ export class Runtime {
       return this.#chooseCapital(intent.actor, (intent as { sector?: SectorId }).sector);
     }
     if (intent.kind === 'allocate-commitment') {
-      const { front, chips, detachmentIds } = intent as {
-        front?: unknown;
+      const { sector, chips, detachmentIds } = intent as {
+        sector?: unknown;
         chips?: unknown;
         detachmentIds?: unknown;
       };
-      return this.#allocateCommitment(intent.actor, front, chips, detachmentIds);
+      return this.#allocateCommitment(intent.actor, sector, chips, detachmentIds);
     }
     if (intent.kind === 'allocate-order') {
       return [this.#reject(
@@ -654,12 +683,11 @@ export class Runtime {
    */
   #commitmentContext(actor: ActorId, candidateOrderKeys: readonly string[] = []): CommitmentContext {
     const state = this.#state;
-    const fronts = frontsOf(state);
 
     return {
       windowOpen: state.phase === 'decision',
       alreadyLocked: state.turnLocks.includes(actor),
-      frontKeys: fronts.filter((front) => isPartyTo(front, actor)).map((front) => front.key),
+      sectorKeys: Object.keys(state.loadedWorld.artifact.sectors),
       orderKeys: [...new Set([
         ...Object.keys(state.recruitmentOrders[actor] ?? {}).map(recruitmentOrderKeyOf),
         ...candidateOrderKeys,
@@ -670,10 +698,10 @@ export class Runtime {
   }
 
   /**
-   * Pour part of the stack onto one front.
+   * Pour part of the stack onto one sector.
    *
    * Recruitment shares this allocation map and budget, but its dynamic keys enter
-   * only through the rich-request writer. Keeping this writer front-only prevents
+   * only through the rich-request writer. Keeping this writer sector-only prevents
    * either lane from changing the other's allocation without its companion state.
    *
    * An allocation *replaces* its target's share rather than adding to it, which is
@@ -744,21 +772,21 @@ export class Runtime {
     };
   }
 
-  /** Pour part of the stack onto one front and name any arriving field substance. */
+  /** Pour part of the stack onto one sector and name any arriving field substance. */
   #allocateCommitment(
     actor: ActorId,
-    front: unknown,
+    sector: unknown,
     chips: unknown,
     detachmentIds: unknown,
   ): GameEvent[] {
-    if (typeof front !== 'string' || front.length === 0) {
-      return [this.#reject({ kind: 'allocate-commitment', actor }, 'An allocation must name a front.')];
+    if (typeof sector !== 'string' || sector.length === 0) {
+      return [this.#reject({ kind: 'allocate-commitment', actor }, 'An allocation must name a sector.')];
     }
     const context = this.#commitmentContext(actor);
     const allocationError = allocationRefusal(
       { ...context, orderKeys: [] },
       actor,
-      front,
+      sector,
       chips,
     );
     if (allocationError !== null) {
@@ -766,15 +794,14 @@ export class Runtime {
     }
 
     const state = this.#state;
-    const namedFront = frontsOf(state).find((candidate) => candidate.key === front)!;
     if (chips !== 0) {
-      const assignmentError = frontAssignmentRefusal(
+      const assignmentError = sectorAssignmentRefusal(
         state.movementGraph,
-        namedFront,
+        sector,
         this.#assignableDetachments(actor),
         detachmentIds,
-        Object.entries(state.frontAssignments[actor] ?? {})
-          .filter(([assignedFront]) => assignedFront !== front)
+        Object.entries(state.sectorAssignments[actor] ?? {})
+          .filter(([assigned]) => assigned !== sector)
           .flatMap(([, ids]) => ids),
       );
       if (assignmentError !== null) {
@@ -782,16 +809,16 @@ export class Runtime {
       }
     }
 
-    const events = this.#allocate(actor, front, chips, {
+    const events = this.#allocate(actor, sector, chips, {
       type: 'commitment-allocated',
-      label: 'front',
-      value: front,
+      label: 'sector',
+      value: sector,
     });
-    const assignments = (state.frontAssignments[actor] ??= {});
+    const assignments = (state.sectorAssignments[actor] ??= {});
     if (chips === 0 || !Array.isArray(detachmentIds) || detachmentIds.length === 0) {
-      delete assignments[front];
+      delete assignments[sector];
     } else {
-      assignments[front] = [...detachmentIds] as string[];
+      assignments[sector] = [...detachmentIds] as string[];
     }
     return events;
   }
@@ -877,21 +904,13 @@ export class Runtime {
     const refusal = lockRefusal(this.#commitmentContext(actor), actor);
     if (refusal !== null) return [this.#reject({ kind: 'lock-commitment', actor }, refusal)];
 
-    const fronts = frontsOf(state);
     const assigned = new Set<string>();
-    const assignments = Object.entries(state.frontAssignments[actor] ?? {})
+    const assignments = Object.entries(state.sectorAssignments[actor] ?? {})
       .sort(([a], [b]) => a.localeCompare(b));
-    for (const [frontKey, detachmentIds] of assignments) {
-      const front = fronts.find((candidate) => candidate.key === frontKey);
-      if (front === undefined) {
-        return [this.#reject(
-          { kind: 'lock-commitment', actor },
-          `Front "${frontKey}" is no longer contested; revise this commitment before locking.`,
-        )];
-      }
-      const assignmentError = frontAssignmentRefusal(
+    for (const [sector, detachmentIds] of assignments) {
+      const assignmentError = sectorAssignmentRefusal(
         state.movementGraph,
-        front,
+        sector,
         this.#assignableDetachments(actor),
         detachmentIds,
         [...assigned],
@@ -930,8 +949,12 @@ export class Runtime {
     const events: GameEvent[] = [this.#turnEvent('commitment-locked', 'decision', { actor })];
 
     if (state.actors.every((a) => state.turnLocks.includes(a))) {
-      const publicFrontKeys = new Set(fronts.map((front) => front.key));
-      events.push(...this.#globallySafeResolutionEvents(this.#resolveTurn(), publicFrontKeys));
+      // Territory is public, so a sector-keyed combat allocation may cross whole at
+      // the reveal (D6.1). What must not is the order half of the shared namespace:
+      // a recruitment key names a sector, a posture and a request, and publishing it
+      // would decide ticket 08's fog surface by accident.
+      const publicCommitKeys = new Set(Object.keys(state.loadedWorld.artifact.sectors));
+      events.push(...this.#globallySafeResolutionEvents(this.#resolveTurn(), publicCommitKeys));
     }
 
     return events;
@@ -948,7 +971,7 @@ export class Runtime {
    */
   #globallySafeResolutionEvents(
     events: readonly GameEvent[],
-    publicFrontKeys: ReadonlySet<string>,
+    publicCommitKeys: ReadonlySet<string>,
   ): GameEvent[] {
     return events.flatMap((event): GameEvent[] => {
       const detail = event.detail ?? {};
@@ -959,7 +982,7 @@ export class Runtime {
         const commitments = Object.fromEntries(this.#state.actors.map((actor) => [
           actor,
           Object.fromEntries(Object.entries(revealed?.[actor] ?? {})
-            .filter(([key]) => publicFrontKeys.has(key))
+            .filter(([key]) => publicCommitKeys.has(key))
             .sort(([a], [b]) => a.localeCompare(b))),
         ]));
         return [{
@@ -1051,7 +1074,7 @@ export class Runtime {
     const events: GameEvent[] = [];
 
     // ── payoff ────────────────────────────────────────────────────────────────
-    const revealed = revealTurn(state.actors, state.commitments, state.frontAssignments);
+    const revealed = revealTurn(state.actors, state.commitments, state.sectorAssignments);
     events.push(
       this.#turnEvent('commitments-revealed', 'payoff', {
         commitments: revealed.commitments,
@@ -1083,7 +1106,7 @@ export class Runtime {
     // regenerates whole (D6.3).
     state.commitments = {};
     state.recruitmentOrders = {};
-    state.frontAssignments = {};
+    state.sectorAssignments = {};
     state.turnLocks = [];
     state.turn += 1;
     events.push(
@@ -1265,11 +1288,15 @@ export class Runtime {
     const state = this.#state;
     const events: GameEvent[] = [];
     this.#marchedThisTurn.clear();
+    this.#approachThisTurn.clear();
     for (const actor of state.actors) {
       const detachments = state.forces[actor]!.detachments;
       for (let index = 0; index < detachments.length; index += 1) {
         const advanced = advanceOneTurn(state.movementGraph, detachments[index]!);
         detachments[index] = advanced.detachment;
+        if (advanced.approach !== null) {
+          this.#approachThisTurn.set(advanced.detachment.id, advanced.approach);
+        }
         if (advanced.travelled === 0) continue;
         this.#marchedThisTurn.add(advanced.detachment.id);
         events.push(this.#turnEvent('detachment-moved', 'payoff', {
@@ -1397,12 +1424,42 @@ export class Runtime {
       side.men += formation.men;
       side.wearMass += formation.men * formation.wear;
     }
-    return { sides, fortTier: this.#state.loadedWorld.artifact.sectors[sector]!.fortTier };
+    const authored = this.#state.loadedWorld.artifact.sectors[sector]!;
+    return {
+      holder: ownerOfSector(this.#state, sector),
+      sides,
+      fortTier: authored.fortTier,
+      terrainLayer: this.#terrainLayerOf(sector),
+    };
+  }
+
+  /**
+   * The one authored terrain a sector carries (TC-⑮).
+   *
+   * TC-⑮'s binding rests on a measured fact: every one of the 56 sectors is
+   * terrain-uniform. A sector that stops being uniform does not have "a terrain"
+   * for the ruling to bind, so this refuses rather than picking — following
+   * `fortificationOf`'s precedent, since the queued re-authoring (TC-⑪) is exactly
+   * where intra-sector terrain is expected to arrive and a silent first-hex read is
+   * what would let it land unnoticed.
+   */
+  #terrainLayerOf(sector: SectorId): TerrainLayer {
+    const units = this.#state.loadedWorld.artifact.sectors[sector]!.mapUnits;
+    const layers = [...new Set(units.map((unit) => unit.terrainLayer))].sort();
+    if (layers.length !== 1) {
+      throw new Error(
+        `Sector "${sector}" carries ${layers.length} terrain layers (${layers.join(', ')}). ` +
+          'TC-⑮ binds a sector\'s defensive ground to its own single authored terrain; ' +
+          'intra-sector terrain needs a ruling before a battle can price it.',
+      );
+    }
+    return layers[0]!;
   }
 
   /** Every engagement this turn produced — a reading, with nothing written yet. */
   #engagementsThisTurn(revealed: RevealedTurn): readonly Engagement[] {
     return engagementsOf(
+      Object.keys(this.#state.loadedWorld.artifact.sectors),
       this.#borderFronts(),
       revealed.commitments,
       (sector) => this.#standingAt(sector),
@@ -1427,6 +1484,19 @@ export class Runtime {
    */
   #resolveEngagements(engagements: readonly Engagement[]): GameEvent[] {
     const events: GameEvent[] = [];
+    // Deferred to after the loop, over a **snapshot** taken inside it. Two distinct
+    // order-dependences would otherwise appear, and neither is theoretical:
+    // a fall-back *moves* a formation into a neighbouring sector, which may be
+    // another engagement's site — whose blood `#resolveCasualties` apportions over a
+    // fresh `#formationsOn` read, and whose own rout would then sweep up a force
+    // that was never in it. Reading each rout's formations at the moment its battle
+    // resolved keeps the canonical sector order fixing the report rather than the
+    // arithmetic, which is what 06c's atomicity claim actually rests on.
+    const routs: {
+      readonly sector: SectorId;
+      readonly actor: ActorId;
+      readonly formations: readonly SectorFormation[];
+    }[] = [];
 
     for (const engagement of engagements) {
       const outcome = resolveBattle(battleInputOf(engagement));
@@ -1434,6 +1504,19 @@ export class Runtime {
         attacker: this.#resolveCasualties(engagement.sector, engagement.attacker, outcome.attacker),
         defender: this.#resolveCasualties(engagement.sector, engagement.defender, outcome.defender),
       };
+      // `escaped` finally has a consumer. It is M4's open-escape survivor count —
+      // the men the escape clause lets slip away — and it gates displacement: a rout
+      // nobody survived displaces nobody.
+      for (const side of ['attacker', 'defender'] as const) {
+        if (!outcome[side].routed || outcome[side].escaped <= 0) continue;
+        const actor = engagement[side].actor;
+        routs.push({
+          sector: engagement.sector,
+          actor,
+          formations: this.#formationsOn(engagement.sector)
+            .filter((formation) => formation.actor === actor),
+        });
+      }
 
       events.push(this.#turnEvent('battle-resolved', 'payoff', {
         sector: engagement.sector,
@@ -1463,7 +1546,145 @@ export class Runtime {
       }));
     }
 
+    for (const rout of routs) this.#displaceRouted(rout.sector, rout.actor, rout.formations);
+
     return events;
+  }
+
+  /**
+   * Where a broken force goes — war-model-build **WM-⑤**.
+   *
+   * Until 06e nothing consumed `escaped`, so a routed force stood on the hex it had
+   * just lost. ADR 0046 turned that from a gap into a defect: with engagements sited
+   * on hostile presence, a force that stays is re-engaged every turn, so "stay"
+   * becomes annihilation and M4's escape clause becomes a lie.
+   *
+   * The axis is **who entered this sector this turn**, not attacker/defender:
+   *
+   * 1. anyone with an approach arc falls back along it — one sector, the way they
+   *    came;
+   * 2. anyone without one **leaves service and stays on the register** — they drop
+   *    out of `serving` and become draftable civilians again.
+   *
+   * Garrison-only defence is the common case on this board (06c item 5) and a
+   * garrison never has an arc, so (2) is the main path rather than a fallback. A
+   * routed garrison is by definition one that lost its sector, and every way to keep
+   * it in service needs somewhere for it to belong — the capital guard, or a
+   * garrison that can retreat, both of which are systems this slice refuses.
+   *
+   * Emits no event of its own. `battle-resolved` already reports *that* a side
+   * routed, and WM-⑤'s consequences are visible where they belong: in the mover's
+   * own `view(actor)`, and in the register arithmetic every viewer's economy
+   * already carries.
+   */
+  #displaceRouted(
+    sector: SectorId,
+    actor: ActorId,
+    formations: readonly SectorFormation[],
+  ): void {
+    const state = this.#state;
+
+    for (const formation of formations) {
+      // A garrison reaches this branch with `detachmentId === null` — structurally,
+      // never by accident, because nothing marches one.
+      const approach = formation.detachmentId === null
+        ? undefined
+        : this.#approachThisTurn.get(formation.detachmentId);
+      const detachment = formation.detachmentId === null
+        ? undefined
+        : state.forces[actor]!.detachments.find(
+            (candidate) => candidate.id === formation.detachmentId,
+          );
+
+      const fallBack = approach !== undefined && detachment !== undefined &&
+        this.#isStandableHex(approach.from);
+      if (!fallBack) {
+        this.#leaveService(sector, actor, formation.detachmentId, formation.men);
+        continue;
+      }
+
+      // R12 prices movement in turns and fatigue, never commit. A fall-back that
+      // paid nothing would be a teleport, so it pays the march rate an ordered march
+      // pays for the boundary step it is undoing.
+      //
+      // One step, not the retrace: WM-⑤ is a **sector**-grain rule ("one sector, the
+      // way they came"), and a force that crossed and then walked deeper into the
+      // sector lands back on the hex the crossing started from. Charging it for the
+      // intervening hexes would price a path the ruling does not describe.
+      const worn = mapCohortFatigue(
+        detachment!,
+        (fatigue, men) => men === 0 ? fatigue : fatigue + MARCH_FATIGUE_PER_HEX,
+      );
+      const index = state.forces[actor]!.detachments.findIndex(
+        (candidate) => candidate.id === detachment!.id,
+      );
+      state.forces[actor]!.detachments[index] = {
+        ...worn,
+        position: { ...approach!.from },
+        // A standing march order is a plan the rout just refuted, and its route
+        // starts from ground this force no longer holds. Carrying it would walk the
+        // survivors straight back into the sector they broke in.
+        movement: null,
+      };
+    }
+  }
+
+  /**
+   * Whether the arc's origin is still somewhere a force can actually stand.
+   *
+   * The ticket's "if the arc's origin is no longer a legal destination, the force
+   * leaves service" — and deliberately nothing more. Whether the ground behind is
+   * now hostile, cut off, or occupied are questions the manoeuvre pass owns;
+   * answering any of them here would be the second destination rule the ticket
+   * forbids inventing.
+   */
+  #isStandableHex(hex: HexPosition): boolean {
+    return this.#state.movementGraph.nodes[hexKey(hex.q, hex.r)] !== undefined;
+  }
+
+  /**
+   * Take men out of `serving` **without** touching the register — the exact
+   * opposite of `#removeDead`.
+   *
+   * Two laws, stated separately because a single conservation invariant over both
+   * would fail on casualties and look like a displacement bug. Death removes a body
+   * from the register permanently, because blood is permanent currency (SPEC, 06c
+   * item 11). Leaving service removes it from the formation only: the register is
+   * unchanged, so `availableCivilians = register − serving` hands those bodies back
+   * to the draft, and WM-⑤ accepts the consequence knowingly — under ADR 0044 a
+   * proportional share of them becomes the conqueror's draftable population when
+   * the ground changes hands, and the conqueror still pays the draft price.
+   */
+  #leaveService(
+    sector: SectorId,
+    actor: ActorId,
+    detachmentId: string | null,
+    men: number,
+  ): void {
+    const state = this.#state;
+    if (detachmentId === null) {
+      const garrison = state.garrisons[sector];
+      if (garrison === undefined) return;
+      garrison.ready = subtractOrigins(garrison.ready, men);
+      return;
+    }
+
+    const detachments = state.forces[actor]!.detachments;
+    const index = detachments.findIndex((candidate) => candidate.id === detachmentId);
+    if (index < 0) return;
+    const detachment = detachments[index]!;
+    const next: Detachment = {
+      ...detachment,
+      ready: { ...detachment.ready, origins: subtractOrigins(detachment.ready.origins, men) },
+    };
+    // Cohorts still forming were not in the battle and did not rout, so they stay —
+    // and a formation reduced to nothing but them is kept for the same reason 06c
+    // keeps it: it is still a body of men, just not a combat-ready one.
+    if (menOf(next.ready.origins) === 0 && next.pending.length === 0) {
+      detachments.splice(index, 1);
+      return;
+    }
+    detachments[index] = next;
   }
 
   /**

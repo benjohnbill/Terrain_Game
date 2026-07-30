@@ -47,7 +47,9 @@
  *     **Answered by ticket 06c: they merge**, because resolution is atomic per
  *     sector and a sector cannot be fought over twice in one turn. The two fronts
  *     survive as fronts and pour their chips into one engagement
- *     (`domain/engagement.ts`).
+ *     (`domain/engagement.ts`). **Ticket 06e dissolved the case rather than
+ *     handling it**: with the stack keyed on the sector (ADR 0046 item 4) there is
+ *     one number to begin with, so the reconciliation 06c wrote was deleted.
  *
  * Across all four, the same rule does the work: **fronts resolve in canonical key
  * order, and nothing consults an actor's identity or the order anyone submitted
@@ -59,14 +61,14 @@
  * A front reading remains a **reading of the commitment**, not the battle. Ticket
  * 03's mandate was the loop, the blind commit, the symmetric reveal, and the
  * budget; ticket 06c added the battle beside this — at the sector, because that is
- * the atom — and the capital fall is ticket 07's. So this still changes no
- * ownership, kills nothing and moves nothing; what it now reports honestly is
- * whether the chips a realm poured onto a border met anybody.
+ * the atom — 06e freed the battle from the border entirely, and the capital fall is
+ * ticket 07's. So this still changes no ownership, kills nothing and moves nothing;
+ * what it reports is whether the attention in play at a border met anybody.
  */
 
 import type { ActorId, Front } from '../runtime/types.js';
 import type { SectorId } from '../world/schema.js';
-import type { Allocations, FrontAssignments } from './commitment.js';
+import type { Allocations, SectorAssignments } from './commitment.js';
 
 /**
  * The revealed turn — both realms' allocations, in the open.
@@ -76,10 +78,24 @@ import type { Allocations, FrontAssignments } from './commitment.js';
  */
 export interface RevealedTurn {
   readonly commitments: Readonly<Record<ActorId, Allocations>>;
-  readonly assignments: Readonly<Record<ActorId, FrontAssignments>>;
+  readonly assignments: Readonly<Record<ActorId, SectorAssignments>>;
 }
 
-/** One front's reading after the reveal. Integers only — shares are a display's. */
+/**
+ * One front's reading after the reveal. Integers only — shares are a display's.
+ *
+ * Since ADR 0046 item 4 the stack is poured onto *sectors*, so a front's numbers
+ * are a **reading over its two endpoint sectors** rather than a stored per-front
+ * quantity. That is what a front is for now: it reports where two realms touch,
+ * and it no longer gates or receives anything.
+ *
+ * Two consequences worth stating rather than rediscovering. Chips on a sector that
+ * serves two borders are reported under *both* — correctly, since the attention is
+ * genuinely in play at both, and nothing sums these readings into a total that
+ * could double-count. And chips poured onto an **interior** sector produce no front
+ * reading at all, because no border is involved; that battle is reported by
+ * `battle-resolved` alone.
+ */
 export interface FrontReading {
   readonly front: string;
   readonly commitments: Readonly<Record<ActorId, number>>;
@@ -102,14 +118,14 @@ export interface FrontReading {
 export function revealTurn(
   actors: readonly ActorId[],
   commitments: Readonly<Record<ActorId, Allocations>>,
-  frontAssignments: Readonly<Record<ActorId, FrontAssignments>> = {},
+  sectorAssignments: Readonly<Record<ActorId, SectorAssignments>> = {},
 ): RevealedTurn {
   const revealed: Record<ActorId, Allocations> = {};
-  const assignments: Record<ActorId, FrontAssignments> = {};
+  const assignments: Record<ActorId, SectorAssignments> = {};
   for (const actor of actors) {
     revealed[actor] = { ...(commitments[actor] ?? {}) };
     assignments[actor] = Object.fromEntries(
-      Object.entries(frontAssignments[actor] ?? {}).map(([front, ids]) => [front, [...ids]]),
+      Object.entries(sectorAssignments[actor] ?? {}).map(([sector, ids]) => [sector, [...ids]]),
     );
   }
   return { commitments: revealed, assignments };
@@ -140,9 +156,16 @@ export function readFronts(
     const assignments: Record<ActorId, readonly string[]> = {};
     let total = 0;
     for (const actor of front.owners) {
-      const chips = revealed.commitments[actor]?.[front.key] ?? 0;
+      // Over the border's own two sectors, in the sorted order `Front` guarantees,
+      // so the reading is identical from either side.
+      const chips = front.sectors.reduce(
+        (sum, sector) => sum + (revealed.commitments[actor]?.[sector] ?? 0),
+        0,
+      );
       commitments[actor] = chips;
-      assignments[actor] = [...(revealed.assignments[actor]?.[front.key] ?? [])];
+      assignments[actor] = front.sectors.flatMap(
+        (sector) => [...(revealed.assignments[actor]?.[sector] ?? [])],
+      );
       total += chips;
     }
     if (total === 0) continue;

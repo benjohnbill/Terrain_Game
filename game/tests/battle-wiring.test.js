@@ -3,9 +3,14 @@
  *
  * `battle-calculator.test.js` pins the arithmetic in isolation. This file pins it
  * **running on the real board**: an army that ends its turn on enemy ground meets
- * that sector's garrison, the sealed border class supplies the ground and the
- * water, the wear ledger becomes an effectiveness multiplier, and the blood is
- * taken out of the conscription register for good.
+ * that sector's garrison, the sector's own authored terrain supplies the ground and
+ * the door supplies the water, the wear ledger becomes an effectiveness multiplier,
+ * and the blood is taken out of the conscription register for good.
+ *
+ * Ticket 06e re-aimed several of these. What was `TC-⑬: the authored door supplies
+ * the ground` is now two sections — the door's surviving crossing column, and
+ * TC-⑮'s sector-terrain binding — and the commit key moved from the front to the
+ * sector (ADR 0046 item 4).
  *
  * Every expected value is composed from the modules' own exported dials, so a
  * re-cut at a birthplace moves these tests without editing them.
@@ -17,10 +22,13 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 
 const {
+  attackPower,
   bodiesLost,
   buildMovementGraph,
+  combatTerrainOf,
   commitLever,
   CRADLE_R1,
+  defensePower,
   effectiveness,
   engagementsOf,
   GARRISON_PER_BORDER_SECTOR,
@@ -52,6 +60,20 @@ function openAtDecision(overrides = {}) {
 const other = (actor) => (actor === 'realm-a' ? 'realm-b' : 'realm-a');
 const lock = (runtime, actor) => runtime.submit({ kind: 'lock-commitment', actor });
 const types = (events) => events.map((event) => event.type);
+
+/**
+ * Submit and refuse to continue on a rejection.
+ *
+ * A silent `intent-rejected` reads downstream as "the mechanic did nothing", which
+ * is how the 06e re-key first appeared: the dispatcher still destructured `front`,
+ * and every commit quietly became zero rather than failing where it broke.
+ */
+function accepted(runtime, intent) {
+  const events = runtime.submit(intent);
+  const rejected = events.find((event) => event.type === 'intent-rejected');
+  assert.ok(rejected === undefined, `${intent.kind} was rejected: ${rejected?.detail.reason}`);
+  return events;
+}
 
 /** Close a turn, letting `actor` lock second so the resolution comes back here. */
 function closeTurn(runtime, actor = 'realm-b') {
@@ -136,11 +158,11 @@ function oneTurnInvasion({ chips = 0 } = {}) {
   };
 
   if (chips > 0) {
-    runtime.submit({
-      kind: 'allocate-commitment', actor: 'realm-a', front: invasion.front, chips, detachmentIds: [],
+    accepted(runtime, {
+      kind: 'allocate-commitment', actor: 'realm-a', sector: invasion.theirs, chips, detachmentIds: [],
     });
   }
-  runtime.submit({
+  accepted(runtime, {
     kind: 'move-detachment',
     actor: 'realm-a',
     detachmentId: invasion.detachmentId,
@@ -327,11 +349,11 @@ test('the battle does not depend on which realm locked first (D6.1a)', () => {
   const plan = (lockSecond) => {
     const runtime = openAtDecision();
     const invasion = nearestInvasion(runtime, 'realm-a');
-    runtime.submit({
-      kind: 'allocate-commitment', actor: 'realm-a', front: invasion.front, chips: 5, detachmentIds: [],
+    accepted(runtime, {
+      kind: 'allocate-commitment', actor: 'realm-a', sector: invasion.theirs, chips: 5, detachmentIds: [],
     });
-    runtime.submit({
-      kind: 'allocate-commitment', actor: 'realm-b', front: invasion.front, chips: 3, detachmentIds: [],
+    accepted(runtime, {
+      kind: 'allocate-commitment', actor: 'realm-b', sector: invasion.theirs, chips: 3, detachmentIds: [],
     });
     runtime.submit({
       kind: 'move-detachment',
@@ -345,32 +367,63 @@ test('the battle does not depend on which realm locked first (D6.1a)', () => {
   assert.deepEqual(plan('realm-a'), plan('realm-b'));
 });
 
-// ── TC-⑬: the authored door supplies the ground ─────────────────────────────
+// ── the adapter, over plain values ──────────────────────────────────────────
 
-test('the border class carries the combat terrain and the water (TC-⑬)', () => {
-  // The sealed table, as a table. Values live at M5 and ADR 0015 and are held by
-  // `battle.ts`; what is under test here is the *binding*, which is TC-⑬'s.
+/**
+ * One sector's standing, as the adapter reads it. `holder` defaults to the
+ * defender because that is what makes the other side an invader at all.
+ */
+const standingOf = ({
+  holder = 'realm-b',
+  invader = 'realm-a',
+  invaderMen = 4000,
+  holderMen = 900,
+  fortTier = 'none',
+  terrainLayer = 'plains',
+} = {}) => ({
+  holder,
+  sides: {
+    [invader]: { men: invaderMen, wearMass: 0 },
+    [holder]: { men: holderMen, wearMass: 0 },
+  },
+  fortTier,
+  terrainLayer,
+});
+
+const EMPTY_STANDING = { holder: 'realm-b', sides: {}, fortTier: 'none', terrainLayer: 'plains' };
+
+// ── TC-⑬'s surviving column: the door supplies the water, and only that ──────
+
+test("the door carries the crossing and no longer carries the ground (TC-⑬ as TC-⑮ left it)", () => {
+  // The sealed table, as a table. Values live at ADR 0015 and are held by
+  // `battle.ts`; what is under test is the *binding*. TC-⑮ amended the terrain
+  // column away, so every row here now defends on the sector's own ground — the
+  // third column is what the door still contributes.
   const SEALED = [
-    ['open', 'plains', 'none'],
-    ['forest', 'forestHills', 'none'],
-    ['hills', 'forestHills', 'none'],
-    ['pass', 'pass', 'none'],
-    ['river', 'plains', 'riverOpposed'],
-    ['strait', 'plains', 'straitOpposed'],
+    ['open', 'none'],
+    ['forest', 'none'],
+    ['hills', 'none'],
+    ['pass', 'none'],
+    ['river', 'riverOpposed'],
+    ['strait', 'straitOpposed'],
   ];
 
-  for (const [chokeClass, terrain, crossing] of SEALED) {
+  for (const [chokeClass, crossing] of SEALED) {
     const [engagement] = engagementsOf(
-      [{ key: 'x|y', sectors: ['x', 'y'], owners: ['realm-a', 'realm-b'], chokeClass }],
+      ['x', 'y'],
+      [{ key: 'x|y', sectors: ['x', 'y'], owners: ['realm-b', 'realm-a'], chokeClass }],
       {},
-      () => ({
-        sides: { 'realm-a': { men: 4000, wearMass: 0 }, 'realm-b': { men: 900, wearMass: 0 } },
-        fortTier: 'none',
-      }),
+      (sector) => (sector === 'x' ? standingOf({ terrainLayer: 'highland' }) : EMPTY_STANDING),
     );
     assert.equal(engagement.chokeClass, chokeClass);
-    assert.equal(engagement.terrain, terrain, `${chokeClass} took the wrong ground`);
     assert.equal(engagement.crossing, crossing, `${chokeClass} took the wrong water`);
+    // The door's class no longer reaches the ground at all: every row above is a
+    // `highland` sector, so every row defends at M5's forest/hills rung.
+    assert.equal(
+      engagement.terrain,
+      'forestHills',
+      `${chokeClass} still took its ground from the door`,
+    );
     // Uniform by seal, not by omission: TC-⑭ starts every player-varyable value
     // equal, and nothing in this slice builds a fort or raises troop quality.
     assert.equal(engagement.fortification, 'none');
@@ -378,45 +431,269 @@ test('the border class carries the combat terrain and the water (TC-⑬)', () =>
   }
 });
 
+test('an interior sector is a battle site, and its door contributes nothing', () => {
+  // The gate ADR 0046 removed: before 06e a candidate site had to be the endpoint
+  // of an authored border, which left 41 of 45 capitals takeable with zero battles.
+  const [engagement] = engagementsOf(
+    ['interior'],
+    [],
+    { 'realm-a': { interior: 6 } },
+    () => standingOf({ terrainLayer: 'mountain' }),
+  );
+
+  assert.equal(engagement.sector, 'interior');
+  assert.deepEqual(engagement.fronts, [], 'an interior engagement invented a border');
+  assert.equal(engagement.chokeClass, null);
+  assert.equal(engagement.crossing, 'none', 'an interior attacker paid a crossing it never made');
+  assert.equal(engagement.terrain, 'mountains', 'interior ground fell back to a default');
+  assert.equal(engagement.attacker.commit, 6);
+});
+
+test('presence is the whole predicate: no invader, no engagement', () => {
+  const sited = (invaderMen) => engagementsOf(
+    ['s'],
+    [{ key: 'b|s', sectors: ['b', 's'], owners: ['realm-b', 'realm-a'], chokeClass: 'open' }],
+    {},
+    () => standingOf({ holder: 'realm-a', invader: 'realm-b', invaderMen }),
+  ).length;
+
+  assert.equal(sited(0), 0, 'an empty side was reported as a battle');
+  assert.equal(sited(1), 1, 'one man standing on hostile ground is an engagement');
+});
+
+test('unowned ground has no defender, so it produces no engagement', () => {
+  // The drawn partition covers all 56 sectors, so this never fires today. It is
+  // pinned because "ground it does not hold" needs somebody to hold it.
+  assert.deepEqual(
+    engagementsOf(
+      ['s'],
+      [],
+      {},
+      () => ({ ...standingOf(), holder: null }),
+    ),
+    [],
+  );
+});
+
 test('an unauthored fortification tier is refused rather than fought at x1.00', () => {
   assert.throws(
     () => engagementsOf(
-      [{ key: 'x|y', sectors: ['x', 'y'], owners: ['realm-a', 'realm-b'], chokeClass: 'open' }],
+      ['x'],
+      [{ key: 'x|y', sectors: ['x', 'y'], owners: ['realm-b', 'realm-a'], chokeClass: 'open' }],
       {},
-      () => ({
-        sides: { 'realm-a': { men: 10, wearMass: 0 }, 'realm-b': { men: 10, wearMass: 0 } },
-        fortTier: 'townWalls-ish',
-      }),
+      () => standingOf({ fortTier: 'townWalls-ish' }),
     ),
     /has no M5 rung/,
   );
 });
 
-// ── ticket 03's case 4, adjudicated ─────────────────────────────────────────
+test('an unbound terrain layer is refused rather than fought at x1.00 (TC-⑮)', () => {
+  // The same precedent, one layer up. TC-⑪'s queued re-authoring is expected to
+  // add layers, and a silent plains is what would hide a missing rung.
+  assert.throws(
+    () => engagementsOf(['x'], [], {}, () => standingOf({ terrainLayer: 'tundra' })),
+    /has no M5 rung/,
+  );
+});
+
+// ── TC-⑮: a sector defends on its own ground ────────────────────────────────
+
+test('every authored layer maps onto an M5 rung, and river-valley is not the river', () => {
+  // The binding, as a table. Multipliers live at M5; `combatTerrainOf` names the
+  // rung and `battle.ts` prices it, so nothing here restates a number.
+  const BOUND = [
+    ['plains', 'plains'],
+    ['steppe', 'plains'],
+    ['desert', 'plains'],
+    ['oasis', 'plains'],
+    // The trap: `river` the border class prices an opposed crossing at 0.70. A
+    // river valley is the ground you stand on, and five interior sectors carry it.
+    ['river-valley', 'plains'],
+    ['highland', 'forestHills'],
+    ['mountain', 'mountains'],
+  ];
+  for (const [layer, rung] of BOUND) assert.equal(combatTerrainOf(layer), rung, `${layer} took the wrong rung`);
+
+  // Every layer the world actually authors is bound — the premise TC-⑮ rests on.
+  const authored = new Set(Object.values(CRADLE_R1.sectors)
+    .flatMap((sector) => sector.mapUnits.map((unit) => unit.terrainLayer)));
+  for (const layer of authored) assert.ok(combatTerrainOf(layer), `${layer} is authored but unbound`);
+});
+
+test('every sector of the authored world is terrain-uniform (TC-⑮\'s premise)', () => {
+  const mixed = Object.values(CRADLE_R1.sectors)
+    .filter((sector) => new Set(sector.mapUnits.map((unit) => unit.terrainLayer)).size !== 1)
+    .map((sector) => sector.id);
+  assert.deepEqual(mixed, [], 'a sector carries more than one terrain, so it has no single ground');
+});
+
+test('a pass is asymmetric: the mountain side defends at 1.5, the plains side at 1.0', () => {
+  // 관중's three `mountain` sectors are exactly its three pass endpoints, so 四塞之地
+  // now comes out of the ground rather than out of the door — and 중원's plains
+  // sector on the far side of the same door stops collecting a defile bonus.
+  const ratioAt = (sector) => {
+    const [engagement] = engagementsOf(
+      [sector],
+      // The pass door both sides share. It supplies the crossing, which for a pass
+      // is `none`, so any asymmetry below is the ground's alone.
+      [{ key: `r1_s0|r6_s5`, sectors: ['r1_s0', 'r6_s5'], owners: ['realm-b', 'realm-a'], chokeClass: 'pass' }],
+      {},
+      () => standingOf({
+        invaderMen: 1800,
+        holderMen: 900,
+        terrainLayer: CRADLE_R1.sectors[sector].mapUnits[0].terrainLayer,
+      }),
+    );
+    const side = (men) => ({ substance: men, commit: 0, quality: UNIFORM_QUALITY, fatigue: 1 });
+    return attackPower(side(1800), engagement.crossing) /
+      defensePower(side(900), engagement.terrain, engagement.fortification);
+  };
+
+  assert.equal(CRADLE_R1.sectors.r6_s5.mapUnits[0].terrainLayer, 'mountain');
+  assert.equal(CRADLE_R1.sectors.r1_s0.mapUnits[0].terrainLayer, 'plains');
+  // 1,800 against a 900 garrison: 1.33 defending the defile, 2.00 defending the
+  // plain behind it. A symmetric result would mean the door is still the source.
+  assert.equal(Number(ratioAt('r6_s5').toFixed(2)), 1.33);
+  assert.equal(Number(ratioAt('r1_s0').toFixed(2)), 2.00);
+  assert.ok(ratioAt('r6_s5') < ratioAt('r1_s0'), 'the pass is still symmetric');
+});
+
+test('a river-door battle is numerically unchanged by this ticket', () => {
+  // TC-⑮ left TC-⑬'s crossing column untouched, so the regression anchor is an
+  // exact number rather than a direction: 1,800 against 900 across an opposed
+  // river is R 1.40 before and after.
+  const [engagement] = engagementsOf(
+    ['s'],
+    [{ key: 'b|s', sectors: ['b', 's'], owners: ['realm-b', 'realm-a'], chokeClass: 'river' }],
+    {},
+    () => standingOf({ invaderMen: 1800, holderMen: 900, terrainLayer: 'river-valley' }),
+  );
+  assert.equal(engagement.crossing, 'riverOpposed');
+  const side = (men) => ({ substance: men, commit: 0, quality: UNIFORM_QUALITY, fatigue: 1 });
+  const ratio = attackPower(side(1800), engagement.crossing) /
+    defensePower(side(900), engagement.terrain, engagement.fortification);
+  assert.equal(Number(ratio.toFixed(2)), 1.40);
+});
+
+// ── WM-⑤: where a broken force goes ─────────────────────────────────────────
+
+/**
+ * Send `men` alone against a full shield and close turns until they meet it.
+ *
+ * The size is the experiment: M4's rout gate is a *fraction*, so a force that is
+ * merely beaten does not break and a force that is annihilated leaves no survivor
+ * to displace. Both ends are asserted at the call sites rather than assumed.
+ */
+function forlornHope(men) {
+  const runtime = openAtDecision();
+  const invasion = nearestInvasion(runtime, 'realm-a');
+  const parent = runtime.view('realm-a').detachments[0].id;
+  accepted(runtime, { kind: 'split-detachment', actor: 'realm-a', detachmentId: parent, men });
+  const child = runtime.view('realm-a').detachments.find((d) => d.id !== parent && d.men === men);
+  assert.ok(child !== undefined, 'the split produced no detachment of that size');
+  accepted(runtime, {
+    kind: 'move-detachment',
+    actor: 'realm-a',
+    detachmentId: child.id,
+    destinationHex: invasion.destination,
+    forcedMarch: false,
+  });
+
+  for (let turn = 0; turn < 8; turn += 1) {
+    const closing = closeTurn(runtime, 'realm-a');
+    const battle = closing.find((event) => event.type === 'battle-resolved');
+    if (battle !== undefined) return { runtime, invasion, battle, childId: child.id, men };
+  }
+  return assert.fail('the forlorn hope never met the shield');
+}
+
+const sectorOfHex = (hex) => GRAPH.nodes[`${hex.q},${hex.r}`].sectorId;
+
+test('a routed force with an arc falls back one sector, and pays the march for it', () => {
+  const run = forlornHope(400);
+  assert.equal(run.battle.detail.routed.attacker, true, 'this fixture no longer breaks its attacker');
+  assert.ok(
+    run.battle.detail.casualties.attacker < run.men,
+    'the fixture annihilated its attacker, so nothing survived to displace',
+  );
+
+  const survivor = run.runtime.view('realm-a').detachments.find((d) => d.id === run.childId);
+  assert.ok(survivor !== undefined, 'a force with an arc left service instead of falling back');
+  assert.equal(survivor.men, run.men - run.battle.detail.casualties.attacker, 'the escaped count is wrong');
+
+  // One sector back, along the arc — the hex the crossing started from, which is by
+  // construction one graph arc from the ground it lost.
+  const landed = `${survivor.position.q},${survivor.position.r}`;
+  assert.notEqual(sectorOfHex(survivor.position), run.invasion.theirs, 'the rout stayed where it broke');
+  assert.ok(
+    GRAPH.nodes[landed].arcs.some((arc) => GRAPH.nodes[arc.to].sectorId === run.invasion.theirs),
+    'the fall-back landed somewhere the arc could not have come from',
+  );
+
+  // R12 prices movement in turns and fatigue, never commit. A displacement that
+  // paid nothing would be a teleport.
+  const stationary = run.runtime.view('realm-a').detachments.find((d) => d.id !== run.childId);
+  assert.ok(
+    survivor.fatigue >= stationary.fatigue + MARCH_FATIGUE_PER_HEX,
+    'the fall-back was free',
+  );
+});
+
+test('a routed garrison has no arc, so it leaves service and stays on the register', () => {
+  // The common case on this board (06c item 5) and therefore the main path: nothing
+  // marches a garrison, so it never has an approach to fall back along.
+  const run = forlornHope(3000);
+  assert.equal(run.battle.detail.routed.defender, true, 'this fixture no longer breaks the shield');
+  const dead = run.battle.detail.casualties.defender;
+  const shield = GARRISON_PER_BORDER_SECTOR;
+  assert.ok(dead < shield, 'the shield was annihilated, so nothing was left to leave service');
+
+  const after = run.runtime.view('realm-b');
+  assert.equal(
+    after.garrisons.find((garrison) => garrison.sectorId === run.invasion.theirs).men,
+    0,
+    'routed survivors stayed in the shield they lost',
+  );
+
+  // The two laws, stated and checked separately. Death takes a body out of the
+  // register for good; leaving service takes it out of `serving` only, and hands it
+  // back to the draft as a civilian.
+  const fresh = openAtDecision().view('realm-b').economy;
+  assert.equal(after.economy.register, fresh.register - dead, 'leaving service shrank the register');
+  assert.equal(after.economy.serving, fresh.serving - shield, 'the whole shield did not leave service');
+  for (const [region, province] of Object.entries(after.economy.provinces)) {
+    assert.equal(
+      province.register,
+      province.serving + province.availableCivilians,
+      `${region} no longer balances`,
+    );
+  }
+});
+
+// ── ticket 03's case 4, dissolved rather than adjudicated ───────────────────
 
 test('two borders onto one sector are one engagement, at the softest crossing', () => {
   const engagements = engagementsOf(
+    ['a', 'b', 's'],
     [
       { key: 'a|s', sectors: ['a', 's'], owners: ['realm-b', 'realm-a'], chokeClass: 'pass' },
       { key: 'b|s', sectors: ['b', 's'], owners: ['realm-b', 'realm-a'], chokeClass: 'open' },
     ],
-    { 'realm-b': { 'a|s': 7, 'b|s': 5 } },
-    (sector) => ({
-      sides: sector === 's'
-        ? { 'realm-a': { men: 900, wearMass: 0 }, 'realm-b': { men: 4000, wearMass: 0 } }
-        : {},
-      fortTier: 'none',
-    }),
+    // One key, one number. 06c had to sum two borders' shares here; ADR 0046
+    // item 4 deleted the need rather than the sum, so there is nothing to merge.
+    { 'realm-b': { s: 12 } },
+    (sector) => (sector === 's'
+      ? standingOf({ holder: 'realm-a', invader: 'realm-b' })
+      : EMPTY_STANDING),
   );
 
   assert.equal(engagements.length, 1, 'a sector was fought over more than once in one turn');
   const [engagement] = engagements;
   assert.equal(engagement.sector, 's');
   assert.deepEqual(engagement.fronts, ['a|s', 'b|s'], 'the merged engagement lost a border');
-  // Reachable-weakest-link: the pass is not the window an attacker actually uses.
+  // Reachable-weakest-link, still ranging over the sector's *doors* and never over
+  // how anyone arrived: the pass is not the window an attacker actually uses.
   assert.equal(engagement.chokeClass, 'open');
-  assert.equal(engagement.terrain, 'plains');
-  // Both borders' chips pour into the one engagement they both open onto.
   assert.equal(engagement.attacker.commit, 12);
   assert.equal(engagement.defender.commit, 0);
 });
@@ -437,14 +714,12 @@ test('a realm pressing one sector from two real borders fights once (r7_s0)', ()
     forcedMarch: false,
   });
 
-  // Chips do not carry over (D6.3), so both borders are pressed every turn until
-  // the army actually arrives — the arrival turn is the one that spends them.
+  // Chips do not carry over (D6.3), so the sector is pressed every turn until the
+  // army actually arrives — the arrival turn is the one that spends them. One
+  // allocation, not two: the sector is the key, however many borders serve it.
   for (let turn = 0; turn < 6; turn += 1) {
-    runtime.submit({
-      kind: 'allocate-commitment', actor: 'realm-b', front: shared[0], chips: 7, detachmentIds: [],
-    });
-    runtime.submit({
-      kind: 'allocate-commitment', actor: 'realm-b', front: shared[1], chips: 5, detachmentIds: [],
+    accepted(runtime, {
+      kind: 'allocate-commitment', actor: 'realm-b', sector: 'r7_s0', chips: 12, detachmentIds: [],
     });
     const closing = closeTurn(runtime, 'realm-b');
     const battles = closing.filter((event) => event.type === 'battle-resolved');
@@ -454,7 +729,7 @@ test('a realm pressing one sector from two real borders fights once (r7_s0)', ()
     const detail = battles[0].detail;
     assert.equal(detail.sector, 'r7_s0');
     assert.deepEqual([...detail.fronts].sort(), [...shared].sort());
-    assert.equal(detail.commitments.attacker, 12, 'only one border\'s chips reached the battle');
+    assert.equal(detail.commitments.attacker, 12, 'the sector\'s chips did not reach the battle');
     // open (x1.0 ground) beside river (x0.70 attack) — the softer door wins.
     assert.equal(detail.borderClass, 'open');
     // Both fronts still exist as fronts; only the engagement merged.
@@ -473,6 +748,7 @@ test('the weakest link follows the sealed defensibility order, pass below strait
   // the order out of M5 and ADR 0015 instead would put pass *above* strait — the
   // last pair here is the one that catches it.
   const weakestOf = (classes) => engagementsOf(
+    ['s'],
     classes.map((chokeClass, index) => ({
       key: `b${index}|s`,
       sectors: [`b${index}`, 's'],
@@ -480,12 +756,7 @@ test('the weakest link follows the sealed defensibility order, pass below strait
       chokeClass,
     })),
     {},
-    (sector) => ({
-      sides: sector === 's'
-        ? { 'realm-a': { men: 900, wearMass: 0 }, 'realm-b': { men: 4000, wearMass: 0 } }
-        : {},
-      fortTier: 'none',
-    }),
+    () => standingOf({ holder: 'realm-a', invader: 'realm-b' }),
   ).find((engagement) => engagement.sector === 's').chokeClass;
 
   assert.equal(weakestOf(['pass', 'open']), 'open');

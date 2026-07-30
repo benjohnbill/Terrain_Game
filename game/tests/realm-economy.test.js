@@ -67,8 +67,8 @@ function openAtDecision(overrides = {}) {
   return runtime;
 }
 
-const allocate = (runtime, actor, front, chips) =>
-  runtime.submit({ kind: 'allocate-commitment', actor, front, chips });
+const allocate = (runtime, actor, sector, chips) =>
+  runtime.submit({ kind: 'allocate-commitment', actor, sector, chips });
 const order = (runtime, actor, kind, chips) =>
   runtime.submit({ kind: 'allocate-order', actor, order: kind, chips });
 const recruit = (runtime, actor, requestId, sectorId, commit, posture = 'field', extra = {}) =>
@@ -266,10 +266,10 @@ test('income lands in the background tier of the reveal, with no extra submissio
 
 test('recruitment draws from the same 20-chip stack every other order draws from', () => {
   const runtime = openAtDecision();
-  const front = runtime.view('realm-a').fronts[0].key;
+  const contested = runtime.view('realm-a').fronts[0].sectors[0];
   const sector = runtime.view('realm-a').realms.find((realm) => realm.actor === 'realm-a').sectors[0];
 
-  assert.equal(allocate(runtime, 'realm-a', front, 14)[0].type, 'commitment-allocated');
+  assert.equal(allocate(runtime, 'realm-a', contested, 14)[0].type, 'commitment-allocated');
   assert.equal(recruit(runtime, 'realm-a', 'reserve', sector, 6)[0].type, 'recruitment-allocated');
   assert.equal(runtime.view('realm-a').commitment.remaining, 0);
 

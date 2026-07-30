@@ -112,7 +112,8 @@ export interface MatchState {
 
   turn: number;
   /**
-   * This turn's blind allocations, per realm: front key -> chips.
+   * This turn's blind allocations, per realm: **sector** id -> chips, plus order
+   * keys (ADR 0046 item 4).
    *
    * Hidden from every viewer but its owner until both realms lock (ledger D6.1).
    * Cleared by the background tier at renewal, because the stack does not carry
@@ -123,8 +124,8 @@ export interface MatchState {
   recruitmentOrders: Record<ActorId, Record<string, RecruitmentRequest>>;
   /** Exact positive recruitment aggregates; projection alone decides who may read them. */
   mobilizationTraces: MobilizationTrace[];
-  /** Own field detachments explicitly assigned to each committed front. */
-  frontAssignments: Record<ActorId, Record<string, readonly string[]>>;
+  /** Own field detachments explicitly assigned to each committed sector. */
+  sectorAssignments: Record<ActorId, Record<string, readonly string[]>>;
   /**
    * Realms that have locked this turn's commitment.
    *

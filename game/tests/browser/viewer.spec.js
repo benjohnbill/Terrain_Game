@@ -140,11 +140,12 @@ test('a human can cycle a whole turn: commit, lock, watch it reveal, land on N+1
   await expect(page.getByTestId('turn-strip')).toContainText('턴 1');
   await expect(page.getByTestId('turn-strip')).toContainText('20/20 남음');
 
-  // realm-b (the viewer in focus) pours two chips onto its first front and locks.
-  const fronts = page.getByTestId('fronts').locator('tr');
-  await expect(fronts.first()).toBeVisible();
-  await fronts.first().getByRole('button', { name: '+1' }).click();
-  await fronts.first().getByRole('button', { name: '+1' }).click();
+  // realm-b (the viewer in focus) pours two chips onto its first commit sector and
+  // locks. The strip lists sectors rather than borders since ADR 0046 item 4.
+  const sectors = page.getByTestId('commit-sectors').locator('tr');
+  await expect(sectors.first()).toBeVisible();
+  await sectors.first().getByRole('button', { name: '+1' }).click();
+  await sectors.first().getByRole('button', { name: '+1' }).click();
   await expect(page.getByTestId('turn-strip')).toContainText('18/20 남음');
   await page.getByTestId('lock').click();
   await expect(page.getByTestId('turn-strip')).toContainText('대기 중');

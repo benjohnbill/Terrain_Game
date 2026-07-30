@@ -18,29 +18,42 @@
  *
  * ## The unit of resolution is the SECTOR, not the front
  *
- * A front is an authored *edge* — the door between two regions — and the ticket
- * seals resolution as **atomic per sector**. The two are different cardinalities,
- * and that difference is what adjudicates ticket 03's enumerated **case 4**:
- * `r7_s0` is a real sector serving two different region borders, so one realm can
- * press it from two sides at once. The turn loop ruled those stay two *fronts*;
- * here they are **one engagement**, because a sector cannot be fought over twice
- * in a turn without the second reading state the first already changed. Both
- * borders' chips are poured into it, and TC-⑬'s reachable-weakest-link picks the
- * ground.
+ * A front is an authored *edge* — the door between two regions — and resolution
+ * is **atomic per sector** (ADR 0032; ADR 0046 item 1). The two are different
+ * cardinalities, and that difference is what adjudicates ticket 03's enumerated
+ * **case 4**: `r7_s0` is a real sector serving two different region borders, so
+ * one realm can press it from two sides at once. The turn loop ruled those stay
+ * two *fronts*; here they are one engagement, because a sector cannot be fought
+ * over twice in a turn without the second reading state the first already
+ * changed. Since ADR 0046 item 4 keyed commit on the sector, that merge needs no
+ * reconciliation at all — there is one key, so there is one number.
+ *
+ * ## Where an engagement may be sited
+ *
+ * **Wherever a hostile force stands** (ADR 0046 item 1). The predicate is a
+ * *sector* predicate — an invading force standing on ground its realm does not
+ * hold — and nothing about an authored border enters it.
+ *
+ * Until 06e the candidate sites were seeded by walking the contested fronts, on
+ * the stated grounds that only a border sector had a sealed defensive ground to
+ * be fought over. Measured across all 15 legal partitions, that gate let **30 of
+ * 30** realm-seats walk into enemy ground without standing on one fightable
+ * sector, and left **41 of 45** authored capitals takeable with zero battles.
+ * TC-⑮ supplies the missing ground and the gate comes off.
  *
  * ## Where the ground comes from
  *
- * Terrain-cradle **TC-⑬** (SEALED 2026-07-08) binds a border's authored class to
- * the combat site's terrain and water; the multipliers themselves live at
- * combat-formula **M5** and **ADR 0015** and are held by `battle.ts`. This module
- * carries the *binding* and never a value.
+ * Terrain-cradle **TC-⑮** (SEALED 2026-07-28/31, ADR 0046 item 2): **a sector's
+ * defensive terrain is its own authored terrain, always.** It does not depend on
+ * how the attacker arrived. The door contributes the **attacker-side** terms
+ * only — the crossing multiplier — which mirrors the calculator's own split:
+ * `defensePower(side, terrain, fortification)` is the ground the defender stands
+ * on, `attackPower(side, crossing)` is what the attacker did to reach it.
  *
- * The hex `terrainLayer` is deliberately **not** consulted. The authored world
- * carries seven layers (plains, steppe, highland, desert, oasis, mountain,
- * river-valley) and M5's ladder has five rungs; no seal maps one onto the other,
- * so reading a sector's hexes for its defensive ground would be originating a
- * rule. TC-⑬ is the mapping the project actually sealed, and it is keyed on the
- * door rather than on the ground behind it.
+ * TC-⑮ **amends TC-⑬'s terrain column**; TC-⑬'s *crossing* column and its
+ * reachable-weakest-link rule for choosing among doors are untouched. Every
+ * multiplier lives at combat-formula **M5** and **ADR 0015** and is held by
+ * `battle.ts`. This module carries the *bindings* and never a value.
  */
 
 import {
@@ -53,7 +66,7 @@ import {
   type EscapeState,
 } from './battle.js';
 import { effectiveness } from './fatigue.js';
-import type { ChokeClass, SectorId } from '../world/schema.js';
+import type { ChokeClass, SectorId, TerrainLayer } from '../world/schema.js';
 import type { ActorId } from '../runtime/types.js';
 
 /**
@@ -102,44 +115,86 @@ export const OPEN_ESCAPE: EscapeState = 'OPEN';
 export const STANDING_POSTURE: DefenseMethod = 'STRONGHOLD';
 
 /**
- * TC-⑬'s table, as a binding: a border class names the combat site's ground and
- * its water. Values are cited, never restated — `battle.ts` holds M5's and
- * ADR 0015's ladders.
+ * **TC-⑬'s surviving column**, as a binding: a border class names the water an
+ * attacker crosses to come through that door. Values are cited, never restated —
+ * `battle.ts` holds ADR 0015's ladder.
  *
  * Two readings are worth stating rather than leaving to be re-derived:
  *
- * - **The water classes carry no ground term.** TC-⑬ gives `river` and `strait`
- *   a water effect and no terrain, and M5's `plains` is the ×1.0 rung — the
- *   identity. Naming it is how "TC-⑬ assigns this door no ground" is written in
- *   a table that must name a terrain for every row.
- * - **The water is always the *opposed* variant.** A front exists only where two
- *   realms hold the two ends of one border, so the defender holds the far bank by
- *   construction; the uncontested rungs have no referent here. TC-⑬ names exactly
- *   these two.
- *
- * M5's `mountains` and `legendaryNaturalSite` rungs have no border class and are
- * therefore unreachable in this slice — absent rather than approximated.
+ * - **The dry classes contribute nothing.** `none` is `CROSSING_MULTIPLIER`'s
+ *   identity, so naming it is how "this door is not a water obstacle" is written
+ *   in a table that must name a crossing for every row.
+ * - **The water is always the *opposed* variant.** A door is a battle's door only
+ *   where the defender holds the far bank, so the uncontested rungs have no
+ *   referent here. TC-⑬ names exactly these two.
  *
  * **What TC-⑬ pairs with `pass` and this does not implement:** the ruling states
- * that the door also *throttles the assaulting body* — "the frontage half of the
- * pass ×2.0 package", validated only as the residual after a frontage cap. M5 puts
- * that cap's **value** with the frontage/matchup stage, which has not run, so
- * writing one here would originate a number. The consequence is stated rather than
- * hidden: an unthrottled `pass` is priced at less than TC-⑬ intends, and
- * `Edge.frontageHexes` is authored and read by nothing. Registered in
- * `docs/SYNC-DEBT.md`.
+ * that the door also *throttles the assaulting body* — the frontage half. TC-⑮
+ * moved that whole question to the operational-manoeuvre pass rather than
+ * abolishing it (`.scratch/operational-manoeuvre/`), and its stated justification
+ * weakened in the move: the "×2.0 only as the residual AFTER a cap" argument
+ * concerned a `pass` **terrain** value TC-⑮ stops using. `Edge.frontageHexes` and
+ * `Choke.cap` remain authored and read by nothing, and neither is the cap — see
+ * that tracker's seam register.
  */
-const COMBAT_GROUND: Readonly<Record<
-  ChokeClass,
-  { readonly terrain: BattleTerrain; readonly crossing: BattleCrossing }
->> = {
-  open: { terrain: 'plains', crossing: 'none' },
-  forest: { terrain: 'forestHills', crossing: 'none' },
-  hills: { terrain: 'forestHills', crossing: 'none' },
-  pass: { terrain: 'pass', crossing: 'none' },
-  river: { terrain: 'plains', crossing: 'riverOpposed' },
-  strait: { terrain: 'plains', crossing: 'straitOpposed' },
+const DOOR_CROSSING: Readonly<Record<ChokeClass, BattleCrossing>> = {
+  open: 'none',
+  forest: 'none',
+  hills: 'none',
+  pass: 'none',
+  river: 'riverOpposed',
+  strait: 'straitOpposed',
 };
+
+/**
+ * **TC-⑮'s table**, as a binding: an authored `terrainLayer` names the M5 rung the
+ * ground defends at. Values are cited, never restated — `battle.ts` holds M5's
+ * ladder, and TC-⑮ holds each row's derivation.
+ *
+ * Six of the seven layers derive with no new value; `mountain` matches a sealed
+ * rung by name — M5's `Mountains`, in the ladder since 2026-07-03 and never used
+ * before, because nothing read a sector's terrain.
+ *
+ * The row that is a trap: **`river-valley` is `plains`, not the `river` border
+ * class's 0.70.** That number prices an opposed crossing; a river valley is the
+ * ground you stand on. Wiring the two together would hand five interior sectors a
+ * crossing penalty against an attacker who never crossed anything.
+ *
+ * M5's `pass` and `legendaryNaturalSite` rungs are now unreachable — no authored
+ * layer names them. `pass` was reachable until TC-⑮ retired the door as a terrain
+ * source, which is the amendment working rather than a value going missing: 관중's
+ * defiles defend at `Mountains` because their **ground** is mountain, and 중원's
+ * plains sector on the far side of the same door stops collecting a defile bonus
+ * it has no geographic claim to.
+ */
+const GROUND_TERRAIN: Readonly<Record<TerrainLayer, BattleTerrain>> = {
+  plains: 'plains',
+  steppe: 'plains',
+  desert: 'plains',
+  oasis: 'plains',
+  'river-valley': 'plains',
+  highland: 'forestHills',
+  mountain: 'mountains',
+};
+
+/**
+ * The M5 rung an authored layer defends at.
+ *
+ * An unknown layer **throws**, following `fortificationOf`'s precedent: the
+ * queued map re-authoring (TC-⑪) is expected to add layers, and a silent ×1.0 is
+ * exactly the failure that would hide a missing rung.
+ */
+export function combatTerrainOf(layer: TerrainLayer): BattleTerrain {
+  const terrain = GROUND_TERRAIN[layer];
+  if (terrain === undefined) {
+    throw new Error(
+      `Authored terrain layer "${layer}" has no M5 rung. TC-⑮ binds the seven layers ` +
+        'this world revision carries; a new layer must be bound there before a battle ' +
+        'can price the ground it is fought on.',
+    );
+  }
+  return terrain;
+}
 
 /**
  * The authored fortification tiers this world revision actually carries.
@@ -197,8 +252,18 @@ const CLASS_DEFENSE_RANK: Readonly<Record<ChokeClass, number>> = {
 };
 
 /**
- * TC-⑬'s **reachable-weakest-link**: where several authored borders open onto one
- * sector, the attack window an attacker actually uses is the softest of them.
+ * TC-⑬'s **reachable-weakest-link**, which TC-⑮ leaves standing for exactly what
+ * it was sealed for: where several authored borders open onto one sector, the
+ * attack window an attacker actually uses is the softest of them.
+ *
+ * What TC-⑮ retired is the *extension* of this rule over **approaches** — letting
+ * an undoored arrival pick a softer defensive term. Measured, routing around a
+ * door costs 0 extra turns on 20 of 20 land doors, and 100 flanking men moved R
+ * from 0.56 to 2.22: a hex-grain fact deciding a sector-grain outcome, for free.
+ * What is retired is that *implementation*, not approach substitution as a
+ * capability — making an approach cost something is deferred to frontage in the
+ * operational-manoeuvre pass. Meanwhile this function ranges over the sector's
+ * authored doors and must never be handed a list derived from how anyone arrived.
  *
  * Ties break on the class name so the reported door is deterministic; `forest`
  * and `hills` tie at M5's shared rung, where the choice is cosmetic anyway.
@@ -233,9 +298,20 @@ export interface SideStanding {
 
 /** What stands on one sector once the turn's movement has resolved. */
 export interface SectorStanding {
+  /** Who holds this ground, or `null` when nobody does. */
+  readonly holder: ActorId | null;
   readonly sides: Readonly<Record<ActorId, SideStanding>>;
   /** The authored fortification tier standing on the sector. */
   readonly fortTier: string;
+  /**
+   * The sector's own authored terrain (TC-⑮).
+   *
+   * Singular because every one of the 56 sectors is terrain-uniform — measured, 0
+   * carry more than one layer — which is the fact that made the binding possible
+   * without re-authoring the map. The reader that derives it is responsible for
+   * refusing a sector that stops being uniform.
+   */
+  readonly terrainLayer: TerrainLayer;
 }
 
 /** One side of one engagement, in board terms rather than calculator terms. */
@@ -244,17 +320,23 @@ export interface EngagementParty {
   readonly men: number;
   /** Men-weighted mean of the **wear ledger** — not yet an effectiveness multiplier. */
   readonly wear: number;
-  /** 행동력 poured onto every border that opens on this sector. */
+  /** 행동력 poured onto this sector — one key, one number (ADR 0046 item 4). */
   readonly commit: number;
 }
 
 /** One sector's engagement, fully described and not yet resolved. */
 export interface Engagement {
   readonly sector: SectorId;
-  /** Every contested border opening onto this sector, in canonical order. */
+  /**
+   * Every contested border opening onto this sector, in canonical order.
+   *
+   * **Empty for an interior sector**, which is now an ordinary battle site rather
+   * than an impossible one. A front no longer gates where combat may occur; it
+   * still reports where two realms touch.
+   */
   readonly fronts: readonly string[];
-  /** The border class the ground was taken from — the weakest link of `fronts`. */
-  readonly chokeClass: ChokeClass;
+  /** The door the crossing was taken from — the weakest link of `fronts`, or none. */
+  readonly chokeClass: ChokeClass | null;
   readonly attacker: EngagementParty;
   readonly defender: EngagementParty;
   readonly terrain: BattleTerrain;
@@ -265,8 +347,8 @@ export interface Engagement {
 
 function partyOf(
   actor: ActorId,
+  sector: SectorId,
   standing: SectorStanding,
-  fronts: readonly BorderFront[],
   commitments: Readonly<Record<ActorId, Readonly<Record<string, number>>>>,
 ): EngagementParty {
   const side = standing.sides[actor] ?? { men: 0, wearMass: 0 };
@@ -275,7 +357,10 @@ function partyOf(
     men: side.men,
     // A side with nobody in it is not tired; it simply is not there.
     wear: side.men === 0 ? 0 : side.wearMass / side.men,
-    commit: fronts.reduce((sum, front) => sum + (commitments[actor]?.[front.key] ?? 0), 0),
+    // No reconciliation across fronts: the key *is* the sector. 06c had to sum
+    // two borders' shares here because the key was the front, and ADR 0046 item 4
+    // deleted the need rather than the sum.
+    commit: commitments[actor]?.[sector] ?? 0,
   };
 }
 
@@ -288,53 +373,65 @@ function partyOf(
  * attack does not abstain because a plan did not name it. The assignment is the
  * decision tier's exclusivity rule; this is the payoff tier reading the board.
  *
- * Only sectors on a **contested border** can be sites, because those are the only
- * sectors whose defensive ground is sealed (TC-⑬ keys it on the door). An army
- * that walked past a border sector into the interior therefore fights nothing —
- * deep operations and the occupation of interior ground are not in this slice,
- * and inventing ground for them here would be inventing a rule.
+ * **Every sector is a candidate** (ADR 0046 item 1). `fronts` no longer seeds the
+ * site list — it is consulted only for what a door still supplies, which is the
+ * attacker's crossing. An army that walks into the interior is now fought there.
+ *
+ * `sectors` is the world's full sector list rather than a pre-filtered one,
+ * because the filter *is* the rule this function states, and a caller that
+ * narrowed the list first would be the place a later gate could quietly reappear.
  */
 export function engagementsOf(
+  sectors: readonly SectorId[],
   fronts: readonly BorderFront[],
   commitments: Readonly<Record<ActorId, Readonly<Record<string, number>>>>,
   standingAt: (sector: SectorId) => SectorStanding,
 ): readonly Engagement[] {
-  const sites = new Map<SectorId, { holder: ActorId; invader: ActorId; fronts: BorderFront[] }>();
+  const doorsBySector = new Map<SectorId, ChokeClass[]>();
+  const frontsBySector = new Map<SectorId, string[]>();
   for (const front of fronts) {
-    front.sectors.forEach((sector, side) => {
-      const site = sites.get(sector);
-      if (site !== undefined) {
-        site.fronts.push(front);
-        return;
-      }
-      // The duel seats exactly two actors (ADR 0042), so the realm on the other
-      // end of any border touching this sector is the same one either way.
-      sites.set(sector, {
-        holder: front.owners[side]!,
-        invader: front.owners[side === 0 ? 1 : 0]!,
-        fronts: [front],
-      });
-    });
+    for (const sector of front.sectors) {
+      const doors = doorsBySector.get(sector);
+      if (doors === undefined) doorsBySector.set(sector, [front.chokeClass]);
+      else doors.push(front.chokeClass);
+      const keys = frontsBySector.get(sector);
+      if (keys === undefined) frontsBySector.set(sector, [front.key]);
+      else keys.push(front.key);
+    }
   }
 
   const engagements: Engagement[] = [];
-  for (const sector of [...sites.keys()].sort()) {
-    const site = sites.get(sector)!;
+  for (const sector of [...sectors].sort()) {
     const standing = standingAt(sector);
+    const holder = standing.holder;
+    // Nobody holds it, so nobody is being invaded. The drawn partition covers all
+    // 56 sectors so this never fires today, but a later cession could produce it,
+    // and "an invading force standing on ground it does not hold" has no defender
+    // to name here.
+    if (holder === null) continue;
+
+    // The duel seats exactly two actors (ADR 0042), so at most one side can be the
+    // invader. Sorted so a hypothetical third seat would still resolve identically
+    // in both hosts rather than by object insertion order.
+    const invader = Object.keys(standing.sides).sort().find(
+      (actor) => actor !== holder && (standing.sides[actor]?.men ?? 0) > 0,
+    );
     // Nobody crossed: there is no engagement to report, and reporting an empty one
     // would make "a sector was fought over" and "a sector exists" indistinguishable.
-    if ((standing.sides[site.invader]?.men ?? 0) <= 0) continue;
+    if (invader === undefined) continue;
 
-    const chokeClass = softestClass(site.fronts.map((front) => front.chokeClass));
-    const ground = COMBAT_GROUND[chokeClass];
+    const doors = doorsBySector.get(sector) ?? [];
+    // An interior sector has no door, so the door contributes nothing — absent
+    // rather than approximated. `none` is the crossing ladder's identity.
+    const chokeClass = doors.length === 0 ? null : softestClass(doors);
     engagements.push({
       sector,
-      fronts: site.fronts.map((front) => front.key).sort(),
+      fronts: [...(frontsBySector.get(sector) ?? [])].sort(),
       chokeClass,
-      attacker: partyOf(site.invader, standing, site.fronts, commitments),
-      defender: partyOf(site.holder, standing, site.fronts, commitments),
-      terrain: ground.terrain,
-      crossing: ground.crossing,
+      attacker: partyOf(invader, sector, standing, commitments),
+      defender: partyOf(holder, sector, standing, commitments),
+      terrain: combatTerrainOf(standing.terrainLayer),
+      crossing: chokeClass === null ? 'none' : DOOR_CROSSING[chokeClass],
       fortification: fortificationOf(standing.fortTier),
       defenseMethod: STANDING_POSTURE,
     });

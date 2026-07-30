@@ -13,6 +13,7 @@ const {
   contentHashOf,
   CRADLE_R1,
   draftOrder,
+  isOrderKey,
   MARCH_FATIGUE_PER_HEX,
   MARCH_SPEED,
   RECOVERY_BASE_RATE,
@@ -111,22 +112,34 @@ test('stacked conversion floors the one-point unit before multiplying', () => {
   );
 });
 
-test('a recruitment allocation key cannot be rewritten through the front lane', () => {
+test('a recruitment allocation key cannot be rewritten through the combat lane', () => {
   const runtime = openAtDecision();
   recruit(runtime, 'realm-a', 'free', 'r2_s0', 20);
-  const frontLaneIntent = {
+  // One stack, two families of key in it (D6.3). The combat writer must not be able
+  // to clear a recruitment order out from under its companion request — which is
+  // also why the two namespaces must stay disjoint, asserted below.
+  const combatLaneIntent = {
     kind: 'allocate-commitment',
     actor: 'realm-a',
-    front: recruitmentOrderKeyOf('free'),
+    sector: recruitmentOrderKeyOf('free'),
     chips: 0,
   };
 
-  assert.equal(preview(runtime.view('realm-a'), frontLaneIntent).admissible, false);
-  const rejected = runtime.submit(frontLaneIntent);
+  assert.equal(preview(runtime.view('realm-a'), combatLaneIntent).admissible, false);
+  const rejected = runtime.submit(combatLaneIntent);
 
   assert.equal(rejected[0].type, 'intent-rejected');
   assert.equal(runtime.view('realm-a').commitment.remaining, 0);
   assert.equal(runtime.view('realm-a').recruitmentOrders[0].commit, 20);
+});
+
+test('no authored sector id can collide with an order key (ADR 0046 item 4)', () => {
+  // `allocationRefusal` resolves a sector key first, so a collision would silently
+  // turn an order into a battle commitment rather than failing. `Runtime.open`
+  // refuses such a world; this is that guard's subject, on the real one.
+  const colliding = Object.keys(CRADLE_R1.sectors).filter(isOrderKey);
+  assert.deepEqual(colliding, []);
+  assert.equal(isOrderKey(recruitmentOrderKeyOf('free')), true, 'the guard recognises nothing');
 });
 
 test('permuting the same recruitment batch leaves the owning projection identical', () => {

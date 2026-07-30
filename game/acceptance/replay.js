@@ -15,14 +15,22 @@
 import { CRADLE_R1, musterHexOf } from '../dist/runtime/index.js';
 
 /**
- * A log for a freshly opened match, in two phases.
+ * A log for a freshly opened match, in four phases.
  *
  * First four turns of the **garrison-only lane**: alternating allocations with the
  * two realms locking in *opposite order each turn*, so a first-mover dependence
- * anywhere in the loop would change the outcome. Then a **contact phase** that
- * marches into the nearest enemy front sector and closes turns until the battle
- * ticket 06c wired actually resolves — because the loop's most intricate arithmetic
- * would otherwise never cross the host boundary through the Runtime.
+ * anywhere in the loop would change the outcome. Then a **rout phase**, a **contact
+ * phase** and an **interior phase**, each added because the arithmetic it exercises
+ * would otherwise never cross the host boundary through the Runtime:
+ *
+ * - **rout** — a detachment too small to win is sent in alone, breaks, and falls
+ *   back one sector along the arc it arrived by (WM-⑤). Its displaced position and
+ *   the fatigue R12 charges it are both in the viewer's own projection, so the two
+ *   hosts are held to the same answer.
+ * - **contact** — the main army takes the same border sector, the battle ticket 06c
+ *   wired.
+ * - **interior** — the army marches on into a sector no authored border touches and
+ *   is engaged there, which is what ADR 0046 made possible and what ticket 07 needs.
  *
  * Pumps the runtime it is handed while deriving the fixture from public projection
  * data. The returned log can then be replayed in a host that never saw the planning
@@ -79,17 +87,22 @@ export function replayLog(runtime) {
   const probe = runtime.view('observer');
   const fronts = probe.fronts.map((f) => f.key);
 
+  // Chips key on the sector now (ADR 0046 item 4), so the lane pours onto the
+  // sectors those borders are made of rather than onto the border names.
+  const laneSectors = [...new Set(probe.fronts.flatMap((front) => front.sectors))].sort();
+  void fronts;
+
   for (let turn = 0; turn < 4; turn++) {
-    const near = fronts[turn % fronts.length];
-    const far = fronts[(turn + 1) % fronts.length];
-    // The fixed fixture's field endpoint is r10_s2, outside every contested
-    // front below. These commitments are intentionally and explicitly the
-    // existing garrison-only lane; naming the detachment would be an illegal
-    // claim that it reaches one of these fronts this turn.
+    const near = laneSectors[turn % laneSectors.length];
+    const far = laneSectors[(turn + 1) % laneSectors.length];
+    // The fixed fixture's field endpoint is r10_s2, outside every sector below.
+    // These commitments are intentionally and explicitly the existing
+    // garrison-only lane; naming the detachment would be an illegal claim that it
+    // ends this turn on one of these sectors.
     append(
-      { kind: 'allocate-commitment', actor: first, front: near, chips: 3 + turn, detachmentIds: [] },
-      { kind: 'allocate-commitment', actor: second, front: far, chips: 2, detachmentIds: [] },
-      { kind: 'allocate-commitment', actor: second, front: near, chips: 5, detachmentIds: [] },
+      { kind: 'allocate-commitment', actor: first, sector: near, chips: 3 + turn, detachmentIds: [] },
+      { kind: 'allocate-commitment', actor: second, sector: far, chips: 2, detachmentIds: [] },
+      { kind: 'allocate-commitment', actor: second, sector: near, chips: 5, detachmentIds: [] },
       // Alternating lock order, turn by turn.
       ...(turn % 2 === 0
         ? [{ kind: 'lock-commitment', actor: first }, { kind: 'lock-commitment', actor: second }]
@@ -97,11 +110,10 @@ export function replayLog(runtime) {
     );
   }
 
-  // ── contact ────────────────────────────────────────────────────────────────
   // Substance has to be *at* a sector its realm does not hold before anything can
   // be fought over, so the fixture crosses a border. The target is read off the
   // public front list rather than hard-coded, so this holds for any seed's
-  // partition; the front is pressed as well, so the M2 lever is on the wire too.
+  // partition; the sector is pressed as well, so the M2 lever is on the wire too.
   const beforeContact = runtime.view(first);
   const ownGround = new Set(beforeContact.realms.find((realm) => realm.actor === first).sectors);
   const invaded = beforeContact.fronts
@@ -111,21 +123,76 @@ export function replayLog(runtime) {
     }))
     .find((candidate) => candidate.sector !== undefined);
   if (invaded === undefined) throw new Error('replay fixture found no enemy front sector to enter');
+  const target = musterHexOf(CRADLE_R1, invaded.sector);
+
+  /** Close turns, pressing one sector, until the payoff produces a battle. */
+  const fightAt = (sector, chips, limit = 12) => {
+    for (let turn = 0; turn < limit; turn++) {
+      append({ kind: 'allocate-commitment', actor: first, sector, chips, detachmentIds: [] });
+      append({ kind: 'lock-commitment', actor: second });
+      const closing = append({ kind: 'lock-commitment', actor: first });
+      const battle = closing.find((event) =>
+        event.type === 'battle-resolved' && event.detail.sector === sector);
+      if (battle !== undefined) return battle;
+    }
+    return undefined;
+  };
+
+  // ── rout ───────────────────────────────────────────────────────────────────
+  // A force this size cannot break a full shield, which is the point: it is sent to
+  // lose, so that WM-⑤'s fall-back crosses `submit()` and lands in a projection
+  // both hosts must agree on. Pressing nothing keeps the lever out of the way.
+  const FORLORN_MEN = 500;
+  append({
+    kind: 'split-detachment', actor: first, detachmentId: firstDetachment, men: FORLORN_MEN,
+  });
+  const forlorn = runtime.view(first).detachments
+    .find((detachment) => detachment.id !== firstDetachment && detachment.men === FORLORN_MEN);
+  if (forlorn === undefined) throw new Error('replay fixture could not raise its forlorn hope');
+  append({
+    kind: 'move-detachment', actor: first, detachmentId: forlorn.id,
+    destinationHex: target, forcedMarch: false,
+  });
+  const broken = fightAt(invaded.sector, 0);
+  if (broken === undefined || broken.detail.routed.attacker !== true) {
+    throw new Error('replay fixture never routed its forlorn hope');
+  }
+  // The fixture verifies its own subject: a fixture that quietly stopped exercising
+  // displacement would still replay identically in both hosts, and the parity check
+  // would go on passing over nothing.
+  const displaced = runtime.view(first).detachments.find((detachment) => detachment.id === forlorn.id);
+  if (displaced === undefined) throw new Error('the forlorn hope left service instead of falling back');
+  if (displaced.position.q === target.q && displaced.position.r === target.r) {
+    throw new Error('the forlorn hope routed and stayed on the hex it lost');
+  }
+
+  // ── contact ────────────────────────────────────────────────────────────────
+  append({
+    kind: 'move-detachment', actor: first, detachmentId: firstDetachment,
+    destinationHex: target, forcedMarch: true,
+  });
+  if (fightAt(invaded.sector, 6) === undefined) {
+    throw new Error('replay fixture never reached contact');
+  }
+
+  // ── interior ───────────────────────────────────────────────────────────────
+  // The sector ADR 0046 made fightable: enemy ground that no authored border
+  // touches. Before 06e an army could stand here all match and meet nothing.
+  const frontSectors = new Set(runtime.view(first).fronts.flatMap((front) => front.sectors));
+  const held = new Set(runtime.view(first).realms.find((realm) => realm.actor === second).sectors);
+  const interior = (CRADLE_R1.sectorAdjacency[invaded.sector] ?? [])
+    .filter((sector) => held.has(sector) && !frontSectors.has(sector))
+    .sort()[0];
+  if (interior === undefined) throw new Error('replay fixture found no interior sector to enter');
 
   append({
     kind: 'move-detachment', actor: first, detachmentId: firstDetachment,
-    destinationHex: musterHexOf(CRADLE_R1, invaded.sector), forcedMarch: true,
+    destinationHex: musterHexOf(CRADLE_R1, interior), forcedMarch: false,
   });
-
-  for (let turn = 0; turn < 10; turn++) {
-    append({
-      kind: 'allocate-commitment', actor: first, front: invaded.front, chips: 6, detachmentIds: [],
-    });
-    append({ kind: 'lock-commitment', actor: second });
-    const closing = append({ kind: 'lock-commitment', actor: first });
-    if (closing.some((event) => event.type === 'battle-resolved')) return log;
+  if (fightAt(interior, 4) === undefined) {
+    throw new Error('replay fixture never fought over interior ground');
   }
-  throw new Error('replay fixture never reached contact');
+  return log;
 }
 
 const GLOBALLY_SAFE_EVENT_TYPES = new Set([

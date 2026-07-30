@@ -175,6 +175,18 @@ function splitOrigins(
   return [retained, child];
 }
 
+/**
+ * Take an exact whole number of men out of a composition, proportionally.
+ *
+ * The **leaving-service** half of the two laws WM-⑤ separates: it shrinks the
+ * formation and says nothing at all about the register, where a casualty shrinks
+ * both. Exact by `apportionExact`, so the parts still sum and no origin loses a
+ * body it did not have.
+ */
+export function subtractOrigins(origins: OriginComposition, men: number): OriginComposition {
+  return splitOrigins(origins, men)[0];
+}
+
 export function splitDetachment(
   source: Detachment, men: number, childId: string,
 ): readonly [Detachment, Detachment] {

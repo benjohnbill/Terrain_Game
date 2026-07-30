@@ -81,9 +81,9 @@ export interface Front {
  */
 export interface CommitmentView {
   readonly budget: number;
-  /** Front key -> chips, for this viewer's realm only. */
+  /** Sector id -> chips (plus order keys), for this viewer's realm only. */
   readonly allocations: Readonly<Record<string, number>>;
-  /** Front key -> own field detachments explicitly committed there. */
+  /** Sector id -> own field detachments explicitly committed there. */
   readonly assignments: Readonly<Record<string, readonly string[]>>;
   readonly spent: number;
   readonly remaining: number;
@@ -118,19 +118,23 @@ export interface ChooseCapitalIntent {
 }
 
 /**
- * Pour part of this turn's stack onto one front.
+ * Pour part of this turn's stack onto one **sector** (ADR 0046 item 4).
  *
- * Replaces that front's share rather than adding to it, so reviewing and re-cutting
- * a plan before locking costs nothing — the decision tier is where every judgment
- * the turn asks for lives, and a rule that made revision expensive would move that
- * judgment into the click.
+ * Replaces that sector's share rather than adding to it, so reviewing and
+ * re-cutting a plan before locking costs nothing — the decision tier is where every
+ * judgment the turn asks for lives, and a rule that made revision expensive would
+ * move that judgment into the click.
+ *
+ * This named a **front** until ticket 06e. The rename is a contract change and not
+ * a spelling: commit is the share allotted to one confrontation, confrontations are
+ * atomic per sector, and an interior sector had no key at all under the old surface.
  */
 export interface AllocateCommitmentIntent {
   readonly kind: 'allocate-commitment';
   readonly actor: ActorId;
-  /** A front key from `MatchView.fronts`. */
-  readonly front: string;
-  /** Whole, non-negative chips. Zero clears the front. */
+  /** A sector id from `MatchView.board.sectors`. */
+  readonly sector: SectorId;
+  /** Whole, non-negative chips. Zero clears the sector. */
   readonly chips: number;
   /** Own detachments whose planned turn endpoint supplies field substance. */
   readonly detachmentIds?: readonly string[];
