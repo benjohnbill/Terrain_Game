@@ -10,8 +10,12 @@ sited on an interior sector before an interior sector can be captured; it **land
 the same day** (`b591f4e`), taking battle-capable sectors from 27 of 56 to all 56.
 This is the next executable ticket.
 
-Status: **resolved** (2026-07-31, branch `l3/ticket-06d-capture-a-sector` — claimed
-off `c37dfdc`, rebased onto `e77f7ff`. Was `ready-for-agent` the same day: the
+Status: **resolved, with two items reported open** (2026-07-31, branch
+`l3/ticket-06d-capture-a-sector` — claimed off `c37dfdc`, rebased onto `e77f7ff`.
+The open items are the economy re-measurement, whose trigger is ticket 13, and
+garrison → field posture transfer, which is HELD pending a user ruling on the wear
+ledger across a posture change. Both are marked in the list below and registered on
+`docs/SYNC-DEBT.md`. Was `ready-for-agent` the same day: the
 register moves to **sector** grain, MT-② amended, and 06e cleared.)
 
 **A second grain ruling was owed and is taken (user, 2026-07-31).** The register's
@@ -72,7 +76,24 @@ by 0044 and are the mechanism. Match-arc OG-③ governs the limbo interval;
   - **A garrison fills by transfer** from the field army. Transfer costs what R12 prices movement at — **turns and fatigue, never 행동력** — because changing posture is moving men. The sector's local cap (`GARRISON_PER_BORDER_SECTOR`, ADR 0014 keeps garrison ceilings local) is the ceiling, so no realm can hide its army behind M5's ×4.8: one sector holds 900 and the whole shield line is 30% of the national ceiling.
   - **Transfer is never free or instant.** An action with no cost is not a decision, and the mechanism exists so that stripping a border to mass a decisive field army is a *gamble* — it costs turns, and the enemy has that window to read.
 - [x] **Direct recruitment into a garrison is out of this slice, as a consequence of R19 rather than as a decision.** Recruitment has no location in the current model, so "raise a levy into *this* wall" has no defined meaning yet; it becomes natural when the deferred siting pass gives recruitment a place. Do not invent it here.
-- [x] **Moving men between postures is in; nothing else about posture is.** Transfer moves *existing* men between the field army and a sector's garrison. It does not add a general force-transfer verb, a garrison-to-garrison move, or any posture beyond these two.
+- [~] **Moving men between postures is in; nothing else about posture is.** Transfer moves *existing* men between the field army and a sector's garrison. It does not add a general force-transfer verb, a garrison-to-garrison move, or any posture beyond these two.
+      **HALF LANDED. Field → garrison is in; garrison → field is HELD, and needs a
+      user ruling.** The direction out cannot be implemented without a rule for **what
+      a man's wear is after standing in a shield**, and no seal has one. A garrison
+      keeps no wear ledger (06c), so men entering have nowhere to carry wear and men
+      leaving would be minted at zero — and since both intents sit in one decision
+      window and headroom reopens after each move out, an exhausted army on any of its
+      own muster hexes could round-trip its whole wear away, free and repeatedly. That
+      defeats 06b's convex wear curve, and R18 (ii) rejected a free transfer in as many
+      words. Each candidate fix needs a statement that does not exist: a garrison wear
+      ledger (the state 06c refused), a transfer wear price (a new dial R18's "zero new
+      pricing devices" forbids), or a same-window restriction (a new rule). So the
+      intent is **unwired rather than half-done** — it takes the ordinary
+      unwired-intent rejection, a test pins that so the hole cannot close by accident,
+      and `docs/SYNC-DEBT.md` carries the seam. Found by this ticket's own code review,
+      not at design time. **Scaling the ticket down is not the agent's call**, so this
+      is reported rather than absorbed: it is the one place 06d does less than the
+      ticket asked.
 - [x] **`DOMAIN_MAP`'s `Standing world rule` entry is stale and must be corrected in this ticket's doc-sync** (R18 i): it still lists local-garrison regeneration as a Phase-1 instance consuming no action capacity, which `MAGNITUDE.md` M12's 2026-07-08 amendment (MT-⑤ / ADR 0027) retired. Projection against an amended Production seal is a **sync debt** — the seal wins. ADR 0014's header stamp is owed in the same batch; M12 itself records it as unpaid.
 - [ ] The economy's re-measurement is re-run once capture exists: `docs/SYNC-DEBT.md` parks "the economy has no sink once the field fills" as a play question, and conquest is the first mechanism that changes both sides of it.
       **NOT DONE, and deliberately so — this is the one acceptance item this session
@@ -253,6 +274,30 @@ builder's to re-run at claim time. The header of this ticket has been wrong befo
    faction, uncontested, and not the target of attack resolution. The capture turn
    fails all three, so limbo is exactly that turn and integration is the next
    stable one. Recorded because it reads like a dial and is not one.
+
+#### The code review changed the shipped result, twice
+
+Both axes ran with `main`'s live rulings named up front, and both found real
+defects rather than style.
+
+- **Origin composition drifted on every posture transfer.** The transfer took its
+  two halves from two separate `subtractOrigins` calls, which conserve the total
+  and not the composition — `{A:3,B:3}` split at 1 sums to `{A:2,B:4}`. Since
+  origin is joined to the register by `register − serving`, that drift ends as a
+  negative civilian count mid-match. The round-trip test had passed because it only
+  asserted totals. Fixed by exporting the one-apportionment `partitionOrigins` and
+  having `withdrawFromDetachment` return both halves; a new test asserts every
+  sector's serving count is identical origin by origin across a transfer.
+- **The garrison → field direction was silently free.** See the held item above.
+  This is the review's most valuable catch: it was a wear-laundering machine that
+  would have reached playtest looking like a balance problem in 06b's curve.
+
+Three over-claims were also corrected rather than defended: limbo's length is a
+reading assembled from three statements rather than a deduction from ADR 0022
+alone; ADR 0022's clauses 2 and 3 collapse into one `battleSites` test and the
+collapse is now argued; and the recapture exemption is deleted, since ADR 0029
+makes the lag uniform and OG-③'s "pre-war usable" scopes to channels ADR 0042
+retired.
 
 #### Follow-ups
 
