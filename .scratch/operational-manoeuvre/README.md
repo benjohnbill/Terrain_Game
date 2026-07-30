@@ -157,6 +157,10 @@ imagination.
 
 This pass's exit criteria must therefore include: **10 and 11 are buildable.**
 
+> **This sentence is one half of an open conflict** — composed with § Ordering step 3
+> it makes the pass and ticket 13 wait for each other. See the ⛔ block in § Ordering;
+> under resolution shape (b) this exit criterion is the part that is wrong.
+
 ### 3. Evidence runs one way — build → pass
 
 The **scoping** of this pass (this file, `SEAMS.md`, debt consolidation) is done now.
@@ -179,6 +183,49 @@ before intercepting it is a decision).
 2. **While the build runs:** seam rows accumulate. No design.
 3. **After ticket 13's match report:** write the gates, then grill them.
 4. **Before tickets 10/11 are claimed:** the pass must have closed.
+
+> ### ⛔ Steps 3 and 4 cannot both hold — OPEN, awaiting a user ruling
+>
+> **Found 2026-07-31.** The build's dependency chain
+> (`.scratch/l3-playable-build/README.md` § Build dependency chain) is strictly
+> linear through **09 → 10 → 11 → 12 → 13**. Compose that with the two steps above:
+>
+> ```
+> manoeuvre gates ← 13 ← 12 ← 11 ← 10 ← this pass closed ← manoeuvre gates
+> ```
+>
+> Step 3 makes this pass wait for ticket 13; step 4 and § junction layer 2 make
+> ticket 13 wait for this pass. **Waiting does not open it.** This is a
+> `Seal conflict` under the build runbook's own four-kind taxonomy — "two or more
+> sealed statements that cannot both be implemented" — whose disposition is
+> **User. Stop at the seam.**
+>
+> Why nobody saw it: the linear chain was written at the ticket re-cut
+> (2026-07-25) and steps 3–4 at this pass's opening (2026-07-31), in different
+> files, and neither session held both.
+>
+> **Nothing here is decided.** Three shapes a resolution could take, recorded as
+> the options a ruling would choose between and *not* ranked by this file:
+>
+> - **(a) Split the pass.** Answer before ticket 10 only what 10/11 need — what
+>   the four shape-complete plans do *mechanically* — and keep the removal
+>   economy's *prices* for after 13. Preserves both intents; costs the clean
+>   "one pass, one close".
+> - **(b) Run 13 without the four plans.** Ticket 10 already licenses the pattern
+>   ("Plans depending on settlement negotiation, reserves, or multi-stage
+>   operations are absent, and their absence is recorded"), and ticket 11 would
+>   carry Part 2 #2 as absent rather than resolved. The pass then opens on 13's
+>   report and *extends* 10/11 afterwards — which makes this pass's exit criterion
+>   ("10 and 11 are buildable") wrong as written.
+> - **(c) Move the evidence source earlier.** Fire the gates on ticket **07**'s
+>   match ("a capital falls and the match ends — the loop closes") rather than
+>   13's. Movement, geography, combat and an ending all exist at 07. The cost is
+>   that 07 has no bot (ticket 12) and no fog (08), so "here is where I wanted to
+>   manoeuvre and could not" would come from a match without a reacting opponent —
+>   which is a weaker source for exactly the sentence step 3 exists to protect.
+>
+> Until this is ruled, step 2 ("no design") still governs and the pass stays
+> scoped-not-designed. Registered in `docs/SYNC-DEBT.md`.
 
 ## Not this pass
 

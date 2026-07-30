@@ -1666,6 +1666,24 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   same-day ordering that made it invisible is on the record. A code-comment-versus-ADR
   cross-check is a candidate `audit-lint` check if it recurs.
 
+- [ ] **The operational-manoeuvre pass and ticket 13 each wait for the other**
+  (registered 2026-07-31). The pass's `README.md` § Ordering step 3 fires its design
+  gates only **after ticket 13's match report**; step 3's own § junction layer 2 —
+  and the `Blocked by` lines this session added to tickets 10 and 11 — put **10 and
+  11 downstream of the pass**. The build's dependency chain is strictly linear through
+  **09 → 10 → 11 → 12 → 13**, so the two compose into a closed loop: the pass waits
+  for 13, 13 waits for 11, 11 waits for the pass. Waiting does not open it.
+  Classified a **`Seal conflict`** by the build runbook's own four-kind taxonomy
+  ("two or more sealed statements that cannot both be implemented → **User.** Stop at
+  the seam"). It went unseen because the linear chain was written at the ticket re-cut
+  (2026-07-25) and the ordering steps at the pass's opening (2026-07-31), in different
+  files, with no session holding both. **Owed: a user ruling**, not a mechanism. The
+  tracker's § Ordering carries the three candidate shapes (split the pass · run 13
+  with the four plans absent · fire the gates on ticket 07's match instead), recorded
+  unranked. Until it is ruled, the pass's step 2 ("no design") still governs. Note the
+  practical urgency is low — the frontier is ticket 06e and the loop only binds at
+  ticket 10 — but the cost of finding it late is a pass that cannot start.
+
 ## Paid
 
 - [x] 2026-07-28 — **The single-definition rule was never swept for in
