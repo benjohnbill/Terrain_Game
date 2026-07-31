@@ -2,7 +2,12 @@
 
 Date: 2026-07-31
 
-Status: Accepted (sealed 2026-07-31, user ruling on the register/origin grain seam)
+Status: Accepted · **Amended by capital CP-⑥ (2026-08-01)** — item 5's "opening
+garrisons originate in their own sector" takes one exception: the **capital guard**,
+whose origins are apportioned across the realm the way item 5 already apportions the
+opening field army. At sector grain no legal capital can back its own guard (0 of 840
+candidates), so the exception is what keeps the rest of item 5 true rather than
+unseatable. (Sealed 2026-07-31, user ruling on the register/origin grain seam.)
 
 - Relationship:
   - **Amends ADR 0045** items 2, 3, 4 and 5: **province-origin accounting becomes

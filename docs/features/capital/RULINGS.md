@@ -9,6 +9,13 @@ Feature-local decision record (Record layer, birthplace tier). Append-only.
 > register-backed, one stock with the last stand — is untouched, and so is item 2's
 > retirement of the flat abstract 1500.
 >
+> **Amended by CP-⑥ (2026-08-01):** item 2's **register backing** is realm-wide. The
+> guard's origins are apportioned across the realm's held sectors, not drawn from the
+> capital sector alone. Local backing became arithmetically unavailable at *every*
+> legal capital once the register moved to sector grain — 0 of 840 candidates reach
+> even CP-② item 7's floor; measurement in CP-⑥. Magnitude, siting, and every other
+> property of the guard are untouched.
+>
 > **Amended by ruling R3 (2026-07-25):** item 1's **designation** rule is retired —
 > capital eligibility is *ownership*, so a player may place their capital on any
 > sector their realm owns, and the authored `capitals`/`cities` markers are advisory
@@ -254,3 +261,68 @@ recorded this as a live conflict between 350×pop and `MAGNITUDE.md`'s
 retired the flat 1500 by name on 2026-07-10, and M13a's line is a parenthetical
 harness inventory carrying no status word — so there were never two seals, only an
 unstamped one. The real question was the coefficient's *size*, which no row asked.
+
+## CP-⑥ The guard's register backing is realm-wide — SEALED 2026-08-01 (user) · L1
+
+**Amends CP-① item 2's "register-backed (serving bodies)" and ADR 0047 item 5.**
+The capital guard's **origins are apportioned across the realm's held sectors** in
+proportion to their remaining register — the rule ADR 0047 item 5 already states for
+the opening **field army** — rather than drawn from the capital sector alone, the rule
+the same item states for opening **garrisons**.
+
+Nothing else changes. Magnitude stays **가안 2,500 × the capital sector's
+`populationValue`** (CP-⑤) and stays land-derived from *that* sector; the guard stays
+place-bound, garrison-class, outside `fieldCap`, register-backed, one stock with the
+last stand, with no special supply rule (CP-② item 7). What moved is **where the
+bodies come from**, not how many there are or where they stand.
+
+**Why local backing was not available.** Measured against the emitted modules
+(`game/dist`) over **all 15 legal partitions × 2 seats × every held sector = 840
+capital candidates** on `terrain-cradle@r1`, applying the sealed opening derivation
+(border shields at `g₀ = 1.0`, then the opening field army apportioned across
+remaining register):
+
+| quantity | value |
+|---|---|
+| realm register (pop 30.0 × `REGISTER_PER_POP` 1,800) | 54,000 |
+| highest coefficient a capital sector can back **from its own register** | **1,453 – 1,490** |
+| coefficient CP-② item 7 requires at every legal capital (guard > one 900 shield, weakest legal pop 0.5) | **> 1,800** |
+| candidates reaching that floor | **0 of 840** |
+
+The two constraints do not merely miss by the 1.389 register/guard ratio row 16
+recorded — they **do not overlap at all**, because the opening field army draws
+~18% of every sector's register before a guard could be seated. The ratio understated
+the gap.
+
+One case settles it independently of any coefficient: **`r5_s8`** (pop 0.5, a border
+sector) has a register of 900 consumed entirely by its own 900-man shield, leaving
+**zero** available civilians. A capital there can back **no** guard locally at any
+coefficient. Re-measured under the alternative reading in which the guard *subsumes*
+the capital's border shield (one stock), the ceiling is 1,453–1,490 again and the
+count reaching 1,800 is still 0 — so the conclusion does not depend on how that
+sub-question resolves.
+
+**Realm backing has room to spare.** Free register after shields and the opening
+field is **37,800 – 42,300**; the largest guard this board can carry is **6,000**,
+leaving **31,800 – 36,300**. The rule needs no exemption, no clamp, and no value.
+
+**Why this is an amendment to ADR 0047 rather than filling a gap in it.** Item 5
+already carries two different rules — garrisons local, opening field apportioned —
+and the guard is a class it does not name. But CP-① item 2 makes the guard
+*garrison-class*, so item 5's garrison clause covers it **as written**. Choosing the
+field-army rule is therefore an exception carved into an accepted ADR item, and
+0047's header carries the stamp.
+
+**Rejected alternatives (recorded):**
+- *Local backing with a lowered coefficient* — retires CP-② item 7 in substance
+  rather than in name: at the ~1,450 ceiling a pop-0.5 capital's guard is 725, below
+  one ordinary 900-man border shield, which is precisely the falsehood CP-⑤ was
+  written to remove. And it still fails outright at `r5_s8`, where availability is 0.
+- *Retiring "register-backed"* — would make the guard the only force outside the
+  blood economy, so SPEC's "blood is permanent currency" would not price its losses.
+  CP-⑤ had explicitly listed this property among the ones it leaves untouched.
+
+Status **AGREED** (**SEALED** — dated, with the user's verdict as source), no new
+value, validation **L1** (exhaustive enumeration over the legal partition space; not
+a battery, not a playtest). **Discharges** `DECISIONS-OWED.md` Part 2 row **16** and
+clears ticket 07's last `needs-info` item.

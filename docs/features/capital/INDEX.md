@@ -2,9 +2,10 @@
 
 - **Status:** CONCEPT SEALED (2026-07-10, CP-①) + **1v1 WIN-CONDITION SEALED
   (2026-07-23/24, CP-②)** — this feature is now the **birthplace of the game's
-  sole win condition** (capital fall, ADR 0042). Still NO L2 wiring; wiring lands
-  as its own stage-② pass with its own measurement, and guard magnitude / terrain
-  dynamics resolve at the parallel 1v1 map pass (ledger "capital-terrain gate").
+  sole win condition** (capital fall, ADR 0042). The guard is **fully specified and
+  unbuilt**: magnitude (CP-⑤, 2026-07-31) and register backing (CP-⑥, 2026-08-01) are
+  both ruled, and **L3 build ticket 07** is what places it. Terrain dynamics still
+  resolve at the parallel 1v1 map pass (ledger "capital-terrain gate").
 - **What it is:** a political designation on one of a realm's main city
   sectors. The capital is where the land layer (sectors) meets the polity
   layer (regime): land transfer moves economic/military substance sector by
@@ -14,9 +15,12 @@
 
 ## Sealed concept (details: RULINGS CP-①)
 
-- Designation: player picks one of the seat's main city sectors at match start.
-- Capital guard (근위대): land-derived (가안 350 × capital sector population),
-  garrison-class, place-bound; doubles as the final-battle stock.
+- Designation: the player picks **any sector the realm owns** at match start —
+  eligibility is ownership (R3, 2026-07-25; CP-① item 1's "main city sectors" wording
+  is retired and its banner says so).
+- Capital guard (근위대): land-derived (가안 2,500 × capital sector population, CP-⑤),
+  garrison-class, place-bound; register-backed **realm-wide** (CP-⑥); doubles as the
+  final-battle stock.
 - Capital fall = regime event (collapse cascade / forced-vassalage trigger),
   distinct in KIND from losing an ordinary city (economic/military hit).
 - Forward-capital reward emerges from force accounting (the guard holds the

@@ -1709,8 +1709,9 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   (registered 2026-07-31 alongside WM-⑤). The user's judgement is that *some* routed
   survivors should stay soldiers, at a lower fraction — but a fraction needs a
   **destination**, and every candidate is an undesigned system: the capital guard
-  (Part 2 #10, still ticket 07's `needs-info`) or a garrison that can retreat (the
-  mobile-garrison system 06b/06c refused). **Morale is not available as the basis** —
+  (its magnitude and register backing are now ruled — Part 2 #10 and #16, CP-⑤ and
+  CP-⑥ — but the guard itself is unbuilt until ticket 07 lands) or a garrison that can
+  retreat (the mobile-garrison system 06b/06c refused). **Morale is not available as the basis** —
   R13 (2026-07-26, the user's own ruling) parks it with "do not implement a morale
   term in the 06 family". **Owed:** the fraction, once a destination lands. The
   capital guard landing is the trigger that wakes this row.

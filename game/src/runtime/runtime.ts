@@ -321,20 +321,21 @@ export class Runtime {
    * gives the guard its **own local ceiling** (ADR 0014 keeps garrison ceilings local),
    * and at 2,500/pop the guard reaches 6,000 on this board's largest sector.
    *
-   * **But a settled magnitude is not a buildable guard, and 06d is why.** CP-① item 2
-   * also calls the guard *register-backed*, and since 2026-07-31 the register is
-   * **1,800/pop stored per sector** (MT-② amended, ADR 0047). Those two coefficients
-   * never meet: 2500/1800 is a fixed **1.389**, so **no** sector's own register can
-   * back its own guard — pop 2.4 wants 6,000 against a register of 4,320, and the
-   * ratio makes that universal rather than a board artifact. Seating the guard the way
-   * the loop below seats a border shield ("drawn from the ground it stands on") would
-   * make `availableCiviliansByOrigin` throw at every legal capital.
+   * **Where its bodies come from is settled too, and it is not the local rule below.**
+   * CP-① item 2 calls the guard *register-backed*, and since 2026-07-31 the register is
+   * **1,800/pop stored per sector** (MT-② amended, ADR 0047). Seating the guard the way
+   * the loop below seats a border shield ("drawn from the ground it stands on") makes
+   * `availableCiviliansByOrigin` throw at **every** legal capital: measured over 840
+   * capital candidates, the highest coefficient a sector can back from its own register
+   * is 1,453–1,490, against CP-② item 7's floor of >1,800. The two never overlap,
+   * because the opening field army apportioned below already draws ~18% of every
+   * sector's register.
    *
-   * So which register backs it is a **ruling**, not a derivation: locally, like every
-   * other garrison, or apportioned across the realm the way the opening *field* army
-   * is seated below. Neither is written down, because CP-① sealed 350/pop while
-   * origins were per province and a province's register covered it either way. Do not
-   * pick one here — `DECISIONS-OWED.md` Part 2 row **16**.
+   * **CP-⑥** (2026-08-01) therefore apportions the guard's origins **across the realm**,
+   * the rule ADR 0047 item 5 already states for the opening field army rather than the
+   * one it states for garrisons — 0047's header carries the amendment stamp. So the
+   * guard reuses `apportionOrigins` over `remaining` below; it does not get its own
+   * seating rule, and it must not be exempted from the register.
    */
   static #seatSubstance(
     artifact: MatchState['loadedWorld']['artifact'],

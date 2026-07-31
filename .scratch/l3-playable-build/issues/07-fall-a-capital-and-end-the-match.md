@@ -11,14 +11,15 @@ game rather than an open-ended one.
 06a–06d by gate C, 2026-07-26. R1 makes a capital fall an ordinary sector capture,
 so the capture path is the real blocker, not the battle alone.)
 
-Status: **needs-info** (2026-07-31 — this line read `ready-for-agent, unblocked`
-earlier today and that was right on the evidence then: both prior `needs-info` items
-did close, and **06d merged the same day** (`34d728d`) so the capture a capital fall
-*is* now exists. Then R6's claim-time recompute was actually run, and found a **third
-item underneath them**: *which register backs the capital guard.* One user ruling; no
-other acceptance item is affected, and 06d/06e's work is untouched. See § Comments →
-"A third item, found by the claim-time recompute" and `DECISIONS-OWED.md` Part 2
-row **16**. This is still the frontier and the loop still closes here.)
+Status: **ready-for-agent** (2026-08-01 — the third item found by R6's claim-time
+recompute is **ruled**: the guard's register backing is **realm-wide**, capital
+**CP-⑥**, and `DECISIONS-OWED.md` Part 2 row **16** is closed. No acceptance item now
+needs an undetermined value, and 06d merged on 2026-07-31 (`34d728d`), so nothing
+blocks this ticket. Recompute R6's second test at claim time anyway — this header has
+been wrong twice, most recently on 2026-07-31 in both directions on the same day. See
+§ Comments → "A third item, found by the claim-time recompute" for the item's full
+history and "The third item, ruled" for the answer. This is the frontier and the loop
+closes here.)
 
 Specification gates: Wayfinder 10, 12.
 
@@ -41,7 +42,7 @@ supply predicate must still admit encirclement in principle (item 7); what is
 deferred is the fall path built on it, not the vulnerability.
 
 - [ ] Each realm has exactly one capital; its guard magnitude is land-derived from the capital sector per its sealed birthplace, with no number restated here.
-- [ ] The guard is an ordinary garrison class placed on the capital sector; it is **not** auto-declared a supply base and obeys the same supply predicate as any force.
+- [ ] The guard is an ordinary garrison class placed on the capital sector; it is **not** auto-declared a supply base and obeys the same supply predicate as any force. Its **register backing is realm-wide** (CP-⑥) — origins apportioned across the realm's held sectors exactly as `#seatSubstance` already apportions the opening field army, not drawn from the capital sector alone.
 - [ ] **Capital fall is an ordinary sector capture** (user ruling 2026-07-25): the capital sector transfers under the same headline-bound binary control rule as any sector, and the match ends the instant it does. There is **no** capital-specific threshold, no "overwhelming" gate, and no special predicate anywhere in this path. What makes it hard is the guard's magnitude, not an extra condition. CP-② item 5's "overwhelming decisive battle" phrasing describes the path, not an additional bar.
 - [ ] No other win check exists anywhere: no last-faction-standing, no percentage-of-hexes, no hegemony or decision point, no points, territory, or economy tiebreak, no draw path, no turn cap.
 - [ ] The Moscow-trap fall path is absent rather than approximated, and its absence is stated in the ticket's evidence rather than left to be discovered.
@@ -173,3 +174,33 @@ claim-time recompute is for.
 
 **Nothing is broken today.** `Runtime.#seatSubstance` seats no guard and says why,
 now including this; the guard does not exist until this ticket builds it.
+
+### The third item, ruled — 2026-08-01
+
+**Realm backing** (reading (b)), sealed at **capital CP-⑥**. Row 16 is closed and
+ADR 0047's header carries the amendment stamp. No value changed: the coefficient stays
+가안 2,500/pop (CP-⑤), the guard stays land-derived from the capital sector, and only
+the **origin apportionment** is settled. Implementation is one call: apportion the
+guard's origins across the realm's remaining sector registers, the way
+`#seatSubstance` already seats the opening field army.
+
+**Reading (a) was not a live option, and the row's own numbers understated why.**
+Re-measured against the emitted modules over **840** capital candidates (all 15 legal
+partitions × 2 seats × every held sector) with the sealed opening derivation applied:
+
+| quantity | value |
+|---|---|
+| highest coefficient a capital sector can back from its **own** register | **1,453 – 1,490** |
+| coefficient CP-② item 7 requires at every legal capital | **> 1,800** |
+| candidates reaching that floor | **0 of 840** |
+| free realm register after shields + opening field | 37,800 – 42,300 |
+| largest guard this board can carry | 6,000 |
+
+The two constraints do not overlap, because the opening field army draws ~18% of every
+sector's register first — the 1.389 ratio recorded above omitted that. `r5_s8` (pop 0.5,
+a border sector) has its whole 900 register consumed by its own 900-man shield, so it
+can back **no** guard locally at any coefficient. Re-measured under the alternative
+reading in which the guard subsumes the capital's border shield, the ceiling is
+unchanged and the count reaching 1,800 is still 0.
+
+Derivation and rejected alternatives: **CP-⑥**. Do not re-derive them here.
