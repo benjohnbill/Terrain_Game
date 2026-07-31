@@ -197,8 +197,17 @@ test('two sectors of one province carry different registers — the variation pr
 
 test('an opening garrison originates in the sector it mans, not in its province', () => {
   const runtime = openAtDecision();
-  const economy = runtime.view('realm-a').economy;
-  for (const garrison of runtime.view('realm-a').garrisons) {
+  const view = runtime.view('realm-a');
+  const economy = view.economy;
+  // The **capital is excluded, and not as a convenience**: ticket 07 raises a guard
+  // there whose origins are apportioned across the whole realm (capital CP-⑥), so at
+  // that one sector local backing is false *by seal*. It stands with the shield
+  // rather than replacing it (CP-⑦), which is why that sector's garrison exceeds the
+  // men its own register serves. The guard's backing is asserted in
+  // `capital-fall.test.js`; this test's subject is the shield rule, and it is unchanged.
+  const capital = view.capitals['realm-a'];
+  for (const garrison of view.garrisons) {
+    if (garrison.sectorId === capital) continue;
     assert.equal(
       economy.sectors[garrison.sectorId].serving >= garrison.men,
       true,

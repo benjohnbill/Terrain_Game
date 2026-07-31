@@ -225,6 +225,9 @@ const GLOBALLY_SAFE_EVENT_TYPES = new Set([
   'commitment-locked',
   'commitments-revealed',
   'front-resolved',
+  // Ticket 07. The match's end reaches every viewer whole — a match whose ending one
+  // side could not read would not be an ending (ADR 0042).
+  'match-ended',
   'realm-recomputed',
   'turn-opened',
   'upkeep-resolved',
@@ -263,6 +266,10 @@ export function turnSummary({ events, view }) {
       .map((event) => ({ type: event.type, turn: event.turn, detail: event.detail ?? null })),
     turn: view.turn,
     phase: view.phase,
+    // Ticket 07. Inside the cross-host summary rather than beside it, because the
+    // claim worth making is that both hosts reach the *same ending*, not merely that
+    // each reaches one.
+    outcome: view.outcome === null ? null : { ...view.outcome },
     currentActor: view.currentActor,
     committed: [...view.committed],
     fronts: view.fronts.map((front) => front.key),

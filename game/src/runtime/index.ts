@@ -35,6 +35,8 @@ export type {
 export {
   CAP_LAND_FRAC,
   CAP_PER_POP,
+  CAPITAL_GUARD_PER_POP,
+  capitalGuardOf,
   CONQUEST_DAMAGE,
   forceLimitOf,
   FRESH_CAPTURE_USABLE_ECONOMY,
@@ -194,6 +196,7 @@ export type {
   Intent,
   LockCommitmentIntent,
   MatchConfig,
+  MatchOutcome,
   MatchPhase,
   MatchView,
   MergeDetachmentsIntent,

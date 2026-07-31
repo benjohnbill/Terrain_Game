@@ -334,6 +334,11 @@ export function project(state: MatchState, viewer: ViewerId): MatchView {
     // Gate 02's sealed member, re-read as the phase (R8). Same value as `phase` by
     // construction, so the two can never disagree about what is legal now.
     currentActor: state.phase,
+    // Copied rather than handed over, like every other record here: the view is the
+    // blur seam and a caller holding a live reference to truth is what it exists to
+    // prevent. Nothing is blurred *out* of it — a match's end is public to both realms
+    // and to the observer alike (ADR 0042).
+    outcome: state.outcome === null ? null : { ...state.outcome },
     actors: [...state.actors],
     board: state.loadedWorld.artifact,
     realms: state.actors.map((actor) => realmView(state, actor)),

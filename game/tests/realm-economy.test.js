@@ -30,6 +30,7 @@ const {
   draftBill,
   draftOrder,
   forceLimitOf,
+  capitalGuardOf,
   GARRISON_PER_BORDER_SECTOR,
   holdsOf,
   incomeOf,
@@ -246,7 +247,18 @@ test('a match opens with substance derived from the sealed start-state coordinat
     view.fronts.flatMap((front) => front.sectors).filter((id) => realm.sectors.includes(id)),
   );
   assert.ok(borderSectors.size > 0);
-  assert.equal(view.economy.garrison, borderSectors.size * GARRISON_PER_BORDER_SECTOR);
+  // Plus the capital guard, which is garrison-class and therefore inside this total
+  // (CP-① item 2 puts it outside `fieldCap`, not outside the shields). It **adds** to
+  // the sector's shield rather than replacing it — capital CP-⑦, 2026-08-01 — so a
+  // border capital contributes both, and this sum is where that ruling is visible in
+  // the economy.
+  const capital = view.capitals['realm-a'];
+  const guard = capitalGuardOf(SECTORS[capital].populationValue);
+  assert.ok(guard > 0, 'the capital raises no guard');
+  assert.equal(
+    view.economy.garrison,
+    borderSectors.size * GARRISON_PER_BORDER_SECTOR + guard,
+  );
 });
 
 test('income lands in the background tier of the reveal, with no extra submission', () => {

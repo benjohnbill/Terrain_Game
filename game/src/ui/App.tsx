@@ -46,18 +46,42 @@ export function App() {
   // owner of truth; this is just a cache-invalidation tick.
   const [tick, setTick] = useState(0);
 
-  const runtime = useMemo(() => Runtime.open({ world: CRADLE_R1, seed, actors: ACTORS }), [seed]);
+  // A new match is a new `Runtime` — the terminal phase deliberately has no exit
+  // (see `MatchPhase`), so restarting cannot be a submission; it has to build
+  // another one. This counter is what lets that happen on the **same** seed:
+  // without it the memo would hand back the ended match and "다시" would do nothing,
+  // which is exactly the replay a player wants most after losing one.
+  const [generation, setGeneration] = useState(0);
+  const runtime = useMemo(
+    () => Runtime.open({ world: CRADLE_R1, seed, actors: ACTORS }),
+    [seed, generation],
+  );
   const view = useMemo(() => runtime.view(viewer), [runtime, viewer, tick]);
 
-  // A new seed is a new match, so its log and focus go with it. Done in the
-  // handler rather than inside the memo: a memo that wrote state would fire
-  // twice under StrictMode and is a render-phase side effect either way.
-  const changeSeed = useCallback((next: string) => {
-    setSeed(next);
+  // Interaction state belongs to this component, so a new match resets it here; the
+  // Runtime resets its own by being a new one. Done in the handler rather than
+  // inside the memo: a memo that wrote state would fire twice under StrictMode and
+  // is a render-phase side effect either way.
+  const resetInteraction = useCallback(() => {
     setLog([]);
     setTick(0);
     setFocused(null);
+    setDetachmentChoice('');
+    setForcedMarch(false);
+    setSplitMen('1');
+    setRecruitSectorChoice('');
+    setRecruitPosture('field');
   }, []);
+
+  const changeSeed = useCallback((next: string) => {
+    setSeed(next);
+    resetInteraction();
+  }, [resetInteraction]);
+
+  const startNewMatch = useCallback(() => {
+    setGeneration((n) => n + 1);
+    resetInteraction();
+  }, [resetInteraction]);
 
   const myRealm = view.realms.find((r) => r.actor === viewer);
   const choosing = view.phase === 'capital-selection' && !view.committed.includes(viewer);
@@ -170,6 +194,10 @@ export function App() {
         </label>
         <span className="hint">wheel to zoom · drag to pan</span>
       </section>
+
+      {view.outcome !== null && (
+        <VictoryScreen outcome={view.outcome} viewer={viewer} onNewMatch={startNewMatch} />
+      )}
 
       {view.phase === 'capital-selection' && (
         <p className="prompt" data-testid="prompt">
@@ -524,6 +552,42 @@ function TurnStrip({
       </table>
       <button type="button" data-testid="lock" disabled={locked} onClick={onLock}>
         커밋 잠그기
+      </button>
+    </section>
+  );
+}
+
+/**
+ * The match is over — who won, and why play stopped (ticket 07 acceptance item 8).
+ *
+ * It states the *cause*, not only the result, because there is exactly one cause and
+ * naming it is what makes the ending legible: a capital fell (ADR 0042). No score, no
+ * margin and no breakdown — there is nothing else to report, and inventing a summary
+ * line here is how a scorecard grows back.
+ *
+ * Greybox, like the rest of this shell: ticket 04 owns how the game is actually
+ * presented, and mistaking this for that design is the error the file header warns of.
+ */
+function VictoryScreen({
+  outcome,
+  viewer,
+  onNewMatch,
+}: {
+  outcome: NonNullable<MatchView['outcome']>;
+  viewer: ActorId;
+  onNewMatch: () => void;
+}) {
+  const won = outcome.winner === viewer;
+  return (
+    <section className="prompt" data-testid="victory">
+      <h2>{won ? '승리' : '패배'}</h2>
+      <p>
+        <strong data-testid="victory-winner">{outcome.winner}</strong>
+        {' '}wins — <code>{outcome.capital}</code>, {outcome.loser}의 수도가 turn{' '}
+        {outcome.turn}에 함락됐어요. 그래서 판이 멈췄어요.
+      </p>
+      <button type="button" data-testid="new-match" onClick={onNewMatch}>
+        새 매치
       </button>
     </section>
   );

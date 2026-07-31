@@ -19,7 +19,7 @@ import {
   recruitmentOrderKeyOf,
   type CommitmentContext,
 } from '../domain/commitment.js';
-import { garrisonHeadroomOf } from '../domain/economy.js';
+import { capitalGuardOf, garrisonHeadroomOf } from '../domain/economy.js';
 import {
   mergeDetachmentsRefusal,
   splitDetachmentRefusal,
@@ -61,6 +61,25 @@ export interface PreviewCard {
 }
 
 const no = (reason: string): PreviewCard => ({ admissible: false, reason });
+
+/**
+ * The guard raising this sector's ceiling for the realm reading the view — the
+ * view-side twin of `Runtime.#capitalGuardAt`, and the reason the two agree is that
+ * both read the *same* coefficient from `domain/economy.ts` rather than each
+ * carrying a number.
+ *
+ * It needs no truth the projection withholds: a realm's own capital is public to it
+ * from the moment it picks one, and `populationValue` is authored geography, which
+ * the information ladder keeps in the open.
+ *
+ * Before the reveal `view.capitals` may hold only this realm's own choice, which is
+ * exactly the case this asks about — so the preview and the Runtime cannot disagree
+ * during the opening beat either.
+ */
+function capitalGuardIn(view: MatchView, sectorId: SectorId): number {
+  if (view.capitals[view.viewer] !== sectorId) return 0;
+  return capitalGuardOf(view.board.sectors[sectorId]!.populationValue);
+}
 
 function assignableDetachmentViews(
   graph: ReturnType<typeof buildMovementGraph>,
@@ -193,7 +212,10 @@ export function preview(view: MatchView, intent: Intent): PreviewCard {
     );
     const garrisonHeadroom = Object.fromEntries(requests.map((stored) => [
       stored.sectorId,
-      garrisonHeadroomOf(currentGarrisons[stored.sectorId] ?? 0),
+      garrisonHeadroomOf(
+        currentGarrisons[stored.sectorId] ?? 0,
+        capitalGuardIn(view, stored.sectorId),
+      ),
     ]));
     const batch = settleRecruitmentBatch({
       requests,
@@ -355,7 +377,7 @@ export function preview(view: MatchView, intent: Intent): PreviewCard {
         sectorId,
         musterHex: musterHexOf(view.board, sectorId),
         garrisonMen,
-        garrisonHeadroom: garrisonHeadroomOf(garrisonMen),
+        garrisonHeadroom: garrisonHeadroomOf(garrisonMen, capitalGuardIn(view, sectorId)),
       };
     });
 

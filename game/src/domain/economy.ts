@@ -57,16 +57,56 @@ export const START_FIELD_FRACTION = 0.5;
 export const GARRISON_PER_BORDER_SECTOR = 900;
 
 /**
- * Room left in one sector's shield, given what already mans it.
+ * The capital guard's coefficient — **capital CP-⑤** (2026-07-31), 가안 2,500 per
+ * point of the capital sector's `populationValue`.
+ *
+ * 가안, and settled by playtest rather than by derivation. What *is* derived is the
+ * floor beneath it: CP-② item 7 seals the guard as a garrison class at **larger**
+ * magnitude than an ordinary one, R3 lets a player seat a capital on any owned
+ * sector, and the weakest legal sector on this board carries pop 0.5 — so honouring
+ * item 7 at every legal capital needs at least 1,800. 2,500 is the user's choice
+ * above that floor, and a later change is a value change at CP-⑤, not a redesign.
+ */
+export const CAPITAL_GUARD_PER_POP = 2500;
+
+/**
+ * The guard a capital sector carries — land-derived from that sector alone (CP-①
+ * item 2, coefficient re-cut by CP-⑤).
+ *
+ * Floored for the reason `forceLimitOf` floors: this counts people. Authored
+ * populations are thirds and fifths, so the exact product lands on 3333.33 as often
+ * as on a round number, and a fractional man is not something a register can back.
+ *
+ * Note what this does **not** read: where the bodies come from. CP-⑥ apportions the
+ * guard's origins across the whole realm, so magnitude and backing are deliberately
+ * two questions with two answers — this is only the first.
+ */
+export function capitalGuardOf(populationValue: number): number {
+  return Math.floor(CAPITAL_GUARD_PER_POP * populationValue);
+}
+
+/**
+ * Room left in one sector's garrison, given what already mans it and what guard —
+ * if any — stands there.
  *
  * Beside the constant rather than at each caller, because four surfaces ask this
  * question — recruitment's garrison headroom, the Runtime's posture sites, the
  * preview's copy of them, and the tests — and the cap is local by seal (ADR 0014
  * keeps garrison ceilings local, M13a sizes them), so a caller that clamped
  * differently would be quietly re-cutting the ceiling.
+ *
+ * **`capitalGuard` is required rather than defaulted, and that is the point.** A
+ * default of 0 would let a caller forget the capital and silently re-cut its ceiling
+ * back to 900 — precisely the drift the paragraph above exists to prevent — whereas a
+ * required parameter makes the compiler move all four callers together.
+ *
+ * The composition is **additive** by **CP-⑦** (2026-08-01): where a capital also
+ * carries an ordinary border shield — 179 of 840 legal capital sites — the two stand
+ * together rather than one replacing the other, so the ceiling is their sum. Pass 0
+ * for every sector that is not its owner's capital.
  */
-export function garrisonHeadroomOf(manned: number): number {
-  return Math.max(0, GARRISON_PER_BORDER_SECTOR - manned);
+export function garrisonHeadroomOf(manned: number, capitalGuard: number): number {
+  return Math.max(0, GARRISON_PER_BORDER_SECTOR + capitalGuard - manned);
 }
 
 /**
