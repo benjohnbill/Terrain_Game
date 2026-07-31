@@ -182,7 +182,7 @@ npm test              # root suite
 npm run lint:docs     # documentation governance
 ```
 
-Baseline on `main` at `e46135e`, re-run for this handoff: **Node 239**, **browser
+Baseline on `main` at `eb2263c` (the CP-⑥ batch), re-run there: **Node 239**, **browser
 21**, root **562/562**, `lint:docs` **0 blocking / 12 advisory**. `verify:game` exits
 **2**: every lane PASSes and **parity is PENDING by design** — Wayfinder gate 10 owns
 the bit-exact-versus-epsilon threshold and has not filled it. Both hosts produce
