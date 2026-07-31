@@ -16,6 +16,11 @@ Feature-local decision record (Record layer, birthplace tier). Append-only.
 > even CP-② item 7's floor; measurement in CP-⑥. Magnitude, siting, and every other
 > property of the guard are untouched.
 >
+> **Extended by CP-⑦ (2026-08-01):** item 2's **own local ceiling** composes
+> *additively* with the sector's ordinary garrison ceiling. Where a capital also
+> carries a border shield — 179 of 840 legal capital candidates — the sector holds the
+> shield **and** the guard, and its ceiling is the sum. Nothing in item 2 is retired.
+>
 > **Amended by ruling R3 (2026-07-25):** item 1's **designation** rule is retired —
 > capital eligibility is *ownership*, so a player may place their capital on any
 > sector their realm owns, and the authored `capitals`/`cities` markers are advisory
@@ -326,3 +331,64 @@ Status **AGREED** (**SEALED** — dated, with the user's verdict as source), no 
 value, validation **L1** (exhaustive enumeration over the legal partition space; not
 a battery, not a playtest). **Discharges** `DECISIONS-OWED.md` Part 2 row **16** and
 clears ticket 07's last `needs-info` item.
+
+## CP-⑦ The guard adds to a border capital's shield rather than replacing it — SEALED 2026-08-01 (user) · L1
+
+**Settles the sub-question CP-⑥ named and deliberately left open**, and completes
+CP-① item 2's "own local ceiling" by saying how it composes. Numbered ⑦ because ④ is
+taken by CP-②'s rump amendment.
+
+**Decision.** Where a capital sector *also* carries an ordinary border shield, the
+two stand together: the sector's garrison is **the shield plus the guard**, and its
+local ceiling is `GARRISON_PER_BORDER_SECTOR + guardMagnitude`. The rule is uniform
+and needs no border test — every sector's ceiling is its ordinary garrison ceiling
+plus, at the capital, the guard's magnitude.
+
+**Why the question is live rather than an edge case.** `#seatSubstance` seats shields
+on contested-edge sectors at `open()`, and capitals are chosen afterwards, so the two
+meet by ordinary play. Measured against the emitted modules over the same **840**
+capital candidates CP-⑥ enumerated (all 15 legal partitions × 2 seats × every held
+sector) on `terrain-cradle@r1`:
+
+| quantity | value |
+|---|---|
+| candidates whose sector already carries an opening shield | **179 of 840 (21.3%)** |
+| distinct sectors that can be both | **27** |
+| guard magnitude on them, at CP-⑤'s 가안 2,500/pop | **1,250 – 6,000** |
+| a border capital's total garrison under this ruling | **2,150 – 6,900** |
+
+`state.garrisons` holds one `GarrisonForce` per sector, so the two are mechanically
+one stock either way; what was undetermined was only the **total**, and 900 is 72% of
+the weakest legal guard — not a rounding difference.
+
+**Why additive.** Neither seal says "instead of": M13a mans a border sector's shield
+at `g₀ = 1.0` and CP-① item 2 sizes the guard, and they speak about different forces
+on the same ground. CP-① item 4's reward is that a forward capital's guard
+**thickens** the realm's busiest gate, which is addition. And CP-② item 7 states that
+the *only* differences between a capital and an ordinary city are consequence KIND and
+guard magnitude — subsumption would introduce a second difference, the capital alone
+losing its ordinary shield.
+
+**What this does not change.** The register is untouched: the shield's 900 is drawn
+locally and already seated at `open()`, and the guard is apportioned realm-wide
+(CP-⑥). Free register after shields and the opening field is 37,800 – 42,300 against
+a largest guard of 6,000, so additivity needs no clamp and no new value.
+
+**One reading note, recorded so it is not rediscovered as a bug.** CP-⑤'s "army
+needed" table is computed against the guard alone. At a border capital the attacker
+must also overcome the shield standing with it, so that table **understates** the
+attacker's requirement on 21.3% of legal sites. This is how to read the table, not a
+change to it: 2,500/pop is unmoved.
+
+**Rejected alternatives (recorded):**
+- *Subsumption (the guard replaces the shield)* — coherent, and CP-⑥ measured under it
+  to show its own conclusion did not depend on the answer. Rejected because it deletes
+  a sealed 900-man shield wherever a capital lands on one, adds the second
+  capital/ordinary-city difference CP-② item 7 excludes, and shrinks CP-① item 4's
+  forward-capital reward to `guard − 900` exactly where that reward is supposed to be
+  strongest.
+
+Status **AGREED** (**SEALED** — dated, with the user's verdict as source), no new
+value, validation **L1** (exhaustive enumeration over the legal partition space; not
+a battery, not a playtest). Found by ticket 07's claim-time R6(ii) recompute and ruled
+in the same session, so it never occupied a `DECISIONS-OWED.md` row.

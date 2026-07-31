@@ -11,15 +11,24 @@ game rather than an open-ended one.
 06a–06d by gate C, 2026-07-26. R1 makes a capital fall an ordinary sector capture,
 so the capture path is the real blocker, not the battle alone.)
 
-Status: **ready-for-agent** (2026-08-01 — the third item found by R6's claim-time
-recompute is **ruled**: the guard's register backing is **realm-wide**, capital
-**CP-⑥**, and `DECISIONS-OWED.md` Part 2 row **16** is closed. No acceptance item now
-needs an undetermined value, and 06d merged on 2026-07-31 (`34d728d`), so nothing
-blocks this ticket. Recompute R6's second test at claim time anyway — this header has
-been wrong twice, most recently on 2026-07-31 in both directions on the same day. See
-§ Comments → "A third item, found by the claim-time recompute" for the item's full
-history and "The third item, ruled" for the answer. This is the frontier and the loop
-closes here.)
+Status: **claimed** (2026-08-01, worktree branch `l3/ticket-07-capital-fall` off
+`2a6bf60`). The claim-time R6(ii) recompute was run **again** on claiming — as the
+header below instructs — and found a **fourth** item beneath the three: the guard and
+an ordinary border shield meeting on the same sector, on 179 of 840 legal capital
+sites. The user ruled it in the same session (capital **CP-⑦**, additive), so no
+acceptance item needs an undetermined value and the claim stands. See § Comments →
+"A fourth item, found by the second claim-time recompute". Prior status line,
+preserved because its instruction is the reason the fourth item was found:
+
+> **ready-for-agent** (2026-08-01 — the third item found by R6's claim-time
+> recompute is **ruled**: the guard's register backing is **realm-wide**, capital
+> **CP-⑥**, and `DECISIONS-OWED.md` Part 2 row **16** is closed. No acceptance item now
+> needs an undetermined value, and 06d merged on 2026-07-31 (`34d728d`), so nothing
+> blocks this ticket. Recompute R6's second test at claim time anyway — this header has
+> been wrong twice, most recently on 2026-07-31 in both directions on the same day. See
+> § Comments → "A third item, found by the claim-time recompute" for the item's full
+> history and "The third item, ruled" for the answer. This is the frontier and the loop
+> closes here.)
 
 Specification gates: Wayfinder 10, 12.
 
@@ -42,7 +51,9 @@ supply predicate must still admit encirclement in principle (item 7); what is
 deferred is the fall path built on it, not the vulnerability.
 
 - [ ] Each realm has exactly one capital; its guard magnitude is land-derived from the capital sector per its sealed birthplace, with no number restated here.
-- [ ] The guard is an ordinary garrison class placed on the capital sector; it is **not** auto-declared a supply base and obeys the same supply predicate as any force. Its **register backing is realm-wide** (CP-⑥) — origins apportioned across the realm's held sectors exactly as `#seatSubstance` already apportions the opening field army, not drawn from the capital sector alone.
+- [ ] The guard is an ordinary garrison class placed on the capital sector; it is **not** auto-declared a supply base and obeys the same supply predicate as any force. Its **register backing is realm-wide** (CP-⑥) — origins apportioned across the realm's held sectors exactly as `#seatSubstance` already apportions the opening field army, not drawn from the capital sector alone. Where the capital sector also carries an
+ordinary border shield (179 of 840 legal sites), the two stand **together** and the
+sector's local ceiling is the sum (**CP-⑦**) — a uniform rule, with no border test.
 - [ ] **Capital fall is an ordinary sector capture** (user ruling 2026-07-25): the capital sector transfers under the same headline-bound binary control rule as any sector, and the match ends the instant it does. There is **no** capital-specific threshold, no "overwhelming" gate, and no special predicate anywhere in this path. What makes it hard is the guard's magnitude, not an extra condition. CP-② item 5's "overwhelming decisive battle" phrasing describes the path, not an additional bar.
 - [ ] No other win check exists anywhere: no last-faction-standing, no percentage-of-hexes, no hegemony or decision point, no points, territory, or economy tiebreak, no draw path, no turn cap.
 - [ ] The Moscow-trap fall path is absent rather than approximated, and its absence is stated in the ticket's evidence rather than left to be discovered.
@@ -204,3 +215,31 @@ reading in which the guard subsumes the capital's border shield, the ceiling is
 unchanged and the count reaching 1,800 is still 0.
 
 Derivation and rejected alternatives: **CP-⑥**. Do not re-derive them here.
+
+### A fourth item, found by the second claim-time recompute — 2026-08-01
+
+**Ruled the same session it was found: capital CP-⑦, additive.** Recorded because the
+*finding* is the reusable part — this is the second consecutive claim-time recompute
+to turn up an item the previous session's "no blockers" header had missed, and both
+times the item lived where two separately-correct seals meet.
+
+**The item.** `#seatSubstance` seats a 900-man shield on every contested-edge sector at
+`open()`, and capitals are chosen afterwards, so a capital can land on a sector that
+already carries one. Measured over the same 840 candidates CP-⑥ enumerated: **179
+(21.3%)**, across **27** distinct sectors. `state.garrisons` holds one `GarrisonForce`
+per sector, so the two are one stock mechanically — but no seal said what the **total**
+is, and at the weakest legal capital the 900 is 72% of the guard.
+
+CP-⑥ knew: it re-measured "under the alternative reading in which the guard *subsumes*
+the capital's border shield" and recorded only that its own conclusion did not depend
+on the answer. That is a correct scope call for CP-⑥ and leaves the question open for
+whoever actually places the guard, which is this ticket.
+
+**The ruling.** The shield and the guard stand together; the sector's local ceiling is
+`GARRISON_PER_BORDER_SECTOR + guardMagnitude`. Uniform — no border test anywhere in the
+implementation. Reasoning, measurement and the rejected subsumption reading: **CP-⑦**.
+Do not re-derive them here.
+
+**One consequence to carry into the evidence rather than rediscover:** CP-⑤'s "army
+needed" table is computed against the guard alone, so it understates the attacker's
+requirement at a border capital. That is a reading note on CP-⑤, not a value change.
