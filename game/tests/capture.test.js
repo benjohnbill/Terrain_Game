@@ -35,6 +35,7 @@ const {
   FRESH_CAPTURE_USABLE_ECONOMY,
   FRESH_CAPTURE_USABLE_POP,
   GARRISON_PER_BORDER_SECTOR,
+  capitalGuardAt,
   garrisonHeadroomOf,
   MARCH_SPEED,
   RIPENING_PER_TURN,
@@ -199,17 +200,16 @@ test('an opening garrison originates in the sector it mans, not in its province'
   const runtime = openAtDecision();
   const view = runtime.view('realm-a');
   const economy = view.economy;
-  // The **capital is excluded, and not as a convenience**: ticket 07 raises a guard
-  // there whose origins are apportioned across the whole realm (capital CP-⑥), so at
-  // that one sector local backing is false *by seal*. It stands with the shield
-  // rather than replacing it (CP-⑦), which is why that sector's garrison exceeds the
-  // men its own register serves. The guard's backing is asserted in
-  // `capital-fall.test.js`; this test's subject is the shield rule, and it is unchanged.
-  const capital = view.capitals['realm-a'];
+  // The **guard is subtracted, not the sector skipped**. Ticket 07 raises a guard at
+  // the capital whose origins are apportioned across the whole realm (capital CP-⑥),
+  // so that many of its men are not locally backed *by seal*. But CP-⑦ leaves the
+  // register untouched — "the shield's 900 is drawn locally" — so the shield standing
+  // with it still owes this claim, and skipping the whole sector would stop asserting
+  // it exactly where a capital happens to sit on a border.
   for (const garrison of view.garrisons) {
-    if (garrison.sectorId === capital) continue;
+    const guard = capitalGuardAt(CRADLE_R1.sectors, garrison.sectorId, view.capitals['realm-a']);
     assert.equal(
-      economy.sectors[garrison.sectorId].serving >= garrison.men,
+      economy.sectors[garrison.sectorId].serving >= garrison.men - guard,
       true,
       `${garrison.sectorId}'s shield must be served by its own register`,
     );
@@ -609,7 +609,15 @@ test('a transfer is refused past the local shield cap, so no army hides behind M
   const { runtime, detachmentId, sectorId } = armyOnOwnInterior();
   const view = runtime.view('realm-a');
   const manned = view.garrisons.find((g) => g.sectorId === sectorId)?.men ?? 0;
-  const tooMany = garrisonHeadroomOf(manned) + 1;
+  // The guard is *derived* rather than remembered — `garrisonHeadroomOf` takes it as a
+  // required argument, and this lane has no compiler: a one-argument call here silently
+  // returned `NaN`, which compares false everywhere, so this assertion passed while
+  // testing nothing until ticket 07's review caught it.
+  const tooMany = garrisonHeadroomOf(
+    manned,
+    capitalGuardAt(CRADLE_R1.sectors, sectorId, view.capitals['realm-a']),
+  ) + 1;
+  assert.ok(Number.isInteger(tooMany), 'the cap read as NaN; this test would assert nothing');
   const over = { kind: 'transfer-to-garrison', actor: 'realm-a', detachmentId, men: tooMany };
 
   assert.equal(preview(view, over).admissible, false, 'preview allowed an over-cap transfer');

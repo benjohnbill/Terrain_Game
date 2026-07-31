@@ -18,6 +18,7 @@
 
 import { resolveBattle, type SideBattleOutcome } from '../domain/battle.js';
 import { capitalChoiceRefusal } from '../domain/capital-choice.js';
+import { capitalFallOf, type SectorCapture } from '../domain/capital-fall.js';
 import {
   battleInputOf,
   bodiesLost,
@@ -38,6 +39,7 @@ import {
   type CommitmentContext,
 } from '../domain/commitment.js';
 import {
+  capitalGuardAt,
   capitalGuardOf,
   forceLimitOf,
   GARRISON_PER_BORDER_SECTOR,
@@ -161,12 +163,9 @@ interface SectorFormation {
   readonly wear: number;
 }
 
-/** One sector changing hands, as ADR 0044's transfer reads it. */
-interface SectorCapture {
-  readonly sector: SectorId;
-  readonly taker: ActorId;
-  readonly loser: ActorId;
-}
+// `SectorCapture` — one sector changing hands, as ADR 0044's transfer reads it — moved
+// to `domain/capital-fall.ts` when the win check did: the check reads captures before
+// they are applied, so the two share the type or they drift.
 
 /**
  * A formation's key inside one engagement's apportionment. Namespaced so a shield
@@ -323,14 +322,19 @@ export class Runtime {
    * simultaneously and in secret (CP-② D1.3). So the guard is raised at the reveal,
    * by `#raiseCapitalGuards`, and that ordering is forced rather than preferred.
    *
-   * **It also fixes the register order, which is worth stating because a natural
+   * **It also settles the register order, which is worth stating because a natural
    * reading gets it backwards.** The guard is garrison-class (CP-① item 2), and the
    * loop below draws garrisons first and the field army from what is left — so one
-   * would expect the guard to come out of `remaining` *before* `openingField`. It
-   * cannot: the guard is unknowable here. CP-⑥ measured the consequence and sealed
-   * against it rather than around it — its "free register after shields **and the
-   * opening field**" of 37,800–42,300, against a largest possible guard of 6,000, is
-   * exactly this order, with room to spare and no clamp required.
+   * would expect the guard to come out of `remaining` *before* `openingField`.
+   *
+   * No seal orders those two draws, and the choice is not forced: the field army's
+   * *apportionment* could have moved to the reveal beside its placement. What decides
+   * it is that CP-⑥ measured this order and sealed against it — its "free register
+   * after shields **and the opening field**" of 37,800–42,300, against a largest
+   * possible guard of 6,000, is exactly field-then-guard, with room to spare and no
+   * clamp required. The observable difference is confined to apportionment rounding
+   * inside origin composition; totals, ceilings and the `availableCivilians`
+   * invariant are identical either way.
    */
   static #seatSubstance(
     artifact: MatchState['loadedWorld']['artifact'],
@@ -704,21 +708,6 @@ export class Runtime {
    * shape from a view, and two copies of "where may men change posture" is how the
    * two would come to answer it differently.
    */
-  /**
-   * The guard standing on one of this realm's sectors — its magnitude if the sector
-   * is that realm's capital, and zero everywhere else.
-   *
-   * The capital's *ceiling* is what this feeds, not its manpower: `garrisonHeadroomOf`
-   * adds it to the ordinary 900 (CP-⑦). Asked per realm rather than per sector because
-   * a guard belongs to a seat, not to ground — the enemy's capital raises nothing on
-   * this realm's books.
-   */
-  #capitalGuardAt(actor: ActorId, sectorId: SectorId): number {
-    const state = this.#state;
-    if (state.capitals[actor] !== sectorId) return 0;
-    return capitalGuardOf(state.loadedWorld.artifact.sectors[sectorId]!.populationValue);
-  }
-
   #postureSites(actor: ActorId): PostureSite[] {
     const state = this.#state;
     return [...state.realms[actor]!.sectors].sort().map((sectorId) => {
@@ -733,7 +722,10 @@ export class Runtime {
         sectorId,
         musterHex: musterHexOf(state.loadedWorld.artifact, sectorId),
         garrisonMen,
-        garrisonHeadroom: garrisonHeadroomOf(garrisonMen, this.#capitalGuardAt(actor, sectorId)),
+        garrisonHeadroom: garrisonHeadroomOf(
+          garrisonMen,
+          capitalGuardAt(state.loadedWorld.artifact.sectors, sectorId, state.capitals[actor]),
+        ),
       };
     });
   }
@@ -1397,12 +1389,18 @@ export class Runtime {
       revealed,
       new Set(engagements.map((engagement) => engagement.sector)),
     ));
-    events.push(...this.#resolveEngagements(engagements));
+    const resolved = this.#resolveEngagements(engagements);
+    events.push(...resolved.events);
 
     // **The loop closes here** (ADR 0042). A capital fell, so the match is over and
     // the rest of this tail must not run: integration, income, upkeep and the next
     // turn's opening are all statements about a match that continues.
-    const ending = this.#capitalFall(events);
+    //
+    // `ending` was decided *before* the captures were applied — `capitalFallOf`'s
+    // contract — so the double-fall refusal it carries fires on an intact board. The
+    // event is still emitted here, after the ground has changed hands, because that is
+    // the order a player watches it in.
+    const ending = resolved.ending;
     if (ending !== null) {
       state.outcome = ending;
       state.phase = 'match-ended';
@@ -1519,7 +1517,11 @@ export class Runtime {
             );
         return [
           request.sectorId,
-          garrisonHeadroomOf(men, this.#capitalGuardAt(actor, request.sectorId)),
+          garrisonHeadroomOf(men, capitalGuardAt(
+            state.loadedWorld.artifact.sectors,
+            request.sectorId,
+            state.capitals[actor],
+          )),
         ];
       }));
       const result = settleRecruitmentBatch({
@@ -1814,7 +1816,9 @@ export class Runtime {
    * the register's re-cut to per-province are 06d's (R18 iii), and a capital
    * falling is 07's. A battle here changes who is *alive*, never who *holds*.
    */
-  #resolveEngagements(engagements: readonly Engagement[]): GameEvent[] {
+  #resolveEngagements(
+    engagements: readonly Engagement[],
+  ): { events: GameEvent[]; ending: MatchOutcome | null } {
     const events: GameEvent[] = [];
     // Deferred to after the loop, over a **snapshot** taken inside it. Two distinct
     // order-dependences would otherwise appear, and neither is theoretical:
@@ -1891,6 +1895,21 @@ export class Runtime {
     }
 
     for (const rout of routs) this.#displaceRouted(rout.sector, rout.actor, rout.formations);
+
+    // **Read the ending before applying the captures, not after** (ticket 07). Two
+    // reasons, and the second is why this line sits above the loop rather than below
+    // it:
+    //
+    // 1. a capture moves the sector to its taker, so "whose capital is now held by
+    //    someone else" stops being answerable the moment it becomes true;
+    // 2. `capitalFallOf` **throws** on a simultaneous double fall — a refusal the user
+    //    pinned rather than answered — and a throw after the loop would leave the board
+    //    already mutated, both capitals changed hands, with `outcome` null and the
+    //    phase still `decision`. That is an unrecoverable match, and it escapes
+    //    `submit()` into the caller. Asked here, the refusal costs the turn and nothing
+    //    else.
+    const ending = capitalFallOf(captures, this.#state.capitals, this.#state.turn);
+
     // Last, and after the routs for the same reason the routs come after the loop:
     // the transfer reads the loser's *settled* books. Casualties have been taken and
     // survivors have left service, so the civilians standing on this ground are known.
@@ -1898,55 +1917,7 @@ export class Runtime {
     // which register they answer to.
     for (const capture of captures) events.push(...this.#captureSector(capture));
 
-    return events;
-  }
-
-  /**
-   * Did a capital just change hands? — the whole of this ticket's win check.
-   *
-   * **It is one sentence, and that is the ruling** (ticket 07 acceptance item 3, user
-   * 2026-07-25): *is the captured sector this loser's capital*. No capital-specific
-   * threshold, no "overwhelming" gate, no second predicate. CP-② item 5's
-   * "overwhelming decisive battle" names the path a player must walk, not a bar the
-   * Runtime checks — what makes a capital hard to take is the guard's magnitude, and
-   * the guard is an ordinary garrison that an ordinary battle must beat.
-   *
-   * Reading the captures out of the event stream rather than re-deriving them from the
-   * board is the point: a capture has already moved the sector to the taker, so
-   * "whose capital is now held by someone else" is a question the map stops being able
-   * to answer at the exact moment it becomes true.
-   *
-   * **The double fall is refused rather than decided.** Two capitals can fall in one
-   * payoff — it is the mutual-exposure duel CP-② item 9 calls the heart of the match
-   * frame, both players all-in on offense at once. Nothing rules what that names:
-   * ADR 0042 names a winner for *a* capital fall, ledger D3.1 forbids a draw path and
-   * a tiebreak, and picking the first-resolved would decide the only win condition by
-   * resolve order, which D6.1a forbids. So this throws, loudly, naming the seals — the
-   * same shape 06d gave its held posture transfer, and it converts to one branch once
-   * the question is ruled.
-   */
-  #capitalFall(events: readonly GameEvent[]): MatchOutcome | null {
-    const state = this.#state;
-    const fallen = events.filter((event) =>
-      event.type === 'sector-captured'
-      && state.capitals[event.detail?.loser as ActorId] === event.detail?.sector);
-    if (fallen.length === 0) return null;
-    if (fallen.length > 1) {
-      throw new Error(
-        'Two capitals fell in one payoff, and no seal says what that names. ' +
-          'ADR 0042 names a winner for one fall; ledger D3.1 forbids a draw and a ' +
-          'tiebreak; D6.1a forbids letting resolve order decide. Refusing rather than ' +
-          'choosing — see ticket 07 § Comments.',
-      );
-    }
-
-    const capture = fallen[0]!;
-    return {
-      winner: capture.detail!.taker as ActorId,
-      loser: capture.detail!.loser as ActorId,
-      capital: capture.detail!.sector as SectorId,
-      turn: state.turn,
-    };
+    return { events, ending };
   }
 
   /**

@@ -337,7 +337,12 @@ export interface PostureSite {
   readonly musterHex: HexPosition;
   /** Men already manning the shield, ready and forming alike — M13a's local cap. */
   readonly garrisonMen: number;
-  /** `garrisonHeadroomOf(garrisonMen)`, computed beside the cap it reads. */
+  /**
+   * `garrisonHeadroomOf(garrisonMen, guard)`, computed beside the cap it reads.
+   *
+   * The guard is in it since ticket 07: a capital's ceiling is the ordinary shield cap
+   * **plus** its guard (CP-⑦), so this is not `900 − manned` at every sector.
+   */
   readonly garrisonHeadroom: number;
 }
 

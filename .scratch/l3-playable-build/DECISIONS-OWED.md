@@ -1040,6 +1040,24 @@ CP-① sealed 350/pop on 2026-07-10, when origins were per province and a provin
 register (1,800 × Σ pop over ~5.6 sectors) covered the guard comfortably under either
 reading. The question is new because the grain is.
 
+**Row 16 had a fourth item underneath it, and that one is closed too.** Claiming 07 on
+2026-08-01 ran the recompute *again* and found that where a capital sector also
+carries an ordinary border shield — **179 of the same 840 candidates, 21.3%, across
+27 distinct sectors** — no seal said whether that sector's garrison is the shield
+**plus** the guard or the guard **instead of** it. CP-⑥ knew: it re-measured under the
+subsuming reading purely to show its own conclusion did not depend on the answer,
+which is a correct scope call that leaves the question for whoever places the guard.
+Ruled the same session — **capital CP-⑦, additive**. 900 is 72% of the weakest legal
+guard, so it was not a rounding difference. Two consecutive claim-time recomputes, two
+found items, both living exactly where separately-correct seals meet.
+
+| 17 | **What does a *simultaneous* double capital fall name?** — **PINNED 2026-08-01 (user), not answered.** Two capitals can fall in one payoff: A's army stands on B's capital while B's stands on A's, both win their battle, and `#resolveEngagements` emits two captures. Not a freak case — it is the **mutual-exposure duel CP-② item 9 calls the heart of the match frame**, both players all-in on offense at once. The user ruled to refuse rather than invent: `Runtime.#capitalFall` throws, naming the seals, and a test in `capital-fall.test.js` pins the refusal. **Zero new normative statements** — the same shape 06d gave its held posture transfer. *What would settle it:* a user ruling on draw / a symmetric non-draw rule / accepting a resolve-order tiebreak — most usefully after playtest shows whether it ever actually happens | **ADR 0042** names a winner for *a* capital fall, and ledger **D3.1** forbids a draw path and a tiebreak-win — so neither "both lose" nor "score it" is available | **D6.1a** forbids application order introducing first-mover asymmetry, so taking the first-resolved capture is not available either. D6.1a's own text addresses two armies entering the *same* sector, and two independent battles each ending the match sits outside it — which is why this is a **gap rather than a conflict** | ticket 07 (pinned; a real match can reach the throw) |
+
+Row 17 was **found 2026-08-01** while wiring 07's win check — by asking where the
+predicate goes, not by a recompute. It is filed here rather than left as a code
+comment because the throw is reachable in real play: rare, but precisely at the
+climax, which is the worst place to discover it.
+
 Row 15 was **found 2026-07-26** by the ticket-05 code review, which caught the
 implementation answering it by accident (a frozen homeland record made limbo
 permanent, so conquest could never raise a taker's income or ceiling). Ticket 05

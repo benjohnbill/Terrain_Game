@@ -19,7 +19,7 @@ import {
   recruitmentOrderKeyOf,
   type CommitmentContext,
 } from '../domain/commitment.js';
-import { capitalGuardOf, garrisonHeadroomOf } from '../domain/economy.js';
+import { capitalGuardAt, garrisonHeadroomOf } from '../domain/economy.js';
 import {
   mergeDetachmentsRefusal,
   splitDetachmentRefusal,
@@ -63,22 +63,18 @@ export interface PreviewCard {
 const no = (reason: string): PreviewCard => ({ admissible: false, reason });
 
 /**
- * The guard raising this sector's ceiling for the realm reading the view — the
- * view-side twin of `Runtime.#capitalGuardAt`, and the reason the two agree is that
- * both read the *same* coefficient from `domain/economy.ts` rather than each
- * carrying a number.
+ * The guard raising this sector's ceiling, asked from a view.
  *
- * It needs no truth the projection withholds: a realm's own capital is public to it
- * from the moment it picks one, and `populationValue` is authored geography, which
- * the information ladder keeps in the open.
+ * A one-line adapter, deliberately: the *rule* is `capitalGuardAt` in
+ * `domain/economy.ts`, shared with the Runtime for the reason `capital-choice.ts`
+ * gives — a preview that answered differently would teach the player a rule the game
+ * does not have. All this does is name which capital "this viewer's" means.
  *
- * Before the reveal `view.capitals` may hold only this realm's own choice, which is
- * exactly the case this asks about — so the preview and the Runtime cannot disagree
- * during the opening beat either.
+ * Before the reveal `view.capitals` holds only this realm's own choice, which is
+ * exactly what is being asked, so the opening beat needs no special case.
  */
 function capitalGuardIn(view: MatchView, sectorId: SectorId): number {
-  if (view.capitals[view.viewer] !== sectorId) return 0;
-  return capitalGuardOf(view.board.sectors[sectorId]!.populationValue);
+  return capitalGuardAt(view.board.sectors, sectorId, view.capitals[view.viewer]);
 }
 
 function assignableDetachmentViews(

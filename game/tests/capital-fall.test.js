@@ -20,7 +20,6 @@
 
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
 
 const {
   CAPITAL_GUARD_PER_POP,
@@ -30,6 +29,7 @@ const {
   REGISTER_PER_POP,
   Runtime,
   buildMovementGraph,
+  capitalFallOf,
   capitalGuardOf,
   garrisonHeadroomOf,
   minimumCostRoute,
@@ -328,16 +328,79 @@ test('the phase is terminal exactly when a capital changed hands, and never othe
   assert.equal(runtime.view('observer').outcome, null, 'a winner was named without a capital fall');
 });
 
-test('a simultaneous double fall refuses rather than picking a winner', () => {
-  // No seal says what two falls in one payoff name, and ADR 0042 names a winner
-  // only for one. Ordering the two would decide it by resolve order, which D6.1a
-  // forbids. So the Runtime refuses, loudly, and the rejection is pinned here
-  // until the question is ruled — the same shape 06d gave its held posture transfer.
-  const source = readFileSync(new URL('../dist/runtime/runtime.js', import.meta.url), 'utf8');
-  assert.ok(
-    source.includes('Two capitals fell in one payoff'),
-    'the double fall stopped being refused without the question being ruled',
+test('one capital falling names its taker, from the captures alone', () => {
+  // The whole win check, exercised directly: no threshold, no gate, no second
+  // predicate — a capture whose sector is the loser's capital, and nothing else.
+  const capitals = { 'realm-a': 'r1_s0', 'realm-b': 'r2_s3' };
+  assert.deepEqual(
+    capitalFallOf([{ sector: 'r2_s3', taker: 'realm-a', loser: 'realm-b' }], capitals, 7),
+    { winner: 'realm-a', loser: 'realm-b', capital: 'r2_s3', turn: 7 },
   );
+});
+
+test('an ordinary capture names nobody, however many of them there are', () => {
+  const capitals = { 'realm-a': 'r1_s0', 'realm-b': 'r2_s3' };
+  assert.equal(capitalFallOf([], capitals, 3), null);
+  assert.equal(
+    capitalFallOf([
+      { sector: 'r2_s0', taker: 'realm-a', loser: 'realm-b' },
+      { sector: 'r2_s1', taker: 'realm-a', loser: 'realm-b' },
+      { sector: 'r1_s1', taker: 'realm-b', loser: 'realm-a' },
+    ], capitals, 3),
+    null,
+    'taking ground named a winner',
+  );
+});
+
+test('a capture of a sector that is the TAKER’s capital names nobody either', () => {
+  // Recapturing your own fallen seat is not a win — the predicate is the *loser's*
+  // capital. Worth pinning because "is this sector a capital" is the wrong reading
+  // and would fire here.
+  const capitals = { 'realm-a': 'r1_s0', 'realm-b': 'r2_s3' };
+  assert.equal(
+    capitalFallOf([{ sector: 'r1_s0', taker: 'realm-a', loser: 'realm-b' }], capitals, 5),
+    null,
+  );
+});
+
+test('a simultaneous double fall refuses rather than picking a winner', () => {
+  // No seal says what two falls in one payoff name: ADR 0042 names a winner for one,
+  // D3.1 forbids a draw and a tiebreak, and ordering them would let resolve order
+  // decide the only win condition, which D6.1a forbids. So it refuses — the user's
+  // ruling (2026-08-01) to pin rather than invent, the shape 06d gave its held
+  // posture transfer. Exercised, not grepped for: a source-text assertion would
+  // survive the branch going dead.
+  const capitals = { 'realm-a': 'r1_s0', 'realm-b': 'r2_s3' };
+  assert.throws(
+    () => capitalFallOf([
+      { sector: 'r2_s3', taker: 'realm-a', loser: 'realm-b' },
+      { sector: 'r1_s0', taker: 'realm-b', loser: 'realm-a' },
+    ], capitals, 9),
+    (error) => {
+      // The message has to be actionable from a crash report alone: both seats, both
+      // directions, and where the question is filed.
+      assert.match(error.message, /Two capitals fell in one payoff/);
+      assert.match(error.message, /r2_s3 \(realm-b → realm-a\)/);
+      assert.match(error.message, /r1_s0 \(realm-a → realm-b\)/);
+      assert.match(error.message, /row 17/);
+      return true;
+    },
+  );
+});
+
+test('the refusal fires before any ground has changed hands', () => {
+  // Where it throws matters as much as that it throws. `capitalFallOf` takes captures
+  // that have been *decided* and not yet applied, so a refused payoff costs the turn
+  // and leaves the board intact — rather than stranding a match with both capitals
+  // transferred, no outcome, and a phase that still says `decision`.
+  const capitals = { 'realm-a': 'r1_s0', 'realm-b': 'r2_s3' };
+  const captures = [
+    { sector: 'r2_s3', taker: 'realm-a', loser: 'realm-b' },
+    { sector: 'r1_s0', taker: 'realm-b', loser: 'realm-a' },
+  ];
+  const before = JSON.stringify(captures);
+  assert.throws(() => capitalFallOf(captures, capitals, 9));
+  assert.equal(JSON.stringify(captures), before, 'the refusal mutated what it was given');
 });
 
 // ── 4. the end is final, and a new match starts after it ────────────────────

@@ -86,6 +86,31 @@ export function capitalGuardOf(populationValue: number): number {
 }
 
 /**
+ * The guard standing on one sector: its magnitude at that realm's capital, zero
+ * everywhere else.
+ *
+ * **One reader, and the reason is `capital-choice.ts`'s.** That file exists because
+ * the Runtime and the preview must answer the *capital* question identically or the
+ * preview teaches a rule the game does not have; this is the same shape one question
+ * over. Sharing only the coefficient would not be enough — the duplicated part is the
+ * *"whose capital is this"* branch, and the two callers key it differently (the
+ * Runtime by `actor`, the preview by `view.viewer`), which is exactly where two copies
+ * drift.
+ *
+ * Takes plain values rather than state, so `preview` may call it without gaining
+ * access to anything the projection withholds — a realm's own capital is public to it
+ * from the moment it picks one, and `populationValue` is authored geography.
+ */
+export function capitalGuardAt(
+  sectors: SectorTable,
+  sectorId: SectorId,
+  capital: SectorId | undefined,
+): number {
+  if (capital !== sectorId) return 0;
+  return capitalGuardOf(sectors[sectorId]!.populationValue);
+}
+
+/**
  * Room left in one sector's garrison, given what already mans it and what guard —
  * if any — stands there.
  *
@@ -97,8 +122,15 @@ export function capitalGuardOf(populationValue: number): number {
  *
  * **`capitalGuard` is required rather than defaulted, and that is the point.** A
  * default of 0 would let a caller forget the capital and silently re-cut its ceiling
- * back to 900 — precisely the drift the paragraph above exists to prevent — whereas a
- * required parameter makes the compiler move all four callers together.
+ * back to 900 — precisely the drift the paragraph above exists to prevent.
+ *
+ * It is a weaker guarantee than it looks, and the honest version is worth writing
+ * down: the compiler moves the *typed* callers, and the test lane is JavaScript. A
+ * one-argument call there yields `NaN` rather than an error, and `NaN` compares false
+ * everywhere, so an over-cap assertion still "passes" while testing nothing. That
+ * happened in this very change and the review caught it. Prefer `capitalGuardAt`
+ * below at every call site, including tests: it makes the second argument something a
+ * caller *derives* rather than something they must remember.
  *
  * The composition is **additive** by **CP-⑦** (2026-08-01): where a capital also
  * carries an ordinary border shield — 179 of 840 legal capital sites — the two stand
