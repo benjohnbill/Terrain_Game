@@ -1,6 +1,11 @@
 .superpowers/
 .DS_Store
-node_modules/
+# No trailing slash, deliberately: this repo runs tickets in `git worktree`s, and
+# the convention there is to *symlink* `node_modules` back to the main checkout.
+# `node_modules/` matches a directory only, so the symlink slipped past it and a
+# `git add -A` committed it (caught in ticket 07 review). Without the slash both
+# the real directory and the symlink are ignored.
+node_modules
 dist/
 coverage/
 *.log

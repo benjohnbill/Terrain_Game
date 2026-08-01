@@ -14,6 +14,8 @@ export { preview } from '../preview/preview.js';
 export type { PreviewCard, RecruitmentPreview } from '../preview/preview.js';
 export { decideBotIntent } from '../bot/index.js';
 export { capitalChoiceRefusal } from '../domain/capital-choice.js';
+export { capitalFallOf } from '../domain/capital-fall.js';
+export type { SectorCapture } from '../domain/capital-fall.js';
 export type { CapitalChoiceContext } from '../domain/capital-choice.js';
 export {
   allocationRefusal,
@@ -35,6 +37,9 @@ export type {
 export {
   CAP_LAND_FRAC,
   CAP_PER_POP,
+  CAPITAL_GUARD_PER_POP,
+  capitalGuardAt,
+  capitalGuardOf,
   CONQUEST_DAMAGE,
   forceLimitOf,
   FRESH_CAPTURE_USABLE_ECONOMY,
@@ -194,6 +199,7 @@ export type {
   Intent,
   LockCommitmentIntent,
   MatchConfig,
+  MatchOutcome,
   MatchPhase,
   MatchView,
   MergeDetachmentsIntent,

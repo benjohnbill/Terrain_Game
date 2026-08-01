@@ -57,16 +57,88 @@ export const START_FIELD_FRACTION = 0.5;
 export const GARRISON_PER_BORDER_SECTOR = 900;
 
 /**
- * Room left in one sector's shield, given what already mans it.
+ * The capital guard's coefficient — **capital CP-⑤** (2026-07-31), 가안 2,500 per
+ * point of the capital sector's `populationValue`.
+ *
+ * 가안, and settled by playtest rather than by derivation. What *is* derived is the
+ * floor beneath it: CP-② item 7 seals the guard as a garrison class at **larger**
+ * magnitude than an ordinary one, R3 lets a player seat a capital on any owned
+ * sector, and the weakest legal sector on this board carries pop 0.5 — so honouring
+ * item 7 at every legal capital needs at least 1,800. 2,500 is the user's choice
+ * above that floor, and a later change is a value change at CP-⑤, not a redesign.
+ */
+export const CAPITAL_GUARD_PER_POP = 2500;
+
+/**
+ * The guard a capital sector carries — land-derived from that sector alone (CP-①
+ * item 2, coefficient re-cut by CP-⑤).
+ *
+ * Floored for the reason `forceLimitOf` floors: this counts people. Authored
+ * populations are thirds and fifths, so the exact product lands on 3333.33 as often
+ * as on a round number, and a fractional man is not something a register can back.
+ *
+ * Note what this does **not** read: where the bodies come from. CP-⑥ apportions the
+ * guard's origins across the whole realm, so magnitude and backing are deliberately
+ * two questions with two answers — this is only the first.
+ */
+export function capitalGuardOf(populationValue: number): number {
+  return Math.floor(CAPITAL_GUARD_PER_POP * populationValue);
+}
+
+/**
+ * The guard standing on one sector: its magnitude at that realm's capital, zero
+ * everywhere else.
+ *
+ * **One reader, and the reason is `capital-choice.ts`'s.** That file exists because
+ * the Runtime and the preview must answer the *capital* question identically or the
+ * preview teaches a rule the game does not have; this is the same shape one question
+ * over. Sharing only the coefficient would not be enough — the duplicated part is the
+ * *"whose capital is this"* branch, and the two callers key it differently (the
+ * Runtime by `actor`, the preview by `view.viewer`), which is exactly where two copies
+ * drift.
+ *
+ * Takes plain values rather than state, so `preview` may call it without gaining
+ * access to anything the projection withholds — a realm's own capital is public to it
+ * from the moment it picks one, and `populationValue` is authored geography.
+ */
+export function capitalGuardAt(
+  sectors: SectorTable,
+  sectorId: SectorId,
+  capital: SectorId | undefined,
+): number {
+  if (capital !== sectorId) return 0;
+  return capitalGuardOf(sectors[sectorId]!.populationValue);
+}
+
+/**
+ * Room left in one sector's garrison, given what already mans it and what guard —
+ * if any — stands there.
  *
  * Beside the constant rather than at each caller, because four surfaces ask this
  * question — recruitment's garrison headroom, the Runtime's posture sites, the
  * preview's copy of them, and the tests — and the cap is local by seal (ADR 0014
  * keeps garrison ceilings local, M13a sizes them), so a caller that clamped
  * differently would be quietly re-cutting the ceiling.
+ *
+ * **`capitalGuard` is required rather than defaulted, and that is the point.** A
+ * default of 0 would let a caller forget the capital and silently re-cut its ceiling
+ * back to 900 — precisely the drift the paragraph above exists to prevent.
+ *
+ * It is a weaker guarantee than it looks, and the honest version is worth writing
+ * down: the compiler moves the *typed* callers, and the test lane is JavaScript. A
+ * one-argument call there yields `NaN` rather than an error, and `NaN` compares false
+ * everywhere, so an over-cap assertion still "passes" while testing nothing. That
+ * happened in this very change and the review caught it. Prefer `capitalGuardAt`
+ * below at every call site, including tests: it makes the second argument something a
+ * caller *derives* rather than something they must remember.
+ *
+ * The composition is **additive** by **CP-⑦** (2026-08-01): where a capital also
+ * carries an ordinary border shield — 179 of 840 legal capital sites — the two stand
+ * together rather than one replacing the other, so the ceiling is their sum. Pass 0
+ * for every sector that is not its owner's capital.
  */
-export function garrisonHeadroomOf(manned: number): number {
-  return Math.max(0, GARRISON_PER_BORDER_SECTOR - manned);
+export function garrisonHeadroomOf(manned: number, capitalGuard: number): number {
+  return Math.max(0, GARRISON_PER_BORDER_SECTOR + capitalGuard - manned);
 }
 
 /**

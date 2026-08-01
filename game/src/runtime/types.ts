@@ -45,8 +45,31 @@ export interface WorldIdentity {
  * mean the caller had to submit something to leave it, which is precisely the
  * extra click D6.2 forbids. The tiers are named on every event instead; see
  * `TurnTier`.
+ *
+ * `match-ended` (ticket 07) belongs here **by that same test rather than as an
+ * exception**: the match rests there, permanently, and no submission moves it. It is
+ * the one resting state with no exit — a new match is a new `Runtime`, not a
+ * transition out of this one, which is what makes "the end is final" (ADR 0042) a
+ * property of the type rather than a promise in a comment.
  */
-export type MatchPhase = 'capital-selection' | 'decision';
+export type MatchPhase = 'capital-selection' | 'decision' | 'match-ended';
+
+/**
+ * How the match ended — **ADR 0042**, the sole win condition, as a value.
+ *
+ * Present only in the terminal phase, and `null` before it. Every field is a fact
+ * the players already watched cross `submit()`: who won, who lost, and the ground
+ * whose fall stopped play. There is no score, no margin and no tiebreak, because
+ * nothing else names a winner (ledger D3.1).
+ */
+export interface MatchOutcome {
+  readonly winner: ActorId;
+  readonly loser: ActorId;
+  /** The capital sector whose capture ended the match. */
+  readonly capital: SectorId;
+  /** The turn it fell on. A record of one, never a limit on one (ticket 07 item 7). */
+  readonly turn: number;
+}
 
 /**
  * The three tiers of a turn (ledger D6.2). Carried on every turn-loop event, so a
@@ -381,6 +404,14 @@ export interface MatchView {
    * sealed name as an alias is what the ruling chose over renaming the member.
    */
   readonly currentActor: ActorId;
+  /**
+   * How the match ended, or `null` while it runs.
+   *
+   * Public to every viewer including the observer, and blurred by nothing: a capital
+   * falling is the map changing, which the sealed information ladder keeps in the
+   * open, and a match whose end one side could not read would not be an end.
+   */
+  readonly outcome: MatchOutcome | null;
   /** Every actor in the match. Identity is public; hidden holdings are not here. */
   readonly actors: readonly ActorId[];
   /**

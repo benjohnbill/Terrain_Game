@@ -19,7 +19,7 @@ import {
   recruitmentOrderKeyOf,
   type CommitmentContext,
 } from '../domain/commitment.js';
-import { garrisonHeadroomOf } from '../domain/economy.js';
+import { capitalGuardAt, garrisonHeadroomOf } from '../domain/economy.js';
 import {
   mergeDetachmentsRefusal,
   splitDetachmentRefusal,
@@ -61,6 +61,21 @@ export interface PreviewCard {
 }
 
 const no = (reason: string): PreviewCard => ({ admissible: false, reason });
+
+/**
+ * The guard raising this sector's ceiling, asked from a view.
+ *
+ * A one-line adapter, deliberately: the *rule* is `capitalGuardAt` in
+ * `domain/economy.ts`, shared with the Runtime for the reason `capital-choice.ts`
+ * gives — a preview that answered differently would teach the player a rule the game
+ * does not have. All this does is name which capital "this viewer's" means.
+ *
+ * Before the reveal `view.capitals` holds only this realm's own choice, which is
+ * exactly what is being asked, so the opening beat needs no special case.
+ */
+function capitalGuardIn(view: MatchView, sectorId: SectorId): number {
+  return capitalGuardAt(view.board.sectors, sectorId, view.capitals[view.viewer]);
+}
 
 function assignableDetachmentViews(
   graph: ReturnType<typeof buildMovementGraph>,
@@ -193,7 +208,10 @@ export function preview(view: MatchView, intent: Intent): PreviewCard {
     );
     const garrisonHeadroom = Object.fromEntries(requests.map((stored) => [
       stored.sectorId,
-      garrisonHeadroomOf(currentGarrisons[stored.sectorId] ?? 0),
+      garrisonHeadroomOf(
+        currentGarrisons[stored.sectorId] ?? 0,
+        capitalGuardIn(view, stored.sectorId),
+      ),
     ]));
     const batch = settleRecruitmentBatch({
       requests,
@@ -355,7 +373,7 @@ export function preview(view: MatchView, intent: Intent): PreviewCard {
         sectorId,
         musterHex: musterHexOf(view.board, sectorId),
         garrisonMen,
-        garrisonHeadroom: garrisonHeadroomOf(garrisonMen),
+        garrisonHeadroom: garrisonHeadroomOf(garrisonMen, capitalGuardIn(view, sectorId)),
       };
     });
 

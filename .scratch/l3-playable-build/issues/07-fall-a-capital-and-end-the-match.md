@@ -11,15 +11,30 @@ game rather than an open-ended one.
 06a–06d by gate C, 2026-07-26. R1 makes a capital fall an ordinary sector capture,
 so the capture path is the real blocker, not the battle alone.)
 
-Status: **ready-for-agent** (2026-08-01 — the third item found by R6's claim-time
-recompute is **ruled**: the guard's register backing is **realm-wide**, capital
-**CP-⑥**, and `DECISIONS-OWED.md` Part 2 row **16** is closed. No acceptance item now
-needs an undetermined value, and 06d merged on 2026-07-31 (`34d728d`), so nothing
-blocks this ticket. Recompute R6's second test at claim time anyway — this header has
-been wrong twice, most recently on 2026-07-31 in both directions on the same day. See
-§ Comments → "A third item, found by the claim-time recompute" for the item's full
-history and "The third item, ruled" for the answer. This is the frontier and the loop
-closes here.)
+Status: **resolved** (2026-08-01, branch `l3/ticket-07-capital-fall` off `2a6bf60`).
+All ten acceptance items are satisfied and verified; evidence and the two-axis review's
+findings are under § Comments. One follow-up is registered rather than absorbed:
+`DECISIONS-OWED.md` Part 2 row **17**, the simultaneous double fall, whose refusal the
+user pinned rather than answered. Prior status line, preserved:
+
+> **claimed** (2026-08-01). The claim-time R6(ii) recompute was run **again** on
+> claiming — as the header below instructs — and found a **fourth** item beneath the
+> three: the guard and an ordinary border shield meeting on the same sector, on 179 of
+> 840 legal capital sites. The user ruled it in the same session (capital **CP-⑦**,
+> additive), so no acceptance item needed an undetermined value and the claim stood.
+> See § Comments → "A fourth item, found by the second claim-time recompute". Prior
+> status line, preserved because its instruction is the reason the fourth item was
+> found:
+
+> **ready-for-agent** (2026-08-01 — the third item found by R6's claim-time
+> recompute is **ruled**: the guard's register backing is **realm-wide**, capital
+> **CP-⑥**, and `DECISIONS-OWED.md` Part 2 row **16** is closed. No acceptance item now
+> needs an undetermined value, and 06d merged on 2026-07-31 (`34d728d`), so nothing
+> blocks this ticket. Recompute R6's second test at claim time anyway — this header has
+> been wrong twice, most recently on 2026-07-31 in both directions on the same day. See
+> § Comments → "A third item, found by the claim-time recompute" for the item's full
+> history and "The third item, ruled" for the answer. This is the frontier and the loop
+> closes here.)
 
 Specification gates: Wayfinder 10, 12.
 
@@ -41,16 +56,18 @@ capital-terrain and encirclement dynamics that the parallel map pass tunes. The
 supply predicate must still admit encirclement in principle (item 7); what is
 deferred is the fall path built on it, not the vulnerability.
 
-- [ ] Each realm has exactly one capital; its guard magnitude is land-derived from the capital sector per its sealed birthplace, with no number restated here.
-- [ ] The guard is an ordinary garrison class placed on the capital sector; it is **not** auto-declared a supply base and obeys the same supply predicate as any force. Its **register backing is realm-wide** (CP-⑥) — origins apportioned across the realm's held sectors exactly as `#seatSubstance` already apportions the opening field army, not drawn from the capital sector alone.
-- [ ] **Capital fall is an ordinary sector capture** (user ruling 2026-07-25): the capital sector transfers under the same headline-bound binary control rule as any sector, and the match ends the instant it does. There is **no** capital-specific threshold, no "overwhelming" gate, and no special predicate anywhere in this path. What makes it hard is the guard's magnitude, not an extra condition. CP-② item 5's "overwhelming decisive battle" phrasing describes the path, not an additional bar.
-- [ ] No other win check exists anywhere: no last-faction-standing, no percentage-of-hexes, no hegemony or decision point, no points, territory, or economy tiebreak, no draw path, no turn cap.
-- [ ] The Moscow-trap fall path is absent rather than approximated, and its absence is stated in the ticket's evidence rather than left to be discovered.
-- [ ] **Capital relocation (천도) is OUT of scope** (user ruling 2026-07-25) and is absent rather than approximated. It is a large system and a core strategic element, not wiring for an already-designed mechanism — and this build's mandate is to wire what is designed, not to introduce systems. Note for whoever reads CP-② item 4 later and wonders: relocation *is* fully specified there; its absence here is a deliberate scope call, not a design gap.
-- [ ] There is no early-rush floor: no rule forbids a capital falling before a given turn.
-- [ ] The match ends explicitly and finally with a victory screen that states who won and why play stopped.
-- [ ] A new match can start afterwards, resetting authoritative and interaction state.
-- [ ] A complete match — setup, several turns, a capital fall, the victory screen — is reproducible from `(worldId, revision, seed, ordered intent log)` in Node and browser.
+- [x] Each realm has exactly one capital; its guard magnitude is land-derived from the capital sector per its sealed birthplace, with no number restated here.
+- [x] The guard is an ordinary garrison class placed on the capital sector; it is **not** auto-declared a supply base and obeys the same supply predicate as any force. Its **register backing is realm-wide** (CP-⑥) — origins apportioned across the realm's held sectors exactly as `#seatSubstance` already apportions the opening field army, not drawn from the capital sector alone. Where the capital sector also carries an
+ordinary border shield (179 of 840 legal sites), the two stand **together** and the
+sector's local ceiling is the sum (**CP-⑦**) — a uniform rule, with no border test.
+- [x] **Capital fall is an ordinary sector capture** (user ruling 2026-07-25): the capital sector transfers under the same headline-bound binary control rule as any sector, and the match ends the instant it does. There is **no** capital-specific threshold, no "overwhelming" gate, and no special predicate anywhere in this path. What makes it hard is the guard's magnitude, not an extra condition. CP-② item 5's "overwhelming decisive battle" phrasing describes the path, not an additional bar.
+- [x] No other win check exists anywhere: no last-faction-standing, no percentage-of-hexes, no hegemony or decision point, no points, territory, or economy tiebreak, no draw path, no turn cap.
+- [x] The Moscow-trap fall path is absent rather than approximated, and its absence is stated in the ticket's evidence rather than left to be discovered.
+- [x] **Capital relocation (천도) is OUT of scope** (user ruling 2026-07-25) and is absent rather than approximated. It is a large system and a core strategic element, not wiring for an already-designed mechanism — and this build's mandate is to wire what is designed, not to introduce systems. Note for whoever reads CP-② item 4 later and wonders: relocation *is* fully specified there; its absence here is a deliberate scope call, not a design gap.
+- [x] There is no early-rush floor: no rule forbids a capital falling before a given turn.
+- [x] The match ends explicitly and finally with a victory screen that states who won and why play stopped.
+- [x] A new match can start afterwards, resetting authoritative and interaction state.
+- [x] A complete match — setup, several turns, a capital fall, the victory screen — is reproducible from `(worldId, revision, seed, ordered intent log)` in Node and browser.
 
 ## Comments
 
@@ -204,3 +221,91 @@ reading in which the guard subsumes the capital's border shield, the ceiling is
 unchanged and the count reaching 1,800 is still 0.
 
 Derivation and rejected alternatives: **CP-⑥**. Do not re-derive them here.
+
+### A fourth item, found by the second claim-time recompute — 2026-08-01
+
+**Ruled the same session it was found: capital CP-⑦, additive.** Recorded because the
+*finding* is the reusable part — this is the second consecutive claim-time recompute
+to turn up an item the previous session's "no blockers" header had missed, and both
+times the item lived where two separately-correct seals meet.
+
+**The item.** `#seatSubstance` seats a 900-man shield on every contested-edge sector at
+`open()`, and capitals are chosen afterwards, so a capital can land on a sector that
+already carries one. Measured over the same 840 candidates CP-⑥ enumerated: **179
+(21.3%)**, across **27** distinct sectors. `state.garrisons` holds one `GarrisonForce`
+per sector, so the two are one stock mechanically — but no seal said what the **total**
+is, and at the weakest legal capital the 900 is 72% of the guard.
+
+CP-⑥ knew: it re-measured "under the alternative reading in which the guard *subsumes*
+the capital's border shield" and recorded only that its own conclusion did not depend
+on the answer. That is a correct scope call for CP-⑥ and leaves the question open for
+whoever actually places the guard, which is this ticket.
+
+**The ruling.** The shield and the guard stand together; the sector's local ceiling is
+`GARRISON_PER_BORDER_SECTOR + guardMagnitude`. Uniform — no border test anywhere in the
+implementation. Reasoning, measurement and the rejected subsumption reading: **CP-⑦**.
+Do not re-derive them here.
+
+**One consequence to carry into the evidence rather than rediscover:** CP-⑤'s "army
+needed" table is computed against the guard alone, so it understates the attacker's
+requirement at a border capital. That is a reading note on CP-⑤, not a value change.
+
+### Implementation evidence — 2026-08-01
+
+- Commit: `50488f7` (CP-⑦ + claim), `a64a7d6` (implementation), plus the review-fix
+  commit that follows them on `l3/ticket-07-capital-fall`.
+- Production authority: ADR 0042 (sole win condition); `capital/RULINGS.md` CP-① item 2
+  as amended, CP-② items 5/7/8/9, **CP-⑤** (가안 2,500/pop), **CP-⑥** (realm-wide
+  backing), **CP-⑦** (additive ceiling); ADR 0047 item 5; ADR 0014 (local ceilings);
+  M13a (g₀ = 1.0, 900/border sector); ledger D3.1, D6.1a, D6.2.
+- Narrow tests: `game/tests/capital-fall.test.js` **18 pass** (guard magnitude,
+  siting, CP-⑦ additivity, headroom, CP-⑥ backing at `r5_s8`, the fall, play stopping,
+  the non-capital capture, the 60-turn iff, the pure win check and its refusal, restart,
+  reproducibility). `game/tests/browser/capital-fall.spec.js` **2 pass** (cross-host
+  ending; a human decapitation through the built viewer).
+- Shared gates: `npm run verify:game` → **exit 2**, every lane PASS with parity
+  **PENDING by design** (gate 10 unfilled); both hosts `d50337ddf67c813b`. Node **257**
+  (was 239), browser **23** (was 21), root `npm test` **562/562**, `npm run lint:docs`
+  **0 blocking / 13 advisory** (was 12 — the new one is `ledger-possibly-paid` matching
+  this ticket's commit against the operational-manoeuvre row, incidental and therefore
+  **left standing**, which the lint's own guidance calls the correct outcome).
+- Browser/runtime check: built viewer at `dist-viewer/index.html`, world
+  `terrain-cradle@r1`, seed `turn-0001`, a full decapitation driven through the DOM —
+  capitals picked, march, 16 chips, both locks — ending in the victory screen and a
+  same-seed restart.
+- Legacy evidence disposition: none used. Nothing here was ported; the guard, the win
+  check and the terminal phase were built from the seals above.
+- Follow-up: `DECISIONS-OWED.md` Part 2 **row 17** (simultaneous double fall, pinned
+  refusal awaiting a user ruling). One deliberate out-of-scope change is recorded
+  rather than hidden: `.gitignore`'s `node_modules/` lost its trailing slash, because
+  the worktree convention symlinks `node_modules` and a directory-only pattern let a
+  `git add -A` commit the symlink during this ticket.
+
+**What the two-axis review caught, because it is the useful part.** Both axes found
+real defects and they converged on one fix:
+
+- **Standards** — `capture.test.js` still called `garrisonHeadroomOf` with one
+  argument. The lane is JavaScript, so it returned `NaN`, and `NaN` compares false
+  everywhere: the over-cap assertion passed green while testing nothing. This also
+  disproved a claim written in the same change ("a required parameter makes the
+  compiler move all four callers"), which is now corrected in place rather than
+  quietly dropped. Also: an orphaned doc block (`#capitalGuardAt` inserted between
+  `#postureSites` and its own comment), a stale `force.ts` citation, and a near-twin
+  pair of guard lookups that the repo's own `capital-choice.ts` precedent says should
+  be one shared pure function.
+- **Spec** — the double-fall refusal **threw after both captures had already been
+  applied**, leaving both capitals transferred with `outcome` null and the phase still
+  `decision`, and escaping `submit()` into an uncaught React handler. Right decision,
+  wrong placement.
+
+Both are fixed by the same move: the win check became `domain/capital-fall.ts`'s pure
+`capitalFallOf(captures, capitals, turn)`, called on the **decided-but-unapplied**
+captures. That puts the refusal on an intact board, removes four `as ActorId` casts
+off the event stream, and makes the pinned refusal a real assertion instead of a
+`readFileSync` grep of the emitted bundle — which both reviewers flagged, since it
+would survive the branch going dead.
+
+The spec axis also narrowed one test re-aim: `capture.test.js` had been made to skip
+the capital wholesale, which stops asserting local backing for the 900 shield standing
+beside the guard. CP-⑦ says the register is untouched, so it now subtracts the guard
+instead of skipping the sector.

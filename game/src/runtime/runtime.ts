@@ -18,6 +18,7 @@
 
 import { resolveBattle, type SideBattleOutcome } from '../domain/battle.js';
 import { capitalChoiceRefusal } from '../domain/capital-choice.js';
+import { capitalFallOf, type SectorCapture } from '../domain/capital-fall.js';
 import {
   battleInputOf,
   bodiesLost,
@@ -38,6 +39,8 @@ import {
   type CommitmentContext,
 } from '../domain/commitment.js';
 import {
+  capitalGuardAt,
+  capitalGuardOf,
   forceLimitOf,
   GARRISON_PER_BORDER_SECTOR,
   garrisonHeadroomOf,
@@ -107,6 +110,7 @@ import type {
   GameEvent,
   Intent,
   MatchConfig,
+  MatchOutcome,
   MatchView,
   TurnTier,
   ViewerId,
@@ -159,12 +163,9 @@ interface SectorFormation {
   readonly wear: number;
 }
 
-/** One sector changing hands, as ADR 0044's transfer reads it. */
-interface SectorCapture {
-  readonly sector: SectorId;
-  readonly taker: ActorId;
-  readonly loser: ActorId;
-}
+// `SectorCapture` — one sector changing hands, as ADR 0044's transfer reads it — moved
+// to `domain/capital-fall.ts` when the win check did: the check reads captures before
+// they are applied, so the two share the type or they drift.
 
 /**
  * A formation's key inside one engagement's apportionment. Namespaced so a shield
@@ -285,6 +286,7 @@ export class Runtime {
       partitionCandidates: partition.candidateCount,
       phase: 'capital-selection',
       capitals: {},
+      outcome: null,
       homeland,
       // Empty, and honestly so: at the opening every realm stands on its own ground,
       // which is already whole. The first entry appears when the first capture
@@ -313,29 +315,26 @@ export class Runtime {
    * ceiling, **g₀ = 1.0** mans every border shield at cap, and the register is
    * land-derived once (MT-②) and a stock from then on.
    *
-   * What is deliberately absent: the **capital guard**. Its *magnitude* is settled —
-   * **CP-⑤** (2026-07-31) re-cut CP-① item 2's coefficient to 가안 **2,500/pop**, and
-   * `MAGNITUDE.md`'s flat `capitalGarrison 1500` turned out never to have been a seal.
-   * Placing the guard is **ticket 07's**, together with the ceiling it needs:
-   * `garrisonHeadroomOf` is uniform at `GARRISON_PER_BORDER_SECTOR`, while CP-① item 2
-   * gives the guard its **own local ceiling** (ADR 0014 keeps garrison ceilings local),
-   * and at 2,500/pop the guard reaches 6,000 on this board's largest sector.
+   * What is **still** absent here, and deliberately: the **capital guard**. Not
+   * because it is unruled — CP-⑤ sizes it, CP-⑥ backs it and CP-⑦ composes its
+   * ceiling — but because its magnitude reads the *capital sector's* population and
+   * no capital exists yet. This runs inside `open`; capitals are chosen afterwards,
+   * simultaneously and in secret (CP-② D1.3). So the guard is raised at the reveal,
+   * by `#raiseCapitalGuards`, and that ordering is forced rather than preferred.
    *
-   * **Where its bodies come from is settled too, and it is not the local rule below.**
-   * CP-① item 2 calls the guard *register-backed*, and since 2026-07-31 the register is
-   * **1,800/pop stored per sector** (MT-② amended, ADR 0047). Seating the guard the way
-   * the loop below seats a border shield ("drawn from the ground it stands on") makes
-   * `availableCiviliansByOrigin` throw at **every** legal capital: measured over 840
-   * capital candidates, the highest coefficient a sector can back from its own register
-   * is 1,453–1,490, against CP-② item 7's floor of >1,800. The two never overlap,
-   * because the opening field army apportioned below already draws ~18% of every
-   * sector's register.
+   * **It also settles the register order, which is worth stating because a natural
+   * reading gets it backwards.** The guard is garrison-class (CP-① item 2), and the
+   * loop below draws garrisons first and the field army from what is left — so one
+   * would expect the guard to come out of `remaining` *before* `openingField`.
    *
-   * **CP-⑥** (2026-08-01) therefore apportions the guard's origins **across the realm**,
-   * the rule ADR 0047 item 5 already states for the opening field army rather than the
-   * one it states for garrisons — 0047's header carries the amendment stamp. So the
-   * guard reuses `apportionOrigins` over `remaining` below; it does not get its own
-   * seating rule, and it must not be exempted from the register.
+   * No seal orders those two draws, and the choice is not forced: the field army's
+   * *apportionment* could have moved to the reveal beside its placement. What decides
+   * it is that CP-⑥ measured this order and sealed against it — its "free register
+   * after shields **and the opening field**" of 37,800–42,300, against a largest
+   * possible guard of 6,000, is exactly field-then-guard, with room to spare and no
+   * clamp required. The observable difference is confined to apportionment rounding
+   * inside origin composition; totals, ceilings and the `availableCivilians`
+   * invariant are identical either way.
    */
   static #seatSubstance(
     artifact: MatchState['loadedWorld']['artifact'],
@@ -408,6 +407,64 @@ export class Runtime {
     return { forces, garrisons };
   }
 
+  /**
+   * Raise both capital guards, at the reveal and only there.
+   *
+   * Three seals meet in this one loop, and each answers a different question:
+   *
+   * - **how many** — `capitalGuardOf`, CP-⑤'s 가안 2,500 × the *capital sector's*
+   *   population. Land-derived from that sector, which is why it cannot be known
+   *   before the sector is chosen (see `#seatSubstance`).
+   * - **from whom** — **CP-⑥**: apportioned across the realm's remaining register,
+   *   the rule ADR 0047 item 5 gives the opening field army rather than the local
+   *   one it gives garrisons. This is not a shortcut: over 840 capital candidates
+   *   *no* sector can back its own guard, so local backing was arithmetically
+   *   unavailable rather than merely awkward.
+   * - **beside what** — **CP-⑦**: where the capital also carries a border shield,
+   *   the guard *adds* to it. That falls out of accumulating into the existing
+   *   `GarrisonForce` rather than replacing it, which is why there is no branch here
+   *   asking whether this sector is a border sector.
+   *
+   * The guard is **not** exempted from the register, and must not become so: CP-①
+   * item 2 makes it register-backed, and SPEC's permanent-blood-currency line is what
+   * would stop pricing its losses if it were. `availableCiviliansByOrigin` is the
+   * guard on that, and it throws rather than clamps.
+   *
+   * It is likewise **not** made a supply base. CP-② item 7 gives the guard no special
+   * supply rule precisely so the capital stays encirclable in principle, and the
+   * Moscow-trap *path* being out of this slice (gate 08) does not license removing the
+   * vulnerability it rests on. Nothing below touches supply, and nothing may.
+   */
+  #raiseCapitalGuards(): void {
+    const state = this.#state;
+    for (const actor of state.actors) {
+      const capital = state.capitals[actor]!;
+      const guardMen = capitalGuardOf(
+        state.loadedWorld.artifact.sectors[capital]!.populationValue,
+      );
+      if (guardMen === 0) continue;
+
+      const forces = state.forces[actor]!;
+      const garrisons = state.realms[actor]!.sectors.flatMap((held) => {
+        const garrison = state.garrisons[held];
+        return garrison === undefined ? [] : [garrison];
+      });
+      // The realm's own books, read the same way every other consumer reads them —
+      // so a guard can never be seated out of bodies that are already serving.
+      const available = availableCiviliansByOrigin(
+        forces.registers,
+        servingByOrigin(forces, garrisons),
+      );
+      const origins = apportionOrigins(guardMen, available);
+      if (menOf(origins) !== guardMen) {
+        throw new Error(`${actor}'s capital guard allocation does not conserve men.`);
+      }
+
+      const standing = state.garrisons[capital] ??= { ready: {}, pending: [] };
+      accumulateOrigins(standing.ready, origins);
+    }
+  }
+
   /** Consume both setup-only cohorts together at the simultaneous capital reveal. */
   #placeOpeningFields(): void {
     const state = this.#state;
@@ -465,6 +522,16 @@ export class Runtime {
     }
     if (!this.#state.actors.includes(intent.actor)) {
       return [this.#reject(intent, `"${String(intent.actor)}" is not an actor in this match.`)];
+    }
+    // The end is final (ADR 0042): a finished match takes no further input of any
+    // kind. Checked here, once, ahead of every kind — a per-kind guard is how one
+    // route would come to survive the ending. A new match is a new `Runtime`.
+    if (this.#state.phase === 'match-ended') {
+      const { winner, capital } = this.#state.outcome!;
+      return [this.#reject(
+        intent,
+        `This match ended when ${capital} fell to ${winner}; start a new match to play on.`,
+      )];
     }
 
     if (intent.kind === 'choose-capital') {
@@ -655,7 +722,10 @@ export class Runtime {
         sectorId,
         musterHex: musterHexOf(state.loadedWorld.artifact, sectorId),
         garrisonMen,
-        garrisonHeadroom: garrisonHeadroomOf(garrisonMen),
+        garrisonHeadroom: garrisonHeadroomOf(
+          garrisonMen,
+          capitalGuardAt(state.loadedWorld.artifact.sectors, sectorId, state.capitals[actor]),
+        ),
       };
     });
   }
@@ -826,7 +896,13 @@ export class Runtime {
     if (state.actors.every((a) => a in state.capitals)) {
       // The opening beat's own reveal, and the handover into the turn loop's sole
       // agency tier. Nothing else happens between: there is no setup screen.
+      //
+      // Fields before guards, and it makes no arithmetic difference: `openingField`
+      // was apportioned in `open` and `servingByOrigin` counts it whether it is still
+      // a setup cohort or already a placed detachment. The order reads as the beat
+      // does — the armies take the field, then the seats are garrisoned.
       this.#placeOpeningFields();
+      this.#raiseCapitalGuards();
       state.phase = 'decision';
       events.push({
         type: 'capitals-revealed',
@@ -1260,6 +1336,21 @@ export class Runtime {
           detail: { tier: detail.tier, budget: detail.budget },
         }];
       }
+      if (event.type === 'match-ended') {
+        // The one event that must reach everyone whole. Every field is already
+        // public — who took the ground, who lost it, and which ground — and a match
+        // whose end a viewer could not read would not be an end (ADR 0042).
+        return [{
+          type: event.type,
+          turn: event.turn,
+          detail: {
+            tier: detail.tier,
+            winner: detail.winner,
+            loser: detail.loser,
+            capital: detail.capital,
+          },
+        }];
+      }
       return [];
     });
   }
@@ -1298,7 +1389,25 @@ export class Runtime {
       revealed,
       new Set(engagements.map((engagement) => engagement.sector)),
     ));
-    events.push(...this.#resolveEngagements(engagements));
+    const resolved = this.#resolveEngagements(engagements);
+    events.push(...resolved.events);
+
+    // **The loop closes here** (ADR 0042). A capital fell, so the match is over and
+    // the rest of this tail must not run: integration, income, upkeep and the next
+    // turn's opening are all statements about a match that continues.
+    //
+    // `ending` was decided *before* the captures were applied — `capitalFallOf`'s
+    // contract — so the double-fall refusal it carries fires on an intact board. The
+    // event is still emitted here, after the ground has changed hands, because that is
+    // the order a player watches it in.
+    const ending = resolved.ending;
+    if (ending !== null) {
+      state.outcome = ending;
+      state.phase = 'match-ended';
+      events.push(this.#turnEvent('match-ended', 'payoff', { ...ending }));
+      return events;
+    }
+
     events.push(...this.#updateMobilizationSignals());
     // Between the battles and the income, and in that order for a reason: a sector
     // taken *this* turn was the target of attack resolution, so ADR 0022's stable
@@ -1406,7 +1515,14 @@ export class Runtime {
               (sum, cohort) => sum + menOf(cohort.origins),
               0,
             );
-        return [request.sectorId, garrisonHeadroomOf(men)];
+        return [
+          request.sectorId,
+          garrisonHeadroomOf(men, capitalGuardAt(
+            state.loadedWorld.artifact.sectors,
+            request.sectorId,
+            state.capitals[actor],
+          )),
+        ];
       }));
       const result = settleRecruitmentBatch({
         requests,
@@ -1700,7 +1816,9 @@ export class Runtime {
    * the register's re-cut to per-province are 06d's (R18 iii), and a capital
    * falling is 07's. A battle here changes who is *alive*, never who *holds*.
    */
-  #resolveEngagements(engagements: readonly Engagement[]): GameEvent[] {
+  #resolveEngagements(
+    engagements: readonly Engagement[],
+  ): { events: GameEvent[]; ending: MatchOutcome | null } {
     const events: GameEvent[] = [];
     // Deferred to after the loop, over a **snapshot** taken inside it. Two distinct
     // order-dependences would otherwise appear, and neither is theoretical:
@@ -1777,6 +1895,21 @@ export class Runtime {
     }
 
     for (const rout of routs) this.#displaceRouted(rout.sector, rout.actor, rout.formations);
+
+    // **Read the ending before applying the captures, not after** (ticket 07). Two
+    // reasons, and the second is why this line sits above the loop rather than below
+    // it:
+    //
+    // 1. a capture moves the sector to its taker, so "whose capital is now held by
+    //    someone else" stops being answerable the moment it becomes true;
+    // 2. `capitalFallOf` **throws** on a simultaneous double fall — a refusal the user
+    //    pinned rather than answered — and a throw after the loop would leave the board
+    //    already mutated, both capitals changed hands, with `outcome` null and the
+    //    phase still `decision`. That is an unrecoverable match, and it escapes
+    //    `submit()` into the caller. Asked here, the refusal costs the turn and nothing
+    //    else.
+    const ending = capitalFallOf(captures, this.#state.capitals, this.#state.turn);
+
     // Last, and after the routs for the same reason the routs come after the loop:
     // the transfer reads the loser's *settled* books. Casualties have been taken and
     // survivors have left service, so the civilians standing on this ground are known.
@@ -1784,7 +1917,7 @@ export class Runtime {
     // which register they answer to.
     for (const capture of captures) events.push(...this.#captureSector(capture));
 
-    return events;
+    return { events, ending };
   }
 
   /**

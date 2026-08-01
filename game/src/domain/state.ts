@@ -14,7 +14,7 @@ import type { LoadedWorld } from '../world/load.js';
 import type { Detachment, ForceCohort, GarrisonForce } from './force.js';
 import type { RecruitmentRequest } from './recruitment.js';
 import type { SectorId } from '../world/schema.js';
-import type { ActorId, Front, MatchPhase, WorldIdentity } from '../runtime/types.js';
+import type { ActorId, Front, MatchOutcome, MatchPhase, WorldIdentity } from '../runtime/types.js';
 import type { Rng } from '../runtime/rng.js';
 
 /** One side's holdings. Drawn at setup; ownership changes as the war does. */
@@ -92,6 +92,17 @@ export interface MatchState {
    * reveal onward (item 1). The projection enforces that; this map holds truth.
    */
   capitals: Record<ActorId, SectorId>;
+
+  /**
+   * How the match ended — `null` until a capital falls, and never cleared.
+   *
+   * Written once, in the same payoff as the capture that caused it, and paired with
+   * `phase: 'match-ended'`. Kept as state rather than derived from the board because
+   * a capture also *moves* the sector: a moment after the fall the capital is the
+   * winner's ground, so "who no longer holds their capital" stops being answerable
+   * from the map the instant it becomes true.
+   */
+  outcome: MatchOutcome | null;
 
   /**
    * Who each sector pays — seeded from the opening partition.
