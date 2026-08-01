@@ -2025,7 +2025,11 @@ export class Runtime {
    * - **the loser keeps them where they stand** needs a garrison detached from its
    *   locality, and a mobile garrison is the system 06b and 06c explicitly refused;
    * - **they withdraw to somewhere** needs a destination, and the only candidate is
-   *   the capital guard, which is ticket 07's `needs-info` and unbuilt.
+   *   the capital guard — which ticket 07 has now built, and which still cannot be
+   *   one: the guard is **place-bound** (CP-① item 2), so it is a garrison that
+   *   happens to be large rather than a place men can fall back to. The alternative
+   *   closed for a better reason than it used to (it read "unbuilt" until 2026-08-01),
+   *   and it is closed by a seal rather than by a schedule.
    *
    * So WM-⑤ (v) applies, and by its own stated reasoning rather than by extension:
    * it covers "a locality-fixed shield with no locality left", and gives that
