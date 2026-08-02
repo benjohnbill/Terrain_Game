@@ -60,6 +60,19 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   a user call. Cheapest honest path is (a) only, and (b) fills in naturally as
   those terms are re-sealed.
 
+- [ ] **The Wayfinder's seals have no ADR, by a deliberate deferral**
+  (registered 2026-08-02, user ruling). Gates 05–10 are all sealed and all live
+  only in `.scratch/l3-playable-seam/issues/`, which is **Working layer** — so
+  the acceptance standard for the entire L3 build is not in the seal chain. The
+  user ruled to **defer, not decline**: write one ADR covering the Wayfinder
+  when **gate 11** closes, rather than one per gate. The precedent that makes
+  deferral safe is that gates 05–08 sealed the same way without complaint; the
+  reason it is a debt anyway is gate 10's ruling that **fun is not judged by a
+  build acceptance gate** — that binds `match-arc`'s TEST-LADDER, every
+  DESIGN-RISKS row waiting on a playtest, and all thirteen tickets, which is
+  cross-feature by any reading. **Trigger: gate 11's closure.** Until then the
+  gate files are the citable source.
+
 - [ ] **`L3` is one identifier with two live meanings, and only one is
   registered** (registered 2026-08-02, found by Wayfinder gate 10's grill —
   it is what kept that gate open). `docs/audits/term-inventory.json` carries

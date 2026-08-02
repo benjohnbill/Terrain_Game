@@ -156,6 +156,24 @@ SPEC direction MUST land with an ADR in the same batch. "SPEC-level"
 is not an exemption from the Record layer — it is the strongest
 reason to enter it.
 
+**Reasons are load-bearing (adopted 2026-08-02, Wayfinder gate 10
+session):** a ruling's stated *reason* is normative alongside its
+conclusion. A seal, an ADR, or a code comment whose reason is **false
+or has expired while its conclusion still stands** is a defect, not a
+cosmetic nitpick — a right answer resting on a wrong reason sends the
+next change to the wrong lever, and it is harder to catch than a wrong
+answer precisely because the conclusion checks out. Correct it at its
+birthplace in the batch that finds it, and **state the true reason
+rather than deleting the false one silently**; where the reason was
+load-bearing for a downstream decision, say so. Amending only a reason
+is a Record-layer stamp, not a redesign, and it does not reopen the
+ruling. The pattern recurred four times in the session that adopted it
+— a sealed ruling crediting the wrong mechanism for early-rush
+defence, a risk row naming a hazard the code did not have, and two
+acceptance docstrings that justified themselves by a gate which had
+just closed — which is why it is written here rather than left a
+habit.
+
 ## Vocabulary Law
 
 - **Definition tiers**: Tier 0 = `DOMAIN_MAP.md` (project canon,
