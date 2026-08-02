@@ -1,8 +1,10 @@
-# Define Game Runtime Authority and Its Interface
+---
+type: grilling
+status: resolved
+blocked_by: []
+---
 
-Type: grilling
-Status: resolved
-Blocked by: none
+# Define Game Runtime Authority and Its Interface
 
 ## Question
 

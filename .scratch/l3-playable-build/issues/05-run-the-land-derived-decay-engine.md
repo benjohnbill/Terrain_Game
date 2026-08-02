@@ -1,4 +1,15 @@
+---
+type: task
+status: resolved
+blocked_by: [03]
+---
+
 # 05 — Run the Realm Economy and the Land-Derived Decay Engine
+
+> **Migrated to front matter 2026-08-03** (ticket 14 R3). The old
+> header lines carried prose that the schema moves off the status line:
+>
+> - **blocked-by line was:** 03 — Close the Simultaneous Commit-and-Reveal Turn Loop.
 
 **What to build:** The board-state machine that recomputes every turn in the
 background tier and makes losing ground hurt permanently: income over held land,
@@ -6,10 +17,6 @@ the land-derived military force limit, the conscription register, recruitment,
 and dual-billed replenishment. This is the engine that makes the match converge
 on its own — without it there is no induced pressure, and "natural match length"
 has nothing driving it.
-
-**Blocked by:** 03 — Close the Simultaneous Commit-and-Reveal Turn Loop.
-
-Status: resolved
 
 Specification gates: Wayfinder 10, 12.
 

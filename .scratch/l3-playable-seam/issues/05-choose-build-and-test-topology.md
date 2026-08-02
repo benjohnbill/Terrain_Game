@@ -1,8 +1,10 @@
-# Choose the Build, Module, and Test Topology
+---
+type: grilling
+status: resolved
+blocked_by: [01, 02, 04]
+---
 
-Type: grilling
-Status: resolved
-Blocked by: 01, 02, 04
+# Choose the Build, Module, and Test Topology
 
 ## Question
 

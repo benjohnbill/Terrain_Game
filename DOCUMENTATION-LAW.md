@@ -192,6 +192,44 @@ habit.
   the single-definition rule above) — it does not move the definition
   out of the feature doc, which stays authoritative.
 
+## Work intake
+
+Durable work enters through the tracker, not through conversation alone.
+Adopted 2026-08-03 (doc-structure ticket 14, R1–R7).
+
+1. Work too large for one session is charted as a Wayfinder map, whose
+   children are decision tickets.
+2. A ticket's **type and scope are agreed with the user before its file is
+   created.** An agent creating a ticket from an instruction rather than
+   from a decision says so, and asks first.
+3. Front matter is written when a ticket file is created, not added to it
+   later. Bringing an existing tracker onto the schema is a **one-time
+   migration**, made in a single batch with its enforcing check — not a
+   retrofit performed ticket by ticket. Schema and value domains live in
+   the repo's tracker doc § Wayfinding operations
+   (`docs/agents/issue-tracker.md`); this law does not restate them.
+4. Implementation runs from a ticket and closes with a review. The ticket
+   is the unit of work; the session is not.
+
+Clause 2 is a duty an agent can skip, and this law says so rather than
+pretending otherwise: a clause with nothing consuming it was measured at
+**0 of 4** on the same day this was adopted (the `Summary`-column duty,
+adopted 2026-07-27, triggered four times and honoured none). What carries
+force here is not the clause but what depends on the schema — a blocking
+lint check on the front matter, and `scripts/frontier.js`, which is how
+available work is found. A ticket without front matter does not appear
+there, so omitting it is a breakage rather than a disobedience. Enforcement
+by dependency is the pattern to reach for first; a clause is the index into
+it, not a substitute for it.
+
+**Deferral discipline.** A deferral recorded without a trigger becomes a
+permanent debt, so any text that parks work — a grandfather entry, a
+"later" note, a held-out file — states two things beside it: **when it is
+picked up** (the named condition, not "soon") and **when the text itself is
+deleted**. An exemption from a blocking check must not outlive its reason.
+The precedent is `AGENTS.md`'s tracker note, which carries its own deletion
+line.
+
 ## Session-close ritual (standing duties)
 
 When a session or work unit closes (final-check in this repo includes

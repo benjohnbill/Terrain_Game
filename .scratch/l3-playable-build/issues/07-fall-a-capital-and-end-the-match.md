@@ -1,4 +1,16 @@
+---
+type: task
+status: resolved
+blocked_by: [06d]
+---
+
 # 07 — Fall a Capital and End the Match
+
+> **Migrated to front matter 2026-08-03** (ticket 14 R3). The old
+> header lines carried prose that the schema moves off the status line:
+>
+> - **status was:** **resolved** (2026-08-01, branch `l3/ticket-07-capital-fall` off `2a6bf60`).
+> - **blocked-by line was:** nothing — 06d merged 2026-07-31 (`34d728d`). (Ticket 06 was re-cut into 06a–06d by gate C, 2026-07-26. R1 makes a capital fall an ordinary sector capture, so the capture path is the real blocker, not the battle alone.)
 
 **What to build:** The terminus, and with it the first end-to-end closure of the
 whole loop. The capital carries a land-derived guard; defeating that guard on its
@@ -7,11 +19,6 @@ explicit victory screen. **After this ticket a complete match can be played from
 setup to victory** — thin, but closed. Every later ticket thickens a terminating
 game rather than an open-ended one.
 
-**Blocked by:** nothing — 06d merged 2026-07-31 (`34d728d`). (Ticket 06 was re-cut into
-06a–06d by gate C, 2026-07-26. R1 makes a capital fall an ordinary sector capture,
-so the capture path is the real blocker, not the battle alone.)
-
-Status: **resolved** (2026-08-01, branch `l3/ticket-07-capital-fall` off `2a6bf60`).
 All ten acceptance items are satisfied and verified; evidence and the two-axis review's
 findings are under § Comments. One follow-up is registered rather than absorbed:
 `DECISIONS-OWED.md` Part 2 row **17**, the simultaneous double fall, whose refusal the

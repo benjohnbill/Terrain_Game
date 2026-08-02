@@ -1,4 +1,15 @@
+---
+type: task
+status: resolved
+blocked_by: [02, 03]
+---
+
 # 06 — Board verbs + emergent siege: the Moscow trap (판 동사 + 창발 공성)
+
+> **Migrated to front matter 2026-08-03** (ticket 14 R3). The old
+> header lines carried prose that the schema moves off the status line:
+>
+> - **blocked-by line was:** 02 — Movement contract; 03 — Engagement v2.
 
 **What to build:** The two defense choices that avoid the calculator, plus
 the siege that emerges from supply arithmetic. Strategic Abandonment
@@ -15,8 +26,6 @@ it (BLOCKED escape → annihilation via the engagement calculator).
 
 Authoritative design: slice-2 design spec §8 (board verbs), §2 (siege clock);
 verb semantics per their operation-plan catalog claim blocks (pointers).
-
-**Blocked by:** 02 — Movement contract; 03 — Engagement v2.
 
 **Status:** landed (2026-07-15, `js/board-verbs.js` + `js/fatigue.js` +
 `tests/board-verbs.test.js`, suite green 372/372, zero regressions; merged to

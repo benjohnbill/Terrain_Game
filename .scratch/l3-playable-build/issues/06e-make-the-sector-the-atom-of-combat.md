@@ -1,4 +1,16 @@
+---
+type: task
+status: resolved
+blocked_by: [06c]
+---
+
 # 06e — Make the Sector the Atom of Combat
+
+> **Migrated to front matter 2026-08-03** (ticket 14 R3). The old
+> header lines carried prose that the schema moves off the status line:
+>
+> - **status was:** **resolved** (created and landed 2026-07-31 — zero unlanded values; see
+> - **blocked-by line was:** 06c — every item here consumes the engagement adapter it landed.
 
 **What to build:** an engagement is sited wherever a hostile force stands, it is
 fought on the ground that sector actually carries, the approach it was reached by is
@@ -6,12 +18,9 @@ recorded, and the chips it receives are keyed to it. This is the ticket that mak
 ticket 07 reachable: without it a battle can only occur at an authored region
 border, and **41 of 45** drawn capitals can be walked to with zero battles.
 
-**Blocked by:** 06c — every item here consumes the engagement adapter it landed.
-
 **Blocks:** 06d (capturing an interior sector requires an engagement to have been
 sited there) and therefore 07.
 
-Status: **resolved** (created and landed 2026-07-31 — zero unlanded values; see
 § Needs-info)
 
 Specification gates: none outstanding. The geography-battle grill closed them.

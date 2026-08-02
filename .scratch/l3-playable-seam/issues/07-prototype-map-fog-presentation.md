@@ -1,8 +1,10 @@
-# Make Uncertainty Legible Without Leaking Truth
+---
+type: prototype
+status: resolved
+blocked_by: [03, 06]
+---
 
-Type: prototype
-Status: resolved
-Blocked by: 03, 06
+# Make Uncertainty Legible Without Leaking Truth
 
 ## Question
 

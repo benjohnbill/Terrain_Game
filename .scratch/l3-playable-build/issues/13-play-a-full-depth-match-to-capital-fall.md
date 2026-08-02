@@ -1,13 +1,20 @@
+---
+type: task
+status: needs-info
+blocked_by: [12]
+---
+
 # 13 — Play a Full-Depth Match to Capital Fall
+
+> **Migrated to front matter 2026-08-03** (ticket 14 R3). The old
+> header lines carried prose that the schema moves off the status line:
+>
+> - **blocked-by line was:** 12 — Field a Rational Bot on the Player's Own Instruments.
 
 **What to build:** Nothing new — the acceptance. One real, complete 1v1 duel,
 human versus bot, at full compound depth, run at its natural player-paced length
 until a capital falls, producing undistorted real-play data. This is the ticket
 that says the slice is done.
-
-**Blocked by:** 12 — Field a Rational Bot on the Player's Own Instruments.
-
-Status: needs-info
 
 Specification gates: Wayfinder 10, 12.
 

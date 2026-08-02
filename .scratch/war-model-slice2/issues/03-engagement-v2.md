@@ -1,4 +1,15 @@
+---
+type: task
+status: resolved
+blocked_by: [01]
+---
+
 # 03 — Engagement v2: symmetric decisive battle + contact methods (교전 v2)
+
+> **Migrated to front matter 2026-08-03** (ticket 14 R3). The old
+> header lines carried prose that the schema moves off the status line:
+>
+> - **blocked-by line was:** 01 — Fatigue core.
 
 **What to build:** The decisive-battle arithmetic becomes symmetric: each
 side's power = substance × commit lever × quality (slot, fixed 1.0) × fatigue
@@ -16,8 +27,6 @@ stays green throughout.
 Authoritative design: slice-2 design spec §1 (grammar), §8 (contact methods);
 Delaying semantics per its operation-plan catalog claim block (pointer, not
 restated).
-
-**Blocked by:** 01 — Fatigue core.
 
 **Status:** landed (2026-07-15, `js/battle.js` + `tests/engagement-v2.test.js`,
 suite green 337/337, zero regressions)

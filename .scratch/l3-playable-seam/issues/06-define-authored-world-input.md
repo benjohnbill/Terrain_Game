@@ -1,8 +1,10 @@
-# Define the Authored World Input Contract
+---
+type: grilling
+status: resolved
+blocked_by: [02]
+---
 
-Type: grilling
-Status: resolved
-Blocked by: 02
+# Define the Authored World Input Contract
 
 ## Question
 

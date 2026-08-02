@@ -1,4 +1,15 @@
+---
+type: task
+status: resolved
+blocked_by: []
+---
+
 # 01 — Fatigue core (피로 코어)
+
+> **Migrated to front matter 2026-08-03** (ticket 14 R3). The old
+> header lines carried prose that the schema moves off the status line:
+>
+> - **blocked-by line was:** None — can start immediately.
 
 **What to build:** An army's condition as a persistent attribute the player can
 read and reason about: one fatigue gauge fed by two ledgers. Marching wears an
@@ -14,8 +25,6 @@ player's choice). Steady supply multiplies per-turn recovery.
 
 Authoritative design: slice-2 design spec §2 (dial sheet included there — all
 nine dial values are 가안 constants in one block).
-
-**Blocked by:** None — can start immediately.
 
 **Status:** landed (2026-07-14, `js/fatigue.js` + `tests/fatigue.test.js`,
 two-axis review passed, suite green)

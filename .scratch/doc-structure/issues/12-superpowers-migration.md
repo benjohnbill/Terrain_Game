@@ -1,8 +1,16 @@
+---
+type: task
+status: open
+blocked_by: [11]
+---
+
 # Superpowers migration — retire the directory into feature/audits homes
 
-Type: task
-Status: BLOCKED — do not execute
-Blocked by: 11 (re-grill required — its root ruling's evidence was refuted)
+> **Migrated to front matter 2026-08-03** (ticket 14 R3). The old
+> header lines carried prose that the schema moves off the status line:
+>
+> - **status was:** BLOCKED — do not execute
+> - **blocked-by line was:** 11 (re-grill required — its root ruling's evidence was refuted)
 
 > ## ⛔ DO NOT EXECUTE (blocked 2026-07-15 by adversarial review)
 >

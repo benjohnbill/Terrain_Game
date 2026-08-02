@@ -1,13 +1,21 @@
+---
+type: task
+status: resolved
+blocked_by: [03, 05]
+---
+
 # 06a — Move a Field Army
+
+> **Migrated to front matter 2026-08-03** (ticket 14 R3). The old
+> header lines carried prose that the schema moves off the status line:
+>
+> - **status was:** landed 2026-07-26 (cross-host replay verified)
+> - **blocked-by line was:** 03 (turn loop), 05 (realm forces exist).
 
 **What to build:** the position substrate the rest of the operational layer stands
 on. A field army occupies a place, is ordered to a destination, takes turns and
 fatigue to get there, and divides and merges freely. No combat here — 06c owns
 that.
-
-**Blocked by:** 03 (turn loop), 05 (realm forces exist).
-
-Status: landed 2026-07-26 (cross-host replay verified)
 
 Specification gates: Wayfinder 10 (acceptance thresholds), 12 (published).
 Authority: **ADR 0043**, **ADR 0045**, war-model-build **WM-④**, and

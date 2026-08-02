@@ -1,14 +1,21 @@
+---
+type: task
+status: resolved
+blocked_by: [02]
+---
+
 # 03 — Close the Simultaneous Commit-and-Reveal Turn Loop
+
+> **Migrated to front matter 2026-08-03** (ticket 14 R3). The old
+> header lines carried prose that the schema moves off the status line:
+>
+> - **blocked-by line was:** 02 — Publish the World Artifact and Partition It Into Two Realms.
 
 **What to build:** The spine. Both realms allocate a whole turn's orders in
 secret from one non-hoardable 행동력 chip stack, lock, then reveal and resolve
 together, and the folded result opens turn N+1. Resolution may be stubbed to a
 placeholder outcome in this ticket — what must be real is the loop, the blind
 commit, the symmetric reveal, and the budget.
-
-**Blocked by:** 02 — Publish the World Artifact and Partition It Into Two Realms.
-
-Status: resolved
 
 Ready under README § Amendment R6, 2026-07-25: (i) gate 02 is `resolved`;
 (ii) the one row that was failing — § 1.3's re-expression — is **sealed by ruling

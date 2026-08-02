@@ -1,4 +1,15 @@
+---
+type: task
+status: needs-info
+blocked_by: [08]
+---
+
 # 09 — Build the EVAL BAR
+
+> **Migrated to front matter 2026-08-03** (ticket 14 R3). The old
+> header lines carried prose that the schema moves off the status line:
+>
+> - **blocked-by line was:** 08 — Project Standard Fog and Price Reconnaissance.
 
 **What to build:** The game's signature read organ. A subjective tactical
 confidence **band** — position plus width — computed from the player's own fogged
@@ -6,8 +17,6 @@ estimate of the decisive engagement, with an equal-commit baseline, a live marke
 at the player's chosen commit, and operation-plan threshold needles. Two vertical
 bars: **LEFT** = the clicked front's R, **RIGHT** = this action's average across
 eligible fronts.
-
-**Blocked by:** 08 — Project Standard Fog and Price Reconnaissance.
 
 **Hands off a ruling when it lands (registered 2026-07-31).** This ticket is the
 last one before the operational-manoeuvre pass and ticket 13 are found to be
@@ -17,8 +26,6 @@ user deferred that ruling **with 09's landing as its trigger**, because by then 
 match loop runs and the choice can be made against a working game. **A session that
 resolves this ticket raises that ruling as its next order of business** — ticket 10
 is not claimable until it is ruled, whatever 10's own `Blocked by` line says.
-
-Status: needs-info
 
 Specification gates: Wayfinder 07 (resolved), 10, 12.
 

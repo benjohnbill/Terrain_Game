@@ -1,7 +1,10 @@
-# Absorb the agent-tooling layer into documentation-law?
+---
+type: grilling
+status: resolved
+blocked_by: []
+---
 
-Type: grilling
-Status: resolved
+# Absorb the agent-tooling layer into documentation-law?
 
 ## Question
 

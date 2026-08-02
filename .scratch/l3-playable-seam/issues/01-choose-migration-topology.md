@@ -1,8 +1,10 @@
-# Preserve or Replace the Legacy Play Path?
+---
+type: grilling
+status: resolved
+blocked_by: []
+---
 
-Type: grilling
-Status: resolved
-Blocked by: none
+# Preserve or Replace the Legacy Play Path?
 
 ## Question
 

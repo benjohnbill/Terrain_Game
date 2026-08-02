@@ -1,9 +1,18 @@
+---
+type: task
+status: superseded
+blocked_by: []
+---
+
 # 06 — The Operational Layer (re-cut index)
+
+> **Migrated to front matter 2026-08-03** (ticket 14 R3). The old
+> header lines carried prose that the schema moves off the status line:
+>
+> - **status was:** re-cut (superseded by 06a, 06b, 06c, 06d)
 
 **RE-CUT 2026-07-26 by Wayfinder gate C. This file no longer carries acceptance
 items; it is the index for 06a–06d.** Do not implement against this file.
-
-Status: re-cut (superseded by 06a, 06b, 06c, 06d)
 
 ## Why it was re-cut
 

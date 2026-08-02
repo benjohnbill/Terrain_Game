@@ -1,11 +1,21 @@
+---
+type: task
+status: resolved
+blocked_by: [06b]
+---
+
 # 06c — Resolve the Decisive Battle
+
+> **Migrated to front matter 2026-08-03** (ticket 14 R3). The old
+> header lines carried prose that the schema moves off the status line:
+>
+> - **status was:** **resolved** (2026-07-28 — the wiring half landed; the calculator landed 2026-07-26. Previously ready-for-agent, re-stamped 2026-07-27 — both blocking batches landed
+> - **blocked-by line was:** 06b — fatigue is an input to the product.
 
 **What to build:** real combat behind the turn loop's reveal. A symmetric per-side
 power product decides a per-sector decisive battle, and its products — casualties,
 rout, escape, fatigue — land on the board. Ticket 03's stub
 (`outcome: 'pending-operations'`) is replaced here. Taking ground is 06d.
-
-**Blocked by:** 06b — fatigue is an input to the product.
 
 > **SPLIT 2026-07-26 — the calculator half may be built ahead, in parallel.** This
 > ticket's *pure calculation* — the per-side power product, the M2 lever curve, M5
@@ -23,7 +33,6 @@ rout, escape, fatigue — land on the board. Ticket 03's stub
 > re-measurement. **Check whether `domain/battle.ts` already exists before building
 > it** — if it does, this ticket is the adapter and the wiring, not the formula.
 
-Status: **resolved** (2026-07-28 — the wiring half landed; the calculator landed 2026-07-26. Previously ready-for-agent, re-stamped 2026-07-27 — both blocking batches landed
 2026-07-26: the delaying dials at `operation-plan-catalog/CATALOG.md` and 06b's
 WB-M① fatigue batch. This header had gone stale against the README waiver table.)
 **Read the SPLIT note above first: `game/src/domain/battle.ts` already exists, so

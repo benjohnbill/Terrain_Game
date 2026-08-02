@@ -1,8 +1,10 @@
-# 14 — The session-workflow the user described: five points, to be grilled
+---
+type: grilling
+status: open
+blocked_by: []
+---
 
-Type: grilling
-Status: open
-Blocked by: —
+# 14 — The session-workflow the user described: five points, to be grilled
 
 This ticket exists to hold the user's own statement of the documentation
 workflow they had in mind, in their own words, in a place that is not
@@ -333,8 +335,50 @@ it will be read. Whether placement drives the Summary column's 0/4 is untested.
 - **`.scratch/l3-first-match/` is an orphan** — a `map.md` with zero tickets,
   unlisted in `AGENTS.md`. **Open.**
 
-## Not yet applied
+## Applied 2026-08-03
 
-R1–R7 are rulings. The law edit, the tracker-doc rewrite, the 55-ticket
-migration, the enforcing checks, the Part 2 status column and the two README
-cuts are **not** in this batch.
+- **Law** — `DOCUMENTATION-LAW.md` § Work intake, mirrored into `AGENTS.md`.
+- **Schema home** — `docs/agents/issue-tracker.md` § Wayfinding operations,
+  rewritten. `wayfinder/SKILL.md` already delegates here; no global skill edited.
+- **Migration** — 54 of 55 tickets across four trackers. Prose that the old
+  status/blocker lines carried is preserved in each file rather than dropped.
+- **Enforcement** — `audit-lint.js` checks 12–14 (`ticketFrontMatter`,
+  `ticketFieldDomains` blocking; `ticketBlockerCurrency` advisory), 13 tests.
+- **Consumer** — `scripts/frontier.js`. Rung 4: work is found by parsing front
+  matter, so a ticket without it is invisible rather than merely non-compliant.
+  This is what makes the blocking check something other than a tax.
+
+The checks earned their place on the first run: `doc-structure/08` and
+**`l3-playable-seam/12`** — the last open Wayfinder gate — both report as
+takeable with every blocker resolved.
+
+## Deferred — each with its trigger and its expiry
+
+Per the law's deferral discipline (adopted in this batch): a parked item states
+when it is picked up **and** when its own text is deleted. Nothing here is
+"later".
+
+| Deferred | Discuss when | Delete this row when |
+|---|---|---|
+| **Ticket 08's migration** — held out of the front-matter schema; the entry is in `TICKET_GRANDFATHERED` (`scripts/audit-lint.js`) | Ticket 08 leaves `needs-info`, or its lane goes idle — whichever is first | The file is migrated and the grandfather entry removed. A test pins the list at exactly one, so a second entry cannot arrive quietly |
+| **Part 2 gains a `Status` column** (R5) — `l3-playable-build/DECISIONS-OWED.md` | The same trigger as ticket 08: it is the same tracker, and a parallel session was sealing Part 2 conflicts (ADR 0048) while this batch ran | The column exists and `frontier.js` reads decision blockers from it |
+| **Two README cuts** (R5) — the build README's per-ticket `Result` column and its gate-status table, both duplicates | Same trigger. Cutting a live tracker's front door under a running session is the collision this batch avoided on purpose | Both are cut and the README points at the tickets instead |
+| **Points 1, 3, 4, 5** of the user's five | Next grill session on this ticket. Point 3 first — it is the only one with a measured cost and no prior ruling against it | All five are ruled and this ticket resolves |
+| **`/implement` delegation seam** — the global skill is tracker-unaware (14 lines) | When a ticket is actually implemented through it and the gap bites. Tier 3: it is a global edit affecting other projects | Either the seam is added or the idea is recorded as declined |
+
+## Live defects, still open
+
+Each is verified against the tree; none is minted as a ticket, because clause 2
+now forbids creating one from a finding rather than from a decision.
+
+- **Ticket 08's `Blocked by: 01` is false** — review § H-6 records `08 → 10 → 12
+  → 08`; its real gate is 11. Not corrected here: the file is held out.
+- **Ticket 13's two handed-over findings are fixed in code** (`audit-lint.js`
+  now admits `undetermined`; the clean line derives its count) but read open.
+- **`doc-registry.json` misses 8 governed files**, invisible because no check
+  runs disk→registry. The ticket-front-matter check is the shape that would fix
+  it, applied to the registry.
+- **`audit-lint.js` has a duplicate `glossaryStatus:` key.** Untouched
+  deliberately, though this batch edited the very object it sits in.
+- **`.scratch/l3-first-match/` is an orphan** — a `map.md` with zero tickets,
+  unlisted in `AGENTS.md`, and now visibly empty in `frontier.js` output.

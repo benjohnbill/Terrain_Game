@@ -1,4 +1,16 @@
+---
+type: task
+status: resolved
+blocked_by: []
+---
+
 # 01 — Establish the L3 Tree and Boot a Deterministic Viewer
+
+> **Migrated to front matter 2026-08-03** (ticket 14 R3). The old
+> header lines carried prose that the schema moves off the status line:
+>
+> - **status was:** landed 2026-07-25
+> - **blocked-by line was:** None — the first ticket once its specification gates close.
 
 **What to build:** Create the canonical `game/` TypeScript/ESM tree beside the
 CommonJS root and the reference archive, stand up the `:game` command surface,
@@ -6,10 +18,6 @@ and make a React viewer boot a framework-free Game Runtime from an authored-worl
 identity and seed. A developer opening the dev path sees an initial viewer-safe
 projection; the archive `index.html` / `game.html` remain independently runnable
 and are not converted.
-
-**Blocked by:** None — the first ticket once its specification gates close.
-
-Status: landed 2026-07-25
 
 Specification gates: Wayfinder 05, 06 (both `resolved`) — read their § Answer
 sections as authority directly, under the R6 per-ticket waiver

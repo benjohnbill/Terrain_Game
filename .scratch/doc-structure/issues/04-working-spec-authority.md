@@ -1,7 +1,15 @@
+---
+type: grilling
+status: resolved
+blocked_by: []
+---
+
 # Working-spec authority — name the pattern or re-point the tickets?
 
-Type: grilling
-Status: resolved — re-grilled 2026-07-16 (designation legalized without freeze; law clause user-sealed, application batched Tier-3)
+> **Migrated to front matter 2026-08-03** (ticket 14 R3). The old
+> header lines carried prose that the schema moves off the status line:
+>
+> - **status was:** resolved — re-grilled 2026-07-16 (designation legalized without freeze; law clause user-sealed, application batched Tier-3)
 
 > ## ⚠ REOPENED — the premise correction stands; the invariant bolted onto it
 > ## does not

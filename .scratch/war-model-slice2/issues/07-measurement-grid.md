@@ -1,4 +1,15 @@
+---
+type: task
+status: resolved
+blocked_by: [02, 03]
+---
+
 # 07 — Measurement grid: metrics 1–4 (측정 그리드)
+
+> **Migrated to front matter 2026-08-03** (ticket 14 R3). The old
+> header lines carried prose that the schema moves off the status line:
+>
+> - **blocked-by line was:** 02 — Movement contract; 03 — Engagement v2.
 
 **What to build:** The slice-2 measurement battery for everything that does
 not need bots: extend the scenario-matrix pattern with layer-restoration
@@ -14,8 +25,6 @@ commit-curve descriptive sweep — data only, the re-grading decision belongs
 to its own session.
 
 Authoritative design: slice-2 design spec §11 (metrics 1–4).
-
-**Blocked by:** 02 — Movement contract; 03 — Engagement v2.
 
 **Status:** landed (2026-07-16, `mockup/operational-layer/probe.js` +
 `mockup/operational-layer/metrics.js` + tests, suite green 399/399, zero

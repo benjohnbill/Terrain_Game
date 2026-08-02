@@ -1,4 +1,15 @@
+---
+type: task
+status: resolved
+blocked_by: [02]
+---
+
 # 05 — Intel v2: reach cones, fatigue bands, border alarm (정보 v2)
+
+> **Migrated to front matter 2026-08-03** (ticket 14 R3). The old
+> header lines carried prose that the schema moves off the status line:
+>
+> - **blocked-by line was:** 02 — Movement contract.
 
 **What to build:** The sealed estimate-band information system extends to the
 operational layer. Enemy fatigue joins substance as a fogged attribute: a
@@ -13,8 +24,6 @@ existence. Bots see exactly what a player sees.
 
 Authoritative design: slice-2 design spec §6; aging per the sealed Aging
 constitution P3 (consume, do not re-legislate).
-
-**Blocked by:** 02 — Movement contract.
 
 **Status:** landed (pure helpers; game.js wiring deferred to ticket 08 per the
 pure-calculator precedent). 2-axis review passed, 365/365 green.

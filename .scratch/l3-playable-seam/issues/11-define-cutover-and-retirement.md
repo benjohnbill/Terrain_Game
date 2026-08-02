@@ -1,10 +1,16 @@
+---
+type: grilling
+status: resolved
+blocked_by: [01, 05, 10]
+---
+
 # Define Cutover and Legacy Retirement
 
-Type: grilling
-Status: **resolved — SEALED 2026-08-02 (user); see § Resolution**
-Blocked by: 01, 05, 10 — all resolved (10 sealed 2026-08-02, which is what
-unblocked this gate; the blocker line then sat stale for hours until an audit
-read it, recorded as case 8 in `docs/audits/2026-08-02-doc-index-proposal-cross-review.md`)
+> **Migrated to front matter 2026-08-03** (ticket 14 R3). The old
+> header lines carried prose that the schema moves off the status line:
+>
+> - **status was:** **resolved — SEALED 2026-08-02 (user); see § Resolution**
+> - **blocked-by line was:** 01, 05, 10 — all resolved (10 sealed 2026-08-02, which is what unblocked this gate; the blocker line then sat stale for hours until an audit read it, recorded as case 8 in `docs/audits/2026-08-02-doc-index-proposal-cross-review.md`)
 
 ## Question
 

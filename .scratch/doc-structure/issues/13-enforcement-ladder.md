@@ -1,7 +1,16 @@
+---
+type: task
+status: resolved
+blocked_by: []
+---
+
 # 13 — Prevention over after-the-fact audit (spec pointer)
 
-Type: task
-Status: mixed — **labelled per piece below, not per stage**
+> **Migrated to front matter 2026-08-03** (ticket 14 R3). The old
+> header lines carried prose that the schema moves off the status line:
+>
+> - **status was:** mixed — **labelled per piece below, not per stage**
+
 Spec: `docs/superpowers/specs/2026-07-26-governance-prevention-over-audit.md`
 
 Governance caught drift at audit time — nineteen copied definitions found

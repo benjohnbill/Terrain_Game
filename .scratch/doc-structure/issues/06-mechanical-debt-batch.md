@@ -1,7 +1,10 @@
-# Mechanical debt batch — ledger hygiene + Operation row re-slim
+---
+type: task
+status: resolved
+blocked_by: []
+---
 
-Type: task
-Status: resolved
+# Mechanical debt batch — ledger hygiene + Operation row re-slim
 
 ## Question
 

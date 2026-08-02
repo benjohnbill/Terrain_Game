@@ -1,14 +1,22 @@
+---
+type: task
+status: resolved
+blocked_by: [01]
+---
+
 # 02 — Publish the World Artifact and Partition It Into Two Realms
+
+> **Migrated to front matter 2026-08-03** (ticket 14 R3). The old
+> header lines carried prose that the schema moves off the status line:
+>
+> - **status was:** landed 2026-07-25
+> - **blocked-by line was:** 01 — Establish the L3 Tree and Boot a Deterministic Viewer.
 
 **What to build:** Turn the terrain-cradle terrain into the first frozen L3 world
 artifact with a real identity, add the tier-1 loader/validator, and give match
 setup a **random balanced-population contiguous two-realm partition** plus
 **player-chosen capital placement**. A player starting a match sees a rendered
 two-realm board with their own realm, the enemy realm, and both capitals.
-
-**Blocked by:** 01 — Establish the L3 Tree and Boot a Deterministic Viewer.
-
-Status: landed 2026-07-25
 
 Specification gates: Wayfinder 06 (`resolved`) — read its § Answer as authority
 directly, under the R6 per-ticket waiver (`README.md` § Amendment R6). Gate 10's

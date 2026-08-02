@@ -1,8 +1,16 @@
+---
+type: task
+status: open
+blocked_by: [02, 03]
+---
+
 # Lint hardening — silent false negatives + the wiring decided in 02/03
 
-Type: task
-Status: BLOCKED — do not execute
-Blocked by: 02 (re-grill: its ruling is a measured no-op), 03 (handoff incomplete)
+> **Migrated to front matter 2026-08-03** (ticket 14 R3). The old
+> header lines carried prose that the schema moves off the status line:
+>
+> - **status was:** BLOCKED — do not execute
+> - **blocked-by line was:** 02 (re-grill: its ruling is a measured no-op), 03 (handoff incomplete)
 
 > ## ⛔ DO NOT EXECUTE (blocked 2026-07-15 by adversarial review)
 >

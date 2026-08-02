@@ -1,8 +1,10 @@
-# Audit run #3 — full re-harvest on the settled schema (terminal gate)
+---
+type: task
+status: open
+blocked_by: []
+---
 
-Type: task
-Status: open
-Blocked by: none
+# Audit run #3 — full re-harvest on the settled schema (terminal gate)
 
 > ## ⚠ Amended 2026-08-03 — the run happened; only the exit criterion is open
 >

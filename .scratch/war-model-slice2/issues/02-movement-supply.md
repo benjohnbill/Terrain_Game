@@ -1,4 +1,15 @@
+---
+type: task
+status: resolved
+blocked_by: [01]
+---
+
 # 02 — Movement contract + supply connectivity (이동 계약 + 보급 연결)
+
+> **Migrated to front matter 2026-08-03** (ticket 14 R3). The old
+> header lines carried prose that the schema moves off the status line:
+>
+> - **blocked-by line was:** 01 — Fatigue core.
 
 **What to build:** Armies gain positions on the authored world's hex graph
 (terrain-cradle geometry). The player issues a destination order; pathing is
@@ -14,8 +25,6 @@ ground), feeding ticket 01's supply ledger. Water crossings keep their sealed
 event tax (crossing penalties); wear counts only length.
 
 Authoritative design: slice-2 design spec §3 (movement), §2 (accrual hookup).
-
-**Blocked by:** 01 — Fatigue core.
 
 **Status:** landed (2026-07-15, `js/movement.js` + `tests/movement.test.js`,
 forced-march seam added to `js/fatigue.js`, two-axis review passed, suite green)

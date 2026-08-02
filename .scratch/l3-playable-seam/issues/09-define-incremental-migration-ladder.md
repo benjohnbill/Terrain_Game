@@ -1,8 +1,16 @@
+---
+type: grilling
+status: resolved
+blocked_by: [01, 02, 05, 06, 08]
+---
+
 # Define the Incremental Migration and Adapter Ladder
 
-Type: grilling
-Status: resolved (2026-08-02, user — decided from above by ADR 0041; see § Resolution)
-Blocked by: 01, 02, 05, 06, 08 — all resolved
+> **Migrated to front matter 2026-08-03** (ticket 14 R3). The old
+> header lines carried prose that the schema moves off the status line:
+>
+> - **status was:** resolved (2026-08-02, user — decided from above by ADR 0041; see § Resolution)
+> - **blocked-by line was:** 01, 02, 05, 06, 08 — all resolved
 
 ## Question
 

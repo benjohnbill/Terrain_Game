@@ -1,8 +1,10 @@
-# Registry refresh — 9 missing docs + new-surface rows
+---
+type: task
+status: open
+blocked_by: [01]
+---
 
-Type: task
-Status: open
-Blocked by: 01
+# Registry refresh — 9 missing docs + new-surface rows
 
 ## Question
 

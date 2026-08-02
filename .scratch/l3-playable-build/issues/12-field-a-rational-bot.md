@@ -1,4 +1,15 @@
+---
+type: task
+status: needs-info
+blocked_by: [11]
+---
+
 # 12 — Field a Rational Bot on the Player's Own Instruments
+
+> **Migrated to front matter 2026-08-03** (ticket 14 R3). The old
+> header lines carried prose that the schema moves off the status line:
+>
+> - **blocked-by line was:** 11 — Resolve Plan-Versus-Plan Matchups.
 
 **What to build:** An opponent that reasons through the same instruments the human
 uses. From its own fogged projection it computes the per-front tactical R, the
@@ -6,10 +17,6 @@ eligible-fronts average, and the plan threshold needles, and it decides from tho
 reads. Where the decision is genuinely unmeasurable, a **disposition** parameter
 governs it. It plays the range under the same irreducible uncertainty the human
 faces — it is not an optimal solver.
-
-**Blocked by:** 11 — Resolve Plan-Versus-Plan Matchups.
-
-Status: needs-info
 
 Specification gates: Wayfinder 10, 12.
 

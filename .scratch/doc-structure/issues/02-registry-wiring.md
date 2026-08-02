@@ -1,7 +1,15 @@
+---
+type: grilling
+status: open
+blocked_by: []
+---
+
 # Wire doc-registry.json's dead fields, or demote the registry?
 
-Type: grilling
-Status: open — REOPENED 2026-07-15 (the ruling below is a measured no-op)
+> **Migrated to front matter 2026-08-03** (ticket 14 R3). The old
+> header lines carried prose that the schema moves off the status line:
+>
+> - **status was:** open — REOPENED 2026-07-15 (the ruling below is a measured no-op)
 
 > ## ⚠ REOPENED — the Answer below is retained as evidence, not as a ruling
 >

@@ -1,7 +1,10 @@
-# Law staleness batch — three stale sentences + one superseded ledger row
+---
+type: task
+status: resolved
+blocked_by: []
+---
 
-Type: task
-Status: resolved
+# Law staleness batch — three stale sentences + one superseded ledger row
 
 ## Question
 

@@ -1,8 +1,16 @@
+---
+type: grilling
+status: open
+blocked_by: []
+---
+
 # Working-surface routing — one document kind, one home
 
-Type: grilling
-Status: open — REOPENED 2026-07-15 (root ruling's shape survives; its evidence does not)
-Blocked by: none (informs 01's deferred `.scratch/` row, ticket 07, ticket 08)
+> **Migrated to front matter 2026-08-03** (ticket 14 R3). The old
+> header lines carried prose that the schema moves off the status line:
+>
+> - **status was:** open — REOPENED 2026-07-15 (root ruling's shape survives; its evidence does not)
+> - **blocked-by line was:** none (informs 01's deferred `.scratch/` row, ticket 07, ticket 08)
 
 > ## ⚠ REOPENED — both load-bearing measurements behind the root ruling failed
 >

@@ -1,8 +1,15 @@
+---
+type: grilling
+status: resolved
+blocked_by: [02, 03, 06, 07]
+---
+
 # Define the First Playable Vertical Slice
 
-Type: grilling
-Status: resolved (sealed 2026-07-25, user grill; blockers 02/03/06/07 all resolved)
-Blocked by: 02, 03, 06, 07
+> **Migrated to front matter 2026-08-03** (ticket 14 R3). The old
+> header lines carried prose that the schema moves off the status line:
+>
+> - **status was:** resolved (sealed 2026-07-25, user grill; blockers 02/03/06/07 all resolved)
 
 > **⚠️ Pivot caveat (ADR 0042, 2026-07-25) — re-cut before grilling.** Blockers
 > 02/03/06/07 are all resolved, and the war-termination long pole (the

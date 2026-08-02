@@ -1,7 +1,10 @@
-# Setup slimming — remove the competing spec home and the law restatement
+---
+type: task
+status: resolved
+blocked_by: []
+---
 
-Type: task
-Status: resolved
+# Setup slimming — remove the competing spec home and the law restatement
 
 ## Question
 

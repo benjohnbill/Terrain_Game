@@ -1,4 +1,16 @@
+---
+type: task
+status: resolved
+blocked_by: [06a]
+---
+
 # 06b — Run the Fatigue and Supply Dual Ledger
+
+> **Migrated to front matter 2026-08-03** (ticket 14 R3). The old
+> header lines carried prose that the schema moves off the status line:
+>
+> - **status was:** **resolved** 2026-07-28 — built on branch `l3/ticket-06b-fatigue-supply`
+> - **blocked-by line was:** 06a — a ledger of marching needs somewhere to march.
 
 **What to build:** the sealed dual ledger — **the wear half wired, the supply half
 landed and dormant.** One ledger accrues from marching and fighting on a convex
@@ -33,9 +45,6 @@ substance loss only. No path inverts capability.
 > uniform supply level with no capital branch anywhere satisfies it by
 > construction — asserted by test rather than by reading.
 
-**Blocked by:** 06a — a ledger of marching needs somewhere to march.
-
-Status: **resolved** 2026-07-28 — built on branch `l3/ticket-06b-fatigue-supply`
 (worktree `~/dev/Terrain_Game-06b`, based on `d7be9ae`) and merged to `main`. The
 branch-pointer this line used to carry is discharged by that merge. Re-stamped
 `ready-for-agent` 2026-07-27: the blocking Part 3 batch landed 2026-07-26 at

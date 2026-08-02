@@ -1,17 +1,20 @@
+---
+type: task
+status: needs-info
+blocked_by: [10]
+---
+
 # 11 — Resolve Plan-Versus-Plan Matchups
+
+> **Migrated to front matter 2026-08-03** (ticket 14 R3). The old
+> header lines carried prose that the schema moves off the status line:
+>
+> - **blocked-by line was:** 10 — Select Differentiated Operation Plans; and the **operational-manoeuvre pass** (`.scratch/operational-manoeuvre/`, § The junction with the build), which inherits 10's reason and adds its own: Part 2 **#2 (Encirclement)** on this ticket's blocker list is that pass's item. This ticket clearing is that tracker's own deletion trigger, so the two cannot be read independently.
 
 **What to build:** The roshambo layer — the largest new build in the program, with
 zero archive code behind it. When two revealed plans meet, the matchup does not
 apply an abstract advantage multiplier; it changes **which formula terms engage**,
 through a small closed verb vocabulary over a sparse matrix.
-
-**Blocked by:** 10 — Select Differentiated Operation Plans; and the
-**operational-manoeuvre pass** (`.scratch/operational-manoeuvre/`, § The junction with
-the build), which inherits 10's reason and adds its own: Part 2 **#2 (Encirclement)** on
-this ticket's blocker list is that pass's item. This ticket clearing is that tracker's
-own deletion trigger, so the two cannot be read independently.
-
-Status: needs-info
 
 Specification gates: Wayfinder 10, 12.
 

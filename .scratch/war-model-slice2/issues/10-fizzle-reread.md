@@ -1,4 +1,15 @@
+---
+type: task
+status: resolved
+blocked_by: [06, 09]
+---
+
 # 10 — Fizzle re-read: metric 5 match loop (김빠짐 재판독)
+
+> **Migrated to front matter 2026-08-03** (ticket 14 R3). The old
+> header lines carried prose that the schema moves off the status line:
+>
+> - **blocked-by line was:** 06 — Board verbs + siege; 09 — Bot exit.
 
 **What to build:** The final verdict harness: a minimal bot-vs-bot match loop
 composing every slice-2 system (movement, fatigue, division, intel, window
@@ -10,8 +21,6 @@ is the evidence input for the slice-2 seal decision (user reads it; the
 harness never self-legislates).
 
 Authoritative design: slice-2 design spec §11 (metric 5).
-
-**Blocked by:** 06 — Board verbs + siege; 09 — Bot exit.
 
 **Status:** built + 2-axis reviewed — branch `war-model-slice2-ticket10`
 (`742fc67` build, `4152b05` review fixes), 461/461, NOT merged (2026-07-16)

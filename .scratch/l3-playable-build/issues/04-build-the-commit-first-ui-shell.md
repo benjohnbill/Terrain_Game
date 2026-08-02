@@ -1,14 +1,21 @@
+---
+type: task
+status: needs-info
+blocked_by: [03]
+---
+
 # 04 — Build the Commit-First UI Shell
+
+> **Migrated to front matter 2026-08-03** (ticket 14 R3). The old
+> header lines carried prose that the schema moves off the status line:
+>
+> - **blocked-by line was:** 03 — Close the Simultaneous Commit-and-Reveal Turn Loop.
 
 **What to build:** The interaction shell gate 07 sealed on a live prototype, in
 React over the Runtime: a thin top strip, the map filling a calm middle, and the
 commit bar as the hero and the entrance. Information is **summoned by the commit
 decision**, not always painted. Every later ticket plugs its surface into this
 shell instead of inventing one.
-
-**Blocked by:** 03 — Close the Simultaneous Commit-and-Reveal Turn Loop.
-
-Status: needs-info
 
 Specification gates: Wayfinder 03 (resolved), 07 (resolved), 10, 12.
 

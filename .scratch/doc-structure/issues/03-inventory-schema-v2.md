@@ -1,7 +1,16 @@
+---
+type: grilling
+status: resolved
+blocked_by: []
+---
+
 # Inventory schema v2 — enum discipline, alias typing, promotion state
 
-Type: grilling
-Status: resolved · **Handoff amended 2026-07-27 (user ruling)** ·
+> **Migrated to front matter 2026-08-03** (ticket 14 R3). The old
+> header lines carried prose that the schema moves off the status line:
+>
+> - **status was:** resolved · **Handoff amended 2026-07-27 (user ruling)** ·
+
 **binding condition SATISFIED 2026-07-27 — schema v2 is no longer void**
 
 > **Binding condition discharged (2026-07-27).** `audit-lint.js` check 10

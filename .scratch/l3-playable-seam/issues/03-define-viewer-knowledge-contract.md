@@ -1,8 +1,10 @@
-# Define What Each Viewer Can Know
+---
+type: grilling
+status: resolved
+blocked_by: []
+---
 
-Type: grilling
-Status: resolved
-Blocked by: none
+# Define What Each Viewer Can Know
 
 ## Question
 

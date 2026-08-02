@@ -1,4 +1,15 @@
+---
+type: task
+status: resolved
+blocked_by: [10]
+---
+
 # 11 — Stall-timer retirement: delete the fizzle driver (스톨 타이머 은퇴)
+
+> **Migrated to front matter 2026-08-03** (ticket 14 R3). The old
+> header lines carried prose that the schema moves off the status line:
+>
+> - **blocked-by line was:** 10 — Fizzle re-read (metric 5). The old harness must stop being the live measurement surface before its exit path is deleted; until then those wars would lose their only exit rather than gain a read-driven one.
 
 **What to build:** The physical removal of the L2 stall→white-peace timer from
 `mockup/combat-calc/tournament.js`, once ticket 10's loop is the live
@@ -18,10 +29,6 @@ of read-driven settlement"); ADR 0037 §41 already flags `war.stalled` as "an
 unlegislated choice that contradicts ADR 0026";
 `docs/features/war-model-build/REQUIREMENTS.md` row A2 tracks the same
 contradiction ("2-turn stall exit fires before the decisive battle").
-
-**Blocked by:** 10 — Fizzle re-read (metric 5). The old harness must stop being
-the live measurement surface before its exit path is deleted; until then those
-wars would lose their only exit rather than gain a read-driven one.
 
 **Status:** built — branch `war-model-slice2-ticket11` (`4b67278`), 466/466,
 lint:docs clean, NOT merged (2-axis review pass 2026-07-16)

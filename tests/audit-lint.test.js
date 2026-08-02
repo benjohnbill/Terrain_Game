@@ -317,8 +317,17 @@ test('tally: a definite check (codeContract) is blocking', () => {
 // blocking staleness gate contradicts that model — it charges every sealing
 // session a manual re-render, the precise cost the lock-point model removes.
 // A stale QUICKREF is now a prompt, not a defect. Documentation-law ritual duty 4.
-test('tally: ledgerCurrency and freshness are the advisory checks', () => {
-  assert.deepEqual([...lint.ADVISORY].sort(), ['freshness', 'ledgerCurrency']);
+// `ticketBlockerCurrency` joined the set on 2026-08-03 (ticket 14 R1-R7), and
+// breaking this pin to add it is what the pin is for. The argument: it asserts a
+// real defect — every blocker resolved while the ticket still reads open — but
+// two different actions clear it, amend the line or claim the ticket, and the
+// check cannot tell which the reader owes. That is rule 2, the same reason
+// `ledgerCurrency` never gated. Blocking would force one arbitrarily, and the
+// wrong forced choice here is the dangerous one: editing `status` to silence a
+// line is precisely the move that left a false `BLOCKED` standing for a week.
+test('tally: ledgerCurrency, freshness and ticketBlockerCurrency are advisory', () => {
+  assert.deepEqual([...lint.ADVISORY].sort(),
+    ['freshness', 'ledgerCurrency', 'ticketBlockerCurrency']);
 });
 
 test('tally: every check that asserts a definite defect gates', () => {
@@ -499,7 +508,9 @@ test('runAll returns a result set per check against the real repo', () => {
   assert.deepEqual(keys, [
     'adrStampDuty', 'baselineSelf', 'codeContract', 'definitionRestatement',
     'fieldDomains', 'freshness', 'glossaryStatus', 'headerDiff',
-    'ledgerCurrency', 'numericRestatement', 'statusMarkers'
+    'ledgerCurrency', 'numericRestatement', 'statusMarkers',
+    // ticket 14 R1-R7, 2026-08-03
+    'ticketBlockerCurrency', 'ticketFieldDomains', 'ticketFrontMatter'
   ]);
   for (const k of keys) assert.ok(Array.isArray(results[k]), `${k} is an array`);
 });
@@ -757,4 +768,116 @@ test('the clean line counts every check runAll actually returns', () => {
   const n = Object.keys(results).length;
   const empty = Object.fromEntries(Object.keys(results).map((k) => [k, []]));
   assert.match(lint.formatReport(empty), new RegExp(`clean \\(${n} checks, 0 findings\\)`));
+});
+
+// ------------------------------------------------------------ checks 12-14
+// Ticket front matter (ticket 14 R1-R7, sealed 2026-08-03). The schema lives in
+// `docs/agents/issue-tracker.md`; these pin the parts that are easy to get
+// wrong and were, in fact, gotten wrong during the migration that landed them.
+
+function tk(id, fm, tracker = 'demo') {
+  return { path: `.scratch/${tracker}/issues/${id}-x.md`, tracker, id, fm };
+}
+
+test('ticketFrontMatter flags a ticket with no block at all', () => {
+  const f = lint.checkTicketFrontMatter([tk('01', null)]);
+  assert.equal(f.length, 1);
+  assert.equal(f[0].kind, 'ticket-front-matter-missing');
+  assert.equal(f[0].field, '(whole block)');
+});
+
+test('ticketFrontMatter flags each individually missing field', () => {
+  const f = lint.checkTicketFrontMatter([tk('01', { type: 'task' })]);
+  assert.deepEqual(f.map((x) => x.field).sort(), ['blocked_by', 'status']);
+});
+
+test('ticketFrontMatter exempts a grandfathered path', () => {
+  const held = tk('08', null);
+  assert.equal(lint.checkTicketFrontMatter([held]).length, 1);
+  assert.equal(lint.checkTicketFrontMatter([held], new Set([held.path])).length, 0);
+});
+
+test('ticketFieldDomains rejects a status outside the domain', () => {
+  const f = lint.checkTicketFieldDomains([
+    tk('01', { type: 'task', status: 'BLOCKED', blocked_by: [] })
+  ]);
+  assert.equal(f.length, 1);
+  assert.equal(f[0].field, 'status');
+  assert.match(f[0].detail, /outside its domain/);
+});
+
+// `BLOCKED` and `landed` are the two the schema deliberately does not carry —
+// blocked is derived, merge state is git's. If either is ever admitted to the
+// domain, this fails and asks why.
+test('ticketFieldDomains admits no stored blocked or landed state', () => {
+  for (const v of ['BLOCKED', 'blocked', 'landed', 'claimed', 'mixed']) {
+    assert.equal(lint.TICKET_DOMAINS.status.has(v), false, `${v} must not be a status value`);
+  }
+});
+
+test('ticketFieldDomains rejects a blocked_by that is not a list of ticket ids', () => {
+  const f = lint.checkTicketFieldDomains([
+    tk('01', { type: 'task', status: 'open', blocked_by: ['03', 'the manoeuvre pass'] })
+  ]);
+  assert.equal(f.length, 1);
+  assert.equal(f[0].field, 'blocked_by');
+});
+
+test('ticketBlockerCurrency fires when every blocker is resolved', () => {
+  const f = lint.checkTicketBlockerCurrency([
+    tk('01', { type: 'task', status: 'resolved', blocked_by: [] }),
+    tk('02', { type: 'task', status: 'open', blocked_by: ['01'] })
+  ]);
+  assert.equal(f.length, 1);
+  assert.equal(f[0].kind, 'ticket-blockers-cleared');
+});
+
+test('ticketBlockerCurrency stays quiet while one blocker is live', () => {
+  const f = lint.checkTicketBlockerCurrency([
+    tk('01', { type: 'task', status: 'resolved', blocked_by: [] }),
+    tk('02', { type: 'task', status: 'needs-info', blocked_by: [] }),
+    tk('03', { type: 'task', status: 'open', blocked_by: ['01', '02'] })
+  ]);
+  assert.equal(f.length, 0);
+});
+
+// An exemption must not manufacture findings against its own dependents. The
+// first run of this check reported the held-out ticket 08 as a missing id to
+// ticket 09, which depends on it.
+test('ticketBlockerCurrency treats an unparsed peer as existing and unresolved', () => {
+  const f = lint.checkTicketBlockerCurrency([
+    tk('08', null),
+    tk('09', { type: 'task', status: 'open', blocked_by: ['08'] })
+  ]);
+  assert.equal(f.length, 0);
+});
+
+test('ticketBlockerCurrency flags a blocker id no ticket carries', () => {
+  const f = lint.checkTicketBlockerCurrency([
+    tk('02', { type: 'task', status: 'open', blocked_by: ['99'] })
+  ]);
+  assert.equal(f.length, 1);
+  assert.equal(f[0].kind, 'ticket-blocker-unknown');
+});
+
+test('blocker currency is advisory; the two front-matter checks block', () => {
+  assert.equal(lint.ADVISORY.has('ticketBlockerCurrency'), true);
+  assert.equal(lint.ADVISORY.has('ticketFrontMatter'), false);
+  assert.equal(lint.ADVISORY.has('ticketFieldDomains'), false);
+});
+
+// The grandfather list is an exemption from a BLOCKING check, so it carries a
+// deletion trigger in its comment. This pins the size so a second entry has to
+// be a deliberate act.
+test('exactly one ticket is held out of the front-matter schema', () => {
+  assert.equal(lint.TICKET_GRANDFATHERED.size, 1);
+});
+
+test('every check runAll returns has a prescription for the kinds it emits', () => {
+  const results = lint.runAll(require('path').join(__dirname, '..'));
+  for (const findings of Object.values(results)) {
+    for (const f of findings) {
+      assert.ok(lint.PRESCRIPTIONS[f.kind], `no prescription for kind "${f.kind}"`);
+    }
+  }
 });

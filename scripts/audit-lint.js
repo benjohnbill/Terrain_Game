@@ -460,6 +460,128 @@ function checkFieldDomains(inventory, grandfathered = DOMAIN_GRANDFATHERED) {
 // "amends ADR NNNN" in a Production doc requires the target ADR's header
 // (everything before the first section) to carry an "Amended by" stamp.
 
+// -- ticket front matter (checks 12-14) -------------------------------------
+//
+// Sealed by ticket 14 R1-R7 (2026-08-03). The schema lives in
+// `docs/agents/issue-tracker.md` § Wayfinding operations; this enforces it,
+// because a schema without its check in the same batch is void (ticket 03).
+//
+// Two states are absent from the schema on purpose and must never be added
+// here: *blocked* is derived from `blocked_by` plus the blockers' own status,
+// and *merged* belongs to git. A ticket stores only what only it knows.
+
+const TICKET_DOMAINS = {
+  type: new Set(['grilling', 'task', 'research', 'prototype']),
+  status: new Set(['open', 'needs-info', 'resolved', 'superseded'])
+};
+
+// One entry, and it is temporary. `08-project-standard-fog-and-price-recon.md`
+// was held out of the 2026-08-03 migration because a parallel session was
+// editing that ticket's feature at the time, and rewriting a header underneath
+// live work is the collision this repo already had once.
+//
+// DELETE THIS ENTRY when ticket 08 leaves `needs-info` or its lane goes idle —
+// whichever comes first — by migrating the file and removing the line. It is an
+// exemption from a blocking check, so it must not outlive its reason.
+const TICKET_GRANDFATHERED = new Set([
+  '.scratch/l3-playable-build/issues/08-project-standard-fog-and-price-recon.md'
+]);
+
+function checkTicketFrontMatter(tickets, grandfathered = TICKET_GRANDFATHERED) {
+  const findings = [];
+  for (const t of tickets) {
+    if (grandfathered.has(t.path)) continue;
+    if (!t.fm) {
+      findings.push({
+        kind: 'ticket-front-matter-missing', path: t.path, field: '(whole block)',
+        detail: 'no parseable `---` front matter block at the top of the file'
+      });
+      continue;
+    }
+    for (const field of ['type', 'status', 'blocked_by']) {
+      if (t.fm[field] !== undefined) continue;
+      findings.push({
+        kind: 'ticket-front-matter-missing', path: t.path, field,
+        detail: `front matter is missing \`${field}\``
+      });
+    }
+  }
+  return findings;
+}
+
+function checkTicketFieldDomains(tickets) {
+  const findings = [];
+  for (const t of tickets) {
+    if (!t.fm) continue;
+    for (const [field, domain] of Object.entries(TICKET_DOMAINS)) {
+      const value = t.fm[field];
+      if (value === undefined || domain.has(value)) continue;
+      findings.push({
+        kind: 'ticket-off-domain-field', path: t.path, field, value: String(value),
+        detail: `${field} "${value}" is outside its domain (${[...domain].join(' | ')})`
+      });
+    }
+    const blockers = t.fm.blocked_by;
+    if (blockers === undefined) continue;
+    if (!Array.isArray(blockers) || blockers.some((b) => !/^\d{1,2}[a-e]?$/.test(b))) {
+      findings.push({
+        kind: 'ticket-off-domain-field', path: t.path, field: 'blocked_by',
+        value: Array.isArray(blockers) ? `[${blockers.join(', ')}]` : String(blockers),
+        detail: 'blocked_by must be a list of ticket numbers in this tracker, e.g. [03, 08]'
+      });
+    }
+  }
+  return findings;
+}
+
+// ADVISORY. A cleared blocker line asserts a real defect, but its green state is
+// reachable two ways — amend the line, or claim the ticket — and the check
+// cannot tell which is correct. Blocking on a choice it cannot make is the
+// no-dismissal-state problem that keeps `ledgerCurrency` advisory too.
+function checkTicketBlockerCurrency(tickets) {
+  const DONE = new Set(['resolved', 'superseded']);
+  // A ticket with no parseable front matter is still a ticket that EXISTS.
+  // Indexing only parsed ones made a held-out file look like a missing id to
+  // everything that depends on it — an exemption must not manufacture findings
+  // against its own dependents. Unparsed peers index with a null status, which
+  // reads as "not resolved", so they gate rather than clear.
+  const byTracker = new Map();
+  for (const t of tickets) {
+    if (!t.id) continue;
+    if (!byTracker.has(t.tracker)) byTracker.set(t.tracker, new Map());
+    byTracker.get(t.tracker).set(t.id, t);
+  }
+  const findings = [];
+  for (const [, peers] of byTracker) {
+    for (const t of peers.values()) {
+      if (!t.fm) continue;
+      const blockers = Array.isArray(t.fm.blocked_by) ? t.fm.blocked_by : [];
+      const unknown = blockers.filter((b) => !peers.has(b));
+      if (unknown.length) {
+        findings.push({
+          kind: 'ticket-blocker-unknown', path: t.path, unknown: unknown.join(', '),
+          detail: `blocked_by names ${unknown.join(', ')}, which no ticket in this tracker carries`
+        });
+      }
+      // An unknown id is not a cleared one. Counting it as cleared reported the
+      // same ticket twice and told the reader it was takeable on the strength of
+      // a blocker nobody could find.
+      if (unknown.length || t.fm.status !== 'open' || !blockers.length) continue;
+      const live = blockers.filter((b) => {
+        const dep = peers.get(b);
+        return dep && !(dep.fm && DONE.has(dep.fm.status));
+      });
+      if (!live.length) {
+        findings.push({
+          kind: 'ticket-blockers-cleared', path: t.path, blockers: blockers.join(', '),
+          detail: `status is open while every blocker (${blockers.join(', ')}) is resolved — this ticket is takeable`
+        });
+      }
+    }
+  }
+  return findings;
+}
+
 function checkAdrStampDuty(productionDocs, adrs) {
   const findings = [];
   const seen = new Set();
@@ -663,6 +785,22 @@ function runAll(root) {
       .map((l) => { const [date, subject] = l.split('\t'); return { date, subject: subject || '' }; });
   } catch (e) { /* no git — ledger check runs empty */ }
 
+  // Tickets. The front-matter parser is required from `frontier.js` rather than
+  // written again here: the reader and the checks must agree about what a valid
+  // block is, and two parsers would drift the way two definitions do.
+  const { readFrontMatter, idOf } = require('./frontier.js');
+  const tickets = [];
+  if (exists('.scratch')) {
+    for (const tracker of fs.readdirSync(path.join(root, '.scratch'))) {
+      const dir = path.posix.join('.scratch', tracker, 'issues');
+      if (!exists(dir)) continue;
+      for (const f of fs.readdirSync(path.join(root, dir)).filter((x) => x.endsWith('.md')).sort()) {
+        const p = path.posix.join(dir, f);
+        tickets.push({ path: p, tracker, id: idOf(f), fm: readFrontMatter(read(p)) });
+      }
+    }
+  }
+
   return {
     headerDiff: checkHeaderDiff(inventory, surfaces),
     codeContract: checkCodeContract(inventory, jsFiles),
@@ -675,7 +813,10 @@ function runAll(root) {
     fieldDomains: checkFieldDomains(inventory),
     glossaryStatus: checkGlossaryStatus(inventory, glossaries),
     baselineSelf: checkBaselineSelf(inventory, registry, exists),
-    adrStampDuty: checkAdrStampDuty(production, adrs)
+    adrStampDuty: checkAdrStampDuty(production, adrs),
+    ticketFrontMatter: checkTicketFrontMatter(tickets),
+    ticketFieldDomains: checkTicketFieldDomains(tickets),
+    ticketBlockerCurrency: checkTicketBlockerCurrency(tickets)
   };
 }
 
@@ -726,6 +867,48 @@ const PRESCRIPTIONS = {
     'The DOMAIN_MAP marker and the inventory status disagree (✅ ≡ AGREED or',
     'SEALED · ❓ ≡ PROPOSED · ⛔ ≡ rejected-recorded). Fix whichever is stale —',
     'the seal at the birthplace decides which one that is, not this message.'
+  ],
+  'ticket-front-matter-missing': () => [
+    'Every ticket opens with a `---` block carrying `type`, `status` and',
+    '`blocked_by`, written at creation. The schema and its value domains are in',
+    '`docs/agents/issue-tracker.md` § Wayfinding operations — read them, do not',
+    'guess a shape from a neighbouring file.',
+    'Do NOT add `blocked` or `landed`: blocked is derived from `blocked_by`,',
+    'and merge state belongs to git. A ticket stores only what only it knows.',
+    'If this file is not a ticket, it does not belong in `issues/` — move it',
+    'rather than giving it front matter to satisfy the check.'
+  ],
+  'ticket-off-domain-field': (f) => [
+    `Legal values for \`${f.field}\`: `
+      + (TICKET_DOMAINS[f.field] ? [...TICKET_DOMAINS[f.field]].join(' | ')
+                                 : 'a list of ticket numbers, e.g. [03, 08]') + '.',
+    ...(f.field === 'status' ? [
+      'Status answers ONE question — can this be picked up? Dates, branches and',
+      'outcomes go in the body, never on this line. There is no `BLOCKED` value',
+      '(derive it) and no `landed` (git owns it).',
+      'A ticket that seems to need `mixed` is a ticket that should be split.'
+    ] : []),
+    ...(f.field === 'blocked_by' ? [
+      'A blocking condition that is not a ticket does not go here. If it must',
+      'gate the work, it becomes a ticket — that is what stops a real blocker',
+      'from hiding in prose where no reader can act on it.'
+    ] : []),
+    'If the value expresses something the domain genuinely cannot, do NOT invent',
+    'a new one — the schema is documentation-law (Tier 3). Ask the user.'
+  ],
+  'ticket-blockers-cleared': (f) => [
+    `Advisory. Every id in \`blocked_by\` (${f.blockers}) is resolved, so this`,
+    'ticket is takeable. Two actions are legitimate and the check cannot tell',
+    'which you owe: claim it and do the work, or — if something still gates it —',
+    'amend `blocked_by` to name the ticket that actually does.',
+    'Do not silence it by editing `status`: a false status line blocked a live',
+    'gate for seven days on 2026-08-02, which is why this check exists.'
+  ],
+  'ticket-blocker-unknown': (f) => [
+    `Advisory. \`blocked_by\` names ${f.unknown}, and no ticket in this tracker`,
+    'carries that id. Either the id is a typo, the blocker lives in another',
+    'tracker (cross-tracker ids are not expressible — say it in the body), or',
+    'the ticket it named was renumbered.'
   ],
   'off-domain-field': (f) => [
     `Legal values for \`${f.field}\`: ${[...(FIELD_DOMAINS[f.field] || [])].join(' | ')}`
@@ -908,7 +1091,11 @@ function formatReport(results) {
 // outright — it made every sealing session pay a manual re-render, which is the
 // precise cost the lock-point model exists to remove. Advisory keeps the prompt
 // and drops the toll. See documentation-law ritual duty 4.
-const ADVISORY = new Set(['ledgerCurrency', 'freshness']);
+// `ticketBlockerCurrency` joins them by rule 2: a cleared blocker line asserts a
+// real defect, but two different actions are correct — amend the line, or claim
+// the now-takeable ticket — and the check cannot tell which the reader owes.
+// Blocking would force one of them arbitrarily.
+const ADVISORY = new Set(['ledgerCurrency', 'freshness', 'ticketBlockerCurrency']);
 
 // Split a results object into blocking vs advisory tallies. The exit status keys
 // off `blocking` only, so this decision — not the console output around it — is
@@ -946,6 +1133,8 @@ module.exports = {
   checkHeaderDiff, checkCodeContract, checkStatusMarkers,
   checkNumericRestatement, checkDefinitionRestatement, checkAdrStampDuty,
   checkFieldDomains, FIELD_DOMAINS, DOMAIN_GRANDFATHERED,
+  checkTicketFrontMatter, checkTicketFieldDomains, checkTicketBlockerCurrency,
+  TICKET_DOMAINS, TICKET_GRANDFATHERED,
   checkGlossaryStatus, statusWordOf,
   checkLedgerCurrency, checkFreshness, checkBaselineSelf,
   parseSurfaceHeaders, splitDomainMapRows, runAll,

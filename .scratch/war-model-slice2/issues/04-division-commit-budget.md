@@ -1,4 +1,15 @@
+---
+type: task
+status: resolved
+blocked_by: [01, 02]
+---
+
 # 04 — Field-army division/merge + commit budget (군 분할·합류 + 커밋 예산)
+
+> **Migrated to front matter 2026-08-03** (ticket 14 R3). The old
+> header lines carried prose that the schema moves off the status line:
+>
+> - **blocked-by line was:** 01 — Fatigue core; 02 — Movement contract.
 
 **What to build:** The two realm resources get their sealed definitions in
 code. The field army divides and merges freely as turn actions — a detachment
@@ -13,8 +24,6 @@ development sink at minimum (the "commit 12 to the war, 8 to development"
 shape).
 
 Authoritative design: slice-2 design spec §4.
-
-**Blocked by:** 01 — Fatigue core; 02 — Movement contract.
 
 **Status:** landed (2026-07-15, `js/field-army.js` + `js/commit.js` +
 `tests/field-army.test.js` + `tests/commit.test.js`, suite green 350/350 at the

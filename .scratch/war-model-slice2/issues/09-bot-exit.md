@@ -1,4 +1,15 @@
+---
+type: task
+status: resolved
+blocked_by: [08]
+---
+
 # 09 — Bot exit, C2: read-driven settlement (봇 종전)
+
+> **Migrated to front matter 2026-08-03** (ticket 14 R3). The old
+> header lines carried prose that the schema moves off the status line:
+>
+> - **blocked-by line was:** 08 — Window read.
 
 **What to build:** Retire the stall→white-peace timer (the measured driver of
 the 77% white-peace fizzle). A bot court now decides to stop fighting the way
@@ -12,8 +23,6 @@ bot policy only: a war is never force-closed over a human player.
 
 Authoritative design: slice-2 design spec §9; settlement arithmetic is a
 port of the sealed acceptance ladder (reuse, not redesign).
-
-**Blocked by:** 08 — Window read.
 
 **Status:** LANDED (branch `war-model-slice2-ticket08-09`, pure module —
 harness wiring lands with ticket 10's compose; see the boundary below)

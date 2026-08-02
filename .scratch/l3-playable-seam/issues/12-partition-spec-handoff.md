@@ -1,8 +1,10 @@
-# Partition the Implementation-Ready Spec Handoff
+---
+type: grilling
+status: open
+blocked_by: [06, 07, 08, 09, 10, 11]
+---
 
-Type: grilling
-Status: open
-Blocked by: 06, 07, 08, 09, 10, 11
+# Partition the Implementation-Ready Spec Handoff
 
 ## Question
 

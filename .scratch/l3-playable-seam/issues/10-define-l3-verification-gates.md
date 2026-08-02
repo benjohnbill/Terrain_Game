@@ -1,9 +1,16 @@
+---
+type: grilling
+status: resolved
+blocked_by: [02, 03, 05, 08, 09]
+---
+
 # Define the L3 Verification and Acceptance Gates
 
-Type: grilling
-Status: **resolved — SEALED 2026-08-02 (user grill); see § Resolution**
-Blocked by: 02, 03, 05, 08, 09 — all resolved (09 closed 2026-08-02 from above by
-ADR 0041; see its § Resolution, which also hands this gate a residue)
+> **Migrated to front matter 2026-08-03** (ticket 14 R3). The old
+> header lines carried prose that the schema moves off the status line:
+>
+> - **status was:** **resolved — SEALED 2026-08-02 (user grill); see § Resolution**
+> - **blocked-by line was:** 02, 03, 05, 08, 09 — all resolved (09 closed 2026-08-02 from above by ADR 0041; see its § Resolution, which also hands this gate a residue)
 
 > **Read Gate 5 below with ADR 0041 in hand.** Its "selected legacy parity" half
 > describes a comparison ADR 0041 retired — the archive is "not a parity

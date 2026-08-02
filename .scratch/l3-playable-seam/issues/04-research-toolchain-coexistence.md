@@ -1,8 +1,10 @@
-# Verify Vite, TypeScript, ESM, and Legacy CommonJS Coexistence
+---
+type: research
+status: resolved
+blocked_by: []
+---
 
-Type: research
-Status: resolved
-Blocked by: none
+# Verify Vite, TypeScript, ESM, and Legacy CommonJS Coexistence
 
 ## Question
 

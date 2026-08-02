@@ -1,16 +1,21 @@
+---
+type: task
+status: resolved
+blocked_by: [06c, 06e]
+---
+
 # 06d — Capture a Sector and Integrate It
+
+> **Migrated to front matter 2026-08-03** (ticket 14 R3). The old
+> header lines carried prose that the schema moves off the status line:
+>
+> - **status was:** **resolved, with two items reported open** (2026-07-31, branch
+> - **blocked-by line was:** nothing. 06c — a capture is a battle outcome — and 06e are both `resolved`. 06e was added as a blocker on 2026-07-31 because an engagement must be sited on an interior sector before an interior sector can be captured; it **landed the same day** (`b591f4e`), taking battle-capable sectors from 27 of 56 to all 56. This is the next executable ticket.
 
 **What to build:** ground changes hands, and then starts paying its taker. This is
 the ticket gate C's ruling R16/R17 was made for, and the one ticket 07 (capital
 fall) stands on — R1 makes a capital fall an ordinary sector capture.
 
-**Blocked by:** nothing. 06c — a capture is a battle outcome — and 06e are both
-`resolved`. 06e was added as a blocker on 2026-07-31 because an engagement must be
-sited on an interior sector before an interior sector can be captured; it **landed
-the same day** (`b591f4e`), taking battle-capable sectors from 27 of 56 to all 56.
-This is the next executable ticket.
-
-Status: **resolved, with two items reported open** (2026-07-31, branch
 `l3/ticket-06d-capture-a-sector` — claimed off `c37dfdc`, rebased onto `e77f7ff`.
 The open items are the economy re-measurement, whose trigger is ticket 13, and
 garrison → field posture transfer, which is HELD pending a user ruling on the wear

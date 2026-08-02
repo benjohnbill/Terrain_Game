@@ -1,4 +1,15 @@
+---
+type: task
+status: resolved
+blocked_by: [03, 04, 05]
+---
+
 # 08 — Opportunism window read, C1 (창 산술)
+
+> **Migrated to front matter 2026-08-03** (ticket 14 R3). The old
+> header lines carried prose that the schema moves off the status line:
+>
+> - **blocked-by line was:** 03 — Engagement v2; 04 — Division + commit budget; 05 — Intel v2.
 
 **What to build:** The bot motion SPEC_GAP ① demanded: a per-turn, per-front
 window arithmetic — one function, two consumers. For each candidate front,
@@ -18,9 +29,6 @@ Reuses the sealed disposition dial (λ) for band judgment — no new
 information rules.
 
 Authoritative design: slice-2 design spec §7.
-
-**Blocked by:** 03 — Engagement v2; 04 — Division + commit budget;
-05 — Intel v2.
 
 **Status:** LANDED (branch `war-model-slice2-ticket08-09`, pure module —
 game.js wiring deferred to a later ticket)
