@@ -14,13 +14,21 @@ This session is planned as two phases, in this order:
 
 Carries only what is **not** in the repo. Everything else is referenced by path.
 
-> **The single most important fact in this document.** Four of the five risks below
-> exist **nowhere in the repository**. They were found by building ticket 07 and were
-> reported only in conversation. This project has already learned this lesson once and
-> written it down — a decision that lives outside the repo is a decision that gets lost
-> (`.scratch/l3-first-match/` post-mortem; memory `terrain-game-l3-first-match-wayfinder`).
-> **Registering them is task 0, before any discussion of them begins.** If this session
-> does nothing else, do that.
+> **Task 0 is already done — read this before planning.** When this handoff was first
+> written, four of the five risks existed **nowhere in the repository**: they were found
+> by building ticket 07 and reported only in conversation, which is the exact failure
+> this project has already paid for once (a decision that lives outside the repo is a
+> decision that gets lost — `.scratch/l3-first-match/` post-mortem; memory
+> `terrain-game-l3-first-match-wayfinder`).
+>
+> They are now registered as **R17–R20 in `docs/DESIGN-RISKS.md`**, each with its
+> measurement, its sources, and what would close it, plus a Next-actions line. The fifth
+> is a seal gap rather than a standing risk and stays where it belongs, on the decision
+> surface as `DECISIONS-OWED.md` Part 2 **row 17**, with a pointer from the risk
+> dashboard.
+>
+> **So read R17–R20 as the primary source and the § below as commentary.** Where the two
+> differ, the register wins — it is the tracked artifact and this file is a handoff.
 
 ## Start here
 
@@ -35,18 +43,26 @@ Carries only what is **not** in the repo. Everything else is referenced by path.
 4. `.scratch/l3-playable-build/issues/07-fall-a-capital-and-end-the-match.md`
    § Comments — the implementation evidence and what the two-axis review caught.
 
-## Task 0 — give the four unregistered risks a home
+## Task 0 — DONE 2026-08-02
 
-`docs/DESIGN-RISKS.md` is the designated register and the next free id is **R17**.
-Risk 4 below is already `DECISIONS-OWED.md` Part 2 row 17 and needs no second home —
-cross-reference it rather than duplicating (single-definition rule).
+The four unregistered risks are now **R17–R20** in `docs/DESIGN-RISKS.md`, with the fifth
+pointed at from the Next-actions list rather than restated (single-definition rule).
+Nothing here is waiting on registration; the session can go straight to the work.
 
-Do this **before** grilling any of them. A grill that runs first and registers second is
-exactly how the previous loss happened.
+| register | this document calls it |
+|---|---|
+| **R17** | Risk 1 — item 8 credits magnitude for what distance does |
+| **R18** | Risk 2 — CP-⑦ refunds the forward capital's risk |
+| **R19** | Risk 3 — the guard's permanent recruitment tax |
+| **R20** | Risk 5 — gate 10's parity threshold now decides who won |
+| `DECISIONS-OWED` row 17 | Risk 4 — the simultaneous double fall (a seal gap, not a risk) |
 
 ---
 
 ## The five risks, in the depth the next session needs
+
+*(Commentary on R17–R20. The register is the source of record; this section carries the
+reasoning and the play-level framing that would not fit a table cell.)*
 
 All measurements below were taken against the emitted modules (`game/dist`) on
 `terrain-cradle@r1` during ticket 07. The probe scripts were throwaway and are gone;
