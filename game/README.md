@@ -10,9 +10,10 @@ evidence and never imported from here (ADR 0041).
 |---|---|
 | Own ESM/TypeScript island beside the CommonJS root; built beside, never converted in place | Wayfinder gate 05 D1 |
 | `package.json` here carries **only** `{"type":"module"}` — the root owns dependencies, the lockfile, `node_modules`, and every script | gate 05 D2 |
-| The Runtime exposes exactly `currentActor`, `view(viewerId)`, `submit(intent)`; no snapshot API, no subscription API | gate 02 § 6 |
+| No snapshot API, no subscription API — nothing hands a caller truth or a live handle on it | **ADR 0049 Decision 4** |
+| The Runtime exposes exactly `currentActor`, `view(viewerId)`, `submit(intent)` | gate 02 § 6 — the concrete surface, which ADR 0049 left to implementation; pinned by `tests/runtime.contract.test.js` |
 | `currentActor` reads as the current **phase**, never as whose move it is; legality is "has this realm locked this turn / is the commit window open" | ruling R8 |
-| Rules read no DOM, renderer, browser global, wall clock, or ambient entropy — seed and clock are injected | ADR 0040, gate 02 § 6 |
+| Rules read no DOM, renderer, browser global, wall clock, or ambient entropy — seed and clock are injected | ADR 0040, ADR 0049 Decision 8 |
 | One emitted ESM graph; Node and browser acceptance both load *that* artifact, never a per-host re-transpile | gate 05 D6 |
 | No archive module is imported here | ADR 0041 |
 
@@ -22,7 +23,7 @@ evidence and never imported from here (ADR 0041).
 src/runtime/      the state-owning shell and its three-method surface
 src/domain/       rules — pure, deterministic, no I/O
 src/world/        the frozen world artifact, its fail-closed loader, the partition draw
-src/projection/   the single blur seam: truth -> viewer-safe MatchView
+src/projection/   the single projection boundary: viewer policy applied once
 src/preview/      pure preview(view, intent), used by the UI and by bots alike
 src/bot/          decideBotIntent(view, seed), submitted through the same door
 src/renderer/     pure geometry over a projection; no DOM (so both hosts test it)

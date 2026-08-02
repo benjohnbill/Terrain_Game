@@ -64,9 +64,17 @@ comparison surface and turn source cleanup into the product milestone.
 6. **Preserve behavioral evidence during each port.** Existing JavaScript
    tests remain active until the corresponding canonical TypeScript behavior
    has parity coverage. New canonical tests are authored against the
-   TypeScript modules. Exact test runner, package boundary, compiler flags, and
-   emitted-output parity commands are decided by the L3 Playable Seam
-   Wayfinder; type checking is a required build gate, not an editor-only aid.
+   TypeScript modules. Test runner, package boundary, compiler flags, and
+   emitted-output parity commands were settled at Wayfinder gate 05 (2026-07-18)
+   and are live in the root `package.json` and `game/tsconfig*.json`; type
+   checking is a required build gate, not an editor-only aid.
+
+   > **Corrected 2026-08-03 (Wayfinder gate 12 batch).** This clause read
+   > "are decided by the L3 Playable Seam Wayfinder" — a Record-layer ADR naming
+   > a Working-layer tracker as its standing authority. The forward reference was
+   > discharged by gate 05 on 2026-07-18 and the ADR never absorbed it. Gate 05 is
+   > **not** promoted: the decision reached the executable surface, so the tracker
+   > keeps the reasoning as evidence while the live commands carry the state.
 
 7. **Keep the renderer and packaging decisions independent.** This ADR does
    not select SVG, Canvas, PixiJS, a desktop wrapper, or a full game engine.

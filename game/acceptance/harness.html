@@ -65,7 +65,7 @@
         },
 
         /**
-         * Pumps an ordered intent log — the canonical durable form (gate 02 § 5).
+         * Pumps an ordered intent log — the canonical durable form (ADR 0049 § Decision 8).
          * The Node lane replays the same log and the two are compared.
          */
         replay({ seed, actors, viewer = 'observer', log }) {

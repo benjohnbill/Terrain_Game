@@ -1,7 +1,7 @@
 ---
 type: grilling
-status: open
-blocked_by: [06, 07, 08, 09, 10, 11]
+status: resolved
+blocked_by: []
 ---
 
 # Partition the Implementation-Ready Spec Handoff
@@ -119,8 +119,10 @@ After the Production batch passes audit, update each
 
 - replace `Specification gates:` with exact Production/ADR pointers;
 - retain its linear implementation blocker;
-- set `Status: ready-for-agent` only when every cited prerequisite exists and
-  no unresolved design choice remains;
+- set `status: open` in the front matter only when every cited prerequisite
+  exists and no unresolved design choice remains. *(This bullet read
+  `Status: ready-for-agent`. Ticket 14 R1/R3 moved state into front matter and
+  R4 retired that value on 2026-08-03; `scripts/audit-lint.js:475` rejects it.)*
 - keep any ticket with an unbuilt R14-safe prerequisite at `needs-info` and name
   that prerequisite rather than approximating it;
 - verify that each ticket remains one demoable vertical increment and does not
@@ -131,3 +133,199 @@ spec. That cost prevents cross-feature drift and makes an independent
 implementation session mechanically discoverable. This recommendation does
 not resolve the gate; the user must approve the partition and ADR promotion
 set after gates 03 and 05–11 close.
+
+---
+
+# Answer — SEALED 2026-08-03 (user grill)
+
+Verdict source: user grill, 2026-08-03, the last open Wayfinder gate. Ten
+rulings, all the user's. The recommendation above was written 2026-07-17 and is
+**partly superseded** by them: option A's new integration feature home is
+rejected, and the ADR promotion set is narrower than § ADR and doc-sync
+recommendation proposed. Read the rulings, not the recommendation.
+
+## What changed under the recommendation before it was ruled
+
+The gate was written on the premise that no build ticket could execute until it
+published. **R6's per-ticket waiver (2026-07-25) routed around that**, and ten
+tickets landed without it — 01, 02, 03, 05, 06a–06e, 07. What they actually did
+is the evidence this gate was missing: each cited existing birthplaces plus a
+purpose-minted ADR. Ticket 06e, the cleanest, closes with four pointers (ADR
+0046 · terrain-cradle TC-⑮ · war-model-build WM-⑤ · combat-formula M5) and
+declares "Specification gates: none outstanding." Option C's predicted cost —
+"every implementation ticket must assemble a different cross-document contract"
+— did not materialise.
+
+## R1 — No new integration feature home
+
+`docs/features/l3-playable-seam/` is **not** created. Measured demand is zero
+across ten landed tickets, and option A's own stated cost ("careful pointers so
+the integration requirements do not copy Fog or war-model definitions") is a
+standing exposure to the single-definition rule bought for a convenience nobody
+reached for. An ADR may draw on several features as evidence; that is not a
+reason to open a birthplace.
+
+## R2 — The promotion criterion is the law's own ADR trigger
+
+A gate does not invent its own criterion. *Reason (user): law, documents, lint
+and skills have to stay coherent, or the workflow stops fitting together.*
+
+## R3 — Citation is the invoice
+
+A Production or Record document that cites a tracker ruling **as authority**
+triggers promotion of that ruling to a birthplace. A ruling nobody cites stays in
+the tracker as record.
+
+Rejected: (A) do nothing — 23 Production/Record citations would keep pointing at
+a layer the law says is not current truth. (B) promote all nineteen
+`DECISIONS-OWED.md` R-rulings — they scatter across four features for no measured
+demand. (C) amend the law so sealed tracker content becomes Record layer —
+**rejected because Working-layer status is load-bearing for `.scratch/` being
+deletable**; `AGENTS.md` already writes deletion conditions for tracker entries,
+and permanent trackers would void the taxonomy.
+
+Measured at ruling time: `DECISIONS-OWED.md` carries a **19-ruling series**
+(R1–R19) with evidence, rejected alternatives and CLOSED stamps — structurally a
+`RULINGS.md` living in the Working layer. One of them, **R6**, is the waiver that
+authorised the arrangement. R6 was not a mistake; it was a debt, and this gate is
+where the build README always said it came due.
+
+## R4 — The law's trigger outranks R3; R3 is the residual rule
+
+| | Law's ADR trigger | R3 invoice | Verdict |
+|---|---|---|---|
+| gate 02 | does not fire | none | **ADR** (by discretion — R5) |
+| gate 05 | does not fire | none | nothing; see R8 |
+| gate 06 | does not fire | none | nothing |
+| `DECISIONS-OWED` R18 | does not fire | `combat-formula/MAGNITUDE.md:890` cites it as `Authority:` | **repay at combat-formula** |
+| R1–R19, the rest | does not fire | none | stay in the tracker as record |
+
+## R5 — Gate 02 is promoted to an ADR, by discretion
+
+**The mandatory trigger does not fire.** `docs/SYNC-DEBT.md`'s registered row read
+it correctly in 2026-07-16: gate 02 answers inside ADR 0039 Decision 3's own
+declared deferral. That row **deferred** the promotion decision to this gate; it
+never refused it.
+
+What carries promotion is measurement taken here: the canonical L3 source cites
+gate 02 by name in **28 places in authored files**, including as its declared
+`Authority:` (`game/src/runtime/runtime.ts:4`, `types.ts:4`, `game/README.md`) and
+inside a contract test's failure message. An accepted ADR (0048) had also come to
+rest on it.
+
+Result: **ADR 0049**. Four expired statements in gate 02's wording are corrected
+at promotion rather than carried: the "blur" framing (ADR 0048 — truth never
+enters the projection function), the `currentActor`/out-of-turn framing (ruling
+R8), the "intent log plus seed" shorthand (authored-world identity restored), and
+"user-sealed" applied to a tracker (not a mechanical seal under the law).
+
+## R6 — Code citations: invoice at promotion, scoped, non-retroactive
+
+`game/` cites tracker gates and rulings by **name** in **166 places** (about half
+the emitted `dist/` mirror). The invoice is **not** 166:
+
+- issued only at promotion, and only against the promoted gate — **28**;
+- within those, only citations claiming **current authority** repoint. Citations
+  that **narrate what was decided when** keep naming the gate, because repointing
+  them would make them false. `game/src/runtime/types.ts:396-403` is the worked
+  example: "Gate 02 sealed `currentActor -> ActorId` a week before the pivot" is
+  history, and ADR 0049 sealed nothing a week before 2026-07-23.
+
+Applied: 28 → **14 remaining**, each either history or explicitly-marked residue.
+
+Gates 05 and 06 issue no invoice, so `game/src/world/load.ts:79` keeps pointing at
+gate 06 D3 permanently. That is **correct, not debt** — the tracker is alive and
+the rule lives there. It becomes debt only if the tracker is demoted, which is a
+different event with its own trigger.
+
+## R7 — ADR 0049's minimum scope
+
+Included: Runtime privately owns truth · callers receive only viewer-legal
+projections · viewer policy applied once at one boundary · **no API hands a
+caller truth or a live handle on it, hence no snapshot and no subscription** (a
+semantic obligation, *not* a freeze on member names or arity) · preview is a pure
+module outside the Runtime · bots are ordinary callers · Runtime enforces
+phase/turn legality while pacing is owned outside · the durable canonical form
+is `(authored-world identity and revision, rule revision, seed, ordered intent
+log)`.
+
+Absorbed into its rationale: **"a protection that depends on caller discipline is
+not a structural guarantee"** — the principle behind three of gate 02's
+rejections, recorded there rather than promoted to a root document (user
+decision, 2026-07-16).
+
+Excluded: gate 03's knowledge matrix · fog's testimony model and values · React,
+renderer, build topology, the `:game` surface · bot strategy · concrete type and
+member names · combat and turn rules · point-in-time measurements.
+
+**Consequence found while applying R6, recorded rather than absorbed:** gate 02
+§ 6 seals *more* than R7 took. The concrete three-member surface, the
+internal-decomposition clause, and the rejection-event shape are not in ADR 0049.
+Those citations stay pointed at gate 02 and are marked in the code as clauses the
+ADR did not take. Widening ADR 0049 to cover them would contradict R7's exclusion
+of API naming and implementation shape; the honest reading is that they are
+**implementation contracts** whose home is the code and its tests.
+
+## R8 — A discharged forward reference converts; it does not promote
+
+`docs/adr/0040:68` read "emitted-output parity commands **are decided by** the L3
+Playable Seam Wayfinder" — a Record-layer ADR naming a Working-layer tracker as
+standing authority, and the only such forward reference in the whole ADR set.
+Gate 05 discharged it on 2026-07-18 and the seven `:game` commands are live in the
+root `package.json`.
+
+Converted to **evidence provenance plus a pointer at the live surface**: "were
+settled at Wayfinder gate 05 (2026-07-18) and are live in the root
+`package.json`". No promotion. Gate 05 and gate 02 are not the same illness — gate
+02's contract still lived only in the tracker, while gate 05's had already been
+delivered into executable form.
+
+## R9 — Ticket republication
+
+`Specification gates:` lines become Production/ADR pointers. **`ready-for-agent`
+stays retired**: ticket 14 R4 cut it the same day, `audit-lint.js:475` rejects it,
+and its job is done by the absence of `needs-info`. The three documents still
+speaking the retired vocabulary — this file, the build README, and
+`docs/agents/triage-labels.md` — are corrected in this batch as R4's unpaid
+residue. Six tickets citing the closed Wayfinder 10 as open are corrected with
+them.
+
+## R10 — This gate closes on execution, not on the ruling
+
+The repo's convention is that a gate resolves on its § Answer and its doc-sync is
+registered separately (gates 05 and 06, 2026-07-18; R6 made it a rule). **This
+gate is the exception, and deliberately.** Resolving on the answer would let
+ticket 08 unblock by citing this § Answer — a Working-layer tracker — which is
+precisely what R3 and R5 rule must stop. Gate 12 is the one gate whose output
+*is* the promotion, so it closes when the promotion lands.
+
+## Material table — all six rows disposed
+
+| Row | Disposition |
+|---|---|
+| Viewer knowledge / Standard Fog → fog-of-war-discovery | Already true: RULINGS ③ and MAGNITUDE FG-M① landed 2026-08-03. Confirmed, not designed |
+| Authored world → terrain-cradle | **Nothing owed.** No ADR trigger, no invoice. Promotes when something cites it |
+| R14-safe war/match behavior → war-model-build | **Nothing owed.** `REQUIREMENTS.md` exists; R14's own closing condition in `docs/DESIGN-RISKS.md` already routes there. `R14-safe` occurs nowhere outside this file |
+| End-to-end seam → a new integration feature home | **Rejected** (R1) |
+| Runtime authority / projection boundary → ADR amending 0039 | **ADR 0049** (R5, R7) |
+| Parallel-strangler build/cutover → second ADR | **Void.** ADR 0041 removed the premise and gate 11 closed as "nothing is retired" |
+
+## Defects this gate found and fixed
+
+Three were live, and all three came from the same 2026-08-03 fog batch dropping
+doc-sync items that nothing checks:
+
+1. **Gate 03 had no invariant 8.** ADR 0048 § Consequences asserted "Invariant 8
+   is added in the same batch" and commit `77d892f` never touched gate 03, whose
+   list still said "all seven" — while ADR 0048 and build ticket 08 both cited
+   eight. Written now; the ADR sentence is corrected rather than quietly made true.
+2. **Gate 03 invariants 2, 5, 6 and 7 still described the retired model.** Their
+   conclusions stood; their mechanisms had been replaced by ruling ③. An
+   implementer following them literally would have built what ③ retired. Amended,
+   and their archive `js/intel.js` citations cut per ADR 0041.
+3. **ADR 0048 was never added to `docs/adr/README.md`.** Nothing runs
+   disk→README, the same gap that leaves `doc-registry.json` missing 8 governed
+   files.
+
+Reported by a parallel read-only session and verified here against the tree
+before acting.

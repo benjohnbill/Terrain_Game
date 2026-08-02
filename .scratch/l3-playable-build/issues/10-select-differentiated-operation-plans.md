@@ -16,7 +16,12 @@ player actually chooses between. Each plan carries its own threshold, its own
 six-axis character, and its own availability conditions, so committing to a front
 becomes "which plan, at what commitment" instead of a single generic attack.
 
-Specification gates: Wayfinder 10, 12.
+Specification gates: **all resolved.** Wayfinder 10 closed 2026-08-02 (it owns
+every acceptance threshold); 12 closed 2026-08-03 — **no new integration feature
+home**, the Production homes are the existing feature birthplaces plus ADR 0049.
+What still holds this ticket at `needs-info` is `DECISIONS-OWED.md` Part 2 **#7**
+(plan effect axes) and **#2** (the encirclement threshold), plus its recorded
+dependency on the operational-manoeuvre pass — not a gate.
 
 Contract (interim pointers): `docs/features/operation-plan-catalog/CATALOG.md`
 (the twelve plans and their shapes); `docs/features/combat-formula/MAGNITUDE.md`

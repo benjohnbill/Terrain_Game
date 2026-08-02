@@ -27,7 +27,12 @@ match loop runs and the choice can be made against a working game. **A session t
 resolves this ticket raises that ruling as its next order of business** — ticket 10
 is not claimable until it is ruled, whatever 10's own `Blocked by` line says.
 
-Specification gates: Wayfinder 07 (resolved), 10, 12.
+Specification gates: **all resolved.** Wayfinder 07 was already; 10 closed
+2026-08-02 (it owns every acceptance threshold); 12 closed 2026-08-03 — **no new
+integration feature home**, the Production homes are the existing feature
+birthplaces plus ADR 0049. What still holds this ticket at `needs-info` is
+`DECISIONS-OWED.md` Part 2 **#3** (the commit marker on the eval bar) and **#2**
+(the encirclement threshold), not a gate.
 
 Contract (interim pointers): duel-pivot ledger Gate 6, EVAL BAR section — the
 sealed skeleton (subjective not omniscient; band not needle; reducible versus

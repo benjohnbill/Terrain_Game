@@ -1,8 +1,10 @@
 /**
  * The Runtime's caller-facing types.
  *
- * Authority: Wayfinder gate 02 § 6 ("Consequent interface"). That section seals
- * the *surface*; it says outright that naming of the interface types is
+ * Authority: **ADR 0049** for what may cross the boundary, and Wayfinder gate 02
+ * § 6 ("Consequent interface") for the concrete surface — a clause ADR 0049
+ * deliberately left to implementation, so it is still cited at the gate that
+ * sealed it. That section says outright that naming of the interface types is
  * provisional and that no domain term is sealed there. So nothing in this file
  * defines a game rule — the rules arrive with their own tickets, against their
  * own contracts.
@@ -41,7 +43,7 @@ export interface WorldIdentity {
  *
  * **Only resting states appear here.** The payoff and background tiers are stages
  * *inside* a resolution: they take no input (D6.2), the Runtime never sleeps
- * (gate 02 § 4), and pacing belongs to the UI — so a resting `payoff` phase would
+ * (ADR 0049 § Decision 7), and pacing belongs to the UI — so a resting `payoff` phase would
  * mean the caller had to submit something to leave it, which is precisely the
  * extra click D6.2 forbids. The tiers are named on every event instead; see
  * `TurnTier`.
@@ -246,7 +248,7 @@ export interface GameEvent {
 
 /**
  * A rejected intent produces an event carrying a reportable reason and **no**
- * state transition (gate 02 § 6, SPEC US16).
+ * state transition (gate 02 § 6 — a clause ADR 0049 did not take; SPEC US16).
  */
 export interface RejectedEvent extends GameEvent {
   readonly type: 'intent-rejected';
@@ -376,9 +378,10 @@ export interface SectorForcesView {
 }
 
 /**
- * What a viewer is handed. This is the **single blur seam**: truth is blurred
- * here, once, and what is not in this object is not knowable downstream
- * (gate 02 § 4-6).
+ * What a viewer is handed. This is the **single projection boundary**: viewer
+ * policy is applied here, once, and what is not in this object is not knowable
+ * downstream (ADR 0049 §§ Decisions 2-3). Not a blur — under ADR 0048 the true
+ * value does not enter the projection function at all.
  *
  * Two invariants are tested rather than merely intended: the seed never appears
  * here, and an opponent's capital does not appear before the sealed simultaneous

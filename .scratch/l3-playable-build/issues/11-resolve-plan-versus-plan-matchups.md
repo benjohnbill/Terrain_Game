@@ -16,7 +16,12 @@ zero archive code behind it. When two revealed plans meet, the matchup does not
 apply an abstract advantage multiplier; it changes **which formula terms engage**,
 through a small closed verb vocabulary over a sparse matrix.
 
-Specification gates: Wayfinder 10, 12.
+Specification gates: **all resolved.** Wayfinder 10 closed 2026-08-02 (it owns
+every acceptance threshold); 12 closed 2026-08-03 — **no new integration feature
+home**, the Production homes are the existing feature birthplaces plus ADR 0049.
+What still holds this ticket at `needs-info` is `DECISIONS-OWED.md` Part 2 **#8**
+and **#9** (the matchup matrix) and **#2** (the encirclement threshold), plus its
+recorded dependency on the operational-manoeuvre pass — not a gate.
 
 Contract (interim pointers): `docs/features/combat-formula/MATCHUP.md` (the
 closed verb vocabulary and the sparse matrix — an empty cell is the plain

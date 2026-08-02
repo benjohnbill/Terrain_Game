@@ -887,7 +887,16 @@ formula, the rest pinned from history:
 placement coordinates, not a standing posture constraint. After setup, a player
 may rebalance freely between field and garrison posture subject to the existing
 movement price in turns and fatigue; the transfer adds no separate commitment
-cost or new dial. Authority: `.scratch/l3-playable-build/DECISIONS-OWED.md` R18.
+cost or new dial. **This row is the seal** (2026-07-26); the user's ruling and
+its evidence are recorded at `.scratch/l3-playable-build/DECISIONS-OWED.md` R18.
+*Whether such a transfer carries its wear ledger across the posture change is a
+separate question and is **HELD** — `docs/SYNC-DEBT.md`.*
+
+> **Citation corrected 2026-08-03 (Wayfinder gate 12 batch).** This line read
+> "Authority: `DECISIONS-OWED.md` R18" — an owning Production dial sheet naming a
+> Working-layer tracker as its authority, which the gate ruled is the one citation
+> kind that has to be repaid. The rule's text was already here; only the label was
+> wrong. The tracker is the verdict source, not the home.
 
 **Rider — these coordinates were calibrated at 15 border sectors per seat,
 and a 1v1 cut of the same terrain gives 3–8 (measured 2026-07-26, ticket 05
@@ -925,7 +934,10 @@ board's freeze (decided 21%→7%) was *caused* by thick shields, and restoring
 ρ = 0.75 by tripling garrisons risks re-importing the signature the duel
 pivot was escaping. Re-measure once deaths exist (ticket 06) and once a whole
 match runs (ticket 07). Measurement table:
-`.scratch/l3-playable-build/issues/05-…md` § Comments.
+`.scratch/l3-playable-build/issues/05-run-the-land-derived-decay-engine.md`
+§ Comments. *(Path de-elided 2026-08-03: `05-…md` resolved to nothing. This is an
+evidence pointer at measurement data for an open question, not an authority
+citation, so gate 12's repayment rule does not fire on it.)*
 
 ## M14 — Thin economy (2026-07-05, A-3 session; rulings ⑱–㉑)
 

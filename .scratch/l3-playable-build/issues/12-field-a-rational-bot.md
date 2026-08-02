@@ -18,7 +18,13 @@ reads. Where the decision is genuinely unmeasurable, a **disposition** parameter
 governs it. It plays the range under the same irreducible uncertainty the human
 faces — it is not an optimal solver.
 
-Specification gates: Wayfinder 10, 12.
+Specification gates: **all resolved.** Wayfinder 10 closed 2026-08-02 (it owns
+every acceptance threshold); 12 closed 2026-08-03 — **no new integration feature
+home**, the Production homes are the existing feature birthplaces plus ADR 0049,
+whose Decision 6 is this ticket's standing contract: the bot is an **ordinary
+caller** on the same projection and intent path as a human. What still holds this
+ticket at `needs-info` is `DECISIONS-OWED.md` Part 2 **#12** (the bot
+decisiveness ladder), not a gate.
 
 Contract (interim pointers): gate 08 § Answer axis 6 (the bot definition in full);
 gate 02 § Answer §4 (`decideBotIntent(view, seed) -> Intent`; bots are ordinary

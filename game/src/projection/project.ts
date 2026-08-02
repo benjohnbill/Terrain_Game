@@ -1,8 +1,10 @@
 /**
- * The blur seam.
+ * The projection boundary — the one place viewer policy is applied.
  *
- * Gate 02 seals that the Runtime privately owns truth and that projection is
- * where truth is blurred — **once**, on the way out. Everything downstream (the
+ * ADR 0049 (Decisions 1-3) seals that the Runtime privately owns truth and that
+ * this function is where viewer policy is applied — **once**, on the way out. It
+ * is not a blur: under ADR 0048 the estimate band is composed from stored
+ * testimony and the true value does not enter here at all. Everything downstream (the
  * renderer, the UI, `preview`, the bot) sees only what this function emitted, so
  * a leak here is a leak everywhere and cannot be corrected later.
  *

@@ -1902,6 +1902,20 @@
    ]
   },
   {
+   "path": "docs/adr/0049-runtime-authority-and-the-projection-boundary.md",
+   "layer": "record",
+   "role": "promoted decision record; append-only + supersession header protocol",
+   "ownerFeature": null,
+   "allowedContent": [
+    "decision",
+    "context",
+    "supersession-stamps"
+   ],
+   "forbiddenContent": [
+    "silent-edits-to-decision"
+   ]
+  },
+  {
    "path": "docs/audits/2026-07-10-structure-forensics.md",
    "layer": "working",
    "role": "audit evidence document (structure/registry forensics); reports, not legislation",

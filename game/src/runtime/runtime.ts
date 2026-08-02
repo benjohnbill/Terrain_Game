@@ -1,19 +1,24 @@
 /**
  * The Game Runtime — a thin state-owning shell.
  *
- * Authority: Wayfinder gate 02 § 6. The surface is exactly three members:
+ * Authority: ADR 0049 (Runtime authority and the projection boundary), which
+ * promoted Wayfinder gate 02 § 6 on 2026-08-03. The surface is:
  *
  *     currentActor  -> ActorId
- *     view(viewerId) -> MatchView     // viewer-safe; blurred here, once
+ *     view(viewerId) -> MatchView     // viewer policy applied here, once
  *     submit(intent) -> GameEvent[]   // validate -> resolve -> advance
  *
  * and nothing more. There is deliberately **no snapshot API** (it would hand
- * truth to a caller and void the blur seam) and **no subscription API**
- * (callers pump; `submit` returns the events).
+ * truth to a caller) and **no subscription API** (callers pump; `submit`
+ * returns the events). ADR 0049 Decision 4 is the standing prohibition; the
+ * concrete three-member shape is this implementation's own contract, pinned by
+ * `tests/runtime.contract.test.js`, because ADR 0049 deliberately does not
+ * freeze member names or arity.
  *
- * Gate 02 also fixes that internal decomposition is an internal seam: this may
- * implement transitions as pure functions behind the shell, and that stays an
- * implementation choice rather than a caller contract.
+ * Gate 02 § 6 also fixed that internal decomposition is an internal seam: this
+ * may implement transitions as pure functions behind the shell, and that stays
+ * an implementation choice rather than a caller contract. ADR 0049 did not take
+ * that clause, so it is cited here at the gate that sealed it.
  */
 
 import { resolveBattle, type SideBattleOutcome } from '../domain/battle.js';
@@ -492,15 +497,16 @@ export class Runtime {
    *
    * A simultaneous turn has no single current actor: both realms are legal callers
    * at the same moment, and legality is "has this realm locked this turn / is the
-   * commit window open". Gate 02's guarantee — the *Runtime*, not the caller,
-   * decides what is legal — never depended on alternation, so the member survives
-   * with its name, its type, and its purpose intact.
+   * commit window open". The guarantee — the *Runtime*, not the caller, decides
+   * what is legal — never depended on alternation, so the member survives with its
+   * name, its type, and its purpose intact. That guarantee is now ADR 0049
+   * Decision 7; the gate references above are the history of how it was re-read.
    */
   get currentActor(): ActorId {
     return this.#state.phase;
   }
 
-  /** The viewer-safe projection. Blurred here, once. */
+  /** The viewer-safe projection. Viewer policy is applied here, once (ADR 0049 § 3). */
   view(viewerId: ViewerId): MatchView {
     if (viewerId !== 'observer' && !this.#state.actors.includes(viewerId)) {
       throw new Error(`Unknown viewer "${viewerId}".`);
@@ -512,7 +518,8 @@ export class Runtime {
    * Validate -> resolve -> advance, returning what happened.
    *
    * An invalid intent is rejected **without a state transition** and with a
-   * reportable reason (gate 02 § 6, SPEC US16) — it returns a rejection event
+   * reportable reason (gate 02 § 6 — a clause ADR 0049 did not take; SPEC US16)
+   * — it returns a rejection event
    * rather than throwing, so a caller (including a bot) is told why in the same
    * shape a success arrives in.
    */

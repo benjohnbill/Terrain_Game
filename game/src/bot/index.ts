@@ -1,7 +1,7 @@
 /**
  * `decideBotIntent(view, seed) -> Intent` — the bot seam.
  *
- * Gate 02 § 6 makes the bot an **ordinary caller**: it reads a `MatchView` like
+ * ADR 0049 § Decision 6 makes the bot an **ordinary caller**: it reads a `MatchView` like
  * any viewer, and submits through the same door a human's intent goes through,
  * so the Runtime rejects a bot's illegal intent exactly as it rejects a human's.
  * It never receives `MatchState`, which is why this module cannot import from

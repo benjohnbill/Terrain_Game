@@ -16,7 +16,12 @@ human versus bot, at full compound depth, run at its natural player-paced length
 until a capital falls, producing undistorted real-play data. This is the ticket
 that says the slice is done.
 
-Specification gates: Wayfinder 10, 12.
+Specification gates: **all resolved.** Wayfinder 10 closed 2026-08-02 (it owns
+every acceptance threshold); 12 closed 2026-08-03 — **no new integration feature
+home**, the Production homes are the existing feature birthplaces plus ADR 0049.
+This ticket carries **no open `DECISIONS-OWED.md` Part 2 row of its own**; it
+stays `needs-info` because R6 test (ii) is recomputed at claim time and every
+upstream ticket must have landed first. Its ticket-level gate is `blocked_by: 12`.
 
 Contract (interim pointers): gate 08 § Answer — axis 1 (match mode), axis 7
 (stopping point) and the scope trade; ADR 0042; duel-pivot ledger D6.4 (match

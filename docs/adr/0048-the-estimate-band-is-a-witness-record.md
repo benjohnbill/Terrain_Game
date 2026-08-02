@@ -128,4 +128,15 @@ record, which is a Runtime state change rather than a display change.
   reinforcement becomes a readable event — for a player who paid to look twice.
 - **Gate 03's invariant set gains its missing member.** All seven invariants guard
   against the truth being *present* in a projection; none guarded against it being
-  *recoverable*. Invariant 8 is added in the same batch.
+  *recoverable*. Invariant 8 closes that gap.
+
+  **Correction, 2026-08-03 (Wayfinder gate 12 batch).** This bullet originally
+  read "Invariant 8 is added in the same batch", and it was not: commit `77d892f`
+  never touched
+  `.scratch/l3-playable-seam/issues/03-define-viewer-knowledge-contract.md`, whose
+  list still ended at seven and still said "all seven". For several hours this
+  ADR asserted a fact about the tree that was false, and build ticket 08 cited the
+  missing invariant twice as binding contract. Invariant 8 was written into gate
+  03 § 5 later the same day, along with the mechanism corrections this ruling owed
+  invariants 2, 5, 6 and 7. The sentence is corrected rather than quietly made
+  true, per the documentation law's reasons-are-load-bearing clause.

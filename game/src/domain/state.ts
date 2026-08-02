@@ -3,7 +3,7 @@
  *
  * This type never leaves the Runtime. Callers receive a `MatchView` built by
  * `projection/project.ts`; there is no snapshot API by which this shape could
- * escape (gate 02 § 6).
+ * escape (ADR 0049 § Decision 4).
  */
 
 import { holdsOf } from './economy.js';

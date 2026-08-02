@@ -2,7 +2,7 @@
  * The determinism contract: randomness comes from the injected seed and from
  * nothing else.
  *
- * ADR 0040 and gate 02 C02.10 bar rules from ambient entropy. What is *not*
+ * ADR 0040 and ADR 0049 § Decision 8 bar rules from ambient entropy. What is *not*
  * barred — and what the seed exists for — is a seeded draw: a different seed
  * per match gives different play, the same seed replays identically
  * (DECISIONS-OWED R4). These tests pin that distinction.

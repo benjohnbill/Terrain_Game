@@ -1,8 +1,8 @@
 /**
  * `preview(view, intent) -> PreviewCard` — pure, and outside the Runtime.
  *
- * Gate 02 § 6 places preview among the "pure modules outside the Runtime (no
- * access to truth)", and states that it is used by **both** the human UI and
+ * ADR 0049 § Decision 5 places preview outside the Runtime as a pure module with
+ * no access to truth, and states that it is used by **both** the human UI and
  * bots. That shared door is the point: a bot that previewed against truth while
  * the human previewed against a projection would be reading a different game.
  *

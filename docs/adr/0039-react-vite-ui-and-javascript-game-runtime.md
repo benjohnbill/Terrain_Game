@@ -9,6 +9,10 @@ Amended by: ADR 0040 (2026-07-16) — separates execution runtime from source
 language: new canonical UI and Game Runtime source is TypeScript/TSX, emitted
 as JavaScript; legacy JavaScript is ported incrementally rather than retained
 as the target source architecture.
+Amended by: ADR 0049 (2026-08-03) — Decision 3's "exposes resulting state and
+events" narrows to *viewer projections and events*. A caller never receives
+authoritative state or a live reference to it. Decision 3's deferral of the
+exact API shape is untouched; what may cross the boundary was never part of it.
 Amends: ADR 0016 — fires its Stage 1 trigger and selects the component
 framework and build tool previously deferred.
 Amends: ADR 0028 — resolves its deferred UI-shell choice while preserving the
@@ -51,10 +55,18 @@ native-first toolchain of a full game engine.
 
 3. **Give the game runtime a narrow, explicit boundary.** UI input crosses the
    boundary as player intent; the runtime validates and resolves that intent,
-   advances authoritative state, and exposes resulting state and events. The
-   exact API shape is an implementation decision, but the boundary must keep
+   advances authoritative state, and exposes **viewer projections** and events.
+   The exact API shape is an implementation decision, but the boundary must keep
    React, DOM access, renderer objects, and browser globals out of rules and
    state-transition modules.
+
+   > **Narrowed by ADR 0049 (2026-08-03).** This clause read "exposes resulting
+   > state and events", which left open whether a caller receives authoritative
+   > state. It does not: the runtime privately owns truth and publishes only
+   > viewer-legal projections. The deferral in the next sentence stands — the
+   > *shape* of the API remains an implementation decision, but what may cross
+   > the boundary is now decided. `DESIGN.md` mirrored the old phrasing and is
+   > corrected in the same batch.
 
 4. **Migrate incrementally.** Existing global-script or mixed-module code is
    evidence and migration input, not the target architecture. L3 work should

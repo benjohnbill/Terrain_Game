@@ -24,13 +24,13 @@ test('the surface is exactly the three members gate 02 sealed', () => {
   assert.equal(typeof runtime.view, 'function');
   assert.equal(typeof runtime.submit, 'function');
 
-  // No snapshot API — it would hand truth to a caller and void the blur seam.
-  // No subscription API — callers pump, and `submit` returns the events.
+  // No snapshot API — it would hand truth to a caller and void the projection
+  // boundary. No subscription API — callers pump, and `submit` returns the events.
   for (const forbidden of ['snapshot', 'getState', 'state', 'subscribe', 'on', 'addEventListener']) {
     assert.equal(
       runtime[forbidden],
       undefined,
-      `Runtime must not expose "${forbidden}" — gate 02 § 6 admits no snapshot and no subscription API.`,
+      `Runtime must not expose "${forbidden}" — ADR 0049 Decision 4 admits no snapshot and no subscription API.`,
     );
   }
 });

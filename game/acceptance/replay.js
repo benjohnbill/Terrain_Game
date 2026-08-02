@@ -1,8 +1,10 @@
 /**
  * The canonical durable form, exercised.
  *
- * Gate 02 § 5 seals that a match is reproducible from `(authored world identity,
- * seed, ordered intent log)` — that triple, and no snapshot. This module builds a
+ * ADR 0049 § Decision 8 seals that a match is reproducible from `(authored world
+ * identity and revision, rule revision, seed, ordered intent log)` — that tuple,
+ * and no snapshot. It restores the world identity that gate 02 § 5's shorthand
+ * ("intent log plus seed") had dropped. This module builds a
  * representative log and reduces a replay to the part worth comparing, so the Node
  * lane and the browser lane can be held against each other without either one
  * re-deriving what "the same match" means.

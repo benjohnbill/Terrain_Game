@@ -17,7 +17,13 @@ commit bar as the hero and the entrance. Information is **summoned by the commit
 decision**, not always painted. Every later ticket plugs its surface into this
 shell instead of inventing one.
 
-Specification gates: Wayfinder 03 (resolved), 07 (resolved), 10, 12.
+Specification gates: **all resolved.** Wayfinder 03 and 07 were already; 10
+closed 2026-08-02 (it owns every acceptance threshold); 12 closed 2026-08-03.
+Gate 12's partition, in one line: **no new integration feature home** — the
+Production homes are the existing feature birthplaces, plus ADR 0049 for the
+Runtime authority and projection boundary. What still holds this ticket at
+`needs-info` is `DECISIONS-OWED.md` Part 2 **#13** (the 판세 in-play surface),
+not a gate.
 
 Contract (interim pointers): gate 07 § Answer (commit-first skeleton
 커밋량 → 행동 소환 → 세부 → 가능 지역 빛남 → 지목; commit bar as entrance;

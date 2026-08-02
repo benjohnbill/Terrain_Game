@@ -11,6 +11,84 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
 
 ## Open
 
+- [ ] **What does a testimony attach to — a sector, or a force? USER RULING OWED,
+  registered 2026-08-03.** Fog `RULINGS.md` ③ decision 5 derives the ageing
+  envelope from three sealed inputs with no new dial, and § What this ruling does
+  not settle classifies the composition check as "an implementation-time
+  verification". A read-only groundwork pass found that classification wrong: the
+  envelope cannot be composed either way until a prior *shape* question is
+  answered. Sector-attached makes the band worthless within 1–4 turns (lower edge
+  to zero after one); force-attached composes but requires **enemy force identity
+  across observations**, a concept no seal defines and which silently grants a
+  tracking guarantee fog is supposed to price. Full analysis, with its numbers, is
+  `.scratch/l3-playable-build/issues/08-…md` § Groundwork G1.
+  **Discuss when:** before ticket 08 is claimed — it is that ticket's actual
+  blocker now that gate 12 has closed. **Delete this row when:** the attachment is
+  ruled at `RULINGS.md` ③ tier and ticket 08 leaves `needs-info`.
+
+- [ ] **Treasury uncertainty has no propagation channel into the Standing band —
+  registered 2026-08-03 (gate 12 batch, finding C3).** Gate 03 § 3 removes
+  **Treasury (국고)** from the projection and expresses its uncertainty "solely by
+  widening the banded **Standing (판세)** estimate", then hands the propagation off
+  as "required by the existing 판세 seal regardless of this gate" — direction
+  unspecified, and assigned to nobody. If that widening is computed from the true
+  treasury, the width inverts to the figure, which is exactly what gate 03
+  invariant 8 forbids; invariant 8 postdates the § 3 seal by seventeen days and
+  the two have never been checked against each other. Home is match-arc (the
+  Standing seal owns the band) plus `fog-of-war-discovery/MAGNITUDE.md` FG-M①
+  (invertibility). Not ruled at gate 12: answering it would invent a mechanism,
+  which R6 test (ii) forbids. **Discuss when:** ticket 08's projection sweep, or
+  earlier if a Standing surface is designed first. **Delete this row when:** the
+  propagation is built and passes invariant 8, or Treasury propagation is ruled
+  out of L3 scope.
+
+- [ ] **ADR 0049 does not cover everything Wayfinder gate 02 § 6 sealed —
+  registered 2026-08-03.** Gate 12 R7 fixed the ADR's minimum scope and
+  deliberately excluded API naming and implementation shape. Three clauses fall in
+  that gap and still cite the gate: the concrete three-member surface
+  (`game/README.md`, `tests/runtime.contract.test.js:20`), the
+  internal-decomposition-is-an-internal-seam clause (`runtime.ts:18`), and the
+  rejection-event shape (`runtime.ts:521`, `types.ts:251`). Each is marked in the
+  code as a clause the ADR did not take. The honest reading is that they are
+  implementation contracts whose home is the code and its tests, not the ADR —
+  but that has not been ruled. **Discuss when:** the next time the Runtime surface
+  changes shape, or a fourth such clause appears. **Delete this row when:** either
+  the three are ruled implementation-owned, or ADR 0049 is widened to take them.
+
+- [ ] **`blur` vocabulary survives in implementation prose — registered
+  2026-08-03.** ADR 0048 retired the framing (the true value never enters the
+  projection function, so nothing is blurred there). The gate 12 batch corrected
+  it only where it sat inside a citation being repointed or in a front-door
+  contract statement; **15 occurrences remain** in `game/src`, `game/tests` and
+  test names — `preview.ts:235`, `fronts.ts:13`, `project.ts` (5),
+  `types.ts` (3), `runtime.contract.test.js:48`, `boot.spec.js:101`,
+  `realm-economy.test.js:373`. Left deliberately: renaming them is ticket 08's
+  implementation work, not a citation repayment, and sweeping them here would
+  have hidden the rename inside a governance batch. **Discuss when:** ticket 08 is
+  implemented. **Delete this row when:** the term is gone from `game/` or a
+  surviving use is justified in place.
+
+- [ ] **Nothing checks disk→`docs/adr/README.md` — registered 2026-08-03.** ADR
+  0048 was minted on 2026-08-03 and never added to the ADR index; the gate 12
+  batch added it hours later. This is the same shape as `doc-registry.json`
+  missing 8 governed files: the existing `dead-registry-path` check runs
+  registry→disk only, so a file that exists but is unregistered is invisible to
+  every check. Two indexes, one missing direction. **Discuss when:** the next
+  `audit-lint.js` change, or the next time an index is found stale. **Delete this
+  row when:** a disk→index check covers both the ADR README and
+  `doc-registry.json`.
+
+- [ ] **`AGENTS.md` still describes triage labels on a `Status:` line — TIER 3,
+  registered 2026-08-03.** Its § Issue tracker reads "the five canonical roles,
+  each label string equal to its name, recorded on a `Status:` line in the issue
+  file." Ticket 14 R1/R3 moved state into front matter and R4 cut the vocabulary
+  from five values to four; `docs/agents/triage-labels.md` was rewritten in the
+  gate 12 batch to match, but `AGENTS.md` points at it with the old mechanism in
+  the pointer. Not corrected here: `AGENTS.md` is Law layer and changes only by
+  explicit user decision. **Discuss when:** the next law-layer edit the user
+  approves. **Delete this row when:** the sentence names front matter, or the user
+  rules the current wording acceptable.
+
 - [ ] **Testimony history has no presentation — registered 2026-08-03.** Fog
   `RULINGS.md` ③ decision 4 rules that a sector's past observation testimonies
   are **shown** to the player, summoned on designation rather than always
@@ -1075,7 +1153,21 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   amending the config to match practice — a doc-structure decision, not settled
   here.
 
-- [ ] **L3 Seam Wayfinder 02 — ADR promotion undecided** (registered 2026-07-16).
+- [x] **L3 Seam Wayfinder 02 — ADR promotion undecided — PAID 2026-08-03** by the
+  Wayfinder gate 12 batch. Promoted to **ADR 0049** (Runtime authority and the
+  projection boundary). Both riders paid in the same batch: ADR 0039's header is
+  stamped and its Decision 3 narrowed from "resulting state" to viewer
+  projections, `DESIGN.md`'s mirroring sentence is corrected, and the
+  caller-discipline principle is absorbed into ADR 0049's rationale rather than
+  promoted to a root document. **The row's own reading was upheld and is worth
+  keeping:** the mandatory-ADR trigger genuinely does not fire, and promotion ran
+  on the Record layer's architecture-grade standard instead, against a measured
+  28 authority citations from the canonical source into this tracker. The trailing
+  "Same for Wayfinder 01 (parallel-strangler topology)" is **void, not owed** —
+  ADR 0041 removed the premise and gate 11 closed as "nothing is retired". The
+  original text follows unchanged.
+
+  - [ ] **L3 Seam Wayfinder 02 — ADR promotion undecided** (registered 2026-07-16).
   Wayfinder 02 (`.scratch/l3-playable-seam/issues/02-define-game-runtime-authority.md`,
   resolved 2026-07-16, user-sealed) settles Game Runtime authority: the Runtime
   privately owns match truth, blur happens once at the projection seam, command

@@ -264,22 +264,53 @@ User-sealed 2026-07-17.
 
 ### 5. Non-leak invariants
 
+> **Amended 2026-08-03, later the same day, in the Wayfinder gate 12 batch.**
+> Fog `RULINGS.md` ③ (user-sealed 2026-08-03) retired the *mechanisms* invariants
+> 2, 5, 6 and 7 named while leaving every one of their *conclusions* standing —
+> the reasons-are-load-bearing case, not a redesign. Two further corrections ride
+> with it. **Invariant 8 was announced but never written:** ADR 0048 § Consequences
+> states "Invariant 8 is added in the same batch", and commit `77d892f` did not
+> touch this file, so the list ended at seven while ADR 0048 and build ticket 08
+> both cited eight. **Archive citations are cut:** invariants 6 and 7 pinned
+> themselves to `js/intel.js`, which ADR 0041 makes evidence rather than contract,
+> and whose constants ruling ③ found in no Production document.
+
 Consequences of [issue 02](02-define-game-runtime-authority.md) and the seals
-above. Every viewer projection must satisfy all seven:
+above. Every viewer projection must satisfy all eight:
 
 1. Forbidden values are **absent** from the projection — not present under a
    display convention.
-2. Blur is applied **exactly once**, when the Runtime builds the projection. No
-   downstream surface re-derives an estimate from truth.
+2. Viewer policy is applied **exactly once**, when the Runtime builds the
+   projection. No downstream surface re-derives an estimate from truth.
+   *(Was "Blur is applied exactly once." Ruling ③ decision 1: the true value does
+   not enter the projection function at any point, so nothing is blurred there —
+   the band is composed from stored testimony.)*
 3. Preview consumes `(viewer projection, candidate intent)` only. It never
    receives a truth value, including one it promises not to render.
 4. No `estimate || truth` fallback anywhere. A falsy estimate is a contract
    failure, not an occasion to reach for the true value.
-5. **A missing confidence record yields the floor band (0.45), never truth.**
-6. Enemy bands never collapse: ceiling `MAX_CONFIDENCE = 0.90`, residual sliver
-   preserved (`js/intel.js:18`, spec §5.4).
-7. Bands are true-containing and the midpoint is not the truth — the hidden
-   position `p` is seed-derived and stable (`js/intel.js:81-95`, spec §5.2).
+5. **A sector with no testimony yields a band bounded by public facts alone,
+   never truth.** *(Was "a missing confidence record yields the floor band
+   (0.45)". The `0.45` floor is an archive constant; the conclusion — never
+   truth — is what carried the invariant.)*
+6. Enemy bands never collapse: no accumulation of testimony narrows a substance
+   band past the intersection floor recorded at
+   `docs/features/fog-of-war-discovery/MAGNITUDE.md` FG-M①. *(Was
+   `MAX_CONFIDENCE = 0.90`, `js/intel.js:18`. Ruling ③ decision 6 re-seats the
+   irreducible sliver on the witness model and leaves this invariant standing.)*
+7. Bands are true-containing and the midpoint is not the truth. Successive
+   testimonies make the centre **wobble** while the width shrinks. *(Was "the
+   hidden position `p` is seed-derived and stable", `js/intel.js:81-95` — the
+   monotonic zoom the duel-pivot ledger rejected on 2026-07-23 and ruling ③
+   replaced.)*
+8. **The projection is not invertible.** No published field, and no combination
+   of published fields, lets a viewer solve for a value invariant 1 keeps absent.
+   A band's width is a fraction of the **reported** figure, never of the true one
+   (ruling ③ decision 7). The guard holds **structurally**: ruling ③ decision 2
+   admits no clamp, and a floor enforced by widening a collapsed interval
+   re-centres that interval on the truth — this invariant violated by its own
+   guard. Unlike 1–7 this is a *class* of check rather than a field check; a
+   projection satisfies it only against the published set as a whole.
 
 ### 6. Named violations in current code
 

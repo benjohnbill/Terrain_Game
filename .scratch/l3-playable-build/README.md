@@ -35,11 +35,14 @@ localize to a demoable increment.
 
 Do not implement any ticket while its status is `needs-info`.
 
-A ticket becomes `ready-for-agent` only after:
+A ticket reaches `open` — fully specified — only after:
 
 1. every listed Wayfinder gate is `resolved`;
-2. gate 12 has published the accepted decision set into Production documents
-   and any required ADRs;
+2. ~~gate 12 has published the accepted decision set into Production documents
+   and any required ADRs~~ — **discharged 2026-08-03.** Gate 12 closed: there is
+   **no new integration feature home**; the Production homes are the existing
+   feature birthplaces plus **ADR 0049** for the Runtime authority and projection
+   boundary;
 3. the ticket's `Specification gates:` line has been replaced by exact
    Production/ADR pointers;
 4. every war behavior the ticket invokes is implemented against its accepted
@@ -48,8 +51,17 @@ A ticket becomes `ready-for-agent` only after:
    reading Working-layer recommendations as authority;
 6. `npm run lint:docs` passes after the publication batch.
 
-`ready-for-agent` means fully specified. The ticket's `Blocked by:` line still
-controls whether it is the next executable frontier.
+`open` means fully specified. `blocked_by:` still controls whether it is the next
+executable frontier, and `node scripts/frontier.js` derives that rather than
+asserting it.
+
+> **Vocabulary corrected 2026-08-03 (gate 12 batch).** This section read
+> `ready-for-agent`, which ticket 14 **R4** retired the same day and
+> `scripts/audit-lint.js:475` now rejects — the domain is
+> `open | needs-info | resolved | superseded`. R4's test was *"does this change as
+> a byproduct of the work, or does it need a separate act of re-judgement?"*;
+> `ready-for-agent` needed the second, which is why it rotted. The job it did is
+> now done by the **absence** of `needs-info`.
 
 ### Amendment R6 — per-ticket authority waiver (user ruling, 2026-07-25)
 
@@ -257,8 +269,9 @@ files. Mapping, so older references resolve:
 1. Read the repository `AGENTS.md`, then this runbook and the selected ticket.
 2. Read every Production/ADR pointer in the ticket; do not substitute the
    umbrella Working spec for those sources.
-3. Confirm the ticket is `ready-for-agent`, every direct blocker is `resolved`,
-   and no new `needs-info` comment has been appended.
+3. Confirm the ticket is `open`, every direct blocker is `resolved`, and no new
+   `needs-info` comment has been appended. `node scripts/frontier.js` derives
+   both from front matter; trust it over any table in this file.
 4. Inspect `git status --short`. Preserve unrelated user work. When the main
    worktree is dirty or another ticket is active, use an isolated Git worktree
    based on the exact accepted commit; `git worktree` is available in this
@@ -328,7 +341,7 @@ Implement only L3 playable-build ticket NN from
 .scratch/l3-playable-build/issues/NN-<slug>.md.
 
 Follow AGENTS.md and .scratch/l3-playable-build/README.md. Verify the ticket is
-ready-for-agent and unblocked, claim it, read every Production/ADR pointer, use
+`open` and unblocked (node scripts/frontier.js), read every Production/ADR pointer, use
 an isolated worktree if the current tree is dirty, implement test-first where
 the behavior is deterministic, run the ticket and shared verification gates,
 record evidence in the ticket, set it resolved only if all criteria pass, and
@@ -339,11 +352,16 @@ reference archive or from the Working umbrella spec.
 ## Status lifecycle
 
 ```text
-needs-info
-  -> ready-for-agent   # gate 12 publication and audit completed
-  -> claimed           # one implementation session owns the ticket
-  -> resolved          # acceptance and evidence completed
+needs-info     # something the ticket needs is undetermined or in conflict
+  -> open      # fully specified; takeable once blocked_by clears
+  -> resolved  # acceptance and evidence completed
+                 (superseded  # re-cut into other tickets, e.g. 06 -> 06a-06e)
 ```
+
+The four values above are the whole domain, enforced by
+`scripts/audit-lint.js:475`. `claimed` was retired with `ready-for-agent` on
+2026-08-03 (ticket 14 R4): it had **0** uses, and concurrency is a branch or a
+worktree, not a status.
 
 If an implementation discovery reveals a genuine design gap, change the ticket
 to `needs-info`, record the question and authoritative conflict, and stop at the

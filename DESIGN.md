@@ -40,8 +40,9 @@ authoritative Game Runtime and domain modules, is TypeScript/TSX; it emits ESM
 JavaScript shared by browser play and Node-based tests or simulations. Existing
 JavaScript is ported through playable vertical slices rather than converted in
 a big-bang rewrite. React sends player intent across a narrow runtime seam and
-renders returned game state and events; rules and state transitions do not
-import React, access the DOM, or depend on browser globals.
+renders the **viewer projections** and events the runtime returns — never
+authoritative state, which the runtime keeps private (ADR 0049); rules and state
+transitions do not import React, access the DOM, or depend on browser globals.
 
 The map renderer remains a separate architectural axis. React can host and
 coordinate the map surface without becoming its renderer, and a renderer

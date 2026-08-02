@@ -157,7 +157,7 @@ test('a turn commits, reveals and resolves in a browser, from the same artifact'
 
 test('an ordered intent log replays to the same turn state in both hosts', async ({ page }) => {
   // The canonical durable form is `(world identity, seed, ordered intent log)`
-  // (gate 02 § 5). This is that claim across the host boundary: Node and the
+  // (ADR 0049 § Decision 8). This is that claim across the host boundary: Node and the
   // browser pump the *same* log through the *same* emitted artifact and must land
   // on the same board.
   const { replayForViewer, replayLog, turnSummary } = await import('../../acceptance/replay.js');
