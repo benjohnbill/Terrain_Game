@@ -31,6 +31,16 @@ Status: open — decision layer PARTIALLY REOPENED after adversarial review
 > convert "we didn't measure it" into "it's done". **Redesign the exit criterion
 > before ticket 10 runs.**
 
+> ## Added 2026-08-02 — ticket 14, the user's own workflow statement
+>
+> `issues/14-session-workflow-five-points.md` carries the user's five-point
+> description of the documentation workflow they had in mind, **verbatim**. It is
+> open and unblocked. It overlaps ticket 13's territory (points 4 and 5) by
+> design — 13 is the enforcement ladder, 14 is the statement of what should be
+> enforced. A live hypothesis it should test: **09, 10 and 12 may be blocked
+> because "what to enforce" was never decided**, in which case 14 is their
+> missing input rather than a fourteenth item.
+
 ## Destination
 
 *(suspect — see the state block above; the gate must be redesigned)*
