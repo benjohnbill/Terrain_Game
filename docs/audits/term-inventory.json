@@ -2942,7 +2942,7 @@
    "aliases": [],
    "birthplace": "docs/features/fog-of-war-discovery/GLOSSARY.md",
    "tier": 1,
-   "status": "AGREED",
+   "status": "SEALED",
    "kind": "mechanism",
    "codeIdentifier": null,
    "codeRefs": [],
@@ -3157,7 +3157,7 @@
    "aliases": [],
    "birthplace": "docs/features/fog-of-war-discovery/GLOSSARY.md",
    "tier": 1,
-   "status": "AGREED",
+   "status": "SEALED",
    "kind": "mechanism",
    "codeIdentifier": "informationConfidence",
    "codeRefs": [
@@ -3170,6 +3170,21 @@
    ],
    "verdict": "standard-match",
    "verdictRef": "2026-07-10-terminology-audit.md"
+  },
+  {
+   "canonical": "Observation testimony",
+   "korean": "관측 증언",
+   "aliases": [
+    "testimony"
+   ],
+   "birthplace": "docs/features/fog-of-war-discovery/GLOSSARY.md",
+   "tier": 1,
+   "status": "SEALED",
+   "kind": "mechanism",
+   "codeIdentifier": null,
+   "codeRefs": [],
+   "verdict": null,
+   "verdictRef": null
   },
   {
    "canonical": "Force role",

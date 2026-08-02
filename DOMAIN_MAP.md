@@ -156,6 +156,14 @@ birthplace's phrasing. Applied to all 56 promoted entries on 2026-07-28
   surfaced through the situation-judgment `불확실` axis and confidence overlays so
   combinations such as border-but-uncertain or split-but-uncertain remain
   expressible.
+- ✅ `Estimate band` (추정 구간): The range a viewer reads in place of an exact
+  figure for anything fogged — enemy substance and fatigue, and the reads derived
+  from them. Composed from recorded observations rather than blurred out of the
+  true value; always contains the truth; never collapses to a point. Promoted
+  2026-08-03 because combat preview, the 판세 read, and the bot all consume it.
+  Definition: `docs/features/fog-of-war-discovery/GLOSSARY.md`; model:
+  that feature's `RULINGS.md` ③; widths: its `MAGNITUDE.md` FG-M①.
+  _Avoid_: reading the midpoint as the answer, or restating its widths here.
 - ✅ `Situation axis`: The current-turn strategic interpretation of a province
   reading: `판세`, `위협`, `기회`, or `불확실`. Province status is the background
   control/contact state; situation axis is why this province matters now.

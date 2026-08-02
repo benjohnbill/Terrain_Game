@@ -866,11 +866,14 @@ test('blocker currency is advisory; the two front-matter checks block', () => {
   assert.equal(lint.ADVISORY.has('ticketFieldDomains'), false);
 });
 
-// The grandfather list is an exemption from a BLOCKING check, so it carries a
-// deletion trigger in its comment. This pins the size so a second entry has to
-// be a deliberate act.
-test('exactly one ticket is held out of the front-matter schema', () => {
-  assert.equal(lint.TICKET_GRANDFATHERED.size, 1);
+// The grandfather list is an exemption from a BLOCKING check. Its single entry
+// was discharged 2026-08-03 — the held-out ticket was migrated and the line
+// deleted, exactly as its own trigger required — so the ratchet is closed and
+// this pin is now zero. Same shape as `RESTATEMENT_GRANDFATHERED` above: once a
+// surface is clean, an exemption reappearing has to be a deliberate act.
+test('no ticket is held out of the front-matter schema', () => {
+  assert.equal(lint.TICKET_GRANDFATHERED.size, 0,
+    'exemptions from a blocking check must not outlive their reason');
 });
 
 test('every check runAll returns has a prescription for the kinds it emits', () => {

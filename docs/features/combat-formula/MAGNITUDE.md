@@ -473,6 +473,23 @@ permanent/base damage — Encirclement's annihilation machinery exempt):**
 | Scorched Earth (core, self) | economy base −30%p (permanent, at cap) + population usable −50%p (flees; base intact, returns on recapture); **commit-scaled: low commit halves both** |
 | Recovery (core) | +10pp on top of the standing +10pp (via menu) |
 
+> **SUPERSEDED 2026-08-03 — the two blocks below, in part.** ADR 0048 replaced
+> the model these dials price: a fog band is now composed from recorded
+> observations rather than blurred out of the current true value, so a "confidence
+> gain in points" and a "confidence → band-width" conversion have nothing left to
+> act on. Their replacements live at
+> `../fog-of-war-discovery/MAGNITUDE.md` FG-M① — observation precision stated as a
+> half-width per grade, and reconnaissance unit prices. Ruling:
+> `../fog-of-war-discovery/RULINGS.md` ③. **Retained, not superseded:** the
+> **saturation rule** and the watching-vs-probing principle behind it — FG-M①
+> depends on it, because without one testimony per sector per turn the enhanced
+> grade is dominated by two cheap scouts. The band-conversion block's *economic*
+> finding also stands and was independently reproduced during the 2026-08-03 grill
+> against M2's lever: reconnaissance refunds a few commit points of safe-pin
+> overpay, and beats an attack turn only situationally, with no fixed optimum.
+> What is retired is the arithmetic, not the economics. The text is kept below
+> because the reasoning behind these dials is the evidence FG-M① was cut against.
+
 **confidenceGain (points; ceiling 0.90):** Reconnaissance primary +0.30
 (commit-scaled ±0.10) plus targeting/evidence depth; battle-contact
 byproduct +0.10; repelled-assault defense +0.15. **Surplus scouting: 2

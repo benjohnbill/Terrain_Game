@@ -74,8 +74,11 @@ Two consequences worth stating because they change how other rows read:
   kept means non-combat orders have no all-or-nothing gate at all. A tier is a
   cumulative total to reach, not a minimum bid.
 
-*Owes:* a seal at the fog birthplace for the recon unit prices (still 가안, and
-still the values that have never been in the repository), and a home for the
+*Owed, half paid:* the recon unit prices **are now sealed** at
+`docs/features/fog-of-war-discovery/MAGNITUDE.md` FG-M① (2026-08-03, still 가안
+but no longer un-recorded), together with the precision each grade buys — which
+this ruling never set. **The table above is this ruling's record of what the user
+said, not a live price list; FG-M① is authoritative.** Still owed: a home for the
 linear-commit grammar itself — it is a match-frame rule, not a fog rule, so it
 belongs wherever the turn structure lands (SYNC-DEBT already tracks that home).
 Unit numbers for fortification, recruitment, and supply remain unset by design;
@@ -991,26 +994,52 @@ bounded destination and readiness contract that lets 06a replace `RealmForces.fi
 
 Both sides are sealed; the agent stops. Ordered by how early each bites.
 
-| # | Conflict | Side A | Side B | Bites at |
-|---|---|---|---|---|
-| 1 | Does the estimate band's centre wobble? | Duel-pivot ledger, user-sealed 2026-07-23: the band's **centre wobbles** as it converges (noisy witness), explicitly to prevent the leak a monotonic shrink would cause | Gate 03 invariant 7 + `js/intel.js`: the hidden position is **seed-derived and stable** — producing exactly the monotonic zoom the ledger rejects | ticket 08 |
-| 2 | Encirclement threshold | `MAGNITUDE.md` M7: **2.2**, described as "the only threshold above rout onset (R≈1.92)" | Ledger: "포위 섬멸 ~**1.92**" — which is the rout-onset figure, not the threshold | tickets 09, 10, 11 |
-| 3 | Commit marker on the eval bar | Ledger seals it twice: equal-commit baseline **plus a live marker at the player's chosen commit** | Both prototypes state in their headers: **"NO COMMIT INFO on the bar — EVER"** | ticket 09 |
-| 4 | Which recon economy | `MAGNITUDE.md` M8 (sealed Production): recon primary **+0.30**, surplus 2 points buy +0.10 per sector, saturating | fog RULINGS ladder **0.45 → 0.70 → 0.90** with `SCOUT_GAIN 0.25` | ticket 08 |
-| 5 | Estimate band width | `MAGNITUDE.md` M8: half-width = **40% × (1 − confidence)** | `js/intel.js`: a different two-constant model, ≈±35% at 0.45 versus M8's ±24% at 0.40 | ticket 08 |
-| 6 | Own-realm knowledge | Gate 03: own realm is **Exact** — no fog on self | `js/intel.js`: `OWNED_CONFIDENCE = 0.85` | ticket 08 |
-| 7 | Plan effect axes | ADR 0024: a **per-axis magnitude**, explicitly "not a primary/secondary classification" | `CATALOG.md`: `core` / `secondary` / `none`, used by all twelve plans | ticket 10 |
-| 8 | Matchup filled-cell count | `MATCHUP.md` prose "15 of 21 cells are empty" and `INDEX.md` "6 authored" | the table itself renders **12** filled cells and 9 empty | ticket 11 |
-| 9 | The matrix's third defence column | `MATCHUP.md` column "Strategic Abandonment", against which six cells resolve `refuse` | `CATALOG.md`: "**Abandonment is a declaration, not a plan.** Scorched Earth is the real plan" | ticket 11 |
-| 10 | Capital guard magnitude — **CLOSED 2026-07-31 by CP-⑤** | CP-①/CP-②: 가안 350 × populationValue | `MAGNITUDE.md`: `capitalGarrison 1500` — **not a seal**; a parenthetical harness inventory with no status word, and CP-① item 2 had already retired the flat 1500 by name on 2026-07-10. There were never two seals, only an unstamped line (now struck). The real question was the coefficient's **size**, which this row never asked: at 350 the strongest guard on the board is 840 — below one 900-man border shield and 9.3% of the opening field — so CP-② items 7 and 8 were both false. **Ruled: 가안 2,500/pop** (user), floor 1,800 derived from CP-② item 7 + M13a | ticket 07 |
-| 11 | Fatigue effectiveness floor | Slice-2 spec: "floor ×0.5 (**가안**, cited, not re-sealed)" | Same file, 72 lines later: "floor ×0.5 is a **sealed anchor**" — which the code implements | ticket 06 |
-| 12 | Bot decisiveness ladder | `tactical-plan-ai` RULINGS ranks **vassalization** as the top rung | ADR 0042 retired settlement as a terminus entirely | ticket 12 |
-| 13 | 판세 in-play surface | *already registered in* `docs/SYNC-DEBT.md` | | ticket 04 |
-| 14 | **Does the operational layer track armies and move them?** — **CLOSED by R12–R15** (2026-07-26, gate C) | `DOMAIN_MAP.md` ✅ `Position as product`: the MVP has **no standalone move action and no tracked army counters** — position is a *product* of operations, and the runbook's own diff review (§ Implementation loop 7) lists "standalone movement" as forbidden scope | slice-2 design spec §3 movement contract + gate 08's full-compound-depth slice: armies hold hex positions, forced march is an explicit toggle, field armies divide and merge — which is army counters and standalone movement | ticket 06 |
+| # | Conflict | Side A | Side B | Bites at | Status |
+|---|---|---|---|---|---|
+| 1 | Does the estimate band's centre wobble? | Duel-pivot ledger, user-sealed 2026-07-23: the band's **centre wobbles** as it converges (noisy witness), explicitly to prevent the leak a monotonic shrink would cause | Gate 03 invariant 7 + `js/intel.js`: the hidden position is **seed-derived and stable** — producing exactly the monotonic zoom the ledger rejects | ticket 08 | closed 2026-08-03 |
+| 2 | Encirclement threshold | `MAGNITUDE.md` M7: **2.2**, described as "the only threshold above rout onset (R≈1.92)" | Ledger: "포위 섬멸 ~**1.92**" — which is the rout-onset figure, not the threshold | tickets 09, 10, 11 | open |
+| 3 | Commit marker on the eval bar | Ledger seals it twice: equal-commit baseline **plus a live marker at the player's chosen commit** | Both prototypes state in their headers: **"NO COMMIT INFO on the bar — EVER"** | ticket 09 | open |
+| 4 | Which recon economy | `MAGNITUDE.md` M8 (sealed Production): recon primary **+0.30**, surplus 2 points buy +0.10 per sector, saturating | fog RULINGS ladder **0.45 → 0.70 → 0.90** with `SCOUT_GAIN 0.25` | ticket 08 | closed 2026-08-03 |
+| 5 | Estimate band width | `MAGNITUDE.md` M8: half-width = **40% × (1 − confidence)** | `js/intel.js`: a different two-constant model, ≈±35% at 0.45 versus M8's ±24% at 0.40 | ticket 08 | closed 2026-08-03 |
+| 6 | Own-realm knowledge | Gate 03: own realm is **Exact** — no fog on self | `js/intel.js`: `OWNED_CONFIDENCE = 0.85` | ticket 08 | closed 2026-08-03 |
+| 7 | Plan effect axes | ADR 0024: a **per-axis magnitude**, explicitly "not a primary/secondary classification" | `CATALOG.md`: `core` / `secondary` / `none`, used by all twelve plans | ticket 10 | open |
+| 8 | Matchup filled-cell count | `MATCHUP.md` prose "15 of 21 cells are empty" and `INDEX.md` "6 authored" | the table itself renders **12** filled cells and 9 empty | ticket 11 | open |
+| 9 | The matrix's third defence column | `MATCHUP.md` column "Strategic Abandonment", against which six cells resolve `refuse` | `CATALOG.md`: "**Abandonment is a declaration, not a plan.** Scorched Earth is the real plan" | ticket 11 | open |
+| 10 | Capital guard magnitude — **CLOSED 2026-07-31 by CP-⑤** | CP-①/CP-②: 가안 350 × populationValue | `MAGNITUDE.md`: `capitalGarrison 1500` — **not a seal**; a parenthetical harness inventory with no status word, and CP-① item 2 had already retired the flat 1500 by name on 2026-07-10. There were never two seals, only an unstamped line (now struck). The real question was the coefficient's **size**, which this row never asked: at 350 the strongest guard on the board is 840 — below one 900-man border shield and 9.3% of the opening field — so CP-② items 7 and 8 were both false. **Ruled: 가안 2,500/pop** (user), floor 1,800 derived from CP-② item 7 + M13a | ticket 07 | closed 2026-07-31 |
+| 11 | Fatigue effectiveness floor | Slice-2 spec: "floor ×0.5 (**가안**, cited, not re-sealed)" | Same file, 72 lines later: "floor ×0.5 is a **sealed anchor**" — which the code implements | ticket 06 | closed 2026-07-26 |
+| 12 | Bot decisiveness ladder | `tactical-plan-ai` RULINGS ranks **vassalization** as the top rung | ADR 0042 retired settlement as a terminus entirely | ticket 12 | open |
+| 13 | 판세 in-play surface | *already registered in* `docs/SYNC-DEBT.md` | | ticket 04 | open |
+| 14 | **Does the operational layer track armies and move them?** — **CLOSED by R12–R15** (2026-07-26, gate C) | `DOMAIN_MAP.md` ✅ `Position as product`: the MVP has **no standalone move action and no tracked army counters** — position is a *product* of operations, and the runbook's own diff review (§ Implementation loop 7) lists "standalone movement" as forbidden scope | slice-2 design spec §3 movement contract + gate 08's full-compound-depth slice: armies hold hex positions, forced march is an explicit toggle, field armies divide and merge — which is army counters and standalone movement | ticket 06 | closed 2026-07-26 |
 
-| 15 | **Does conquered land ever start paying its taker?** — **CLOSED by R16–R17** (2026-07-26, gate C) | `MAGNITUDE.md` M14 + ruling ⑮: "conquest raises the national cap", at a usable discount (fresh capture 50/60%) — sealed as the match-closure lever; ADR 0022/0029 supply the ripening that integrates it | OG-③: occupied-untransferred land "counts toward NEITHER side's derived quantities", and the transfer channel that ended limbo was **settlement**, which ADR 0042 retired for the duel — leaving no path from occupied to integrated | ticket 06 |
+| 15 | **Does conquered land ever start paying its taker?** — **CLOSED by R16–R17** (2026-07-26, gate C) | `MAGNITUDE.md` M14 + ruling ⑮: "conquest raises the national cap", at a usable discount (fresh capture 50/60%) — sealed as the match-closure lever; ADR 0022/0029 supply the ripening that integrates it | OG-③: occupied-untransferred land "counts toward NEITHER side's derived quantities", and the transfer channel that ended limbo was **settlement**, which ADR 0042 retired for the duel — leaving no path from occupied to integrated | ticket 06 | closed 2026-07-26 |
 
-| 16 | **Which register backs the capital guard?** — **CLOSED 2026-08-01 by capital CP-⑥**: the guard's origins are apportioned **realm-wide**, the rule ADR 0047 item 5 already states for the opening field army; 0047's header carries the amendment stamp. Local backing turned out not to be a live option at all — re-measured over **840** capital candidates (15 legal partitions × 2 seats × held sectors) with the sealed opening derivation applied, the highest coefficient a sector can back from its own register is **1,453–1,490** against CP-② item 7's floor of **>1,800**, so the two constraints do not overlap; the 1.389 ratio below understated the gap by omitting the opening field army's ~18% draw. `r5_s8` (pop 0.5 border sector) has **0** available civilians, so no coefficient works there. Realm backing leaves 31,800–36,300 spare and needs no value | Capital **CP-⑤** (SEALED 2026-07-31): guard = **가안 2,500 × capital sector `populationValue`**, and "register-backed" is listed among the properties it leaves untouched | Match-arc **MT-②** (amended 2026-07-31) + **ADR 0047**: the register is **1,800/pop** and is stored **per sector**, and origin composition is per sector — so a shield "drawn from the ground it stands on" (how 06d seats every border shield) cannot back this guard at **any** legal capital: the ratio is a fixed 2500/1800 = **1.389**, and **0 of 56** sectors can back their own guard (measured: pop 2.4 → guard 6,000 against a register of 4,320). `availableCiviliansByOrigin` treats that as fatal, so the match could not be seated | ticket 07 |
+| 16 | **Which register backs the capital guard?** — **CLOSED 2026-08-01 by capital CP-⑥**: the guard's origins are apportioned **realm-wide**, the rule ADR 0047 item 5 already states for the opening field army; 0047's header carries the amendment stamp. Local backing turned out not to be a live option at all — re-measured over **840** capital candidates (15 legal partitions × 2 seats × held sectors) with the sealed opening derivation applied, the highest coefficient a sector can back from its own register is **1,453–1,490** against CP-② item 7's floor of **>1,800**, so the two constraints do not overlap; the 1.389 ratio below understated the gap by omitting the opening field army's ~18% draw. `r5_s8` (pop 0.5 border sector) has **0** available civilians, so no coefficient works there. Realm backing leaves 31,800–36,300 spare and needs no value | Capital **CP-⑤** (SEALED 2026-07-31): guard = **가안 2,500 × capital sector `populationValue`**, and "register-backed" is listed among the properties it leaves untouched | Match-arc **MT-②** (amended 2026-07-31) + **ADR 0047**: the register is **1,800/pop** and is stored **per sector**, and origin composition is per sector — so a shield "drawn from the ground it stands on" (how 06d seats every border shield) cannot back this guard at **any** legal capital: the ratio is a fixed 2500/1800 = **1.389**, and **0 of 56** sectors can back their own guard (measured: pop 2.4 → guard 6,000 against a register of 4,320). `availableCiviliansByOrigin` treats that as fatal, so the match could not be seated | ticket 07 | closed 2026-08-01 |
+
+**The `Status` column landed 2026-08-03** (doc-structure ticket 14, R5), so a row's
+state sits in a fixed place instead of inside its conflict-name cell. Where a cell
+already carries a CLOSED marker the prose is left standing: it holds the *reason*,
+which the column cannot.
+
+**Rows 1, 4, 5 and 6 — the whole fog band — closed 2026-08-03** by a user grill.
+Two of them were never conflicts. Row 1's two "sides" are the same user position
+recorded twice — 노화 헌법 P3 (2026-07-07) and the duel-pivot ledger's witness
+seal (2026-07-23) — while what actually disagreed with both was `js/intel.js`,
+which recomputes the band from the **current** true value on every read, so stale
+intelligence silently tracks enemy reinforcement instead of fading. Rows 5 and 6
+closed by **ADR 0041 §2** rather than by a ruling: their "Side B" is four archive
+constants and `OWNED_CONFIDENCE`, which appear in no Production document, so there
+was never a second seal to weigh. Row 4 reduced to one number once R2's
+linear-commit grammar was applied, and that number is now sealed.
+
+The grill also found what neither recorded side named: **the band was invertible.**
+Its width was proportional to the true value while both width and confidence were
+displayed, so the true figure solved out of a single observation — under M8's
+conversion as much as the archive's. Gate 03's invariant 6 was preserving a
+residual sliver next to a width that gave the answer.
+
+Homes: `docs/features/fog-of-war-discovery/RULINGS.md` ③ (the model, with the nine
+decisions and their reasons) · that feature's `MAGNITUDE.md` FG-M① (values) ·
+**ADR 0048** (why it is cross-feature) · gate 03 invariants 5, 7 and the new 8.
 
 Row 16 was **found 2026-07-31** by ticket 07's claim-time recompute — the check R6
 exists for, catching exactly what it is meant to catch. Three seals landed the same
@@ -1051,7 +1080,7 @@ Ruled the same session — **capital CP-⑦, additive**. 900 is 72% of the weake
 guard, so it was not a rounding difference. Two consecutive claim-time recomputes, two
 found items, both living exactly where separately-correct seals meet.
 
-| 17 | **What does a *simultaneous* double capital fall name?** — **PINNED 2026-08-01 (user), not answered.** Two capitals can fall in one payoff: A's army stands on B's capital while B's stands on A's, both win their battle, and `#resolveEngagements` emits two captures. Not a freak case — it is the **mutual-exposure duel CP-② item 9 calls the heart of the match frame**, both players all-in on offense at once. The user ruled to refuse rather than invent: `Runtime.#capitalFall` throws, naming the seals, and a test in `capital-fall.test.js` pins the refusal. **Zero new normative statements** — the same shape 06d gave its held posture transfer. *What would settle it:* a user ruling on draw / a symmetric non-draw rule / accepting a resolve-order tiebreak — most usefully after playtest shows whether it ever actually happens | **ADR 0042** names a winner for *a* capital fall, and ledger **D3.1** forbids a draw path and a tiebreak-win — so neither "both lose" nor "score it" is available | **D6.1a** forbids application order introducing first-mover asymmetry, so taking the first-resolved capture is not available either. D6.1a's own text addresses two armies entering the *same* sector, and two independent battles each ending the match sits outside it — which is why this is a **gap rather than a conflict** | ticket 07 (pinned; a real match can reach the throw) |
+| 17 | **What does a *simultaneous* double capital fall name?** — **PINNED 2026-08-01 (user), not answered.** Two capitals can fall in one payoff: A's army stands on B's capital while B's stands on A's, both win their battle, and `#resolveEngagements` emits two captures. Not a freak case — it is the **mutual-exposure duel CP-② item 9 calls the heart of the match frame**, both players all-in on offense at once. The user ruled to refuse rather than invent: `Runtime.#capitalFall` throws, naming the seals, and a test in `capital-fall.test.js` pins the refusal. **Zero new normative statements** — the same shape 06d gave its held posture transfer. *What would settle it:* a user ruling on draw / a symmetric non-draw rule / accepting a resolve-order tiebreak — most usefully after playtest shows whether it ever actually happens | **ADR 0042** names a winner for *a* capital fall, and ledger **D3.1** forbids a draw path and a tiebreak-win — so neither "both lose" nor "score it" is available | **D6.1a** forbids application order introducing first-mover asymmetry, so taking the first-resolved capture is not available either. D6.1a's own text addresses two armies entering the *same* sector, and two independent battles each ending the match sits outside it — which is why this is a **gap rather than a conflict** | ticket 07 (pinned; a real match can reach the throw) | pinned 2026-08-01 |
 
 Row 17 was **found 2026-08-01** while wiring 07's win check — by asking where the
 predicate goes, not by a recompute. It is filed here rather than left as a code
@@ -1112,7 +1141,7 @@ matrix".
 > | Fatigue, movement, supply (14 dials) | **`docs/features/war-model-build/MAGNITUDE.md` WB-M① and WB-M②** — a model doc created for the purpose, because this feature had none and that is why the dials had no birthplace. |
 > | Delaying defence (breakthrough R 2.0, erosion 0.15) | `docs/features/operation-plan-catalog/CATALOG.md`, at the Delaying Defense entry — the owning model doc for plan-shaped values. |
 > | Bot (λ formula, disposition presets, siege/field commit, eligibility gates) | **Approved, birthplace owed.** They belong to ticket 12's contract and block nothing now; `docs/SYNC-DEBT.md` carries the row. |
-> | Fog band shape (4 constants in `js/intel.js`) | **Excluded, not refused.** Part 3 itself states they "cannot be approved until [Part 2 #5] resolves", and it is unresolved. Approving them would have sealed one side of a live conflict by accident. |
+> | Fog band shape (4 constants in `js/intel.js`) | ~~Excluded, not refused~~ — **VOID 2026-08-03, and not pending.** The exclusion was correct and its condition has now been met the other way: row #5 resolved by the constants **never being ported**, so there is nothing left to approve. Their replacement is `docs/features/fog-of-war-discovery/MAGNITUDE.md` FG-M①, cut from the contract rather than harvested from the archive (ADR 0041 §2). Deleting them from this batch's scope needs no further act. |
 >
 > Two debts were paid by the landing rather than by a ruling: **Part 2 #11** (the
 > ×0.5 fatigue floor — both sides always said 0.5, so it was a stamp) and the
@@ -1143,8 +1172,14 @@ silently sets the reach cone's radius, so it is a fog dial as much as a movement
 one. Whether recovery additionally requires standing still is marked HELD in both
 the spec and the code.
 
-**Fog band shape** (`js/intel.js`) — the four constants behind the estimate band,
-which conflict with M8 (Part 2 #5) and so cannot be approved until that resolves.
+**Fog band shape** (`js/intel.js`) — ~~the four constants behind the estimate
+band, which conflict with M8 (Part 2 #5) and so cannot be approved until that
+resolves.~~ **VOID 2026-08-03.** Row #5 resolved by retiring both candidate
+models, so neither the constants nor M8's conversion is approved; the estimate
+band's widths are cut fresh at `docs/features/fog-of-war-discovery/MAGNITUDE.md`
+FG-M①. This entry stays struck rather than deleted because Part 3's premise —
+values that determine behaviour and that no document records — is exactly what
+FG-M① now closes for this feature.
 
 **Bot** (`plan-ai.js`, `plan-battery.js`, `tournament.js`) — the judged-value
 formula `mid − λ(high−low)/2` · disposition presets ±0.5 · siege commit 8 and

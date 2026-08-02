@@ -3,6 +3,7 @@
 Date: 2026-07-02
 
 Status: Accepted
+Amended by: ADR 0048 (2026-08-03) — § Decision 3 names the guardrail correctly and cites a retired mechanism for it. "No oracle" stands and is now structural rather than a ceiling check: under the witness model a substance band keeps an irreducible sliver no accumulation of testimony passes (`docs/features/fog-of-war-discovery/MAGNITUDE.md` FG-M①). The archive's `MAX_CONFIDENCE` 0.90 is not that guardrail any more; read the intersection floor in its place.
 
 ## Context
 

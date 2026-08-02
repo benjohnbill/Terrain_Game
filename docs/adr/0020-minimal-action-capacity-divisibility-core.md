@@ -5,6 +5,7 @@ Date: 2026-07-01
 Status: Accepted
 Amends: ADR 0018 (2026-07-01) — reclassifies a single divisible action-capacity pool from deferred to core; the heavier four-capacity/overclock system stays deferred (see § Consequences).
 Amended by: ADR 0027 (2026-07-07) — "primary action" / "surplus outlets" are reframed as magnitude labels over a freely-split pool, not fixed roles bound to activity types; no hard action-count cap (the M2 knee soft-caps); force-shaping activities are commit-gated, bottom 0 (see § Decision).
+Amended by: ADR 0048 (2026-08-03) — § Context states the scouting loop's causation backwards and names a retired constant. The loop itself stands: scouting narrows the band, which shrinks the safety margin, which frees surplus. But information confidence does not *narrow* the band — under the witness model it is the **readout** of a narrowing that accumulated testimony produces — and the irreducible residual is now the intersection floor at `docs/features/fog-of-war-discovery/MAGNITUDE.md` FG-M①, not the archive's `MAX_CONFIDENCE` ceiling.
 
 ## Context
 

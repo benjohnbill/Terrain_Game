@@ -475,17 +475,17 @@ const TICKET_DOMAINS = {
   status: new Set(['open', 'needs-info', 'resolved', 'superseded'])
 };
 
-// One entry, and it is temporary. `08-project-standard-fog-and-price-recon.md`
-// was held out of the 2026-08-03 migration because a parallel session was
-// editing that ticket's feature at the time, and rewriting a header underneath
-// live work is the collision this repo already had once.
+// Empty, and it stays empty. The list carried exactly one entry on 2026-08-03:
+// `08-project-standard-fog-and-price-recon.md`, held out of that day's migration
+// because a parallel session was editing that ticket's feature and rewriting a
+// header underneath live work is the collision this repo already had once. That
+// session migrated the file as it closed and deleted the entry here in the same
+// commit, which is the discharge its own deletion trigger named.
 //
-// DELETE THIS ENTRY when ticket 08 leaves `needs-info` or its lane goes idle —
-// whichever comes first — by migrating the file and removing the line. It is an
-// exemption from a blocking check, so it must not outlive its reason.
-const TICKET_GRANDFATHERED = new Set([
-  '.scratch/l3-playable-build/issues/08-project-standard-fog-and-price-recon.md'
-]);
+// An exemption from a blocking check must not outlive its reason, so the ratchet
+// is now closed: a new entry is a deliberate act, and the test that pins this
+// size to zero is what makes it one.
+const TICKET_GRANDFATHERED = new Set([]);
 
 function checkTicketFrontMatter(tickets, grandfathered = TICKET_GRANDFATHERED) {
   const findings = [];

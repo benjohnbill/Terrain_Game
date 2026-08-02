@@ -256,8 +256,21 @@ historically unknown was never the map; it was the opponent's state.
 | Rung | Visibility |
 |---|---|
 | Terrain, fortification grade | public (fog RULING ①, G12 — unchanged) |
-| Substance, fatigue, army positions | scoutable **true-containing estimate bands**, aging per the Aging constitution (노화 헌법) P3: narrow at contact, re-widen per unobserved turn (`js/intel.js` scalars exist) |
+| Substance, fatigue, army positions | scoutable **true-containing estimate bands**, aging per the Aging constitution (노화 헌법) P3: narrow at contact, re-widen per unobserved turn (~~`js/intel.js` scalars exist~~ — see the correction below) |
 | Standing posture, commit allocation | **the dark market (깜깜이 시장, [조어]):** unreachable at any confidence; revealed only ex-post via battle reports, back-inferable as tendency |
+
+> **Reason corrected 2026-08-03 (fog `RULINGS.md` ③ / ADR 0048); the rung itself
+> stands.** The parenthetical *"(`js/intel.js` scalars exist)"* asserted that P3
+> was already implemented. **It was not.** The scalars exist — `DECAY_PER_TURN`
+> and the width constants are real — but they widen a band recomputed from the
+> **current** true value on every read, so a stale reading silently tracks enemy
+> reinforcement instead of fading into vagueness. That is the opposite of P3's
+> 접촉 순간 박제 후 바램, and the false parenthetical is a large part of why the
+> gap went unnoticed for seven weeks. The row's *claim* — substance, fatigue and
+> positions are true-containing bands that narrow at contact and re-widen when
+> unobserved — is correct and is now actually implemented by the witness model.
+> Read fog `RULINGS.md` ③ for the mechanism and `MAGNITUDE.md` FG-M① for the
+> values; do not read `js/intel.js` as this rung's contract (ADR 0041: archive).
 
 **Seal-quality sentence (user):** *as information completes, the duel moves
 from information to psychology — reconnaissance's destination is not

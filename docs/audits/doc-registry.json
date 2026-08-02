@@ -1888,6 +1888,20 @@
    ]
   },
   {
+   "path": "docs/adr/0048-the-estimate-band-is-a-witness-record.md",
+   "layer": "record",
+   "role": "promoted decision record; append-only + supersession header protocol",
+   "ownerFeature": null,
+   "allowedContent": [
+    "decision",
+    "context",
+    "supersession-stamps"
+   ],
+   "forbiddenContent": [
+    "silent-edits-to-decision"
+   ]
+  },
+  {
    "path": "docs/audits/2026-07-10-structure-forensics.md",
    "layer": "working",
    "role": "audit evidence document (structure/registry forensics); reports, not legislation",
@@ -1923,6 +1937,20 @@
    ],
    "forbiddenContent": [
     "ruling-history"
+   ]
+  },
+  {
+   "path": "docs/features/fog-of-war-discovery/MAGNITUDE.md",
+   "layer": "production",
+   "role": "model document; single owning home for its dials (MAGNITUDE)",
+   "ownerFeature": "fog-of-war-discovery",
+   "allowedContent": [
+    "dials",
+    "models",
+    "seal-stamps"
+   ],
+   "forbiddenContent": [
+    "restating-other-docs-dials"
    ]
   },
   {

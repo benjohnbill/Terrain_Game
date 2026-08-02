@@ -11,6 +11,51 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
 
 ## Open
 
+- [ ] **Testimony history has no presentation — registered 2026-08-03.** Fog
+  `RULINGS.md` ③ decision 4 rules that a sector's past observation testimonies
+  are **shown** to the player, summoned on designation rather than always
+  painted, because otherwise the trend read it enables ("it was this, now it is
+  that") becomes a contest over who kept notes on paper. The **surface** is not
+  designed: no encoding, no interaction, no place in the commit-first three-zone
+  layout that gate 07 sealed. This is a DISPLAY-DEBT-class item living here
+  because the ruling that created it is a fog seal.
+  *Picked up by:* build ticket 04 (the commit-first UI shell) or the parked
+  presentation pass, whichever reaches a fog surface first.
+  *Deleted when:* the encoding is sealed at the fog birthplace or in
+  `docs/DISPLAY-DEBT.md`, and ticket 08's acceptance item for a readable
+  testimony history cites it.
+
+- [ ] **The ageing envelope is derived on paper and uncomposed in practice —
+  registered 2026-08-03.** Fog `RULINGS.md` ③ decision 5 forward-corrects a
+  testimony using bounds that already exist in sealed form — the affordability
+  bound's `rate` term (AB-①), the casualty curve (M4), and march reach (ADR
+  0043) — so the ruling claims **zero new dials**. That claim is reasoned, not
+  demonstrated: nobody has composed the three into a single conservative
+  per-turn envelope and checked that it never widens by less than the truth
+  could have moved. **If it under-widens, the dealer lies** — a band would stop
+  containing the truth, which is the one property the whole model rests on.
+  *Picked up by:* build ticket 08, at implementation, before any band is
+  displayed.
+  *Deleted when:* the composition is implemented with a test that fails on an
+  under-widening envelope — or, if it cannot be composed, when the fallback dial
+  is ruled by the user and sealed at FG-M① (a new decision, not an
+  implementation choice).
+
+- [ ] **`Information confidence`'s code contract points at six archive files
+  whose model is retired — registered 2026-08-03.** Its `codeRefs` in
+  `docs/audits/term-inventory.json` list `js/intel.js`, `js/game.js`,
+  `js/map.js`, `js/situation.js`, `js/actions.js`, `js/command-preview.js`. The
+  index is factually correct — the identifier does appear there — but every one
+  of those files implements the model ADR 0048 replaced, so a reader following
+  the contract lands on superseded behaviour. This is a **narrower, sharper
+  instance** of the standing "term code contracts anchor to what is now a
+  reference archive" row below: that row is about the archive being an archive;
+  this one is about the archive being *wrong*, not merely old.
+  *Picked up by:* build ticket 08, when the L3 implementation creates a real
+  `codeRefs` target under `game/src/`.
+  *Deleted when:* the row's `codeRefs` point at the L3 implementation, or the
+  broader archive-anchoring row is paid and subsumes this one.
+
 - [x] **Superseded staged starvation survives in two more surfaces — PAID
   2026-07-28** (registered and paid the same day, found while reading supply
   authority for build ticket 06b). Both surfaces now state the sealed continuous
