@@ -1,8 +1,10 @@
 # Define Cutover and Legacy Retirement
 
 Type: grilling
-Status: open
-Blocked by: 01, 05, 10
+Status: **resolved — SEALED 2026-08-02 (user); see § Resolution**
+Blocked by: 01, 05, 10 — all resolved (10 sealed 2026-08-02, which is what
+unblocked this gate; the blocker line then sat stale for hours until an audit
+read it, recorded as case 8 in `docs/audits/2026-08-02-doc-index-proposal-cross-review.md`)
 
 ## Question
 
@@ -89,3 +91,72 @@ The honest cost is an extra deploy/restore/redeploy cycle and temporary unlinked
 legacy payload. It is finite evidence, not a second product. This recommendation
 does not resolve the gate; the user must confirm the window, severity threshold,
 archive policy, and stable public route.
+
+## Resolution — SEALED 2026-08-02 · L1 (user)
+
+**The cutover half is dissolved; the retirement half was real, and belonged to a
+different environment than this gate assumed.** Option A above is not chosen — it
+is moot.
+
+### The cutover half: there is no route to hand over
+
+Every question about promotion presumes the L3 game eventually occupies "the
+stable public play route". **ADR 0041 removed that premise**: the game does not
+ship as a statically-hosted web page, and a browser is a development and playtest
+host rather than the distribution target. So there is no promotion event, no
+rollback drill on a public artifact, no promoted window, and no cutover. Cutover
+states 1–4 and the deploy→restore→redeploy cycle all describe something that will
+not happen.
+
+Gate 01's parallel strangler goes the same way, for the reason **gate 09** closed
+on earlier the same day: there is no migration, so there is nothing to strangle.
+
+### The retirement half was real, and it was not the game's problem
+
+The gate asks what evidence permits removing `game.html`, legacy orchestration,
+and adapters "without losing a working comparison surface too early". Two of
+those turned out to be empty and one turned out to be live:
+
+- **Adapters: none exist.** Gate 09 measured zero archive imports in `game/src`
+  and `game/tests` after nine landed tickets.
+- **Deletion: not owed.** ADR 0041 — *"The archive is not deleted, and its
+  retirement is not a precondition for L3. It stops being load-bearing; it does
+  not stop being useful."*
+- **But the archive was being published.** Measured at closure:
+  `scripts/build-hosting.js` copied `game.html` and the whole `js/` directory
+  into the Firebase bundle, and `index.html:186` embeds `game.html` in an
+  iframe labelled "strategy-ground · development build".
+
+That last one is a **marketing-environment** question, not a build-architecture
+one — which is exactly what ADR 0041's isolation implies, and what nobody had
+carried across. It is also sharper than "an old build is up": the prototype is
+the multi-faction conquest design that **ADR 0042 retired**, so the public
+artifact was demonstrating a game this project no longer builds.
+
+### What was ruled and done
+
+**User ruling: take it down** (2026-08-02). Executed in the narrow half only,
+because the broad half edits a rendered product surface:
+
+- **Done.** `scripts/build-hosting.js` no longer copies `js/` wholesale. Exactly
+  one of its 26 files, `landing.js`, is loaded by anything the bundle serves
+  (`index.html:30`); the other **25 are prototype modules that shipped publicly
+  with no loader at all** — `game.html` loads its own code from `assets/game/`.
+  The bundle went from carrying them to 15 files, with every asset `index.html`
+  and `game.html` require verified present. **No rendered output changed.**
+- **Deferred, and registered.** Removing the `game.html` iframe from the landing
+  is a visible product change whose surrounding copy may assume the demo. It
+  needs someone who can see the page. Until then `AGENTS.md`'s "Firebase Hosting
+  serves the landing page only" remains **inaccurate** — the landing still embeds
+  a playable prototype. Recorded in `docs/SYNC-DEBT.md`.
+
+**What this does not do:** retire, delete, or archive anything. The reference
+archive stays in the repo and still runs under a local static server (`AGENTS.md`
+§ Verification). Only its *publication* stopped.
+
+Status **AGREED** (**SEALED** — dated, user's verdict as source), validation
+**L1** (exhaustive reference check across every shipped surface, plus a rebuild
+verifying no required asset was lost; not a deployed smoke test). **This closes
+the last open Wayfinder gate** — 01–11 are resolved and only gate 12's
+publication remains, whose (a) half is blocked on
+`.scratch/doc-structure/issues/10-audit-run-3.md`.

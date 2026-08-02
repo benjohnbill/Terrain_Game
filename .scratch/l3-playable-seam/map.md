@@ -114,6 +114,16 @@ it.**
   concern. What survives is the archive-freeze question, which ADR 0041 §2
   largely answers (the archive is not deleted; it stops being load-bearing).
   Residue: whether anything is retired at all, and on what evidence.
+  **CLOSED 2026-08-02** (user; see the gate's § Resolution). The residue resolved
+  to **nothing is retired** — but the closing check found the archive was being
+  **published**: `build-hosting.js` copied `game.html` and all of `js/` into the
+  Firebase bundle, and the landing embeds `game.html` in an iframe. That is a
+  *marketing-environment* question ADR 0041's isolation had moved without anyone
+  carrying it, and it is sharper than an old build being up — the prototype is
+  the multi-faction design **ADR 0042 retired**. Ruled take-it-down; the narrow
+  half is done (25 prototype modules that shipped with **no loader** are out of
+  the bundle, no rendered change), the iframe removal is deferred as a visible
+  product edit and registered in `docs/SYNC-DEBT.md`.
 
 **Reduced:**
 
@@ -177,8 +187,9 @@ with the loop closing at ticket 07 (capital fall) and two tickets newly minted
 (commit-first UI shell; the land-derived decay engine, which nothing previously
 owned even though D6.4's natural match length depends on it). Ticket SHAPES only:
 readiness still needs 09/10/11 closed and gate 12 published, and 12 (a) remains
-blocked. **09 and 10 both closed 2026-08-02**, so only **11** remains before
-gate 12's publication; 12 (a) is still blocked on the doc-structure gate.
+blocked. **09, 10 and 11 all closed 2026-08-02 — every grill gate 01–11 is now
+resolved**, so only gate 12's publication remains; 12 (a) is still blocked on the
+doc-structure gate.
 Mapping and the readiness chain live in that tracker's `README.md`.
 Gate 05's scope had been
 amended twice over, and both amendments held at seal time:

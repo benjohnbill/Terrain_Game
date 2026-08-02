@@ -110,11 +110,12 @@ State as of 2026-07-25:
 | 05, 06, 07, 08 | **resolved** | — the four real grill gates are sealed |
 | 09 | **closed 2026-08-02** | decided from above by ADR 0041, which removed the migration premise the gate's question rests on; zero archive imports measured in `game/src` / `game/tests` after nine landed tickets. Its classification residue transferred to gate 10's Gate 5 |
 | 10 | **closed 2026-08-02** | all three residues sealed by user grill: 10 is the **admission** gate to L3 playtesting (not its verdict — fun/tension/skill left for TEST-LADDER's L3 rung and R12/R1/R2); parity strength is **bit-exact**; the human rung is all five Gate-7 tasks with the user judging and one miss a FAIL. **Gate 10 owned every acceptance command's pass/fail threshold**, so this unblocks all thirteen tickets' pass/fail. `verify:game` now reaches exit 0 |
-| 11 | open (re-framed by ADR 0041) | residue = whether anything is retired at all, and on what evidence |
+| 11 | **closed 2026-08-02** | cutover half void (ADR 0041: the game never occupies a public route, so there is nothing to promote or roll back); retirement residue resolved to **nothing is retired**. The closing check found the archive was being *published* — a marketing-environment question, ruled take-it-down; the 25 loaderless prototype modules are out of the hosting bundle, the landing iframe is deferred and registered |
 | 12 (a) governance batch | **blocked** | its declared precondition `.scratch/doc-structure/issues/10-audit-run-3.md` reads `Status: BLOCKED — the gate itself is unsound` / `⛔ DO NOT EXECUTE` |
 | 12 (b) ticket re-pointing | open, mechanical | needs (a); no grill required |
 
-So the path to executable tickets is: close ~~09 / 10~~ / 11 (small residues), then
+So the path to executable tickets is: ~~close 09 / 10 / 11 (small residues)~~ —
+**all three closed 2026-08-02, so every grill gate 01–11 is resolved** — then
 resolve the doc-structure blocker or take a user decision to route around it, then
 run 12 (a) and 12 (b). Do not assume the re-cut alone made these tickets
 actionable — it re-cut their *shapes*, not their authority.

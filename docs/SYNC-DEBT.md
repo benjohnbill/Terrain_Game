@@ -60,6 +60,24 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   a user call. Cheapest honest path is (a) only, and (b) fills in naturally as
   those terms are re-sealed.
 
+- [ ] **The landing page still embeds the retired design, and `AGENTS.md` says it
+  serves "the landing page only"** (registered 2026-08-02 while closing Wayfinder
+  gate 11). `index.html:186` embeds `game.html` in an iframe labelled
+  "strategy-ground · development build". `game.html` is the reference prototype:
+  **multi-faction world conquest**, the design **ADR 0042 retired** in favour of
+  the 1v1 duel. So the public artifact demonstrates a game this project no longer
+  builds, and ADR 0041's "Firebase Hosting serves the landing page **only**" is
+  inaccurate as written.
+  The user ruled **take it down** (2026-08-02). Half was executed: `js/`'s 25
+  loaderless prototype modules left the hosting bundle with **no rendered
+  change** (`scripts/build-hosting.js`, gate 11 § Resolution). **The iframe
+  itself is deferred** because removing it edits a rendered product surface whose
+  surrounding copy may assume the demo exists — it needs someone who can see the
+  page, and probably a decision about what replaces the slot (nothing / a static
+  image / a capture of the L3 build). **Until it is done, do not "fix" the
+  `AGENTS.md` sentence to match reality** — the sentence is the intended end
+  state; the deployment is what is wrong.
+
 - [ ] **This ledger has no way to know it has gone stale, and the check built to
   tell it has never once been right** (registered 2026-08-02, doc-audit Layer 1).
   `ledgerCurrency` / `ledger-possibly-paid` exists to answer "has this debt been
