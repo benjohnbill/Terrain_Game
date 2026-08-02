@@ -3,10 +3,14 @@
  * initial projections in Node and in a browser.
  *
  * Gate 05 D6 requires this check inside `verify:game`, and hands its **pass
- * threshold** — bit-exact versus epsilon — to gate 10, which is open. So this
- * script runs the comparison for real and then refuses to judge it: it prints
- * both digests, prints whether they matched, and exits PENDING. Filling
- * `parity.equality` in `thresholds.js` is what turns it into a verdict.
+ * threshold** — bit-exact versus epsilon — to gate 10. **Gate 10 sealed it
+ * bit-exact on 2026-08-02**, so this script now judges as well as measures:
+ * equal digests PASS, and any difference exits 1, which no threshold choice
+ * could have excused.
+ *
+ * `thresholds.js` carries the seal and the one condition that reopens it — a
+ * non-V8 engine, because `Math.pow` is implementation-approximated and
+ * `battle.ts`'s casualty exponent is the domain's only non-integer one.
  */
 
 import { chromium } from '@playwright/test';
@@ -85,8 +89,7 @@ if (nodeDigest !== browserDigest) {
 }
 
 try {
-  requireThreshold('parity.equality');
-  console.log('PASS  parity holds at the recorded threshold.');
+  console.log(`PASS  parity holds at the recorded threshold (${requireThreshold('parity.equality')}).`);
 } catch (error) {
   if (!(error instanceof PendingThreshold)) throw error;
   console.error(formatPending(error));

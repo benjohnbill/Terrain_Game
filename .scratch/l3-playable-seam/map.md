@@ -97,13 +97,17 @@ it.**
   classification residue does not stay here — it transfers to **gate 10's
   Gate 5** (birthplace + contract tests), which is where "did the
   re-implementation silently drop archived behavior?" is actually answerable.
-- **10** — ~85% restates the spec's Testing Decisions; 27 of 41 ledger
-  constraints already name it downstream. Real residue = proof **strength**
-  (metamorphic testing), **who judges the human rung and what is a FAIL**, and
-  the unasked question: is 10 the **admission** gate to L3 playtesting or the L3
-  **verdict**? (`docs/features/match-arc/TEST-LADDER.md` — the source of the
-  word "L3" — defines that rung as fun/tension/skill expression; neither ticket
-  nor spec cites it.)
+- **10** — **CLOSED 2026-08-02** (user grill; see the gate's § Resolution).
+  ~85% restated the spec's Testing Decisions; 27 of 41 ledger constraints
+  already named it downstream. All three residues are sealed: **10 is the
+  ADMISSION gate to L3 playtesting, not the L3 verdict** — the unasked question
+  above turned out to be the root, and the answer was already in the gate's own
+  Gate 7, whose five tasks are comprehension without a single fun/tension/skill
+  item; parity proof strength is **bit-exact** (`thresholds.js` carries the seal
+  and its one reopening condition, a non-V8 engine); the human rung is **all
+  five tasks, the user judging, one miss a FAIL**. Fun/tension/skill left this
+  gate for TEST-LADDER's L3 rung and `DESIGN-RISKS` R12/R1/R2. `verify:game`
+  reached exit 0 for the first time on the seal.
 - **11** — **re-framed 2026-07-17 by ADR 0041.** Route promotion and hosting
   rollback were most of its content and are now void: the game never occupies
   the public landing route, and static-artifact rollback is the landing page's
@@ -173,7 +177,8 @@ with the loop closing at ticket 07 (capital fall) and two tickets newly minted
 (commit-first UI shell; the land-derived decay engine, which nothing previously
 owned even though D6.4's natural match length depends on it). Ticket SHAPES only:
 readiness still needs 09/10/11 closed and gate 12 published, and 12 (a) remains
-blocked. **09 closed 2026-08-02**, which leaves 10 with every blocker resolved.
+blocked. **09 and 10 both closed 2026-08-02**, so only **11** remains before
+gate 12's publication; 12 (a) is still blocked on the doc-structure gate.
 Mapping and the readiness chain live in that tracker's `README.md`.
 Gate 05's scope had been
 amended twice over, and both amendments held at seal time:

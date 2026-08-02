@@ -4,8 +4,13 @@
  * It runs every lane even when an earlier one is pending, so a run reports the
  * *whole* state of the build rather than stopping at the first red. A genuine
  * failure exits 1; a lane that ran clean but has no authorised threshold exits
- * 2 (PENDING). Only an all-green run exits 0 — and today none can, by design:
- * `parity.equality` belongs to Wayfinder gate 10, which is open.
+ * 2 (PENDING). Only an all-green run exits 0.
+ *
+ * **An all-green run has been reachable since 2026-08-02**, when gate 10 sealed
+ * `parity.equality`. Until then no run could exit 0 by design, which meant a red
+ * result carried no information — the hazard DESIGN-RISKS R20 records. Treat a
+ * new PENDING as a real signal: it means a threshold was added and not yet
+ * filled, not that this is business as usual.
  */
 
 import { spawnSync } from 'node:child_process';

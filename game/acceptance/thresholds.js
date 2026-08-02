@@ -23,18 +23,34 @@
  * @property {unknown} value    The decision. `null` while unfilled.
  * @property {string} question  What exactly is undecided, in one sentence.
  * @property {string} source    Where the ownership was sealed.
+ * @property {string} [sealedBy] Where the *decision* was sealed, once filled.
+ * @property {string} [revisitWhen] The named condition that reopens a filled threshold.
  */
 
 /** @type {Readonly<Record<string, Threshold>>} */
 export const THRESHOLDS = Object.freeze({
   'parity.equality': {
     owner: 'Wayfinder gate 10',
-    filled: false,
-    value: null,
+    filled: true,
+    value: 'bit-exact',
     question:
       'Is Node/browser projection parity judged bit-exact, or to an epsilon? ' +
       'And if epsilon, what is it?',
     source: 'gate 05 D6 — "The parity pass threshold (bit-exact versus epsilon) is gate 10\'s to own."',
+    sealedBy:
+      'gate 10 § Resolution, SEALED 2026-08-02 (user). Bit-exact is what the digest ' +
+      'comparison already implements, so this authorises the running check rather than ' +
+      'tightening it; epsilon was not chosen partly because a sha256 digest cannot carry ' +
+      'one without restructuring the comparison field by field.',
+    revisitWhen:
+      'The game runs on a non-V8 JavaScript engine. Both hosts agree today because both ' +
+      'are V8, which is an accident of host choice and not a language guarantee: ' +
+      'ECMAScript leaves Math.pow implementation-approximated, and domain/battle.ts\'s ' +
+      'CASUALTY_EXPONENT of 1.4 is the one non-integer exponent in the domain, so it ' +
+      'takes the genuine transcendental path. Casualties feed capital fall, so that ' +
+      'single site is the only known way the two hosts could disagree about who won. ' +
+      'The trigger is the shell decision deferred by ADR 0016 Stage 2 (a system-webview ' +
+      'shell would put JavaScriptCore under the game on macOS and Linux).',
   },
 });
 

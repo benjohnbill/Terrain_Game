@@ -1,7 +1,7 @@
 # Define the L3 Verification and Acceptance Gates
 
 Type: grilling
-Status: open — **unblocked 2026-08-02**; every blocker below is resolved
+Status: **resolved — SEALED 2026-08-02 (user grill); see § Resolution**
 Blocked by: 02, 03, 05, 08, 09 — all resolved (09 closed 2026-08-02 from above by
 ADR 0041; see its § Resolution, which also hands this gate a residue)
 
@@ -151,3 +151,100 @@ The honest cost is one maintained browser acceptance path and deliberate human
 time at prototype/promotion milestones. This recommendation does not resolve
 the gate; the user must confirm the required layers, exact parity strength, and
 human pass criteria.
+
+## Resolution — SEALED 2026-08-02 · L1 (user grill)
+
+Option **A** stands as recommended: the seven layers above are the required
+stack. Three rulings settle the residue the 2026-07-17 audit left.
+
+### R10-① Gate 10 is the ADMISSION gate to L3 playtesting, not its verdict
+
+**The unasked question, asked.** "L3" carries two meanings in this project — the
+top rung of the test-trust ladder (`docs/features/match-arc/TEST-LADDER.md`:
+"Human playtest — fun, tension, skill expression, actual human choices") and the
+build generation now under construction (`AGENTS.md`, ADR 0041). This gate's
+title uses the second; its Gate 7 was being read as the first, and that is what
+kept the residue open.
+
+**The gate's own Gate 7 already chose.** Its five tasks — distinguish the
+information tiers, explain what a border alarm reveals and withholds, predict
+and identify what reconnaissance changed, explain a bot action and a battle
+result from the event presentation, finish a match and say why it ended — are
+*comprehension*, every one. Not one of them measures fun, tension, or skill
+expression. The author's hand had already picked admission; only the name was
+missing.
+
+**Why admission is the right reading and not merely the convenient one.**
+TEST-LADDER defines each rung by what it can **establish**, not by a pass mark;
+it is an epistemology, and a build-acceptance gate that demanded "fun" would be
+misreading it. Comprehension is the *precondition* for L3 evidence: a playtester
+who cannot tell an estimate from an exact value produces a "this isn't fun" that
+says nothing about the design. And the verdict reading is circular in practice —
+this gate owns every acceptance command's pass/fail threshold (gate 05 D3), so
+it gates all thirteen build tickets; making it wait on a playtest would put the
+tickets behind the playtest that needs them.
+
+**What therefore leaves this gate.** Fun, tension and skill expression are not
+judged here. They are TEST-LADDER's L3 rung and they belong to the standing
+design risks that already wait on a playtest — `docs/DESIGN-RISKS.md` **R12**
+(the immersion charter's three unverified claims), with **R1** and **R2**. This
+gate certifies that a playtest of this build would *mean* something; it does not
+pronounce on what the playtest finds.
+
+### R10-② Parity proof strength is BIT-EXACT
+
+`parity.equality` is filled in `game/acceptance/thresholds.js`, which carries the
+seal and its reopening condition; not restated here.
+
+The ruling **authorises the check that was already running** rather than
+tightening anything: the lane compares a sha256 digest of a canonically
+serialized turn-0 projection, so it was bit-exact by construction. Epsilon was
+not chosen partly because a digest cannot carry one — it would mean rewriting the
+comparison to walk the projection field by field.
+
+**Measured at seal time, and the reason a reopening condition exists at all.**
+Both hosts agree (`d50337ddf67c813b`) because both are V8 — an accident of host
+choice, not a language guarantee. ECMAScript leaves `Math.pow`
+implementation-approximated. The domain calls it four times; three exponents are
+integers (2.0, 2.0, 1.0), and `domain/battle.ts`'s `CASUALTY_EXPONENT` of **1.4**
+is the only non-integer one, so it takes the genuine transcendental path.
+Casualties feed capital fall. **That single site is the only known way the two
+hosts could come to disagree about who won**, and the trigger that would expose
+it is the shell decision ADR 0016 Stage 2 defers.
+
+### R10-③ The human rung: all five tasks, the user judges, one miss is a FAIL
+
+A run PASSes only if the playtester performs **all five** of Gate 7's tasks.
+There is no partial credit: the tasks are not a score, and admitting a build that
+fails one would admit a playtest whose findings that failure contaminates. The
+judge is **the user**. The record the gate already requires — viewport, build
+identity, world revision, seed, intent log, outcome, observed misunderstanding —
+is the evidence, and a FAIL names which task failed.
+
+**One tension, recorded rather than resolved.** Gate 7 says "without developer
+explanation", and the user is the designer, so the condition cannot be satisfied
+structurally by the person now named to judge it. The user ruled anyway, and the
+ruling stands: an early admission judgement by the designer is worth more than a
+blocked gate. But the reading is **optimistic by construction** — the designer
+cannot un-know what the screen is supposed to say — so a comprehension PASS
+judged this way is weaker evidence than the same PASS from a third party. When a
+non-designer plays, that run is the stronger record.
+
+### Gate 5 re-cut, inherited from gate 09
+
+Gate 09 closed on 2026-08-02 because ADR 0041 removed its premise, and it handed
+one residue here: the guarantee that greenfield re-implementation does not
+silently drop undocumented-but-valuable archived behavior. That is Gate 5's
+birthplace-and-contract-tests clause, and Gate 5's other half — "selected legacy
+parity" — describes a comparison ADR 0041 retired. Read Gate 5 as: **every
+L3-invoked operation names its Production birthplace and passes its contract
+tests**, with the archive consulted as verification evidence and never as a
+parity comparator for behavior it never ran.
+
+### What changed the moment this sealed
+
+`npm run verify:game` reached **exit 0** for the first time (six lanes PASS).
+Until this seal no run could go green by design, so its red carried no
+information — the hazard `docs/DESIGN-RISKS.md` **R20** records. A future PENDING
+now means a threshold was added and left unfilled, which is a real signal rather
+than business as usual.
