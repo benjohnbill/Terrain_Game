@@ -1,10 +1,38 @@
 # Audit run #3 — full re-harvest on the settled schema (terminal gate)
 
 Type: task
-Status: BLOCKED — the gate itself is unsound
-Blocked by: 03, 08, 09 — and the exit criterion must be redesigned before this runs
+Status: open
+Blocked by: none
 
-> ## ⛔ DO NOT EXECUTE — and do not trust this ticket's gate
+> ## ⚠ Amended 2026-08-03 — the run happened; only the exit criterion is open
+>
+> **This ticket's work was executed on 2026-07-26** and is on record at
+> `docs/audits/2026-07-26-audit-run-3.md` (commit `a3bf9a2`). All four work
+> items below ran: the `verdict: null` queue went **39 → 0**, the registry went
+> **119 → 167 rows with 0 dead paths**, the dated report was written, and
+> `lint:docs` came back **0 blocking** (8 advisory, each verified spurious).
+> The run executed **without** tickets 08 and 09 landing, so the declared
+> blocker line was not merely stale — it was never binding.
+>
+> **The status line said `BLOCKED — do not execute` for the seven days after
+> that run**, and it is quoted verbatim as the precondition of the L3 build's
+> gate 12 (a) (`.scratch/l3-playable-build/README.md`), which was therefore
+> recorded as blocked on work that was already finished. That is the whole
+> visible cost of the error, and it is the same defect class as the 2026-08-02
+> gate-11 incident: a blocker line nobody re-read.
+>
+> **What remains true, and is the only reason this ticket is still open:** the
+> review below judged the ticket's *exit criterion* unsound — a lint-clean run
+> cannot fail where the package is weakest. The run happening does not settle
+> that. The run's own report says so in its header: *"evidence document …
+> nothing here changes canon by itself."* **So the map's Destination does not
+> close on the strength of that run**, and redesigning the criterion is what
+> this ticket now is.
+>
+> The original block is preserved below rather than deleted, because its gate
+> analysis is still live and only its execution verdict expired.
+
+> ## Superseded verdict (was: ⛔ DO NOT EXECUTE) — gate analysis still stands
 >
 > Evidence: `docs/audits/2026-07-15-doc-structure-review.md` (H-10, M-14, and
 > the honest-efficacy section).

@@ -17,7 +17,11 @@ Status: open — decision layer PARTIALLY REOPENED after adversarial review
 > **Reopened (re-grill required, in a fresh session):** 02, 11. (04 re-grilled &
 > re-sealed 2026-07-16 — designation without freeze; law clause user-sealed,
 > file edit batched Tier-3.)
-> **Blocked (do not execute):** 09, 10, 12 — each carries the reason in its file.
+> **Blocked (do not execute):** 09, 12 — each carries the reason in its file.
+> ~~10~~ — **corrected 2026-08-03: ticket 10's work ran on 2026-07-26**
+> (`docs/audits/2026-07-26-audit-run-3.md`, `a3bf9a2`), and its status line said
+> `BLOCKED — do not execute` for the seven days after. Only its exit criterion is
+> still open. See the ticket's amendment block.
 > **Applied and sealed (standing):** 01 rulings 1–2, 05, 06, 07 (`456344b`,
 > `e35caf8`).
 > **Corrected in place:** 01 (duplicate Answer block removed), 03 (":423"
@@ -40,6 +44,19 @@ Status: open — decision layer PARTIALLY REOPENED after adversarial review
 > enforced. A live hypothesis it should test: **09, 10 and 12 may be blocked
 > because "what to enforce" was never decided**, in which case 14 is their
 > missing input rather than a fourteenth item.
+>
+> **Point 2 ruled 2026-08-03 (user grill) — R1…R7 in the ticket's § Answer.**
+> Ticket front matter becomes YAML (`type` / `status` / `blocked_by`); `blocked`
+> and `landed` are derived, never stored; the schema's home is
+> `docs/agents/issue-tracker.md` § Wayfinding operations, which
+> `wayfinder/SKILL.md` already delegates to, so no global skill is edited. Law
+> gains a `## Work intake` section (Tier 3, sealed; text in the ticket).
+> **Nothing is applied yet** — the migration, the checks and the law edit are a
+> later batch. Points 1, 3, 4 and 5 remain open, so the ticket stays open.
+>
+> Testing the hypothesis above found one third of it already false: **ticket
+> 10 was not blocked** — its run executed 2026-07-26 and the status line stayed
+> `BLOCKED` for seven days. Corrected in the state block above.
 
 ## Destination
 

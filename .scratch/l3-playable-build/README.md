@@ -111,14 +111,16 @@ State as of 2026-07-25:
 | 09 | **closed 2026-08-02** | decided from above by ADR 0041, which removed the migration premise the gate's question rests on; zero archive imports measured in `game/src` / `game/tests` after nine landed tickets. Its classification residue transferred to gate 10's Gate 5 |
 | 10 | **closed 2026-08-02** | all three residues sealed by user grill: 10 is the **admission** gate to L3 playtesting (not its verdict — fun/tension/skill left for TEST-LADDER's L3 rung and R12/R1/R2); parity strength is **bit-exact**; the human rung is all five Gate-7 tasks with the user judging and one miss a FAIL. **Gate 10 owned every acceptance command's pass/fail threshold**, so this unblocks all thirteen tickets' pass/fail. `verify:game` now reaches exit 0 |
 | 11 | **closed 2026-08-02** | cutover half void (ADR 0041: the game never occupies a public route, so there is nothing to promote or roll back); retirement residue resolved to **nothing is retired**. The closing check found the archive was being *published* — a marketing-environment question, ruled take-it-down; the 25 loaderless prototype modules are out of the hosting bundle, the landing iframe is deferred and registered |
-| 12 (a) governance batch | **blocked** | its declared precondition `.scratch/doc-structure/issues/10-audit-run-3.md` reads `Status: BLOCKED — the gate itself is unsound` / `⛔ DO NOT EXECUTE` |
+| 12 (a) governance batch | **precondition void 2026-08-03** | the declared precondition was that `.scratch/doc-structure/issues/10-audit-run-3.md` reads `BLOCKED — do not execute`. **That line was false when this row was written.** The audit it gates on ran 2026-07-26 — `docs/audits/2026-07-26-audit-run-3.md` (`a3bf9a2`): verdict queue 39 → 0, registry 119 → 167 with 0 dead paths, `lint:docs` 0 blocking. Ticket 10 is now `open` on its **exit criterion** alone. What this row cannot settle: gate 12's own text says it runs "after … the planned documentation / terminology audit", which has run — but if it also needs the doc-structure map's *Destination* closed, that remains open, because the 2026-07-15 review judged that Destination's criterion unsound. Decide which of the two it needs before running (a) |
 | 12 (b) ticket re-pointing | open, mechanical | needs (a); no grill required |
 
 So the path to executable tickets is: ~~close 09 / 10 / 11 (small residues)~~ —
-**all three closed 2026-08-02, so every grill gate 01–11 is resolved** — then
-resolve the doc-structure blocker or take a user decision to route around it, then
-run 12 (a) and 12 (b). Do not assume the re-cut alone made these tickets
-actionable — it re-cut their *shapes*, not their authority.
+**all three closed 2026-08-02, so every grill gate 01–11 is resolved** —
+~~then resolve the doc-structure blocker or take a user decision to route around
+it~~ **(corrected 2026-08-03: there was no doc-structure blocker to resolve — the
+audit had already run; see the 12 (a) row)** — then decide which precondition
+12 (a) actually has, and run 12 (a) and 12 (b). Do not assume the re-cut alone
+made these tickets actionable — it re-cut their *shapes*, not their authority.
 
 ## Build dependency chain
 

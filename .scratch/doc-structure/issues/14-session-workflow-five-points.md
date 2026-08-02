@@ -159,3 +159,182 @@ refutation; § What this leaves owed) · `research/design-history-survey.md` § 
 `13-enforcement-ladder.md` · `03-inventory-schema-v2.md` § Q3 ·
 `.context/handoff-lane-b-documentation-law-2026-08-02.md` (the handoff this
 ticket was extracted from).
+
+---
+
+# Answer — point 2 only (2026-08-03, user grill)
+
+Points 1, 3, 4 and 5 are **not** ruled here; the ticket stays open for them.
+Every ruling below is the user's; the measurements are cited so a later reader
+can re-run them rather than trust them.
+
+## The two principles the rulings rest on
+
+- **Law-derived facts belong in an index; self-asserted state belongs in the
+  file.** `doc-registry.json` is not a counter-example — its `layer`/`role` fall
+  out of the law (`derivedFrom: DOCUMENTATION-LAW.md`), they are not claims a
+  document makes about itself.
+- **A ticket stores only what only that ticket knows.** Everything else is
+  derived at read time. This is 03 Q3's "DERIVE, do not store" applied to the
+  tracker, and it is what disqualified `blocked` and `landed`.
+
+## R1 — `Status:` is a routing field, consulted before, during and after a session
+
+It answers one question: **can this be picked up?** It must therefore be
+machine-readable. History, dates, branches and outcomes move to the body.
+
+Measured: three competing dictionaries were live at once — `issue-tracker.md`
+(`claimed`/`resolved`), `triage-labels.md` (five roles), and the values actually
+written (neither). `claimed` had **0** uses; `needs-triage`, `ready-for-human`
+and `wontfix` had **0** each.
+
+## R2 — the field lives in the ticket file, and ships with a coverage check
+
+Rejected: a central index of ticket state. It would make point 4's mid-session
+update a second write to a second file — the dual maintenance § E #11 rejected
+as over-heavy — and an index row would be the second copy 03 Q3 forbids.
+
+The check is a condition of the schema, not a follow-up: *a schema is void
+without its enforcing check in the same batch* (03). Both known architectures
+failed the same way — things missing, invisibly: the in-file convention was
+absent from 29 of 55 tickets because nothing scanned, and `doc-registry.json`
+misses 8 governed files because `dead-registry-path` runs registry→disk only.
+
+## R3 — YAML front matter, flat scalars, one-time migration of all tickets
+
+Chosen over the existing bare `Key: value` lines on one criterion: **a delimited
+block has a machine-findable end, so a tool can rewrite it without touching
+prose.** The absence of that boundary is not hypothetical — prose had already
+bled into **19 of 44** status lines.
+
+No YAML dependency is added; a few flat scalars need a small reader, and the
+repo's zero runtime dependencies stay at zero. This creates a new Law-layer
+surface and is **Tier 3** — the user sealed it.
+
+## R4 — `status: open | needs-info | resolved | superseded`
+
+Each value was tested by one question: *does it change as a byproduct of the
+work, or does it require a separate act of re-judgement?* The rot-prone ones are
+exactly those needing re-judgement.
+
+| Retired | Why |
+|---|---|
+| `BLOCKED` | Derivable from the blockers. Stored, it sat 15 days untouched |
+| `landed` | git owns merge state. Measured: `resolved`→merge was **same-day in 5 of 6** cases, 1 day in the sixth — a value always maintained and never queried |
+| `mixed` | Not a status. It is a ticket that should be split, as 06 → 06a–06e already was |
+| `re-cut` | Renamed `superseded` |
+| `claimed`, `needs-triage`, `wontfix` | 0 uses. Concurrency is a branch/worktree |
+
+The de facto vocabulary was already small — seven head tokens across 44 lines,
+each followed by prose. The set was named, not imposed.
+
+## R5 — `blocked_by:` holds ticket ids only
+
+A blocking condition that is not a ticket is not written on that line. Decision
+blockers are derived **from the other end**: `DECISIONS-OWED.md` § Part 2
+already records, per conflict, which ticket it bites at.
+
+Part 2 therefore gains a **`Status` column**, so "this row is closed" sits in a
+fixed place instead of inside the conflict-name cell as prose.
+
+Two duplicates are cut: the build README's per-ticket `Result` column (ticket
+status restated) and its gate-status table (the seam tracker's statuses
+restated). Its R6 waiver table **stays** — that evidence has no other home.
+
+## R6 — `type: grilling | task | research | prototype`, fixed at creation
+
+Never changes, so it has no staleness surface. It carries real routing
+information: `grilling` means the user must be present, one question at a time.
+That is why `triage-labels.md`'s `ready-for-human` had 0 uses — this field
+already said it. The 29 tickets without a `type` become `task`.
+
+## R7 — the pre-agreement duty: law carries the pipeline, the tracker doc carries the schema, global skills are untouched
+
+A law clause alone was measured and it does not work. Natural experiment: the
+`Summary`-column duty entered the Vocabulary Law 2026-07-27 with no consuming
+machinery. Trigger events since: `capital guard` re-sealed twice (CP-⑤
+2026-07-31, CP-⑥ 2026-08-01) plus two rows added 2026-07-28. **Compliance: 0 of
+4. Fill rate 0 of 121 rows.**
+
+So enforcement comes from **dependency, not from instruction** — the rungs, with
+this repo's own evidence: law clause (**0/4**) · advisory lint (17 standing,
+uncleared) · **blocking lint + pre-commit/pre-push/CI** (landed 2026-07-27; the
+commit is rejected) · **substrate** (the workflow reads it, so omission is
+breakage, not disobedience). Front matter reaches rung 3 at no extra cost via
+R2's check, and rung 4 when the session-start map becomes the way work is found.
+A blocking check on a field nobody reads is pure tax; the map is what makes it
+earn its keep. The two ship together.
+
+Three homes, no global skill edit:
+
+- **Law** — a new `## Work intake` section carrying the pipeline shape.
+- **`docs/agents/issue-tracker.md` § Wayfinding operations** — the schema, value
+  domains, frontier rule. `wayfinder/SKILL.md` **already delegates here**
+  ("consult the tracker doc's Wayfinding operations section for how *this* repo
+  expresses them"), and the law's own Working-layer row already assigns
+  `docs/agents/` this role.
+- **`/implement`** — has no delegation seam (14 lines, tracker-unaware). If one
+  is added it must be repo-agnostic, and it is a global edit: **Tier 3, open.**
+
+### The law text
+
+```markdown
+## Work intake
+
+Durable work enters through the tracker, not through conversation alone.
+
+1. Work too large for one session is charted as a Wayfinder map, whose
+   children are decision tickets.
+2. A ticket's **type and scope are agreed with the user before its file is
+   created.** An agent creating a ticket from an instruction rather than
+   from a decision says so, and asks first.
+3. Front matter is written when a ticket file is created, not added to it
+   later. Bringing an existing tracker onto the schema is a **one-time
+   migration**, made in a single batch with its enforcing check — not a
+   retrofit performed ticket by ticket. Schema and value domains live in the
+   repo's tracker doc § Wayfinding operations; this law does not restate them.
+4. Implementation runs from a ticket and closes with a review. The ticket
+   is the unit of work; the session is not.
+```
+
+## How the clauses were verified
+
+Three subagents planned real work from the four clauses alone, blind to any
+criteria, with "front matter" appearing nowhere in their task text and the
+tracker doc reachable only by following clause 3's pointer. The rubric was
+written and fixed **before** any result arrived. Entry paths: undesigned new
+work · an instruction to create a named file · picking up existing work.
+
+All three reached the designed preparation; all three stopped for clause 2.
+**Verdict: sufficient with one named gap.** Clause 3 originally read "never
+retrofitted", which two runs independently identified as forbidding the very
+migration R3 rules, and the third demonstrated live — running the frontier
+procedure literally returned the **empty set**, since no ticket carries front
+matter yet. The wording above is the fix.
+
+Honest limit: clause 2 held 3 of 3, but the law section was the salient text in
+those prompts. What is shown is that the wording works **when read** — not that
+it will be read. Whether placement drives the Summary column's 0/4 is untested.
+
+## Live defects the verification surfaced (all re-verified against the tree)
+
+- **Ticket 10's status was false for seven days**, and gate 12 (a) of the L3
+  build quoted it as its precondition. Fixed in the same batch. Details in that
+  ticket's amendment block.
+- **Ticket 08's `Blocked by: 01` is false** — review § H-6 records the cycle
+  `08 → 10 → 12 → 08`; its real gate is 11. **Open.**
+- **Ticket 13's two handed-over findings are fixed in code** (`audit-lint.js:423`
+  now admits `undetermined`; `:871` derives the count) but still read open in the
+  ticket. **Open.**
+- **`doc-registry.json` misses 8 governed files** (ADRs 0045/0046/0047 among
+  them), invisible because no check runs disk→registry. **Open.**
+- **`audit-lint.js` has a duplicate `glossaryStatus:` key** at `:670`/`:676`.
+  **Open**, and not to be minted as a ticket without agreement (clause 2).
+- **`.scratch/l3-first-match/` is an orphan** — a `map.md` with zero tickets,
+  unlisted in `AGENTS.md`. **Open.**
+
+## Not yet applied
+
+R1–R7 are rulings. The law edit, the tracker-doc rewrite, the 55-ticket
+migration, the enforcing checks, the Part 2 status column and the two README
+cuts are **not** in this batch.
