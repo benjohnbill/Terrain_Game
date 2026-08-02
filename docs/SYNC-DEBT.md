@@ -66,7 +66,11 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   paid?" by matching an Open row's distinctive title tokens against commit
   subjects dated after its registration. Its record, summed across the two audits
   that triaged it: **run #3 (2026-07-26) 8 of 8 spurious · this run
-  (2026-08-02) 14 of 14 spurious — 0 true positives in 22.** The failure mode is
+  (2026-08-02) 14 of 14 spurious — 0 true positives in 22.** *(The 14 had already
+  become 15 within hours of this row being written — a live micro-instance of the
+  problem, inside the row describing it. The tally is a moving figure; the
+  0-true-positives record is the durable part. Noted 2026-08-02 by the
+  cross-review below.)* The failure mode is
   identical six days apart: run #3 blamed "an incidental shared word (`re-cut`,
   `record`, `evidence`, `naming`)"; this run's misfires were `reason`, `re-cut`,
   `record`. Two implementation repairs are already recorded in the function's own
@@ -103,6 +107,20 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   adding checks is a decided question, not an audit action", a required ledger
   field is a Law-layer change, and the lock-point model is a policy ruling of the
   same class as the QUICKREF one.
+
+  **Cross-reviewed 2026-08-02 — the candidate list is now ranked by evidence.**
+  Three independent reviewers refuted the richest candidate (structured
+  status/discharge/premise fields per row, extended to all documents):
+  `docs/audits/2026-08-02-doc-index-proposal-cross-review.md`. Headline: the
+  shape is **already implemented twice in this repo** — `DESIGN-RISKS`'s
+  `Status | Home / thread | Next to close` triple and `doc-registry.json` — and
+  **both are stale today**; and `.scratch/doc-structure/research/design-history-survey.md`
+  § E already refuses three of its components by name (#4 central seal registry
+  DECIDED NO by the user 2026-07-05, #11 per-entry metadata, #13 blocking hooks).
+  The surviving candidate is none of the four listed above: a **blocker-edge
+  check on tracker tickets**, comparing the `Status:` and `Blocked by:` lines
+  that already exist, advisory only, no new file. It fires today on Wayfinder
+  gate 11. Still user-scope; the review is a report, not a ruling.
 
 - [ ] **The Wayfinder's seals have no ADR, by a deliberate deferral**
   (registered 2026-08-02, user ruling). Gates 05–10 are all sealed and all live
