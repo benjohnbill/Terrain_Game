@@ -89,7 +89,7 @@ leaves this table by having its blocking value landed at a birthplace.
 | 10 | ✅ | ❌ Part 2 #7; the fit-ranking function (§ 1.5). **Also downstream of the operational-manoeuvre pass** (recorded 2026-07-31) — four of the twelve catalog plans it would expose are that pass's subject | needs-info |
 | 11 | ✅ | ❌ Part 2 #2, #8, #9. **Also downstream of the operational-manoeuvre pass** (recorded 2026-07-31) — Part 2 #2 (Encirclement) is that pass's own item, and this ticket clearing is its deletion trigger | needs-info |
 | 12 | ✅ | ❌ Part 2 #12; R4's three axes are unvalued | needs-info |
-| 13 | ✅ | ❌ every acceptance threshold belongs to gate 10 | needs-info |
+| 13 | ✅ | ✅ **cleared 2026-08-02 — gate 10 sealed.** Its thresholds now exist: `verify:game` is the automated verdict (six lanes, exit 0 reachable since the seal), the human rung is Gate 7's five comprehension tasks with the user judging and one miss a FAIL, and parity is bit-exact. Note what the seal also *removes* from this ticket: gate 10 is the **admission** gate, so "undistorted" here means the match is legible and reproducible, **not** that it was judged fun — fun/tension/skill are TEST-LADDER's L3 rung and DESIGN-RISKS R12/R1/R2, and they are not this ticket's to pass | needs-info — on the **chain** only (12 → 11 → 10 → 09 → 08), no longer on a missing value |
 
 Each ticket carries an interim `Contract (interim pointers):` line so a reader can
 find today's truth before that publication happens. Those pointers are **reading
