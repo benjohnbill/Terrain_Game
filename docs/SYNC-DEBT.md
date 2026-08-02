@@ -792,7 +792,8 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   its derivation).
 
 - [ ] **Seal-versus-seal conflicts surfaced by the value sweep — twelve rows**
-  (registered 2026-07-25). A demand-driven sweep over the thirteen build tickets
+  (registered 2026-07-25; **eleven live as of 2026-08-02** — see the partial-payment
+  note at the end of this row). A demand-driven sweep over the thirteen build tickets
   found conflicts that no reader had hit because nobody had assembled the design
   end to end: band centre wobble versus seed-stable position; Encirclement
   threshold 2.2 versus 1.92 (the latter is the rout-onset figure); the eval bar's
@@ -810,6 +811,16 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   AB-②'s rider though code and tests already treat it as the factory default, and
   the viewer knowledge matrix has carried eight rows since its 2026-07-23
   amendment while every citation still says "seven-grade".
+
+  **Partial payment, noted 2026-08-02 (doc-audit Layer 1).** One of the twelve is
+  closed at its birthplace and the enumeration above still lists it as live:
+  **capital guard 350×pop versus `capitalGarrison 1500`** (Part 2 #10) was ruled
+  **2026-07-31 by capital CP-⑤**, which also recorded that there were never two
+  seals — `MAGNITUDE.md`'s `capitalGarrison 1500` is a parenthetical harness
+  inventory carrying no status word, and CP-① item 2 had retired the flat 1500 by
+  name on 2026-07-10. **Eleven remain live** (Part 2 #1–#9, #11, #12), plus #13
+  판세 which this row never covered. Recorded rather than struck because the other
+  eleven still stand; do not re-grill #10.
 
 - [ ] **Dials named-but-unvalued in design docs, valued only in code**
   (registered 2026-07-25, demand-driven value sweep). The slice-2 operational
@@ -1783,6 +1794,19 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   tracker's § Ordering carries the three candidate shapes (split the pass · run 13
   with the four plans absent · fire the gates on ticket 07's match instead), recorded
   unranked. Until it is ruled, the pass's step 2 ("no design") still governs.
+
+  **A fact the row could not carry when it was written, noted 2026-08-02
+  (doc-audit Layer 1).** The third candidate — *fire the gates on ticket 07's
+  match instead* — was speculative on 2026-07-31 because **07 had not merged**. It
+  merged 2026-08-01 (`15877c1`), and a match now runs from setup to a capital
+  fall, cross-host, with `capital-fall.spec.js` driving it. So that candidate's
+  precondition **now exists**, where the other two still describe work. This
+  changes what is *available*, not what is *chosen*: the three stay **unranked**
+  and the ruling stays the user's. Note also that the row's premise "the chain is
+  strictly linear through 09 → 10 → 11 → 12 → 13" is under review — the same audit
+  session read the tickets as two branches (`08→09` and `10→11`) merging at 12 —
+  but the deadlock survives either reading, since the pass gates 10 and 11 under
+  both.
   **Deferred by user ruling the same day, with a trigger: rule it when ticket 09
   lands** — 09 is the last ticket before the loop binds, and by then the ruling is
   made against a running game rather than three paper shapes. The row stays open
