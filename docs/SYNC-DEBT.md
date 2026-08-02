@@ -60,6 +60,30 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   a user call. Cheapest honest path is (a) only, and (b) fills in naturally as
   those terms are re-sealed.
 
+- [ ] **`L3` is one identifier with two live meanings, and only one is
+  registered** (registered 2026-08-02, found by Wayfinder gate 10's grill —
+  it is what kept that gate open). `docs/audits/term-inventory.json` carries
+  `L3` as an **alias of the Tier-1 term `Test-trust ladder` (검증 신뢰 사다리)**,
+  birthplace `docs/features/match-arc/TEST-LADDER.md`, where the rung means
+  *human playtest — fun, tension, skill expression*. The project simultaneously
+  uses `L3` for the **build generation** now under construction — `AGENTS.md`
+  § Current Direction, ADR 0041, both `.scratch/l3-*` trackers, and the whole
+  `game/` tree — and that sense is registered nowhere. This is a
+  single-definition violation in the plainest form, and it has a mechanical
+  consequence: the `alias-inject.js` UserPromptSubmit hook resolves `L3` to the
+  ladder, so sessions about the *build* have been fed the *ladder's* meaning.
+  Gate 10 spent its open life on the ambiguity and could not close until the two
+  senses were separated by hand. The collision reaches Tier 0: `DOMAIN_MAP.md`
+  carries the ladder sense at its `Test-trust ladder` entry ("L0 hand reasoning →
+  L3 human playtest") and the build sense thirty-odd lines later ("the L3 build
+  does not inherit its world"), so both live in the canon file itself.
+  **Naming is the user's — this is a proposal, not an agent edit.** Options:
+  rename the ladder rung (keeping `L3` as a 구칭 alias at the birthplace row per
+  the vocabulary law), rename the build generation, or register the build sense
+  as a second canonical term and accept a documented homonym. Gate 10's
+  § Resolution states the distinction in prose meanwhile, so the ambiguity is
+  described but not removed.
+
 - [ ] **`DOMAIN_MAP.md`'s place-naming rule has no birthplace** (registered
   2026-07-28, enforcement-ladder stage 4). The `## World Direction` section was
   reduced to pointers, and every bullet resolved somewhere — except one: place
