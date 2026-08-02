@@ -86,10 +86,17 @@ it.**
 
 **Demoted — not grill gates:**
 
-- **09** — pre-answered by ADR 0040 D2/D5/D6 + spec + C01.7. The "adapter
-  ladder" frame is inapplicable: the eight port targets have no coupling to
-  adapt (~35–40 lines of mechanical edit). Real residue = a **classification**
-  (accepted / superseded / incidental), folded into 08's slice work.
+- **09** — **CLOSED 2026-08-02** (user; see the gate's § Resolution). Was
+  pre-answered by ADR 0040 D2/D5/D6 + spec + C01.7; **ADR 0041 then removed the
+  gate's whole premise** — the archive is not build source, is "not a parity
+  comparator for behavior they never ran," and its retirement is not an L3
+  precondition, so there is no crossing to order, no adapter to justify, and no
+  old path whose retirement needs a parity demonstration. Measured at closure:
+  **zero** archive imports in `game/src` / `game/tests` after nine landed
+  tickets, so option A was executed de facto and B was never invoked. The
+  classification residue does not stay here — it transfers to **gate 10's
+  Gate 5** (birthplace + contract tests), which is where "did the
+  re-implementation silently drop archived behavior?" is actually answerable.
 - **10** — ~85% restates the spec's Testing Decisions; 27 of 41 ledger
   constraints already name it downstream. Real residue = proof **strength**
   (metamorphic testing), **who judges the human rung and what is a FAIL**, and
@@ -166,7 +173,8 @@ with the loop closing at ticket 07 (capital fall) and two tickets newly minted
 (commit-first UI shell; the land-derived decay engine, which nothing previously
 owned even though D6.4's natural match length depends on it). Ticket SHAPES only:
 readiness still needs 09/10/11 closed and gate 12 published, and 12 (a) remains
-blocked. Mapping and the readiness chain live in that tracker's `README.md`.
+blocked. **09 closed 2026-08-02**, which leaves 10 with every blocker resolved.
+Mapping and the readiness chain live in that tracker's `README.md`.
 Gate 05's scope had been
 amended twice over, and both amendments held at seal time:
 

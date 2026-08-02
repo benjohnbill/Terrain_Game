@@ -1,8 +1,17 @@
 # Define the L3 Verification and Acceptance Gates
 
 Type: grilling
-Status: open
-Blocked by: 02, 03, 05, 08, 09
+Status: open — **unblocked 2026-08-02**; every blocker below is resolved
+Blocked by: 02, 03, 05, 08, 09 — all resolved (09 closed 2026-08-02 from above by
+ADR 0041; see its § Resolution, which also hands this gate a residue)
+
+> **Read Gate 5 below with ADR 0041 in hand.** Its "selected legacy parity" half
+> describes a comparison ADR 0041 retired — the archive is "not a parity
+> comparator for behavior they never ran," and accepted behavior reaches L3 by
+> re-implementation from its authoritative contract. Gate 09's resolution
+> transfers one residue here: the guarantee that re-implementation does not
+> silently drop undocumented-but-valuable archived behavior is Gate 5's
+> birthplace-and-contract-tests clause, not a migration inventory.
 
 ## Question
 

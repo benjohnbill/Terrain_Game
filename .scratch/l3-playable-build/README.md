@@ -108,13 +108,13 @@ State as of 2026-07-25:
 | Gate | Status | What still blocks it |
 |---|---|---|
 | 05, 06, 07, 08 | **resolved** | — the four real grill gates are sealed |
-| 09 | open (demoted) | residue = classifying the port targets (accepted / superseded / incidental); folded into slice work by the 2026-07-17 re-cut |
+| 09 | **closed 2026-08-02** | decided from above by ADR 0041, which removed the migration premise the gate's question rests on; zero archive imports measured in `game/src` / `game/tests` after nine landed tickets. Its classification residue transferred to gate 10's Gate 5 |
 | 10 | open (demoted) | residue = proof strength, who judges the human rung and what counts as a FAIL, and whether 10 is the *admission* gate to L3 playtesting or its *verdict*. **Gate 10 owns every acceptance command's pass/fail threshold**, so it gates all thirteen tickets |
 | 11 | open (re-framed by ADR 0041) | residue = whether anything is retired at all, and on what evidence |
 | 12 (a) governance batch | **blocked** | its declared precondition `.scratch/doc-structure/issues/10-audit-run-3.md` reads `Status: BLOCKED — the gate itself is unsound` / `⛔ DO NOT EXECUTE` |
 | 12 (b) ticket re-pointing | open, mechanical | needs (a); no grill required |
 
-So the path to executable tickets is: close 09 / 10 / 11 (small residues), then
+So the path to executable tickets is: close ~~09~~ / 10 / 11 (small residues), then
 resolve the doc-structure blocker or take a user decision to route around it, then
 run 12 (a) and 12 (b). Do not assume the re-cut alone made these tickets
 actionable — it re-cut their *shapes*, not their authority.
