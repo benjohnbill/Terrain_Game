@@ -29,7 +29,8 @@ can cite one authoritative home without duplication or cross-spec drift?
   cites the final Production home that closes every specification gate.
 - Cross-feature architecture decisions that meet the ADR threshold must promote
   with the supersession/amendment protocol in the same doc-sync batch.
-- `docs/SYNC-DEBT.md:14-42` reserves three riders for this gate: decide ADR
+- `docs/SYNC-DEBT.md`, the row **"L3 Seam Wayfinder 02 — ADR promotion
+  undecided"** (registered 2026-07-16), reserves three riders for this gate: decide ADR
   promotion for the resolved Wayfinder architecture; if an ADR is minted, stamp
   ADR 0039 and correct `DESIGN.md:43` from returned authoritative state to
   viewer-safe projection; absorb the recurring principle that caller discipline
