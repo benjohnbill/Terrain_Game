@@ -60,6 +60,50 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   a user call. Cheapest honest path is (a) only, and (b) fills in naturally as
   those terms are re-sealed.
 
+- [ ] **This ledger has no way to know it has gone stale, and the check built to
+  tell it has never once been right** (registered 2026-08-02, doc-audit Layer 1).
+  `ledgerCurrency` / `ledger-possibly-paid` exists to answer "has this debt been
+  paid?" by matching an Open row's distinctive title tokens against commit
+  subjects dated after its registration. Its record, summed across the two audits
+  that triaged it: **run #3 (2026-07-26) 8 of 8 spurious · this run
+  (2026-08-02) 14 of 14 spurious — 0 true positives in 22.** The failure mode is
+  identical six days apart: run #3 blamed "an incidental shared word (`re-cut`,
+  `record`, `evidence`, `naming`)"; this run's misfires were `reason`, `re-cut`,
+  `record`. Two implementation repairs are already recorded in the function's own
+  comments (line-wrapped row parsing, shared-token matching), so this is not an
+  untuned check — **the signal is wrong.** It watches *activity* (did a commit say
+  a word) where the question is *state* (has this been decided at its birthplace).
+  The check that would have caught this run's real finding already exists in
+  another shape: `unstamped-adr-amendment` and `glossary-status-drift` compare
+  declared status against actual status, and they are blocking because they are
+  accurate.
+
+  **Two things a ruling has to cover, and one it cannot.** (a) The
+  activity-versus-state signal above. (b) **There is nowhere to record that a row
+  was verified still-live**, so every audit re-verifies from scratch: run #3
+  checked `Fog INDEX Status line still says "position fog"` against the file and
+  found it live; this run independently did the same check, on the same row, and
+  got the same answer. What a ruling **cannot** fix is the class this session's
+  own evidence exposes — five stale statements were found on 2026-08-02 and
+  **zero of them by any mechanism**, including one row (`DESIGN-RISKS` R20 as
+  first written) that named a hazard the code never had, i.e. was false on the
+  day it was registered. No discharge condition protects against a row that was
+  wrong when written; only reading the thing it points at does.
+
+  **The shape a ruling might take, recorded unranked.** The project already ruled
+  this exact problem once, for the QUICKREF (user, 2026-07-28): stop demanding
+  per-batch freshness, re-render at deliberate **lock points**, and let the lint
+  report *drift size* as advisory rather than gate. `vocab:lock`'s marker /
+  report / `--advance` is the same shape. Neither is applied to this ledger.
+  Candidates: a lock marker plus drift report here · a machine-checkable
+  discharge pointer per row (`DESIGN-RISKS`'s `Next to close` column is the
+  in-house precedent, and this ledger has no equivalent) · recording a
+  verified-live date on the row itself · leaving the check as-is and treating
+  the tally as noise. **User-scope, all of it**: run #3 recorded that "moving or
+  adding checks is a decided question, not an audit action", a required ledger
+  field is a Law-layer change, and the lock-point model is a policy ruling of the
+  same class as the QUICKREF one.
+
 - [ ] **The Wayfinder's seals have no ADR, by a deliberate deferral**
   (registered 2026-08-02, user ruling). Gates 05–10 are all sealed and all live
   only in `.scratch/l3-playable-seam/issues/`, which is **Working layer** — so
