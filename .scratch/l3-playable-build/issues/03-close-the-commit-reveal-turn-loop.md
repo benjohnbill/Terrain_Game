@@ -30,9 +30,11 @@ blind commit → simultaneous reveal and resolution), **D6.1a** (resolve order i
 simultaneous and symmetric, no first-mover asymmetry), **D6.2** (three-tier phase
 skeleton: decision ② / payoff ④ non-demotable / background ①⑤ auto-folded),
 **D6.3** (행동력 = one chip stack, the single currency for every order kind,
-regenerated each turn, non-hoardable, Σ ≤ budget); gate 02 § Answer §4–§6
-(bots are ordinary callers, turn order is a Runtime rule, the Runtime never
-sleeps, the intent log plus seed is canonical); `DOMAIN_MAP.md` (no standalone
+regenerated each turn, non-hoardable, Σ ≤ budget); **ADR 0049** Decisions 6-8
+(bots are ordinary callers, the Runtime enforces phase legality and never
+sleeps, and the canonical durable form is world identity + revision + seed +
+ordered intent log — promoted from gate 02 § Answer §4–§6 on 2026-08-03, with
+the "intent log plus seed" shorthand corrected there); `DOMAIN_MAP.md` (no standalone
 move command).
 
 **In-build design — the resolve-order algorithm (D6.1a).** Only the *principle*
@@ -131,6 +133,6 @@ waiting on (`docs/SYNC-DEBT.md`).
   projection carries one field meaning "realms that have locked the current beat"
   rather than one field per beat. Every ticket-02 assertion survived the rename.
 - **The payoff and background tiers are not resting phases.** They take no input
-  (D6.2) and the Runtime never sleeps (gate 02 § 4), so a resting payoff phase
+  (D6.2) and the Runtime never sleeps (ADR 0049 § Decision 7), so a resting payoff phase
   would require a submission to leave it — the extra click D6.2 forbids. The tiers
   are stamped on every event instead, which is what lets a display pace them.

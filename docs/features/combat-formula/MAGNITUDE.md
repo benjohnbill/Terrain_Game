@@ -887,8 +887,9 @@ formula, the rest pinned from history:
 placement coordinates, not a standing posture constraint. After setup, a player
 may rebalance freely between field and garrison posture subject to the existing
 movement price in turns and fatigue; the transfer adds no separate commitment
-cost or new dial. **This row is the seal** (2026-07-26); the user's ruling and
-its evidence are recorded at `.scratch/l3-playable-build/DECISIONS-OWED.md` R18.
+cost or new dial. **SEALED 2026-07-26** — verdict source: user ruling,
+`.scratch/l3-playable-build/DECISIONS-OWED.md` R18 (L1). This row is the home;
+the tracker holds the ruling's evidence.
 *Whether such a transfer carries its wear ledger across the posture change is a
 separate question and is **HELD** — `docs/SYNC-DEBT.md`.*
 

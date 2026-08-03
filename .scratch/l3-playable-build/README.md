@@ -57,7 +57,7 @@ asserting it.
 
 > **Vocabulary corrected 2026-08-03 (gate 12 batch).** This section read
 > `ready-for-agent`, which ticket 14 **R4** retired the same day and
-> `scripts/audit-lint.js:475` now rejects — the domain is
+> `scripts/audit-lint.js` check `ticketFieldDomains` now rejects — the domain is
 > `open | needs-info | resolved | superseded`. R4's test was *"does this change as
 > a byproduct of the work, or does it need a separate act of re-judgement?"*;
 > `ready-for-agent` needed the second, which is why it rotted. The job it did is
@@ -359,7 +359,7 @@ needs-info     # something the ticket needs is undetermined or in conflict
 ```
 
 The four values above are the whole domain, enforced by
-`scripts/audit-lint.js:475`. `claimed` was retired with `ready-for-agent` on
+`scripts/audit-lint.js` check `ticketFieldDomains`. `claimed` was retired with `ready-for-agent` on
 2026-08-03 (ticket 14 R4): it had **0** uses, and concurrency is a branch or a
 worktree, not a status.
 

@@ -152,7 +152,7 @@ the build declares it at planting time.
 **Tickets 10 (`Select Differentiated Operation Plans`) and 11 (`Resolve Plan-Versus-Plan
 Matchups`) are downstream of this pass.** Four of the twelve catalog plans they would
 expose *are* this pass's subject, shape-complete and unimplemented. Recorded on both
-sides so 10/11 cannot quietly become `ready-for-agent` and fill four plans from
+sides so 10/11 cannot quietly become `open` and fill four plans from
 imagination.
 
 This pass's exit criteria must therefore include: **10 and 11 are buildable.**

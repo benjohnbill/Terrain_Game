@@ -31,8 +31,9 @@ Specification gates: **all resolved.** Wayfinder 03 was already; 10 closed
 > Runtime authority and projection boundary this ticket writes against. The
 > contract below was already correct; gate 12 confirmed it rather than moved it.
 > Ticket 07 is `resolved`, and this ticket carries **no open `DECISIONS-OWED.md`
-> Part 2 row** — #1, #4, #5 and #6 all closed 2026-08-03. Status moves
-> `needs-info` → `open`.
+> Part 2 row** — #1, #4, #5 and #6 all closed 2026-08-03. Gate 12 was therefore
+> the last item on the list this ticket knew about — but it was not the last
+> item, see below.
 >
 > Two things landed with that batch that this ticket depends on and did not have
 > when it was written: **gate 03 invariant 8 now exists** (it was announced by
@@ -41,11 +42,13 @@ Specification gates: **all resolved.** Wayfinder 03 was already; 10 closed
 > corrected** to the witness model, so following them literally no longer builds
 > the model ruling ③ retired.
 >
-> **The status did not move, and the reason is new.** It was briefly set to
-> `open` in this batch on the belief that gate 12 was the last thing holding it.
-> A read-only groundwork pass run in parallel found a different blocker
-> underneath — see § Groundwork below. `needs-info` stands, on the
-> testimony-attachment question rather than on a gate.
+> **`needs-info` stands, and the reason is new.** The status was briefly set to
+> `open` in this batch on the belief that gate 12 was the last thing holding it,
+> and put back within the same batch: a read-only groundwork pass run in parallel
+> found a different blocker underneath — **what does a testimony attach to, a
+> sector or a force?** — which no seal answers and which decides whether the
+> ageing envelope composes at all. See § Groundwork G1 below, and the matching
+> row in `docs/SYNC-DEBT.md`. The blocker is that question, not a gate.
 
 **The four seal conflicts that blocked this ticket are CLOSED** —
 `DECISIONS-OWED.md` Part 2 #1, #4, #5 and #6, resolved by the 2026-08-03 fog

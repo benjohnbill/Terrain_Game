@@ -122,7 +122,7 @@ After the Production batch passes audit, update each
 - set `status: open` in the front matter only when every cited prerequisite
   exists and no unresolved design choice remains. *(This bullet read
   `Status: ready-for-agent`. Ticket 14 R1/R3 moved state into front matter and
-  R4 retired that value on 2026-08-03; `scripts/audit-lint.js:475` rejects it.)*
+  R4 retired that value on 2026-08-03; `scripts/audit-lint.js` check `ticketFieldDomains` rejects it.)*
 - keep any ticket with an unbuilt R14-safe prerequisite at `needs-info` and name
   that prerequisite rather than approximating it;
 - verify that each ticket remains one demoable vertical increment and does not
@@ -283,12 +283,29 @@ delivered into executable form.
 ## R9 — Ticket republication
 
 `Specification gates:` lines become Production/ADR pointers. **`ready-for-agent`
-stays retired**: ticket 14 R4 cut it the same day, `audit-lint.js:475` rejects it,
-and its job is done by the absence of `needs-info`. The three documents still
-speaking the retired vocabulary — this file, the build README, and
-`docs/agents/triage-labels.md` — are corrected in this batch as R4's unpaid
-residue. Six tickets citing the closed Wayfinder 10 as open are corrected with
-them.
+stays retired**: ticket 14 R4 cut it the same day, `audit-lint.js` check
+`ticketFieldDomains` rejects it, and its job is done by the absence of
+`needs-info`. Documents still speaking the retired vocabulary are corrected in
+this batch as R4's unpaid residue. Six tickets citing the closed Wayfinder 10 as
+open are corrected with them.
+
+> **Count corrected during this batch's own review.** R9 first said "three
+> documents". The review found **five**, and the miss has a cause worth keeping:
+> `audit-lint.js` validates front matter only under `issues/`, so every surviving
+> use sat where no check looks — `.scratch/l3-playable-seam/spec.md` (including a
+> live `Status: ready-for-agent` header, the retired value on the retired
+> mechanism), `DECISIONS-OWED.md` § R6, and `.scratch/operational-manoeuvre/README.md`.
+> All are corrected; R6's recorded ruling text is left verbatim with a
+> translation note, because a ruling is a record. Two further occurrences are
+> deliberately kept: `README.md`'s quoted 2026-07-25 amendment and ticket 07's
+> resolved-state history, both of which *narrate* the old vocabulary rather than
+> use it — the same history-versus-authority line R6 draws for code.
+
+**One limit, stated rather than glossed.** "Exact Production/ADR pointers" is
+achievable only where a contract exists. Tickets 04, 09, 10, 11 and 13 are still
+`needs-info` on unruled `DECISIONS-OWED.md` Part 2 rows, so their lines name the
+gate closure and the specific rows that remain, not a final contract they cannot
+yet cite. They convert fully when those rows are ruled.
 
 ## R10 — This gate closes on execution, not on the ruling
 

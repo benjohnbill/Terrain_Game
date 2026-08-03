@@ -187,6 +187,12 @@ only thing standing between the program and its destination.
 **The ruling.** A ticket may be set `ready-for-agent` **without** conditions 2, 3
 and 6 when both of these hold:
 
+> *Read `ready-for-agent` here as `status: open`.* The ruling's own words are left
+> as recorded — a ruling is a record, and rewriting its text would be editing
+> history — but the value was retired by ticket 14 R4 on 2026-08-03 and
+> `scripts/audit-lint.js` check `ticketFieldDomains` now rejects it. The ruling
+> itself is unchanged.
+
 - **(i) sealed authority** — every Wayfinder gate the ticket cites is
   `resolved`, so its contract already exists in a sealed § Answer;
 - **(ii) zero unlanded values** — no acceptance item needs a value or rule that

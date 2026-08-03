@@ -2,7 +2,9 @@
  * The determinism contract: randomness comes from the injected seed and from
  * nothing else.
  *
- * ADR 0040 and ADR 0049 § Decision 8 bar rules from ambient entropy. What is *not*
+ * ADR 0040 bars rules from ambient entropy, and ADR 0049 § Decision 8 is why it
+ * matters: replay is defined from the seed, so a rule reading the clock is
+ * unreplayable. What is *not*
  * barred — and what the seed exists for — is a seeded draw: a different seed
  * per match gives different play, the same seed replays identically
  * (DECISIONS-OWED R4). These tests pin that distinction.

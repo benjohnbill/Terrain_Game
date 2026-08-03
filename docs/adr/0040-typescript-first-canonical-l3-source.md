@@ -5,6 +5,12 @@ Date: 2026-07-16
 Status: Accepted
 Decision source: user final seal, 2026-07-16 ("응, 그 결정으로 최종
 봉인").
+Corrected by: Wayfinder gate 12 ruling R8 (2026-08-03) — Decision item 6's
+"emitted-output parity commands **are decided by** the L3 Playable Seam
+Wayfinder" was a Record-layer forward reference naming a Working-layer tracker as
+standing authority. Gate 05 discharged it on 2026-07-18 and this ADR never
+absorbed the answer. Item 6 now names gate 05 as the verdict source and the root
+`package.json` as the live surface. No decision changed.
 Amends: ADR 0016 — Stage 1 changes the canonical source language while keeping
 JavaScript as the execution runtime.
 Amends: ADR 0028 — replaces the future "plain JavaScript" source-language

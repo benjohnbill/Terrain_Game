@@ -1,7 +1,7 @@
 /**
  * Deterministic randomness, drawn only from the injected seed.
  *
- * ADR 0040 and ADR 0049 § Decision 8 bar rules from reading `Math.random()` or
+ * ADR 0040 § Decision 3 bars rules from reading `Math.random()` or
  * `Date.now()` — that is why the archive bot was discarded. Randomness from the
  * *injected seed* is not barred and is exactly what the seed exists for: a
  * different seed per match gives different play, the same seed replays

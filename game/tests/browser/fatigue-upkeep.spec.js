@@ -4,7 +4,7 @@
  * Ticket 06b requires that accrual and recovery be identical across Node and the
  * browser, exercised **through a real turn** rather than as a unit call. So the
  * subject here is an ordered intent log — the canonical durable form (ADR 0049
- * § 5) — that marches a force hard and then rests it, replayed in both hosts.
+ * § Decision 8) — that marches a force hard and then rests it, replayed in both hosts.
  */
 
 import { test, expect } from '@playwright/test';

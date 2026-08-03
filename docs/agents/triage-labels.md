@@ -4,24 +4,19 @@
 > label strings written on a bare `Status:` line. Both halves of that are gone:
 > ticket 14 **R1/R3** moved state into YAML front matter, and **R4** cut the
 > vocabulary to four values after measuring that three of the five labels here
-> had **0** uses. `scripts/audit-lint.js:475` now rejects anything else. The
+> had **0** uses. `scripts/audit-lint.js` check `ticketFieldDomains` now rejects anything else. The
 > table below is kept as a *translation* for skills that speak the old roles —
 > it is not a vocabulary this repo writes.
 
 The skills speak in terms of five canonical triage roles. This repo uses a
-**local-markdown** tracker whose state lives in each ticket's front matter:
+**local-markdown** tracker whose state lives in each ticket's YAML front matter,
+not in a label string.
 
-```yaml
----
-type: grilling | task | research | prototype
-status: open | needs-info | resolved | superseded
-blocked_by: [<ticket ids>]
----
-```
-
-Schema, value domains and the frontier rule are defined once, at
-`docs/agents/issue-tracker.md` § Wayfinding operations. This file does not
-restate them.
+The fields, their value domains and the frontier rule are defined once, at
+`docs/agents/issue-tracker.md` § Wayfinding operations, and enforced by
+`scripts/audit-lint.js` (checks `ticketFrontMatter` and `ticketFieldDomains`).
+This file does not restate them — read them there, then come back for the
+translation below.
 
 ## Translating the five roles
 
@@ -32,6 +27,12 @@ restate them.
 | `ready-for-agent`         | `status: open` with `type: task` | Retired as a value, 0 uses under that name. R4's test: it required a separate act of re-judgement, so it rotted. Its job is done by the **absence** of `needs-info` |
 | `ready-for-human`         | `type: grilling`     | Retired, 0 uses — the `type` field already said it, which is why nobody ever wrote the label |
 | `wontfix`                 | `status: superseded`, or no ticket at all | Retired, 0 uses |
+
+**This table has no measured consumer.** It exists because skills phrased in the
+mattpocock vocabulary may still arrive; none has in this repo. It is not parked
+work, so it carries no pickup condition — but it does carry a deletion one:
+**delete this file when a skill-facing translation has gone unused for a full
+tracker cycle, or when the skills that speak these roles are no longer installed.**
 
 When a skill mentions a role (e.g. "apply the AFK-ready triage label"), read the
 middle column and write **front matter**, never a `Status:` line.

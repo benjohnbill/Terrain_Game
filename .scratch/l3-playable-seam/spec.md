@@ -1,9 +1,19 @@
 # L3 Playable Seam — Working Umbrella Spec
 
-Status: ready-for-agent
+Status: superseded in part — **the Wayfinder is closed** (gate 12, 2026-08-03)
 Layer: Working (local issue-tracker publication)
-Implementation readiness: blocked by the named Wayfinder gates in Further Notes
-Record basis: ADR 0016, ADR 0028, ADR 0037, ADR 0038, ADR 0039, ADR 0040
+Implementation readiness: no Wayfinder gate remains open; each build ticket now
+carries its own `status` in front matter, and `node scripts/frontier.js` derives
+what is takeable
+Record basis: ADR 0016, ADR 0028, ADR 0037, ADR 0038, ADR 0039, ADR 0040,
+**ADR 0049**
+
+> **Header corrected 2026-08-03 (gate 12 batch).** This read
+> `Status: ready-for-agent` — the value ticket 14 R4 retired, written in the bare
+> `Status:`-line mechanism R1/R3 replaced. It survived the batch's first pass
+> because `audit-lint.js` only validates front matter under `issues/`, so nothing
+> looked here. Gate 12's R9 claimed three documents still spoke the retired
+> vocabulary; this file was a fourth, and the § Answer is corrected to say so.
 
 > This document synthesizes the approved destination and standing architecture.
 > It does not replace the authoritative feature definitions it references.
@@ -560,7 +570,7 @@ Implementation Decisions above.
 - The user approved the replacement nine-ticket linear breakdown on 2026-07-16.
   It is published under the local L3 playable-build tracker with `needs-info`
   status while its named Wayfinder specification gates remain open.
-- No implementation ticket becomes `ready-for-agent` until issue 12 publishes
+- No implementation ticket becomes `open` until issue 12 publishes
   the Production partition and every acceptance-shaping dependency named by the
   ticket has a recorded answer.
 - Published implementation tickets will cite the Production partition chosen by
@@ -582,7 +592,7 @@ Implementation Decisions above.
 
 The following named tickets remain decision or prototype gates. Their answers
 must be recorded in their own ticket and reflected into this spec before
-implementation tickets depending on them become `ready-for-agent`.
+implementation tickets depending on them become `open`.
 
 1. [Make Uncertainty Legible Without Leaking Truth](issues/07-prototype-map-fog-presentation.md)
    — live user-evaluated presentation and the initial renderer decision.
@@ -605,7 +615,7 @@ implementation tickets depending on them become `ready-for-agent`.
 ### Documentation lifecycle
 
 - This umbrella spec is a Working-layer tracker artifact. Its
-  `ready-for-agent` status means it is ready for agent-driven Wayfinder closure
+  Its former `ready-for-agent` status meant it was ready for agent-driven Wayfinder closure
   and later ticket decomposition; it does not override the explicit
   implementation-readiness block in the header.
 - No new domain term or magnitude is sealed here. Any domain-language changes

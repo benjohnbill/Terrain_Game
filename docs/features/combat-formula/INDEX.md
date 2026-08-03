@@ -13,6 +13,17 @@
 > **R18 documentation sync paid 2026-07-26.** M13a now marks its field/garrison
 > coordinates as setup-only. Later posture rebalancing uses the existing movement
 > price; no new magnitude was introduced.
+>
+> **Citation repaid 2026-08-03 (Wayfinder gate 12, R3/R4).** That rider row in
+> `MAGNITUDE.md` read `Authority: DECISIONS-OWED.md R18` — an owning dial sheet
+> naming a Working-layer tracker as its authority, the one citation kind gate 12
+> ruled must be repaid. The rule's text was already here; the row now carries a
+> proper seal (**SEALED 2026-07-26**, verdict source R18, L1) and the tracker is
+> named as verdict source rather than home. No value changed. **Still open beside
+> it:** whether a garrison → field transfer carries its wear ledger across the
+> posture change is **HELD** pending a user ruling — `docs/SYNC-DEBT.md`. A reader
+> of the rider should not take "rebalance freely" to mean the wear question is
+> settled.
 
 ## Purpose
 
