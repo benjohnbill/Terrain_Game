@@ -11,6 +11,35 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
 
 ## Open
 
+- [ ] **Three live documents state the turn's decision order, and gate 07
+  reversed it — registered 2026-08-03.** The ladder in
+  `docs/features/operation-plan-catalog/INDEX.md:35-42` and `DOMAIN_MAP.md`'s
+  Tier-0 `Turn decision layers` both run *situation judgment → front-sector focus
+  → core command (which plan) → fine adjustment (the commitment slider)*: land
+  first, commit last. Gate 07 § Answer item 3
+  (`.scratch/l3-playable-seam/issues/07-prototype-map-fog-presentation.md:148-154`,
+  SEALED 2026-07-23 on the user's live reaction) runs **커밋량 → 행동 소환 → 세부
+  작전 → 가능 지역 빛남 → 지목** — commit is the *entrance*, and the seal names
+  land-first "a later variant". Both cannot be the order.
+
+  **The newer seal governs**, so what is owed is a re-cut of the two older
+  statements, not a re-decision. Note the ladder is not wholly wrong: its *stages*
+  survive almost intact and only their **sequence** inverts, which is why this
+  reads as correct on a skim and is easy to leave standing.
+
+  **Third instance, and the public one:** the landing page's flagship interactive
+  (`index.html` `#war-model`, *"One operation. Four connected judgments"* — Read →
+  Position → Commit → Consequence) teaches the old order to visitors, directly
+  above an iframe running the sealed one. Registered here rather than fixed
+  because the landing revision is its own pass
+  (`.context/handoff-landing-revision-grill-2026-08-03.md`, on
+  `demo/school-submission`).
+
+  *Picked up by:* the doc-sync batch that follows either build ticket 04 (the
+  commit-first shell, which cannot be built against a contradicted order) or the
+  landing revision grill — whichever comes first. *Deleted when:* both older
+  statements name the sealed order, or a user ruling reopens it and picks one.
+
 - [ ] **The reconnaissance ROI comparison was run at defender commit 0 only —
   registered 2026-08-03.** The 2026-08-03 fog grill compared reconnaissance
   precision tiers (25/10/5 against M8's 22/4) to decide where buying precision
