@@ -80,6 +80,46 @@ const EVENT_GLOSS: Readonly<Record<string, string>> = {
   'preview-refused': '미리보기가 막았어요',
 };
 
+/**
+ * Korean labels for the battle card's ground, over the exact value domains
+ * `domain/battle.ts` declares (`BattleTerrain`, `BattleFortification`,
+ * `BattleCrossing`) and `world/schema.ts`'s `ChokeClass`.
+ *
+ * Labels only, and **no multipliers**: the M5 ladders are private constants with
+ * one owner, so printing their numbers here would be a second home for a dial,
+ * and the composed power reading is what ticket 09's EVAL BAR is for. The card
+ * tells a player *what ground it was*, which is public (fog ruling ① for the
+ * wall, terrain throughout), and lets the ladder stay where it lives.
+ */
+const TERRAIN_LABEL: Readonly<Record<string, string>> = {
+  plains: '평지',
+  forestHills: '숲·구릉',
+  mountains: '산지',
+  pass: '관문',
+  legendaryNaturalSite: '천험의 요지',
+};
+
+const FORTIFICATION_LABEL: Readonly<Record<string, string>> = {
+  none: '축성 없음',
+  fieldWorks: '야전 축성',
+  townWalls: '읍성',
+  fortress: '요새',
+  legendaryFortress: '천하의 요새',
+};
+
+const CROSSING_LABEL: Readonly<Record<string, string>> = {
+  none: '도하 없음',
+  riverUncontested: '강 건넘 (무저항)',
+  riverOpposed: '강 건넘 (저항)',
+  straitUncontested: '해협 건넘 (무저항)',
+  straitOpposed: '해협 건넘 (저항)',
+};
+
+const DEFENSE_METHOD_LABEL: Readonly<Record<string, string>> = {
+  STRONGHOLD: '거점 방어',
+  DELAYING: '지연 방어',
+};
+
 export function App() {
   const [seed, setSeed] = useState('duel-0001');
   const [viewer, setViewer] = useState<ActorId>('realm-a');
@@ -241,6 +281,14 @@ export function App() {
     setFocused(null);
   }, [nextSeat]);
 
+  // Battles are read back out of the log rather than stored a second time: the
+  // log already holds every event the Runtime published, and a parallel copy is
+  // how the two would come to disagree about what happened.
+  const battles = useMemo(
+    () => log.filter((event) => event.type === 'battle-resolved').reverse(),
+    [log],
+  );
+
   return (
     <main className="shell">
       <header>
@@ -321,6 +369,18 @@ export function App() {
         onPick={pick}
       />
 
+      {battles.length > 0 && (
+        <section data-testid="battles">
+          <h2>전투</h2>
+          {/* Newest first: the card a player is looking for is the one that just
+              resolved, and older ones stay readable underneath as the match's
+              military history rather than being replaced. */}
+          {battles.map((battle, i) => (
+            <BattleCard key={`${battle.turn}-${i}`} detail={battle.detail ?? {}} />
+          ))}
+        </section>
+      )}
+
       <section className="readout">
         <div>
           <h2>Realms</h2>
@@ -361,6 +421,105 @@ export function App() {
         </pre>
       </section>
     </main>
+  );
+}
+
+/**
+ * One resolved battle, read causally rather than chronologically.
+ *
+ * A battle is a single deterministic judgment, not a sequence of rounds, so there
+ * is no process to replay — what a player needs instead is *why it came out that
+ * way*. The card puts the ground first and the two commitments second, because
+ * that is the order the model works in: terrain and walls belong to the
+ * defender, and commitment is the lever each side pulls on top of them. "I poured
+ * more and still lost" becomes legible the moment the mountain and the wall are
+ * on the same card.
+ *
+ * Everything here is already viewer-safe. `submit()` names the battle's public
+ * fields one by one and drops exact pre-battle strength and the composed power
+ * product on purpose (they are ticket 08's bands and ticket 09's EVAL BAR), so
+ * this card cannot show a strength ratio and does not try to.
+ */
+function BattleCard({ detail }: { detail: Readonly<Record<string, unknown>> }) {
+  const str = (key: string): string | null =>
+    typeof detail[key] === 'string' ? (detail[key] as string) : null;
+  const label = (table: Readonly<Record<string, string>>, key: string): string | null => {
+    const raw = str(key);
+    return raw === null ? null : (table[raw] ?? raw);
+  };
+  // `winner` names the ROLE, not the realm — 'ATTACKER' | 'DEFENDER' | 'NEITHER'
+  // — and the third value is a real outcome rather than a missing one: a Delaying
+  // defence below the breakthrough ratio buys a turn without either side winning.
+  // Reading it as an actor id reports both sides as losers, which is what the
+  // first draft of this card did.
+  const winner = str('winner');
+  const side = (role: 'attacker' | 'defender') => {
+    const commitments = detail.commitments as Record<string, unknown> | undefined;
+    const casualties = detail.casualties as Record<string, unknown> | undefined;
+    const routed = detail.routed as Record<string, unknown> | undefined;
+    const num = (from: Record<string, unknown> | undefined): number | null =>
+      typeof from?.[role] === 'number' ? (from[role] as number) : null;
+    return {
+      actor: str(role),
+      commit: num(commitments),
+      dead: num(casualties),
+      routed: routed?.[role] === true,
+      result: winner === 'NEITHER'
+        ? '결판 없음'
+        : winner === role.toUpperCase() ? '승리' : '패배',
+    };
+  };
+
+  const attacker = side('attacker');
+  const defender = side('defender');
+  const fell = detail.sectorFalls === true;
+  // The ground, in the order it is priced: what it is, what had to be crossed to
+  // reach it, what was built on it, and how it was held.
+  const ground = [
+    label(TERRAIN_LABEL, 'terrain'),
+    label(CROSSING_LABEL, 'crossing'),
+    label(FORTIFICATION_LABEL, 'fortification'),
+    label(DEFENSE_METHOD_LABEL, 'defenseMethod'),
+  ].filter((part): part is string => part !== null);
+
+  const row = (role: string, s: ReturnType<typeof side>) => (
+    <tr>
+      <td>{s.actor}</td>
+      <td>{role}</td>
+      <td>{s.commit === null ? '—' : `행동력 ${s.commit}`}</td>
+      <td>
+        {s.result}
+        {s.routed ? ' · 궤주' : ''}
+      </td>
+      <td>{s.dead === null ? '—' : `전사 ${Math.round(s.dead).toLocaleString('en-US')}`}</td>
+    </tr>
+  );
+
+  return (
+    <article className="battle-card">
+      <h3>
+        {str('sector') ?? '—'}
+        {' '}
+        <span className="hint">{fell ? '구역이 넘어갔어요' : '구역을 지켰어요'}</span>
+      </h3>
+      <p className="battle-ground">{ground.join(' · ')}</p>
+      <table>
+        <tbody>
+          {row('공격', attacker)}
+          {row('방어', defender)}
+        </tbody>
+      </table>
+      {/* `fortificationDamage` is Delaying's erosion clock — a magnitude, not a
+          flag. Reporting it as a boolean loses the whole point of the mechanic,
+          which is that a wall wears down across repeated defences. */}
+      <p className="hint">
+        {typeof detail.fortificationDamage === 'number' && detail.fortificationDamage > 0
+          ? `성벽 침식 ${(detail.fortificationDamage as number).toFixed(2)}`
+          : '성벽 온전'}
+        {' · '}
+        {detail.routeDisrupted === true ? '보급로 차단' : '보급로 온전'}
+      </p>
+    </article>
   );
 }
 
@@ -420,6 +579,15 @@ function SeatBar({
         <span className="hint">턴 {view.turn} · {beat}</span>
       </div>
       <p className="seatbar-step" data-testid="seat-step">{step}</p>
+      {/* Naming the invasion is the difference between a loop that turns and a
+          loop that turns forever without a war: pouring chips and locking is a
+          complete legal turn, so a player told only to do that never marches, never
+          meets the enemy, and never sees a battle at all. */}
+      {!over && !seatDone && view.phase === 'decision' && (
+        <p className="hint" data-testid="seat-aside">
+          적 구역을 골라 야전군을 행군시키면, 그 구역에서 전투가 벌어져요.
+        </p>
+      )}
       {!over && nextSeat !== null && seatDone && (
         <button type="button" className="handoff" data-testid="hand-off" onClick={onHandOff}>
           ▶ {nextSeat}에게 좌석 넘기기

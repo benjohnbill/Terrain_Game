@@ -174,6 +174,38 @@ body {
   border-color: #e2c27a;
 }
 
+/* --- battle card ---------------------------------------------------------
+   The payoff, read causally: the ground on one line, then the two sides. Plain
+   panel rather than a second accent — the seat bar is the surface that has to be
+   found, and a page of competing highlights finds nothing. */
+
+.battle-card {
+  margin: 0 0 0.75rem;
+  padding: 0.7rem 0.9rem;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+}
+
+.battle-card h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.battle-ground {
+  margin: 0.2rem 0 0.5rem;
+  color: var(--ink-dim);
+  font-size: 0.9em;
+}
+
+.battle-card table {
+  margin-bottom: 0.4rem;
+}
+
+.battle-card p:last-child {
+  margin: 0;
+}
+
 .readout {
   display: grid;
   grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
