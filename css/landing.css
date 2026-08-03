@@ -1398,12 +1398,21 @@ marker path {
    its own viewport, so the transform is not just unnecessary here — it would
    shrink the type and fight a layout that is already responsive. The frame keeps
    an aspect ratio so the section's rhythm holds, and a floor so the commit bar
-   and the two eval bars are never crushed. */
+   and the two eval bars are never crushed.
+
+   The ceiling exists for a measured reason. At 16/10 the frame is 749px tall at
+   full width, which overflows a 1280x720 laptop by 29px — and what falls below
+   the fold is the bottom of the frame, where the commit bar is. That bar is the
+   demo's entrance: a visitor who cannot see it has nothing to click. Capping the
+   frame at 78vh keeps the whole surface on one screen at every size measured
+   (1920x1080 down to 390x844) at the cost of a slightly wider frame on short
+   viewports, which is the better trade. */
 .build-stage {
     position: relative;
     width: 100%;
     aspect-ratio: 16 / 10;
     min-height: 460px;
+    max-height: 78vh;
     overflow: hidden;
     background: var(--ground-deep);
 }
