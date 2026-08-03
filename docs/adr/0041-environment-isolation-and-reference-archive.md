@@ -2,9 +2,9 @@
 
 Date: 2026-07-17
 
-Status: Accepted · **Amended by ADR 0050 (2026-08-03)**
+Status: Accepted · **Amended by ADR 0051 (2026-08-03)**
 
-Amendment delta (ADR 0050): § Decision 1's "marketing landing surface **only**"
+Amendment delta (ADR 0051): § Decision 1's "marketing landing surface **only**"
 is corrected — the landing may also carry a playable demo of the L3 build — and
 its "the game build is not an input to them" is narrowed by a bounded exception:
 the landing pipeline may copy the emitted bundle as an **opaque artifact**, but may

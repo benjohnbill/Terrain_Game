@@ -1,4 +1,4 @@
-# ADR 0050: The Landing May Carry a Playable Demo, as an Opaque Artifact
+# ADR 0051: The Landing May Carry a Playable Demo, as an Opaque Artifact
 
 Date: 2026-08-03
 

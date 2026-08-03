@@ -98,7 +98,7 @@ complete war"*, Vision = *"Every match, a war story"*.
 
 Now is understated (a full match plays), Next has happened, and Vision commits to
 **"PvP와 Steam 출시"** — PvP is a separate SPEC axis and the sealed distribution
-target is a **native shell** (ADR 0016 Stage 2, ADR 0041/0050), not Steam. Steam
+target is a **native shell** (ADR 0016 Stage 2, ADR 0041/0051), not Steam. Steam
 is not forbidden; it is simply not decided, and the page states it as direction.
 
 ### 6. The approved design doc is now stale in two places
@@ -113,7 +113,7 @@ batch, or the next reader implements backwards from it.
 
 All of today's landing changes are on **`demo/school-submission`**, which was
 created as throwaway. `main` still has the old `index.html`, the old
-`build-hosting.js`, and no ADR 0050. The deployed site is built from the demo
+`build-hosting.js`, and no ADR 0051. The deployed site is built from the demo
 worktree.
 
 That is fine for a submission and wrong as a resting state. **Decide before
@@ -136,7 +136,7 @@ Record-layer and belongs on `main` regardless.
   mine it.
 - **`PRODUCT.md` § Anti-references**: do not imply the prototype is a finished
   demo. The demo is grey-box and hot-seat; say so.
-- **ADR 0050 bounds the embed**: the landing may carry the demo as an *opaque
+- **ADR 0051 bounds the embed**: the landing may carry the demo as an *opaque
   built artifact*. Copy the bundle; do not reach into the game's source or config.
 - **SPEC is Direction layer.** If the revision wants to state something SPEC does
   not, that is a proposal, not an edit.

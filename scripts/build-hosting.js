@@ -28,7 +28,7 @@ const excludedFromDirectories = [path.join("assets", "game")];
 const singleFiles = ["js/landing.js"];
 
 // The playable demo, served at `/play` and embedded by the landing's build
-// section. ADR 0050 amends ADR 0041 to allow exactly this and bounds it: the
+// section. ADR 0051 amends ADR 0041 to allow exactly this and bounds it: the
 // demo crosses as an **opaque built artifact**, so what follows may copy
 // `game/dist-viewer/` and may not read the game's source, config, or module
 // graph. The game build takes nothing from here in return, which is the

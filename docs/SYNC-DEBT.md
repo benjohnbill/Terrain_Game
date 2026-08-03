@@ -183,22 +183,22 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   a user call. Cheapest honest path is (a) only, and (b) fills in naturally as
   those terms are re-sealed.
 
-- [x] **PAID 2026-08-03 — the landing embeds the L3 build, and ADR 0050 amends
+- [x] **PAID 2026-08-03 — the landing embeds the L3 build, and ADR 0051 amends
   the "only" sentence.** The deferred half of the take-it-down ruling is executed
   rather than narrowed: `game.html` and `assets/game/`'s five modules left the
   hosting bundle, and all five landing references now point at `/play`, which
   serves the L3 duel build. So the public artifact demonstrates the game this
-  project *does* build. The governance half is settled by **ADR 0050**, which
+  project *does* build. The governance half is settled by **ADR 0051**, which
   amends ADR 0041 § Decision 1 — the landing may carry a playable demo, bounded to
   copying the emitted bundle as an opaque artifact, with the game build still
   taking nothing from the landing. That ADR supersedes this row's instruction not
   to fix the sentence: the sentence is what changed.
   **Still owed, and small:** `AGENTS.md` § Environments and `DESIGN.md` restate
-  "the landing page only" in prose. Re-cut both to ADR 0050 in the next doc-sync
+  "the landing page only" in prose. Re-cut both to ADR 0051 in the next doc-sync
   batch; they are stale in exactly the direction that ADR names. *Delete this
   paragraph when they are re-cut.*
 
-  Original row, kept because its analysis is what ADR 0050 answers:
+  Original row, kept because its analysis is what ADR 0051 answers:
 
 - ~~**The landing page still embeds the retired design, and `AGENTS.md` says it
   serves "the landing page only"**~~ (registered 2026-08-02 while closing Wayfinder
