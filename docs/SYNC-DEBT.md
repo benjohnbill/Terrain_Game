@@ -11,6 +11,29 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
 
 ## Open
 
+- [ ] **Two governance principles are held at Working layer on purpose —
+  registered 2026-08-03, user decision.** Wayfinder gate 12 produced two rules
+  that outrank the gate that made them: **"citation is the invoice"** (R3 — a
+  Production or Record document citing a tracker ruling *as authority* triggers
+  promotion; an uncited ruling stays) and **"a discharged forward reference
+  converts rather than promotes"** (R8 — once the referenced decision lands, the
+  citation becomes evidence provenance plus a pointer at the live surface). Both
+  currently live in `.scratch/l3-playable-seam/issues/12-…md` § Answer, which is
+  the Working layer they exist to route work out of.
+  **Held deliberately, not overlooked.** The user ruled 2026-08-03 to leave them
+  and let R3 apply to itself: gate 12 is their only consumer, no Production or
+  Record document cites them as authority, so no invoice exists. The alternative
+  — a law clause with one consumer — is what this repo measured at **0 of 4**
+  compliance (the `Summary` column, 2026-07-27).
+  Standing counter-argument, recorded so the next reader need not re-derive it:
+  R3 fired **four times in the session that made it** (`MAGNITUDE.md` twice, ADR
+  0040 item 6, and 28 code citations), which is already past most definitions of
+  recurrence.
+  **Discuss when:** a second decision pass cites either principle as authority,
+  or a third independent case of the same defect appears. **Delete this row
+  when:** they are promoted to `DOCUMENTATION-LAW.md` or an ADR, or a later
+  ruling records that they stay feature-local for good.
+
 - [ ] **What does a testimony attach to — a sector, or a force? USER RULING OWED,
   registered 2026-08-03.** Fog `RULINGS.md` ③ decision 5 derives the ageing
   envelope from three sealed inputs with no new dial, and § What this ruling does

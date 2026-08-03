@@ -475,6 +475,19 @@ Live trackers:
 Trackers are Working layer: consult them for what is *being decided*. Current
 truth lives in the seal chain (§ Documentation & Terminology Law), not here.
 
-**Triage labels** — the five canonical roles, each label string equal to its
-name, recorded on a `Status:` line in the issue file. See
-`docs/agents/triage-labels.md`.
+**Ticket state** lives in each ticket's YAML front matter (`type`, `status`,
+`blocked_by`), not in a label string. Schema and value domains:
+`docs/agents/issue-tracker.md` § Wayfinding operations. Skills phrased in the
+five older triage roles translate through `docs/agents/triage-labels.md`.
+
+Work is **found**, not looked up: `node scripts/frontier.js` derives what is
+takeable from that front matter across every tracker. A ticket without front
+matter does not appear there at all, so omitting it is a breakage rather than a
+style lapse.
+
+*(This paragraph read "the five canonical roles … recorded on a `Status:` line
+in the issue file" until 2026-08-03. Ticket 14 R1/R3 moved state into front
+matter and R4 cut the vocabulary to four values; the pointer had kept the
+retired mechanism, which would have sent a cold session to write a `Status:`
+line and drop its ticket out of the frontier. Corrected by user decision in the
+Wayfinder gate 12 batch.)*
