@@ -11,6 +11,22 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
 
 ## Open
 
+- [ ] **The reconnaissance ROI comparison was run at defender commit 0 only —
+  registered 2026-08-03.** The 2026-08-03 fog grill compared reconnaissance
+  precision tiers (25/10/5 against M8's 22/4) to decide where buying precision
+  stops paying, and the run held **defender commit at 0**. The user named a
+  fuller run — the same comparison with the defender also pouring — and it was
+  never performed and never written down; `/final-check` caught the omission at
+  that session's close and the note did not survive into the repository. Registered
+  here because the crossover it feeds (ρ ≈ 1.49) is recorded at
+  `docs/features/fog-of-war-discovery/MAGNITUDE.md` FG-M① as **emergent**, which
+  means it is only as good as the sweep behind it, and a defender-commit axis is
+  exactly the kind of term that moves an emergent crossover.
+  **Discuss when:** the testimony-attachment ruling lands and ticket 08's numbers
+  are exercised for real — the same sweep can carry both. **Delete this row when:**
+  the comparison is re-run with a non-zero defender commit and FG-M①'s crossover
+  either survives or is re-cut against it.
+
 - [ ] **Two governance principles are held at Working layer on purpose —
   registered 2026-08-03, user decision.** Wayfinder gate 12 produced two rules
   that outrank the gate that made them: **"citation is the invoice"** (R3 — a
