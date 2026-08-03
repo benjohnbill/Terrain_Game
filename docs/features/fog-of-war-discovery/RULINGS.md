@@ -378,9 +378,10 @@ Three things the grill established that no seal had:
 
 7. **The dealer does not spend all of its precision.** The figure a testimony
    reports is drawn from a range strictly narrower than honesty would permit, and
-   the margin between the two **is** the irreducible sliver. The margin scales with
-   the grade's stated width, so the cheap grade saturates short of the floor and
-   only the expensive grade reaches it.
+   the margin between the two **is** the irreducible sliver — the ±5% intersection
+   floor, the **same margin at every grade**. A grade's asymptote is its stated
+   width less that margin, so the cheap grade saturates short of the floor and only
+   the expensive grade reaches it.
 
    *Reason: measured, not argued — ticket 08 § Groundwork G2. Drawing the reported
    figure from the whole honesty-feasible range lets that range's own endpoints pin
@@ -390,11 +391,26 @@ Three things the grill established that no seal had:
    preserve the sliver hands over the answer with decoration. Drawing narrower
    makes the floor a consequence of how the dealer speaks rather than a clamp
    bolted on afterwards, which is what FG-M① already claims when it says the floor
-   holds "structurally rather than by a ceiling check". Grade-proportional rather
-   than uniform (user): it gives the two grades different **products** rather than
-   different speeds — the expensive grade buys a destination the cheap one cannot
-   reach — and a cheap grade that visibly saturates pushes commit onto a new target
-   or an upgrade instead of onto more of the same look.*
+   holds "structurally rather than by a ceiling check". What the user ruled is the
+   **outcome**: the two paid grades sell different **destinations** rather than
+   different speeds — the expensive grade buys a floor the cheap one cannot reach,
+   and a cheap grade that visibly saturates pushes commit onto a new target or an
+   upgrade instead of onto more of the same look. A uniform margin is what delivers
+   that outcome, and it is also what keeps the "no new dial" claim true: the margin
+   is a number already sealed, whereas scaling it to each grade's width would need a
+   proportionality constant, which is a dial.*
+
+   > **Mechanism corrected 2026-08-03, hours after this ruling was written. The
+   > outcome the user ruled is unchanged.** This decision first read *"the margin
+   > scales with the grade's stated width"* and *"grade-proportional rather than
+   > uniform"* — contradicting its own preceding sentence, and contradicting every
+   > other surface (`MAGNITUDE.md` FG-M①, ADR 0050, ticket 08 § Groundwork G2), all
+   > of which record uniform. The two readings are easy to confuse because they
+   > **coincide exactly at the enhanced grade**, which is the grade the groundwork
+   > measured; they part at the normal grade, where uniform gives ±20%. Recorded
+   > rather than quietly rewritten because the wrong mechanism would have sent an
+   > implementer to introduce a proportionality constant — the very dial this ruling
+   > says it does not add. Caught by the batch's own two-axis review, on both axes.
 
 ### Derived, not decided — do not re-rule these
 

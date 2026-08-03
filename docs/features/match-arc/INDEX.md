@@ -46,6 +46,17 @@ questions. Definitions live in `GLOSSARY.md`; numbers in
 > the duel-pivot ledger (`.scratch/l3-playable-seam/`). Individual seal rows below
 > are NOT edited (append-only record); read them under this banner's split.
 
+> **Grain stamp 2026-08-03.** Wherever this file says **province origin** — the R19
+> banner immediately below, and MT-⑥'s summary — read **sector origin**: ADR 0047
+> moved origin accounting to sector grain on 2026-07-31 and stamped MT-⑥ with the
+> delta, but the summaries here and the `징집 명부` definition row in `GLOSSARY.md`
+> were not carried over, so the birthplace tier read one grain while its own ruling
+> tier read the other. The GLOSSARY row is corrected in this batch; these banners
+> are append-only record and are stamped rather than rewritten. Found while writing
+> fog `RULINGS.md` ④, whose immobile half rests on exactly this property — a serving
+> body keeping its **sector** origin wherever it stands is what stops a sector's
+> mobilization reading from marching away.
+
 > **R19 authority batch SEALED (2026-07-26).** Recruitment is now sector-sited,
 > settles as a simultaneous integral-priced batch, preserves province origin, and
 > becomes combat-ready on the following turn. Authority: `RULINGS.md` MT-⑥ and

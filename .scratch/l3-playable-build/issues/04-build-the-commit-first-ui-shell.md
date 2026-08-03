@@ -51,10 +51,11 @@ surface as blocked pending the resolution recorded in `docs/SYNC-DEBT.md`.
 > prohibition is on an in-play strategic verdict and a live coach read; laying out
 > the materials a player reasons from — the aggregated sector side, the force
 > contacts refused a total, and the viewer's coverage — asserts no position and
-> falls outside it. Ruling ④ seals *what* the surface must and must not do and
-> deliberately does **not** place it, because placement is this ticket's blocker
-> and not fog's to take. Whoever rules #13 should read ④ decision 6 first; it may
-> be the whole of the disagreement.
+> falls outside it. Ruling ④ seals *what* the surface must and must not do — four
+> clauses, at its birthplace and deliberately not copied here — and does **not**
+> place it, because placement is this ticket's blocker and not fog's to take.
+> Whoever rules #13 should read ④ decision 6 first; it may be the whole of the
+> disagreement.
 
 - [ ] The three-zone layout renders: thin top strip, map-filled middle, commit-bar hero; the resting screen is calm rather than dashboard-dense.
 - [ ] The commit flow runs 커밋량 → 행동 소환 → 세부 → 가능 지역 빛남 → 지목 with the commit bar as the entrance; detail panels appear on the commit decision and are not permanently painted.

@@ -8,8 +8,9 @@ Decision source: user grill, 2026-08-03, opened on the blocker that ADR 0048 and
 fog `RULINGS.md` ③ both left standing and `docs/SYNC-DEBT.md` registered as a
 user ruling owed. The full ruling with its reasons is
 `docs/features/fog-of-war-discovery/RULINGS.md` ④; the one derived value is
-`docs/features/fog-of-war-discovery/MAGNITUDE.md` FG-M①. This ADR records the
-cross-feature decision and restates neither.
+`docs/features/fog-of-war-discovery/MAGNITUDE.md` FG-M①. This ADR restates the
+decision itself, because a Record-layer entry must be readable alone; it carries
+**no definition and no number**, and both live where they are cited above.
 
 - Relationship:
   - **Amends ADR 0048** § Consequences on two points, both stamped there: the
@@ -74,7 +75,7 @@ turn, which is the sector-attached failure by a different road.
 | Garrison substance · 동원 강도 · civilian register | no | the **sector** |
 | 판세 | — | the **realm**, at match level |
 
-Four consequences ride with it, sealed in the same grill and recorded at
+Six consequences ride with it, sealed in the same grill and recorded at
 `RULINGS.md` ④ decisions 2–7:
 
 1. **A division weakens a testimony rather than killing or preserving it** — the
@@ -82,13 +83,19 @@ Four consequences ride with it, sealed in the same grill and recorded at
 2. **Identity across observations is free only under unbroken contact.** One
    unobserved turn cuts the chain; a later sighting is a new contact the Runtime
    never joins to the old one.
-3. **The census the player assembles is an evidence contrast, never a computed
+3. **Re-acquisition after a gap is that new contact**, never a resumed track, which
+   is what turns an opponent's division from a laundry into a deception play.
+4. **The two subjects age visibly differently**, and that difference is the read: a
+   sector card holds its position while its figure blurs, a force marker holds its
+   figure while its cone spreads. One reconnaissance purchase therefore carries a
+   certain part and a contingent part.
+5. **The census the player assembles is an evidence contrast, never a computed
    remainder.** The Runtime aggregates the sector side, refuses to sum the force
    side, and shows its coverage. Where that contrast is surfaced is
    `DECISIONS-OWED.md` Part 2 #13, not this ADR.
-4. **The dealer does not spend all of its precision.** A reported figure is drawn
-   from a range narrower than honesty permits, and the margin is the intersection
-   floor. Value at FG-M①; no new dial.
+6. **The dealer does not spend all of its precision.** A reported figure is drawn
+   from a range narrower than honesty permits, and the margin — uniform across
+   grades — is the intersection floor. Value at FG-M①; no new dial.
 
 **Why this is architecture rather than a feature ruling.** It changes the key of
 the state ADR 0048 introduced — a per-viewer record per *sector* becomes a record

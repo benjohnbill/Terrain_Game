@@ -75,6 +75,21 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   when:** it is promoted to `DOCUMENTATION-LAW.md`, or a later ruling records that
   it stays an unwritten habit.
 
+- [ ] **FG-M①'s ladder has one inversion, and its own paragraph denied it —
+  registered 2026-08-03 (ruling ④ review).** The precision table makes **repelled
+  assault ±20%, a free byproduct finer than the ±25% cheapest purchase**, while the
+  paragraph beneath it read "Both free sources sit wider than the cheapest
+  purchase". The false reason is corrected at FG-M① and the conclusion restated on
+  its true grounds (the enhanced grade still beats ±20%, and a defender cannot
+  *choose* to be assaulted). **What is not answered is whether ±20% was meant to
+  land inside the paid range at all** — that is a value, the values are 가안 and L0,
+  and they are the user's. Saturation does not repair it: every asymptote sits 5
+  points inside its stated width, so the ordering is preserved rather than
+  reordered. **Discuss when:** the first playtest re-seals FG-M①'s values (build
+  ticket 13, TEST-LADDER L3) — the same sitting that retires its L0 paragraph.
+  **Delete this row when:** the four widths are re-sealed with the ordering either
+  intended or re-cut.
+
 - [ ] **Garrison substance is sector-attached only while garrisons cannot move —
   registered 2026-08-03 (fog RULINGS ④ decision 1 rider).** Fog `RULINGS.md` ④ sets
   a testimony's subject by whether the subject can move, and puts garrison
@@ -1170,11 +1185,10 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   distinction the two seals may have been talking past: an **evidence** surface is
   not a **verdict** surface. Gate 6 forbids an in-play strategic *verdict* and a
   live coach read; gate 07's mini-meter carried an evidence read. Ruling ④ seals
-  what such a surface must and must not do — aggregate the sector side, refuse to
-  sum the force side *visibly*, show the viewer's coverage, assert no position —
-  and deliberately does **not** place it, because placement is ticket 04's blocker
-  (`DECISIONS-OWED.md` Part 2 #13) and not fog's to take. Read ④ decision 6 before
-  ruling this row; it may dissolve rather than decide the conflict.
+  what such a surface must and must not do and deliberately does **not** place it,
+  because placement is ticket 04's blocker (`DECISIONS-OWED.md` Part 2 #13) and not
+  fog's to take. **Read ④ decision 6 before ruling this row** — its four clauses are
+  not restated here, and they may dissolve rather than decide the conflict.
 
 - [ ] **1v1 map re-authoring — terrain-cradle is a 5–6-seat multipolar map**
   (registered 2026-07-24, ADR 0042 cascade). DOMAIN_MAP/DESIGN now assert the

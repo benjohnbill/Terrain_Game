@@ -51,10 +51,25 @@ substance band below it. It is what makes gate 03's invariant 6 hold structurall
 rather than by a ceiling check, and it is the numeric form of the sealed reading
 that the last stretch of a force estimate is psychology rather than information.
 
-**Paid beats free, deliberately.** Both free sources sit wider than the cheapest
-purchase. The ordering is the dial, not an accident: if incidental contact were
-worth as much as a purposeful look, nothing would be bought after first contact and
-the information market would close.
+**Paid beats free, deliberately.** The ordering is the dial, not an accident: if
+incidental contact were worth as much as a purposeful look, nothing would be bought
+after first contact and the information market would close.
+
+> **Reason corrected 2026-08-03 (ruling ④ review), values unchanged.** This
+> paragraph read *"Both free sources sit wider than the cheapest purchase"*, and the
+> table directly above it says otherwise: **repelled assault is ±20%, finer than the
+> ±25% cheapest purchase.** Only battle contact (±30%) sits wider. The conclusion
+> stands on narrower grounds than the sentence claimed, and the true grounds are
+> worth stating, because a reader who takes the false version at face value will
+> mis-price the ladder. What actually keeps the market open after a repelled
+> assault: **the enhanced grade (±10%) still beats it**, and a defender cannot
+> *choose* to be assaulted, so the ±20% reading is a windfall on a turn the opponent
+> selected rather than a purchasable substitute. What is genuinely lost is the
+> normal grade against that one target on that one turn.
+>
+> **Whether ±20% was meant to land inside the paid range is a value question and is
+> not answered here** — the values are 가안 and the user's. Registered in
+> `docs/SYNC-DEBT.md`; picked up at the first playtest with the rest of FG-M①.
 
 With no observation at all, the band is bounded only by public facts — the register
 pool caps how many bodies a realm can have serving. That bound is derived, not a
@@ -114,24 +129,32 @@ intersection floor and the table falls out:
 
 | Observation | Stated half-width `w` | Asymptote `w − a` |
 |---|---|---|
-| Enhanced reconnaissance | ±10% | **±5%** — the floor |
-| Repelled assault | ±20% | ±15% |
-| Normal reconnaissance | ±25% | **±20%** — saturates short of the floor |
-| Battle contact | ±30% | ±25% |
+| Enhanced reconnaissance | ±10% | **≈±5%** — the floor |
+| Repelled assault | ±20% | ≈±15% |
+| Normal reconnaissance | ±25% | **≈±20%** — saturates short of the floor |
+| Battle contact | ±30% | ≈±25% |
+
+Approximate because the closed form is the limit: the sweep in G2 measures **5.03%**
+at the enhanced grade, against the 5.00% the subtraction gives.
 
 `a` = **±5%**, uniform across grades, and it is **not a new dial**: it is the
 intersection floor above, doing a second job. The floor stops being a clamp applied
 to a collapsed interval and becomes a property of how the dealer speaks, which is
 what this sheet already claimed when it said the floor holds "structurally rather
-than by a ceiling check".
+than by a ceiling check". A margin scaled to each grade's width instead would need a
+proportionality constant — that *would* be a new dial, and it is why uniform is what
+the sealed outcome rests on.
 
 **What this buys the grade ladder (the user's ruling).** The two paid grades sell
 different **destinations**, not different speeds: no accumulation of normal
 reconnaissance reaches the floor, so a player who wants the last sliver must buy the
 enhanced grade rather than grind the cheap one. A cheap grade that visibly saturates
 also pushes commit onto a fresh target or an upgrade instead of onto more of the same
-look. Both free byproducts stay coarser than the cheapest purchase after saturation
-as well as before it, so "paid beats free" survives repetition.
+look. **Saturation preserves the ladder's existing ordering rather than repairing
+it** — every asymptote sits exactly 5 points inside its stated width, so repeated
+observation reorders nothing, including the one inversion the paragraph above
+records (repelled assault stays finer than normal reconnaissance, at ≈15% against
+≈20%).
 
 **Containment holds with room.** A testimony contains the truth while `a ≤ w/(1+w)`:
 9.09% at the enhanced grade and 20.0% at normal, against `a` = 5%. The floor binds
