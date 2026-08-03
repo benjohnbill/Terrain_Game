@@ -144,17 +144,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     setOperationStep("read", false);
 
-    // Build-section embed: the fog prototype is rendered at a fixed 1280-wide
-    // base (where its whole map draws correctly); scale it to the frame width so
-    // the full map shows at every screen size instead of a blank/clipped iframe.
-    const buildStage = document.querySelector(".build-stage");
-    if (buildStage) {
-        const embed = buildStage.querySelector(".build-embed");
-        const BASE_WIDTH = 1280;
-        const fitEmbed = () => {
-            embed.style.transform = `scale(${buildStage.clientWidth / BASE_WIDTH})`;
-        };
-        fitEmbed();
-        new ResizeObserver(fitEmbed).observe(buildStage);
-    }
+    // The build-section embed needs no JavaScript.
+    //
+    // It used to be rendered at a fixed 1280 width and scaled to the frame with a
+    // transform, because the fog prototype it carried had no resize handler and
+    // drew blank in a fluid iframe. The L3 build lays itself out from its own
+    // viewport, so the transform is gone and `.build-stage` sizes it in CSS
+    // alone. Removed rather than left inert: a ResizeObserver writing a transform
+    // nothing needs is the kind of code a later reader keeps because they cannot
+    // tell whether it is load-bearing.
 });

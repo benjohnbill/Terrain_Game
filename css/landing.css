@@ -1390,27 +1390,30 @@ marker path {
     height: auto;
 }
 
-/* The fog prototype renders its full map correctly at a wide viewport but has
-   no resize handler, so inside a fluid iframe it can draw blank. Render it at a
-   fixed base size where the whole map composition is correct (= the reference
-   screenshot), then scale that down to the responsive frame width (scale factor
-   set by landing.js). Wheel zoom / drag pan still work inside the scaled frame. */
+/* The embed fills its box at its own scale.
+
+   This used to render the frame at a fixed 1280x900 and scale it down with a
+   transform, because the fog prototype it carried had no resize handler and drew
+   blank in a fluid iframe. The L3 build is a React app that lays itself out from
+   its own viewport, so the transform is not just unnecessary here — it would
+   shrink the type and fight a layout that is already responsive. The frame keeps
+   an aspect ratio so the section's rhythm holds, and a floor so the commit bar
+   and the two eval bars are never crushed. */
 .build-stage {
     position: relative;
     width: 100%;
-    aspect-ratio: 1280 / 900;
+    aspect-ratio: 16 / 10;
+    min-height: 460px;
     overflow: hidden;
     background: var(--ground-deep);
 }
 
 .build-stage .build-embed {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 1280px;
-    height: 900px;
+    inset: 0;
+    width: 100%;
+    height: 100%;
     border: 0;
-    transform-origin: top left;
 }
 
 .build-shot figcaption {
