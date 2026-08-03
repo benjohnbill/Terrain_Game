@@ -246,13 +246,34 @@ User-sealed 2026-07-17.
 |---|---|---|
 | **Public** (at every confidence level) | terrain · fortification grade · routes · diplomatic relationships · **current political control** · land value / yield · **register pool** | fog RULING ① · this gate §1 · land-derived (§2) |
 | **Exact** (own realm only) | own substance · fatigue · position · treasury · register · action capacity · commit pool | Slice 2 D1, "no fog on self" |
-| **Estimate band** (`[0.45, 0.90]`) | enemy substance · enemy fatigue | Slice 2 information ladder |
+| **Estimate band** (grades and widths at fog `MAGNITUDE.md` FG-M①) | enemy substance · enemy fatigue | fog `RULINGS.md` ③ (the witness model) + ④ (its subject) |
 | **Estimate band, sector-derived** (zero new dials) | civilian register (pool − serving) · 동원 강도 (serving ÷ pool) | this gate §2 |
 | **Estimate band, match-level derived** (zero new dials) | **판세** (includes treasury uncertainty) — a match-level aggregate, isolated from the sector-level derived lenses | this gate §3; re-leveled 2026-07-19, formally split 2026-07-23 (gate 07 seal) |
 | **Last-seen fix + reach cone** | enemy field-army position | Slice 2 (도달 원뿔) |
 | **Categorical** (existence + heading only) | border alarm | Slice 2 (국경 경보) |
 | **Absent from the projection** | enemy standing posture · enemy commit allocation · **enemy treasury** | 깜깜이 시장 · this gate §3 |
 
+> **Amendment landed 2026-08-03 (fog ruling ④).** Two corrections to the table
+> above, neither of which changes what any viewer may know.
+>
+> **The estimate-band grade no longer names retired constants.** It read
+> `[0.45, 0.90]`, basis "Slice 2 information ladder" — the archive confidence
+> ladder that fog ruling ③ retired on 2026-08-03 and whose constants appear in no
+> Production document (ADR 0041 §2). The same day, ruling ② had its own
+> "already-sealed ladder" reason corrected for exactly this; § 5 was amended in the
+> gate 12 batch and this row was missed. Grades and widths now point at their
+> owning dial sheet, which is the only place they have ever been sealed.
+>
+> **The grade rows do not say what a band is *about*, and now that is settled
+> elsewhere.** Fog `RULINGS.md` ④ sets a testimony's subject by whether the subject
+> can move: **field-army substance and fatigue attach to the force**; **garrison
+> substance, 동원 강도 and civilian register attach to the sector**; 판세 attaches
+> to the realm. The matrix rows are unchanged — this is a property of the record
+> behind a grade, not of the grade — but a reader taking the "estimate band" row to
+> mean *a number stored against a sector* would build the reading that ruling ④
+> rejected. The `Last-seen fix + reach cone` row was force-attached all along, which
+> is why the gap was invisible here.
+>
 > **Amendment landed 2026-07-23 (gate 07 seal).** The single derived-band row is
 > now **split above** — the sector-level lenses (civilian register, 동원 강도)
 > and the match-level **판세** aggregate are separate rows. 판세's GRADE is

@@ -22,8 +22,12 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   `docs/features/fog-of-war-discovery/MAGNITUDE.md` FG-M① as **emergent**, which
   means it is only as good as the sweep behind it, and a defender-commit axis is
   exactly the kind of term that moves an emergent crossover.
-  **Discuss when:** the testimony-attachment ruling lands and ticket 08's numbers
-  are exercised for real — the same sweep can carry both. **Delete this row when:**
+  **Discuss when:** ~~the testimony-attachment ruling lands and~~ ticket 08's
+  numbers are exercised for real. *(First half fired 2026-08-03 — the ruling landed
+  as `RULINGS.md` ④ / ADR 0050 without touching a price, so the sweep is still
+  owed and now has one more term to carry: ④ decision 7's reporting spread changes
+  what repeated reconnaissance actually converges to, which is an input to any ROI
+  comparison.)* **Delete this row when:**
   the comparison is re-run with a non-zero defender commit and FG-M①'s crossover
   either survives or is re-cut against it.
 
@@ -50,20 +54,53 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   when:** they are promoted to `DOCUMENTATION-LAW.md` or an ADR, or a later
   ruling records that they stay feature-local for good.
 
-- [ ] **What does a testimony attach to — a sector, or a force? USER RULING OWED,
-  registered 2026-08-03.** Fog `RULINGS.md` ③ decision 5 derives the ageing
-  envelope from three sealed inputs with no new dial, and § What this ruling does
-  not settle classifies the composition check as "an implementation-time
-  verification". A read-only groundwork pass found that classification wrong: the
-  envelope cannot be composed either way until a prior *shape* question is
-  answered. Sector-attached makes the band worthless within 1–4 turns (lower edge
-  to zero after one); force-attached composes but requires **enemy force identity
-  across observations**, a concept no seal defines and which silently grants a
-  tracking guarantee fog is supposed to price. Full analysis, with its numbers, is
-  `.scratch/l3-playable-build/issues/08-…md` § Groundwork G1.
-  **Discuss when:** before ticket 08 is claimed — it is that ticket's actual
-  blocker now that gate 12 has closed. **Delete this row when:** the attachment is
-  ruled at `RULINGS.md` ③ tier and ticket 08 leaves `needs-info`.
+- [ ] **A "verification" is a verification only when every input it consumes is
+  named — held at Working layer, registered 2026-08-03, user decision.** The
+  general form of the defect that stopped build ticket 08. Fog `RULINGS.md` ③
+  classified its envelope-composition check as "an implementation-time
+  verification"; the check consumed a subject no seal had named, so it could not be
+  performed at all, and it stopped a build rather than a review. The rule: when a
+  row or a clause parks work as "confirm at implementation time", count the inputs
+  it consumes and check each has a seal. One that does not makes the item an
+  **unruled decision wearing a verification's label**, and the correct home is a
+  ruling, not this ledger. It is cheap to apply — an item registered as a
+  verification is registered in writing, so the count is available at registration
+  time.
+  **Held deliberately, not overlooked**, and by the same reasoning the user applied
+  to gate 12's two principles above: one case is not a law. Promoting it now would
+  add a clause to `DOCUMENTATION-LAW.md` with a single consumer, which is what this
+  repo measured at **0 of 4** compliance.
+  **Discuss when:** a second item registered as an implementation-time
+  verification turns out to have consumed an unnamed input. **Delete this row
+  when:** it is promoted to `DOCUMENTATION-LAW.md`, or a later ruling records that
+  it stays an unwritten habit.
+
+- [ ] **Garrison substance is sector-attached only while garrisons cannot move —
+  registered 2026-08-03 (fog RULINGS ④ decision 1 rider).** Fog `RULINGS.md` ④ sets
+  a testimony's subject by whether the subject can move, and puts garrison
+  substance in the immobile row on the strength of the current build: garrison→field
+  posture transfer is unwired and itself held in this ledger. The two rows are
+  coupled and neither says so on its own, which is why this exists. If the transfer
+  is built, garrison substance becomes mobile and its testimony must move to the
+  force row — with everything that follows for it: unbroken contact, division,
+  re-acquisition.
+  **Discuss when:** the posture-transfer hold is lifted, in that same batch.
+  **Delete this row when:** garrison substance is re-classified in `RULINGS.md` ④
+  decision 1's table, or posture transfer is ruled out of L3 scope.
+
+- [ ] **The knowledge matrix has no adjacency grade, and no seal says that is
+  deliberate — registered 2026-08-03 (fog RULINGS ④).** Wayfinder gate 03 § 4 grants
+  free intelligence from battle contact, repelled assault, and border alarm
+  (existence + heading), and nothing for simply standing next to an enemy force.
+  Ruling ④ decision 3 **leans on that absence**: it is what makes "unbroken contact"
+  mean "paid again this turn", which is what prices target tracking. So the absence
+  is now load-bearing, and it has never been examined — it may be right for a game
+  where information is bought, or it may be the thing that reads as broken the first
+  time an enemy army stands beside yours unseen.
+  **Discuss when:** the first real playtest (build ticket 13, TEST-LADDER L3), where
+  the question answers itself in one match. **Delete this row when:** an adjacency
+  grade is added to gate 03 § 4, or a seal records that its absence is intended and
+  ④ decision 3's pricing survives.
 
 - [ ] **Treasury uncertainty has no propagation channel into the Standing band —
   registered 2026-08-03 (gate 12 batch, finding C3).** Gate 03 § 3 removes
@@ -1129,6 +1166,15 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   resolving which position stands when the read-layer / 형세판단 feature-doc
   birthplace is minted (same home as the turn-structure / eval-bar row above),
   and stamping whichever gate answer is superseded.
+  **New input 2026-08-03 (fog `RULINGS.md` ④ decision 6).** The fog grill named a
+  distinction the two seals may have been talking past: an **evidence** surface is
+  not a **verdict** surface. Gate 6 forbids an in-play strategic *verdict* and a
+  live coach read; gate 07's mini-meter carried an evidence read. Ruling ④ seals
+  what such a surface must and must not do — aggregate the sector side, refuse to
+  sum the force side *visibly*, show the viewer's coverage, assert no position —
+  and deliberately does **not** place it, because placement is ticket 04's blocker
+  (`DECISIONS-OWED.md` Part 2 #13) and not fog's to take. Read ④ decision 6 before
+  ruling this row; it may dissolve rather than decide the conflict.
 
 - [ ] **1v1 map re-authoring — terrain-cradle is a 5–6-seat multipolar map**
   (registered 2026-07-24, ADR 0042 cascade). DOMAIN_MAP/DESIGN now assert the
@@ -2069,6 +2115,30 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   until then, and a session that lands 09 raises it as the next order of business.
 
 ## Paid
+
+- [x] 2026-08-03 — **What does a testimony attach to — a sector, or a force? PAID**
+  (registered 2026-08-03, same day). Ruled by user grill: **neither reading alone —
+  the subject is set by whether it can move.** Field-army substance and fatigue
+  attach to the force; garrison substance, 동원 강도 and civilian register attach to
+  the sector; 판세 to the realm. The recorded either/or was a false dilemma, and the
+  groundwork pass that raised it had both horns right about *different observables*:
+  its sector-attached failure (lower edge to zero after one turn) is entirely the
+  march-out channel, which a sector's population does not have, since a serving body
+  keeps its sector origin wherever it stands (ADR 0047). The grill added the finding
+  neither side had: **force-attachment with no coherence rule is unsafe**, because
+  division is free — no commit, no fatigue, no per-turn cap, gated only by the commit
+  lock — so a testimony surviving an unseen division either stops containing the
+  truth or needs a decline channel that reaches zero every turn. Identity is
+  therefore granted only under **unbroken contact**, and re-acquisition after a gap
+  is a new contact the Runtime never joins to the old one, which is also what turns
+  an opponent's division from an intelligence laundry into a deception play.
+  Homes: `docs/features/fog-of-war-discovery/RULINGS.md` **④** (seven decisions with
+  their reasons) · that feature's `MAGNITUDE.md` FG-M① § Consequence — the reporting
+  spread (the one derived value) · **ADR 0050** (cross-feature; amends ADR 0048
+  twice) · `GLOSSARY.md` rows `Testimony subject` and `Unbroken contact`. Ticket 08
+  left `needs-info` in the same batch. Three riders this ruling created are open
+  above: the verification-inputs rule, the garrison-mobility coupling, and the
+  missing adjacency grade.
 
 - [x] 2026-07-28 — **The single-definition rule was never swept for in
   `DOMAIN_MAP.md` — PAID** (registered 2026-07-26, audit run #3). Run #3 found 19

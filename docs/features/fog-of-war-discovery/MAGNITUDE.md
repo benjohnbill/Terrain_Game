@@ -99,3 +99,46 @@ This crossover is **emergent and must not be set directly.** It moves when the u
 prices move — at an upgrade cost of 2 it rises to ρ ≈ 2.30 and reconnaissance
 becomes a standing tax; at 6 it falls to ρ ≈ 1.15 and reconnaissance is bought only
 in desperation. The price is the threshold's dial.
+
+### Consequence — the reporting spread, derived not dialled
+
+Sealed 2026-08-03 with `RULINGS.md` ④ decision 7. **The figure a testimony reports
+is not drawn from the whole range honesty allows.** It is drawn from a narrower one
+centred on the truth, and the margin between the two is what the intersection floor
+is made of.
+
+Write `w` for a grade's stated half-width and `a` for the **reporting spread** — how
+far the reported figure may sit from the true value. Repeated testimonies at one
+grade intersect to an asymptotic half-width of `w − a`. Set `a` equal to the
+intersection floor and the table falls out:
+
+| Observation | Stated half-width `w` | Asymptote `w − a` |
+|---|---|---|
+| Enhanced reconnaissance | ±10% | **±5%** — the floor |
+| Repelled assault | ±20% | ±15% |
+| Normal reconnaissance | ±25% | **±20%** — saturates short of the floor |
+| Battle contact | ±30% | ±25% |
+
+`a` = **±5%**, uniform across grades, and it is **not a new dial**: it is the
+intersection floor above, doing a second job. The floor stops being a clamp applied
+to a collapsed interval and becomes a property of how the dealer speaks, which is
+what this sheet already claimed when it said the floor holds "structurally rather
+than by a ceiling check".
+
+**What this buys the grade ladder (the user's ruling).** The two paid grades sell
+different **destinations**, not different speeds: no accumulation of normal
+reconnaissance reaches the floor, so a player who wants the last sliver must buy the
+enhanced grade rather than grind the cheap one. A cheap grade that visibly saturates
+also pushes commit onto a fresh target or an upgrade instead of onto more of the same
+look. Both free byproducts stay coarser than the cheapest purchase after saturation
+as well as before it, so "paid beats free" survives repetition.
+
+**Containment holds with room.** A testimony contains the truth while `a ≤ w/(1+w)`:
+9.09% at the enhanced grade and 20.0% at normal, against `a` = 5%. The floor binds
+first at every grade, which is why it — and not containment — is what fixes `a`.
+
+Like the ρ crossover above, this is **emergent and must not be set directly**. It
+moves when either sealed dial moves. Measured evidence for the failure it repairs,
+and the sweep behind these figures:
+`.scratch/l3-playable-build/issues/08-project-standard-fog-and-price-recon.md`
+§ Groundwork G2.

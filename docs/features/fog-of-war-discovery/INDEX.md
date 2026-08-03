@@ -7,6 +7,16 @@ record, not a blur of the truth.** Values at `MAGNITUDE.md` FG-M① (가안, L0,
 revisit at first playtest). That ruling closed `DECISIONS-OWED.md` Part 2 #1,
 #4, #5 and #6 — the fog band blocking L3 build ticket 08.
 
+**Subject sealed later the same day (`RULINGS.md` ④, ADR 0050): a testimony's
+subject is set by whether that subject can move.** Ruling ③ said what a testimony
+is; ④ says what it is *about*, which ③ had left unstated and which turned out to be
+ticket 08's real blocker. Field-army substance and fatigue attach to the **force**;
+garrison substance, 동원 강도 and civilian register attach to the **sector**; 판세
+to the realm. Six decisions ride with it — division weakens rather than kills a
+testimony, identity is free only under **unbroken contact**, re-acquisition is a new
+contact, the two subjects age visibly differently, the census is an evidence contrast
+rather than a computed remainder, and the dealer does not spend all of its precision.
+
 Scope is the **mutable layer** — enemy substance, fatigue, army position, and
 the reads derived from them. It is *not* position fog: geography has been public
 from turn 0 since 2026-07-14, and the map-discovery model is retired. The heavier
@@ -14,8 +24,11 @@ Challenge/terrain-fog work stays deferred.
 
 Not yet built. The L3 implementation is build ticket 08
 (`.scratch/l3-playable-build/issues/08-project-standard-fog-and-price-recon.md`),
-whose remaining gate is Wayfinder 12 (spec partition). The 2026-07-01 design spec
-is **evidence of shape, superseded on the model** — read `RULINGS.md` ③ first.
+which is **`open` and takeable as of 2026-08-03**: every Wayfinder gate has closed
+and ruling ④ lifted the last hold. *(This paragraph said "whose remaining gate is
+Wayfinder 12 (spec partition)" until 2026-08-03; gate 12 closed that morning and
+ruling ④ closed the blocker found underneath it.)* The 2026-07-01 design spec is
+**evidence of shape, superseded on the model** — read `RULINGS.md` ③ then ④.
 
 ## Idea
 
@@ -86,28 +99,53 @@ subtle warning signals before total blindness.
   keeps an irreducible sliver. See `RULINGS.md` ③ and `MAGNITUDE.md` FG-M①. This
   supersedes the estimate-range mechanics of the 2026-07-01 design spec §5.2–§5.3
   and retires the archive's four band constants unported (ADR 0041 §2).
+- **What a testimony is ABOUT (2026-08-03, user grill):** resolved — its
+  **subject**, set by whether that subject can move. Field-army substance and
+  fatigue attach to the force; garrison substance, 동원 강도 and civilian register
+  to the sector; 판세 to the realm. The recorded either/or (sector *or* force) was
+  a false dilemma. Identity across observations is free only under unbroken
+  contact, re-acquisition after a gap is a new contact, a division weakens a
+  testimony rather than killing or preserving it, and the census reaches the player
+  as an evidence contrast rather than a computed remainder. See `RULINGS.md` ④ and
+  ADR 0050; the one derived value (the reporting spread) is at `MAGNITUDE.md` FG-M①.
 
 ## Open questions
 
 - **How the testimony history is presented.** Ruling ③ decided it is shown,
   summoned on designation rather than always painted; the surface design is
   deferred and registered in `docs/SYNC-DEBT.md`.
-- **Whether the derived ageing envelope composes cleanly** from its three sealed
-  inputs (recruitment rate, casualty curve, march reach). An implementation-time
-  verification, also registered in `docs/SYNC-DEBT.md`.
+- **Where the census evidence contrast is surfaced.** Ruling ④ decision 6 sealed
+  what it must and must not do and deliberately left the placement to
+  `DECISIONS-OWED.md` Part 2 #13 (build ticket 04's blocker).
+- **Whether garrison substance stays sector-attached.** It does while garrisons
+  cannot move; ④ decision 1's rider fires when garrison→field posture transfer is
+  built. Registered in `docs/SYNC-DEBT.md`.
+- **Whether the knowledge matrix should carry an adjacency grade.** Ruling ④
+  decision 3 leans on its absence to price tracking, and no seal says the absence
+  is deliberate. Picked up at the first playtest; registered in
+  `docs/SYNC-DEBT.md`.
 - **Detection and radar pricing** — still candidates under `RULINGS.md` ②,
   deferred to the map scale-up pass.
+
+*Closed 2026-08-03:* **whether the derived ageing envelope composes cleanly** from
+its three sealed inputs. It was listed here as an implementation-time verification
+while the check still consumed an unnamed input — the envelope's subject — so it
+could not be performed at all. Ruling ④ named the subject and the check became
+genuinely performable, which is where it now sits (stamped at `RULINGS.md` ③ and
+ADR 0048).
 
 ## Files
 
 - `GLOSSARY.md` — Tier-1 vocabulary: information confidence, estimate band
-  (both re-cut 2026-08-03), observation testimony (coined 2026-08-03).
+  (both re-cut 2026-08-03), observation testimony (coined 2026-08-03), testimony
+  subject and unbroken contact (both registered 2026-08-03, ruling ④).
 - `RULINGS.md` — decision record (① wall-grade visibility; ② read-layer
   presentation contract SEALED at L3 gate 07 + registered recon-economy
-  candidates, 2026-07-23; ③ the witness model, SEALED 2026-08-03).
+  candidates, 2026-07-23; ③ the witness model, SEALED 2026-08-03; ④ a testimony's
+  subject, SEALED 2026-08-03).
 - `MAGNITUDE.md` — the owning dial sheet (FG-M①: observation precision and
-  reconnaissance unit prices). Created 2026-08-03; numbers live here and nowhere
-  else.
+  reconnaissance unit prices, plus two derived consequences — the ρ crossover and
+  the reporting spread). Created 2026-08-03; numbers live here and nowhere else.
 
 ## Related
 
@@ -119,5 +157,9 @@ subtle warning signals before total blindness.
 - `js/intel.js` (IntelSystem) — **reference archive, not build source** (ADR
   0041). Its estimate-range model is superseded by ruling ③; consult it as
   evidence of the earlier shape, never as the contract.
-- ADR 0048 (the witness model); ADR 0017 (opt-in depth); ADR 0009 / ADR 0014
+- ADR 0048 (the witness model) and **ADR 0050** (its subject — force for what
+  moves, sector for what does not); ADR 0017 (opt-in depth); ADR 0009 / ADR 0014
   (anti-snowball counterplay).
+- ADR 0047 (sector-origin population accounting) — what makes the immobile half of
+  ruling ④ true: a serving body keeps its sector origin wherever it stands, so a
+  sector's mobilization reading cannot march away.

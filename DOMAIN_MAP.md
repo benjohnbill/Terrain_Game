@@ -162,7 +162,9 @@ birthplace's phrasing. Applied to all 56 promoted entries on 2026-07-28
   true value; always contains the truth; never collapses to a point. Promoted
   2026-08-03 because combat preview, the 판세 read, and the bot all consume it.
   Definition: `docs/features/fog-of-war-discovery/GLOSSARY.md`; model:
-  that feature's `RULINGS.md` ③; widths: its `MAGNITUDE.md` FG-M①.
+  that feature's `RULINGS.md` ③ (what a band is) and ④ (what the testimonies
+  behind it are about — force for what moves, sector for what does not); widths
+  and the reporting spread: its `MAGNITUDE.md` FG-M①.
   _Avoid_: reading the midpoint as the answer, or restating its widths here.
 - ✅ `Situation axis`: The current-turn strategic interpretation of a province
   reading: `판세`, `위협`, `기회`, or `불확실`. Province status is the background

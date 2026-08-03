@@ -213,3 +213,218 @@ control). Detection and radar pricing, still candidates under ruling ②. Whethe
 the derived forward-correction envelope composes cleanly from its three sealed
 inputs — that is an implementation-time verification, registered in
 `docs/SYNC-DEBT.md`.
+
+> **Classification corrected 2026-08-03 (ruling ④), conclusion retained.** Calling
+> the envelope's composition "an implementation-time verification" was **premature
+> rather than wrong**. The check consumed a subject no seal had named — what the
+> envelope is a bound *on* — so it could not be performed at all, and it stopped
+> build ticket 08 on the morning of the day ruling ④ closed. With the subject set
+> by ④ decision 1 the classification holds: the immobile observables have no
+> march-out channel, and the mobile ones need the envelope for one turn at a time
+> under unbroken contact (④ decision 3). The general form is registered at
+> `docs/SYNC-DEBT.md` — **a verification is a verification only when every input it
+> consumes is named**; otherwise it is an unruled decision wearing a
+> verification's label, and it will stop a build rather than a review.
+>
+> This ruling also never said what a testimony is *about*. Ruling ④ answers that
+> and leaves all nine decisions below standing; decision 3's accumulate-and-
+> intersect gains a stated scope rather than a correction.
+
+## ④ A testimony's subject is set by whether that subject can move — SEALED 2026-08-03 (user grill) · L0
+
+Verdict source: user grill, 2026-08-03, opened on the blocker ruling ③ left
+standing and `docs/SYNC-DEBT.md` registered as a user ruling owed. Ruling ③
+settled what a testimony **is**; it never settled what a testimony is **about**,
+and the forward-correction envelope cannot be composed until it does. This
+ruling answers that and the six questions that fall out of it. It carries one
+derived value, recorded at `MAGNITUDE.md` FG-M① rather than here, and no dial.
+
+### What the grill found
+
+The question was recorded as a choice — sector-attached or force-attached — and
+it is a **false dilemma**. Both attachments are correct, for different
+observables, and the discriminator is a property the board already has.
+
+Three things the grill established that no seal had:
+
+1. **Position got away without naming a subject; magnitude cannot.** A reach cone
+   is never reconciled against a later sighting — it simply widens into a
+   possibility region. Ruling ③ decision 3 makes magnitude testimonies
+   *accumulate and intersect*, and intersection is precisely the operation that
+   requires knowing two observations concern the same subject. That asymmetry is
+   why the question surfaced here and not when position was designed, and it is
+   why ③ could truthfully say position "already runs this grammar" while leaving
+   the gap open.
+2. **Sector-attachment is fatal only to subjects that can march.** Its measured
+   failure — lower edge to zero after one turn, ticket 08 § Groundwork G1 — comes
+   entirely from the march-out channel. A sector's population cannot march out:
+   every serving body keeps the sector origin it was drawn from wherever it is
+   standing (`../match-arc/GLOSSARY.md` 징집 명부, sector grain per ADR 0047), so
+   the channel does not exist for the immobile observables and their bands decay
+   instead of vanishing. 노화 헌법 P3's *decays* is literally true there.
+3. **Force-attachment without a coherence rule is either a lie or a degeneration.**
+   Division is free: no commit cost, no fatigue cost, no per-turn cap, gated only
+   by the commit lock (`game/src/runtime/runtime.ts` `#splitDetachment`). A
+   testimony that stays attached through an unseen division either stops
+   containing the truth — the one thing ADR 0048 forbids — or opens a decline
+   channel wide enough to reach zero every turn, which is the sector-attached
+   failure reached by another road.
+
+### The model
+
+1. **A testimony's subject is set by whether the subject can move.**
+
+   | Observable | Moves | The testimony attaches to |
+   |---|---|---|
+   | Field-army substance · field-army fatigue | yes | the **force** |
+   | Garrison substance · 동원 강도 · civilian register | no | the **sector** |
+   | 판세 | — | the **realm**, at match level |
+
+   *Reason (user): a sector reading is void the moment the men walk out of it, and
+   what the player is assembling is a census of the opponent's national strength.
+   Only the force attachment conserves — the same army cannot stand in two
+   sectors, so accounted mass has a ceiling the public register pool sets, and
+   "how much is unaccounted for" becomes a question with an answer. Sector-level
+   substance readings are independent intervals whose upper edges sum past
+   anything the opponent could hold.*
+
+   **Rider with a trigger.** Garrison substance sits in the immobile row *because
+   garrisons are immobile today*: garrison→field posture transfer is unwired and
+   held (`docs/SYNC-DEBT.md`). Build that transfer and garrison substance moves to
+   the force row in the same batch.
+
+2. **A division weakens a testimony. It neither kills it nor leaves it intact.**
+   The count stays true of the aggregate that came out of the observed force;
+   what is lost is the attribution.
+
+   *Reason: keeping the attachment through a division makes the dealer lie —
+   the interval no longer contains what it claims to describe — or else forces a
+   decline channel that permits total collapse, which is decision-1's rejected
+   reading again. Killing the testimony makes free division an
+   intelligence-laundering move: division costs nothing, so an opponent would
+   break every chain every turn and the model would collapse to "you know only
+   what you saw this turn". Weakening preserves containment, preserves the count,
+   and still charges the observer, because re-attributing the mass costs a fresh
+   look. It is also how counting works: four thousand men seen crossing a pass are
+   still four thousand men when they split into two columns.*
+
+3. **Identity across observations is free only under unbroken contact.** While a
+   viewer observes a force every turn the Runtime links those observations, the
+   trend read accumulates, and a division is visible because the viewer is
+   watching it happen. One unobserved turn cuts the chain.
+
+   *Reason: defining identity by observation uses the grammar the rest of the
+   model already runs on — free intelligence comes from contact, precision comes
+   from purchase — and needs no stored state beyond the contact clock. The
+   structural alternative (identity breaks on composition change) cannot read off
+   existing state as it appears to: `Detachment.id` survives **both** operations,
+   since division keeps the source id (`game/src/domain/force.ts`
+   `splitDetachment`) and merge reuses one of its inputs' ids
+   (`runtime.ts` `#mergeDetachments`). Because the knowledge matrix carries no
+   adjacency row (gate 03 § 4), "unbroken contact" is in practice "paid again this
+   turn" — which prices tracking directly, and prices it by the target's mobility,
+   since a fast force's one-turn cone spans more sectors to buy. No dial: the
+   price is FG-M①'s.*
+
+4. **Re-acquisition is a new contact, never a resumed track.** After a gap the
+   Runtime does not link a fresh observation to an older one. The viewer holds two
+   contacts and reconciles them or does not.
+
+   *Reason (user): this is where deception lives. An opponent who divides inside
+   the viewer's blind spot leaves them holding a stale ~4,000 and a fresh ~1,000
+   that do not reconcile — attrition and division both fit the evidence, and the
+   dealer said nothing false. That is exactly ruling ②'s disposition: the dealer
+   never lies, and deception lives in opponent actions read through honest
+   instruments. A resumed track would also have to link by `Detachment.id`, making
+   an information rule turn on which id a merging player happened to name first.*
+
+5. **The two subjects age visibly differently, and that difference is the read.**
+   A sector card holds its position while its figure blurs; a force marker holds
+   its figure while its position blurs, the cone growing until the reading belongs
+   to no sector at all. One reconnaissance purchase therefore carries a **certain**
+   part (the land) and a **contingent** part (whatever force was standing there),
+   and the pre-designation preview says which is which.
+
+   *Reason: the player acquires a habit rather than a rule — readings taken off
+   land keep, readings taken off armies do not — and the rule never has to be
+   stated anywhere in the UI. It also splits reconnaissance into two products at
+   one price: a rear sector sells durable knowledge, a front sector sells
+   perishable knowledge that is actionable now. The two objects must stay visually
+   distinct or the contrast in decision 6 reads as a defect; that is an acceptance
+   condition on build ticket 04.*
+
+6. **The census arrives as an evidence contrast, never as a computed remainder.**
+
+   a. No published "unaccounted N".
+   b. The Runtime aggregates the sector side and **refuses to sum** the force side
+      — sector testimonies cannot overlap, force contacts can — and the refusal is
+      visible: contacts render as a dated list, not a total.
+   c. Coverage is shown beside the aggregate.
+   d. It is **evidence, not a verdict**.
+
+   *Reason: under decision 4 the Runtime cannot honestly total the contacts, since
+   two of them may be the same force, so laying out the materials is the only
+   honest render available — and what the player does with them is a gap read, not
+   arithmetic. Showing nothing was closed by ③ decision 4's own reason: with
+   forty-nine sectors summoned one at a time, an unshown contrast is a contest over
+   who kept notes on paper. Clause (d) is what keeps this inside duel-pivot Gate
+   6's prohibition on an in-play strategic or coach verdict, and it names the
+   distinction those two seals appear to have been talking past — an evidence
+   surface is not a verdict surface.*
+
+   **Where the contrast is surfaced is not settled here.** That is
+   `DECISIONS-OWED.md` Part 2 #13, build ticket 04's blocker; this ruling is an
+   input to it and does not pre-empt it.
+
+7. **The dealer does not spend all of its precision.** The figure a testimony
+   reports is drawn from a range strictly narrower than honesty would permit, and
+   the margin between the two **is** the irreducible sliver. The margin scales with
+   the grade's stated width, so the cheap grade saturates short of the floor and
+   only the expensive grade reaches it.
+
+   *Reason: measured, not argued — ticket 08 § Groundwork G2. Drawing the reported
+   figure from the whole honesty-feasible range lets that range's own endpoints pin
+   the truth: about ten normal scouts, twenty commit and affordable inside a match,
+   put the intersection inside the ±5% floor, and applying the floor by widening a
+   collapsed interval then centres it on the true value — the device installed to
+   preserve the sliver hands over the answer with decoration. Drawing narrower
+   makes the floor a consequence of how the dealer speaks rather than a clamp
+   bolted on afterwards, which is what FG-M① already claims when it says the floor
+   holds "structurally rather than by a ceiling check". Grade-proportional rather
+   than uniform (user): it gives the two grades different **products** rather than
+   different speeds — the expensive grade buys a destination the cheap one cannot
+   reach — and a cheap grade that visibly saturates pushes commit onto a new target
+   or an upgrade instead of onto more of the same look.*
+
+### Derived, not decided — do not re-rule these
+
+- **Ruling ③ stands entire.** This ruling names its subject and changes none of
+  its nine decisions. Decision 3's accumulate-and-intersect gains a stated scope
+  — within unbroken contact — rather than a correction.
+- **The envelope's job shrinks to something checkable.** Immobile subjects have no
+  march-out channel; mobile subjects need the bound for one turn at a time, under
+  observation, and never for an unseen division, because a watched division
+  deposits fresh testimony. This is what makes ③'s composition check a real
+  implementation-time verification rather than a premature label — stamped there.
+- **The archive already built position force-attached.** `js/intel.js` keys its
+  records per detachment (`fixKey`, `turnsUnobserved`), consumed that way by
+  `js/window-read.js`. Evidence, not contract (ADR 0041), and the reason ③ could
+  say position already runs this grammar.
+- **The reporting spread is not a free parameter.** The two sealed dials fix it;
+  it is recorded at `MAGNITUDE.md` FG-M① beside the ρ crossover, as a consequence
+  of the same kind. Never set it directly.
+
+### What this ruling does not settle
+
+- **Where the evidence contrast is surfaced** — `DECISIONS-OWED.md` Part 2 #13,
+  build ticket 04.
+- **The presentation of testimony history** — ③ deferred it; ruling ② governs the
+  surface.
+- **Whether garrison substance stays sector-attached.** It does while garrisons
+  cannot move; the trigger is decision 1's rider.
+- **Whether the knowledge matrix should carry an adjacency row.** Decision 3 leans
+  on its absence, and the absence is deliberate as far as any seal says — but no
+  seal says it deliberately. Registered; picked up at the first playtest (build
+  ticket 13), where "an enemy army stood next to mine and I could not see it" is
+  either right or obviously wrong.
+- **Detection and radar pricing**, still candidates under ruling ②.

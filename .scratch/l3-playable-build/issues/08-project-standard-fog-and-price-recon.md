@@ -1,6 +1,6 @@
 ---
 type: task
-status: needs-info
+status: open
 blocked_by: []
 ---
 
@@ -42,20 +42,33 @@ Specification gates: **all resolved.** Wayfinder 03 was already; 10 closed
 > corrected** to the witness model, so following them literally no longer builds
 > the model ruling ③ retired.
 >
-> **`needs-info` stands, and the reason is new.** The status was briefly set to
-> `open` in this batch on the belief that gate 12 was the last thing holding it,
-> and put back within the same batch: a read-only groundwork pass run in parallel
-> found a different blocker underneath — **what does a testimony attach to, a
-> sector or a force?** — which no seal answers and which decides whether the
-> ageing envelope composes at all. See § Groundwork G1 below, and the matching
-> row in `docs/SYNC-DEBT.md`. The blocker is that question, not a gate.
+> **`needs-info` was reinstated within the gate 12 batch, and is now lifted.** The
+> status went to `open` on the belief that gate 12 was the last thing holding it,
+> and went straight back: a read-only groundwork pass found a different blocker
+> underneath — **what does a testimony attach to, a sector or a force?** — which no
+> seal answered and which decided whether the ageing envelope composes at all.
+>
+> **Ruled 2026-08-03 (user grill), and this ticket is `open`.** The recorded
+> either/or was a false dilemma: a testimony's subject is set by whether the
+> subject can **move**. Field-army substance and fatigue attach to the **force**;
+> garrison substance, 동원 강도 and civilian register attach to the **sector**;
+> 판세 to the realm. Six further decisions ride with it — division weakens a
+> testimony rather than killing or preserving it; identity is free only under
+> unbroken contact; re-acquisition is a new contact; the two subjects age visibly
+> differently; the census is an evidence contrast, never a computed remainder; the
+> dealer does not spend all of its precision. **Contract:
+> `docs/features/fog-of-war-discovery/RULINGS.md` ④ and ADR 0050**; the one derived
+> value is at `MAGNITUDE.md` FG-M① (§ Consequence — the reporting spread). See
+> § Groundwork below, both items now stamped with what the grill did with them.
 
 **The four seal conflicts that blocked this ticket are CLOSED** —
 `DECISIONS-OWED.md` Part 2 #1, #4, #5 and #6, resolved by the 2026-08-03 fog
 grill. Do not re-open them from this file.
 
 Contract: **`docs/features/fog-of-war-discovery/RULINGS.md` ③** (the witness
-model — what a band *is*, sealed 2026-08-03) and that feature's
+model — what a band *is*, sealed 2026-08-03), **④** (what a testimony is *about*
+— its subject, division, identity, and the reporting spread, sealed 2026-08-03;
+cross-feature record **ADR 0050**) and that feature's
 **`MAGNITUDE.md` FG-M①** (observation precision and reconnaissance unit prices).
 Those two are authoritative; everything below points at them. Also binding:
 gate 03 § Answer (what each viewer may know — the **eight**-grade matrix and the
@@ -104,6 +117,12 @@ by design.
 - [ ] Successive scouts behave as noisy witnesses — the band centre wobbles while the width shrinks — rather than as a monotonic zoom onto a fixed point.
 - [ ] **Testimony ages by widening, never by becoming false.** An unobserved sector's band re-widens per turn by a bound derived from what could have changed (recruitment rate, casualties, march reach) — not by a decay dial — so a stale reading stops tracking the enemy's current strength. This is 노화 헌법 P3 actually implemented.
 - [ ] **A substance band never collapses**: no accumulation of testimony narrows it past FG-M①'s intersection floor.
+- [ ] **Every testimony is stored against its subject** (RULINGS ④ decision 1): field-army substance and fatigue against the **force**, garrison substance / 동원 강도 / civilian register against the **sector**. No field-army substance is stored per sector, and no sector observable is stored per force.
+- [ ] **Testimonies of one force accumulate only under unbroken contact.** A turn with no observation of that force cuts the chain; a later observation opens a **new** contact the Runtime never joins to the old one, and the viewer holds both.
+- [ ] **A division is handled by observation, not by a coherence flag.** Watched, it deposits fresh testimony. Unwatched, the pre-division testimony stands as a true statement about the aggregate that came out of that force and never comes to exclude the truth. No code reads `Detachment.id` to decide whether a viewer's chain survives.
+- [ ] **The reported figure is drawn from a range narrower than the honesty-feasible one by FG-M①'s intersection floor**, so the floor holds with no clamp: measured over repeated scouts, the enhanced grade asymptotes at ±5% and the normal grade at ±20%, and every stored interval still contains the truth.
+- [ ] **The projection never publishes a total across force contacts.** Contacts are published as a dated list; only the sector side is aggregated, and it is published with the viewer's coverage beside it. No `unaccounted` figure is computed or published.
+- [ ] **The reconnaissance preview distinguishes what the purchase certainly buys** (the sector's own readings) **from what it buys only if a force is standing there**, before designation.
 - [ ] **Free contact intelligence is coarser than the cheapest purchase**, so reconnaissance stays worth buying after first contact.
 - [ ] **The testimony history is readable**, summoned on designation rather than always painted, so "it was this, now it is that" is a read the player can make. *(The surface design is deferred — `docs/SYNC-DEBT.md`.)*
 - [ ] The enemy's current-turn commitment remains unscoutable and is resolved only at the reveal.
@@ -120,7 +139,21 @@ outside the repository, which is how this project has lost decisions before. **I
 is analysis, not a seal.** Nothing below is authority; two items need a user
 ruling and say so.
 
-### G1 — What does a testimony attach to: a sector, or a force? **Blocks this ticket.**
+### G1 — What does a testimony attach to: a sector, or a force? **ANSWERED 2026-08-03**
+
+> **Ruled by user grill, 2026-08-03 — `RULINGS.md` ④ decision 1 + ADR 0050.**
+> Neither reading below, and both: the subject is set by **mobility**. This
+> analysis was right that the question was a shape question and right about the
+> numbers on each horn; what it missed is that the two horns describe *different
+> observables*. Its sector-attached failure case is real and confined to subjects
+> that can march — a sector's population cannot, because a serving body keeps its
+> sector origin wherever it stands (ADR 0047) — and its force-attached cost is real
+> and is paid by ④ decision 3, which grants identity only under unbroken contact.
+> The grill added one finding this pass did not have: **force-attachment with no
+> coherence rule is unsafe**, because division is free (no commit, no fatigue, no
+> cap, gated only by the commit lock), so a testimony surviving an unseen division
+> either stops containing the truth or needs a decline channel that reaches zero
+> every turn. Text below is left as written, as the evidence the ruling rests on.
 
 `RULINGS.md` ③ decision 5 derives the ageing envelope from three sealed inputs
 with no new dial, and `docs/SYNC-DEBT.md` registers that as reasoned rather than
@@ -150,7 +183,20 @@ Ruling ③ § What this ruling does not settle calls the envelope "an
 implementation-time verification"; this finding says that classification is
 wrong, and that disagreement is itself for the user to settle.
 
-### G2 — The obvious implementation of the witness model breaks invariant 8
+### G2 — The obvious implementation of the witness model breaks invariant 8 — **SEALED 2026-08-03**
+
+> **Sealed by user grill, 2026-08-03 — `RULINGS.md` ④ decision 7; value at
+> `MAGNITUDE.md` FG-M① § Consequence — the reporting spread.** The fix below is
+> adopted as written. One thing this pass left open the grill closed: whether the
+> narrowed draw range is **uniform across grades** or scales with each grade's
+> width. Ruled uniform, equal to the ±5% intersection floor — so the asymptote is
+> `w − 5%` per grade, the enhanced grade reaches the floor and the normal grade
+> saturates at ±20%. That was chosen for what it does to the ladder, not for the
+> arithmetic: **the two paid grades sell different destinations rather than
+> different speeds**, so no amount of cheap reconnaissance substitutes for the
+> expensive one, and a visibly saturating cheap grade pushes commit onto a new
+> target or an upgrade. It is not a new dial — the spread *is* the floor, doing a
+> second job.
 
 Measured, not argued (`band-probe.js`). Three sealed properties must hold at once
 — a testimony contains the truth (③ decision 2), its width is a fraction of the

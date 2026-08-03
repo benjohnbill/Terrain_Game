@@ -3187,6 +3187,38 @@
    "verdictRef": null
   },
   {
+   "canonical": "Testimony subject",
+   "korean": "증언 대상",
+   "aliases": [
+    "testimony subject",
+    "증언의 주어"
+   ],
+   "birthplace": "docs/features/fog-of-war-discovery/GLOSSARY.md",
+   "tier": 1,
+   "status": "SEALED",
+   "kind": "mechanism",
+   "codeIdentifier": null,
+   "codeRefs": [],
+   "verdict": null,
+   "verdictRef": null
+  },
+  {
+   "canonical": "Unbroken contact",
+   "korean": "연속 접촉",
+   "aliases": [
+    "unbroken contact",
+    "contact run"
+   ],
+   "birthplace": "docs/features/fog-of-war-discovery/GLOSSARY.md",
+   "tier": 1,
+   "status": "SEALED",
+   "kind": "mechanism",
+   "codeIdentifier": null,
+   "codeRefs": [],
+   "verdict": null,
+   "verdictRef": null
+  },
+  {
    "canonical": "Force role",
    "korean": "군사 역할",
    "aliases": [

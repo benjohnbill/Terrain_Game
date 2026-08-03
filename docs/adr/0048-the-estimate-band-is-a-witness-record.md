@@ -2,7 +2,13 @@
 
 Date: 2026-08-03
 
-Status: Accepted
+Status: Accepted (amended by ADR 0050)
+
+> **Amended by ADR 0050 (2026-08-03).** Delta, in one line: this ADR's per-viewer
+> observation state is keyed by **subject**, and the subject is a force for what
+> can move and a sector for what cannot — a distinction this ADR did not draw and
+> whose absence stopped build ticket 08. Two § Consequences bullets are stamped
+> below. The Decision above is unchanged.
 
 Decision source: user grill, 2026-08-03, opened to resolve `DECISIONS-OWED.md`
 Part 2 #1, #4, #5 and #6 — the fog band blocking L3 build ticket 08. The full
@@ -106,12 +112,27 @@ record, which is a Runtime state change rather than a display change.
 - **The Runtime gains per-viewer observation state.** A scalar per sector becomes
   a list of timestamped intervals per viewer per sector. This is new state, and it
   is the price of P3 being real.
+
+  **Amended 2026-08-03 by ADR 0050.** "Per viewer per **sector**" is right for the
+  immobile observables and wrong for the mobile ones: field-army substance and
+  fatigue attach to the **force**, because a sector reading is void the moment the
+  men walk out of it. The state is keyed by subject, and mobility decides the
+  subject. This bullet named a key without noticing it was a design choice.
 - **The forward-correction envelope must be composed, not dialled.** Its inputs —
   the affordability bound's rate term, the casualty curve, march reach — are all
   sealed, so no new dial is introduced, but whether they compose cleanly into a
   conservative bound is an implementation-time verification. Registered in
   `docs/SYNC-DEBT.md`; if the composition fails, the fallback is a dial and that
   is a new decision, not an implementation choice.
+
+  **Classification amended 2026-08-03 by ADR 0050; conclusion retained.** It was
+  **premature rather than wrong**. The check consumed an input no seal had named —
+  what the envelope bounds — so it could not be performed at all, and it stopped
+  build ticket 08 rather than a review. With the subject set it holds: the immobile
+  observables have no march-out channel, and the mobile ones need the bound one
+  turn at a time under unbroken contact. The general form is registered in
+  `docs/SYNC-DEBT.md` — a verification is a verification only when every input it
+  consumes is named.
 - **Containment becomes a property to preserve rather than one to assume.** Every
   stored interval must be true when taken, and every forward correction must widen
   by at least what could have changed. A correction that widens too little makes

@@ -45,6 +45,17 @@ surface exists at all, and therefore over where treasury uncertainty shows.
 meter (the later, user-sealed position), and treat the treasury-uncertainty
 surface as blocked pending the resolution recorded in `docs/SYNC-DEBT.md`.
 
+> **New input to #13, registered 2026-08-03 — fog `RULINGS.md` ④ decision 6.** The
+> fog grill named a distinction the two conflicting seals appear to have been
+> talking past: an **evidence surface** is not a **verdict surface**. Gate 6's
+> prohibition is on an in-play strategic verdict and a live coach read; laying out
+> the materials a player reasons from — the aggregated sector side, the force
+> contacts refused a total, and the viewer's coverage — asserts no position and
+> falls outside it. Ruling ④ seals *what* the surface must and must not do and
+> deliberately does **not** place it, because placement is this ticket's blocker
+> and not fog's to take. Whoever rules #13 should read ④ decision 6 first; it may
+> be the whole of the disagreement.
+
 - [ ] The three-zone layout renders: thin top strip, map-filled middle, commit-bar hero; the resting screen is calm rather than dashboard-dense.
 - [ ] The commit flow runs 커밋량 → 행동 소환 → 세부 → 가능 지역 빛남 → 지목 with the commit bar as the entrance; detail panels appear on the commit decision and are not permanently painted.
 - [ ] Before 확정 the player may freely re-click eligible sectors with no lock on first click; 확정 is an inline lightweight confirmation in the commit bar, not a modal card.
@@ -53,5 +64,6 @@ surface as blocked pending the resolution recorded in `docs/SYNC-DEBT.md`.
 - [ ] Turn closure is visible: 턴 종료 → reveal → event tray → the changed world reads as the next turn's opening information state.
 - [ ] The renderer stays SVG; any escalation is gated on a measurement, not on ambition (ADR 0028).
 - [ ] React and the renderer receive only viewer projections; no rule, threshold, or authoritative field is computed or held in the view.
+- [ ] **A sector reading and a force marker are unmistakable for one another** (fog `RULINGS.md` ④ decision 5): the sector card is anchored to its sector and blurs in its figure; the force marker is anchored to a hex, floats free of any sector, and blurs in its position as its cone grows. A player must not be able to read a force's count as a property of the sector under it — if they can, the evidence contrast of ④ decision 6 reads as a defect rather than as the tension it is. Verified with a human in the browser, not asserted from tests.
 - [ ] Browser verification covers the agreed viewport and records it; visual behavior is not claimed from Node tests.
 - [ ] Any deliberately deferred visual work is registered in `docs/DISPLAY-DEBT.md` rather than left implicit.
