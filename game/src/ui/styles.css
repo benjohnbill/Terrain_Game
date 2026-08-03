@@ -113,6 +113,67 @@ body {
   font-size: 0.85em;
 }
 
+/* --- seat bar ------------------------------------------------------------
+   Hot-seat legibility. Louder than the panels around it on purpose: it answers
+   "whose move is it" and "what do I do now", which is what a first-time player
+   is actually stuck on. Still grey-box — one accent, no ornament. */
+
+/* Same idiom as `.prompt` — tinted wash plus a full border — one step stronger,
+   because this is the panel a stuck player has to find first. */
+.seatbar {
+  margin: 1rem 0 0;
+  padding: 0.8rem 1rem;
+  background: rgba(226, 194, 122, 0.07);
+  border: 1px solid rgba(226, 194, 122, 0.45);
+  border-radius: 4px;
+}
+
+.seatbar-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  align-items: baseline;
+}
+
+.seat-label {
+  color: var(--ink-dim);
+  font-size: 0.85em;
+}
+
+.seat-badge {
+  padding: 0.1rem 0.5rem;
+  border: 1px solid currentcolor;
+  border-radius: 3px;
+  letter-spacing: 0.03em;
+}
+
+/* Seat colours, so the two chairs read apart at a glance. Deliberately not the
+   board's realm palette: this says which chair you are sitting in, and the map
+   owns which realm owns ground. */
+.seat-realm-a {
+  color: #e2c27a;
+}
+
+.seat-realm-b {
+  color: #7ab8e2;
+}
+
+.seatbar-step {
+  margin: 0.5rem 0 0;
+}
+
+.handoff {
+  margin: 0.7rem 0 0;
+  padding: 0.45rem 0.9rem;
+  border-color: #e2c27a;
+  color: #e2c27a;
+}
+
+.handoff:hover {
+  background: rgba(226, 194, 122, 0.12);
+  border-color: #e2c27a;
+}
+
 .readout {
   display: grid;
   grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);

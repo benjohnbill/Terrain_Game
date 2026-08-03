@@ -16,6 +16,16 @@
  * **Interaction state lives here, not in the Runtime**: the seed box, which
  * viewer is being shown, hover, and the sector under consideration but not yet
  * committed. Only a submitted intent crosses into the Runtime.
+ *
+ * **Demo branch addition — hot-seat legibility, not new mechanics.** The seat is
+ * handed between the two realms through one dropdown, which is correct
+ * hot-seat wiring and completely undiscoverable: a first-time player locks
+ * realm-a's capital, reads "Waiting for realm-b", and has nothing on screen
+ * telling them *they* are realm-b too. `SeatBar` states whose seat it is, what
+ * that seat must do next, and offers the hand-off as a button. It reads the
+ * same projection everything else does and submits nothing — the turn order
+ * stays the Runtime's (gate 02), so this can only make the existing loop
+ * findable, never change it.
  */
 
 import { useCallback, useMemo, useState } from 'react';
@@ -30,6 +40,45 @@ import { MapBoard } from './MapBoard.js';
 
 const ACTORS: readonly ActorId[] = ['realm-a', 'realm-b'];
 const GREYBOX_RECRUIT_ID = 'greybox-recruit';
+
+/**
+ * Korean glosses for the event log — a reading aid appended to the raw type,
+ * never a replacement for it.
+ *
+ * The log is the only place the turn's resolution is visible in this probe, and
+ * `front-resolved` / `shield-dissolved` tell an audience nothing. Every key here
+ * is an event the Runtime actually emits (`#turnEvent` call sites plus the four
+ * submit-path types); an unglossed type renders bare rather than guessed at,
+ * which is why the lookup is allowed to miss.
+ */
+const EVENT_GLOSS: Readonly<Record<string, string>> = {
+  'capital-locked': '수도를 정했어요 (상대에게는 아직 비공개)',
+  'capitals-revealed': '양쪽 수도가 동시에 공개됐어요',
+  'commitment-allocated': '행동력을 구역에 배분했어요',
+  'commitment-locked': '커밋을 잠갔어요',
+  'commitments-revealed': '양쪽 커밋이 동시에 공개됐어요',
+  'turn-opened': '새 턴이 열렸어요',
+  'movement-planned': '행군 명령을 세웠어요',
+  'detachment-moved': '야전군이 이동했어요',
+  'detachment-split': '야전군을 나눴어요',
+  'detachments-merged': '야전군을 합쳤어요',
+  'posture-transferred': '태세를 바꿔 병력을 옮겼어요',
+  'recruitment-allocated': '모병 주문을 넣었어요',
+  'recruitment-resolved': '모병이 처리됐어요',
+  recruited: '병력을 모았어요',
+  'cohort-affiliated': '신병이 부대에 배속됐어요',
+  'cohort-activated': '신병이 전투 가용이 됐어요',
+  'upkeep-resolved': '피로와 보급을 정산했어요',
+  'front-resolved': '전선이 해결됐어요',
+  'battle-resolved': '전투가 끝났어요',
+  'sector-captured': '구역을 점령했어요',
+  'sector-integrated': '점령지가 편입됐어요',
+  'shield-dissolved': '수비대가 해체됐어요',
+  'realm-recomputed': '국력을 다시 계산했어요',
+  'match-ended': '매치가 끝났어요',
+  'intent-rejected': '거절됐어요',
+  'preview-refused': '미리보기가 막았어요',
+};
 
 export function App() {
   const [seed, setSeed] = useState('duel-0001');
@@ -106,7 +155,15 @@ export function App() {
         setLog((l) => [...l, { type: 'preview-refused', turn: view.turn, detail: { reason: card.reason ?? '' } }]);
         return;
       }
-      setLog((l) => [...l, ...runtime.submit(intent)]);
+      // `runtime.submit` is a mutation and must run OUTSIDE the state updater.
+      // React StrictMode double-invokes updaters in development to surface
+      // impurity, so a submit called inside one is sent twice: the first attempt
+      // succeeds and the second is rejected as a repeat, and the rejection is
+      // what the player is left looking at. It survives only in `dev:game` —
+      // StrictMode does not double-invoke in a production build, which is why the
+      // Playwright suite (which drives the built bundle) never saw it.
+      const events = runtime.submit(intent);
+      setLog((l) => [...l, ...events]);
       setTick((t) => t + 1);
     },
     [runtime, view],
@@ -168,6 +225,22 @@ export function App() {
     [submitting, viewer],
   );
 
+  // Whose seat is owed a move, read off the projection rather than tracked here:
+  // `committed` is the Runtime's own answer to "who is done this beat", and it
+  // means capital-locked in the opening beat and commitment-locked afterwards.
+  // Deriving instead of storing is why the hand-off cannot drift out of step
+  // with the match.
+  const owing = view.actors.filter((actor) => !view.committed.includes(actor));
+  const seatDone = view.committed.includes(viewer);
+  const nextSeat = owing.find((actor) => actor !== viewer) ?? null;
+  // A hand-off is offered only when this seat has nothing left to do and another
+  // seat does. It moves the chair, never the match — no intent is submitted.
+  const handOff = useCallback(() => {
+    if (nextSeat === null) return;
+    setViewer(nextSeat);
+    setFocused(null);
+  }, [nextSeat]);
+
   return (
     <main className="shell">
       <header>
@@ -183,7 +256,7 @@ export function App() {
           seed <input value={seed} onChange={(e) => changeSeed(e.target.value)} spellCheck={false} />
         </label>
         <label>
-          viewing{' '}
+          조종 중{' '}
           <select data-testid="viewer" value={viewer} onChange={(e) => setViewer(e.target.value as ActorId)}>
             {ACTORS.map((a) => (
               <option key={a} value={a}>
@@ -194,6 +267,15 @@ export function App() {
         </label>
         <span className="hint">wheel to zoom · drag to pan</span>
       </section>
+
+      <SeatBar
+        view={view}
+        viewer={viewer}
+        seatDone={seatDone}
+        nextSeat={nextSeat}
+        owing={owing}
+        onHandOff={handOff}
+      />
 
       {view.outcome !== null && (
         <VictoryScreen outcome={view.outcome} viewer={viewer} onNewMatch={startNewMatch} />
@@ -268,10 +350,82 @@ export function App() {
       <section>
         <h2>Events</h2>
         <pre data-testid="events">
-          {log.map((e, i) => `${i + 1}. ${e.type}${e.detail?.reason ? `: ${String(e.detail.reason)}` : ''}`).join('\n')}
+          {log.map((e, i) => {
+            // The raw type stays first and unaltered: it is the contract the
+            // tests read, and it is the only part of this line that is authored
+            // by the Runtime rather than by the shell.
+            const gloss = EVENT_GLOSS[e.type];
+            const reason = e.detail?.reason ? `: ${String(e.detail.reason)}` : '';
+            return `${i + 1}. ${e.type}${reason}${gloss ? `  — ${gloss}` : ''}`;
+          }).join('\n')}
         </pre>
       </section>
     </main>
+  );
+}
+
+/**
+ * Whose seat this is, what the seat owes, and the hand-off.
+ *
+ * The one thing hot-seat play needs and this shell had nowhere: a player who has
+ * locked realm-a is *also* realm-b, and nothing said so. Three lines, in the
+ * order a player needs them — who am I, what beat is this, what do I do now —
+ * then the hand-off as a button rather than as knowledge about a dropdown.
+ *
+ * It derives every word from the projection and submits nothing. Deliberately
+ * not automatic: the seat changing under the player is how a hot-seat game
+ * leaks, and saying "hand over" out loud is the beat a demo wants anyway.
+ */
+function SeatBar({
+  view,
+  viewer,
+  seatDone,
+  nextSeat,
+  owing,
+  onHandOff,
+}: {
+  view: MatchView;
+  viewer: ActorId;
+  seatDone: boolean;
+  nextSeat: ActorId | null;
+  owing: readonly ActorId[];
+  onHandOff: () => void;
+}) {
+  const over = view.outcome !== null;
+  const beat = over
+    ? '매치 종료'
+    : view.phase === 'capital-selection'
+      ? '수도 선택'
+      : '커밋';
+
+  // What this seat owes, right now. The waiting case names the other seat because
+  // that is the whole point: the player is both of them.
+  const step = over
+    ? '판이 멈췄어요. 아래에서 새 매치를 시작할 수 있어요.'
+    : !seatDone
+      ? view.phase === 'capital-selection'
+        ? '수도를 고르세요 — 내 땅(밝은 구역) 아무 곳이나 클릭.'
+        : '행동력을 구역에 배분하고 커밋을 잠그세요.'
+      : nextSeat !== null
+        ? `이 좌석은 끝났어요. ${nextSeat} 차례예요 — 아래 버튼으로 넘기세요.`
+        : owing.length === 0
+          ? '양쪽 다 잠갔어요. 공개가 해결되면 다음 턴이 열려요.'
+          : `${owing.join(', ')} 대기 중.`;
+
+  return (
+    <section className="seatbar" data-testid="seatbar">
+      <div className="seatbar-head">
+        <span className="seat-label">조종 중</span>
+        <strong className={`seat-badge seat-${viewer}`} data-testid="seat-actor">{viewer}</strong>
+        <span className="hint">턴 {view.turn} · {beat}</span>
+      </div>
+      <p className="seatbar-step" data-testid="seat-step">{step}</p>
+      {!over && nextSeat !== null && seatDone && (
+        <button type="button" className="handoff" data-testid="hand-off" onClick={onHandOff}>
+          ▶ {nextSeat}에게 좌석 넘기기
+        </button>
+      )}
+    </section>
   );
 }
 
