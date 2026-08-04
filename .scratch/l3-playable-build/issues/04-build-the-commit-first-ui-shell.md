@@ -137,6 +137,10 @@ no treasury-specific band is ever published, so the shell is buildable either wa
 - [ ] **Recruitment runs as a commit-bar verb**, and the reads `docs/DISPLAY-DEBT.md` owes the recruit card land with it: the mobilization-intensity meter with its named zone, the exact quoted bill before 확정, and the M10 leak preview. Its DISPLAY-DEBT row is paid or re-cut in the same batch, not left standing beside a built surface.
 - [ ] **Force is allocated on the map** (ADR 0052 decisions 1–2): an own field army is directed by dragging from it to a destination, divisions persist as independent field armies across turns, and the arrow reads before it is released.
 - [ ] **Drag is disambiguated by its origin** (ADR 0052 decision 3): drag on empty map pans the camera, drag from an own force issues an order. Gate 07's coupled continuous camera is otherwise untouched, and this is verified with a human in the browser — a pointer-target rule is exactly what a Node test cannot see.
+
+*Inherited from build ticket 08 on 2026-08-05, when that ticket resolved:*
+
+- [ ] **The defensive reading surface mirrors the offensive one** rather than being a separate one-off panel. Ticket 08 built the material a mirror is made from and no UI at all — one `IntelligenceView` serves both the attacking and the defending read, and `alarms` is the defender's free floor (border alarm gives existence and direction inside the defender's own ring; paid response stays a separate purchase). Placing that mirror is this ticket's, which is why 08 could not satisfy it and did not try.
 - [ ] **Garrison reinforcement is honest about being one-way.** Field → garrison is landed; garrison → field is unwired and HELD. The surface does not offer the return trip, and does not imply it is available.
 - [ ] **축성 stays a facade and says so.** Its unit price is a design blank (FG-M①, R2), so it cannot be a verb under the verb test; the shell must not invent a price to make the row look complete.
 

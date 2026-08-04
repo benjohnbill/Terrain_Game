@@ -1,6 +1,6 @@
 ---
 type: task
-status: open
+status: resolved
 blocked_by: []
 ---
 
@@ -16,13 +16,29 @@ blocked_by: []
 >   `resolved`, so the derivation reports this ticket unblocked; it stays
 >   `needs-info` for the specification gate below, not for a ticket.)*
 
-> **Implemented 2026-08-04 — read § Comments before starting anything here.**
-> `4eff886` and `9a75bf5` on branch `l3-build-ticket08`. `verify:game` passes on
-> all six lanes. **Status is still `open`, and deliberately**: three acceptance
-> items below are unsatisfied and none of them is code this ticket may write —
-> one is a value question for the user (the FG-M① ladder inversion), one is
-> ticket 04's UI, and one is a surface ③ decision 4 already deferred. Whether
-> those three should hold this ticket open or move off it is the user's call.
+> **Implemented 2026-08-04, RESOLVED 2026-08-05 — read § Comments before citing
+> anything here.** `4eff886` and `9a75bf5`, merged to `main`; `verify:game`
+> passes on all six lanes.
+>
+> **Three acceptance items are unsatisfied at close, and each has moved to its
+> owner** (user decision 2026-08-05). None of them was ever code this ticket
+> could write, and holding the ticket open for them inverted a dependency: two
+> belong to a ticket that is not downstream of this one.
+>
+> | Item | Where it now lives |
+> |---|---|
+> | Free contact intelligence coarser than the cheapest purchase | `docs/SYNC-DEBT.md` § Open — a **value question**, with its own trigger (the next fog pass, ahead of the first playtest) and deletion condition. Already registered before this close; nothing was created here. |
+> | The defensive reading surface mirrors the offensive one | **Ticket 04**, as an acceptance item. It is UI, and this ticket built none by design. |
+> | Testimony history summoned on designation | Satisfied as *data*; the presentation clause was **already deferred by fog `RULINGS.md` ③ decision 4** and stays there. |
+>
+> Closing was preferred to holding because `scripts/frontier.js` answers one
+> question — *can this be picked up?* — and this ticket had no code left to
+> write. A `TAKEABLE` row that costs a cold session 375 lines to discover that
+> is a false signal, which is the failure the schema exists to prevent.
+>
+> **The L3 build frontier is empty as of this close, and that is the honest
+> state**: all six remaining tickets wait on a decision rather than on
+> implementation capacity.
 
 **What to build:** Thicken the Runtime's single blur seam from the migration-grade
 projection into Standard Fog, and make reconnaissance a real purchase. The land
@@ -131,10 +147,10 @@ by design.
 - [ ] **The reported figure is drawn from a range narrower than the honesty-feasible one by FG-M①'s intersection floor**, so the floor holds with no clamp: measured over repeated scouts, the enhanced grade asymptotes at ±5% and the normal grade at ±20%, and every stored interval still contains the truth.
 - [ ] **The projection never publishes a total across force contacts.** Contacts are published as a dated list; only the sector side is aggregated, and it is published with the viewer's coverage beside it. No `unaccounted` figure is computed or published.
 - [ ] **The reconnaissance preview distinguishes what the purchase certainly buys** (the sector's own readings) **from what it buys only if a force is standing there**, before designation.
-- [ ] **Free contact intelligence is coarser than the cheapest purchase**, so reconnaissance stays worth buying after first contact.
-- [ ] **The testimony history is readable**, summoned on designation rather than always painted, so "it was this, now it is that" is a read the player can make. *(The surface design is deferred — `docs/SYNC-DEBT.md`.)*
+- [ ] **Free contact intelligence is coarser than the cheapest purchase**, so reconnaissance stays worth buying after first contact. → **MOVED OUT 2026-08-05**: not satisfiable at the sealed values (repelled assault ±20% against the ±25% cheapest purchase). A value question, carried by `docs/SYNC-DEBT.md` § Open with its own trigger; the code implements the sealed values and the test asserts what actually holds.
+- [x] **The testimony history is readable**, summoned on designation rather than always painted, so "it was this, now it is that" is a read the player can make. → **SATISFIED AS DATA 2026-08-05** (`SectorIntelView.garrisonHistory`, `ForceContactView.substanceHistory`); the "summoned on designation" clause is presentation and stays deferred at fog `RULINGS.md` ③ decision 4, which deferred it before this ticket was claimed.
 - [ ] The enemy's current-turn commitment remains unscoutable and is resolved only at the reveal.
-- [ ] The defensive reading surface mirrors the offensive one rather than being a separate one-off panel.
+- [ ] The defensive reading surface mirrors the offensive one rather than being a separate one-off panel. → **MOVED TO TICKET 04 on 2026-08-05.** It is UI, and this ticket built none by design. What landed here is the material a mirror is built from: one `IntelligenceView` serves both readings, and `alarms` is the defender's free floor.
 - [ ] Any development-grade disclosure introduced during migration is removed here; the completed path exposes no hidden true state to React or the renderer.
 
 ---
@@ -349,6 +365,10 @@ keeps closing. That is G2's own failure one level up, and it defeats ④ decisio
 Registered in `docs/SYNC-DEBT.md` as decision-grade, ahead of the first playtest.
 
 #### What is not done, and why
+
+> **Dispositioned 2026-08-05 by user decision — see the front-door table for
+> where each item now lives.** The analysis below is left as written, because it
+> is the evidence the disposition rests on.
 
 Three acceptance items are not satisfied, and none of them is an oversight:
 
