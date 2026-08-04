@@ -11,6 +11,24 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
 
 ## Open
 
+- [ ] **The landing's operation explainer teaches an arc the game no longer has, and
+  its illustration cannot be relabelled into the sealed one — registered
+  2026-08-03.** `#war-model` walks four panels across turns 11 → 16, and its SVG
+  keys four map states to `read | position | commit | consequence` (terrain →
+  forces → window → result). Gate 07 sealed the opposite grammar for a turn —
+  커밋량 → 행동 소환 → 세부 작전 → 가능 지역 빛남 → 지목 — with commit as the
+  *entrance*. The 2026-08-03 pass established these are **different altitudes**, not
+  the same sequence in a different order: the section narrates one match, the demo
+  above it plays one turn. Reframing the section to say so removed the
+  contradiction, which is why this is deferred rather than urgent. What remains is
+  the full re-cut: a commit-first turn primer needs its four map states redrawn as
+  UI grammar, not terrain, so it is illustration work, not copy work.
+  **Discuss when:** the next session that authors landing work — the user's stated
+  plan is to open it after the main design and build tickets, when the landing is
+  extended rather than patched. **Delete this row when:** the explainer is
+  re-authored against the sealed turn grammar, or the section is retired in favour
+  of the demo.
+
 - [ ] **The landing revision is on a branch, and its approved design doc is stale
   in four places — registered 2026-08-03.** The duel-pivot re-cut of the landing
   landed on `demo/school-submission` (`c7be696`) and is deployed, because the
