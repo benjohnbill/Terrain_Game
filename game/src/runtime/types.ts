@@ -435,8 +435,15 @@ export interface SectorIntelView {
 export interface BorderAlarmView {
   readonly sectorId: SectorId;
   readonly actor: ActorId;
-  /** Where it is headed, or `null` when it is standing still. */
-  readonly heading: SectorId | null;
+  /**
+   * The ground it crossed from, or `null` when it was already standing here.
+   *
+   * The heading of a force that has **arrived**, which is what an alarm can
+   * honestly carry. Where it intends to go next is a hole card, and reading that
+   * off a pending movement order would hand the defender the attacker's plan
+   * during the blind beat — so this is captured when the turn resolves.
+   */
+  readonly from: SectorId | null;
 }
 
 /**

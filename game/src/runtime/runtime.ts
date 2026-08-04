@@ -92,7 +92,6 @@ import {
   FORCED_MARCH_EXTRA_CAP,
   MARCH_FATIGUE_PER_HEX,
   MARCH_SPEED,
-  reachCone,
   type MovementApproach,
 } from '../domain/movement.js';
 import {
@@ -106,16 +105,22 @@ import {
   contactFor,
   contactGrade,
   emptyLedger,
+  reachableSectors,
   reconOrderKeyOf,
-  reconnaissancePriceOf,
-  reconnaissanceRequestRefusal,
+  reconnaissancePlanOf,
   sectorRecordOf,
   type ForceContact,
   type ReconnaissanceRequest,
 } from '../domain/intel.js';
-import { testimonyOf, type ObservationGrade, type PaidGrade } from '../domain/testimony.js';
+import { testimonyOf, type ObservationGrade } from '../domain/testimony.js';
 import { frontsOf, garrisonOf, holdingsOf, ownerOfSector } from '../domain/state.js';
-import type { MatchState, MobilizationTrace, Realm, RealmForces } from '../domain/state.js';
+import type {
+  BorderAlarmTrace,
+  MatchState,
+  MobilizationTrace,
+  Realm,
+  RealmForces,
+} from '../domain/state.js';
 import { readFronts, revealTurn, type RevealedTurn } from '../domain/turn.js';
 import { project } from '../projection/project.js';
 import { drawPartition } from '../world/partition.js';
@@ -322,6 +327,7 @@ export class Runtime {
       // the whole board's terrain and register pools, and nothing about the men.
       intelligence: Object.fromEntries(actors.map((actor) => [actor, emptyLedger()])),
       mobilizationTraces: [],
+      borderAlarmTraces: [],
       sectorAssignments: {},
       turnLocks: [],
     };
@@ -824,12 +830,11 @@ export class Runtime {
     // anyone counted, so the contact stops accumulating rather than coming to
     // exclude the truth.
     this.#closeContactsOnAll([source.id]);
-    // And the shield they walked into stops being what anyone counted either. No
-    // rate covers this channel — it moves whatever happened to be standing there —
-    // so it is recorded as the event it is, for every viewer.
-    for (const viewer of state.actors) {
-      sectorRecordOf(state.intelligence[viewer]!, site.sectorId).lastReinforcementTurn = state.turn;
-    }
+    // Nothing is recorded against the *shield* they walked into, deliberately. An
+    // earlier version of this marked the sector so its band would widen only when a
+    // transfer had actually happened — which reads a posture change back to the
+    // opponent, and gate 03 § 4 puts enemy standing posture Absent from the
+    // projection. `garrisonEnvelope` covers the channel unconditionally instead.
 
     return [this.#turnEvent('posture-transferred', 'decision', {
       actor,
@@ -1200,46 +1205,38 @@ export class Runtime {
     const state = this.#state;
     const intent = { kind: 'allocate-reconnaissance', actor };
 
-    // `null` calls the look off. Checked before the grade rule, because "no grade"
-    // is a legal instruction and `reconnaissanceRequestRefusal` is right to refuse
-    // it as a grade.
-    const cancelling = grade === null;
-    const refusal = cancelling
-      ? reconnaissanceRequestRefusal(
-          this.#reconnaissanceLegalityContext(actor),
-          sector,
-          'normal-reconnaissance',
-        )
-      : reconnaissanceRequestRefusal(this.#reconnaissanceLegalityContext(actor), sector, grade);
-    if (refusal !== null) return [this.#reject(intent, refusal)];
+    const plan = reconnaissancePlanOf(
+      this.#reconnaissanceLegalityContext(actor),
+      sector,
+      grade,
+    );
+    if (plan.refusal !== null) return [this.#reject(intent, plan.refusal)];
 
-    const sectorId = sector as SectorId;
-    const key = reconOrderKeyOf(sectorId);
-    const chips = cancelling ? 0 : reconnaissancePriceOf(grade as PaidGrade);
     const allocationError = allocationRefusal(
-      this.#commitmentContext(actor, [key]),
+      this.#commitmentContext(actor, [plan.key]),
       actor,
-      key,
-      chips,
+      plan.key,
+      plan.chips,
     );
     if (allocationError !== null) return [this.#reject(intent, allocationError)];
 
+    const sectorId = sector as SectorId;
     const allocations = (state.commitments[actor] ??= {});
     const requests = (state.reconnaissanceOrders[actor] ??=
       Object.create(null) as Record<SectorId, ReconnaissanceRequest>);
-    if (cancelling) {
-      delete allocations[key];
+    if (plan.request === null) {
+      delete allocations[plan.key];
       delete requests[sectorId];
     } else {
-      allocations[key] = chips;
-      requests[sectorId] = { sectorId, grade: grade as PaidGrade };
+      allocations[plan.key] = plan.chips;
+      requests[sectorId] = plan.request;
     }
 
     return [this.#turnEvent('reconnaissance-allocated', 'decision', {
       actor,
       sectorId,
-      grade: cancelling ? null : grade,
-      chips,
+      grade: plan.request === null ? null : plan.request.grade,
+      chips: plan.chips,
       spent: spentOf(allocations),
       remaining: TURN_COMMITMENT_BUDGET - spentOf(allocations),
     })];
@@ -1494,6 +1491,7 @@ export class Runtime {
 
     events.push(...this.#activateCohortsReadyFor(state.turn));
     events.push(...this.#resolveRecruitment(revealed.commitments));
+    const standingBeforeMovement = this.#sectorsBeforeMovement();
     events.push(...this.#resolveMovement());
     events.push(...this.#resolveRecruitmentAffiliation());
     // After the marching, before the fighting: a look bought this turn reads where
@@ -1527,6 +1525,7 @@ export class Runtime {
     }
 
     events.push(...this.#updateMobilizationSignals());
+    events.push(...this.#updateBorderAlarms(standingBeforeMovement));
     // Between the battles and the income, and in that order for a reason: a sector
     // taken *this* turn was the target of attack resolution, so ADR 0022's stable
     // turn excludes it and it integrates no earlier than next turn. Income then reads
@@ -2543,11 +2542,22 @@ export class Runtime {
     owner: ActorId,
     sector: SectorId,
     grade: ObservationGrade,
+    /**
+     * Whether this look also reads the register behind the ground.
+     *
+     * True for a purchase, which is what FG-M①'s price buys. **False for a
+     * battle**: fighting a shield tells you how many manned it, and no seal turns
+     * that into a reading of how many of the sector's people are under arms
+     * elsewhere in the realm. Granting it free would hand over the 동원 강도 and
+     * civilian-register reads that reconnaissance exists to sell.
+     */
+    readsRegister: boolean,
   ): void {
     const record = sectorRecordOf(this.#state.intelligence[viewer]!, sector);
     record.garrison.push(
       this.#observe(viewer, grade, `garrison:${sector}`, this.#garrisonMenOn(sector)),
     );
+    if (!readsRegister) return;
     record.serving.push(
       this.#observe(viewer, grade, `serving:${sector}`, this.#servingFrom(owner, sector)),
     );
@@ -2593,7 +2603,7 @@ export class Runtime {
   }
 
   /**
-   * Reconnaissance resolves — **immediately, this turn** (ticket 08 § Pricing).
+   * Reconnaissance resolves — **immediately, this turn** (`DECISIONS-OWED.md` R2).
    *
    * Run after movement so a look reads where the men actually ended up, and before
    * the battles so a scout reports what stood there rather than what survived.
@@ -2608,7 +2618,7 @@ export class Runtime {
       for (const request of requests) {
         const owner = ownerOfSector(state, request.sectorId);
         if (owner === null || owner === actor) continue;
-        this.#depositSectorReading(actor, owner, request.sectorId, request.grade);
+        this.#depositSectorReading(actor, owner, request.sectorId, request.grade, true);
         const forcesSeen = this.#depositForceReadings(actor, request.sectorId, request.grade);
         events.push(this.#turnEvent('reconnaissance-resolved', 'payoff', {
           actor,
@@ -2625,13 +2635,21 @@ export class Runtime {
   }
 
   /**
-   * What fighting tells you for free — coarser than the cheapest purchase, so the
-   * information market does not close on first contact (③ decision 9).
+   * What fighting tells you for free.
    *
-   * A defender who **repels** an assault reads the attacker at the finer free
-   * grade: they held the ground and counted what came at them. Nobody can choose
-   * to be assaulted, so it is a windfall on a turn the opponent selected rather
-   * than a purchasable substitute (FG-M① § Precision).
+   * A defender who **repels** an assault reads the attacker at ±20%; every other
+   * reading is battle contact at ±30% (FG-M① § Precision).
+   *
+   * ③ decision 9 says the free grades are coarser than the cheapest purchase, and
+   * at FG-M①'s values **that is not true of repelled assault** — ±20% is finer
+   * than the ±25% normal grade, and only battle contact sits wider. FG-M①
+   * corrected its own version of that sentence on 2026-08-03 and gave the true
+   * grounds: the enhanced grade (±10%) still beats ±20%, and a defender cannot
+   * *choose* to be assaulted, so the finer free reading is a windfall on a turn
+   * the opponent selected rather than a purchasable substitute. What is genuinely
+   * lost is the normal grade against that one target on that one turn. Whether
+   * ±20% belongs inside the paid range is a value question and is the user's —
+   * `docs/SYNC-DEBT.md` carries it.
    */
   #depositBattleContact(
     engagement: Engagement,
@@ -2642,27 +2660,32 @@ export class Runtime {
     const attacker = engagement.attacker.actor;
     const defender = engagement.defender.actor;
 
-    const readings: readonly (readonly [ActorId, ActorId, ObservationGrade])[] = [
-      [defender, attacker, contactGrade(winner === 'DEFENDER')],
-      [attacker, defender, contactGrade(false)],
+    const readings: readonly {
+      readonly viewer: ActorId;
+      readonly subject: ActorId;
+      readonly grade: ObservationGrade;
+    }[] = [
+      { viewer: defender, subject: attacker, grade: contactGrade(winner === 'DEFENDER') },
+      { viewer: attacker, subject: defender, grade: contactGrade(false) },
     ];
 
-    for (const [viewer, subject, grade] of readings) {
-      this.#depositSectorReading(viewer, subject, sector, grade);
+    for (const { viewer, subject, grade } of readings) {
+      this.#depositSectorReading(viewer, subject, sector, grade, false);
       this.#depositForceReadings(viewer, sector, grade);
+      const ledger = state.intelligence[viewer]!;
       // Blood was shed here, and both sides know it. Every statement either of
       // them holds from before this turn keeps its ceiling and gives up its floor:
       // the men it counted may all be dead, and only a battle can do that.
-      const record = sectorRecordOf(state.intelligence[viewer]!, sector);
-      record.lastLossTurn = state.turn;
-      record.servingLossTurn = state.turn;
-      for (const contact of state.intelligence[viewer]!.contacts) {
+      const here = sectorRecordOf(ledger, sector);
+      here.lastLossTurn = state.turn;
+      for (const contact of ledger.contacts) {
         if (contact.actor !== subject) continue;
         if (this.#contactCouldHaveBeenAt(contact, sector)) contact.lastLossTurn = state.turn;
       }
-      // A body drawn from anywhere in the realm can fall here, so every sector
-      // record of the side that fought loosens its serving floor.
-      for (const record of Object.values(state.intelligence[viewer]!.sectors)) {
+      // A body drawn from anywhere in the realm can fall here, and which origins
+      // fell is not public — so every sector record loosens its serving floor,
+      // this one included.
+      for (const record of Object.values(ledger.sectors)) {
         record.servingLossTurn = state.turn;
       }
     }
@@ -2683,21 +2706,12 @@ export class Runtime {
    * trend read: a duel fights most turns.
    */
   #contactCouldHaveBeenAt(contact: ForceContact, sector: SectorId): boolean {
-    const age = this.#state.turn - contact.lastObservedTurn;
-    if (age <= 0) return contact.lastSeenSector === sector;
-    const cone = reachCone(
+    return reachableSectors(
       this.#state.movementGraph,
       contact.lastSeenAt,
-      age,
-      // The forced-march cap, not the ordinary speed: a force *may* pay fatigue to
-      // go further, so a cone drawn at the ordinary speed would be a bound the
-      // board can break, and every bound here has to be one it cannot.
-      MARCH_SPEED + FORCED_MARCH_EXTRA_CAP,
-    );
-    for (const key of cone) {
-      if (this.#state.movementGraph.nodes[key]?.sectorId === sector) return true;
-    }
-    return false;
+      this.#state.turn - contact.lastObservedTurn,
+      contact.lastSeenSector,
+    ).includes(sector);
   }
 
   /**
@@ -2716,6 +2730,44 @@ export class Runtime {
     for (const actor of state.actors) {
       closeContactsOn(state.intelligence[actor]!, detachmentIds, state.turn);
     }
+  }
+
+  /**
+   * Where every enemy force ended the turn on somebody else's ground, and which
+   * way it came.
+   *
+   * Captured here rather than read live in the projection, for the reason
+   * `#updateMobilizationSignals` is: a movement order is a hole card the owner may
+   * still re-aim during the blind decision beat, so a projection reading
+   * `Detachment.movement` would publish the opponent's plan to the defender.
+   * Recording what already happened publishes only what a sentry could see.
+   */
+  #updateBorderAlarms(before: ReadonlyMap<string, SectorId>): GameEvent[] {
+    const state = this.#state;
+    const traces: BorderAlarmTrace[] = [];
+    for (const actor of state.actors) {
+      for (const detachment of state.forces[actor]!.detachments) {
+        const at = this.#sectorAt(detachment.position);
+        const holder = ownerOfSector(state, at);
+        if (holder === null || holder === actor) continue;
+        const from = before.get(detachment.id);
+        traces.push({ actor, sectorId: at, from: from === undefined || from === at ? null : from });
+      }
+    }
+    traces.sort((a, b) => a.sectorId.localeCompare(b.sectorId) || a.actor.localeCompare(b.actor));
+    state.borderAlarmTraces = traces;
+    return [];
+  }
+
+  /** Where every force stood before this turn's marching — the alarm's "from". */
+  #sectorsBeforeMovement(): Map<string, SectorId> {
+    const before = new Map<string, SectorId>();
+    for (const actor of this.#state.actors) {
+      for (const detachment of this.#state.forces[actor]!.detachments) {
+        before.set(detachment.id, this.#sectorAt(detachment.position));
+      }
+    }
+    return before;
   }
 
   #updateMobilizationSignals(): GameEvent[] {

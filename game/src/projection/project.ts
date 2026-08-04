@@ -46,20 +46,14 @@ import {
   fatigueEnvelope,
   forceEnvelope,
   garrisonEnvelope,
+  reachableSectors,
   servingEnvelope,
   UNKNOWN_WEAR,
   type ForceContact,
   type ReconnaissanceRequest,
   type SectorRecord,
 } from '../domain/intel.js';
-import {
-  advanceOneTurn,
-  FORCED_MARCH_EXTRA_CAP,
-  MARCH_SPEED,
-  musterHexOf,
-  reachCone,
-  type MovementGraph,
-} from '../domain/movement.js';
+import { advanceOneTurn, musterHexOf, type MovementGraph } from '../domain/movement.js';
 import { compareRecruitmentRequests, type RecruitmentRequest } from '../domain/recruitment.js';
 import { frontsOf, garrisonOf, holdingsOf } from '../domain/state.js';
 import type { MatchState } from '../domain/state.js';
@@ -384,20 +378,35 @@ const latestTurnOf = (...groups: readonly (readonly Testimony[])[]): number | nu
 };
 
 /**
- * A sector's shield ceiling, from public facts alone.
+ * A sector's shield ceiling, from **what this viewer may know** alone.
  *
- * The seat is authored geography and the coefficient is sealed, so a viewer can
- * compute this for ground it has never seen. The capital's location is public
- * from the reveal (CP-② item 1) while its guard's *strength* is fogged — which
- * is exactly this shape: the ceiling is known, the manning is banded.
+ * The seat is authored geography and the coefficient is sealed, so a ceiling can
+ * be computed for ground nobody has ever seen. The capital's location is public
+ * from the reveal (CP-② item 1) while its guard's *strength* stays fogged — the
+ * ceiling is known, the manning is banded.
+ *
+ * **`capitals` is the viewer's own visible set, never `state.capitals`.** Reading
+ * truth here leaked the opponent's secret capital during the selection beat: the
+ * guard raises one sector's ceiling far above 900, so a viewer comparing ceilings
+ * could read the enemy's pick straight off the band list before locking their
+ * own. That is invariant 1 broken by a field nobody thought of as a field, and it
+ * is safe to key on the visible set because the guard is not raised until the
+ * reveal (`#raiseCapitalGuards`, in the same step that publishes both capitals) —
+ * so before it there is no guard to bound.
  */
-function garrisonCeilingOf(state: MatchState, sectorId: SectorId, owner: ActorId): number {
+function garrisonCeilingOf(
+  state: MatchState,
+  capitals: Readonly<Record<ActorId, SectorId>>,
+  sectorId: SectorId,
+  owner: ActorId,
+): number {
   return GARRISON_PER_BORDER_SECTOR
-    + capitalGuardAt(state.loadedWorld.artifact.sectors, sectorId, state.capitals[owner]);
+    + capitalGuardAt(state.loadedWorld.artifact.sectors, sectorId, capitals[owner]);
 }
 
 function sectorIntelView(
   state: MatchState,
+  capitals: Readonly<Record<ActorId, SectorId>>,
   sectorId: SectorId,
   owner: ActorId,
   record: SectorRecord | undefined,
@@ -412,11 +421,8 @@ function sectorIntelView(
     testimonies: garrisonTestimonies,
     now: state.turn,
     envelope: garrisonEnvelope(forceLimit),
-    publicBound: { low: 0, high: garrisonCeilingOf(state, sectorId, owner) },
+    publicBound: { low: 0, high: garrisonCeilingOf(state, capitals, sectorId, owner) },
     ...(record?.lastLossTurn === undefined ? {} : { lastLossTurn: record.lastLossTurn }),
-    ...(record?.lastReinforcementTurn === undefined
-      ? {}
-      : { lastGainTurn: record.lastReinforcementTurn }),
   });
   const serving = composeBand({
     testimonies: servingTestimonies,
@@ -445,32 +451,14 @@ function sectorIntelView(
   };
 }
 
-/**
- * Where a contact could be now — its last-seen sector while it is current, and a
- * cone widening by one turn's march for every turn since (④ decision 5).
- *
- * Published as **sectors** rather than hexes: the sector is the operational atom
- * (ADR 0032), it is the grain a commitment is poured onto, and a cone of hexes at
- * turn-scale staleness is hundreds of entries carrying no decision the sector list
- * does not already carry.
- */
+/** Where a contact could be now — one reader, shared with the Runtime. */
 function reachOf(state: MatchState, contact: ForceContact): SectorId[] {
-  const age = Math.max(0, state.turn - contact.lastObservedTurn);
-  if (age === 0) return [contact.lastSeenSector];
-  // The forced-march cap, not the ordinary speed: a force may pay fatigue to go
-  // further, so a cone drawn at `MARCH_SPEED` would be a bound the board can break.
-  const cone = reachCone(
+  return reachableSectors(
     state.movementGraph,
     contact.lastSeenAt,
-    age,
-    MARCH_SPEED + FORCED_MARCH_EXTRA_CAP,
+    state.turn - contact.lastObservedTurn,
+    contact.lastSeenSector,
   );
-  const reached = new Set<SectorId>();
-  for (const hexKey of cone) {
-    const sector = state.movementGraph.nodes[hexKey]?.sectorId;
-    if (sector !== undefined) reached.add(sector);
-  }
-  return [...reached].sort();
 }
 
 function contactView(
@@ -526,37 +514,37 @@ function contactView(
 /**
  * The free warning floor: an enemy force standing on ground this realm holds.
  *
- * Existence and heading only. No magnitude, no fatigue, no identity — a viewer
- * cannot tell one alarm's force from another's, and cannot count them into a
- * total, because the alarm carries nothing to count. Paid response stays a
- * separate purchase (gate 07 § Answer).
+ * Existence and where it crossed from — no magnitude, no fatigue, no posture, no
+ * identity. **One entry per sector per realm**, however many formations are
+ * standing there, because an alarm a viewer could count would be a magnitude
+ * reading bought for nothing: two entries where there was one says "they split",
+ * which is exactly what ④ decision 3 charges for.
+ *
+ * Read off the resolution-time trace rather than off live `Detachment.movement`,
+ * because a pending movement order is a hole card the opponent may still re-aim
+ * during the blind beat. Paid response stays a separate purchase (gate 07).
  */
 function borderAlarms(state: MatchState, viewer: ViewerId): BorderAlarmView[] {
   if (viewer === 'observer') return [];
   const own = new Set(state.realms[viewer]!.sectors);
-  const alarms: BorderAlarmView[] = [];
-  for (const actor of state.actors) {
-    if (actor === viewer) continue;
-    for (const detachment of state.forces[actor]!.detachments) {
-      const at = state.movementGraph.nodes[hexKeyOf(detachment)]?.sectorId;
-      if (at === undefined || !own.has(at)) continue;
-      const destination = detachment.movement === null
-        ? null
-        : state.movementGraph.nodes[
-            `${detachment.movement.destination.q},${detachment.movement.destination.r}`
-          ]?.sectorId ?? null;
-      alarms.push({
-        sectorId: at,
-        actor,
-        heading: destination === at ? null : destination,
-      });
+  const byGround = new Map<string, BorderAlarmView>();
+  for (const trace of state.borderAlarmTraces) {
+    if (trace.actor === viewer || !own.has(trace.sectorId)) continue;
+    const key = `${trace.sectorId}|${trace.actor}`;
+    const seen = byGround.get(key);
+    if (seen === undefined) {
+      byGround.set(key, { sectorId: trace.sectorId, actor: trace.actor, from: trace.from });
+    } else if (seen.from !== trace.from) {
+      // Two formations of one realm on one ground that arrived by different roads:
+      // collapsing them to a single heading would be a claim, so the alarm keeps
+      // the fact and drops the direction.
+      byGround.set(key, { ...seen, from: null });
     }
   }
-  return alarms.sort((a, b) => a.sectorId.localeCompare(b.sectorId));
+  return [...byGround.values()].sort((a, b) =>
+    a.sectorId.localeCompare(b.sectorId) || a.actor.localeCompare(b.actor));
 }
 
-const hexKeyOf = (detachment: Detachment): string =>
-  `${detachment.position.q},${detachment.position.r}`;
 
 /**
  * What this viewer has learned — the single composition point.
@@ -583,6 +571,10 @@ function visibleIntelligence(state: MatchState, viewer: ViewerId): IntelligenceV
   const ledger = state.intelligence[viewer];
   if (ledger === undefined) return empty;
 
+  // What this viewer may know about capital seats — never `state.capitals`. See
+  // `garrisonCeilingOf`.
+  const capitals = visibleCapitals(state, viewer);
+
   const sectors: SectorIntelView[] = [];
   let servingLow = 0;
   let servingHigh = 0;
@@ -595,7 +587,14 @@ function visibleIntelligence(state: MatchState, viewer: ViewerId): IntelligenceV
     const holdings = holdingsOf(state, actor);
     const forceLimit = forceLimitOf(state.loadedWorld.artifact.sectors, holdings, state.ripening);
     for (const sectorId of [...state.realms[actor]!.sectors].sort()) {
-      const view = sectorIntelView(state, sectorId, actor, ledger.sectors[sectorId], forceLimit);
+      const view = sectorIntelView(
+        state,
+        capitals,
+        sectorId,
+        actor,
+        ledger.sectors[sectorId],
+        forceLimit,
+      );
       sectors.push(view);
       // The sector side is the one that may be summed: two sector testimonies
       // cannot describe the same men, because a serving body keeps the sector

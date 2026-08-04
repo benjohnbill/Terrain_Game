@@ -63,6 +63,15 @@ export interface RealmForces {
   nextDetachmentOrdinal: number;
 }
 
+/** One enemy force found standing on a realm's ground when the turn resolved. */
+export interface BorderAlarmTrace {
+  readonly actor: ActorId;
+  /** The sector it is standing on — the ground whose holder is being warned. */
+  readonly sectorId: SectorId;
+  /** The sector it came from, or `null` when it did not move this turn. */
+  readonly from: SectorId | null;
+}
+
 /** Exact recruitment truth retained by the Runtime for the current decision beat. */
 export interface MobilizationTrace {
   readonly actor: ActorId;
@@ -192,6 +201,17 @@ export interface MatchState {
   intelligence: Record<ActorId, IntelligenceLedger>;
   /** Exact positive recruitment aggregates; projection alone decides who may read them. */
   mobilizationTraces: MobilizationTrace[];
+  /**
+   * Where an enemy force was standing on somebody's ground at the **end** of a
+   * turn, and which way it went to get there.
+   *
+   * Captured at resolution rather than read live off `Detachment.movement`, for
+   * the same reason `mobilizationTraces` is: a pending movement order is a hole
+   * card the player may still re-aim during the blind decision beat, so a
+   * projection that read it would hand the defender the attacker's plan. This
+   * records what already happened.
+   */
+  borderAlarmTraces: BorderAlarmTrace[];
   /** Own field detachments explicitly assigned to each committed sector. */
   sectorAssignments: Record<ActorId, Record<string, readonly string[]>>;
   /**

@@ -44,11 +44,9 @@ import {
 import {
   reconOrderKeyOf,
   reconnaissanceOfferOf,
-  reconnaissancePriceOf,
-  reconnaissanceRequestRefusal,
+  reconnaissancePlanOf,
   type ReconnaissanceOffer,
 } from '../domain/intel.js';
-import type { PaidGrade } from '../domain/testimony.js';
 import { hexKey } from '../world/schema.js';
 import type { ActorId, DetachmentView, HexPosition, Intent, MatchView, SectorId } from '../runtime/types.js';
 
@@ -254,36 +252,27 @@ export function preview(view: MatchView, intent: Intent): PreviewCard {
       return no(`A reconnaissance order is previewed by the realm making it; "${view.viewer}" cannot preview "${intent.actor}"'s.`);
     }
     const order = intent as { sector?: unknown; grade?: unknown };
-    const cancelling = order.grade === null;
-    const refusal = reconnaissanceRequestRefusal(
+    const plan = reconnaissancePlanOf(
       {
         sectorKeys: Object.keys(view.board.sectors),
         controlledSectors:
           view.realms.find((realm) => realm.actor === intent.actor)?.sectors ?? [],
       },
       order.sector,
-      cancelling ? 'normal-reconnaissance' : order.grade,
+      order.grade,
     );
-    if (refusal !== null) return no(refusal);
+    if (plan.refusal !== null) return no(plan.refusal);
 
-    const key = reconOrderKeyOf(order.sector as SectorId);
-    const chips = cancelling ? 0 : reconnaissancePriceOf(order.grade as PaidGrade);
     const allocationError = allocationRefusal(
-      commitmentContext(view, intent.actor, [key]),
+      commitmentContext(view, intent.actor, [plan.key]),
       intent.actor,
-      key,
-      chips,
+      plan.key,
+      plan.chips,
     );
     if (allocationError !== null) return no(allocationError);
-    if (cancelling) return { admissible: true };
+    if (plan.request === null) return { admissible: true };
 
-    return {
-      admissible: true,
-      reconnaissance: reconnaissanceOfferOf({
-        sectorId: order.sector as SectorId,
-        grade: order.grade as PaidGrade,
-      }),
-    };
+    return { admissible: true, reconnaissance: reconnaissanceOfferOf(plan.request) };
   }
 
   if (intent.kind === 'allocate-commitment' || intent.kind === 'lock-commitment') {

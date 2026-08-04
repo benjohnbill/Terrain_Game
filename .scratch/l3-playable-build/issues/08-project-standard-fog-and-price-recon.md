@@ -244,3 +244,124 @@ it.
   `truth ∈ band` for every viewer, sector and turn across a full match can be
   asserted in tests. Decision 1 forbids truth entering the *projection function*,
   not the test that audits it.
+
+---
+
+## Comments
+
+### Implementation evidence — 2026-08-04
+
+- Commit: `4eff886` (branch `l3-build-ticket08`, worktree `Terrain_Game-t08`)
+- Production authority: `docs/features/fog-of-war-discovery/RULINGS.md` ③ and ④ ·
+  that feature's `MAGNITUDE.md` FG-M① (every value) · ADR 0050 · ADR 0048 ·
+  ADR 0049 · gate 03 § 4 (knowledge matrix) and § 5 (the eight invariants) ·
+  `DECISIONS-OWED.md` R2 (the pricing grammar)
+- Narrow tests: `node --test game/tests/testimony.test.js` **14/14** ·
+  `node --test game/tests/fog-projection.test.js` **27/27**
+- Shared gates: `npm test` **575/575** · `npm run test:game` **298/298** ·
+  `npm run typecheck:game` clean · `npm run verify:game` **PASS** (six lanes:
+  typecheck, build:runtime, build:viewer, test:node, test:browser, parity
+  bit-exact) · `npm run lint:docs` **0 blocking / 21 advisory**
+- Browser/runtime check: covered by `verify:game`'s `test:browser` lane
+  (23 passed) and its `parity` lane — `terrain-cradle@r1`, seed
+  `parity-fixture-0001`, node and browser digests identical (`a7a4c85a156a9beb`)
+- Legacy evidence disposition: `js/intel.js` **not ported** — consulted as
+  evidence that force-attached position works (`fixKey`, `turnsUnobserved`,
+  consumed by `js/window-read.js`) and re-implemented from the contract, per
+  ADR 0041. Its four band constants and `OWNED_CONFIDENCE` are retired by ③ and
+  appear nowhere in the new code.
+- Follow-up: two rows registered in `docs/SYNC-DEBT.md` (contact closure on a
+  composition change; the garrison reinforcement channel as an event) — see
+  § What is not done below.
+
+#### What landed
+
+`game/src/domain/testimony.ts` is the arithmetic, and owns FG-M①'s values in
+code. `game/src/domain/intel.ts` is the ledger — sector records for the immobile
+observables, contacts for the mobile ones — plus the forward-correction envelope
+and the reconnaissance order grammar. `projection/project.ts` is the single
+composition point; `preview` gained the pre-designation certain/contingent split;
+`RealmView` gained the public register pool.
+
+The sealed asymptotes fall out of the sampling rather than being enforced:
+measured over 400 scouts the enhanced grade lands at ±5.03% and the normal grade
+at ±20.25%, with no clamp anywhere in the composition path.
+
+Two bounds were wrong, and the G3 **empty-intersection self-assert caught both
+before any test did** — the oracle doing exactly the job it was designed for. The
+wear ledger has no ceiling (`CONVERSION_TERMINAL_LEDGER` is where its *effect*
+saturates, not where it stops counting), and a battle's loss channel has to be
+judged by whether a contact's **reach** covers the battle's sector rather than by
+which force actually fought; the latter would have handed the viewer a tracking
+guarantee they never bought.
+
+#### What the two-axis review changed — 2026-08-04
+
+Run after `4eff886` and worth recording, because both axes found things neither
+the acceptance list nor the self-asserts caught. Fixes are in `HEAD`.
+
+**Two leaks, both invariant 1:**
+
+- **The enemy's secret capital leaked through a garrison ceiling.**
+  `garrisonCeilingOf` fed the *true* `state.capitals[owner]` into the public
+  bound, so the seat's guard raised exactly one sector's ceiling far above 900 —
+  readable straight off the band list **during the selection beat**, before the
+  opponent had shown their hand. Now keyed to `visibleCapitals`, which is safe
+  because the guard is not raised until the same step that publishes both seats.
+- **Border alarm published a pending movement order.** It read
+  `Detachment.movement` live, which the opponent may still re-aim during the
+  blind beat — so a defender polling the view saw the attacker's plan. Captured
+  at resolution now, as a trace beside `mobilizationTraces` (the existing
+  precedent for exactly this), and carrying where the force *came from* rather
+  than where it is going. The same change makes an alarm **one per ground per
+  realm**: countable alarms were a magnitude reading bought for nothing.
+
+**One scope creep, removed:** a battle deposited a *sector* reading including the
+realm-wide `serving` figure, handing over the 동원 강도 and civilian-register
+reads that reconnaissance exists to sell. A battle now counts the shield it
+fought and nothing behind it.
+
+**One uncited information rule, removed:** the garrison band widened only when a
+posture transfer had actually happened — which reads a posture change back to the
+opponent, and gate 03 § 4 puts enemy standing posture Absent from the projection.
+Replaced by an unconditional bound; the cost is registered in
+`docs/SYNC-DEBT.md`.
+
+**One false reason, corrected at its birthplace.** ③ decision 9's blanket "free
+contact is coarser than the cheapest purchase" is false at FG-M①'s own values;
+FG-M① had corrected its own copy on 2026-08-03 and the correction never reached
+the ruling, from where it travelled into a code comment. Stamped at
+`RULINGS.md` ③ decision 9.
+
+**One finding not repaired, because repairing it is a user decision.** The sealed
+band is **invertible by a viewer who knows the reporting spread** — twelve normal
+looks show a ±21.5% band while the same evidence pins the truth to ±1.35% and
+keeps closing. That is G2's own failure one level up, and it defeats ④ decision
+7's purpose without breaching invariant 8 as written. Every repair is a new dial.
+Registered in `docs/SYNC-DEBT.md` as decision-grade, ahead of the first playtest.
+
+#### What is not done, and why
+
+Three acceptance items are not satisfied, and none of them is an oversight:
+
+- **"Free contact intelligence is coarser than the cheapest purchase"** is **not
+  satisfiable at the sealed values** — repelled assault is ±20% against the ±25%
+  cheapest purchase. FG-M① records the inversion and its own correction note; the
+  code implements the sealed values and the test asserts what actually holds (the
+  enhanced grade still beats ±20%, and battle contact is coarser than normal
+  reconnaissance). Already registered in `docs/SYNC-DEBT.md`; it is a value
+  question and it is the user's.
+- **"The defensive reading surface mirrors the offensive one"** is UI, and no UI
+  was built here. The shell is ticket 04's, which is `needs-info`, and ④ decision 6
+  leaves the census surface to `DECISIONS-OWED.md` Part 2 #13 — ticket 04's
+  blocker, not this one's to pre-empt. What landed is
+  the material a mirror would be built from: one `IntelligenceView` serves both
+  readings, and `alarms` is the defender's free floor.
+- **"The testimony history is readable"** is satisfied as *data*
+  (`SectorIntelView.garrisonHistory`, `ForceContactView.substanceHistory`); the
+  clause "summoned on designation rather than always painted" is presentation,
+  already deferred by ③ decision 4.
+
+Everything else on the list is implemented and tested. The development-grade
+disclosure item holds by inspection: `game/src/ui` reaches the Runtime only
+through `view(viewer)` and `submit(intent)`, and carries no DEV placeholder.

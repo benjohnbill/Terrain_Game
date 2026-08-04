@@ -575,12 +575,89 @@ test('free contact is coarser than the enhanced purchase, which keeps the market
   );
 });
 
-test('border alarm gives existence and heading, and nothing that could be counted', () => {
+test('border alarm gives existence and a crossing, and nothing that could be counted', () => {
   const runtime = openMatch('alarm-0008');
   const view = runtime.view('realm-a');
   for (const alarm of view.intelligence.alarms) {
-    assert.deepEqual(Object.keys(alarm).sort(), ['actor', 'heading', 'sectorId']);
+    assert.deepEqual(Object.keys(alarm).sort(), ['actor', 'from', 'sectorId']);
     assert.ok(!('men' in alarm) && !('substance' in alarm) && !('fatigue' in alarm));
+  }
+});
+
+test('an alarm is one per ground per realm, however many formations stand there', () => {
+  // Two entries where there was one says "they split", which is a magnitude
+  // reading bought for nothing — exactly what ④ decision 3 charges for.
+  const runtime = openMatch('alarm-count-0001');
+  const invader = runtime.view('realm-b').detachments[0];
+  runtime.submit({ kind: 'split-detachment', actor: 'realm-b', detachmentId: invader.id, men: 500 });
+
+  for (let turn = 0; turn < 8; turn += 1) {
+    const alarms = runtime.view('realm-a').intelligence.alarms;
+    const keys = alarms.map((alarm) => `${alarm.sectorId}|${alarm.actor}`);
+    assert.equal(new Set(keys).size, keys.length, `duplicate alarms: ${keys.join(', ')}`);
+    closeTurn(runtime);
+  }
+});
+
+test('an alarm never carries a pending movement order — the plan is a hole card', () => {
+  // Read live off `Detachment.movement`, an alarm would publish the attacker's
+  // re-aimed destination to the defender during the blind beat. It is captured at
+  // resolution instead, so submitting an order changes nothing until it resolves.
+  const runtime = openMatch('alarm-intent-0001');
+  const before = JSON.stringify(runtime.view('realm-a').intelligence.alarms);
+  const detachment = runtime.view('realm-b').detachments[0];
+  const graph = { q: detachment.position.q + 1, r: detachment.position.r };
+  runtime.submit({
+    kind: 'move-detachment', actor: 'realm-b', detachmentId: detachment.id,
+    destinationHex: graph, forcedMarch: false,
+  });
+  assert.equal(
+    JSON.stringify(runtime.view('realm-a').intelligence.alarms),
+    before,
+    'an order the opponent has not yet locked changed what the defender can see',
+  );
+});
+
+test('the enemy capital does not leak through a garrison ceiling before the reveal', () => {
+  // The guard raises one sector's ceiling far above 900, so a viewer comparing
+  // ceilings could read the enemy's pick straight off the band list. Invariant 1,
+  // broken by a field nobody thought of as a field.
+  const runtime = Runtime.open({ world: CRADLE_R1, seed: 'capital-leak-0001', actors: ACTORS });
+  const own = runtime.view('realm-a').realms.find((realm) => realm.actor === 'realm-a').sectors;
+  runtime.submit({ kind: 'choose-capital', actor: 'realm-a', sector: own[0] });
+
+  const beforeReveal = runtime.view('realm-b');
+  assert.equal(beforeReveal.phase, 'capital-selection');
+  assert.deepEqual(beforeReveal.capitals, {}, 'the opponent has not shown their hand');
+  const ceilings = new Set(beforeReveal.intelligence.sectors.map((s) => s.garrison.high));
+  assert.equal(ceilings.size, 1, `one ceiling stands out: ${[...ceilings].join(', ')}`);
+
+  // After the reveal it is public, so the ceiling may and should carry the guard.
+  const theirs = runtime.view('realm-b').realms.find((realm) => realm.actor === 'realm-b').sectors;
+  runtime.submit({ kind: 'choose-capital', actor: 'realm-b', sector: theirs[0] });
+  const after = runtime.view('realm-b');
+  assert.equal(after.capitals['realm-a'], own[0]);
+  const capitalSector = after.intelligence.sectors.find((s) => s.sectorId === own[0]);
+  assert.ok(capitalSector.garrison.high > 900, 'the guard raises the seat it stands on');
+});
+
+test('a battle counts the shield it fought and buys no reading of the register behind it', () => {
+  // Fighting tells you what manned the wall. Turning that into 동원 강도 and the
+  // civilian register would hand over the reads reconnaissance exists to sell.
+  const runtime = openMatch('battle-register-0001');
+  for (let turn = 0; turn < 10; turn += 1) {
+    closeTurn(runtime);
+    const view = runtime.view('realm-a');
+    const fought = view.intelligence.sectors.filter((sector) => sector.observedTurn !== null);
+    if (fought.length === 0) continue;
+    for (const sector of fought) {
+      assert.equal(
+        sector.serving.low, 0,
+        `${sector.sectorId} gained a register floor nobody paid for`,
+      );
+      assert.equal(sector.serving.high, sector.registerPool);
+    }
+    return;
   }
 });
 

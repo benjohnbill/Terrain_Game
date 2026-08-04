@@ -198,17 +198,6 @@ export interface BandInput {
    * has no attrition outside battle, so a subject nobody fought loses nobody.
    */
   readonly lastLossTurn?: number;
-  /**
-   * The latest turn on which men could have arrived by a channel no rate bounds —
-   * a posture transfer into a shield, which moves whatever was standing there.
-   *
-   * The mirror of `lastLossTurn`, and it exists for the same reason: a rate that
-   * had to cover this channel would have to cover the realm's whole field army,
-   * which relaxes every reading to its ceiling in one turn and makes the purchase
-   * worthless. Naming the event instead keeps the band sharp until something
-   * actually happened. Testimony taken on or before it keeps only its lower edge.
-   */
-  readonly lastGainTurn?: number;
 }
 
 /**
@@ -227,21 +216,18 @@ export interface BandInput {
  * access to truth at all, which is why this throws rather than degrading.
  */
 export function composeBand(input: BandInput): Interval {
-  const { testimonies, now, envelope, publicBound, lastLossTurn, lastGainTurn } = input;
+  const { testimonies, now, envelope, publicBound, lastLossTurn } = input;
   let band = publicBound;
 
   for (const testimony of testimonies) {
     const age = Math.max(0, now - testimony.turn);
     const claim = intervalOf(testimony);
     const bled = lastLossTurn !== undefined && testimony.turn <= lastLossTurn;
-    const reinforced = lastGainTurn !== undefined && testimony.turn <= lastGainTurn;
     const corrected: Interval = {
       low: bled
         ? publicBound.low
         : Math.max(publicBound.low, claim.low - envelope.lossPerTurn * age),
-      high: reinforced
-        ? publicBound.high
-        : Math.min(publicBound.high, claim.high + envelope.gainPerTurn * age),
+      high: Math.min(publicBound.high, claim.high + envelope.gainPerTurn * age),
     };
     const met = intersect(band, corrected);
     if (met === null) {
@@ -256,7 +242,7 @@ export function composeBand(input: BandInput): Interval {
           `${testimony.grade}@${testimony.turn} reported=${testimony.reported} ` +
           `envelope=+${envelope.gainPerTurn}/-${envelope.lossPerTurn} ` +
           `public=[${publicBound.low}, ${publicBound.high}] ` +
-          `lastLoss=${String(lastLossTurn)} lastGain=${String(lastGainTurn)}`,
+          `lastLoss=${String(lastLossTurn)}`,
       );
     }
     band = met;

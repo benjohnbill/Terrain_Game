@@ -11,6 +11,119 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
 
 ## Open
 
+- [ ] **The sealed band is invertible by a knowledgeable viewer, and the
+  intersection floor does not stop it — registered 2026-08-04, build ticket 08,
+  found by that ticket's own two-axis review.** This is a **decision-grade
+  finding against `RULINGS.md` ④ decision 7 and FG-M①, not an implementation
+  defect**; the code implements the seals exactly, and that is the problem.
+
+  ④ decision 7 makes the displayed band asymptote at `w − a`, so no accumulation
+  of normal reconnaissance reaches the ±5% floor — the sealed outcome that the two
+  paid grades sell different **destinations** rather than different speeds. That
+  holds for the band. It does not hold for what a viewer can *compute* from it.
+
+  The arithmetic, in one line: a viewer who knows `a` — it is written in
+  `MAGNITUDE.md`, so assume they do — knows each reported figure sits in
+  `[x(1−a), x(1+a)]`, hence `x ∈ [max rᵢ/(1+a), min rᵢ/(1−a)]`. That interval
+  shrinks **without bound** as looks accumulate. Measured: twelve normal-grade
+  looks show a band at ±21.5%, correctly saturating, while the same evidence pins
+  the truth to **±1.35%** and keeps closing. The floor is a property of the
+  rendering, not of the information.
+
+  **It is not fixed by hiding the history.** `composeBand` returns
+  `[max rᵢ(1−w), min rᵢ(1+w)]`, so `max rᵢ` and `min rᵢ` are recoverable from the
+  published band alone by dividing by `(1−w)` and `(1+w)`. The published
+  `substanceHistory` and `garrisonHistory` make it easier to see, not possible.
+  Removing them would cost ③ decision 4's trend read and buy nothing.
+
+  This is **G2's own failure one level up** — "the range's own endpoints pin the
+  truth" — reappearing after the fix that was supposed to remove it. G2 measured
+  the intersection; nobody measured the estimator.
+
+  **Not repaired here, deliberately.** Every repair is a new dial or a new rule:
+  drawing the reported figure from an unbounded distribution instead of a uniform
+  window, varying `a` per observation, or storing a perturbed interval. ④ decision
+  7 rests on "no new dial", so choosing among these is the user's, not an agent's.
+  Note what still holds meanwhile: the *absent* values (treasury, posture, commit)
+  remain unrecoverable, so gate 03 invariant 8 as written is not breached — it is
+  the **purpose** of the floor that this defeats.
+
+  *Picked up by:* the next fog pass, ahead of the first playtest — the estimator
+  is worth more than the band to any player who reads this ledger, so the ROI
+  sweep already owed at FG-M① would measure the wrong thing until it is settled.
+  *Deleted when:* a user ruling either accepts the estimator as intended play or
+  re-cuts the sampling at `RULINGS.md` ④ decision 7.
+
+- [ ] **A composition change closes a contact, and no seal says so — registered
+  2026-08-04, build ticket 08.** Fog `RULINGS.md` ④ decision 2 rules that a
+  division *weakens* a testimony — "it neither kills it nor leaves it intact" —
+  and that "the count stays true of the aggregate that came out of the observed
+  force". Implementing it needed a mechanism the ruling does not name, because
+  the naive chain **breaks containment**: a force of 4,000 divides into 1,000 and
+  3,000, the next look reports ~1,000, and the intersection of `[3600, 4400]` with
+  `[900, 1100]` is empty. Ticket 08 therefore has the Runtime **close** the
+  contact on a division, a consolidation, or a posture transfer out of the force
+  (`game/src/domain/intel.ts` `closeContactsOn`, `ForceContact.closedOnTurn`): the
+  statements stay in the ledger, dated and readable, and stop describing whatever
+  now stands under that name. A fresh observation opens a new contact.
+
+  **Why this is a decision and not an implementation detail.** ④ decision 3
+  explicitly rejected "identity breaks on composition change" — but as the
+  *definition of identity*, on the grounds that it "cannot read off existing
+  state as it appears to", since `Detachment.id` survives both operations. The
+  Runtime performing the split does not have that problem: it knows without
+  reading an id. So the rejected reason does not reach this use, and the
+  acceptance item it must not violate ("No code reads `Detachment.id` to decide
+  whether a viewer's chain survives") is honoured — survival is decided by the
+  composition event and by observation. That is a reading, and the user has not
+  ruled on it.
+
+  A second reading exists and was not taken: let the envelope's gain term cover
+  reinforcement up to the realm's public force ceiling, so a chain survives
+  everything. It was rejected because it relaxes every force band to complete
+  ignorance one turn after it is bought, which contradicts ④ decision 5's "a
+  force marker holds its figure while its position blurs".
+
+  *Picked up by:* the first playtest (build ticket 13), where "I watched that
+  army split and lost my count of it" is either right or obviously wrong.
+  *Deleted when:* a user ruling either adopts the contact-closing mechanism at
+  `RULINGS.md` ④ or names a different one.
+
+- [ ] **The garrison's reinforcement channel is carried as an event, not a rate,
+  and the consequence is asymmetric knowledge — registered 2026-08-04, build
+  ticket 08.** ③ decision 5 derives the forward correction from three sealed
+  inputs and no dial. Two of them compose cleanly at sector grain; the third —
+  march speed against distance — does not, because **ready field men can step
+  into the shield of the ground they stand on**, which moves whatever happens to
+  be standing there rather than a bounded rate. Covering it by a bound means
+  relaxing to the realm's whole force ceiling every turn, and since a realm's
+  one-turn draft already exceeds any single shield's 900-man cap, that makes a
+  garrison reading worthless **before the player can act on it** (a look resolves
+  in its own turn's payoff, so it is one turn old when they next act).
+
+  Ticket 08 therefore covers the channel **unconditionally**, and the shape that
+  falls out is what the player will feel: **a shield reading's floor persists and
+  its ceiling was public all along** — "at least this many" is the whole of what
+  reconnaissance buys on immobile ground. That is 노화 헌법 P3's *decays* rather
+  than *vanishes*, but it is not what "an unobserved sector's band re-widens per
+  turn" reads like, which is the ticket's own acceptance wording.
+
+  **The sharper alternative was built and then removed**, and the reason is worth
+  keeping: marking the sector when a transfer actually happened kept the band
+  sharp until one did — but a band that widens *because* men changed posture reads
+  a posture change back to the opponent, and gate 03 § 4 puts enemy standing
+  posture **Absent from the projection**. That is an information rule no seal
+  grants, so the coarser honest version stands.
+
+  The coarseness has a named cause: **the knowledge matrix carries no adjacency
+  row** (gate 03 § 4), so a viewer cannot tell whether a force was standing there
+  to step in. That absence is already registered as its own open question at
+  `RULINGS.md` ④ § What this ruling does not settle.
+
+  *Picked up by:* the first playtest (build ticket 13), together with the
+  adjacency-row question it depends on. *Deleted when:* the adjacency question is
+  ruled, or a user ruling accepts the event mechanism at `RULINGS.md` ③.
+
 - [ ] **Three live documents state the turn's decision order, and gate 07
   reversed it — registered 2026-08-03.** The ladder in
   `docs/features/operation-plan-catalog/INDEX.md:35-42` and `DOMAIN_MAP.md`'s

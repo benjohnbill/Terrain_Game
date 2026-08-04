@@ -190,6 +190,26 @@ holds a realm's own state at Exact.
    distinguish purposeful spying from incidental contact; if the two are worth the
    same, nothing is bought after first contact and the information market closes.*
 
+   > **Scope corrected 2026-08-04 (build ticket 08's two-axis review), the user's
+   > reason unchanged.** As a blanket statement this decision is **false at
+   > FG-M①'s own values**: repelled assault is ±20%, *finer* than the ±25%
+   > cheapest purchase, and only battle contact (±30%) sits wider. `MAGNITUDE.md`
+   > FG-M① corrected the identical sentence in its own § Precision on 2026-08-03;
+   > the correction did not reach here, and the still-false version then travelled
+   > into the implementation as a code comment before the review caught it on both
+   > axes — the birthplace-goes-stale pattern, one document further along.
+   >
+   > **What stands is the user's reason and the market it protects.** What
+   > actually keeps that market open: the **enhanced grade (±10%) beats every free
+   > reading**, and a defender cannot *choose* to be assaulted, so ±20% is a
+   > windfall on a turn the opponent selected rather than a purchasable
+   > substitute. What is genuinely lost is the normal grade against that one
+   > target on that one turn.
+   >
+   > **Not settled here:** whether ±20% was meant to land inside the paid range at
+   > all. That is a value, it is the user's, and `docs/SYNC-DEBT.md` carries it to
+   > the first playtest with the rest of FG-M①.
+
 ### Derived, not decided — do not re-rule these
 
 - **Scope was already fixed by 노화 헌법 P3.** The mutable layer becomes memory;

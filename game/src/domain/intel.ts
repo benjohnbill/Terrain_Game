@@ -24,9 +24,11 @@ import {
   FORCED_MARCH_PREMIUM,
   MARCH_FATIGUE_PER_HEX,
   MARCH_SPEED,
+  reachCone,
+  type MovementGraph,
 } from './movement.js';
 import type { ChangeEnvelope, ObservationGrade, PaidGrade, Testimony } from './testimony.js';
-import { RECONNAISSANCE_UNIT_PRICE, isPaidGrade } from './testimony.js';
+import { PAID_GRADES, RECONNAISSANCE_UNIT_PRICE, isPaidGrade } from './testimony.js';
 import type { HexPosition, SectorId } from '../world/schema.js';
 import type { ActorId } from '../runtime/types.js';
 
@@ -85,6 +87,52 @@ export function reconnaissanceRequestRefusal(
 export const reconnaissancePriceOf = (grade: PaidGrade): number =>
   RECONNAISSANCE_UNIT_PRICE[grade];
 
+/** What a reconnaissance order comes to, once its own rules have passed. */
+export interface ReconnaissancePlan {
+  readonly refusal: string | null;
+  /** Its key in the shared stack. Meaningful only when `refusal` is null. */
+  readonly key: string;
+  /** What it costs — zero when the order calls a standing look off. */
+  readonly chips: number;
+  /** The order to store, or `null` when it clears the target. */
+  readonly request: ReconnaissanceRequest | null;
+}
+
+/**
+ * One reading of a reconnaissance order, for the Runtime and `preview` alike.
+ *
+ * Shared for the reason `capital-choice.ts` and `commitment.ts` are shared: the
+ * two must answer identically or the preview teaches the player a rule the game
+ * does not have. It stops short of the **spend** check, which each caller runs
+ * against its own allocation map — the projection carries the viewer's own stack
+ * and the Runtime carries everyone's, so that one input genuinely differs.
+ *
+ * `null` grade calls a standing look off, and is checked before the grade rule
+ * because "no grade" is a legal instruction while `reconnaissanceRequestRefusal`
+ * is right to refuse it as a grade.
+ */
+export function reconnaissancePlanOf(
+  context: ReconnaissanceLegalityContext,
+  sectorId: unknown,
+  grade: unknown,
+): ReconnaissancePlan {
+  const cancelling = grade === null;
+  const refusal = reconnaissanceRequestRefusal(
+    context,
+    sectorId,
+    cancelling ? PAID_GRADES[0] : grade,
+  );
+  if (refusal !== null) return { refusal, key: '', chips: 0, request: null };
+
+  const sector = sectorId as SectorId;
+  return {
+    refusal: null,
+    key: reconOrderKeyOf(sector),
+    chips: cancelling ? 0 : reconnaissancePriceOf(grade as PaidGrade),
+    request: cancelling ? null : { sectorId: sector, grade: grade as PaidGrade },
+  };
+}
+
 /**
  * What a purchase on one sector **certainly** buys, and what it buys only if a
  * force happens to be standing there (④ decision 5).
@@ -122,7 +170,7 @@ export function reconnaissanceOfferOf(request: ReconnaissanceRequest): Reconnais
  *
  * Two quantities, both sector-attached because neither can march out of the
  * ground it belongs to: the shield manning it, and the bodies this sector's
- * register has under arms anywhere (④ decision 1 note 2 — a serving body keeps
+ * register has under arms anywhere (④ § What the grill found, finding 2 — a serving body keeps
  * its sector origin wherever it stands, ADR 0047). 동원 강도 and the civilian
  * register are *derived* from the second against the public register pool, with
  * zero new dials (gate 03 § 2).
@@ -146,14 +194,6 @@ export interface SectorRecord {
    * surrenders its own only when the fighting was here.
    */
   servingLossTurn?: number;
-  /**
-   * The latest turn men stepped into this shield from the field beside it.
-   *
-   * A transfer moves whatever was standing there, so no rate bounds it — see
-   * `garrisonEnvelope`. Recorded as an event for every viewer, because the act is
-   * visible from outside even when the count is not.
-   */
-  lastReinforcementTurn?: number;
 }
 
 /**
@@ -234,6 +274,39 @@ export function sectorRecordOf(ledger: IntelligenceLedger, sectorId: SectorId): 
  * is free only under unbroken contact, and re-acquisition is a new contact rather
  * than a resumed track. One unobserved turn cuts the chain, and nothing rejoins it.
  */
+/**
+ * The sectors a force last seen at `from`, `age` turns ago, could stand on now.
+ *
+ * One reader for the projection's published cone and for the Runtime's "could
+ * this contact have been in that battle" question, because two copies of *where
+ * could it be* is how the band a player reads and the floor the Runtime releases
+ * would come to disagree.
+ *
+ * Drawn at the **forced-march cap**, not the ordinary speed: a force may pay
+ * fatigue to go further, so a cone at `MARCH_SPEED` would be a bound the board
+ * can break, and every bound in this model has to be one it cannot.
+ *
+ * Sectors rather than hexes, because the sector is the operational atom
+ * (ADR 0032) and is the grain a commitment is poured onto; a hex cone at
+ * turn-scale staleness is hundreds of entries carrying no decision the sector
+ * list does not already carry.
+ */
+export function reachableSectors(
+  graph: MovementGraph,
+  from: HexPosition,
+  age: number,
+  at: SectorId,
+): SectorId[] {
+  if (age <= 0) return [at];
+  const cone = reachCone(graph, from, age, MARCH_SPEED + FORCED_MARCH_EXTRA_CAP);
+  const reached = new Set<SectorId>();
+  for (const key of cone) {
+    const sector = graph.nodes[key]?.sectorId;
+    if (sector !== undefined) reached.add(sector);
+  }
+  return [...reached].sort();
+}
+
 export function contactFor(
   ledger: IntelligenceLedger,
   actor: ActorId,
@@ -317,8 +390,13 @@ export function closeContactsOn(
  * How a **force**'s count could have moved in one turn.
  *
  * Upward by the recruitment rate term — fresh cohorts may join a standing
- * detachment. Downward by nothing: this slice has no attrition outside battle,
- * and battle is public, so it is carried by `lastLossTurn` rather than by a rate.
+ * detachment. Downward by nothing *by rate*, and that is the casualty curve's
+ * answer rather than an omission of it: ③ decision 5 names the curve as one of
+ * the three bounds, and `casualtyFractions` caps at **1**, so the honest public
+ * bound a battle yields is total loss. Its inputs — the composed power product —
+ * are not public, so nothing sharper is computable by a viewer. A battle is
+ * public, so it is carried as `lastLossTurn`; a turn without one takes nobody,
+ * because this slice has no attrition outside battle.
  * Division and consolidation open no channel here because they close the contact
  * instead (④ decision 2) — a testimony is a statement about the men that were
  * counted, and those men do not stop existing when they are re-labelled.
@@ -328,22 +406,29 @@ export function forceEnvelope(forceLimit: number): ChangeEnvelope {
 }
 
 /**
- * How a sector's **shield** could have changed in one turn, by rate.
+ * How a sector's **shield** could have changed in one turn.
  *
- * The recruitment reach, and nothing else. The shield's other inbound channel —
- * ready field men stepping into the ground they already stand on — is not a rate
- * at all: it moves whatever happens to be standing there, so covering it by a
- * bound would mean relaxing to the realm's whole force ceiling every turn, which
- * makes a garrison reading worthless one turn after it is bought. It is carried
- * as an **event** instead (`Testimony`'s `lastGainTurn`), so the band stays sharp
- * until a transfer actually happens.
+ * Two inbound channels, and the second is not a rate at all: ready field men may
+ * step into the shield of the ground they already stand on, which moves whatever
+ * happens to be standing there. The realm's public force ceiling is the only
+ * bound on that a viewer can compute, because the knowledge matrix carries no
+ * adjacency row (gate 03 § 4) — a viewer cannot tell whether a force was there to
+ * step in.
  *
- * That the event is visible to every viewer while the *amount* is not is the
- * honest position: men walking from a field army into a wall beside it is a thing
- * you can see happen without being able to count it.
+ * **Bounded unconditionally rather than by the event.** Marking the sector when a
+ * transfer actually happened would keep the band sharp until one did — but a band
+ * that widens *because* men changed posture reads a posture change back to the
+ * opponent, and gate 03 § 4 puts enemy standing posture Absent from the
+ * projection. That would be an information rule no seal grants, so it is not
+ * written here.
+ *
+ * The price is real and is what a player will feel: a realm's one-turn draft
+ * already exceeds any ordinary shield's 900-man cap, so a garrison reading's
+ * **ceiling** was public all along and its **floor** is the whole of what
+ * reconnaissance buys on immobile ground. `docs/SYNC-DEBT.md` carries it.
  */
 export function garrisonEnvelope(forceLimit: number): ChangeEnvelope {
-  return { gainPerTurn: recruitmentReachPerTurn(forceLimit), lossPerTurn: 0 };
+  return { gainPerTurn: recruitmentReachPerTurn(forceLimit) + forceLimit, lossPerTurn: 0 };
 }
 
 /**
@@ -395,7 +480,8 @@ export const UNKNOWN_WEAR = Object.freeze({ low: 0, high: Number.POSITIVE_INFINI
  *
  * Upward by the recruitment rate term alone: a posture transfer moves a body
  * between field and shield without changing whether it serves. Downward by
- * nothing by rate — a sector's population cannot march out (④ decision 1 note 2),
+ * nothing by rate — a sector's population cannot march out (④ § What the grill
+ * found, finding 2),
  * which is exactly why the immobile subjects' bands decay rather than vanish.
  * Death is carried by `servingLossTurn`.
  */
