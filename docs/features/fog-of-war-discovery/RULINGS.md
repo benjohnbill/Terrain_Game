@@ -45,6 +45,11 @@ source). The validated presentation contract, sealed on the flow/feel axis
   banned); 동원 강도 = a sector-bound band summoned on command; civilian
   register = derived. (판세's match-level isolation is the issue 03 §4 formal
   amendment of 2026-07-23.)
+  **— 판세 clause amended by ADR 0053 (2026-08-05):** no in-play 판세 mini-meter;
+  the top strip carries **coverage** (how much of the opponent's ground this
+  viewer has observed) and the evidence contrast of ④ decision 6 is summoned from
+  it. The other two encodings stand. This restatement is stamped as well as its
+  birthplace at gate 07 § Sealed 2, because it reads as normative here.
 - **Recon is a paid, deliberate act,** presented as a live band-narrowing (the
   confidence rung walks up the already-sealed 0.45 → 0.70 → 0.90 ladder) while
   intent (hole cards) stays dark — "I opened my eyes here" is felt without the

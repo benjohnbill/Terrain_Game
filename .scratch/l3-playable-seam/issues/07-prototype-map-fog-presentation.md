@@ -145,6 +145,18 @@ not settle.
    banded, progress-bar banned); **동원 강도** = sector-bound band summoned on
    command; **civilian register** = derived. Confirms the issue 03 §4 판세
    re-level (formal amendment landed this batch).
+
+   > **Amended by ADR 0053 (2026-08-05) — the 판세 encoding only.** There is **no
+   > in-play 판세 mini-meter**. Gate 6 fork A (sealed the same day as this gate)
+   > dropped the in-play strategic bar, and `DECISIONS-OWED.md` Part 2 #13 held
+   > the two apart until fog `RULINGS.md` ④ decision 6 named the distinction they
+   > were talking past: an **evidence** surface is not a **verdict** surface. What
+   > rests in the top strip instead is **coverage** — how much of the opponent's
+   > ground this viewer has observed — from which the evidence contrast is
+   > summoned. The 동원 강도 and civilian-register encodings in this item are
+   > **untouched**, and so is the summon-don't-paint principle that shaped all
+   > three. Note what the amendment does *not* say: the mini-meter was not wrong
+   > about wanting a resident match-level read, only about it being an answer.
 3. **The interaction skeleton — commit-first (user direction 2026-07-23).**
    커밋량 → 행동 소환 (exaggerated radial bloom) → 세부 작전 → 가능 지역 빛남 →
    지목. The **commit bar IS the entrance** (the entrance-design principle

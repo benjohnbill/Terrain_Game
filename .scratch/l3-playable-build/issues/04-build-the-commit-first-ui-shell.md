@@ -1,6 +1,6 @@
 ---
 type: task
-status: needs-info
+status: open
 blocked_by: [03]
 ---
 
@@ -69,9 +69,11 @@ Specification gates: **all resolved.** Wayfinder 03 and 07 were already; 10
 closed 2026-08-02 (it owns every acceptance threshold); 12 closed 2026-08-03.
 Gate 12's partition, in one line: **no new integration feature home** — the
 Production homes are the existing feature birthplaces, plus ADR 0049 for the
-Runtime authority and projection boundary. What still holds this ticket at
+Runtime authority and projection boundary. ~~What still holds this ticket at
 `needs-info` is `DECISIONS-OWED.md` Part 2 **#13** (the 판세 in-play surface),
-not a gate.
+not a gate.~~ **#13 closed 2026-08-05 (ADR 0053), and nothing else held this
+ticket: `blocked_by: [03]` was already satisfied. Status moved to `open` in the
+same batch — this ticket is takeable.**
 
 Contract (interim pointers): gate 07 § Answer (commit-first skeleton
 커밋량 → 행동 소환 → 세부 → 가능 지역 빛남 → 지목; commit bar as entrance;
@@ -82,17 +84,26 @@ free target exploration before 확정; commit-notch retrospection with inline
 취소); gate 03 § Answer (the seven-grade viewer matrix and its encodings);
 `docs/DISPLAY-DEBT.md`.
 
-**Conflict to route, not to resolve here.** Gate 07 encoded the derived-band
-grade as **판세 = a match-level mini-meter**, and gate 03 lets treasury
-uncertainty survive *only* as 판세 band width. Duel-pivot Gate 6 then sealed
-(user, fork A) that the in-play **STRATEGIC 판세 bar is DROPPED** — one in-play
-bar, tactical only, with the strategic verdict moved to a post-game coach
-excluded from live play. Those two seals conflict over whether a live 판세
-surface exists at all, and therefore over where treasury uncertainty shows.
-**Do not pick a side inside this ticket.** Build the shell without a live 판세
-meter (the later, user-sealed position), and treat the treasury-uncertainty
-surface as blocked pending the resolution recorded in `docs/SYNC-DEBT.md`.
+**The conflict this ticket was told to route is RESOLVED — ADR 0053
+(2026-08-05, user grill).** Gate 07 had encoded 판세 as a match-level mini-meter
+while Gate 6 fork A dropped the in-play strategic bar, and fog `RULINGS.md` ④
+decision 6 turned out to be the whole of the disagreement, exactly as the note
+below guessed: an **evidence** surface is not a **verdict** surface, and the two
+seals were never talking about the same object.
 
+Ruled: **no in-play 판세 meter.** What rests in the top strip is **coverage —
+how much of the opponent's ground this viewer has observed** — which is legal
+there because it reports the viewer's own epistemic state rather than a position
+on the match. The evidence contrast of ④ decision 6 is **summoned** from that
+band and closes again. Read ADR 0053 for the reasons; they are not restated here.
+
+**One thing left this ticket when #13 closed, and it is registered rather than
+carried:** gate 03 C03.6 routed enemy-treasury uncertainty through "판세 band
+width", and there is no 판세 band. `docs/SYNC-DEBT.md` holds the question. **It
+does not block the build** — both live readings agree that no treasury figure and
+no treasury-specific band is ever published, so the shell is buildable either way.
+
+> *(Retained for the record — the 2026-08-03 note that turned out to be right.)*
 > **New input to #13, registered 2026-08-03 — fog `RULINGS.md` ④ decision 6.** The
 > fog grill named a distinction the two conflicting seals appear to have been
 > talking past: an **evidence surface** is not a **verdict surface**. Gate 6's
@@ -128,3 +139,11 @@ surface as blocked pending the resolution recorded in `docs/SYNC-DEBT.md`.
 - [ ] **Drag is disambiguated by its origin** (ADR 0052 decision 3): drag on empty map pans the camera, drag from an own force issues an order. Gate 07's coupled continuous camera is otherwise untouched, and this is verified with a human in the browser — a pointer-target rule is exactly what a Node test cannot see.
 - [ ] **Garrison reinforcement is honest about being one-way.** Field → garrison is landed; garrison → field is unwired and HELD. The surface does not offer the return trip, and does not imply it is available.
 - [ ] **축성 stays a facade and says so.** Its unit price is a design blank (FG-M①, R2), so it cannot be a verb under the verb test; the shell must not invent a price to make the row look complete.
+
+*Added 2026-08-05 by ADR 0053 (Part 2 #13's closure):*
+
+- [ ] **No in-play 판세 meter exists anywhere in the shell.** Nothing states who is ahead at match level while the match runs. A reviewer can check this by asking of every resident element: is this the viewer's own epistemic state, or a position on the match? The second kind does not ship.
+- [ ] **The top strip carries a coverage band** — how much of the opponent's ground this viewer has observed — and it is the only match-level resident. It reports width, never a centre, the way gate 07 requires a sector band's width to be felt.
+- [ ] **The evidence contrast is summoned from that band and closes again**, honouring all four clauses of fog `RULINGS.md` ④ decision 6 at their birthplace: no published "unaccounted N"; the sector side aggregated; the force side **refused a total** with the refusal visible as a dated list rather than a sum; coverage shown beside. It is evidence, and nothing in it asserts a position.
+- [ ] **Coverage's own definition is settled before it is rendered** — a percentage of *what* (sectors held, sectors visible, land value, register?) is a magnitude question owed to `docs/features/fog-of-war-discovery/`, and it is not a new dial if it reads off a quantity that already exists. The shell must not mint the definition by picking whatever was convenient to compute.
+- [ ] **No treasury figure and no treasury-specific band is published**, whichever way the gate 03 C03.6 question in `docs/SYNC-DEBT.md` is later ruled. Both live readings agree on this, which is why it does not block.

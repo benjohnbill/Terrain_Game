@@ -11,6 +11,40 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
 
 ## Open
 
+- [ ] **Enemy-treasury uncertainty was routed through a surface that no longer
+  exists — registered 2026-08-05, left open by ADR 0053 on purpose.** Gate 03
+  C03.6 (user seal, 2026-07-17) puts enemy treasury **Absent from the
+  projection** — no number, no band, no display convention — and lets its
+  uncertainty survive **"only as 판세 band width"**. ADR 0053 ruled there is no
+  in-play 판세 band, so the clause names a home that is gone. The Absent half is
+  untouched and is not in question; what is homeless is the *residual presence*
+  the clause deliberately preserved, so that a player feels there is something
+  here they cannot see.
+
+  Two readings, and **neither is written down**, which is why 0053 declined to
+  pick one:
+
+  (a) **The coverage band already carries it.** Treasury is one of the things the
+  unobserved half contains, so "52% observed" is a true statement about the
+  player's ignorance of the opponent's money as much as of their men. Costs
+  nothing and adds no surface; the objection is that coverage is a *spatial*
+  read and money is not on the map, so a player may read the band as saying
+  nothing about the treasury at all.
+
+  (b) **The summoned evidence surface carries it as an explicit unknown** — a
+  row that names the treasury and shows no value. Honest and unmissable; the
+  objection is that fog `RULINGS.md` ④ decision 6 (a) forbids a published
+  "unaccounted N", and a row whose whole content is "unknown" is close enough to
+  that line to need the user's eye rather than an agent's judgment.
+
+  **It does not block build ticket 04.** Both readings agree that no treasury
+  figure and no treasury-specific band is ever published, which is the only thing
+  the shell needs in order to be built; the ticket carries that as an acceptance
+  item. **Discuss when:** the coverage band is first rendered and can be looked
+  at, or sooner if the user wants it settled on paper. **Delete this row when:**
+  C03.6 names a live surface, or a ruling records that the residual presence is
+  dropped and the treasury is simply absent with no trace.
+
 - [ ] **The sealed band is invertible by a knowledgeable viewer, and the
   intersection floor does not stop it — registered 2026-08-04, build ticket 08,
   found by that ticket's own two-axis review.** This is a **decision-grade
