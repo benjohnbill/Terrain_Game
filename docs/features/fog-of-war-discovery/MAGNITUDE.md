@@ -165,3 +165,84 @@ moves when either sealed dial moves. Measured evidence for the failure it repair
 and the sweep behind these figures:
 `.scratch/l3-playable-build/issues/08-project-standard-fog-and-price-recon.md`
 § Groundwork G2.
+
+## FG-M② — Coverage, the size of the viewer's own ignorance — SEALED 2026-08-05 (user grill) · L0
+
+Verdict source: user grill, 2026-08-05, opened on the two residues ADR 0053 left
+behind when it closed `DECISIONS-OWED.md` Part 2 #13. That ADR put a **coverage**
+band in the top strip and recorded that the figure "needs a definition and has
+none". The reason was false — build ticket 08 shipped one, and three tests pin it
+— and what was actually missing is this seal. ADR 0053's header carries the
+correction; the definition below **replaces** the shipped one. Presentation is
+`RULINGS.md` ⑤ and is not restated here.
+
+### What it measures
+
+Coverage is the share of the opponent's ground on which this viewer still holds a
+**tight** reading. Per sector it is the share of that sector's prior ignorance the
+viewer has removed:
+
+```
+tightness(sector) = 1 − ( current band width ÷ the width that sector
+                          would carry with no testimony at all )
+
+coverage          = mean of tightness across the sectors the opponent holds
+```
+
+Neither input is authored here. The numerator is the band ③ composes from stored
+testimony. The denominator is the bound public facts alone impose, which ticket
+08's acceptance list already required: *"with no testimony on a sector, the band is
+bounded by public facts alone and never by the truth."*
+
+A sector never observed reads **0**. One just scouted at the enhanced grade reads
+near **1**.
+
+**Zero new dials**, and that is the whole reason the definition takes this shape
+rather than a simpler one.
+
+### Decay is free — 노화 헌법 P3 already does it
+
+The shipped definition counted a sector as covered if it carried **any** testimony
+at all, so a sector looked at once on turn 1 scored the same as one scouted this
+turn at the enhanced grade. Such a band reports high while the statements under it
+have aged into uselessness, which is a **dealer that lies** — the one thing ②'s
+deception disposition forbids outright.
+
+Reading the width instead repairs that with no decay dial and no age curve. P3
+already widens an unobserved testimony every turn toward the public bound, so a
+tightness that reads the width **returns to 0 on its own**, at exactly the rate the
+fog model already moves. An age→number mapping would have been a new dial, and it
+would also score the two paid grades identically on the turn they are bought —
+collapsing the ladder FG-M① exists to keep apart.
+
+### The denominator is spatial, and unweighted
+
+Coverage is a mean over **sector count**, not over land value, register, or any
+other magnitude. Weighting by value was rejected deliberately: it would weight by
+*what the match is about*, and ADR 0053's only ground for seating this band in the
+top strip is that it reports the viewer's own **epistemic** state rather than a
+position on the match. A figure saying "you have seen 62% of what matters" states
+which ground matters, which is the verdict duel-pivot ledger Gate 6 fork A dropped.
+A share of ground states nothing of the kind.
+
+The objection this knowingly accepts: a player who has scouted only worthless
+ground reads high while knowing little that decides anything. Repairing that is not
+coverage's job. Coverage says how far the viewer has looked; *what was found* is the
+summoned evidence surface, and *what the ground is worth* is the map (**ADR 0054**).
+
+### The force side is absent, and structurally so
+
+Coverage is the **sector side only**, and that is not a scoping preference. ④
+decision 6 refuses force contacts a total, because two contacts may describe the
+same force, and a fraction cannot be built without one. So a viewer holding tight
+readings on every enemy sector while having lost track of the field army sees a
+bright band — correctly. *The ground is lit and the army is dark* is a tension to
+keep, not a defect to paper over.
+
+### Where the denominator vanishes
+
+A sector whose public facts already pin the value — a zero register pool leaves no
+room for a serving band — carries a no-testimony width of **0**, making tightness
+`1 − 0/0`. It reads **1**: nothing was ever hidden there, so nothing remains to
+remove. Stated here rather than left to an implementer, because both honest-looking
+alternatives (0, or a throw) misreport a sector the viewer fully knows.

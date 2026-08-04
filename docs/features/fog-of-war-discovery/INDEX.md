@@ -17,6 +17,19 @@ testimony, identity is free only under **unbroken contact**, re-acquisition is a
 contact, the two subjects age visibly differently, the census is an evidence contrast
 rather than a computed remainder, and the dealer does not spend all of its precision.
 
+**Coverage sealed 2026-08-05 (`RULINGS.md` ⑤ + `MAGNITUDE.md` FG-M②).** ADR 0053
+seated a coverage band in the top strip and left two residues; both closed here.
+FG-M② defines the quantity — the mean share of each sector's prior ignorance the
+viewer has removed, read off band width, so **decay is free**: 노화 헌법 P3 already
+widens an unobserved testimony, and tightness returns to 0 on its own. It
+**replaces** ticket 08's shipped counting rule, which scored a twelve-turn-old look
+like a fresh enhanced scout. ⑤ is the surface: **no number, and the band's fading
+is what says this is not a measured value.** The denominator is spatial and
+unweighted on purpose — weighting by value would state which ground matters, which
+is the verdict Gate 6 fork A dropped. **ADR 0054** takes the other residue: the map,
+not the strip, carries what the ground is worth. The projection has not caught up to
+FG-M② yet and the debt is registered with ticket 04 as its trigger.
+
 Scope is the **mutable layer** — enemy substance, fatigue, army position, and
 the reads derived from them. It is *not* position fog: geography has been public
 from turn 0 since 2026-07-14, and the map-discovery model is retired. The heavier
@@ -165,10 +178,14 @@ ADR 0048).
 - `RULINGS.md` — decision record (① wall-grade visibility; ② read-layer
   presentation contract SEALED at L3 gate 07 + registered recon-economy
   candidates, 2026-07-23; ③ the witness model, SEALED 2026-08-03; ④ a testimony's
-  subject, SEALED 2026-08-03).
+  subject, SEALED 2026-08-03; ⑤ the coverage band's surface — no number, the fade
+  is the statement — SEALED 2026-08-05).
 - `MAGNITUDE.md` — the owning dial sheet (FG-M①: observation precision and
   reconnaissance unit prices, plus two derived consequences — the ρ crossover and
-  the reporting spread). Created 2026-08-03; numbers live here and nowhere else.
+  the reporting spread. FG-M②: coverage, the size of the viewer's own ignorance,
+  SEALED 2026-08-05 — derived, zero dials). Created 2026-08-03; numbers live here
+  and nowhere else. Following FG-M①'s own precedent, these derived quantities carry
+  no `GLOSSARY.md` row: the reporting spread has none either.
 
 ## Related
 

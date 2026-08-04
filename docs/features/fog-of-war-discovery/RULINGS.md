@@ -50,6 +50,10 @@ source). The validated presentation contract, sealed on the flow/feel axis
   viewer has observed) and the evidence contrast of ④ decision 6 is summoned from
   it. The other two encodings stand. This restatement is stamped as well as its
   birthplace at gate 07 § Sealed 2, because it reads as normative here.
+  **— extended by ruling ⑤ (2026-08-05):** the coverage band's own encoding is
+  ruling ⑤ and its quantity is `MAGNITUDE.md` FG-M②. ⑤ is an application of this
+  contract, not a departure from it — it reaches for the same "width is felt / no
+  comfortable midpoint" device this bullet's neighbours already seal.
 - **Recon is a paid, deliberate act,** presented as a live band-narrowing (the
   confidence rung walks up the already-sealed 0.45 → 0.70 → 0.90 ladder) while
   intent (hole cards) stays dark — "I opened my eyes here" is felt without the
@@ -457,8 +461,12 @@ Three things the grill established that no seal had:
 
 ### What this ruling does not settle
 
-- **Where the evidence contrast is surfaced** — `DECISIONS-OWED.md` Part 2 #13,
-  build ticket 04.
+- ~~**Where the evidence contrast is surfaced** — `DECISIONS-OWED.md` Part 2 #13,
+  build ticket 04.~~ **SETTLED 2026-08-05.** #13 closed by **ADR 0053** (it is
+  summoned from a coverage band in the top strip, and there is no in-play 판세
+  meter); the residues 0053 left are closed by **ruling ⑤** / `MAGNITUDE.md` FG-M②
+  (what the band shows and how) and **ADR 0054** (the map, not the strip, carries
+  what the ground is worth).
 - **The presentation of testimony history** — ③ deferred it; ruling ② governs the
   surface.
 - **Whether garrison substance stays sector-attached.** It does while garrisons
@@ -469,3 +477,64 @@ Three things the grill established that no seal had:
   ticket 13), where "an enemy army stood next to mine and I could not see it" is
   either right or obviously wrong.
 - **Detection and radar pricing**, still candidates under ruling ②.
+
+## ⑤ The coverage band shows how far the viewer has looked, and says so as a blur — SEALED 2026-08-05 (user grill) · L0
+
+Verdict source: user grill, 2026-08-05, opened on the residues ADR 0053 left when
+it seated a **coverage** band in the top strip. The quantity is `MAGNITUDE.md`
+FG-M② and is not restated here; this ruling is its surface. It is an application
+of ruling ② rather than a departure — ② already sealed a band **whose width is
+felt**, with no comfortable midpoint, on the ground that *the dealer never lies*.
+
+### Decision 1 — the band carries no number
+
+No percentage, no `28 / 49`, no ratio anywhere on the strip. One band.
+
+The reason is the reason ② gives for the enemy-force band: a figure invites a
+precision the underlying statements do not have. Coverage is an average over
+testimonies of differing age and grade, and printing `57%` asserts a sharpness
+that the average destroys. A count would be worse, not better — it reads as
+verifiable while hiding that a sector counted whole may be a twelve-turn-old look.
+
+### Decision 2 — the imprecision is carried by the visual itself
+
+**The band's continuity and its fading are the statement.** It is not a filled bar
+with a dark remainder; it fades, and the fading is what says *this is not a
+measured value*. A player reads "much of their ground is dim to me" without ever
+being handed a quantity to be wrong about.
+
+This is what makes the surface honest rather than merely quiet. The retired
+counting definition would have reported high while its statements aged into
+uselessness (FG-M② § Decay is free); the new quantity decays on its own, and a
+rendering that *shows* decay as blur lets the player see it happen. **A rendering
+that re-sharpens what the quantity blurred contradicts this ruling**, whatever
+device it uses — tick marks, snapping, a numeric tooltip.
+
+Not sealed here: colour, exact geometry, where in the strip it sits. Build ticket
+04, under `docs/DISPLAY-DEBT.md`.
+
+### Decision 3 — the band is the sector side, and must not read as "how much I know"
+
+Coverage cannot include force contacts: ④ decision 6 refuses them a total, so no
+fraction over them exists to be had. The consequence is a state the shell must not
+disguise — **tight readings on every enemy sector while the field army is lost
+shows a bright band.** That is correct and is a tension worth keeping.
+
+What follows is a duty on the surface, not on the quantity: the band must not
+present itself as a general "how much do I know" meter. Whether that is met by a
+name beside it, or by seating it against the contacts read so the contrast does the
+work, is **build ticket 04's** placement call. This ruling requires only that the
+scope be legible by one of them.
+
+### What this ruling does not settle
+
+- **Colour, geometry, and placement in the strip** — ticket 04 (above).
+- **The player-facing name, if any.** FG-M②'s "ignorance removal" is internal
+  vocabulary and must not reach a label in that form; the surface may well carry
+  no word at all.
+- **What the ground is worth** — a different read on a different surface, sealed
+  at **ADR 0054**: the map carries it, the strip does not.
+- **The projection's conformance.** `CoverageView` still ships ticket 08's
+  counting definition and three tests pin it. Re-cutting it to FG-M② is registered
+  in `docs/SYNC-DEBT.md` with build ticket 04 as its trigger — the seal is truth
+  meanwhile.

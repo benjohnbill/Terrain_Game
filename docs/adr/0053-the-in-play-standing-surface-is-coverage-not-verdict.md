@@ -2,7 +2,20 @@
 
 Date: 2026-08-05
 
-Status: Accepted
+Status: Accepted · **Amended by ADR 0054 and by fog `RULINGS.md` ⑤ /
+`MAGNITUDE.md` FG-M② (2026-08-05)**
+
+> **Delta, in two lines.** Both residues this ADR left open closed the same day.
+> **(1)** The C03.6 question it declined to answer is answered by **ADR 0054** —
+> the map, not the strip, carries what the ground is worth, and the treasury's
+> hidden stock is read as a mismatch among three already-public sector reads.
+> **(2)** § Consequences below claims the coverage figure "needs a definition and
+> has none". **That reason was false when written** — build ticket 08 had shipped
+> one and three tests pinned it. The conclusion stood: a *seal* was owed, and it is
+> now `MAGNITUDE.md` **FG-M②**, which replaces the shipped counting definition with
+> an ignorance-removal ratio that decays on its own. Presentation is ruling **⑤**.
+> This ADR's own decision — no in-play 판세 meter, coverage in the top strip — is
+> untouched by either.
 
 Decision source: user grill, 2026-08-05, closing `DECISIONS-OWED.md` Part 2 **#13**
 — the last item holding build ticket 04 at `needs-info`. The conflict spanned
@@ -23,8 +36,10 @@ This ADR records the placement.
   - **Applies fog `RULINGS.md` ④ decision 6** (the census arrives as an evidence
     contrast, never as a computed remainder) at the placement ④ left open. All
     four of its clauses bind here and are not restated.
-  - **Leaves gate 03 C03.6 without a home** — see § Consequences. That is
-    recorded as an open question, not answered here.
+  - ~~**Leaves gate 03 C03.6 without a home** — see § Consequences. That is
+    recorded as an open question, not answered here.~~ **Answered 2026-08-05 by
+    ADR 0054**: the map carries it. Left as written because the deliberate refusal
+    is what sent the question to a grill instead of to an agent's judgment.
   - Confirms ADR 0042 (the strategic verdict stays out of live play) and ADR 0052
     (this surface is not an eval bar and does not enter the two-bar layout).
 
@@ -95,8 +110,32 @@ short of placing it.
   question is registered in `docs/SYNC-DEBT.md`; the surface is buildable
   meanwhile, because both readings agree that no treasury figure and no
   treasury-specific band is ever published.
-- **The coverage figure needs a definition and has none.** "How much of the
+
+  > **Chosen 2026-08-05 by ADR 0054 — and by neither of the two readings above.**
+  > A third exists: the treasury's *flow* is already fully public and already
+  > spatial (income is a function of held sectors, and land value / yield and the
+  > register pool are Public), so the map carries the residual presence and the
+  > hidden **stock** is read as a mismatch among three sector reads. Reading (a) is
+  > closed rather than merely unchosen: FG-M② defines coverage as ignorance about
+  > *ground*, so it definitionally says nothing about money.
+
+- ~~**The coverage figure needs a definition and has none.**~~ "How much of the
   opponent's ground has been observed" is a percentage of *what* — sectors held,
   sectors visible, land value, register? That is a magnitude question for the
   fog feature's own docs, owed before the surface is built, and it is not a new
   dial if it reads off an existing quantity.
+
+  > **The struck reason was false when written, and the conclusion still held.**
+  > Build ticket 08 had shipped a definition — `sectorsObserved / sectorsTotal`,
+  > a sector counted whole if it carried **any** testimony — and three tests pinned
+  > it. What was missing was a **seal**, not a definition, and this bullet's
+  > wording would have sent a reader looking for an absence instead of at a
+  > shipped choice.
+  >
+  > Sealed 2026-08-05 as `MAGNITUDE.md` **FG-M②**, which **replaces** the shipped
+  > definition: coverage is the mean share of each sector's prior ignorance the
+  > viewer has removed, read off band width. The counting definition was the defect
+  > — it scored a twelve-turn-old look the same as a fresh enhanced scout, so the
+  > band reported high while its statements had aged into uselessness. Reading width
+  > instead makes decay free (노화 헌법 P3 already widens it) and keeps the
+  > "not a new dial" condition this bullet correctly set. Presentation: ruling **⑤**.

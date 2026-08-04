@@ -11,39 +11,27 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
 
 ## Open
 
-- [ ] **Enemy-treasury uncertainty was routed through a surface that no longer
-  exists — registered 2026-08-05, left open by ADR 0053 on purpose.** Gate 03
-  C03.6 (user seal, 2026-07-17) puts enemy treasury **Absent from the
-  projection** — no number, no band, no display convention — and lets its
-  uncertainty survive **"only as 판세 band width"**. ADR 0053 ruled there is no
-  in-play 판세 band, so the clause names a home that is gone. The Absent half is
-  untouched and is not in question; what is homeless is the *residual presence*
-  the clause deliberately preserved, so that a player feels there is something
-  here they cannot see.
+- [ ] **`CoverageView` still ships the counting definition FG-M② replaced —
+  registered 2026-08-05.** Fog `MAGNITUDE.md` **FG-M②** seals coverage as the mean
+  share of each sector's prior ignorance the viewer has removed, read off band
+  width. `game/src/runtime/types.ts` `CoverageView` and
+  `game/src/projection/project.ts` still carry build ticket 08's shipped rule —
+  `sectorsObserved` counts a sector whole if it holds **any** testimony, and
+  `sectorsTotal` is a raw count — and three assertions under `game/tests/` pin it.
 
-  Two readings, and **neither is written down**, which is why 0053 declined to
-  pick one:
+  **The seal is truth meanwhile** (§ Documentation & Terminology Law, conflict
+  rule), and nothing is misreported to a player today: `game/src/ui/` holds **no**
+  reference to `coverage`, so the field is computed and rendered nowhere.
 
-  (a) **The coverage band already carries it.** Treasury is one of the things the
-  unobserved half contains, so "52% observed" is a true statement about the
-  player's ignorance of the opponent's money as much as of their men. Costs
-  nothing and adds no surface; the objection is that coverage is a *spatial*
-  read and money is not on the map, so a player may read the band as saying
-  nothing about the treasury at all.
+  Not repaired in the sealing batch **on purpose.** Ticket 08 is `resolved`, so no
+  ticket authorised the change, and work-intake clause 4 makes the ticket the unit
+  of work. Writing it anyway — even as a four-line formula swap — would have been
+  the exact breach the intake rule was adopted on 2026-08-03 to stop, in the batch
+  that cites that rule elsewhere.
 
-  (b) **The summoned evidence surface carries it as an explicit unknown** — a
-  row that names the treasury and shows no value. Honest and unmissable; the
-  objection is that fog `RULINGS.md` ④ decision 6 (a) forbids a published
-  "unaccounted N", and a row whose whole content is "unknown" is close enough to
-  that line to need the user's eye rather than an agent's judgment.
-
-  **It does not block build ticket 04.** Both readings agree that no treasury
-  figure and no treasury-specific band is ever published, which is the only thing
-  the shell needs in order to be built; the ticket carries that as an acceptance
-  item. **Discuss when:** the coverage band is first rendered and can be looked
-  at, or sooner if the user wants it settled on paper. **Delete this row when:**
-  C03.6 names a live surface, or a ruling records that the residual presence is
-  dropped and the treasury is simply absent with no trace.
+  *Picked up by:* **build ticket 04**, which carries it as an acceptance item so the
+  re-cut lands *before* the band is rendered rather than after. *Delete this row
+  when:* the projection computes FG-M② and the three pinning assertions assert it.
 
 - [ ] **The sealed band is invertible by a knowledgeable viewer, and the
   intersection floor does not stop it — registered 2026-08-04, build ticket 08,
@@ -2348,6 +2336,26 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   until then, and a session that lands 09 raises it as the next order of business.
 
 ## Paid
+
+- [x] 2026-08-05 — **Enemy-treasury uncertainty was routed through a surface that
+  no longer exists: PAID** (registered 2026-08-05, the same day, left open by
+  ADR 0053 on purpose). Gate 03 C03.6 preserved the treasury's *residual presence*
+  through "판세 band width", and ADR 0053 removed 판세. Ruled by user grill and
+  recorded as **ADR 0054** — and by **neither** of the two readings this row
+  carried. The reframing measurement: the treasury's **flow is already fully public
+  and already spatial** (income is a function of held sectors; land value / yield
+  and the register pool are Public at every confidence level), so only the
+  accumulated **stock** ever hides. **The map carries it** — per sector, what the
+  ground *earns* (Public, exact), *can raise* (Public, exact), and *has raised*
+  (banded, decays) — as a **summoned lens**, never paint (fog ② 's calm-map seal
+  confirmed). The hidden stock is a *mismatch* among the three and is never
+  computed, which meets fog ④ decision 6's gap-read-not-arithmetic in its own
+  terms. Recorded rather than left implicit: reading **(a)** is **closed, not merely
+  unchosen** — `MAGNITUDE.md` FG-M② defines coverage as ignorance about *ground*, so
+  it definitionally says nothing about money, and this row's own objection to (a)
+  was right. Reading (b)'s "unknown" row is dropped. The Absent half of C03.6 is
+  untouched throughout. ADR 0053 is stamped in the same batch, in its header, its
+  relationship bullet, its § Consequences, and its `README.md` row.
 
 - [x] 2026-08-05 — **판세 in-play surface — two sealed positions conflict: PAID**
   (registered 2026-07-25). Ruled by user grill and recorded as **ADR 0053**:
