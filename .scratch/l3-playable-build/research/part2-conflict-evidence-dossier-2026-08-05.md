@@ -16,6 +16,14 @@ capacity. There is one user, and `docs/agents/issue-tracker.md` allows one
 that precedes them can. This pass does the archaeology so a grill session is
 judgment-only.
 
+**Rows closed since assembly, same day.** **#2** — Encirclement threshold, ruled
+2.2 as a mis-citation, sealed at `combat-formula/MAGNITUDE.md` M7. **#9** — the
+abandonment column comes out, sealed at `combat-formula/MATCHUP.md` § The cede
+rule. **#8** — dissolved by #9 rather than adjudicated. **Live: #7 and #12.** This
+file stays as the evidence those rulings were made against; it is not amended to
+speak as their record, and one of its measured facts is corrected in place below
+(row #9, the scorched-string count).
+
 ## What this dossier does not cover
 
 | Row | Why not |
@@ -284,6 +292,18 @@ carries an explicit user confirmation and the column carries none.
 - **`Scorched Earth` / `청야` appear 0 times in `MATCHUP.md`** (6 times in
   `CATALOG.md`). The matrix carries the tier CATALOG calls a *declaration* and
   omits entirely the tier CATALOG calls *the real plan*.
+
+  > **Corrected 2026-08-05 (the grill that closed this row). The string count is
+  > right and the sentence it supports is misleading.** `MATCHUP.md` references
+  > the scorched tier twice by concept — "scorched variant leaves nothing to loot
+  > (derived)" in the Raid × Abandonment cell, and "scorch to lure" in the
+  > escape-hunting family's Moscow-trap chain. So the matrix was **not unaware**
+  > of the second tier; it knew both and gave a column only to the declaration.
+  > That is a weaker version of this bullet's argument and a stronger version of
+  > the row's: an author who knew the two-tier split still drew one column, which
+  > points at the column being a habit rather than a ruling. Searching for
+  > canonical names alone is what produced the misleading form — the vocabulary
+  > filter of the survey-silence guard, exactly.
 - **The matrix's own cell text uses CATALOG's word.** The Encirclement ×
   Abandonment cell reads: "✅ `bypass escape` (isolated: **the abandonment
   declaration itself is impossible**)".

@@ -71,7 +71,9 @@ ceiling ranges.
   — chokes fail by deletion, not attrition.
 - `refuse` — the defender declines the full contest; the headline concedes
   on the plan's authored terms and resolution-layer products apply instead
-  (Delaying Defense bargain, Strategic Abandonment declaration).
+  (Delaying Defense bargain). A declared Strategic Abandonment also produces
+  `refuse`, but uniformly and against every attack plan, so it is stated as
+  § The cede rule below the matrix rather than authored per cell.
 
 Verb objects may be formula terms (D6) **or resolution-layer products** —
 e.g., `discount escape` acts on the escape clause a refusing plan sells,
@@ -80,21 +82,64 @@ decision, 2026-07-03).
 
 ## Matrix (attack plans × defense plans)
 
-Rows: the 7 attack plans. Columns: the 3 defense plans (non-combat plans do
-not contest; an undefended/unattended sector defends at baseline lever ×1).
-Cells record deviations from `engage`-everything; an empty cell means the
-plain D6 formula runs — 15 of 21 cells are empty by design (sparse
-principle). Status marks: ✅ user-confirmed shape; ◻ proposed, pending.
+Rows: the 7 attack plans. Columns: the **2** defense plans that contest —
+Stronghold and Delaying (non-combat plans do not contest; an
+undefended/unattended sector defends at baseline lever ×1). Cells record
+deviations from `engage`-everything; an empty cell means the plain D6 formula
+runs — **9 of 14 cells are empty by design** (sparse principle). Status marks:
+✅ user-confirmed shape; ◻ proposed, pending.
 
-| attack \ defense | Stronghold Defense | Delaying Defense | Strategic Abandonment |
-|---|---|---|---|
-| Swift Seizure | — (full multipliers; weakness is derived) | ✅ `refuse` (ground traded, garrison slips) | ✅ `refuse` (uncontested transfer) |
-| Deliberate Pressure | — (erosion already lives in its axes) | — (siege prep vs a leaver = wasted commit, emergent) | ✅ `refuse` |
-| Flanking Breakthrough | ✅ `discount fortification` (enters at the seam) | ✅ `discount escape` (withdrawal partially caught) | ✅ `refuse` |
-| Raid | ✅ `bypass fortification`; contest = field interception (garrison × terrain) | — (time bargain worthless vs a raider: no advance to slow) | ✅ `refuse`; scorched variant leaves nothing to loot (derived) |
-| Supply Interdiction | — (contest lives on the rear route) | — | ✅ `refuse` |
-| Encirclement & Annihilation | — (isolation gate + D10 cliff, derived) | ✅ `bypass escape` (isolated: no way out → rout becomes annihilation) | ✅ `bypass escape` (isolated: the abandonment declaration itself is impossible) |
-| Crossing / Landing | — (water penalty is the plan's own identity) | — | ✅ `refuse` |
+| attack \ defense | Stronghold Defense | Delaying Defense |
+|---|---|---|
+| Swift Seizure | — (full multipliers; weakness is derived) | ✅ `refuse` (ground traded, garrison slips) |
+| Deliberate Pressure | — (erosion already lives in its axes) | — (siege prep vs a leaver = wasted commit, emergent) |
+| Flanking Breakthrough | ✅ `discount fortification` (enters at the seam) | ✅ `discount escape` (withdrawal partially caught) |
+| Raid | ✅ `bypass fortification`; contest = field interception (garrison × terrain) | — (time bargain worthless vs a raider: no advance to slow) |
+| Supply Interdiction | — (contest lives on the rear route) | — |
+| Encirclement & Annihilation | — (isolation gate + D10 cliff, derived) | ✅ `bypass escape` (isolated: no way out → rout becomes annihilation) |
+| Crossing / Landing | — (water penalty is the plan's own identity) | — |
+
+### The cede rule — abandonment is not a column — SEALED 2026-08-05 (user grill)
+
+Verdict source: user grill 2026-08-05, closing `DECISIONS-OWED.md` Part 2 **#9**
+and dissolving **#8**. This sheet carried a third column, **Strategic
+Abandonment**, whose seven cells read one repeated `refuse` plus one precondition
+failure. That is a rule drawn as an axis: a table whose whole job is to record
+what the attacker's *method* changes had a column where the method changed
+nothing. What the column held, stated as the rule it always was:
+
+- **A declared abandonment refuses the engagement, whatever the attack plan.**
+  The sector transfers uncontested. The declaration is free and locks zero
+  commitment (`../operation-plan-catalog/CATALOG.md`, the cede family), so it is
+  not a way of spending the turn on defence — it is the way of *not* spending it,
+  and that is its entire value. Presenting it beside Stronghold and Delaying as a
+  third plan hides the one thing it sells (ADR 0021's sacrifice loop).
+- **The escape it sells stays a default, not a guarantee** — unchanged. Its
+  bearer is the escape-hunting family below, which lives in the Delaying column
+  and never depended on this column existing.
+- **Isolation makes the declaration unavailable.** With Encirclement's isolation
+  gate satisfied there is no way out to withdraw along, so the declaration cannot
+  be made at all. That is an availability condition on the card, not a matchup;
+  it moves to the declaration's own availability line in `CATALOG.md`.
+- **Scorched Earth is not a column either**, for a second and independent reason:
+  its effect axes are all self-directed and its own shape entry says **"No battle
+  is sought."** A plan that seeks no battle has nothing to meet an attack plan
+  with. The retired Raid cell's rider — scorched ground leaves nothing to loot —
+  was already marked derived and stays with the plan in `CATALOG.md`.
+
+Why it read as a column for so long: `refuse` is a real verb in the vocabulary
+above and the declaration really does produce it. What the column added on top
+was the false suggestion that *which* attack plan it met mattered.
+
+Two things already agreed with this rule before it was written, which is part of
+why it is a cleanup rather than a redesign: `game/src/domain/battle.ts` knows two
+defence methods (`STRONGHOLD | DELAYING`) and has no third slot, and the slice-2
+operational-layer design lists Strategic Abandonment as a *board verb* — "free
+declaration, immediate transfer channel" — separately from Scorched Earth's
+"turn-consuming self-damage resolution".
+
+No L-stamp: this seal sets no value. It removes a column and states the rule that
+was inside it; the values it touches (the escape fraction, D10) keep their own.
 
 ### Confirmed: the escape-hunting family (2026-07-03)
 

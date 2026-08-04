@@ -733,6 +733,16 @@ self-contradiction. The card therefore splits:
   *chosen sacrifice* rather than neglect, and situation judgment folds the
   threat as acknowledged instead of re-alarming every turn (ADR 0019
   dissonance handling).
+
+  **Availability (shape, the declaration) — added 2026-08-05, relocated not
+  newly ruled.** An own sector, **not isolated**: with Encirclement's isolation
+  gate satisfied there is no way out to withdraw along, so the declaration
+  cannot be made at all and the engagement resolves through the D10 cliff
+  instead. This condition was written in `../combat-formula/MATCHUP.md`'s
+  Encirclement × Abandonment cell ("the abandonment declaration itself is
+  impossible"); the cede rule of 2026-08-05 retired that column and sent the
+  condition here, where the card's other availability gates live. It is the same
+  ruling, at a better address.
 - **Scorched Earth (청야 소각) is the real plan.** Burning is work; it
   consumes the turn.
 

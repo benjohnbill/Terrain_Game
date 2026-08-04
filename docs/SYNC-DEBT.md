@@ -1385,6 +1385,16 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   the same reason as the 2026-08-02 note — the four that remain still need it. Do
   not re-grill #1–#6, #10, #11, #13.
 
+  **Third partial payment, same day. Two remain live: Part 2 #7 and #12.** The
+  same session closed **#9** — the matchup matrix's abandonment column comes out,
+  sealed at `docs/features/combat-formula/MATCHUP.md` § The cede rule — and **#8
+  dissolved** as a consequence rather than being adjudicated: the six cells the
+  two rival tallies disagreed about are exactly the cells the column took with
+  it, so both readings now count 5 authored / 9 derived of 14. #8's underlying
+  definitional question (is a ✅ mark authorship or status?) is recorded in its
+  row as **unexercised**, to be settled by ticket 11 only if a bare-`refuse` cell
+  is ever authored. Enumeration above still lists all twelve; kept for #7 and #12.
+
 - [ ] **Dials named-but-unvalued in design docs, valued only in code**
   (registered 2026-07-25, demand-driven value sweep). The slice-2 operational
   design seals each fatigue/movement/supply dial by *number* — "dial (3)",

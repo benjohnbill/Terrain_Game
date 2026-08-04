@@ -19,10 +19,18 @@ through a small closed verb vocabulary over a sparse matrix.
 Specification gates: **all resolved.** Wayfinder 10 closed 2026-08-02 (it owns
 every acceptance threshold); 12 closed 2026-08-03 — **no new integration feature
 home**, the Production homes are the existing feature birthplaces plus ADR 0049.
-What still holds this ticket at `needs-info` is `DECISIONS-OWED.md` Part 2 **#8**
-and **#9** (the matchup matrix), plus its recorded dependency on the
-operational-manoeuvre pass — not a gate. **#2** (the encirclement threshold) closed
-2026-08-05 at 2.2.
+What still holds this ticket at `needs-info` is its recorded dependency on the
+operational-manoeuvre pass — not a gate, and no longer a Part 2 row. All three of
+this ticket's rows closed 2026-08-05: **#2** at 2.2, **#9** by the cede rule (the
+abandonment column comes out — the matrix this ticket builds is **7×2 = 14 cells,
+5 authored**, not 21), and **#8** dissolved by #9 rather than adjudicated.
+
+**One thing #8 leaves this ticket, and it is a trap worth naming.** Its
+definitional question — does a ✅ mark record authorship or status? — was never
+answered, because the collapse removed every cell that made the two readings
+differ. If this ticket ever authors a cell as a bare `refuse` with no further
+terms, the question is live again and is this ticket's to settle. Do not read #8's
+closure as an answer to it.
 
 **One item arrives with that closure.** M7's threshold table carries exactly one
 unresolved conditional, and it is on this ticket's stage: the Flanking Breakthrough

@@ -35,8 +35,10 @@ run on fogged inputs, is the pre-battle forecast.
 ## Status
 
 **Structural pass COMPLETE (2026-07-03): decisions D1–D11 settled** (see
-`FORMULA.md`), matchup matrix shaped 21/21 (6 authored cells + 15
-derived-by-design; `MATCHUP.md`), factor ranges survey-validated
+`FORMULA.md`), matchup matrix shaped 14/14 (5 authored cells + 9
+derived-by-design; `MATCHUP.md` — 7×2 since the cede rule of 2026-08-05
+retired the abandonment column, which is also why the old 21/21 and its two
+rival tallies are gone), factor ranges survey-validated
 (`RESEARCH.md`). **Magnitude pass COMPLETE (2026-07-03 → 07-05): M1–M13
 sealed** (`MAGNITUDE.md`; M12 tempo-gated confirm, M13 economy→mass with
 cap growth structure sealed 07-05 ruling ⑮ — numbers → A-3), validated by
@@ -55,6 +57,16 @@ which is M4's rout onset, plus **§ Consequence — the rout cliff is a reading 
 EVAL BAR** (SEALED, L1), the first presentation ruling this feature holds. One item
 went out to L3 build ticket 11: M7's Flanking row still carries its unresolved
 `1.4–1.5` conditional, and 11 is the matchup-fraction stage that owes the check.
+
+**`MATCHUP.md` re-shaped 2026-08-05 (user grill) — 7×2, and § The cede rule is
+new.** Part 2 **#9** closed: Strategic Abandonment is not a defence column, since
+the declaration is free, locks zero commitment, and produces the same `refuse`
+against every attack plan — a rule, not an axis. Part 2 **#8** (the filled-cell
+count) **dissolved** in the same act: the six cells whose reading the two rival
+tallies disagreed about are exactly the cells that left, and both readings now
+count 5 authored / 9 derived. The isolation precondition that lived in the
+Encirclement × Abandonment cell relocated to the declaration's availability line
+in `../operation-plan-catalog/CATALOG.md`.
 
 ## Where This Sits
 

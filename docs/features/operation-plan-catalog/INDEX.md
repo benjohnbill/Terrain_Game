@@ -19,6 +19,18 @@ defining zero or a unique core axis). Remaining: the magnitude pass (relative
 calibration with the combat-balancing formula) and ADR promotion once the
 shapes have survived a review. Content may still churn at magnitude level.
 
+**The cede family's two tiers hold, and both are now outside the matchup matrix
+(2026-08-05, user grill).** `DECISIONS-OWED.md` Part 2 #9 asked whether
+combat-formula's matchup matrix should keep a "Strategic Abandonment" defence
+column against this catalog's ruling that abandonment is a declaration and
+Scorched Earth is the real plan. **Ruled for this catalog:** the column came out
+and became `../combat-formula/MATCHUP.md` § The cede rule. Two consequences land
+here — the declaration gained the **availability line** it never had (an own
+sector, *not isolated*, relocated from the matrix cell that used to carry it), and
+Scorched Earth is confirmed outside the matrix on its own grounds, since its axes
+are all self-directed and its shape entry says no battle is sought. Neither tier's
+shape changed; only where the rule is written did.
+
 Authoring method (user-approved): **shape first, magnitude later**. Each plan
 first fixes its identity — core axes, deliberate zeros, sibling contrasts, risk
 character (`CATALOG.md` § Authoring Method). Exact magnitudes are calibrated in
