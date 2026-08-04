@@ -22,13 +22,36 @@ the reads derived from them. It is *not* position fog: geography has been public
 from turn 0 since 2026-07-14, and the map-discovery model is retired. The heavier
 Challenge/terrain-fog work stays deferred.
 
-Not yet built. The L3 implementation is build ticket 08
+**Built 2026-08-05.** The L3 implementation is build ticket 08
 (`.scratch/l3-playable-build/issues/08-project-standard-fog-and-price-recon.md`),
-which is **`open` and takeable as of 2026-08-03**: every Wayfinder gate has closed
-and ruling ④ lifted the last hold. *(This paragraph said "whose remaining gate is
-Wayfinder 12 (spec partition)" until 2026-08-03; gate 12 closed that morning and
-ruling ④ closed the blocker found underneath it.)* The 2026-07-01 design spec is
-**evidence of shape, superseded on the model** — read `RULINGS.md` ③ then ④.
+now `resolved` — the testimony and intelligence-ledger modules landed and merged
+into `main`. *(This paragraph read "whose remaining gate is Wayfinder 12" until
+2026-08-03, then "**`open` and takeable as of 2026-08-03**" until 2026-08-05. Both
+were true when written; the ticket closed the night of the 4th.)* The 2026-07-01
+design spec is **evidence of shape, superseded on the model** — read `RULINGS.md`
+③ then ④.
+
+**Two things landed on this feature the same week and are not in the rulings
+above.**
+
+- **Where ④ decision 6's census surface goes — placed 2026-08-05 by ADR 0053.**
+  ④ sealed what the evidence contrast must do and deliberately did not place it,
+  naming build ticket 04. It is placed now: **no in-play 판세 meter**; the top
+  strip carries **coverage** (how much of the opponent's ground this viewer has
+  observed), and the contrast is summoned from it. That closed
+  `DECISIONS-OWED.md` Part 2 #13 and amended this feature's own `RULINGS.md` ②,
+  which restated gate 07's retired 판세 mini-meter encoding in a form that reads
+  as normative — stamped there. One thing did **not** close with it: gate 03
+  C03.6 routed enemy-treasury uncertainty through a 판세 band width, and there is
+  no 판세 band (`docs/SYNC-DEBT.md`).
+- **⚠ An open decision-grade finding against this feature's own seal.** Ticket
+  08's two-axis review found the sealed band is **invertible by a knowledgeable
+  viewer**: ④ decision 7's asymptote holds for the band and not for what a viewer
+  can compute from it, so accumulated looks pin the truth far tighter than the
+  displayed width admits. The code implements the seals exactly, which is why it
+  is a decision against ④ decision 7 and FG-M① rather than a defect. Registered
+  in `docs/SYNC-DEBT.md` § Open and **not yet ruled** — read it before treating
+  FG-M①'s values as settled.
 
 ## Idea
 
