@@ -40,10 +40,13 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   another file already knows is derived at read time* — and that derivation exists
   for doc→doc and is missing for code→doc.
 
-  **Discuss when:** (a) before ticket 04 or 09 is claimed, whichever comes first;
-  (b) in the next `.scratch/doc-structure/` pass, as a ticket whose type and scope
-  the user agrees first. **Delete this row when:** 04's scope is ruled and the
-  code→doc derivation question has its own ticket.
+  (b) is now charted: `.scratch/doc-structure/issues/15-code-to-doc-derivation.md`
+  (`grilling`, takeable, type and scope agreed with the user 2026-08-04). It owns
+  the general question and deliberately does not restate this row.
+
+  **Discuss when:** (a) before ticket 04 or 09 is claimed, whichever comes first.
+  **Delete this row when:** (a) is ruled — (b) now lives in ticket 15 and leaves
+  with it, not with this row.
 
 - [ ] **Three live documents state the turn's decision order, and gate 07
   reversed it — registered 2026-08-03.** The ladder in
