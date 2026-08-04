@@ -16,16 +16,30 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   landed on `demo/school-submission` (`c7be696`) and is deployed, because the
   submission deadline was that day and the branch is the deploy source. The user
   ruled the resting state is a **merge into `main`**; it was deferred, not
-  declined. Two consequences are unpaid. (a) `main`'s `index.html` still sells the
-  pre-pivot game, so a cold reader of the trunk gets the wrong product. (b)
-  `docs/superpowers/specs/2026-07-16-strategy-ground-ax-landing-design.md` (Status:
-  Approved) now misstates the hero H1, and still says the secondary CTA "opens
-  `game.html`" and that `game.html` is "retained as the current development build"
-  — both false since 2026-08-03. A reader implementing from it would build
-  backwards. **Discuss when:** the submission is in and `main`'s working tree is
-  clean (the documentation lane had 14 uncommitted files at the time of writing).
-  **Delete this row when:** the branch is merged into `main` and the design doc is
-  re-cut in the same batch.
+  declined. Two consequences are unpaid.
+
+  (a) `main`'s `index.html` still sells the pre-pivot game, so a cold reader of the
+  trunk gets the wrong product.
+
+  (b) `docs/superpowers/specs/2026-07-16-strategy-ground-ax-landing-design.md`
+  (Status: Approved) records three things that later rulings have moved past, with
+  nothing at the doc saying so: the headline (L38), the primary/secondary CTA roles
+  and `game.html` as the secondary's target (L40–41), and `game.html` as the
+  retained development build (L103). These are **not defects in the doc** — it is an
+  accurate 2026-07-16 record. What is missing is the stamp: the take-it-down ruling
+  and ADR 0051 amended the `game.html` lines, and the 2026-08-03 duel re-cut amended
+  the headline. Disposition is per-claim against the sealing ruling or the current
+  code, not a rewrite from a reader's judgement.
+
+  One item inside (b) has **no ruling behind it either way**: the primary and
+  secondary CTA roles are now inverted from the approved design (primary opens the
+  build, secondary scrolls to the model). That inversion arrived with the demo as a
+  side effect, not as a decision. It is a question for the user, not a stamp.
+
+  **Discuss when:** the submission is in and `main`'s working tree is clean (the
+  documentation lane had 14 uncommitted files at the time of writing).
+  **Delete this row when:** the branch is merged into `main`, the design doc carries
+  its amendment stamps, and the CTA inversion is either ruled or reverted.
 
 - [ ] **What does a testimony attach to — a sector, or a force? USER RULING OWED,
   registered 2026-08-03.** Fog `RULINGS.md` ③ decision 5 derives the ageing
