@@ -65,6 +65,59 @@ case and they may need different mechanisms: (a) the same thing gets built twice
 explicit position that lint findings are reports, never legislation. A check that
 blocks a takeable ticket is a strong instrument; decide deliberately.
 
+## Live cases
+
+Evidence for the grill, not proposals. Added as they occur.
+
+**Case 1 is the trigger case** — build tickets 04 and 09 describing work whose
+code was already on `main`. It is numbered here so this list is complete, and it
+is **not restated**: it lives in `docs/SYNC-DEBT.md` § Paid (the row *Tickets 04
+and 09 describe work whose code is already on `main`*, paid 2026-08-05 on the
+scoping half) and in those two tickets' bodies, per § Why this exists above.
+
+**Case 2 — a feature's front door went two events stale, and the duty that owns
+it has no consumer (2026-08-05).** The session that ruled build ticket 04 stamped
+`docs/features/fog-of-war-discovery/RULINGS.md` ② and never touched that
+feature's `INDEX.md`, which still read *"Not yet built … `open` and takeable as
+of 2026-08-03"* while build ticket 08 was `resolved` and merged. It was also
+missing the decision-grade finding ticket 08's own review had raised against that
+feature's seal. A cold reader arriving at the front door would have gone looking
+for finished work, and would have read shaken values as settled. Caught by
+`/final-check`, not by any check.
+
+What makes it evidence rather than an anecdote is that **the same batch ran a
+clean control**. Three session-close duties fired; the two with a consumer were
+caught and the one without was not:
+
+| Duty | Consumer | Outcome |
+|---|---|---|
+| Register a new term (ritual 7) | `headerDiff` — **blocking** | caught pre-commit, fixed |
+| Mark a paid ledger row (ritual 6) | `ledgerCurrency` — advisory | caught, row moved to Paid |
+| Stamp superseded seals (ritual 5) | `adrStampDuty` | passed |
+| **Refresh a touched feature's INDEX (ritual 3)** | **none** | **missed** |
+
+This bears on three of the questions above.
+
+- **Q2 (what does the deriving).** An INDEX-freshness check is one instance of
+  the git-history-probe candidate, and the machinery already exists —
+  `scripts/audit-lint.js:783` runs `git log --since=30.days` for
+  `ledgerCurrency`. The work is roughly thirty lines. **That is precisely why it
+  was not built ahead of this grill**: cheap to build is not the same as decided,
+  and building it first would have picked Q1's fork by default.
+- **Q3 (which failure).** This is a third failure mode beside the two recorded —
+  not "built twice" and not "unreviewed code adopted as a foundation", but
+  **a Projection-layer surface silently outrunning what it describes**. It may
+  want the same mechanism or a different one.
+- **Q4 (blocking or advisory).** A diff-based INDEX check can only see that the
+  file changed, never that it is *accurate*, so it is silenceable by a cosmetic
+  edit — the `ledgerCurrency` kind, not the `headerDiff` kind. Worth weighing
+  against the standing position that findings are reports.
+
+**Deliberately not acted on.** No ticket was created and no check was written:
+n=1, the measured cost was a few hours of a stale front door caught at session
+close, and the repo's own bar for some clauses is a third independent case. If a
+second instance appears, note it here rather than re-deriving the argument.
+
 ## Out of scope
 
 Building the tool. Once Q1–Q4 are ruled, the implementation becomes its own
