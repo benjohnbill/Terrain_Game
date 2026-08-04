@@ -16,6 +16,14 @@ blocked_by: []
 >   `resolved`, so the derivation reports this ticket unblocked; it stays
 >   `needs-info` for the specification gate below, not for a ticket.)*
 
+> **Implemented 2026-08-04 — read § Comments before starting anything here.**
+> `4eff886` and `9a75bf5` on branch `l3-build-ticket08`. `verify:game` passes on
+> all six lanes. **Status is still `open`, and deliberately**: three acceptance
+> items below are unsatisfied and none of them is code this ticket may write —
+> one is a value question for the user (the FG-M① ladder inversion), one is
+> ticket 04's UI, and one is a surface ③ decision 4 already deferred. Whether
+> those three should hold this ticket open or move off it is the user's call.
+
 **What to build:** Thicken the Runtime's single blur seam from the migration-grade
 projection into Standard Fog, and make reconnaissance a real purchase. The land
 and everything derived from it is published; only the mutable draw on it is
