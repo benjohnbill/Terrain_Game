@@ -27,6 +27,12 @@ and unreviewed on this repo's two axes. The disposition is the same as ticket
 scoping call, registered in `docs/SYNC-DEBT.md` § Open. The front matter is
 correct as it stands — ticket 04's note says why.
 
+**Ruled 2026-08-05 with ticket 04: merge, not adopt or discard.** `eval-r.ts`
+comes forward with the shell rather than being rebuilt, and this ticket inherits
+it as a starting point that has not had the two-axis review. The front matter
+still stands — this ticket's own blockers (Part 2 #3 is now closed; **#2**, the
+encirclement threshold, is not) are what hold it, never the scoping question.
+
 **Hands off a ruling when it lands (registered 2026-07-31).** This ticket is the
 last one before the operational-manoeuvre pass and ticket 13 are found to be
 waiting for each other — a `Seal conflict` recorded in
@@ -69,7 +75,10 @@ own projection and nothing else.
 - [ ] The true value is always inside the displayed band; no display can exclude it.
 - [ ] The bar is computed at an equal-commit baseline with a live marker at the player's chosen commit, and the equal-commit basis is labelled so the player is not misled into reading it as a prediction of their own allocation.
 - [ ] Operation-plan threshold needles are shown from their owning magnitude doc so the catalog teaches itself without a tutorial.
-- [ ] LEFT tracks the clicked front and updates live as the player re-clicks eligible sectors before 확정; RIGHT holds the descriptive average across eligible fronts for the chosen action; picking an action shows both at the average and clicking a front makes only LEFT diverge.
+- [ ] ~~LEFT tracks the clicked front and updates live as the player re-clicks eligible sectors before 확정; RIGHT holds the descriptive average across eligible fronts for the chosen action; picking an action shows both at the average and clicking a front makes only LEFT diverge.~~ **Re-cut 2026-08-05 by ADR 0052 — see the two items below.** The struck text is kept rather than deleted because it records what the right bar was *for*: it fixed a reference so the per-engagement bar read as a deviation instead of sloshing. That problem is real and its answer moved rather than vanished.
+- [ ] **The two-bar layout stands, and the anchor sits inside each bar.** LEFT still tracks the clicked front and updates live as the player re-clicks eligible sectors before 확정. What the RIGHT bar holds is **this ticket's to cut against a running game** — the descriptive average across eligible fronts is retired, because ADR 0052 lets force divide across several fronts in one turn and "this front versus typical" stops being a decision input. Sloshing is damped by the equal-commit baseline the bar already carries, not by a second bar.
+- [ ] **The baseline-and-marker device reads on both decision axes** (ADR 0052 decision 5): baseline = the board with the player's decision removed, marker = the board with it applied, and the gap is what the decision bought. Commitment already runs this. Force joins it, so a player who sends half an army sees what the other half would have been worth.
+- [ ] **The force-axis baseline is the force presently standing there — 가안 (L0), confirmed here, not before.** ADR 0052 decision 7 records the structure and marks the value provisional on purpose: a baseline is an input to the tactical-R composition, which this ticket's own § In-build design forbids grilling ahead of a running prototype. Bring it to the user on the live shell and record their ruling; if it does not read, the two rejected candidates are 전군 투입 and 균등 분할.
 - [ ] The average is descriptive — an aggregate of the player's own fogged options — and is never presented as a will-I-win-the-turn verdict.
 - [ ] The bar exists only for R-shaped actions (attack and defence); non-combat actions have no bar rather than a meaningless one.
 - [ ] There is no numeric what-if calculator and no assumed-enemy sliders; the pre-commit read is the band against the threshold margin.

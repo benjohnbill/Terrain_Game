@@ -123,42 +123,6 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   *Picked up by:* the first playtest (build ticket 13), together with the
   adjacency-row question it depends on. *Deleted when:* the adjacency question is
   ruled, or a user ruling accepts the event mechanism at `RULINGS.md` ③.
-- [ ] **Tickets 04 and 09 describe work whose code is already on `main`, and no
-  check could have noticed — registered 2026-08-04.** The 2026-08-03 submission
-  lane built a commit-first shell and an eval-R computation over the real Runtime
-  (`game/src/ui/DemoShell.tsx` 717 lines, `shell.css`, a reworked `App.tsx`,
-  `eval-r.ts` 254 lines; `45170fd`, merged `9a17cb3`) under a same-day deadline
-  and without this repo's two-axis review. Both tickets still read "What to
-  build", and both are correct to: `status` answers only whether the ticket can be
-  picked up. The notes are filed in each ticket's body, where the schema puts
-  outcomes and history.
-
-  Two things are owed, and they are different sizes.
-
-  (a) **The scoping call, which is the user's**: is `DemoShell.tsx` ticket 04's
-  deliverable — making 04 *harden and adopt* rather than *build*, and putting its
-  `blocked_by: [03]` in question — or a probe that 04 replaces? Ticket 09 follows
-  whatever 04 is ruled. ADR 0051 does not settle it: it bounds how the demo
-  crosses into the *landing* as an opaque artifact and says nothing about its
-  source, which the merge placed on `main` regardless.
-
-  (b) **The structural gap this exposed**: the tracker derives ticket state from
-  other tickets (`scripts/frontier.js`) and audits documents against documents
-  (`scripts/audit-lint.js`). Nothing derives anything from the *code*. So
-  `frontier.js` printing `TAKEABLE 04` never meant "no implementation exists" — it
-  meant "this tool did not look". Code moves inside a session; a ticket moves only
-  when someone edits it, so the divergence is structural rather than carelessness,
-  and it will recur. The schema already states the cure in principle — *anything
-  another file already knows is derived at read time* — and that derivation exists
-  for doc→doc and is missing for code→doc.
-
-  (b) is now charted: `.scratch/doc-structure/issues/15-code-to-doc-derivation.md`
-  (`grilling`, takeable, type and scope agreed with the user 2026-08-04). It owns
-  the general question and deliberately does not restate this row.
-
-  **Discuss when:** (a) before ticket 04 or 09 is claimed, whichever comes first.
-  **Delete this row when:** (a) is ruled — (b) now lives in ticket 15 and leaves
-  with it, not with this row.
 
 - [ ] **Three live documents state the turn's decision order, and gate 07
   reversed it — registered 2026-08-03.** The ladder in
@@ -2372,6 +2336,28 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   until then, and a session that lands 09 raises it as the next order of business.
 
 ## Paid
+
+- [x] 2026-08-05 — **Tickets 04 and 09 describe work whose code is already on
+  `main` — the scoping half PAID** (registered 2026-08-04). Ruled by user grill:
+  ticket 04 **merges**. Neither horn of the recorded question was right, and the
+  measurement is why — **neither file is a superset of the other.**
+  `DemoShell.tsx` carries the sealed commit-first flow and the LEFT/RIGHT bands
+  and none of recruitment (0 references against `App.tsx`'s 34), division, merge,
+  garrisons, the battle card, or forced march as a choice; `App.tsx` carries all
+  of those, none of the flow, and declares itself a probe in three places —
+  `TurnStrip` says outright that it *"is meant to be deleted."* Adopting either
+  as-is would have silently dropped the other half. So 04 builds one shell from
+  `DemoShell.tsx`'s flow with `App.tsx`'s mechanical surface brought into it, and
+  closes the second Vite entry; two duties ride with the ruling (a seam audit as
+  the **first** act, asking whether tickets 09–13 can plug into this shape rather
+  than whether the code is good; and correcting the three self-declaring comments
+  that become false on adoption). Ticket 09 follows, inheriting `eval-r.ts`.
+  Recorded at the birthplaces: ticket 04 § body and acceptance list, ticket 09 §
+  body, and **ADR 0052** for the design decisions the grill reached on the way —
+  those are not this row's and are not restated here. The structural half (b)
+  left with `.scratch/doc-structure/issues/15-code-to-doc-derivation.md` on
+  2026-08-04, as this row's own deletion condition said it would; **ticket 15 is
+  still open and takeable.**
 
 - [x] 2026-08-03 — **What does a testimony attach to — a sector, or a force? PAID**
   (registered 2026-08-03, same day). Ruled by user grill: **neither reading alone —

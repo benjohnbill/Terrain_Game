@@ -437,7 +437,17 @@ All feel/tempo numbers are 가안, tuned in L3 play per the standing frame.
     The prototype's 가정 계산기 (assumed-enemy sliders) is retired for a one-line intuitive
     verdict driven off the bar.
   - **TWO vertical bars — LEFT = clicked front's R, RIGHT = this action's AVERAGE across
-    eligible fronts (2026-07-23, user; prototype direction).** Solves the multi-front
+    eligible fronts (2026-07-23, user; prototype direction).**
+    > **Amended by ADR 0052 (2026-08-05) — the RIGHT bar's ROLE only.** Force can now
+    > be divided across several fronts in one turn (ADR 0052 decisions 1–2), so the
+    > player is no longer choosing one front, and "this front vs typical" stops being
+    > a decision input. The **two-bar layout stands**; what the right-hand bar holds
+    > is ticket 09's to re-cut against a running game. The *sloshing* problem below is
+    > real and is **not** left unanswered: the anchor moves inside the LEFT bar, which
+    > already carries an equal-commit baseline plus a live marker (premise 2 above) —
+    > ADR 0052 decision 5 generalises that same device to the force axis. Everything
+    > else in this clause, and the other nine clauses of this seal, stand.
+    Solves the multi-front
     "sloshing": the left (per-engagement) bar is disorienting alone; the RIGHT bar fixes an
     average baseline so the left reads as a MEANINGFUL DEVIATION (this front vs typical =
     "where is the soft spot"). UX: action picked → both show the average (match); click a

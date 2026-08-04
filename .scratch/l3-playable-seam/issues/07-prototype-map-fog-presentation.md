@@ -159,6 +159,14 @@ not settle.
    presentation pass): UoC2-grade graphic zoom + **physical camera height** (the
    viewpoint physically lowers into the world — a camera-height concern, not
    information altitude).
+
+   > **Refined by ADR 0052 (2026-08-05) — drag gains a target discriminator.**
+   > The map became a controller as well as a view: an own field army is directed
+   > by dragging from it to a destination. So **drag on empty map pans; drag from
+   > an own force issues an order.** The camera contract itself is unchanged —
+   > wheel zoom, drag pan, coupled, continuous — and this is recorded here rather
+   > than only in the ADR because a reader of this item alone would otherwise
+   > implement drag as pan unconditionally and find the order gesture unreachable.
 5. **Casual presentation principle (user direction 2026-07-23).** Three zones —
    a thin top info strip / the MAP fills the middle (calm at rest) / the COMMIT
    BAR is the hero at the bottom. The board's info and glow (enemy bands, reach
