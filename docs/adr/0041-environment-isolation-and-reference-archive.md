@@ -2,7 +2,17 @@
 
 Date: 2026-07-17
 
-Status: Accepted
+Status: Accepted · **Amended by ADR 0051 (2026-08-03)**
+
+Amendment delta (ADR 0051): § Decision 1's "marketing landing surface **only**"
+is corrected — the landing may also carry a playable demo of the L3 build — and
+its "the game build is not an input to them" is narrowed by a bounded exception:
+the landing pipeline may copy the emitted bundle as an **opaque artifact**, but may
+not read the game's source, config, or module graph, and the game build still
+takes nothing from the landing. The distribution target (a native shell) and the
+direction of isolation this ADR exists to protect are unchanged. § Context's own
+"a marketing surface carrying a demo — not the game's shipping channel" becomes
+normative rather than incidental.
 
 Decision source: user statement, 2026-07-17 — Firebase hosts the marketing
 landing page only; the game we are actually building does not ship on Firebase;

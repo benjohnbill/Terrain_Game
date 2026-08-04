@@ -30,9 +30,9 @@ document.addEventListener("DOMContentLoaded", () => {
         consequence: {
             kicker: "Outcome judgment",
             title: "Let the plan become history.",
-            body: "주력은 적의 전면이 아니라 끊어진 연결부를 공격합니다. 앞선 세 번의 판단이 하나의 결과로 수렴하고, 다음 전쟁의 국력까지 바꿉니다.",
-            decision: "고립된 야전군을 파괴할 것인가, 유리한 정산을 요구할 것인가",
-            consequence: "승리는 영토 한 칸이 아니라 전쟁 이후의 판세를 바꿉니다.",
+            body: "주력은 적의 전면이 아니라 끊어진 연결부를 공격합니다. 앞선 세 번의 판단이 하나의 결과로 수렴하고, 적의 수도로 가는 길이 열립니다.",
+            decision: "고립된 야전군을 끝낼 것인가, 수도로 곧장 밀 것인가",
+            consequence: "승리는 영토 한 칸이 아니라 수도까지 남은 거리를 바꿉니다.",
             turn: "16",
             phase: "Field army isolated"
         }
@@ -144,17 +144,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     setOperationStep("read", false);
 
-    // Build-section embed: the fog prototype is rendered at a fixed 1280-wide
-    // base (where its whole map draws correctly); scale it to the frame width so
-    // the full map shows at every screen size instead of a blank/clipped iframe.
-    const buildStage = document.querySelector(".build-stage");
-    if (buildStage) {
-        const embed = buildStage.querySelector(".build-embed");
-        const BASE_WIDTH = 1280;
-        const fitEmbed = () => {
-            embed.style.transform = `scale(${buildStage.clientWidth / BASE_WIDTH})`;
-        };
-        fitEmbed();
-        new ResizeObserver(fitEmbed).observe(buildStage);
-    }
+    // The build-section embed needs no JavaScript.
+    //
+    // It used to be rendered at a fixed 1280 width and scaled to the frame with a
+    // transform, because the fog prototype it carried had no resize handler and
+    // drew blank in a fluid iframe. The L3 build lays itself out from its own
+    // viewport, so the transform is gone and `.build-stage` sizes it in CSS
+    // alone. Removed rather than left inert: a ResizeObserver writing a transform
+    // nothing needs is the kind of code a later reader keeps because they cannot
+    // tell whether it is load-bearing.
 });

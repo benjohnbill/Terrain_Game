@@ -18,6 +18,15 @@ at the player's chosen commit, and operation-plan threshold needles. Two vertica
 bars: **LEFT** = the clicked front's R, **RIGHT** = this action's average across
 eligible fronts.
 
+**Code answering that description is already on `main`, and it did not arrive
+through this ticket** (recorded 2026-08-04). The 2026-08-03 submission lane built
+`game/src/ui/eval-r.ts` (254 lines) and runs two diverging eval bars inside the
+demo shell — committed at `45170fd`, merged at `9a17cb3`, written under deadline
+and unreviewed on this repo's two axes. The disposition is the same as ticket
+04's: whether it is this ticket's deliverable or a probe to replace is the user's
+scoping call, registered in `docs/SYNC-DEBT.md` § Open. The front matter is
+correct as it stands — ticket 04's note says why.
+
 **Hands off a ruling when it lands (registered 2026-07-31).** This ticket is the
 last one before the operational-manoeuvre pass and ticket 13 are found to be
 waiting for each other — a `Seal conflict` recorded in

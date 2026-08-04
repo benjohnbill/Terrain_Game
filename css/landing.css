@@ -1176,10 +1176,38 @@ marker path {
     margin: 0;
     padding: 0;
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     list-style: none;
     counter-reset: none;
     border-top: 1px solid var(--line-strong);
+}
+
+.state-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.state-list li {
+    position: relative;
+    padding-left: 20px;
+    color: var(--ink-soft);
+    font-size: 0.92rem;
+    line-height: 1.55;
+}
+
+.state-list li + li {
+    margin-top: 12px;
+}
+
+.state-list li::before {
+    content: "";
+    position: absolute;
+    top: 0.62em;
+    left: 0;
+    width: 8px;
+    height: 1px;
+    background: var(--ink-muted);
 }
 
 .development-step {
@@ -1390,27 +1418,39 @@ marker path {
     height: auto;
 }
 
-/* The fog prototype renders its full map correctly at a wide viewport but has
-   no resize handler, so inside a fluid iframe it can draw blank. Render it at a
-   fixed base size where the whole map composition is correct (= the reference
-   screenshot), then scale that down to the responsive frame width (scale factor
-   set by landing.js). Wheel zoom / drag pan still work inside the scaled frame. */
+/* The embed fills its box at its own scale.
+
+   This used to render the frame at a fixed 1280x900 and scale it down with a
+   transform, because the fog prototype it carried had no resize handler and drew
+   blank in a fluid iframe. The L3 build is a React app that lays itself out from
+   its own viewport, so the transform is not just unnecessary here — it would
+   shrink the type and fight a layout that is already responsive. The frame keeps
+   an aspect ratio so the section's rhythm holds, and a floor so the commit bar
+   and the two eval bars are never crushed.
+
+   The ceiling exists for a measured reason. At 16/10 the frame is 749px tall at
+   full width, which overflows a 1280x720 laptop by 29px — and what falls below
+   the fold is the bottom of the frame, where the commit bar is. That bar is the
+   demo's entrance: a visitor who cannot see it has nothing to click. Capping the
+   frame at 78vh keeps the whole surface on one screen at every size measured
+   (1920x1080 down to 390x844) at the cost of a slightly wider frame on short
+   viewports, which is the better trade. */
 .build-stage {
     position: relative;
     width: 100%;
-    aspect-ratio: 1280 / 900;
+    aspect-ratio: 16 / 10;
+    min-height: 460px;
+    max-height: 78vh;
     overflow: hidden;
     background: var(--ground-deep);
 }
 
 .build-stage .build-embed {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 1280px;
-    height: 900px;
+    inset: 0;
+    width: 100%;
+    height: 100%;
     border: 0;
-    transform-origin: top left;
 }
 
 .build-shot figcaption {
@@ -1455,44 +1495,36 @@ marker path {
     border-top: 1px solid var(--line);
 }
 
-.proof-stats {
+.proof-areas {
     margin: 0;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     border-top: 1px solid var(--line-strong);
 }
 
-.proof-stats > div {
+.proof-areas > div {
     padding: 34px 26px 30px 0;
     border-bottom: 1px solid var(--line-strong);
 }
 
-.proof-stats > div + div {
+.proof-areas > div + div {
     padding-left: 26px;
     border-left: 1px solid var(--line-strong);
 }
 
-.proof-stats dt {
-    font-family: var(--font-display);
-    font-size: clamp(3.4rem, 5vw, 4.6rem);
-    font-weight: 700;
-    line-height: 0.9;
-    letter-spacing: -0.02em;
+.proof-areas dt {
+    font-size: clamp(1.35rem, 1.9vw, 1.7rem);
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
     color: var(--brass-pale);
 }
 
-.proof-stats dd {
+.proof-areas dd {
     margin: 18px 0 0;
     color: var(--ink-soft);
     font-size: 0.9rem;
     line-height: 1.55;
-}
-
-.proof-stats dd strong {
-    display: block;
-    margin-bottom: 4px;
-    color: var(--ink);
-    font-weight: 600;
 }
 
 .proof-note {
@@ -1504,16 +1536,20 @@ marker path {
     font-size: 0.92rem;
 }
 
+.proof-link {
+    margin: 24px 0 0;
+}
+
 @media (max-width: 1024px) {
-    .proof-stats {
+    .proof-areas {
         grid-template-columns: repeat(2, 1fr);
     }
 
-    .proof-stats > div {
+    .proof-areas > div {
         padding: 30px 22px 26px;
     }
 
-    .proof-stats > div:nth-child(odd) {
+    .proof-areas > div:nth-child(odd) {
         padding-left: 0;
         border-left: 0;
     }
@@ -1795,12 +1831,12 @@ marker path {
         grid-column: auto;
     }
 
-    .proof-stats {
+    .proof-areas {
         grid-template-columns: 1fr;
     }
 
-    .proof-stats > div,
-    .proof-stats > div + div {
+    .proof-areas > div,
+    .proof-areas > div + div {
         padding: 24px 0;
         border-left: 0;
     }
