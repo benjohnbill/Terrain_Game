@@ -39,11 +39,19 @@ Two consequences carried into the rows below:
 
 - Row **#3** was `open` when this pass began and `closed` before it ended. The
   row table above records the state at assembly.
-- Row **#2**'s ledger side lives in a file that was being edited. The amendment
-  hunk lands at ~line 437 (the two-bar clause) and **does not touch line 420**,
-  which is the line quoted below. Re-check before sealing.
+- Row **#2**'s ledger side lives in a file that was being edited.
 
 This dossier was written in a separate worktree for that reason.
+
+**Discharged.** That session committed as **`68d1e1f`** (*docs(design): rule
+ticket 04's scope, and separate commitment from force*) before this dossier was
+finished. Its ledger hunk lands at ~line 437 (the two-bar clause) and does not
+touch line 420, so row #2's quotation below is **verified intact at `68d1e1f`**
+and is citable there rather than against a moving file. Ticket 04's scoping call
+was ruled in the same commit — the ticket **merges** the two shells rather than
+adopting or discarding either — and 04 nonetheless remains `needs-info`, because
+Part 2 **#13** is still open. The frontier is therefore unchanged by that commit:
+ticket 08 takeable, the other six `needs-info`.
 
 ---
 
