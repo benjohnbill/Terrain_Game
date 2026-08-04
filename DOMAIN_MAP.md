@@ -258,7 +258,14 @@ birthplace's phrasing. Applied to all 56 promoted entries on 2026-07-28
   `routeDisruption` (`routeValue` / route access), `usableValueDamage` (actively
   destroys usable economy/population; independent of capture; the permanent-
   weakening path), and `confidenceGain` (information confidence). Preset effects
-  are authored as a per-axis magnitude, not a primary/secondary split. Each axis
+  are authored as a per-axis magnitude, not a primary/secondary split — and
+  `CATALOG.md`'s `core`/`secondary`/`none` is **not** that split (clarified
+  2026-08-05, Part 2 #7): it is the per-axis identity layer of a *shape first,
+  magnitude later* method, while the magnitudes are authored per (plan, axis) pair
+  in `docs/features/combat-formula/MAGNITUDE.md` M8, which also records **which
+  machinery owns each axis's magnitude** — three axes are M8's, and
+  `controlShift`, `garrisonDamage` and `confidenceGain` are owned by the headline,
+  the casualty curve, and the fog model respectively. Each axis
   is bidirectional and target-relative: the same axis that damages an enemy
   element builds/recovers a friendly one (fortification build, garrison
   reinforce, usable-value recovery), so attack, defense, and non-combat plans

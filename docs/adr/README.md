@@ -54,7 +54,7 @@ a target; ← is amended/superseded by a later ADR.
 | 0021 | Under-Commitment Failure Causes Front-Sector Loss | 2026-07-01 | Accepted | — |
 | 0022 | Front Sectors as the One-Turn Operational Layer | 2026-07-01 | Accepted | → Amends 0014 · ← Amended by 0029 (uniform integration lag) |
 | 0023 | Province Status and Control Summary From Front Sectors | 2026-07-01 | Accepted | — |
-| 0024 | Operation Plan Presets for Core Commands | 2026-07-01 | Accepted | — |
+| 0024 | Operation Plan Presets for Core Commands | 2026-07-01 | Accepted | **Clarified 2026-08-05** (Part 2 #7), Decision unchanged, not amended: the catalog's per-axis `core`/`secondary`/`none` is the identity layer, **not** the plan-level split this ADR rejected; the per-axis magnitude it deferred was authored per (plan, axis) pair in `combat-formula/MAGNITUDE.md` M8, which also records which machinery owns each axis's magnitude (three of six are not M8's) |
 | 0025 | Turn-Based Core with the Uncertainty Duel | 2026-07-02 | Accepted | — |
 | 0026 | One-Shot Plan Effects, Persistent State, Standing Rules | 2026-07-02 | Accepted | — |
 | 0027 | Free Commit Allocation — Main/Surplus as Magnitude Labels | 2026-07-07 | Accepted | → Amends 0020 |

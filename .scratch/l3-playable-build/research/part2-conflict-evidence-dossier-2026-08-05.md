@@ -19,7 +19,11 @@ judgment-only.
 **Rows closed since assembly, same day.** **#2** — Encirclement threshold, ruled
 2.2 as a mis-citation, sealed at `combat-formula/MAGNITUDE.md` M7. **#9** — the
 abandonment column comes out, sealed at `combat-formula/MATCHUP.md` § The cede
-rule. **#8** — dissolved by #9 rather than adjudicated. **Live: #7 and #12.** This
+rule. **#8** — dissolved by #9 rather than adjudicated. **#7** — not a conflict but
+two layers of one method (identity labels versus per-(plan, axis) magnitudes),
+sealed at `combat-formula/MAGNITUDE.md` M8 § Consequence; this dossier's own
+instinct was right, since it flagged M8 as the candidate resolvent. **Live: #12
+only.** This
 file stays as the evidence those rulings were made against; it is not amended to
 speak as their record, and one of its measured facts is corrected in place below
 (row #9, the scorched-string count).

@@ -31,6 +31,17 @@ Scorched Earth is confirmed outside the matrix on its own grounds, since its axe
 are all self-directed and its shape entry says no battle is sought. Neither tier's
 shape changed; only where the rule is written did.
 
+**The shape notation was vindicated, not corrected (2026-08-05, user grill).**
+`DECISIONS-OWED.md` Part 2 #7 read this catalog's `core`/`secondary`/`none` as
+violating ADR 0024's "per-axis magnitude, not a primary/secondary classification".
+**Ruled: two layers of one method, not two answers** — these labels are the identity
+layer, per axis, and the magnitudes were authored per (plan, axis) pair by the
+numeric pass in `../combat-formula/MAGNITUDE.md` M8, which 0024's own text deferred
+to. The measurable proof is in M8: two `core` holders of the same axis carry
+different dials. ADR 0024 is clarified rather than amended, and `CATALOG.md`'s
+notation line now carries the distinction so the next reader does not re-file the
+row. Nothing in the twelve plans changed.
+
 Authoring method (user-approved): **shape first, magnitude later**. Each plan
 first fixes its identity — core axes, deliberate zeros, sibling contrasts, risk
 character (`CATALOG.md` § Authoring Method). Exact magnitudes are calibrated in

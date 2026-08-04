@@ -68,6 +68,16 @@ count 5 authored / 9 derived. The isolation precondition that lived in the
 Encirclement × Abandonment cell relocated to the declaration's availability line
 in `../operation-plan-catalog/CATALOG.md`.
 
+**M8 gained § Consequence 2026-08-05 (user grill) — the shape/magnitude split and
+per-axis magnitude ownership.** Part 2 **#7** closed: `core`/`secondary`/`none` is
+the identity layer, the magnitudes are M8's own per-(plan, axis) tables, and ADR
+0024 — which deferred magnitude by its own text — is **clarified, not amended**
+(header + README stamps; DOMAIN_MAP's Tier-0 entry corrected). M8 now states which
+machinery owns each axis's magnitude: three axes are M8's, `controlShift` is the
+headline's, `garrisonDamage` is the casualty curve's, and `confidenceGain` is fog
+FG-M①'s. `confidenceGain` **stays an axis** by user ruling, with a plan-axis dial
+left as the user's open option on FG-M①'s inherited playtest pickup.
+
 ## Where This Sits
 
 Turn decision ladder layer 5 — resolution (DOMAIN_MAP "Turn decision

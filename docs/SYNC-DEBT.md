@@ -1395,6 +1395,16 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   row as **unexercised**, to be settled by ticket 11 only if a bare-`refuse` cell
   is ever authored. Enumeration above still lists all twelve; kept for #7 and #12.
 
+  **Fourth partial payment, same day. One remains live: Part 2 #12** (the bot
+  decisiveness ladder, whose birthplace already recorded its own conflict and left
+  it open — what is owed there is the re-cut, not the discovery). **#7** closed as
+  a two-layer misreading rather than a conflict, sealed at
+  `docs/features/combat-formula/MAGNITUDE.md` M8 § Consequence, with clarification
+  stamps on ADR 0024's header and README row and a correction to DOMAIN_MAP's
+  Tier-0 `Operation effect axis` entry, which carried the same misleading clause.
+  **When #12 closes this whole row is paid** and should be struck rather than
+  annotated a fifth time.
+
 - [ ] **Dials named-but-unvalued in design docs, valued only in code**
   (registered 2026-07-25, demand-driven value sweep). The slice-2 operational
   design seals each fatigue/movement/supply dial by *number* — "dial (3)",

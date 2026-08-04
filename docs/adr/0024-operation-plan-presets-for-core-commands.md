@@ -4,6 +4,20 @@ Date: 2026-07-01
 
 Status: Accepted
 
+**Clarified 2026-08-05 (user grill, `DECISIONS-OWED.md` Part 2 #7) — the Decision
+is unchanged and this ADR is neither superseded nor amended.** § Operation plan
+catalog schema rejects "a primary/secondary classification" as a *substitute* for
+per-axis magnitude. `docs/features/operation-plan-catalog/CATALOG.md` labels every
+plan's axes `core`/`secondary`/`none`, which reads at first glance like the thing
+rejected here and is not: those labels are **per axis**, they are the identity
+layer of a user-approved *shape first, magnitude later* method, and the per-axis
+magnitude this ADR asked for was authored — as this ADR's own text deferred it —
+by the numeric combat pass, per (plan, axis) pair in
+`docs/features/combat-formula/MAGNITUDE.md` **M8**. The stamp is here because a
+reader meeting the parenthetical alone would conclude the catalog violates an
+accepted ADR. Full reasoning and the per-axis magnitude-ownership table: M8
+§ Consequence — the shape layer and the magnitude layer.
+
 ## Context
 
 ADR 0017 defines skill as adjusting from a statistical-average preset toward the

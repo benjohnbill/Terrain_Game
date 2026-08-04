@@ -19,11 +19,27 @@ becomes "which plan, at what commitment" instead of a single generic attack.
 Specification gates: **all resolved.** Wayfinder 10 closed 2026-08-02 (it owns
 every acceptance threshold); 12 closed 2026-08-03 — **no new integration feature
 home**, the Production homes are the existing feature birthplaces plus ADR 0049.
-What still holds this ticket at `needs-info` is `DECISIONS-OWED.md` Part 2 **#7**
-(plan effect axes), plus its recorded dependency on the operational-manoeuvre pass
-— not a gate. **#2** (the encirclement threshold) closed 2026-08-05: 2.2 stands and
-M7 is the single source, which is exactly what this ticket's own acceptance item on
-one-source thresholds asks for.
+What still holds this ticket at `needs-info` is its recorded dependency on the
+operational-manoeuvre pass — not a gate, and no longer a Part 2 row. Both of this
+ticket's rows closed 2026-08-05: **#2** (2.2 stands; M7 is the single source, which
+is what this ticket's own one-source acceptance item asks for) and **#7**.
+
+**What #7's closure tells this ticket to build.** The catalog's
+`core`/`secondary`/`none` and ADR 0024's "per-axis magnitude" are not rivals: the
+labels are the **identity layer** (fit ranking, claim blocks) and the magnitudes are
+authored per **(plan, axis)** pair in `MAGNITUDE.md` M8. So the "six-axis stamp"
+this ticket reads from its owning magnitude doc is M8's tables — and **three of the
+six axes do not have M8 dials at all**, by design, with their magnitudes owned
+elsewhere: `controlShift` by the headline (binary, 50/60% capture opening, ADR
+0022), `garrisonDamage` by the casualty curve (D11), `confidenceGain` by fog
+FG-M①'s observation-type pricing. A plan whose axis has no M8 dial is **not** a
+missing value to invent here; read the owner named in M8 § Consequence.
+
+One live edge worth knowing before it bites: FG-M① prices information by observation
+event, and a raid that meets no sortie produces none (M8's own audit fix makes an
+unattended garrison never march) while `CATALOG.md` still gives Raid
+`confidenceGain: secondary`. That is recorded at M8 with a playtest pickup — do not
+close it inside this ticket by inventing a number.
 
 Contract (interim pointers): `docs/features/operation-plan-catalog/CATALOG.md`
 (the twelve plans and their shapes); `docs/features/combat-formula/MAGNITUDE.md`

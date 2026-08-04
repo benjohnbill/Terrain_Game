@@ -23,6 +23,16 @@ Plans are authored in two passes:
 
 Shape notation: `core` / `secondary` / `none` per axis.
 
+> **What this notation is, and what it is not (clarified 2026-08-05, Part 2 #7).**
+> It is the **identity layer** — per axis, what this plan is *about* — read by fit
+> ranking and the claim block. It is **not** the plan's magnitudes and **not** the
+> plan-level primary/secondary ranking ADR 0024 rejected: 0024 asked for a
+> magnitude *per axis*, deferred it to the numeric pass by its own text, and that
+> pass authored it per **(plan, axis)** pair in `../combat-formula/MAGNITUDE.md`
+> M8 — where two `core` holders of the same axis carry different dials, which is
+> what proves the label is not the number. M8 § Consequence also records which
+> machinery owns each axis's magnitude; three of the six are not M8's.
+
 Two method amendments (2026-07-02, from the Delaying Defense grill):
 
 - **Resolution-layer products.** The six axes change *sector elements*; some

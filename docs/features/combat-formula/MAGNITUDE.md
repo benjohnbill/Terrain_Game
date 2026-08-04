@@ -580,7 +580,60 @@ candidate shape d = 0.20 × (c − 0.30) (equilibrium 0.80 under one
 surplus scout); garrison regeneration rates; raid-income economy
 pricing; mid-war surplus absorption watch item.
 
-## M9 — Defensive reserve: 긴급 투입 (진관 grammar) (2026-07-03)
+### Consequence — the shape layer and the magnitude layer, and who owns each axis — SEALED 2026-08-05 (user grill)
+
+Verdict source: user grill 2026-08-05, closing `DECISIONS-OWED.md` Part 2 **#7**.
+That row read `CATALOG.md`'s `core`/`secondary`/`none` as a rival to ADR 0024's
+"a per-axis magnitude, **not** a primary/secondary classification". **They are two
+layers of one authoring method, not two answers**, and this sheet is where the
+distinction becomes checkable rather than assertable:
+
+- **The tables above are keyed by holder, not by tier.** `usableValueDamage`
+  carries **two** core holders with **different** dials — Raid at −15%p rising to
+  the −30%p cap, Scorched Earth at economy base −30%p plus population usable −50%p.
+  If `core` were the magnitude, those two would be equal. They are not, so `core`
+  is not the magnitude: every number above is authored per **(plan, axis)** pair,
+  which is exactly the per-axis magnitude ADR 0024 specified and explicitly
+  deferred to "the numeric combat pass" — this pass.
+- **`core`/`secondary`/`none` is the identity layer**, as the head of M8 already
+  says: shapes "remain as identity metadata for fit ranking and claim blocks".
+  `CATALOG.md` labels its rows **per axis** and calls them "Shape notation" under a
+  user-approved *shape first, magnitude later* method, so it never claimed to
+  author magnitudes. What ADR 0024 rejected was a **plan-level** ranking of axes
+  against each other used *instead of* magnitude; nothing in the chain does that.
+- **ADR 0024 is therefore not amended** — it deferred magnitude by its own text and
+  this pass supplied it. Its header carries a clarification stamp only, because a
+  reader meeting 0024's parenthetical alone would conclude the catalog is wrong.
+
+**Who owns each axis's magnitude.** An axis says *what a plan touches*; a dial says
+*how much*. For three axes the "how much" is owned elsewhere, which is a
+consequence of decisions already sealed rather than a gap:
+
+| Axis | Magnitude owner |
+|---|---|
+| `fortificationDamage` · `routeDisruption` · `usableValueDamage` | **M8**, the tables above |
+| `controlShift` | the headline — binary, capture opening 50/60% (ADR 0022) |
+| `garrisonDamage` | the casualty curve and rout machinery (a separate magnitude would violate D11) |
+| `confidenceGain` | **`../fog-of-war-discovery/MAGNITUDE.md` FG-M①**, since 2026-08-03 |
+
+**`confidenceGain` stays an axis (user ruling 2026-08-05).** Its M8 dial was
+superseded when ADR 0048 replaced the model underneath it, and FG-M① now prices
+information by **observation type** — enhanced reconnaissance ±10%, repelled
+assault ±20%, normal reconnaissance ±25%, battle contact ±30%. That is not axis
+language, so the axis currently has no dial of its own, and it keeps the same
+standing as `controlShift` and `garrisonDamage`: live as identity, magnitude owned
+by other machinery.
+
+**A plan-axis dial may be attached here later — the user holds that option.** What
+it would take is stated so the option is real rather than decorative: FG-M①'s table
+has **no entry for a plan's information byproduct that produces no observation
+event** (a raid that meets no sortie is the measured case — M8's own audit fix makes
+an unattended garrison never march, so no contact occurs, yet `CATALOG.md` gives
+Raid `confidenceGain: secondary`). Either an observation type covers that, or this
+axis takes a dial. **Picked up at the first real playtest** — the trigger is
+inherited, not invented: FG-M①'s values are 가안 and carry exactly that pickup
+already (L3, build ticket 13). **This paragraph is deleted** when either the fog
+side gains the missing observation type or an axis dial lands in the table above.
 
 **Premise (settled through discussion):** points never persist; their
 *effects on world stocks* always do (the wallet/ledger split, applied).
