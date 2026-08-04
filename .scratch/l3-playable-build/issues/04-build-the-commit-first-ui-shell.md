@@ -17,6 +17,24 @@ commit bar as the hero and the entrance. Information is **summoned by the commit
 decision**, not always painted. Every later ticket plugs its surface into this
 shell instead of inventing one.
 
+**Code answering that description is already on `main`, and it did not arrive
+through this ticket** (recorded 2026-08-04). The 2026-08-03 landing/submission
+lane built a commit-first shell over the real Runtime — `game/src/ui/DemoShell.tsx`
+(717 lines), `game/src/ui/shell.css`, and a reworked `game/src/ui/App.tsx` —
+committed at `45170fd` and merged at `9a17cb3`. It was written under a same-day
+submission deadline and has not had this repo's two-axis review.
+
+Whether that is this ticket's deliverable — which would make this ticket *harden
+and adopt* rather than *build*, and would put its `blocked_by` in question — or a
+probe this ticket replaces, is **an open scoping question the user decides**;
+registered in `docs/SYNC-DEBT.md` § Open. Do not settle it by reading the code,
+and do not start a second shell before it is settled.
+
+The front matter is **not** wrong and should not be "corrected": `status` answers
+only whether this can be picked up, and it still cannot. Outcomes and history
+belong in the body, which is where this paragraph sits
+(`docs/agents/issue-tracker.md` § Ticket front matter).
+
 Specification gates: **all resolved.** Wayfinder 03 and 07 were already; 10
 closed 2026-08-02 (it owns every acceptance threshold); 12 closed 2026-08-03.
 Gate 12's partition, in one line: **no new integration feature home** — the

@@ -11,6 +11,40 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
 
 ## Open
 
+- [ ] **Tickets 04 and 09 describe work whose code is already on `main`, and no
+  check could have noticed — registered 2026-08-04.** The 2026-08-03 submission
+  lane built a commit-first shell and an eval-R computation over the real Runtime
+  (`game/src/ui/DemoShell.tsx` 717 lines, `shell.css`, a reworked `App.tsx`,
+  `eval-r.ts` 254 lines; `45170fd`, merged `9a17cb3`) under a same-day deadline
+  and without this repo's two-axis review. Both tickets still read "What to
+  build", and both are correct to: `status` answers only whether the ticket can be
+  picked up. The notes are filed in each ticket's body, where the schema puts
+  outcomes and history.
+
+  Two things are owed, and they are different sizes.
+
+  (a) **The scoping call, which is the user's**: is `DemoShell.tsx` ticket 04's
+  deliverable — making 04 *harden and adopt* rather than *build*, and putting its
+  `blocked_by: [03]` in question — or a probe that 04 replaces? Ticket 09 follows
+  whatever 04 is ruled. ADR 0051 does not settle it: it bounds how the demo
+  crosses into the *landing* as an opaque artifact and says nothing about its
+  source, which the merge placed on `main` regardless.
+
+  (b) **The structural gap this exposed**: the tracker derives ticket state from
+  other tickets (`scripts/frontier.js`) and audits documents against documents
+  (`scripts/audit-lint.js`). Nothing derives anything from the *code*. So
+  `frontier.js` printing `TAKEABLE 04` never meant "no implementation exists" — it
+  meant "this tool did not look". Code moves inside a session; a ticket moves only
+  when someone edits it, so the divergence is structural rather than carelessness,
+  and it will recur. The schema already states the cure in principle — *anything
+  another file already knows is derived at read time* — and that derivation exists
+  for doc→doc and is missing for code→doc.
+
+  **Discuss when:** (a) before ticket 04 or 09 is claimed, whichever comes first;
+  (b) in the next `.scratch/doc-structure/` pass, as a ticket whose type and scope
+  the user agrees first. **Delete this row when:** 04's scope is ruled and the
+  code→doc derivation question has its own ticket.
+
 - [ ] **Three live documents state the turn's decision order, and gate 07
   reversed it — registered 2026-08-03.** The ladder in
   `docs/features/operation-plan-catalog/INDEX.md:35-42` and `DOMAIN_MAP.md`'s
