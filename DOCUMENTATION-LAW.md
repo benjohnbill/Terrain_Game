@@ -84,6 +84,25 @@ audit is superseded — its checks ship in `scripts/audit-lint.js` under
 other names; only the Working-layer sublabels stay deferred — see
 `docs/SYNC-DEBT.md`.)
 
+**Derived and chosen inside one value (adopted 2026-08-05, promoted from
+three feature instances).** A sealed quantity usually carries two things
+at once: a **derived** constraint the surrounding model forces, and a
+**chosen** value someone picked inside the room that constraint leaves.
+**A re-cut inherits the derived part and does not inherit the chosen
+part.** So when a value is load-bearing for a downstream derivation, its
+seal states which part is which and by what — a seal that states only
+its number leaves the next author unable to tell, and the two failures
+are asymmetric: treating a derived constraint as free breaks the model
+silently, while treating a chosen value as forced freezes a dial that
+was always meant to move. This is a **different axis from the L-stamp
+above** — L says how *verified* a value is, this says how *free* it is,
+and a hand-reasoned L0 value can still sit under a hard derived
+constraint. Instances it was promoted from: combat-formula M7's
+Encirclement threshold (*above* M4's rout cliff is derived, the 2.2
+headroom is chosen), fog FG-M①'s reconnaissance crossover (ρ≈1.49,
+"emergent and must not be set directly"), and capital CP-⑤'s guard
+coefficient (2,500 chosen against a derived floor of 1,800).
+
 ## ADR supersession protocol
 
 A new ADR that changes or contradicts an existing one MUST, in the

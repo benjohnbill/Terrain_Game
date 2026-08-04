@@ -28,6 +28,15 @@ as rivals. What actually needed the user was smaller and better: whether the rou
 cliff is read on the EVAL BAR, whether abandonment is a plan card, and whether
 `confidenceGain` survives as an axis.
 
+**The law gained a clause this session, and it binds #12's re-cut.**
+`DOCUMENTATION-LAW.md` § Conflict rule now carries **Derived and chosen inside one
+value** (adopted 2026-08-05, promoted by user decision from three feature
+instances): a sealed quantity usually carries a *derived* constraint and a *chosen*
+value, **a re-cut inherits only the derived part**, and a load-bearing value's seal
+says which is which. It is a different axis from the L-stamp — L says how verified a
+value is, this says how free it is. #12 will set or retire rung values, so mark them
+as it goes rather than at the end.
+
 ## What #12 is, and why it is not like the other four
 
 **The birthplace already stamped its own conflict and left it open** —
