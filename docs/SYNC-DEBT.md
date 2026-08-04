@@ -1408,28 +1408,6 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   values at a birthplace. This is substantially the work gate 12 (a) was blocked
   from doing.
 
-- [ ] **판세 in-play surface — two sealed positions conflict** (registered
-  2026-07-25, L3 build-ticket re-cut). Gate 07 § Answer sealed the derived-band
-  grade's encoding as **판세 = a match-level mini-meter** (live, in-play), and
-  gate 03's viewer contract routes treasury uncertainty through **판세 band
-  width** as its only surviving surface. Duel-pivot ledger Gate 6 then sealed
-  (user, fork A) that the in-play **STRATEGIC 판세 bar is DROPPED** — one in-play
-  bar, tactical only, strategic verdict moved to a post-game coach explicitly
-  excluded from live play. Both are user seals, hours apart, and the later one
-  leaves treasury uncertainty with no display surface. The build tracker's ticket
-  04 is instructed to follow the later position (no live 판세 meter) and to treat
-  the treasury-uncertainty surface as blocked, rather than to pick a side. Pay by
-  resolving which position stands when the read-layer / 형세판단 feature-doc
-  birthplace is minted (same home as the turn-structure / eval-bar row above),
-  and stamping whichever gate answer is superseded.
-  **New input 2026-08-03 (fog `RULINGS.md` ④ decision 6).** The fog grill named a
-  distinction the two seals may have been talking past: an **evidence** surface is
-  not a **verdict** surface. Gate 6 forbids an in-play strategic *verdict* and a
-  live coach read; gate 07's mini-meter carried an evidence read. Ruling ④ seals
-  what such a surface must and must not do and deliberately does **not** place it,
-  because placement is ticket 04's blocker (`DECISIONS-OWED.md` Part 2 #13) and not
-  fog's to take. **Read ④ decision 6 before ruling this row** — its four clauses are
-  not restated here, and they may dissolve rather than decide the conflict.
 
 - [ ] **1v1 map re-authoring — terrain-cradle is a 5–6-seat multipolar map**
   (registered 2026-07-24, ADR 0042 cascade). DOMAIN_MAP/DESIGN now assert the
@@ -2370,6 +2348,23 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   until then, and a session that lands 09 raises it as the next order of business.
 
 ## Paid
+
+- [x] 2026-08-05 — **판세 in-play surface — two sealed positions conflict: PAID**
+  (registered 2026-07-25). Ruled by user grill and recorded as **ADR 0053**:
+  there is **no in-play 판세 meter** (Gate 6 fork A holds), and what rests in the
+  top strip is **coverage** — how much of the opponent's ground this viewer has
+  observed — from which the evidence contrast of fog `RULINGS.md` ④ decision 6 is
+  summoned. This row's own 2026-08-03 note was right that ④ *"may dissolve rather
+  than decide"* the conflict, and that is what happened: the two seals were never
+  describing the same object, because an evidence surface is not a verdict
+  surface. Gate 07 § Sealed 2 is stamped, and so is fog `RULINGS.md` ②, which
+  restated the retired encoding in a form that reads as normative. The paired
+  `DECISIONS-OWED.md` Part 2 #13 closed in the same batch, and build ticket 04 —
+  which this row had left instructed to treat the surface as blocked — moved to
+  `open`. **The treasury half did not close with it** and is now its own row in
+  § Open above: C03.6 routed treasury uncertainty through a 판세 band width, and
+  there is no 판세 band. 0053 declined to choose between the two available
+  readings, which is why that half is registered rather than quietly resolved.
 
 - [x] 2026-08-05 — **Tickets 04 and 09 describe work whose code is already on
   `main` — the scoping half PAID** (registered 2026-08-04). Ruled by user grill:

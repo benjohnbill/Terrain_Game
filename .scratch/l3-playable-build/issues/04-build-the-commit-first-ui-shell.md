@@ -50,10 +50,17 @@ Two duties ride with that ruling:
   (`AGENTS.md` § Reasons are load-bearing), and these are load-bearing: they are
   what a cold reader uses to decide which file is authoritative.
 
-The front matter is **not** wrong and should not be "corrected": `status` answers
-only whether this can be picked up, and it still cannot — `DECISIONS-OWED.md`
-Part 2 **#13** is still open. Outcomes and history belong in the body, which is
-where this paragraph sits (`docs/agents/issue-tracker.md` § Ticket front matter).
+*(This paragraph read "the front matter is **not** wrong … `status` answers only
+whether this can be picked up, and it still cannot — Part 2 **#13** is still
+open" for the few hours between the scoping ruling and #13's closure the same
+session. Both halves were true when written and the second expired within the
+batch; it is corrected here rather than deleted, because the reasoning it records
+is what kept `status` honest while the scoping question was live.)*
+**#13 closed later the same day (ADR 0053) and `status` moved to `open`.**
+The principle stands and is why the front matter never needed "correcting":
+`status` answers only whether the ticket can be picked up, and outcomes and
+history belong in the body — which is where this paragraph sits
+(`docs/agents/issue-tracker.md` § Ticket front matter).
 
 **Design decisions this ticket now carries — ADR 0052 (2026-08-05).** The same
 grill separated the player's two decision axes: commitment is a multiplier
@@ -151,3 +158,11 @@ no treasury-specific band is ever published, so the shell is buildable either wa
 - [ ] **The evidence contrast is summoned from that band and closes again**, honouring all four clauses of fog `RULINGS.md` ④ decision 6 at their birthplace: no published "unaccounted N"; the sector side aggregated; the force side **refused a total** with the refusal visible as a dated list rather than a sum; coverage shown beside. It is evidence, and nothing in it asserts a position.
 - [ ] **Coverage's own definition is settled before it is rendered** — a percentage of *what* (sectors held, sectors visible, land value, register?) is a magnitude question owed to `docs/features/fog-of-war-discovery/`, and it is not a new dial if it reads off a quantity that already exists. The shell must not mint the definition by picking whatever was convenient to compute.
 - [ ] **No treasury figure and no treasury-specific band is published**, whichever way the gate 03 C03.6 question in `docs/SYNC-DEBT.md` is later ruled. Both live readings agree on this, which is why it does not block.
+
+*Placements ruled 2026-08-05 (user), by the residency rule: **what rests on screen must be a question, never an answer.** These are the mechanics `App.tsx` holds that the merge brings across; each needed a home and none had one in this ticket or in gate 07.*
+
+- [ ] **The battle card arrives on its own at turn closure** — the one deliberate exception, because a result is a notification and making the player go and ask for it is the wrong shape. It keeps `App.tsx`'s reading order (ground first — terrain, crossing, fortification, defence method — then the two commitments), which is what makes "I poured more and still lost" legible.
+- [ ] **Garrisons are summoned by clicking their sector.** Own information, so it may rest without leaking anything; it does not rest anyway, because it is an answer nobody asked for.
+- [ ] **The economy is summoned from the commit bar** (treasury, income, register, 동원 강도). Its DISPLAY-DEBT row (*Economy-legibility surface*) stays parked and is not silently discharged by rendering the numbers — a read of *where 생산 comes from and goes* is what that row owes, and a figure strip is not it.
+- [ ] **Mobilization signals live inside the summoned evidence surface**, not on their own. ADR 0053 gave them a home when it placed the coverage band, and gate 07 already encoded 동원 강도 as a sector-bound band summoned on command — the two agree.
+- [ ] **The seat bar rests** — the second deliberate exception. Whose seat it is, what that seat owes, and the hand-off are load-bearing in hot-seat play: `App.tsx` added it because a player who locked realm-a had nothing on screen telling them they were also realm-b. It is not a claim about the match, so the residency rule does not exclude it.

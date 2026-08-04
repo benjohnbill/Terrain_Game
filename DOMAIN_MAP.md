@@ -69,6 +69,23 @@ birthplace's phrasing. Applied to all 56 promoted entries on 2026-07-28
   the approach-arc contract and the commit key. Definition + grounds: ADR 0046
   § Decision item 5.
 
+- ✅ `Progressive disclosure` (필요할 때만 열리는 정보) — **user-promoted
+  2026-08-05**: information is held for the player to go and find when they are
+  curious, and a screen invites a chain of clicks only where one is needed. The
+  project's sharpening of the standard UX term is a **residency rule**: what may
+  *rest* on screen is a **question**, never an **answer** — a resident answer ends
+  the click chain before it starts, while a resident question begins it. That is
+  also why it is not merely a tidiness preference here: an answer at rest is what
+  makes a player stop thinking, and 형세판단 is the game. Promoted because it
+  decided three independent questions in one session — where the standing surface
+  goes (coverage, not a verdict), and the placement of five inherited mechanics
+  in the commit-first shell, and it had been reachable only by reading a Wayfinder
+  gate. Deliberate exceptions exist and are named where they are ruled, not here:
+  a result is a notification, and hot-seat play must say whose seat it is.
+  Grounds: ADR 0053 § Decision 3; originally sealed as the casual presentation
+  principle at gate 07 § Sealed 5 (*"summoned by the commit decision, not always
+  painted"*), whose skeleton this generalises beyond the commit flow.
+
 ## Core Terms
 
 - ✅ `Map unit`: A playable geographic unit. Currently rendered as a hex, but
