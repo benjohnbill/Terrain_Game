@@ -30,9 +30,9 @@ document.addEventListener("DOMContentLoaded", () => {
         consequence: {
             kicker: "Outcome judgment",
             title: "Let the plan become history.",
-            body: "주력은 적의 전면이 아니라 끊어진 연결부를 공격합니다. 앞선 세 번의 판단이 하나의 결과로 수렴하고, 다음 전쟁의 국력까지 바꿉니다.",
-            decision: "고립된 야전군을 파괴할 것인가, 유리한 정산을 요구할 것인가",
-            consequence: "승리는 영토 한 칸이 아니라 전쟁 이후의 판세를 바꿉니다.",
+            body: "주력은 적의 전면이 아니라 끊어진 연결부를 공격합니다. 앞선 세 번의 판단이 하나의 결과로 수렴하고, 적의 수도로 가는 길이 열립니다.",
+            decision: "고립된 야전군을 끝낼 것인가, 수도로 곧장 밀 것인가",
+            consequence: "승리는 영토 한 칸이 아니라 수도까지 남은 거리를 바꿉니다.",
             turn: "16",
             phase: "Field army isolated"
         }

@@ -3,25 +3,25 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Strategy Ground는 지형, 병력, 정보, 타이밍에 대한 몇 번의 판단으로 전쟁의 결말을 설계하는 턴제 전략 게임입니다.">
+    <meta name="description" content="Strategy Ground는 상대의 수도를 먼저 무너뜨리는 쪽이 이기는 1:1 턴제 전략 게임입니다. 지형, 병력, 정보, 타이밍에 대한 몇 번의 판단이 한 판의 전쟁을 결정합니다.">
     <meta name="theme-color" content="#0a0d0c">
     <link rel="canonical" href="https://notification-prototype-ec5c5.web.app/">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Strategy Ground">
     <meta property="og:locale" content="ko_KR">
     <meta property="og:url" content="https://notification-prototype-ec5c5.web.app/">
-    <meta property="og:title" content="Strategy Ground — Shape the war before the battle begins.">
-    <meta property="og:description" content="복잡성은 깊게, 조작은 간결하게. 결정적 전쟁을 설계하는 턴제 전략 게임.">
+    <meta property="og:title" content="Strategy Ground — Two capitals. Only one still stands.">
+    <meta property="og:description" content="두 나라, 한 번의 전쟁. 상대의 수도를 먼저 무너뜨리는 쪽이 이기는 1:1 턴제 전략 게임.">
     <meta property="og:image" content="https://notification-prototype-ec5c5.web.app/assets/landing/og-image.jpg">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta property="og:image:type" content="image/jpeg">
-    <meta property="og:image:alt" content="Strategy Ground 개발 빌드 화면 — 헥스 지도 위 네 세력의 전쟁.">
+    <meta property="og:image:alt" content="Strategy Ground 개발 빌드 화면 — 헥스 지도 위의 작전 상황.">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Strategy Ground — Shape the war before the battle begins.">
-    <meta name="twitter:description" content="복잡성은 깊게, 조작은 간결하게. 결정적 전쟁을 설계하는 턴제 전략 게임.">
+    <meta name="twitter:title" content="Strategy Ground — Two capitals. Only one still stands.">
+    <meta name="twitter:description" content="두 나라, 한 번의 전쟁. 상대의 수도를 먼저 무너뜨리는 쪽이 이기는 1:1 턴제 전략 게임.">
     <meta name="twitter:image" content="https://notification-prototype-ec5c5.web.app/assets/landing/og-image.jpg">
-    <title>Strategy Ground — Turn-Based War Strategy</title>
+    <title>Strategy Ground — 1v1 Turn-Based War Strategy</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -35,7 +35,7 @@
         "@type": "VideoGame",
         "name": "Strategy Ground",
         "alternateName": "Strategy Ground (working title)",
-        "description": "지형, 병력, 정보, 타이밍에 대한 몇 번의 판단으로 전쟁의 결말을 설계하는 턴제 전략 게임. 현재 개발 중.",
+        "description": "상대의 수도를 먼저 무너뜨리는 쪽이 이기는 1:1 턴제 전략 게임. 지형, 병력, 정보, 타이밍에 대한 몇 번의 판단이 한 판의 전쟁을 결정합니다. 현재 개발 중.",
         "url": "https://notification-prototype-ec5c5.web.app/",
         "image": "https://notification-prototype-ec5c5.web.app/assets/landing/og-image.jpg",
         "inLanguage": "ko",
@@ -68,10 +68,10 @@
             </button>
 
             <nav id="site-navigation" class="site-nav" aria-label="주요 탐색" data-site-nav>
+                <a href="#build">Play a Turn</a>
                 <a href="#idea">The Idea</a>
                 <a href="#war-model">War Model</a>
-                <a href="#proof">Built in the Open</a>
-                <a href="#development">Development</a>
+                <a href="#development">Current State</a>
                 <a class="nav-build" href="play">Development Build</a>
             </nav>
         </div>
@@ -81,12 +81,12 @@
         <section class="hero" id="top" aria-labelledby="hero-title">
             <div class="hero-shell">
                 <div class="hero-copy">
-                    <p class="status-line"><span aria-hidden="true"></span> Working title · Playable systems prototype</p>
-                    <h1 id="hero-title">Shape the war<br>before the battle begins.</h1>
+                    <p class="status-line"><span aria-hidden="true"></span> Working title · Playable 1v1 build</p>
+                    <h1 id="hero-title">Two capitals.<br>Only one still stands.</h1>
                     <p class="hero-lede">
                         지형을 읽고, 병력을 배치하고, 정보를 의심하고, 때를 선택하십시오.
-                        <strong>Strategy Ground</strong>는 몇 번의 큰 판단이 전쟁의 서사를 만드는
-                        턴제 전략 게임입니다.
+                        <strong>Strategy Ground</strong>는 상대의 수도를 먼저 무너뜨리는 쪽이 이기는
+                        1:1 턴제 전략 게임입니다. 몇 번의 큰 판단이 한 판의 전쟁을 결정합니다.
                     </p>
                     <div class="hero-actions">
                         <a class="button button--primary" href="play">
@@ -157,7 +157,7 @@
                 </figure>
             </div>
             <div class="hero-proof" aria-label="제품 특성">
-                <span>Turn-based war strategy</span>
+                <span>1v1 turn-based war strategy</span>
                 <span>Fictional East Asia-inspired world</span>
                 <span>High complexity, low micromanagement</span>
             </div>
@@ -238,12 +238,13 @@
             <div class="section-shell">
                 <div class="section-heading">
                     <div>
-                        <p class="section-index">A playable explanation</p>
-                        <h2 id="war-model-title">One operation.<br>Four connected judgments.</h2>
+                        <p class="section-index">The arc of one match</p>
+                        <h2 id="war-model-title">One match.<br>Four judgments that decide it.</h2>
                     </div>
                     <p>
-                        Strategy Ground가 어떤 판단의 연결을 게임의 핵심으로 삼는지,
-                        지도 위에서 한 단계씩 짚어 보여주는 인터랙티브 설명입니다.
+                        위에서 둔 것이 <strong>한 턴</strong>이라면, 이것은 <strong>한 판</strong>입니다.
+                        여러 턴에 걸쳐 쌓인 판단이 어떻게 하나의 결말로 수렴하는지,
+                        지도 위에서 한 단계씩 짚어 보여줍니다.
                     </p>
                 </div>
 
@@ -391,7 +392,7 @@
                         </div>
                         <div>
                             <p>Catastrophic commitment</p>
-                            <h3>잘못 고른 결전으로<br>나라의 위기를 열다</h3>
+                            <h3>잘못 고른 결전으로<br>수도로 가는 길을 내주다</h3>
                             <span>노출된 평원 · 끊긴 퇴로 · 소멸한 야전군</span>
                         </div>
                     </article>
@@ -425,7 +426,7 @@
                     </div>
                     <div>
                         <dt>Compressed arc</dt>
-                        <dd>한 판의 성장과 전쟁, 위기를 짧고 밀도 높은 호흡으로 설계합니다.</dd>
+                        <dd>성장과 전쟁과 결말이 한 판 안에서 끝나도록 설계합니다.</dd>
                     </div>
                     <div>
                         <dt>Player-authored climax</dt>
@@ -449,29 +450,34 @@
                     </p>
                 </div>
 
-                <dl class="proof-stats">
+                <dl class="proof-areas">
                     <div>
-                        <dt>437</dt>
-                        <dd><strong>통과하는 자동화 테스트.</strong> 전투 산술과 작전 모델을 회귀로 지킵니다.</dd>
+                        <dt>지형과 보급</dt>
+                        <dd>어디로 갈 수 있고, 가면 무엇을 잃는가. 이동·보급·피로가 하나의 장부로 묶입니다.</dd>
                     </div>
                     <div>
-                        <dt>38</dt>
-                        <dd><strong>기록된 설계 결정(ADR).</strong> 되돌릴 수 없는 규칙을 명문화합니다.</dd>
+                        <dt>전투 해상도</dt>
+                        <dd>전투는 주사위가 아니라 앞선 판단의 산술입니다. 같은 병력도 조건에 따라 다르게 끝납니다.</dd>
                     </div>
                     <div>
-                        <dt>11</dt>
-                        <dd><strong>봉인된 기능 설계 문서.</strong> 지형, 전투 공식, 정보 안개, 작전 카탈로그.</dd>
+                        <dt>정보와 안개</dt>
+                        <dd>모르는 것은 무작위 방해가 아니라 추론할 여지입니다. 무엇이 보이는지가 규칙으로 정해집니다.</dd>
                     </div>
                     <div>
-                        <dt>9</dt>
-                        <dd><strong>검증 중인 전쟁 모델 모듈.</strong> 피로, 이동·보급, 교전, 병력 분할, 정보.</dd>
+                        <dt>전쟁의 끝</dt>
+                        <dd>이기는 방법은 하나입니다. 상대의 수도가 무너지는 것. 그 외의 종결은 설계에서 뺐습니다.</dd>
                     </div>
                 </dl>
 
                 <p class="proof-note">
-                    이 숫자들은 마케팅 문구가 아니라 저장소에 있는 사실입니다. 슬라이스2 전쟁 모델은
-                    지금 테스트로 검증되고 있으며, 다음 증거 목표는 이것을 플레이 가능한 한 번의 전쟁으로
-                    배선하는 것입니다.
+                    이 설계는 화면보다 먼저 문서로 봉인되고 테스트로 지켜집니다. 결정의 기록과
+                    검증 코드는 전부 공개돼 있으니, 우리가 무엇을 정했고 무엇을 아직 못 정했는지
+                    직접 확인하실 수 있습니다.
+                </p>
+                <p class="proof-link">
+                    <a class="button button--quiet" href="https://github.com/benjohnbill/Terrain_Game" rel="noopener">
+                        저장소에서 설계 기록 보기
+                    </a>
                 </p>
             </div>
         </section>
@@ -481,29 +487,35 @@
                 <div class="section-heading">
                     <div>
                         <p class="section-index">Development, without theatre</p>
-                        <h2 id="development-title">Built in public.<br>Promised in layers.</h2>
+                        <h2 id="development-title">What works today.<br>What does not, yet.</h2>
                     </div>
                     <p>
                         지금 작동하는 것과 앞으로 만들 것을 같은 말로 포장하지 않습니다.
-                        출시 날짜 대신, 제품의 증거가 어떤 순서로 깊어지는지 공개합니다.
+                        출시 날짜도, 로드맵 약속도 걸지 않습니다. 위에서 직접 확인할 수 있는
+                        사실만 적습니다.
                     </p>
                 </div>
 
                 <ol class="development-track">
                     <li class="development-step development-step--active">
-                        <div><span>Now</span><i>Current proof</i></div>
-                        <h3>Systems prototype</h3>
-                        <p>가상의 지도, 지형 기반 전투, 상황 판단과 자원 루프가 브라우저에서 지금 돌아갑니다. 위에서 직접 실행해 볼 수 있습니다.</p>
+                        <div><span>됩니다</span><i>Working today</i></div>
+                        <h3>한 판이 끝납니다</h3>
+                        <ul class="state-list">
+                            <li>수도 함락까지 한 판이 실제로 끝납니다</li>
+                            <li>커밋 → 공개 → 전투 → 점령의 한 턴이 돌아갑니다</li>
+                            <li>지형·보급·피로가 실제로 계산됩니다</li>
+                            <li>상대의 판은 규칙에 따라 가려집니다</li>
+                        </ul>
                     </li>
                     <li class="development-step">
-                        <div><span>Next</span><i>Proof target</i></div>
-                        <h3>One complete war</h3>
-                        <p>준비, 작전, 결전, 정산이 하나의 인과관계로 읽히는 전쟁 단위를 검증합니다.</p>
-                    </li>
-                    <li class="development-step">
-                        <div><span>Vision</span><i>Product direction</i></div>
-                        <h3>Every match, a war story</h3>
-                        <p>PvP와 Steam 출시를 향해, 매 판 다른 전쟁사가 남는 완성형 제품으로 확장합니다.</p>
+                        <div><span>아직입니다</span><i>Not yet</i></div>
+                        <h3>여기까지는 없습니다</h3>
+                        <ul class="state-list">
+                            <li>화면은 회색 상자 단계입니다</li>
+                            <li>두 사람이 한 화면을 번갈아 씁니다</li>
+                            <li>혼자 둘 상대는 아직 없습니다</li>
+                            <li>정찰로 적을 재는 일은 아직입니다</li>
+                        </ul>
                     </li>
                 </ol>
 
