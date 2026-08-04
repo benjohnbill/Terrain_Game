@@ -16,6 +16,16 @@
  * **Interaction state lives here, not in the Runtime**: the seed box, which
  * viewer is being shown, hover, and the sector under consideration but not yet
  * committed. Only a submitted intent crosses into the Runtime.
+ *
+ * **Demo branch addition — hot-seat legibility, not new mechanics.** The seat is
+ * handed between the two realms through one dropdown, which is correct
+ * hot-seat wiring and completely undiscoverable: a first-time player locks
+ * realm-a's capital, reads "Waiting for realm-b", and has nothing on screen
+ * telling them *they* are realm-b too. `SeatBar` states whose seat it is, what
+ * that seat must do next, and offers the hand-off as a button. It reads the
+ * same projection everything else does and submits nothing — the turn order
+ * stays the Runtime's (gate 02), so this can only make the existing loop
+ * findable, never change it.
  */
 
 import { useCallback, useMemo, useState } from 'react';
@@ -27,9 +37,50 @@ import { musterHexOf } from '../domain/movement.js';
 import type { RecruitmentPosture } from '../domain/recruitment.js';
 import type { ActorId, GameEvent, Intent, MatchView, SectorId } from '../runtime/types.js';
 import { MapBoard } from './MapBoard.js';
+import { EVENT_GLOSS } from './gloss.js';
 
 const ACTORS: readonly ActorId[] = ['realm-a', 'realm-b'];
 const GREYBOX_RECRUIT_ID = 'greybox-recruit';
+
+/**
+ * Korean labels for the battle card's ground, over the exact value domains
+ * `domain/battle.ts` declares (`BattleTerrain`, `BattleFortification`,
+ * `BattleCrossing`) and `world/schema.ts`'s `ChokeClass`.
+ *
+ * Labels only, and **no multipliers**: the M5 ladders are private constants with
+ * one owner, so printing their numbers here would be a second home for a dial,
+ * and the composed power reading is what ticket 09's EVAL BAR is for. The card
+ * tells a player *what ground it was*, which is public (fog ruling ① for the
+ * wall, terrain throughout), and lets the ladder stay where it lives.
+ */
+const TERRAIN_LABEL: Readonly<Record<string, string>> = {
+  plains: '평지',
+  forestHills: '숲·구릉',
+  mountains: '산지',
+  pass: '관문',
+  legendaryNaturalSite: '천험의 요지',
+};
+
+const FORTIFICATION_LABEL: Readonly<Record<string, string>> = {
+  none: '축성 없음',
+  fieldWorks: '야전 축성',
+  townWalls: '읍성',
+  fortress: '요새',
+  legendaryFortress: '천하의 요새',
+};
+
+const CROSSING_LABEL: Readonly<Record<string, string>> = {
+  none: '도하 없음',
+  riverUncontested: '강 건넘 (무저항)',
+  riverOpposed: '강 건넘 (저항)',
+  straitUncontested: '해협 건넘 (무저항)',
+  straitOpposed: '해협 건넘 (저항)',
+};
+
+const DEFENSE_METHOD_LABEL: Readonly<Record<string, string>> = {
+  STRONGHOLD: '거점 방어',
+  DELAYING: '지연 방어',
+};
 
 export function App() {
   const [seed, setSeed] = useState('duel-0001');
@@ -106,7 +157,15 @@ export function App() {
         setLog((l) => [...l, { type: 'preview-refused', turn: view.turn, detail: { reason: card.reason ?? '' } }]);
         return;
       }
-      setLog((l) => [...l, ...runtime.submit(intent)]);
+      // `runtime.submit` is a mutation and must run OUTSIDE the state updater.
+      // React StrictMode double-invokes updaters in development to surface
+      // impurity, so a submit called inside one is sent twice: the first attempt
+      // succeeds and the second is rejected as a repeat, and the rejection is
+      // what the player is left looking at. It survives only in `dev:game` —
+      // StrictMode does not double-invoke in a production build, which is why the
+      // Playwright suite (which drives the built bundle) never saw it.
+      const events = runtime.submit(intent);
+      setLog((l) => [...l, ...events]);
       setTick((t) => t + 1);
     },
     [runtime, view],
@@ -168,6 +227,30 @@ export function App() {
     [submitting, viewer],
   );
 
+  // Whose seat is owed a move, read off the projection rather than tracked here:
+  // `committed` is the Runtime's own answer to "who is done this beat", and it
+  // means capital-locked in the opening beat and commitment-locked afterwards.
+  // Deriving instead of storing is why the hand-off cannot drift out of step
+  // with the match.
+  const owing = view.actors.filter((actor) => !view.committed.includes(actor));
+  const seatDone = view.committed.includes(viewer);
+  const nextSeat = owing.find((actor) => actor !== viewer) ?? null;
+  // A hand-off is offered only when this seat has nothing left to do and another
+  // seat does. It moves the chair, never the match — no intent is submitted.
+  const handOff = useCallback(() => {
+    if (nextSeat === null) return;
+    setViewer(nextSeat);
+    setFocused(null);
+  }, [nextSeat]);
+
+  // Battles are read back out of the log rather than stored a second time: the
+  // log already holds every event the Runtime published, and a parallel copy is
+  // how the two would come to disagree about what happened.
+  const battles = useMemo(
+    () => log.filter((event) => event.type === 'battle-resolved').reverse(),
+    [log],
+  );
+
   return (
     <main className="shell">
       <header>
@@ -183,7 +266,7 @@ export function App() {
           seed <input value={seed} onChange={(e) => changeSeed(e.target.value)} spellCheck={false} />
         </label>
         <label>
-          viewing{' '}
+          조종 중{' '}
           <select data-testid="viewer" value={viewer} onChange={(e) => setViewer(e.target.value as ActorId)}>
             {ACTORS.map((a) => (
               <option key={a} value={a}>
@@ -194,6 +277,15 @@ export function App() {
         </label>
         <span className="hint">wheel to zoom · drag to pan</span>
       </section>
+
+      <SeatBar
+        view={view}
+        viewer={viewer}
+        seatDone={seatDone}
+        nextSeat={nextSeat}
+        owing={owing}
+        onHandOff={handOff}
+      />
 
       {view.outcome !== null && (
         <VictoryScreen outcome={view.outcome} viewer={viewer} onNewMatch={startNewMatch} />
@@ -239,6 +331,18 @@ export function App() {
         onPick={pick}
       />
 
+      {battles.length > 0 && (
+        <section data-testid="battles">
+          <h2>전투</h2>
+          {/* Newest first: the card a player is looking for is the one that just
+              resolved, and older ones stay readable underneath as the match's
+              military history rather than being replaced. */}
+          {battles.map((battle, i) => (
+            <BattleCard key={`${battle.turn}-${i}`} detail={battle.detail ?? {}} />
+          ))}
+        </section>
+      )}
+
       <section className="readout">
         <div>
           <h2>Realms</h2>
@@ -268,10 +372,190 @@ export function App() {
       <section>
         <h2>Events</h2>
         <pre data-testid="events">
-          {log.map((e, i) => `${i + 1}. ${e.type}${e.detail?.reason ? `: ${String(e.detail.reason)}` : ''}`).join('\n')}
+          {log.map((e, i) => {
+            // The raw type stays first and unaltered: it is the contract the
+            // tests read, and it is the only part of this line that is authored
+            // by the Runtime rather than by the shell.
+            const gloss = EVENT_GLOSS[e.type];
+            const reason = e.detail?.reason ? `: ${String(e.detail.reason)}` : '';
+            return `${i + 1}. ${e.type}${reason}${gloss ? `  — ${gloss}` : ''}`;
+          }).join('\n')}
         </pre>
       </section>
     </main>
+  );
+}
+
+/**
+ * One resolved battle, read causally rather than chronologically.
+ *
+ * A battle is a single deterministic judgment, not a sequence of rounds, so there
+ * is no process to replay — what a player needs instead is *why it came out that
+ * way*. The card puts the ground first and the two commitments second, because
+ * that is the order the model works in: terrain and walls belong to the
+ * defender, and commitment is the lever each side pulls on top of them. "I poured
+ * more and still lost" becomes legible the moment the mountain and the wall are
+ * on the same card.
+ *
+ * Everything here is already viewer-safe. `submit()` names the battle's public
+ * fields one by one and drops exact pre-battle strength and the composed power
+ * product on purpose (they are ticket 08's bands and ticket 09's EVAL BAR), so
+ * this card cannot show a strength ratio and does not try to.
+ */
+function BattleCard({ detail }: { detail: Readonly<Record<string, unknown>> }) {
+  const str = (key: string): string | null =>
+    typeof detail[key] === 'string' ? (detail[key] as string) : null;
+  const label = (table: Readonly<Record<string, string>>, key: string): string | null => {
+    const raw = str(key);
+    return raw === null ? null : (table[raw] ?? raw);
+  };
+  // `winner` names the ROLE, not the realm — 'ATTACKER' | 'DEFENDER' | 'NEITHER'
+  // — and the third value is a real outcome rather than a missing one: a Delaying
+  // defence below the breakthrough ratio buys a turn without either side winning.
+  // Reading it as an actor id reports both sides as losers, which is what the
+  // first draft of this card did.
+  const winner = str('winner');
+  const side = (role: 'attacker' | 'defender') => {
+    const commitments = detail.commitments as Record<string, unknown> | undefined;
+    const casualties = detail.casualties as Record<string, unknown> | undefined;
+    const routed = detail.routed as Record<string, unknown> | undefined;
+    const num = (from: Record<string, unknown> | undefined): number | null =>
+      typeof from?.[role] === 'number' ? (from[role] as number) : null;
+    return {
+      actor: str(role),
+      commit: num(commitments),
+      dead: num(casualties),
+      routed: routed?.[role] === true,
+      result: winner === 'NEITHER'
+        ? '결판 없음'
+        : winner === role.toUpperCase() ? '승리' : '패배',
+    };
+  };
+
+  const attacker = side('attacker');
+  const defender = side('defender');
+  const fell = detail.sectorFalls === true;
+  // The ground, in the order it is priced: what it is, what had to be crossed to
+  // reach it, what was built on it, and how it was held.
+  const ground = [
+    label(TERRAIN_LABEL, 'terrain'),
+    label(CROSSING_LABEL, 'crossing'),
+    label(FORTIFICATION_LABEL, 'fortification'),
+    label(DEFENSE_METHOD_LABEL, 'defenseMethod'),
+  ].filter((part): part is string => part !== null);
+
+  const row = (role: string, s: ReturnType<typeof side>) => (
+    <tr>
+      <td>{s.actor}</td>
+      <td>{role}</td>
+      <td>{s.commit === null ? '—' : `행동력 ${s.commit}`}</td>
+      <td>
+        {s.result}
+        {s.routed ? ' · 궤주' : ''}
+      </td>
+      <td>{s.dead === null ? '—' : `전사 ${Math.round(s.dead).toLocaleString('en-US')}`}</td>
+    </tr>
+  );
+
+  return (
+    <article className="battle-card">
+      <h3>
+        {str('sector') ?? '—'}
+        {' '}
+        <span className="hint">{fell ? '구역이 넘어갔어요' : '구역을 지켰어요'}</span>
+      </h3>
+      <p className="battle-ground">{ground.join(' · ')}</p>
+      <table>
+        <tbody>
+          {row('공격', attacker)}
+          {row('방어', defender)}
+        </tbody>
+      </table>
+      {/* `fortificationDamage` is Delaying's erosion clock — a magnitude, not a
+          flag. Reporting it as a boolean loses the whole point of the mechanic,
+          which is that a wall wears down across repeated defences. */}
+      <p className="hint">
+        {typeof detail.fortificationDamage === 'number' && detail.fortificationDamage > 0
+          ? `성벽 침식 ${(detail.fortificationDamage as number).toFixed(2)}`
+          : '성벽 온전'}
+        {' · '}
+        {detail.routeDisrupted === true ? '보급로 차단' : '보급로 온전'}
+      </p>
+    </article>
+  );
+}
+
+/**
+ * Whose seat this is, what the seat owes, and the hand-off.
+ *
+ * The one thing hot-seat play needs and this shell had nowhere: a player who has
+ * locked realm-a is *also* realm-b, and nothing said so. Three lines, in the
+ * order a player needs them — who am I, what beat is this, what do I do now —
+ * then the hand-off as a button rather than as knowledge about a dropdown.
+ *
+ * It derives every word from the projection and submits nothing. Deliberately
+ * not automatic: the seat changing under the player is how a hot-seat game
+ * leaks, and saying "hand over" out loud is the beat a demo wants anyway.
+ */
+function SeatBar({
+  view,
+  viewer,
+  seatDone,
+  nextSeat,
+  owing,
+  onHandOff,
+}: {
+  view: MatchView;
+  viewer: ActorId;
+  seatDone: boolean;
+  nextSeat: ActorId | null;
+  owing: readonly ActorId[];
+  onHandOff: () => void;
+}) {
+  const over = view.outcome !== null;
+  const beat = over
+    ? '매치 종료'
+    : view.phase === 'capital-selection'
+      ? '수도 선택'
+      : '커밋';
+
+  // What this seat owes, right now. The waiting case names the other seat because
+  // that is the whole point: the player is both of them.
+  const step = over
+    ? '판이 멈췄어요. 아래에서 새 매치를 시작할 수 있어요.'
+    : !seatDone
+      ? view.phase === 'capital-selection'
+        ? '수도를 고르세요 — 내 땅(밝은 구역) 아무 곳이나 클릭.'
+        : '행동력을 구역에 배분하고 커밋을 잠그세요.'
+      : nextSeat !== null
+        ? `이 좌석은 끝났어요. ${nextSeat} 차례예요 — 아래 버튼으로 넘기세요.`
+        : owing.length === 0
+          ? '양쪽 다 잠갔어요. 공개가 해결되면 다음 턴이 열려요.'
+          : `${owing.join(', ')} 대기 중.`;
+
+  return (
+    <section className="seatbar" data-testid="seatbar">
+      <div className="seatbar-head">
+        <span className="seat-label">조종 중</span>
+        <strong className={`seat-badge seat-${viewer}`} data-testid="seat-actor">{viewer}</strong>
+        <span className="hint">턴 {view.turn} · {beat}</span>
+      </div>
+      <p className="seatbar-step" data-testid="seat-step">{step}</p>
+      {/* Naming the invasion is the difference between a loop that turns and a
+          loop that turns forever without a war: pouring chips and locking is a
+          complete legal turn, so a player told only to do that never marches, never
+          meets the enemy, and never sees a battle at all. */}
+      {!over && !seatDone && view.phase === 'decision' && (
+        <p className="hint" data-testid="seat-aside">
+          적 구역을 골라 야전군을 행군시키면, 그 구역에서 전투가 벌어져요.
+        </p>
+      )}
+      {!over && nextSeat !== null && seatDone && (
+        <button type="button" className="handoff" data-testid="hand-off" onClick={onHandOff}>
+          ▶ {nextSeat}에게 좌석 넘기기
+        </button>
+      )}
+    </section>
   );
 }
 

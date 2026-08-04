@@ -145,6 +145,54 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   the question answers itself in one match. **Delete this row when:** an adjacency
   grade is added to gate 03 § 4, or a seal records that its absence is intended and
   ④ decision 3's pricing survives.
+- [ ] **The landing's operation explainer teaches an arc the game no longer has, and
+  its illustration cannot be relabelled into the sealed one — registered
+  2026-08-03.** `#war-model` walks four panels across turns 11 → 16, and its SVG
+  keys four map states to `read | position | commit | consequence` (terrain →
+  forces → window → result). Gate 07 sealed the opposite grammar for a turn —
+  커밋량 → 행동 소환 → 세부 작전 → 가능 지역 빛남 → 지목 — with commit as the
+  *entrance*. The 2026-08-03 pass established these are **different altitudes**, not
+  the same sequence in a different order: the section narrates one match, the demo
+  above it plays one turn. Reframing the section to say so removed the
+  contradiction, which is why this is deferred rather than urgent. What remains is
+  the full re-cut: a commit-first turn primer needs its four map states redrawn as
+  UI grammar, not terrain, so it is illustration work, not copy work.
+  **Discuss when:** the next session that authors landing work — the user's stated
+  plan is to open it after the main design and build tickets, when the landing is
+  extended rather than patched. **Delete this row when:** the explainer is
+  re-authored against the sealed turn grammar, or the section is retired in favour
+  of the demo.
+
+- [ ] **The landing revision is on a branch, and its approved design doc is stale
+  in four places — registered 2026-08-03.** The duel-pivot re-cut of the landing
+  landed on `demo/school-submission` (`c7be696`) and is deployed, because the
+  submission deadline was that day and the branch is the deploy source. The user
+  ruled the resting state is a **merge into `main`**; it was deferred, not
+  declined. Two consequences are unpaid.
+
+  (a) `main`'s `index.html` still sells the pre-pivot game, so a cold reader of the
+  trunk gets the wrong product.
+
+  (b) `docs/superpowers/specs/2026-07-16-strategy-ground-ax-landing-design.md`
+  (Status: Approved) records three things that later rulings have moved past, with
+  nothing at the doc saying so: the headline (L38), the primary/secondary CTA roles
+  and `game.html` as the secondary's target (L40–41), and `game.html` as the
+  retained development build (L103). These are **not defects in the doc** — it is an
+  accurate 2026-07-16 record. What is missing is the stamp: the take-it-down ruling
+  and ADR 0051 amended the `game.html` lines, and the 2026-08-03 duel re-cut amended
+  the headline. Disposition is per-claim against the sealing ruling or the current
+  code, not a rewrite from a reader's judgement.
+
+  One item inside (b) has **no ruling behind it either way**: the primary and
+  secondary CTA roles are now inverted from the approved design (primary opens the
+  build, secondary scrolls to the model). That inversion arrived with the demo as a
+  side effect, not as a decision. It is a question for the user, not a stamp.
+
+  **Discuss when:** the submission is in and `main`'s working tree is clean (the
+  documentation lane had 14 uncommitted files at the time of writing).
+  **Delete this row when:** the branch is merged into `main`, the design doc carries
+  its amendment stamps, and the CTA inversion is either ruled or reverted.
+
 
 - [ ] **Treasury uncertainty has no propagation channel into the Standing band —
   registered 2026-08-03 (gate 12 batch, finding C3).** Gate 03 § 3 removes
@@ -303,8 +351,25 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   a user call. Cheapest honest path is (a) only, and (b) fills in naturally as
   those terms are re-sealed.
 
-- [ ] **The landing page still embeds the retired design, and `AGENTS.md` says it
-  serves "the landing page only"** (registered 2026-08-02 while closing Wayfinder
+- [x] **PAID 2026-08-03 — the landing embeds the L3 build, and ADR 0051 amends
+  the "only" sentence.** The deferred half of the take-it-down ruling is executed
+  rather than narrowed: `game.html` and `assets/game/`'s five modules left the
+  hosting bundle, and all five landing references now point at `/play`, which
+  serves the L3 duel build. So the public artifact demonstrates the game this
+  project *does* build. The governance half is settled by **ADR 0051**, which
+  amends ADR 0041 § Decision 1 — the landing may carry a playable demo, bounded to
+  copying the emitted bundle as an opaque artifact, with the game build still
+  taking nothing from the landing. That ADR supersedes this row's instruction not
+  to fix the sentence: the sentence is what changed.
+  **Still owed, and small:** `AGENTS.md` § Environments and `DESIGN.md` restate
+  "the landing page only" in prose. Re-cut both to ADR 0051 in the next doc-sync
+  batch; they are stale in exactly the direction that ADR names. *Delete this
+  paragraph when they are re-cut.*
+
+  Original row, kept because its analysis is what ADR 0051 answers:
+
+- ~~**The landing page still embeds the retired design, and `AGENTS.md` says it
+  serves "the landing page only"**~~ (registered 2026-08-02 while closing Wayfinder
   gate 11). `index.html:186` embeds `game.html` in an iframe labelled
   "strategy-ground · development build". `game.html` is the reference prototype:
   **multi-faction world conquest**, the design **ADR 0042 retired** in favour of
