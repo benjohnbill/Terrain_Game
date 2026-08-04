@@ -11,6 +11,22 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
 
 ## Open
 
+- [ ] **The landing revision is on a branch, and its approved design doc is stale
+  in four places — registered 2026-08-03.** The duel-pivot re-cut of the landing
+  landed on `demo/school-submission` (`c7be696`) and is deployed, because the
+  submission deadline was that day and the branch is the deploy source. The user
+  ruled the resting state is a **merge into `main`**; it was deferred, not
+  declined. Two consequences are unpaid. (a) `main`'s `index.html` still sells the
+  pre-pivot game, so a cold reader of the trunk gets the wrong product. (b)
+  `docs/superpowers/specs/2026-07-16-strategy-ground-ax-landing-design.md` (Status:
+  Approved) now misstates the hero H1, and still says the secondary CTA "opens
+  `game.html`" and that `game.html` is "retained as the current development build"
+  — both false since 2026-08-03. A reader implementing from it would build
+  backwards. **Discuss when:** the submission is in and `main`'s working tree is
+  clean (the documentation lane had 14 uncommitted files at the time of writing).
+  **Delete this row when:** the branch is merged into `main` and the design doc is
+  re-cut in the same batch.
+
 - [ ] **What does a testimony attach to — a sector, or a force? USER RULING OWED,
   registered 2026-08-03.** Fog `RULINGS.md` ③ decision 5 derives the ageing
   envelope from three sealed inputs with no new dial, and § What this ruling does
