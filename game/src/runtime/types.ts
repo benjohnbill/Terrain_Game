@@ -12,6 +12,8 @@
 
 import type { HexPosition, RegionId, SectorId, WorldArtifact } from '../world/schema.js';
 import type { RecruitmentRequest } from '../domain/recruitment.js';
+import type { ReconnaissanceRequest } from '../domain/intel.js';
+import type { ObservationGrade, PaidGrade } from '../domain/testimony.js';
 
 export type { HexPosition, RegionId, SectorId } from '../world/schema.js';
 
@@ -123,6 +125,7 @@ export type Intent =
   | AllocateCommitmentIntent
   | AllocateOrderIntent
   | AllocateRecruitmentIntent
+  | AllocateReconnaissanceIntent
   | MoveDetachmentIntent
   | SplitDetachmentIntent
   | MergeDetachmentsIntent
@@ -181,6 +184,30 @@ export interface AllocateOrderIntent {
 export interface AllocateRecruitmentIntent extends RecruitmentRequest {
   readonly kind: 'allocate-recruitment';
   readonly actor: ActorId;
+}
+
+/**
+ * Buy a look at one sector, at one grade — fog `MAGNITUDE.md` FG-M①.
+ *
+ * **Not an action with a fixed cost** (`DECISIONS-OWED.md` R2, 2026-07-25):
+ * each grade carries a per-sector unit price, the player pours from the single
+ * 행동력 stack, and what they pour converts linearly into how many sectors they
+ * scout. One target per intent; re-submitting the same sector replaces its grade
+ * and returns the retired grade's chips, exactly as a sector allocation does —
+ * reviewing and re-cutting a plan before locking costs nothing.
+ *
+ * Naming the grade rather than the chips is what makes the ladder legible: six
+ * chips is three normal looks or one enhanced one, and M8's saturation rule is
+ * what stops the first from dominating the second (FG-M① § Reconnaissance unit
+ * prices).
+ */
+export interface AllocateReconnaissanceIntent {
+  readonly kind: 'allocate-reconnaissance';
+  readonly actor: ActorId;
+  /** Any sector this realm does not hold. */
+  readonly sector: SectorId;
+  /** The grade to buy, or `null` to call the look off and take the chips back. */
+  readonly grade: PaidGrade | null;
 }
 
 /**
@@ -289,6 +316,157 @@ export interface RealmView {
   readonly yield: number;
   /** The land-derived ceiling on the field army, over **holdings** (M14). */
   readonly forceLimit: number;
+  /**
+   * 징집 명부's land-derived pool — `registerPerPop × Σ populationValue` over
+   * **controlled** sectors, public for both realms (gate 03 § 2).
+   *
+   * Public because it is arithmetic over public land, and it is fog RULING ①
+   * reaching its second subject: land and the people on it are the visible
+   * structure, and how many of them a realm moved into service is the manning
+   * that the estimate band covers. It is what the 동원 강도 and civilian-register
+   * reads are taken **against** — each is a public denominator combined with a
+   * banded numerator, which is what gives both zero new dials.
+   *
+   * Keyed on control rather than on holdings, unlike the four figures above:
+   * this counts the bodies a stretch of land can raise, not what that land pays,
+   * so limbo does not suspend it.
+   */
+  readonly registerPool: number;
+}
+
+/**
+ * A true-containing range. Every band a viewer reads is one of these, and none
+ * of them was computed from the value it brackets (fog `RULINGS.md` ③
+ * decision 1).
+ */
+export interface BandView {
+  readonly low: number;
+  readonly high: number;
+}
+
+/**
+ * One stored statement, as the player may read it back.
+ *
+ * ③ decision 4 shows the history rather than only its summary: the trend read —
+ * "it was this, now it is that" — is the capability the witness model adds and
+ * the model it replaced could not express at all. The **surface** is deferred
+ * (`docs/SYNC-DEBT.md`); this is the material it will be built from, summoned on
+ * designation rather than always painted.
+ */
+export interface TestimonyReadView {
+  readonly turn: number;
+  readonly grade: ObservationGrade;
+  readonly low: number;
+  readonly high: number;
+}
+
+/**
+ * One **contact** — a run of turns in which this viewer watched one enemy force
+ * without a gap (fog `RULINGS.md` ④ decisions 3 and 4).
+ *
+ * Published as a member of a dated list and **never summed with another**: two
+ * contacts may be the same force, so a total would be the Runtime asserting
+ * something it cannot know. That refusal is visible rather than silent, which is
+ * ④ decision 6's whole shape.
+ */
+export interface ForceContactView {
+  readonly contactId: string;
+  /** Whose force. That a force is somebody's is public the moment it is seen. */
+  readonly actor: ActorId;
+  readonly lastSeenAt: HexPosition;
+  readonly lastSeenSector: SectorId;
+  readonly lastSeenTurn: number;
+  readonly openedOnTurn: number;
+  /**
+   * Where it could be now — the last-seen fix widened by what could have happened
+   * since, in sectors. Exactly the sector it stands on while the contact is
+   * current, and growing with staleness thereafter, until the reading belongs to
+   * no sector at all (④ decision 5).
+   */
+  readonly reach: readonly SectorId[];
+  readonly substance: BandView;
+  readonly fatigue: BandView;
+  /** Observed this turn — ④ decision 3's unbroken contact, as a fact to render. */
+  readonly current: boolean;
+  /**
+   * Whether this contact can still accumulate. A closed one is a dated record of
+   * an aggregate that has since divided or consolidated: still true, no longer
+   * about anything standing on the board.
+   */
+  readonly closed: boolean;
+  readonly substanceHistory: readonly TestimonyReadView[];
+}
+
+/**
+ * What this viewer knows about one sector it does not hold.
+ *
+ * Every opposing sector appears, observed or not — a list carrying only the
+ * scouted ones would make its own length a signal, and the unobserved band is a
+ * real reading rather than an absence: bounded by public facts alone, never by
+ * the truth (gate 03 invariant 5).
+ */
+export interface SectorIntelView {
+  readonly sectorId: SectorId;
+  readonly owner: ActorId;
+  /** The shield manning it. Sector-attached: a garrison cannot march out (④ 1). */
+  readonly garrison: BandView;
+  /** Bodies of this sector's register under arms anywhere. */
+  readonly serving: BandView;
+  /** The public denominator both derived reads are taken against. */
+  readonly registerPool: number;
+  /** 동원 강도 — serving ÷ pool. Derived, zero new dials (gate 03 § 2). */
+  readonly mobilization: BandView;
+  /** Civilian register — pool − serving. Derived, and reversed on the same band. */
+  readonly civilianRegister: BandView;
+  /** The turn of the most recent statement about this ground, or `null`. */
+  readonly observedTurn: number | null;
+  readonly garrisonHistory: readonly TestimonyReadView[];
+}
+
+/**
+ * A free existence-and-heading warning, inside the viewer's own ring.
+ *
+ * Categorical by seal (gate 03 § 4): an enemy force standing on ground this realm
+ * controls announces *that* it is there and which way it is going. It carries no
+ * magnitude, no fatigue, no posture and no identity, and buying a reading of it
+ * is a separate purchase — which is what keeps the free floor from closing the
+ * information market.
+ */
+export interface BorderAlarmView {
+  readonly sectorId: SectorId;
+  readonly actor: ActorId;
+  /** Where it is headed, or `null` when it is standing still. */
+  readonly heading: SectorId | null;
+}
+
+/**
+ * The census, laid out as evidence rather than delivered as a verdict (④ 6).
+ *
+ * The sector side is aggregated because sector testimonies cannot overlap. The
+ * force side is not, and the absence of a total here is the point: under ④
+ * decision 4 the Runtime cannot honestly add two contacts together, so it refuses
+ * visibly. There is no `unaccounted` figure and none is derivable — what the
+ * player does with the contrast is a gap read, not arithmetic.
+ */
+export interface CoverageView {
+  /** Opposing sectors carrying any testimony at all. */
+  readonly sectorsObserved: number;
+  readonly sectorsTotal: number;
+  /** The turn of the oldest statement inside `sectorsObserved`, or `null`. */
+  readonly oldestObservedTurn: number | null;
+  /** Σ of the sector-attached serving bands — the one side that may be summed. */
+  readonly serving: BandView;
+  /** The public pool that sum is read against. */
+  readonly registerPool: number;
+}
+
+/** Everything this viewer has learned about the other realm. */
+export interface IntelligenceView {
+  readonly sectors: readonly SectorIntelView[];
+  /** Dated, never totalled. See `ForceContactView`. */
+  readonly contacts: readonly ForceContactView[];
+  readonly coverage: CoverageView;
+  readonly alarms: readonly BorderAlarmView[];
 }
 
 /**
@@ -455,6 +633,17 @@ export interface MatchView {
   readonly recruitmentOrders: readonly RecruitmentRequest[];
   /** Opposing recruitment sources visible during this decision beat only. */
   readonly mobilizationSignals: readonly MobilizationSignalView[];
+  /** This viewer's own reconnaissance purchases for the current turn. */
+  readonly reconnaissanceOrders: readonly ReconnaissanceRequest[];
+  /**
+   * Everything this viewer has learned about the other realm — Standard Fog.
+   *
+   * Composed from stored testimony and from bounds computable off public facts.
+   * **No true value reaches it**, which is why it is a member of the projection
+   * rather than something a surface derives: the composition happens once, here,
+   * where nothing downstream can reach around it.
+   */
+  readonly intelligence: IntelligenceView;
   /**
    * This viewer's own stocks, or `null` for the observer.
    *

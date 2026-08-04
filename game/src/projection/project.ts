@@ -25,7 +25,14 @@
  */
 
 import { spentOf, TURN_COMMITMENT_BUDGET } from '../domain/commitment.js';
-import { forceLimitOf, incomeOf, landValueOf } from '../domain/economy.js';
+import {
+  capitalGuardAt,
+  forceLimitOf,
+  GARRISON_PER_BORDER_SECTOR,
+  incomeOf,
+  landValueOf,
+  registerOf,
+} from '../domain/economy.js';
 import {
   availableCiviliansByOrigin,
   fieldOf,
@@ -35,21 +42,45 @@ import {
   type GarrisonForce,
   type PendingCohort,
 } from '../domain/force.js';
-import { advanceOneTurn, musterHexOf, type MovementGraph } from '../domain/movement.js';
+import {
+  fatigueEnvelope,
+  forceEnvelope,
+  garrisonEnvelope,
+  servingEnvelope,
+  UNKNOWN_WEAR,
+  type ForceContact,
+  type ReconnaissanceRequest,
+  type SectorRecord,
+} from '../domain/intel.js';
+import {
+  advanceOneTurn,
+  FORCED_MARCH_EXTRA_CAP,
+  MARCH_SPEED,
+  musterHexOf,
+  reachCone,
+  type MovementGraph,
+} from '../domain/movement.js';
 import { compareRecruitmentRequests, type RecruitmentRequest } from '../domain/recruitment.js';
 import { frontsOf, garrisonOf, holdingsOf } from '../domain/state.js';
 import type { MatchState } from '../domain/state.js';
+import { composeBand, intervalOf, type Interval, type Testimony } from '../domain/testimony.js';
 import type {
   ActorId,
+  BandView,
+  BorderAlarmView,
   CommitmentView,
   DetachmentView,
   EconomyView,
+  ForceContactView,
   GarrisonView,
+  IntelligenceView,
   MatchView,
   MobilizationSignalView,
   RealmView,
   SectorForcesView,
   SectorId,
+  SectorIntelView,
+  TestimonyReadView,
   ViewerId,
 } from '../runtime/types.js';
 
@@ -78,6 +109,9 @@ function realmView(state: MatchState, actor: ActorId): RealmView {
     landValue: landValueOf(sectors, holdings),
     yield: incomeOf(sectors, holdings, state.ripening),
     forceLimit: forceLimitOf(sectors, holdings, state.ripening),
+    // Over **control**, not holdings: this counts the bodies a stretch of land can
+    // raise rather than what that land pays, so limbo does not suspend it.
+    registerPool: registerOf(sectors, realm.sectors),
   };
 }
 
@@ -319,6 +353,300 @@ function visibleMobilizationSignals(
     }));
 }
 
+// ── Standard Fog ────────────────────────────────────────────────────────────
+//
+// Everything below composes bands out of two things and no third: the testimony
+// this viewer's ledger holds, and bounds that are arithmetic over public facts.
+// `MatchState` is in scope here because the rest of this file needs it, so the
+// discipline is stated rather than enforced by the type — no function in this
+// section reads an opposing realm's stocks, forces or garrisons, and a whole-match
+// test asserts the consequence (containment) rather than trusting the intent.
+
+const band = (interval: Interval): BandView => ({ low: interval.low, high: interval.high });
+
+function historyOf(testimonies: readonly Testimony[]): TestimonyReadView[] {
+  return testimonies
+    .map((testimony) => {
+      const claim = intervalOf(testimony);
+      return { turn: testimony.turn, grade: testimony.grade, low: claim.low, high: claim.high };
+    })
+    .sort((a, b) => a.turn - b.turn);
+}
+
+const latestTurnOf = (...groups: readonly (readonly Testimony[])[]): number | null => {
+  let latest: number | null = null;
+  for (const group of groups) {
+    for (const testimony of group) {
+      if (latest === null || testimony.turn > latest) latest = testimony.turn;
+    }
+  }
+  return latest;
+};
+
+/**
+ * A sector's shield ceiling, from public facts alone.
+ *
+ * The seat is authored geography and the coefficient is sealed, so a viewer can
+ * compute this for ground it has never seen. The capital's location is public
+ * from the reveal (CP-② item 1) while its guard's *strength* is fogged — which
+ * is exactly this shape: the ceiling is known, the manning is banded.
+ */
+function garrisonCeilingOf(state: MatchState, sectorId: SectorId, owner: ActorId): number {
+  return GARRISON_PER_BORDER_SECTOR
+    + capitalGuardAt(state.loadedWorld.artifact.sectors, sectorId, state.capitals[owner]);
+}
+
+function sectorIntelView(
+  state: MatchState,
+  sectorId: SectorId,
+  owner: ActorId,
+  record: SectorRecord | undefined,
+  forceLimit: number,
+): SectorIntelView {
+  const sectors = state.loadedWorld.artifact.sectors;
+  const registerPool = registerOf(sectors, [sectorId]);
+  const garrisonTestimonies = record?.garrison ?? [];
+  const servingTestimonies = record?.serving ?? [];
+
+  const garrison = composeBand({
+    testimonies: garrisonTestimonies,
+    now: state.turn,
+    envelope: garrisonEnvelope(forceLimit),
+    publicBound: { low: 0, high: garrisonCeilingOf(state, sectorId, owner) },
+    ...(record?.lastLossTurn === undefined ? {} : { lastLossTurn: record.lastLossTurn }),
+    ...(record?.lastReinforcementTurn === undefined
+      ? {}
+      : { lastGainTurn: record.lastReinforcementTurn }),
+  });
+  const serving = composeBand({
+    testimonies: servingTestimonies,
+    now: state.turn,
+    envelope: servingEnvelope(forceLimit),
+    // Nobody can serve who was never registered here, and the pool is public.
+    publicBound: { low: 0, high: registerPool },
+    ...(record?.servingLossTurn === undefined ? {} : { lastLossTurn: record.servingLossTurn }),
+  });
+
+  return {
+    sectorId,
+    owner,
+    garrison: band(garrison),
+    serving: band(serving),
+    registerPool,
+    // Both derived from one banded numerator over one public denominator, which
+    // is what gives them zero new dials (gate 03 § 2). The civilian read reverses
+    // the edges because it subtracts: more serving is fewer civilians.
+    mobilization: registerPool === 0
+      ? { low: 0, high: 0 }
+      : { low: serving.low / registerPool, high: serving.high / registerPool },
+    civilianRegister: { low: registerPool - serving.high, high: registerPool - serving.low },
+    observedTurn: latestTurnOf(garrisonTestimonies, servingTestimonies),
+    garrisonHistory: historyOf(garrisonTestimonies),
+  };
+}
+
+/**
+ * Where a contact could be now — its last-seen sector while it is current, and a
+ * cone widening by one turn's march for every turn since (④ decision 5).
+ *
+ * Published as **sectors** rather than hexes: the sector is the operational atom
+ * (ADR 0032), it is the grain a commitment is poured onto, and a cone of hexes at
+ * turn-scale staleness is hundreds of entries carrying no decision the sector list
+ * does not already carry.
+ */
+function reachOf(state: MatchState, contact: ForceContact): SectorId[] {
+  const age = Math.max(0, state.turn - contact.lastObservedTurn);
+  if (age === 0) return [contact.lastSeenSector];
+  // The forced-march cap, not the ordinary speed: a force may pay fatigue to go
+  // further, so a cone drawn at `MARCH_SPEED` would be a bound the board can break.
+  const cone = reachCone(
+    state.movementGraph,
+    contact.lastSeenAt,
+    age,
+    MARCH_SPEED + FORCED_MARCH_EXTRA_CAP,
+  );
+  const reached = new Set<SectorId>();
+  for (const hexKey of cone) {
+    const sector = state.movementGraph.nodes[hexKey]?.sectorId;
+    if (sector !== undefined) reached.add(sector);
+  }
+  return [...reached].sort();
+}
+
+function contactView(
+  state: MatchState,
+  contact: ForceContact,
+  forceLimit: number,
+): ForceContactView {
+  const envelope = forceEnvelope(forceLimit);
+  const loss = contact.lastLossTurn === undefined ? {} : { lastLossTurn: contact.lastLossTurn };
+  const substance = composeBand({
+    testimonies: contact.substance,
+    now: state.turn,
+    envelope,
+    publicBound: { low: 0, high: forceLimit },
+    ...loss,
+  });
+  const fatigue = composeBand({
+    testimonies: contact.fatigue,
+    now: state.turn,
+    // Wear is the one banded quantity that moves every turn under its own steam —
+    // marching accrues it and rest recovers it — so it needs a rate on both edges
+    // where substance needs one on neither.
+    envelope: fatigueEnvelope(),
+    // Zero is a real reading: an army that has not marched is unworn, and a
+    // multiplicative width around zero is zero. What a scout learns there is what
+    // anyone looking at a fresh army would learn, so it is left honest rather than
+    // padded — the substance floor (invariant 6) is stated for substance.
+    //
+    // Unbounded above, and see `UNKNOWN_WEAR` for why: the ledger keeps counting
+    // past the point its effect saturates.
+    publicBound: UNKNOWN_WEAR,
+  });
+  if (!Number.isFinite(fatigue.high)) {
+    throw new Error(`Contact ${contact.id} carries no wear testimony; a contact is created by one.`);
+  }
+
+  return {
+    contactId: contact.id,
+    actor: contact.actor,
+    lastSeenAt: { ...contact.lastSeenAt },
+    lastSeenSector: contact.lastSeenSector,
+    lastSeenTurn: contact.lastObservedTurn,
+    openedOnTurn: contact.openedOnTurn,
+    reach: reachOf(state, contact),
+    substance: band(substance),
+    fatigue: band(fatigue),
+    current: contact.lastObservedTurn === state.turn,
+    closed: contact.closedOnTurn !== undefined,
+    substanceHistory: historyOf(contact.substance),
+  };
+}
+
+/**
+ * The free warning floor: an enemy force standing on ground this realm holds.
+ *
+ * Existence and heading only. No magnitude, no fatigue, no identity — a viewer
+ * cannot tell one alarm's force from another's, and cannot count them into a
+ * total, because the alarm carries nothing to count. Paid response stays a
+ * separate purchase (gate 07 § Answer).
+ */
+function borderAlarms(state: MatchState, viewer: ViewerId): BorderAlarmView[] {
+  if (viewer === 'observer') return [];
+  const own = new Set(state.realms[viewer]!.sectors);
+  const alarms: BorderAlarmView[] = [];
+  for (const actor of state.actors) {
+    if (actor === viewer) continue;
+    for (const detachment of state.forces[actor]!.detachments) {
+      const at = state.movementGraph.nodes[hexKeyOf(detachment)]?.sectorId;
+      if (at === undefined || !own.has(at)) continue;
+      const destination = detachment.movement === null
+        ? null
+        : state.movementGraph.nodes[
+            `${detachment.movement.destination.q},${detachment.movement.destination.r}`
+          ]?.sectorId ?? null;
+      alarms.push({
+        sectorId: at,
+        actor,
+        heading: destination === at ? null : destination,
+      });
+    }
+  }
+  return alarms.sort((a, b) => a.sectorId.localeCompare(b.sectorId));
+}
+
+const hexKeyOf = (detachment: Detachment): string =>
+  `${detachment.position.q},${detachment.position.r}`;
+
+/**
+ * What this viewer has learned — the single composition point.
+ *
+ * The observer is handed an empty picture on purpose, for the reason it is handed
+ * no economy: a tooling viewer that could read both sides' intelligence would be a
+ * side door around the seam, and tests would start asserting through it.
+ */
+function visibleIntelligence(state: MatchState, viewer: ViewerId): IntelligenceView {
+  const empty: IntelligenceView = {
+    sectors: [],
+    contacts: [],
+    coverage: {
+      sectorsObserved: 0,
+      sectorsTotal: 0,
+      oldestObservedTurn: null,
+      serving: { low: 0, high: 0 },
+      registerPool: 0,
+    },
+    alarms: [],
+  };
+  if (viewer === 'observer') return empty;
+
+  const ledger = state.intelligence[viewer];
+  if (ledger === undefined) return empty;
+
+  const sectors: SectorIntelView[] = [];
+  let servingLow = 0;
+  let servingHigh = 0;
+  let poolTotal = 0;
+  let observedCount = 0;
+  let oldestObservedTurn: number | null = null;
+
+  for (const actor of state.actors) {
+    if (actor === viewer) continue;
+    const holdings = holdingsOf(state, actor);
+    const forceLimit = forceLimitOf(state.loadedWorld.artifact.sectors, holdings, state.ripening);
+    for (const sectorId of [...state.realms[actor]!.sectors].sort()) {
+      const view = sectorIntelView(state, sectorId, actor, ledger.sectors[sectorId], forceLimit);
+      sectors.push(view);
+      // The sector side is the one that may be summed: two sector testimonies
+      // cannot describe the same men, because a serving body keeps the sector
+      // origin it was drawn from wherever it stands (④ decision 6b).
+      servingLow += view.serving.low;
+      servingHigh += view.serving.high;
+      poolTotal += view.registerPool;
+      if (view.observedTurn !== null) {
+        observedCount += 1;
+        if (oldestObservedTurn === null || view.observedTurn < oldestObservedTurn) {
+          oldestObservedTurn = view.observedTurn;
+        }
+      }
+    }
+  }
+
+  const contacts = ledger.contacts
+    .map((contact) => {
+      const holdings = holdingsOf(state, contact.actor);
+      return contactView(
+        state,
+        contact,
+        forceLimitOf(state.loadedWorld.artifact.sectors, holdings, state.ripening),
+      );
+    })
+    .sort((a, b) => b.lastSeenTurn - a.lastSeenTurn || a.contactId.localeCompare(b.contactId));
+
+  return {
+    sectors,
+    contacts,
+    coverage: {
+      sectorsObserved: observedCount,
+      sectorsTotal: sectors.length,
+      oldestObservedTurn,
+      serving: { low: servingLow, high: servingHigh },
+      registerPool: poolTotal,
+    },
+    alarms: borderAlarms(state, viewer),
+  };
+}
+
+function visibleReconnaissanceOrders(
+  state: MatchState,
+  viewer: ViewerId,
+): ReconnaissanceRequest[] {
+  if (viewer === 'observer') return [];
+  return Object.values(state.reconnaissanceOrders[viewer] ?? {})
+    .map((request) => ({ ...request }))
+    .sort((a, b) => a.sectorId.localeCompare(b.sectorId));
+}
+
 /**
  * Builds the viewer-safe view of a match.
  *
@@ -350,6 +678,8 @@ export function project(state: MatchState, viewer: ViewerId): MatchView {
     commitment: visibleCommitment(state, viewer),
     recruitmentOrders: visibleRecruitmentOrders(state, viewer),
     mobilizationSignals: visibleMobilizationSignals(state, viewer),
+    reconnaissanceOrders: visibleReconnaissanceOrders(state, viewer),
+    intelligence: visibleIntelligence(state, viewer),
     economy: visibleEconomy(state, viewer),
     detachments: visibleDetachments(state, viewer),
     garrisons: visibleGarrisons(state, viewer),

@@ -138,6 +138,56 @@ export type {
   PendingCohort,
   PostureSite,
 } from '../domain/force.js';
+export {
+  closeContactsOn,
+  contactFor,
+  contactGrade,
+  emptyLedger,
+  fatigueEnvelope,
+  forceEnvelope,
+  garrisonEnvelope,
+  isReconOrderKey,
+  ORDER_RECON,
+  reconOrderKeyOf,
+  reconnaissanceOfferOf,
+  reconnaissancePriceOf,
+  reconnaissanceRequestRefusal,
+  recruitmentReachPerTurn,
+  sectorRecordOf,
+  servingEnvelope,
+  UNKNOWN_WEAR,
+} from '../domain/intel.js';
+export type {
+  ForceContact,
+  IntelligenceLedger,
+  ReconnaissanceLegalityContext,
+  ReconnaissanceOffer,
+  ReconnaissanceRequest,
+  SectorRecord,
+} from '../domain/intel.js';
+export {
+  composeBand,
+  INTERSECTION_FLOOR,
+  intersect,
+  intervalOf,
+  isPaidGrade,
+  OBSERVATION_HALF_WIDTH,
+  PAID_GRADES,
+  RECONNAISSANCE_UNIT_PRICE,
+  relativeHalfWidth,
+  REPORTING_SPREAD,
+  reportedFigureOf,
+  testimonyOf,
+  UNCHANGING,
+} from '../domain/testimony.js';
+export type {
+  BandInput,
+  ChangeEnvelope,
+  Interval,
+  ObservationGrade,
+  PaidGrade,
+  Testimony,
+} from '../domain/testimony.js';
 export { readFronts, revealTurn } from '../domain/turn.js';
 export type { FrontReading, RevealedTurn } from '../domain/turn.js';
 export {
@@ -187,7 +237,15 @@ export type {
   ActorId,
   AllocateCommitmentIntent,
   AllocateOrderIntent,
+  AllocateReconnaissanceIntent,
   AllocateRecruitmentIntent,
+  BandView,
+  BorderAlarmView,
+  CoverageView,
+  ForceContactView,
+  IntelligenceView,
+  SectorIntelView,
+  TestimonyReadView,
   ChooseCapitalIntent,
   Clock,
   CommitmentView,

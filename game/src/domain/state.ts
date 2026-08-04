@@ -12,6 +12,7 @@ import { contestedFronts } from './fronts.js';
 import type { MovementGraph } from './movement.js';
 import type { LoadedWorld } from '../world/load.js';
 import type { Detachment, ForceCohort, GarrisonForce } from './force.js';
+import type { IntelligenceLedger, ReconnaissanceRequest } from './intel.js';
 import type { RecruitmentRequest } from './recruitment.js';
 import type { SectorId } from '../world/schema.js';
 import type { ActorId, Front, MatchOutcome, MatchPhase, WorldIdentity } from '../runtime/types.js';
@@ -169,6 +170,26 @@ export interface MatchState {
   commitments: Record<ActorId, Record<string, number>>;
   /** Rich one-turn recruitment requests, hidden from every viewer but their owner. */
   recruitmentOrders: Record<ActorId, Record<string, RecruitmentRequest>>;
+  /**
+   * This turn's reconnaissance purchases, keyed by target sector, per realm.
+   *
+   * Hidden from every viewer but its owner for the same reason a commitment is:
+   * *where* an opponent is looking is itself intelligence, and publishing it
+   * would hand over their read of the board for nothing.
+   */
+  reconnaissanceOrders: Record<ActorId, Record<SectorId, ReconnaissanceRequest>>;
+  /**
+   * What each realm has been **told** — one ledger per actor, held beside truth
+   * rather than derived from it.
+   *
+   * This is the state that makes fog `RULINGS.md` ③ decision 1 mechanical: the
+   * projection composes a band out of this and out of public facts, and there is
+   * no code path on which the true value and a viewer projection meet. The
+   * ledger is written only where an observation happens, which is the one place
+   * truth is legitimately read — an act of observation is a realm looking at the
+   * world.
+   */
+  intelligence: Record<ActorId, IntelligenceLedger>;
   /** Exact positive recruitment aggregates; projection alone decides who may read them. */
   mobilizationTraces: MobilizationTrace[];
   /** Own field detachments explicitly assigned to each committed sector. */

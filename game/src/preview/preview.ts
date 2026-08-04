@@ -41,6 +41,14 @@ import {
   type RecruitmentFulfillment,
   type RecruitmentRequest,
 } from '../domain/recruitment.js';
+import {
+  reconOrderKeyOf,
+  reconnaissanceOfferOf,
+  reconnaissancePriceOf,
+  reconnaissanceRequestRefusal,
+  type ReconnaissanceOffer,
+} from '../domain/intel.js';
+import type { PaidGrade } from '../domain/testimony.js';
 import { hexKey } from '../world/schema.js';
 import type { ActorId, DetachmentView, HexPosition, Intent, MatchView, SectorId } from '../runtime/types.js';
 
@@ -58,6 +66,17 @@ export interface PreviewCard {
   readonly draft?: DraftResult;
   /** The selected request plus the exact aggregate batch answer it participates in. */
   readonly recruitment?: RecruitmentPreview;
+  /**
+   * For a reconnaissance order: what the purchase certainly buys, and what it buys
+   * only if a force is standing there.
+   *
+   * Shown **before designation** (④ decision 5). One price sells two products — a
+   * rear sector sells durable knowledge, a front sector sells perishable knowledge
+   * that is actionable now — and the player is meant to acquire that as a habit
+   * rather than read it as a rule. Saying which half is which is what makes the
+   * habit learnable without the UI ever stating the rule.
+   */
+  readonly reconnaissance?: ReconnaissanceOffer;
 }
 
 const no = (reason: string): PreviewCard => ({ admissible: false, reason });
@@ -228,6 +247,43 @@ export function preview(view: MatchView, intent: Intent): PreviewCard {
     });
     const fulfillment = batch.fulfilled.find((candidate) => candidate.requestId === request.requestId)!;
     return { admissible: true, recruitment: { fulfillment, batch } };
+  }
+
+  if (intent.kind === 'allocate-reconnaissance') {
+    if (intent.actor !== view.viewer) {
+      return no(`A reconnaissance order is previewed by the realm making it; "${view.viewer}" cannot preview "${intent.actor}"'s.`);
+    }
+    const order = intent as { sector?: unknown; grade?: unknown };
+    const cancelling = order.grade === null;
+    const refusal = reconnaissanceRequestRefusal(
+      {
+        sectorKeys: Object.keys(view.board.sectors),
+        controlledSectors:
+          view.realms.find((realm) => realm.actor === intent.actor)?.sectors ?? [],
+      },
+      order.sector,
+      cancelling ? 'normal-reconnaissance' : order.grade,
+    );
+    if (refusal !== null) return no(refusal);
+
+    const key = reconOrderKeyOf(order.sector as SectorId);
+    const chips = cancelling ? 0 : reconnaissancePriceOf(order.grade as PaidGrade);
+    const allocationError = allocationRefusal(
+      commitmentContext(view, intent.actor, [key]),
+      intent.actor,
+      key,
+      chips,
+    );
+    if (allocationError !== null) return no(allocationError);
+    if (cancelling) return { admissible: true };
+
+    return {
+      admissible: true,
+      reconnaissance: reconnaissanceOfferOf({
+        sectorId: order.sector as SectorId,
+        grade: order.grade as PaidGrade,
+      }),
+    };
   }
 
   if (intent.kind === 'allocate-commitment' || intent.kind === 'lock-commitment') {
@@ -413,6 +469,7 @@ function commitmentContext(
     sectorKeys: Object.keys(view.board.sectors),
     orderKeys: [...new Set([
       ...view.recruitmentOrders.map((request) => recruitmentOrderKeyOf(request.requestId)),
+      ...view.reconnaissanceOrders.map((request) => reconOrderKeyOf(request.sectorId)),
       ...candidateOrderKeys,
     ])],
     // Safe because the caller already established `actor === view.viewer`.

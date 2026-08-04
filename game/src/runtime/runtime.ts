@@ -92,6 +92,7 @@ import {
   FORCED_MARCH_EXTRA_CAP,
   MARCH_FATIGUE_PER_HEX,
   MARCH_SPEED,
+  reachCone,
   type MovementApproach,
 } from '../domain/movement.js';
 import {
@@ -100,6 +101,19 @@ import {
   settleRecruitmentBatch,
   type RecruitmentRequest,
 } from '../domain/recruitment.js';
+import {
+  closeContactsOn,
+  contactFor,
+  contactGrade,
+  emptyLedger,
+  reconOrderKeyOf,
+  reconnaissancePriceOf,
+  reconnaissanceRequestRefusal,
+  sectorRecordOf,
+  type ForceContact,
+  type ReconnaissanceRequest,
+} from '../domain/intel.js';
+import { testimonyOf, type ObservationGrade, type PaidGrade } from '../domain/testimony.js';
 import { frontsOf, garrisonOf, holdingsOf, ownerOfSector } from '../domain/state.js';
 import type { MatchState, MobilizationTrace, Realm, RealmForces } from '../domain/state.js';
 import { readFronts, revealTurn, type RevealedTurn } from '../domain/turn.js';
@@ -302,6 +316,11 @@ export class Runtime {
       turn: 1,
       commitments: {},
       recruitmentOrders: {},
+      reconnaissanceOrders: {},
+      // Empty ledgers, and honestly so: at the opening nobody has looked at
+      // anything, so every band is what public facts alone already say — which is
+      // the whole board's terrain and register pools, and nothing about the men.
+      intelligence: Object.fromEntries(actors.map((actor) => [actor, emptyLedger()])),
       mobilizationTraces: [],
       sectorAssignments: {},
       turnLocks: [],
@@ -587,6 +606,10 @@ export class Runtime {
         forcedMarch,
       );
     }
+    if (intent.kind === 'allocate-reconnaissance') {
+      const { sector, grade } = intent as { sector?: unknown; grade?: unknown };
+      return this.#allocateReconnaissance(intent.actor, sector, grade);
+    }
     if (intent.kind === 'move-detachment') {
       const { detachmentId, destinationHex, forcedMarch } = intent as {
         detachmentId?: unknown;
@@ -700,6 +723,8 @@ export class Runtime {
       childId,
     );
     forces.detachments.splice(sourceIndex, 1, retained, child);
+    // The aggregate anyone was watching has ceased to be one thing (④ decision 2).
+    this.#closeContactsOnAll([retained.id]);
     return [this.#turnEvent('detachment-split', 'decision', {
       actor,
       detachmentId: retained.id,
@@ -794,6 +819,17 @@ export class Runtime {
     const ready: Record<SectorId, number> = { ...garrison.ready };
     accumulateOrigins(ready, leaving);
     state.garrisons[site.sectorId] = { ready, pending: garrison.pending };
+    // Men walking out of a formation into the shield beside it is a composition
+    // change like any other: what stands under that name is no longer the aggregate
+    // anyone counted, so the contact stops accumulating rather than coming to
+    // exclude the truth.
+    this.#closeContactsOnAll([source.id]);
+    // And the shield they walked into stops being what anyone counted either. No
+    // rate covers this channel — it moves whatever happened to be standing there —
+    // so it is recorded as the event it is, for every viewer.
+    for (const viewer of state.actors) {
+      sectorRecordOf(state.intelligence[viewer]!, site.sectorId).lastReinforcementTurn = state.turn;
+    }
 
     return [this.#turnEvent('posture-transferred', 'decision', {
       actor,
@@ -855,6 +891,9 @@ export class Runtime {
     const survivors = forces.detachments.filter((detachment) => !selected.has(detachment.id));
     survivors.splice(firstIndex, 0, merged);
     forces.detachments.splice(0, forces.detachments.length, ...survivors);
+    // A consolidation is the same weakening as a division, from the other side: the
+    // thing standing here is no longer the aggregate anyone counted (④ decision 2).
+    this.#closeContactsOnAll(ids);
     return [this.#turnEvent('detachments-merged', 'decision', {
       actor,
       detachmentIds: ids,
@@ -936,6 +975,7 @@ export class Runtime {
       sectorKeys: this.#sectorIds(),
       orderKeys: [...new Set([
         ...Object.keys(state.recruitmentOrders[actor] ?? {}).map(recruitmentOrderKeyOf),
+        ...Object.keys(state.reconnaissanceOrders[actor] ?? {}).map(reconOrderKeyOf),
         ...candidateOrderKeys,
       ])],
       allocations: state.commitments[actor] ?? {},
@@ -1133,6 +1173,73 @@ export class Runtime {
       sectorId,
       commit: amount,
       posture,
+      spent: spentOf(allocations),
+      remaining: TURN_COMMITMENT_BUDGET - spentOf(allocations),
+    })];
+  }
+
+  /** The sectors this realm may buy a look at — every one it does not hold. */
+  #reconnaissanceLegalityContext(actor: ActorId) {
+    return {
+      sectorKeys: this.#sectorIds(),
+      controlledSectors: this.#state.realms[actor]!.sectors,
+    };
+  }
+
+  /**
+   * Buy a look at one sector — priced per sector by grade (FG-M①), poured from
+   * the one stack (D6.3), and replacing whatever was aimed there before.
+   *
+   * The grade names the price rather than the caller naming chips. That is what
+   * keeps the two paid grades selling different **destinations** rather than
+   * different speeds (④ decision 7): a caller who could pour arbitrary chips at
+   * one sector would be buying a deeper look by spending more, which is exactly
+   * the saturation rule M8 forbids.
+   */
+  #allocateReconnaissance(actor: ActorId, sector: unknown, grade: unknown): GameEvent[] {
+    const state = this.#state;
+    const intent = { kind: 'allocate-reconnaissance', actor };
+
+    // `null` calls the look off. Checked before the grade rule, because "no grade"
+    // is a legal instruction and `reconnaissanceRequestRefusal` is right to refuse
+    // it as a grade.
+    const cancelling = grade === null;
+    const refusal = cancelling
+      ? reconnaissanceRequestRefusal(
+          this.#reconnaissanceLegalityContext(actor),
+          sector,
+          'normal-reconnaissance',
+        )
+      : reconnaissanceRequestRefusal(this.#reconnaissanceLegalityContext(actor), sector, grade);
+    if (refusal !== null) return [this.#reject(intent, refusal)];
+
+    const sectorId = sector as SectorId;
+    const key = reconOrderKeyOf(sectorId);
+    const chips = cancelling ? 0 : reconnaissancePriceOf(grade as PaidGrade);
+    const allocationError = allocationRefusal(
+      this.#commitmentContext(actor, [key]),
+      actor,
+      key,
+      chips,
+    );
+    if (allocationError !== null) return [this.#reject(intent, allocationError)];
+
+    const allocations = (state.commitments[actor] ??= {});
+    const requests = (state.reconnaissanceOrders[actor] ??=
+      Object.create(null) as Record<SectorId, ReconnaissanceRequest>);
+    if (cancelling) {
+      delete allocations[key];
+      delete requests[sectorId];
+    } else {
+      allocations[key] = chips;
+      requests[sectorId] = { sectorId, grade: grade as PaidGrade };
+    }
+
+    return [this.#turnEvent('reconnaissance-allocated', 'decision', {
+      actor,
+      sectorId,
+      grade: cancelling ? null : grade,
+      chips,
       spent: spentOf(allocations),
       remaining: TURN_COMMITMENT_BUDGET - spentOf(allocations),
     })];
@@ -1389,6 +1496,10 @@ export class Runtime {
     events.push(...this.#resolveRecruitment(revealed.commitments));
     events.push(...this.#resolveMovement());
     events.push(...this.#resolveRecruitmentAffiliation());
+    // After the marching, before the fighting: a look bought this turn reads where
+    // the men actually ended up, and reports what stood there rather than what
+    // survived.
+    events.push(...this.#resolveReconnaissance());
     // Read the board first, then change it: the front reading reports what the
     // chips met, and the battles are what meeting costs.
     const engagements = this.#engagementsThisTurn(revealed);
@@ -1434,6 +1545,7 @@ export class Runtime {
     // regenerates whole (D6.3).
     state.commitments = {};
     state.recruitmentOrders = {};
+    state.reconnaissanceOrders = {};
     state.sectorAssignments = {};
     state.turnLocks = [];
     state.turn += 1;
@@ -1872,6 +1984,8 @@ export class Runtime {
           loser: engagement.defender.actor,
         });
       }
+
+      this.#depositBattleContact(engagement, outcome.winner);
 
       events.push(this.#turnEvent('battle-resolved', 'payoff', {
         sector: engagement.sector,
@@ -2370,6 +2484,240 @@ export class Runtime {
    * activated before this turn's settlement. Their source sectors therefore give
    * this information-update beat one exact, positive aggregate per actor-sector.
    */
+  // ── observation ───────────────────────────────────────────────────────────
+  //
+  // The **only** place the Runtime reads truth on a viewer's behalf, and it does
+  // not hand any of it over: each function below takes a true figure, speaks a
+  // vaguer one, and stores the vaguer one (fog `RULINGS.md` ③ decision 1). The
+  // true value does not survive the call, which is what makes "the true value
+  // never enters the projection function" a property of the shape rather than a
+  // promise — `project` has no parameter through which it could arrive.
+
+  /**
+   * One act of observation, drawn from the seeded stream.
+   *
+   * Forked per observation rather than drawn from the shared stream, on the
+   * standard reason `Rng.fork` exists: a label-derived stream lets this consumer
+   * draw without the order of *other* consumers' draws shifting its results, so
+   * a replay stays stable as the build grows.
+   */
+  #observe(
+    viewer: ActorId,
+    grade: ObservationGrade,
+    label: string,
+    truth: number,
+  ): ReturnType<typeof testimonyOf> {
+    const turn = this.#state.turn;
+    const draw = this.#state.rng.fork(`intel:${viewer}:${turn}:${label}`).next();
+    return testimonyOf(grade, turn, truth, draw);
+  }
+
+  /** Bodies of one sector's register standing under arms anywhere, for its realm. */
+  #servingFrom(actor: ActorId, sector: SectorId): number {
+    const state = this.#state;
+    const ownedGarrisons = state.realms[actor]!.sectors.flatMap((sectorId) => {
+      const force = state.garrisons[sectorId];
+      return force === undefined ? [] : [force];
+    });
+    return servingByOrigin(state.forces[actor]!, ownedGarrisons)[sector] ?? 0;
+  }
+
+  /** The shield standing on one sector, ready and forming alike. */
+  #garrisonMenOn(sector: SectorId): number {
+    const garrison = this.#state.garrisons[sector];
+    if (garrison === undefined) return 0;
+    return menOf(garrison.ready)
+      + garrison.pending.reduce((sum, cohort) => sum + menOf(cohort.origins), 0);
+  }
+
+  /**
+   * The **certain** half of a look: the land, and what it has under arms.
+   *
+   * Sector-attached because neither can march out of the ground it belongs to (④
+   * decision 1). A serving body keeps the sector origin it was drawn from wherever
+   * it stands, which is what makes the second reading a statement about *this*
+   * ground rather than about wherever its men happen to be.
+   */
+  #depositSectorReading(
+    viewer: ActorId,
+    owner: ActorId,
+    sector: SectorId,
+    grade: ObservationGrade,
+  ): void {
+    const record = sectorRecordOf(this.#state.intelligence[viewer]!, sector);
+    record.garrison.push(
+      this.#observe(viewer, grade, `garrison:${sector}`, this.#garrisonMenOn(sector)),
+    );
+    record.serving.push(
+      this.#observe(viewer, grade, `serving:${sector}`, this.#servingFrom(owner, sector)),
+    );
+  }
+
+  /**
+   * The **contingent** half: whatever force happens to be standing there.
+   *
+   * Force-attached, and filed under a contact rather than under the sector — a
+   * sector reading would be void the moment the men walked out of it, which is the
+   * failure ④ decision 1 rejected. Position rides along, because a look that told
+   * you how many without telling you where would be a reading of nothing.
+   */
+  #depositForceReadings(viewer: ActorId, sector: SectorId, grade: ObservationGrade): number {
+    const state = this.#state;
+    const ledger = state.intelligence[viewer]!;
+    let seen = 0;
+    for (const actor of state.actors) {
+      if (actor === viewer) continue;
+      for (const detachment of state.forces[actor]!.detachments) {
+        if (this.#sectorAt(detachment.position) !== sector) continue;
+        const men = menOf(detachment.ready.origins)
+          + detachment.pending.reduce((sum, cohort) => sum + menOf(cohort.origins), 0);
+        if (men === 0) continue;
+        const contact = contactFor(
+          ledger,
+          actor,
+          detachment.id,
+          state.turn,
+          detachment.position,
+          sector,
+        );
+        contact.substance.push(
+          this.#observe(viewer, grade, `substance:${contact.id}`, men),
+        );
+        contact.fatigue.push(
+          this.#observe(viewer, grade, `fatigue:${contact.id}`, detachment.ready.fatigue),
+        );
+        seen += 1;
+      }
+    }
+    return seen;
+  }
+
+  /**
+   * Reconnaissance resolves — **immediately, this turn** (ticket 08 § Pricing).
+   *
+   * Run after movement so a look reads where the men actually ended up, and before
+   * the battles so a scout reports what stood there rather than what survived.
+   * Both are the honest reading of "a look taken this turn".
+   */
+  #resolveReconnaissance(): GameEvent[] {
+    const state = this.#state;
+    const events: GameEvent[] = [];
+    for (const actor of state.actors) {
+      const requests = Object.values(state.reconnaissanceOrders[actor] ?? {})
+        .sort((a, b) => a.sectorId.localeCompare(b.sectorId));
+      for (const request of requests) {
+        const owner = ownerOfSector(state, request.sectorId);
+        if (owner === null || owner === actor) continue;
+        this.#depositSectorReading(actor, owner, request.sectorId, request.grade);
+        const forcesSeen = this.#depositForceReadings(actor, request.sectorId, request.grade);
+        events.push(this.#turnEvent('reconnaissance-resolved', 'payoff', {
+          actor,
+          sectorId: request.sectorId,
+          grade: request.grade,
+          // *How many* separate formations a look found is part of what was bought;
+          // what they are is in the viewer's own projection, never in an event both
+          // realms could read.
+          forcesSeen,
+        }));
+      }
+    }
+    return events;
+  }
+
+  /**
+   * What fighting tells you for free — coarser than the cheapest purchase, so the
+   * information market does not close on first contact (③ decision 9).
+   *
+   * A defender who **repels** an assault reads the attacker at the finer free
+   * grade: they held the ground and counted what came at them. Nobody can choose
+   * to be assaulted, so it is a windfall on a turn the opponent selected rather
+   * than a purchasable substitute (FG-M① § Precision).
+   */
+  #depositBattleContact(
+    engagement: Engagement,
+    winner: 'ATTACKER' | 'DEFENDER' | 'NEITHER',
+  ): void {
+    const state = this.#state;
+    const sector = engagement.sector;
+    const attacker = engagement.attacker.actor;
+    const defender = engagement.defender.actor;
+
+    const readings: readonly (readonly [ActorId, ActorId, ObservationGrade])[] = [
+      [defender, attacker, contactGrade(winner === 'DEFENDER')],
+      [attacker, defender, contactGrade(false)],
+    ];
+
+    for (const [viewer, subject, grade] of readings) {
+      this.#depositSectorReading(viewer, subject, sector, grade);
+      this.#depositForceReadings(viewer, sector, grade);
+      // Blood was shed here, and both sides know it. Every statement either of
+      // them holds from before this turn keeps its ceiling and gives up its floor:
+      // the men it counted may all be dead, and only a battle can do that.
+      const record = sectorRecordOf(state.intelligence[viewer]!, sector);
+      record.lastLossTurn = state.turn;
+      record.servingLossTurn = state.turn;
+      for (const contact of state.intelligence[viewer]!.contacts) {
+        if (contact.actor !== subject) continue;
+        if (this.#contactCouldHaveBeenAt(contact, sector)) contact.lastLossTurn = state.turn;
+      }
+      // A body drawn from anywhere in the realm can fall here, so every sector
+      // record of the side that fought loosens its serving floor.
+      for (const record of Object.values(state.intelligence[viewer]!.sectors)) {
+        record.servingLossTurn = state.turn;
+      }
+    }
+  }
+
+  /**
+   * Could the force behind this contact have been in a battle at this sector?
+   *
+   * Asked from the **viewer's** side only — the last-seen fix widened by one
+   * turn's march for each turn since. A contact seen this turn standing somewhere
+   * else demonstrably was not in this battle, so its floor survives; a contact old
+   * enough that the sector is inside its cone might have been, so its floor goes.
+   *
+   * Answering by identity instead — "was this the detachment that fought" — would
+   * be the Runtime handing the viewer a tracking guarantee it never bought, which
+   * is exactly what ④ decision 3 prices. Answering by nothing at all, and
+   * releasing every floor on every battle, would be safe but would delete the
+   * trend read: a duel fights most turns.
+   */
+  #contactCouldHaveBeenAt(contact: ForceContact, sector: SectorId): boolean {
+    const age = this.#state.turn - contact.lastObservedTurn;
+    if (age <= 0) return contact.lastSeenSector === sector;
+    const cone = reachCone(
+      this.#state.movementGraph,
+      contact.lastSeenAt,
+      age,
+      // The forced-march cap, not the ordinary speed: a force *may* pay fatigue to
+      // go further, so a cone drawn at the ordinary speed would be a bound the
+      // board can break, and every bound here has to be one it cannot.
+      MARCH_SPEED + FORCED_MARCH_EXTRA_CAP,
+    );
+    for (const key of cone) {
+      if (this.#state.movementGraph.nodes[key]?.sectorId === sector) return true;
+    }
+    return false;
+  }
+
+  /**
+   * A force that divides or consolidates stops being the subject anyone was
+   * watching — for **every** viewer, at once.
+   *
+   * ④ decision 2: a division neither kills a testimony nor leaves it intact. The
+   * count stays true of the aggregate that came out of the observed force, and
+   * what is lost is the attribution. Closing the contact is that weakening made
+   * mechanical, and it is what keeps containment structural: a chain that stayed
+   * open across a division would have to claim two different aggregates were one,
+   * and the intersection would empty on the next look.
+   */
+  #closeContactsOnAll(detachmentIds: readonly string[]): void {
+    const state = this.#state;
+    for (const actor of state.actors) {
+      closeContactsOn(state.intelligence[actor]!, detachmentIds, state.turn);
+    }
+  }
+
   #updateMobilizationSignals(): GameEvent[] {
     const state = this.#state;
     const traces: MobilizationTrace[] = [];
