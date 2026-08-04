@@ -401,11 +401,64 @@ superiority.
 | Swift Seizure | 1.5 | The doctrinal assault bar; 1.5–1.92 = thin take, ≥1.92 = shattering take |
 | Crossing / Landing | 1.5 | Same bar as Swift — water already taxed attack-side (×0.70–0.85) |
 | Flanking Breakthrough | 1.6 | Maneuver coordination premium. Boundary condition (M6 audit): the fortification discount fraction must be large enough that Flanking beats Swift vs fortified fronts, else lower to 1.4–1.5 — check at the matchup-fraction stage |
-| Encirclement & Annihilation | 2.2 | Only threshold above rout onset (R≈1.92): success arithmetically implies rout, and isolation implies blocked escape — annihilation from the numbers. 항복 수확 discounts winner blood (M6) |
+| Encirclement & Annihilation | 2.2 | Only threshold above rout onset (**R≈1.92 is M4's rout onset, not a threshold** — see the reading note below the table): success arithmetically implies rout, and isolation implies blocked escape — annihilation from the numbers. 항복 수확 discounts winner blood (M6) |
 
 Defense plans carry no thresholds — the defensive headline is the mirror
 (attack fell short); Delaying Defense's bargain is a resolution-layer
 product priced at the matchup-fraction stage.
+
+**Reading the Encirclement row (added 2026-08-05; value unchanged).** That row
+carries two numbers and only one of them is a threshold. **2.2** is the
+threshold; **R≈1.92** is M4's rout onset, quoted inside the cell because 2.2's
+derivation *is* its position relative to it. The distinction is written down
+because the cell has already been mis-transcribed: the duel-pivot ledger's Gate 6
+needle premise copied `~1.92` out of this cell as Encirclement's threshold while
+copying Deliberate Pressure's `1.1` correctly — one wrong number taken from the
+right row (`.scratch/l3-playable-build/DECISIONS-OWED.md` Part 2 #2, closed
+2026-08-05; the ledger line is stamped at its own location).
+
+**Derived and chosen differ inside this one value.** Being *above* 1.92 is
+derived — the whole annihilation argument rests on it, and § Toxic band names that
+placement as a thing to protect. The *size* of the gap (2.2 rather than 2.0 or
+2.5) is hand-given headroom. A later re-cut therefore inherits the constraint
+**"above rout onset, with headroom"** and does not inherit the figure 2.2.
+
+### Consequence — the rout cliff is a reading on the EVAL BAR — SEALED 2026-08-05 (user grill) · L1
+
+Verdict source: user grill 2026-08-05, closing `DECISIONS-OWED.md` Part 2 #2.
+
+Correcting the threshold moves 1.92 from the **edge** of the needle span to its
+**interior**. The ledger drew needles from 1.1 up to what it believed was
+Encirclement's slot; with the mis-citation corrected the span runs 1.1 → 2.2 and
+M4's cliff falls inside it. Nothing had ever placed the cliff on the bar — the
+ledger's EVAL BAR section never mentions it and `game/src/ui/eval-r.ts` carries no
+threshold or zone concept at all — so this correction *creates* the question
+rather than inheriting it.
+
+**Sealed: the cliff is read on the bar, and it is read without a number.** M7
+already holds the outcome language for it — the Swift Seizure row's
+`1.5–1.92 = thin take, ≥1.92 = shattering take` — which is the language of a
+result rather than of the machine, so the reading can exist without teaching the
+player the mechanism.
+
+Why this is a design ruling and not a nicety: without it, the last stretch of
+commitment is worth far more than the middle stretch and **nothing on the surface
+says so.** A player who pours just past a 1.5 threshold wins; one who pours to
+1.92 shatters the defender (M4: escape OPEN loses 50% of the remainder, BLOCKED is
+annihilation). SPEC's skill-piercable proposition forbids burying a gradient that
+large where the surface cannot teach it.
+
+**What this seal deliberately does not settle.** The treatment — texture, how hard
+the boundary reads, whether the zone appears on both bars — is ticket 09's to cut
+against a live prototype, per that ticket's § In-build design. The one constraint
+carried into that cut: **no new mark and no numeral.** The zone is the existing bar
+rendered differently above the cliff, never a second needle. No 한국어 표시어 is
+coined here either; the player-facing words for the two bands belong to 09's cut.
+
+L-stamp **L1** — shape by argument, the ledger's own convention for the EVAL BAR
+skeleton. The ruling was given as a provisional design judgment ("for now,
+design-wise"), which is recorded so that no later reader reads a sealed *visual*
+into it. Treatment and any measurement of whether the read lands are L3.
 
 **Toxic band accepted (1 < R < threshold favors the stronger side's
 exchange despite headline failure).** Dual historical validation: at

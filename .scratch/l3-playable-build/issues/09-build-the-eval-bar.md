@@ -1,6 +1,6 @@
 ---
 type: task
-status: needs-info
+status: open
 blocked_by: [08]
 ---
 
@@ -29,9 +29,14 @@ correct as it stands — ticket 04's note says why.
 
 **Ruled 2026-08-05 with ticket 04: merge, not adopt or discard.** `eval-r.ts`
 comes forward with the shell rather than being rebuilt, and this ticket inherits
-it as a starting point that has not had the two-axis review. The front matter
-still stands — this ticket's own blockers (Part 2 #3 is now closed; **#2**, the
-encirclement threshold, is not) are what hold it, never the scoping question.
+it as a starting point that has not had the two-axis review. What held this ticket
+was never the scoping question — it was its own blockers, Part 2 #3 and #2.
+
+**Both are now closed, and this ticket is `open` (2026-08-05).** #3 closed by ADR
+0052, #2 by the user grill that sealed the Encirclement threshold at 2.2. That
+grill also handed this ticket a new acceptance item (the rout-cliff zone, below)
+and left its treatment here on purpose. The two-axis review of the inherited
+`eval-r.ts` and `DemoShell.tsx` is this ticket's first act, not its last.
 
 **Hands off a ruling when it lands (registered 2026-07-31).** This ticket is the
 last one before the operational-manoeuvre pass and ticket 13 are found to be
@@ -45,9 +50,19 @@ is not claimable until it is ruled, whatever 10's own `Blocked by` line says.
 Specification gates: **all resolved.** Wayfinder 07 was already; 10 closed
 2026-08-02 (it owns every acceptance threshold); 12 closed 2026-08-03 — **no new
 integration feature home**, the Production homes are the existing feature
-birthplaces plus ADR 0049. What still holds this ticket at `needs-info` is
-`DECISIONS-OWED.md` Part 2 **#3** (the commit marker on the eval bar) and **#2**
-(the encirclement threshold), not a gate.
+birthplaces plus ADR 0049. `DECISIONS-OWED.md` Part 2 **#3** (the commit marker)
+and **#2** (the encirclement threshold) both closed 2026-08-05; nothing else held
+this ticket, so it is takeable.
+
+**Where this ticket's own rulings land, and why it is not obvious.** The EVAL BAR
+has no Production birthplace of its own, and gate 12 refused to create one — so the
+bar's contract is spread across the ledger's Gate 6 (Working), fog `RULINGS.md` ②
+(band presentation) and combat-formula `MAGNITUDE.md` M7 (the threshold values the
+needles show). Rulings this ticket produces file at whichever of those owns the
+subject; the rout-cliff zone filed at M7 for that reason. **Promoting the bar's
+whole presentation contract to an ADR is deferred with this ticket's landing as
+its trigger** — recorded in `docs/SYNC-DEBT.md`, where the deletion condition
+lives too.
 
 Contract (interim pointers): duel-pivot ledger Gate 6, EVAL BAR section — the
 sealed skeleton (subjective not omniscient; band not needle; reducible versus
@@ -75,6 +90,7 @@ own projection and nothing else.
 - [ ] The true value is always inside the displayed band; no display can exclude it.
 - [ ] The bar is computed at an equal-commit baseline with a live marker at the player's chosen commit, and the equal-commit basis is labelled so the player is not misled into reading it as a prediction of their own allocation.
 - [ ] Operation-plan threshold needles are shown from their owning magnitude doc so the catalog teaches itself without a tutorial.
+- [ ] **The rout cliff reads on the axis, with no numeral and no new mark** (`MAGNITUDE.md` M7 § Consequence, SEALED 2026-08-05). Above M4's cliff the bar is the same bar rendered differently — never a second needle — so a player can feel that the last stretch of commitment buys a shattering result rather than a bare win, without being taught the mechanism. The treatment is this ticket's to cut on the live prototype; that it is read at all is not.
 - [ ] ~~LEFT tracks the clicked front and updates live as the player re-clicks eligible sectors before 확정; RIGHT holds the descriptive average across eligible fronts for the chosen action; picking an action shows both at the average and clicking a front makes only LEFT diverge.~~ **Re-cut 2026-08-05 by ADR 0052 — see the two items below.** The struck text is kept rather than deleted because it records what the right bar was *for*: it fixed a reference so the per-engagement bar read as a deviation instead of sloshing. That problem is real and its answer moved rather than vanished.
 - [ ] **The two-bar layout stands, and the anchor sits inside each bar.** LEFT still tracks the clicked front and updates live as the player re-clicks eligible sectors before 확정. What the RIGHT bar holds is **this ticket's to cut against a running game** — the descriptive average across eligible fronts is retired, because ADR 0052 lets force divide across several fronts in one turn and "this front versus typical" stops being a decision input. Sloshing is damped by the equal-commit baseline the bar already carries, not by a second bar.
 - [ ] **The baseline-and-marker device reads on both decision axes** (ADR 0052 decision 5): baseline = the board with the player's decision removed, marker = the board with it applied, and the gap is what the decision bought. Commitment already runs this. Force joins it, so a player who sends half an army sees what the other half would have been worth.

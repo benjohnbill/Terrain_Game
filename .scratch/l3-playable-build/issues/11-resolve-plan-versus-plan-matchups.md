@@ -20,8 +20,17 @@ Specification gates: **all resolved.** Wayfinder 10 closed 2026-08-02 (it owns
 every acceptance threshold); 12 closed 2026-08-03 — **no new integration feature
 home**, the Production homes are the existing feature birthplaces plus ADR 0049.
 What still holds this ticket at `needs-info` is `DECISIONS-OWED.md` Part 2 **#8**
-and **#9** (the matchup matrix) and **#2** (the encirclement threshold), plus its
-recorded dependency on the operational-manoeuvre pass — not a gate.
+and **#9** (the matchup matrix), plus its recorded dependency on the
+operational-manoeuvre pass — not a gate. **#2** (the encirclement threshold) closed
+2026-08-05 at 2.2.
+
+**One item arrives with that closure.** M7's threshold table carries exactly one
+unresolved conditional, and it is on this ticket's stage: the Flanking Breakthrough
+row (1.6) says *"the fortification discount fraction must be large enough that
+Flanking beats Swift vs fortified fronts, else lower to 1.4–1.5 — check at the
+matchup-fraction stage"*. This ticket **is** that stage, and the code already ships
+1.6 as a needle (`game/src/ui/DemoShell.tsx`), so the check has a live value to fail
+against. Report the outcome to M7 as its owning doc; do not re-cut the number here.
 
 Contract (interim pointers): `docs/features/combat-formula/MATCHUP.md` (the
 closed verb vocabulary and the sparse matrix — an empty cell is the plain

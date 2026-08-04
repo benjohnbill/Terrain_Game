@@ -419,6 +419,21 @@ All feel/tempo numbers are 가안, tuned in L3 play per the standing frame.
       ("equal-commit R here, your-commit R here, threshold there"); (3) operation-plan
       THRESHOLD needles (신중 압박 ~1.1, 포위 섬멸 ~1.92 = 가안) make the catalog
       self-teaching (no tutorial).
+      > **Corrected 2026-08-05 (user grill, closing `DECISIONS-OWED.md` Part 2 #2) —
+      > 포위 섬멸's needle is 2.2, not ~1.92.** This premise was never a ruling on the
+      > threshold: it was quoting `../../docs/features/combat-formula/MAGNITUDE.md` M7,
+      > which owns plan thresholds, and 신중 압박 `~1.1` above matches M7 exactly. M7's
+      > Encirclement cell carries two numbers — the threshold **2.2** and M4's rout
+      > onset **R≈1.92** — and this line took the second. **What the mis-citation cost
+      > is this premise's own purpose:** the needle span was drawn 1.1 → 1.92, which put
+      > the rout cliff at the span's edge; at 1.92 the cliff sits *inside* nothing,
+      > because the top needle *is* the cliff. Corrected, the span is 1.1 → 2.2 and the
+      > cliff is interior — which is why the same grill had to rule whether the cliff is
+      > read at all. It is (M7 § Consequence — the rout cliff is a reading on the EVAL
+      > BAR, SEALED 2026-08-05). The `= 가안` marking stands for the needle *values*,
+      > which remain M7's to re-cut; it never covered which number this line quoted.
+      > The M7 cell that invited the error is annotated at its own birthplace in the
+      > same batch.
     · **In-play strategy = the PLAYER's judgment** — read from the tactical bar + the
       MAP (capital threats / reach cones) + fog. Not a bar.
     · **Strategic verdict → post-game COACH:** "winning at turn 14, then over-committed

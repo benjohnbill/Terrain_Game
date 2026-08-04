@@ -20,8 +20,10 @@ Specification gates: **all resolved.** Wayfinder 10 closed 2026-08-02 (it owns
 every acceptance threshold); 12 closed 2026-08-03 — **no new integration feature
 home**, the Production homes are the existing feature birthplaces plus ADR 0049.
 What still holds this ticket at `needs-info` is `DECISIONS-OWED.md` Part 2 **#7**
-(plan effect axes) and **#2** (the encirclement threshold), plus its recorded
-dependency on the operational-manoeuvre pass — not a gate.
+(plan effect axes), plus its recorded dependency on the operational-manoeuvre pass
+— not a gate. **#2** (the encirclement threshold) closed 2026-08-05: 2.2 stands and
+M7 is the single source, which is exactly what this ticket's own acceptance item on
+one-source thresholds asks for.
 
 Contract (interim pointers): `docs/features/operation-plan-catalog/CATALOG.md`
 (the twelve plans and their shapes); `docs/features/combat-formula/MAGNITUDE.md`

@@ -11,6 +11,35 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
 
 ## Open
 
+- [ ] **The EVAL BAR has no Production birthplace, and its presentation contract is
+  owed an ADR — registered 2026-08-05 (user grill closing Part 2 #2).** The game's
+  signature read organ has no `docs/features/` home, and gate 12 ruled that no new
+  integration feature home is created (Production homes are the existing feature
+  birthplaces plus ADR 0049). So the bar's contract sits in three houses that each
+  own something else: the duel-pivot ledger's Gate 6 (Working layer) holds the
+  skeleton, fog `RULINGS.md` ② holds band presentation, and combat-formula
+  `MAGNITUDE.md` M7 holds the threshold values the needles show. The rout-cliff
+  ruling of 2026-08-05 filed at M7 under that rule — correctly, since it is a
+  reading *of M7's numbers* — but the next such ruling may have no equally natural
+  owner, and ticket 09 is about to produce several (the organ's name, the tactical-R
+  composition, the visual treatment).
+
+  **Ruled 2026-08-05 (user): file at the owning birthplace now, promote the whole
+  presentation contract to an ADR when ticket 09 lands.** Promoting today was
+  rejected on two grounds — the reason for the cliff ruling lives inside M7 (M4's
+  cliff, M7's thin/shattering vocabulary), so filing it there keeps conclusion next
+  to reason; and 0051–0054 already landed inside three days, so a fifth ADR for one
+  reading is inflation. The accepted cost, stated rather than hidden: **a UI ruling
+  filed in a values doc is findable by whoever reads M7 and not by whoever
+  redesigns the bar.** Promotion at 09's landing pays that back, because by then the
+  cut treatment exists and goes into the ADR with the contract.
+
+  - **Picked up when:** ticket 09 lands (the same trigger the operational-manoeuvre
+    ordering ruling already carries — one session can serve both).
+  - **This row is deleted when:** that ADR is accepted and M7 § Consequence carries
+    a pointer to it. If 09 lands without the promotion, the row stays open and says
+    so; it does not expire quietly.
+
 - [ ] **`CoverageView` still ships the counting definition FG-M② replaced —
   registered 2026-08-05.** Fog `MAGNITUDE.md` **FG-M②** seals coverage as the mean
   share of each sector's prior ignorance the viewer has removed, read off band
@@ -1344,6 +1373,17 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   name on 2026-07-10. **Eleven remain live** (Part 2 #1–#9, #11, #12), plus #13
   판세 which this row never covered. Recorded rather than struck because the other
   eleven still stand; do not re-grill #10.
+
+  **Second partial payment, 2026-08-05. Four remain live: Part 2 #7, #8, #9, #12.**
+  Closed since the note above: **#1, #4, #5, #6** (fog grill 2026-08-03), **#3**
+  (ADR 0052), **#13** (ADR 0053, never covered by this row), and **#2** — the
+  Encirclement threshold, ruled **2.2** by user grill 2026-08-05 and sealed at
+  `docs/features/combat-formula/MAGNITUDE.md` M7. #2 closed as a **mis-citation
+  rather than a conflict of decisions**: the ledger premise was quoting M7 and took
+  the rout-onset figure out of a cell that carries two numbers. This row's
+  enumeration above still reads as if all twelve were live; it is left standing for
+  the same reason as the 2026-08-02 note — the four that remain still need it. Do
+  not re-grill #1–#6, #10, #11, #13.
 
 - [ ] **Dials named-but-unvalued in design docs, valued only in code**
   (registered 2026-07-25, demand-driven value sweep). The slice-2 operational

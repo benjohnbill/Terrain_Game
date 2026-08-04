@@ -37,7 +37,7 @@ board implementation:
 | going around a door | this session's TC-⑮ / bypass A · B · C taxonomy | **Flanking Breakthrough (우회 돌파)** |
 | walking past unopposed | **R14** — interception of a force in transit has no design (2026-07-26) | — |
 | cutting supply | **R16** — the supply design pass | **Supply Interdiction (보급 차단)** |
-| being cut off | Part 2 **#2** Encirclement threshold; 06c pinned `escape` to a constant; **D10** already designs the isolated-rout multiplier | **Encirclement and Annihilation (포위 섬멸)** |
+| being cut off | Part 2 **#2** Encirclement threshold — **closed 2026-08-05 at 2.2**, so what this pass owes is the *mechanism*, not the price; 06c pinned `escape` to a constant; **D10** already designs the isolated-rout multiplier | **Encirclement and Annihilation (포위 섬멸)** |
 | forcing a water door | TC-⑬'s surviving crossing column | **Crossing / Landing Securement (도하·상륙 확보)** |
 | throttling a choke | TC-⑬'s frontage half, re-pointed here 2026-07-31 | — (D9 / M11 own it) |
 | the map's depth | this session's map-resolution row (TC-⑪ froze the grid) | — |
@@ -214,7 +214,11 @@ before intercepting it is a decision).
 > - **(b) Run 13 without the four plans.** Ticket 10 already licenses the pattern
 >   ("Plans depending on settlement negotiation, reserves, or multi-stage
 >   operations are absent, and their absence is recorded"), and ticket 11 would
->   carry Part 2 #2 as absent rather than resolved. The pass then opens on 13's
+>   carry Part 2 #2 as absent rather than resolved. *(Read with care since
+>   2026-08-05: Part 2 #2 as a **row** is now closed — the threshold is 2.2. What
+>   this option means by "absent" is Encirclement's **mechanism**, which is still
+>   unbuilt; the phrasing predates the closure and the option itself is
+>   unaffected.)* The pass then opens on 13's
 >   report and *extends* 10/11 afterwards — which makes this pass's exit criterion
 >   ("10 and 11 are buildable") wrong as written.
 > - **(c) Move the evidence source earlier.** Fire the gates on ticket **07**'s

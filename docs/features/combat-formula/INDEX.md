@@ -47,6 +47,15 @@ COMPLETE (2026-07-05, M14 — rulings ⑱–㉑)**: yield (생산) unit, derived
 fortification-vs-recruitment verification paid), development. Remaining:
 A-4 doc debts (claim blocks ×12), Honest Gaps routed to other threads.
 
+**M7 amended 2026-08-05 (user grill; values unchanged).** The Encirclement
+threshold conflict (`DECISIONS-OWED.md` Part 2 #2) closed at **2.2** as a
+mis-citation rather than a contest of seals, and M7 gained two things at the same
+time: a reading note saying which of that row's two numbers is the threshold and
+which is M4's rout onset, plus **§ Consequence — the rout cliff is a reading on the
+EVAL BAR** (SEALED, L1), the first presentation ruling this feature holds. One item
+went out to L3 build ticket 11: M7's Flanking row still carries its unresolved
+`1.4–1.5` conditional, and 11 is the matchup-fraction stage that owes the check.
+
 ## Where This Sits
 
 Turn decision ladder layer 5 — resolution (DOMAIN_MAP "Turn decision
