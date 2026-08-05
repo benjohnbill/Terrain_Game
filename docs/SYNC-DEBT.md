@@ -11,6 +11,47 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
 
 ## Open
 
+- [ ] **The landing page states a business direction that no layer document carries
+  — registered 2026-08-05 (user decision, landing presentation re-cut).** The page
+  now names a revenue model in public: F2P core, bot-archetype diversity, and a
+  coaching-feedback subscription for improvers. Nothing in the seal chain says that.
+  The subscription BM was grilled *out* of SPEC on 2026-07-24
+  (`docs/features/capital/SPEC-AMENDMENT-DRAFT-duel-pivot.md:27`, "S2 BM removed …
+  stays PARKED"), on the stated reason **"Money ≠ fun/design."** That ruling is not
+  reversed here and SPEC is untouched: the user's decision was that a presentation
+  is not SPEC, so a direction may be spoken and shown while remaining unsealed.
+
+  What the page does carry from the seal chain is the *prohibition* — live coaching
+  is forbidden as pay-to-win, strategic verdict is post-game only (ADR 0053, fog
+  `RULINGS.md`, tickets 04/09 acceptance). That half is real. The unsealed half is
+  marked on the page as a direction under review rather than a commitment, which is
+  the honest form but not a substitute for a decision.
+
+  - **Picked up when:** the user rules on the business model as product direction,
+    or a post-L3 pass opens the BM axis — whichever comes first.
+  - **This row is deleted when:** either the model is sealed at a birthplace and the
+    page cites it, or the page's business section is removed.
+
+- [ ] **The landing carries dead CSS for three retired sections, and keeps an
+  eyebrow pattern the approved design's Avoid list names — registered 2026-08-05.**
+  The presentation re-cut deleted `#idea`, `#principles`, and `#proof` from
+  `index.html` and moved `#outcomes`' cards into the What-it-is section. Their rules
+  are still in `css/landing.css` (`.idea*`, `.principles*`, `.principle-list*`,
+  `.contrast-band*`, `.outcomes`, `.proof`, `.proof-link`,
+  `.section-heading--outcomes`, plus responsive entries) — roughly 250 lines that
+  ship and style nothing. Left in deliberately: the re-cut was done under a
+  presentation deadline and deleting live CSS by eye is how a working page breaks.
+  Separately, the shipped page puts a `.section-index` eyebrow on every section,
+  which `…-ax-landing-design.md` § Visual system lists under **Avoid** ("repeated
+  eyebrow labels"); the new sections kept the pattern for consistency with the
+  page a reader actually sees, rather than splitting the difference.
+
+  - **Picked up when:** the next session that touches `css/landing.css` for any
+    reason.
+  - **This row is deleted when:** the dead rules are removed with the page verified
+    at the six widths in the plan's verification section, and the eyebrow deviation
+    is either accepted at the design doc or corrected on the page.
+
 - [ ] **The EVAL BAR has no Production birthplace, and its presentation contract is
   owed an ADR — registered 2026-08-05 (user grill closing Part 2 #2).** The game's
   signature read organ has no `docs/features/` home, and gate 12 ruled that no new
@@ -334,8 +375,11 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   ruled the resting state is a **merge into `main`**; it was deferred, not
   declined. Two consequences are unpaid.
 
-  (a) `main`'s `index.html` still sells the pre-pivot game, so a cold reader of the
-  trunk gets the wrong product.
+  (a) ~~`main`'s `index.html` still sells the pre-pivot game, so a cold reader of the
+  trunk gets the wrong product.~~ **Paid — the re-cut is on `main` at `c7be696`.**
+  This clause was already false when it was read on 2026-08-05, which is the failure
+  mode a dated row is supposed to prevent: the row recorded a branch state and the
+  branch was merged without the row being revisited.
 
   (b) `docs/superpowers/specs/2026-07-16-strategy-ground-ax-landing-design.md`
   (Status: Approved) records three things that later rulings have moved past, with
@@ -352,10 +396,18 @@ FIXES; session `019f3183…`, log in `.context/codex-session-id`).
   build, secondary scrolls to the model). That inversion arrived with the demo as a
   side effect, not as a decision. It is a question for the user, not a stamp.
 
-  **Discuss when:** the submission is in and `main`'s working tree is clean (the
-  documentation lane had 14 uncommitted files at the time of writing).
-  **Delete this row when:** the branch is merged into `main`, the design doc carries
-  its amendment stamps, and the CTA inversion is either ruled or reverted.
+  **Amended 2026-08-05 (landing presentation re-cut).** The staleness in (b) grew:
+  the design doc's whole § Page structure now describes a seven-part shape the page
+  no longer has — the four-step war-model interaction, the principles-and-status
+  block, and the `Now / Next / Vision` progression are all retired. The CTA
+  inversion question inside (b) is **resolved by decision, not by side effect**: the
+  primary CTA opens the build and there is no secondary, recorded in `PRODUCT.md`
+  § Conversion & proof. The doc's header now carries a stamp pointing here.
+
+  **Discuss when:** the next session that edits the landing for any reason.
+  **Delete this row when:** the design doc carries its per-claim amendment stamps,
+  disposed against the sealing ruling or the current code rather than rewritten from
+  a reader's judgement.
 
 
 - [ ] **Treasury uncertainty has no propagation channel into the Standing band —

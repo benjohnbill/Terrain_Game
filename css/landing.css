@@ -340,9 +340,9 @@ h3 {
 }
 
 .hero h1 {
-    max-width: 10ch;
+    max-width: 15ch;
     margin-bottom: 30px;
-    font-size: clamp(4rem, 7.3vw, 6rem);
+    font-size: clamp(3.4rem, 6.2vw, 5.3rem);
 }
 
 .hero-lede {
@@ -792,10 +792,12 @@ marker path {
     transition: opacity 260ms ease;
 }
 
+/* The four-step tablist is gone; the map is now a single static frame that shows
+   terrain reading and the committed main effort at once. The per-state selectors
+   stay because the layers themselves are still the drawing's structure. */
+.operation-map[data-active-state="static"] [data-map-state],
 .operation-map[data-active-state="read"] [data-map-state="read"],
-.operation-map[data-active-state="position"] [data-map-state="position"],
-.operation-map[data-active-state="commit"] [data-map-state="commit"],
-.operation-map[data-active-state="consequence"] [data-map-state="consequence"] {
+.operation-map[data-active-state="commit"] [data-map-state="commit"] {
     opacity: 1;
 }
 
@@ -825,80 +827,10 @@ marker path {
     stroke-dasharray: 6 6;
 }
 
-.operation-route--resolved {
-    opacity: 0.65;
-}
-
-.operation-turn {
-    position: absolute;
-    right: 28px;
-    bottom: 22px;
-    left: 28px;
-    z-index: 3;
-    display: grid;
-    grid-template-columns: auto auto 1fr auto;
-    align-items: center;
-    gap: 10px;
-    color: var(--ink-muted);
-    font-family: var(--font-display);
-    font-size: 0.74rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-}
-
-.operation-turn strong {
-    color: var(--ink);
-    font-size: 1.1rem;
-}
-
-.operation-turn i {
-    height: 1px;
-    display: block;
-    background: var(--line-strong);
-}
-
 .operation-panel {
     display: flex;
     flex-direction: column;
     min-width: 0;
-}
-
-.operation-tabs {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    border-bottom: 1px solid var(--line);
-}
-
-.operation-tabs button {
-    min-height: 66px;
-    padding: 9px 7px;
-    border: 0;
-    border-bottom: 3px solid transparent;
-    background: transparent;
-    color: var(--ink-muted);
-    cursor: pointer;
-    font-family: var(--font-display);
-    font-size: 0.82rem;
-    font-weight: 600;
-    letter-spacing: 0.035em;
-    transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease;
-}
-
-.operation-tabs button span {
-    display: block;
-    margin-bottom: 1px;
-    font-size: 0.66rem;
-    opacity: 0.7;
-}
-
-.operation-tabs button:hover {
-    background: oklch(0.65 0.10 140 / 0.06);
-    color: var(--ink-soft);
-}
-
-.operation-tabs button[aria-selected="true"] {
-    border-color: var(--brass);
-    color: var(--brass-pale);
 }
 
 .operation-copy {
@@ -915,7 +847,7 @@ marker path {
     line-height: 0.98;
 }
 
-.operation-copy > p:not(.operation-kicker):not(.operation-progress) {
+.operation-copy > p {
     max-width: 58ch;
     color: var(--ink-soft);
 }
@@ -945,26 +877,6 @@ marker path {
     color: var(--ink);
     font-size: 0.91rem;
     font-weight: 600;
-}
-
-.operation-progress {
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    height: 3px;
-    margin: 0;
-    background: var(--line);
-}
-
-.operation-progress span {
-    width: 100%;
-    height: 100%;
-    display: block;
-    background: var(--brass);
-    transform: scaleX(var(--operation-scale, 0.25));
-    transform-origin: left;
-    transition: transform 260ms var(--ease-out);
 }
 
 .outcomes {
@@ -1540,6 +1452,211 @@ marker path {
     margin: 24px 0 0;
 }
 
+.proof-note strong {
+    color: var(--ink);
+    font-weight: 600;
+}
+
+/* The measurement — two figures from the run that retired the previous design.
+   Vermilion is the system's danger colour and these are failure readings, so the
+   numerals take it rather than brass. Latin digits, so the display face is right. */
+.measurement {
+    background: var(--ground-deep);
+}
+
+.measure-pair {
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-top: 1px solid var(--line-strong);
+    border-bottom: 1px solid var(--line-strong);
+}
+
+.measure-pair > div {
+    padding: 44px 34px 48px 0;
+}
+
+.measure-pair > div + div {
+    padding-left: 34px;
+    border-left: 1px solid var(--line-strong);
+}
+
+.measure-pair dt {
+    color: var(--danger-pale);
+    font-family: var(--font-display);
+    font-size: clamp(4rem, 8vw, 7rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 0.9;
+}
+
+.measure-pair dt span {
+    margin-left: 2px;
+    font-size: 0.42em;
+    vertical-align: 0.95em;
+}
+
+.measure-pair dd {
+    max-width: 44ch;
+    margin: 22px 0 0;
+    color: var(--ink-soft);
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.measure-pair dd strong {
+    margin-bottom: 6px;
+    display: block;
+    color: var(--ink);
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+/* Market — the page's one lit surface. The section carries a data table, which is
+   the one thing on this page that reads better on paper than on the map table, and
+   it keeps the light/dark rhythm the retired Idea and Principles sections held. */
+.market {
+    background: var(--ink);
+    color: var(--ground-deep);
+}
+
+.market .section-index {
+    color: oklch(0.40 0.10 140);
+}
+
+.market .section-heading > p {
+    color: oklch(0.34 0.022 145);
+}
+
+.market-scroll {
+    overflow-x: auto;
+}
+
+.market-table {
+    width: 100%;
+    min-width: 720px;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.market-table caption {
+    padding-bottom: 16px;
+    color: oklch(0.45 0.03 145);
+    font-family: var(--font-display);
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    text-align: left;
+    text-transform: uppercase;
+}
+
+.market-table th,
+.market-table td {
+    padding: 16px 20px 16px 0;
+    border-bottom: 1px solid oklch(0.2 0.015 145 / 0.18);
+    font-size: 0.9rem;
+    line-height: 1.45;
+    vertical-align: top;
+}
+
+.market-table thead th {
+    border-bottom: 1px solid oklch(0.2 0.015 145 / 0.45);
+    color: oklch(0.33 0.03 145);
+    font-family: var(--font-display);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.market-table tbody th {
+    padding-right: 28px;
+    color: var(--ground-deep);
+    font-family: var(--font-display);
+    font-size: 1.08rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.market-table td {
+    color: oklch(0.36 0.022 145);
+}
+
+.market-table code {
+    padding: 1px 6px;
+    border: 1px solid oklch(0.2 0.015 145 / 0.28);
+    color: var(--ground-deep);
+    font-family: var(--font-display);
+    font-size: 0.92em;
+    letter-spacing: 0.04em;
+}
+
+.market-table .cell-absent {
+    color: oklch(0.52 0.14 30);
+}
+
+.market-table .cell-present {
+    color: oklch(0.42 0.11 140);
+    font-weight: 600;
+}
+
+.market-table .row-analogue th,
+.market-table .row-analogue td {
+    background: oklch(0.75 0.12 85 / 0.16);
+}
+
+.market-read {
+    margin-top: clamp(3rem, 6vw, 5rem);
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: clamp(2rem, 5vw, 5rem);
+    align-items: start;
+}
+
+.market-quote {
+    margin: 0;
+    padding-top: 22px;
+    border-top: 2px solid var(--ground-deep);
+    font-family: var(--font-display);
+    font-size: clamp(1.6rem, 2.6vw, 2.3rem);
+    font-weight: 600;
+    line-height: 1.15;
+}
+
+.market-quote cite {
+    margin-top: 16px;
+    display: block;
+    color: oklch(0.45 0.03 145);
+    font-family: var(--font-body);
+    font-size: 0.82rem;
+    font-style: normal;
+}
+
+.market-target p {
+    max-width: 58ch;
+    margin: 0 0 16px;
+    color: oklch(0.34 0.022 145);
+}
+
+.market-target p:last-child {
+    margin-bottom: 0;
+}
+
+/* Business model — three stages plus the rule that forbids the obvious version of
+   the middle one. Reuses the proof-areas grid at three columns. */
+.model {
+    background: var(--ground-soft);
+}
+
+.proof-areas--three {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.model .development-disclosure {
+    margin-top: clamp(2.5rem, 5vw, 4rem);
+    border-top: 1px solid var(--line);
+}
+
 @media (max-width: 1024px) {
     .proof-areas {
         grid-template-columns: repeat(2, 1fr);
@@ -1551,6 +1668,34 @@ marker path {
 
     .proof-areas > div:nth-child(odd) {
         padding-left: 0;
+        border-left: 0;
+    }
+
+    /* The odd-child reset above assumes two columns, so the three-column variant
+       stacks here rather than inheriting a border rule written for a different
+       grid. */
+    .proof-areas--three {
+        grid-template-columns: 1fr;
+    }
+
+    .proof-areas--three > div,
+    .proof-areas--three > div + div {
+        padding: 26px 0;
+        border-left: 0;
+    }
+
+    .measure-pair,
+    .market-read {
+        grid-template-columns: 1fr;
+    }
+
+    .measure-pair > div {
+        padding: 34px 0 38px;
+    }
+
+    .measure-pair > div + div {
+        padding-left: 0;
+        border-top: 1px solid var(--line-strong);
         border-left: 0;
     }
 
@@ -1604,10 +1749,6 @@ marker path {
 
     .operation-map {
         min-height: auto;
-    }
-
-    .operation-panel {
-        min-height: 520px;
     }
 
     .principles-intro {
@@ -1756,27 +1897,12 @@ marker path {
         transform: scale(1.08);
     }
 
-    .operation-turn {
-        right: 18px;
-        bottom: 14px;
-        left: 18px;
-        grid-template-columns: auto auto 1fr;
+    .measure-pair dt {
+        font-size: clamp(3.2rem, 16vw, 4.6rem);
     }
 
-    .operation-turn span:last-child {
-        display: none;
-    }
-
-    .operation-panel {
-        min-height: 540px;
-    }
-
-    .operation-tabs {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .operation-tabs button {
-        min-height: 58px;
+    .market-table {
+        min-width: 640px;
     }
 
     .operation-copy h3 {

@@ -3,23 +3,23 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Strategy Ground는 상대의 수도를 먼저 무너뜨리는 쪽이 이기는 1:1 턴제 전략 게임입니다. 지형, 병력, 정보, 타이밍에 대한 몇 번의 판단이 한 판의 전쟁을 결정합니다.">
+    <meta name="description" content="안개 속 포커처럼 읽는 1:1 전쟁 게임. 30분대에 끝나고, 이기는 길은 적의 수도 하나뿐입니다. 지형, 병력, 정보, 타이밍에 대한 몇 번의 판단이 한 판을 결정합니다.">
     <meta name="theme-color" content="#0a0d0c">
     <link rel="canonical" href="https://notification-prototype-ec5c5.web.app/">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Strategy Ground">
     <meta property="og:locale" content="ko_KR">
     <meta property="og:url" content="https://notification-prototype-ec5c5.web.app/">
-    <meta property="og:title" content="Strategy Ground — Two capitals. Only one still stands.">
-    <meta property="og:description" content="두 나라, 한 번의 전쟁. 상대의 수도를 먼저 무너뜨리는 쪽이 이기는 1:1 턴제 전략 게임.">
+    <meta property="og:title" content="Strategy Ground — Grand strategy depth, without the four-hour session.">
+    <meta property="og:description" content="안개 속 포커처럼 읽는 1:1 전쟁. 30분대에 끝나고, 이기는 길은 적의 수도 하나뿐입니다.">
     <meta property="og:image" content="https://notification-prototype-ec5c5.web.app/assets/landing/og-image.jpg">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta property="og:image:type" content="image/jpeg">
     <meta property="og:image:alt" content="Strategy Ground 개발 빌드 화면 — 헥스 지도 위의 작전 상황.">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Strategy Ground — Two capitals. Only one still stands.">
-    <meta name="twitter:description" content="두 나라, 한 번의 전쟁. 상대의 수도를 먼저 무너뜨리는 쪽이 이기는 1:1 턴제 전략 게임.">
+    <meta name="twitter:title" content="Strategy Ground — Grand strategy depth, without the four-hour session.">
+    <meta name="twitter:description" content="안개 속 포커처럼 읽는 1:1 전쟁. 30분대에 끝나고, 이기는 길은 적의 수도 하나뿐입니다.">
     <meta name="twitter:image" content="https://notification-prototype-ec5c5.web.app/assets/landing/og-image.jpg">
     <title>Strategy Ground — 1v1 Turn-Based War Strategy</title>
 
@@ -35,7 +35,7 @@
         "@type": "VideoGame",
         "name": "Strategy Ground",
         "alternateName": "Strategy Ground (working title)",
-        "description": "상대의 수도를 먼저 무너뜨리는 쪽이 이기는 1:1 턴제 전략 게임. 지형, 병력, 정보, 타이밍에 대한 몇 번의 판단이 한 판의 전쟁을 결정합니다. 현재 개발 중.",
+        "description": "안개 속 포커처럼 읽는 1:1 전쟁 게임. 30분대에 끝나고, 이기는 길은 적의 수도 하나뿐입니다. 현재 개발 중.",
         "url": "https://notification-prototype-ec5c5.web.app/",
         "image": "https://notification-prototype-ec5c5.web.app/assets/landing/og-image.jpg",
         "inLanguage": "ko",
@@ -68,10 +68,11 @@
             </button>
 
             <nav id="site-navigation" class="site-nav" aria-label="주요 탐색" data-site-nav>
+                <a href="#measurement">Why</a>
+                <a href="#what">What It Is</a>
                 <a href="#build">Play a Turn</a>
-                <a href="#idea">The Idea</a>
-                <a href="#war-model">War Model</a>
-                <a href="#development">Current State</a>
+                <a href="#market">Market</a>
+                <a href="#model">Model</a>
                 <a class="nav-build" href="play">Development Build</a>
             </nav>
         </div>
@@ -82,19 +83,19 @@
             <div class="hero-shell">
                 <div class="hero-copy">
                     <p class="status-line"><span aria-hidden="true"></span> Working title · Playable 1v1 build</p>
-                    <h1 id="hero-title">Two capitals.<br>Only one still stands.</h1>
+                    <h1 id="hero-title">Grand strategy depth.<br>Without the four-hour session.</h1>
                     <p class="hero-lede">
-                        지형을 읽고, 병력을 배치하고, 정보를 의심하고, 때를 선택하십시오.
-                        <strong>Strategy Ground</strong>는 상대의 수도를 먼저 무너뜨리는 쪽이 이기는
-                        1:1 턴제 전략 게임입니다. 몇 번의 큰 판단이 한 판의 전쟁을 결정합니다.
+                        <strong>안개 속 포커처럼 읽는 1:1 전쟁</strong> — 30분대에 끝나고, 이기는 길은 적의 수도 하나뿐입니다.
+                        긴 전쟁 게임은 영토가 커질수록 더 많은 조작을 요구하지만, 기억에 남는 순간은 반복 업무가 아니라
+                        판을 뒤집은 판단 하나입니다.
                     </p>
                     <div class="hero-actions">
                         <a class="button button--primary" href="play">
                             Play the current build
                             <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m7 4 6 6-6 6"/></svg>
                         </a>
-                        <a class="button button--quiet" href="#war-model">
-                            See the war model
+                        <a class="button button--quiet" href="#what">
+                            See what it is
                         </a>
                     </div>
                     <p class="build-note">지금 브라우저에서 바로 실행되는 개발 빌드입니다. 완성된 데모가 아니라, 검증 중인 전쟁 시스템을 그대로 봅니다.</p>
@@ -157,9 +158,170 @@
                 </figure>
             </div>
             <div class="hero-proof" aria-label="제품 특성">
-                <span>1v1 turn-based war strategy</span>
-                <span>Fictional East Asia-inspired world</span>
-                <span>High complexity, low micromanagement</span>
+                <span>1v1 turn-based war</span>
+                <span>30-40 minutes per match</span>
+                <span>Capital fall, the only win</span>
+            </div>
+        </section>
+
+        <section class="section measurement" id="measurement" aria-labelledby="measurement-title">
+            <div class="section-shell">
+                <div class="section-heading">
+                    <div>
+                        <p class="section-index">Why it changed</p>
+                        <h2 id="measurement-title">I measured my own game.<br>It did not do what I promised.</h2>
+                    </div>
+                    <p>
+                        먼저 만든 것은 네다섯 세력이 겨루는 정복 게임이었습니다. 봇끼리 수천 판을 돌려
+                        전쟁이 실제로 어떻게 끝나는지 셌고, 결과는 약속한 것과 달랐습니다.
+                    </p>
+                </div>
+
+                <dl class="measure-pair">
+                    <div>
+                        <dt>68.7<span>%</span></dt>
+                        <dd>
+                            <strong>실질적 결과 없이 끝난 전쟁</strong>
+                            영토도 병력도 의미 있게 바뀌지 않은 채 종료됐습니다.
+                        </dd>
+                    </div>
+                    <div>
+                        <dt>18.2<span>%</span></dt>
+                        <dd>
+                            <strong>끝나지 않은 전쟁</strong>
+                            어느 쪽도 결판을 내지 못하고 계속됐습니다.
+                        </dd>
+                    </div>
+                </dl>
+
+                <p class="proof-note">
+                    이 숫자는 지금 만드는 게임의 것이 아니라, <strong>이 측정 때문에 버린 설계</strong>의 것입니다.
+                    다섯 세력 보드에서 돌린 결과이고, 저장소의 측정 스크립트로 다시 돌려볼 수 있습니다.
+                    그래서 세력 수를 둘로 줄이고, 이기는 방법을 수도 함락 하나로 잘랐습니다.
+                </p>
+            </div>
+        </section>
+
+        <section class="section war-model" id="what" aria-labelledby="what-title">
+            <div class="section-shell">
+                <div class="section-heading">
+                    <div>
+                        <p class="section-index">What it is</p>
+                        <h2 id="what-title">A 1v1 terrain-war duel,<br>read like poker under fog.</h2>
+                    </div>
+                    <p>
+                        지형과 보급, 정보와 타이밍은 그대로 둡니다. 대신 플레이어가 직접 처리해야 하는 일을
+                        몇 개의 큰 선택으로 압축합니다. 시스템 복잡도는 높게, <strong>요구되는</strong> 조작
+                        복잡도는 낮게. 숙련은 선택 사항으로 남습니다.
+                    </p>
+                </div>
+
+                <div class="operation-layout">
+                    <div class="operation-map-wrap">
+                        <div class="operation-map" data-active-state="static">
+                            <div class="map-coordinate" aria-hidden="true">OPERATION / WESTERN GATE</div>
+                            <svg class="strategy-map" viewBox="0 0 720 560" role="img" aria-labelledby="operation-map-title operation-map-desc">
+                                <title id="operation-map-title">작전 판단 지도</title>
+                                <desc id="operation-map-desc">병력이 전개될 수 있는 관문, 양측 야전군의 위치, 그리고 주공이 투입되는 진격로가 표시된 가상의 작전 지도입니다.</desc>
+                                <defs>
+                                    <pattern id="operation-contours" width="78" height="56" patternUnits="userSpaceOnUse">
+                                        <path d="M-10 38C10 6 52 4 88 31" fill="none" stroke="currentColor" stroke-width="1"/>
+                                        <path d="M-5 52C22 22 57 22 84 47" fill="none" stroke="currentColor" stroke-width="1"/>
+                                    </pattern>
+                                    <marker id="operation-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                                        <path d="M0 0 10 5 0 10Z"/>
+                                    </marker>
+                                </defs>
+                                <rect class="map-contours" x="0" y="0" width="720" height="560" fill="url(#operation-contours)"/>
+                                <path class="region region--north" d="M79 98 242 55 333 92 326 199 223 237 99 192Z"/>
+                                <path class="region region--center" d="m326 199 134-94 154 42 36 135-91 82-144-25-91-68Z"/>
+                                <path class="region region--south" d="m122 300 202-29 91 68 144 25-31 122-171 43-170-57-98-92Z"/>
+                                <path class="river" d="M46 236c119-15 132 41 225 35 110-7 134-78 223-54 81 22 93 93 182 98"/>
+                                <path class="river river--minor" d="M295 60c-17 73 16 112 73 153 42 30 37 74 47 126"/>
+                                <path class="ridge" d="M93 201c67-8 103-48 142-102M122 300c69-23 94-3 151-28M528 486c-21-55-5-91 31-122"/>
+
+                                <g class="map-state-layer map-state-layer--read" data-map-state="read">
+                                    <circle class="intel-radius" cx="373" cy="231" r="92"/>
+                                    <circle class="terrain-key" cx="373" cy="231" r="25"/>
+                                    <path class="terrain-gate" d="M349 214 373 231l25-18"/>
+                                    <g class="map-label map-label--accent" transform="translate(398 211)">
+                                        <text>WESTERN GATE</text><text y="16">KEY TERRAIN</text>
+                                    </g>
+                                    <g class="map-label" transform="translate(112 143)">
+                                        <text>HIGH GROUND</text><text y="16">FORTIFIED</text>
+                                    </g>
+                                </g>
+
+                                <g class="map-state-layer map-state-layer--commit" data-map-state="commit">
+                                    <path class="operation-route" d="M183 363C275 330 315 278 373 231c52-43 103-36 152-11" marker-end="url(#operation-arrow)"/>
+                                    <path class="feint-route" d="M278 410c61-9 99-5 137 17"/>
+                                    <g class="force force--friendly" transform="translate(183 363)">
+                                        <rect x="-24" y="-13" width="48" height="26" rx="2"/><path d="M-15 0h30M0-8v16"/>
+                                    </g>
+                                    <g class="force force--hostile" transform="translate(525 220)">
+                                        <rect x="-25" y="-13" width="50" height="26" rx="2"/><path d="m-14-7 28 14m0-14-28 14"/>
+                                    </g>
+                                    <g class="map-label map-label--accent" transform="translate(301 316)">
+                                        <text>MAIN EFFORT</text><text y="16">COMMIT ON TURN 14</text>
+                                    </g>
+                                </g>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="operation-panel">
+                        <div class="operation-copy">
+                            <h3>이기는 길은 하나뿐입니다.</h3>
+                            <p>
+                                강을 건너는 길은 넓지만, 병력이 전개될 수 있는 관문은 하나뿐입니다.
+                                적의 숫자보다 먼저 싸움이 벌어질 조건을 읽고, 주력을 감추고, 되돌릴 수
+                                없는 순간에 커밋합니다. 그 판단들이 쌓여 하나의 결말로 수렴합니다.
+                            </p>
+                            <dl class="operation-facts">
+                                <div><dt>Victory</dt><dd>적의 수도 함락. 그 외의 종결은 설계에서 뺐습니다.</dd></div>
+                                <div><dt>Tempo</dt><dd>한 판 30-40분. 길어도 한 시간.</dd></div>
+                                <div><dt>Hand</dt><dd>태세 프리셋과 채워진 명령으로 낮은 진입 문턱.</dd></div>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="outcome-pair">
+                    <article class="outcome outcome--reversal">
+                        <div class="outcome-map" aria-hidden="true">
+                            <span class="outcome-line outcome-line--one"></span>
+                            <span class="outcome-line outcome-line--two"></span>
+                            <span class="outcome-position outcome-position--small"></span>
+                            <span class="outcome-position outcome-position--large"></span>
+                            <span class="outcome-gate"></span>
+                        </div>
+                        <div>
+                            <p>Prepared reversal</p>
+                            <h3>불리한 병력으로<br>결정적 지점을 만들다</h3>
+                            <span>좁은 관문 · 숨긴 예비대 · 늦춘 결전</span>
+                        </div>
+                    </article>
+                    <article class="outcome outcome--collapse">
+                        <div class="outcome-map" aria-hidden="true">
+                            <span class="collapse-ring"></span>
+                            <span class="collapse-route"></span>
+                            <span class="collapse-position collapse-position--one"></span>
+                            <span class="collapse-position collapse-position--two"></span>
+                        </div>
+                        <div>
+                            <p>Catastrophic commitment</p>
+                            <h3>잘못 고른 결전으로<br>수도로 가는 길을 내주다</h3>
+                            <span>노출된 평원 · 끊긴 퇴로 · 소멸한 야전군</span>
+                        </div>
+                    </article>
+                </div>
+
+                <p class="proof-note">
+                    두 결과 모두 지급되는 이벤트가 아니라 플레이어가 만든 것입니다. 이 모델은 화면보다
+                    먼저 문서로 봉인되고 테스트로 지켜집니다. <strong>테스트 575개가 통과하고, 같은 계산이
+                    Node와 브라우저에서 비트 단위로 동일합니다.</strong> 세계는 콘텐츠 해시가 찍혀 있고,
+                    가능한 두 세력 분할 15가지 전부 인구 불균형이 0.000%입니다.
+                </p>
             </div>
         </section>
 
@@ -199,295 +361,144 @@
             </div>
         </section>
 
-        <section class="idea section" id="idea" aria-labelledby="idea-title">
-            <div class="section-shell idea-grid">
-                <div class="idea-statement">
-                    <p class="section-index">The idea</p>
-                    <h2 id="idea-title">전략의 깊이는<br><em>명령의 개수</em>가 아닙니다.</h2>
-                </div>
-                <div class="idea-copy">
-                    <p class="idea-lede">
-                        기존의 긴 전쟁 게임은 영토가 커질수록 더 많은 조작을 요구합니다.
-                        하지만 기억에 남는 순간은 반복 업무가 아니라, 판을 뒤집은 한 번의 판단입니다.
-                    </p>
+        <section class="section market" id="market" aria-labelledby="market-title">
+            <div class="section-shell">
+                <div class="section-heading">
+                    <div>
+                        <p class="section-index">Market</p>
+                        <h2 id="market-title">Franchises sell on their name.<br>We do not have one.</h2>
+                    </div>
                     <p>
-                        Strategy Ground는 복잡성을 제거하지 않습니다. 지형, 보급, 병력, 정보,
-                        요새와 타이밍이 서로 영향을 주도록 남겨둡니다. 대신 플레이어가 직접 처리해야
-                        하는 일을 몇 개의 큰 선택으로 압축합니다.
+                        경쟁 제품 페이지 여섯 개를 네 축으로 뜯어봤습니다. 판타지의 크기, 플레이어 주도권,
+                        시간 압축, 그리고 증거입니다. 대형 프랜차이즈는 이름이 "왜 관심을 가져야 하나"를 이미
+                        답해주기 때문에 히어로에서 기능을 설명하지 않습니다. 무명 게임에는 그 경제가 없습니다.
                     </p>
-                    <blockquote>
-                        “적게 조작하고, 더 많이 책임진다.”
+                </div>
+
+                <div class="market-scroll">
+                    <table class="market-table">
+                        <caption>여섯 개 공식 제품 페이지, 2026-07-16 조사</caption>
+                        <thead>
+                            <tr>
+                                <th scope="col">Title</th>
+                                <th scope="col">Fantasy</th>
+                                <th scope="col">Agency</th>
+                                <th scope="col">Compression</th>
+                                <th scope="col">Proof</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th scope="row">Civilization VII</th>
+                                <td>믿을 만한 문명의 저술</td>
+                                <td><code>Build</code></td>
+                                <td class="cell-absent">없음</td>
+                                <td>프랜차이즈 인지도, 평점</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Hearts of Iron IV</th>
+                                <td>2차대전 국가 지휘</td>
+                                <td><code>Steer</code> · <code>Take charge</code></td>
+                                <td class="cell-absent">없음</td>
+                                <td>산업, 동맹, 대체 역사, 멀티</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Europa Universalis V</th>
+                                <td>역사를 가로지르는 야망</td>
+                                <td>정체성 명령문</td>
+                                <td class="cell-absent">역방향 (방대한 시간 규모를 판다)</td>
+                                <td>살아있는 세계, 외교·경제·군사</td>
+                            </tr>
+                            <tr class="row-analogue">
+                                <th scope="row">Slipways</th>
+                                <td>방대한 우주 제국 건설</td>
+                                <td><code>Build</code></td>
+                                <td class="cell-present">같은 문장 안에서 시간 비용을 해소</td>
+                                <td>트레일러, 스토어</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Manor Lords</th>
+                                <td>이름과 키아트에 위임</td>
+                                <td>약함</td>
+                                <td class="cell-absent">없음</td>
+                                <td>결합한 두 경험을 명시, GIF</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">The Battle of Polytopia</th>
+                                <td>접근 가능한 로우폴리 정복</td>
+                                <td>약함</td>
+                                <td class="cell-present">바로 아래 <code>Fast paced</code></td>
+                                <td>수상, 플랫폼 폭, 토너먼트</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="market-read">
+                    <blockquote class="market-quote">
+                        “Build vast space empires. Still be done in time for lunch.”
+                        <cite>Slipways · 가장 가까운 카피 구조</cite>
                     </blockquote>
-                </div>
-            </div>
-
-            <div class="contrast-band section-shell" aria-label="제품 차별점">
-                <div>
-                    <span class="contrast-label">Less of this</span>
-                    <p>늘어난 영토만큼 반복되는 행정과 소탕</p>
-                </div>
-                <svg viewBox="0 0 64 24" aria-hidden="true"><path d="M2 12h56m-8-8 8 8-8 8"/></svg>
-                <div>
-                    <span class="contrast-label">More of this</span>
-                    <p>몇 턴에 걸쳐 설계한 작전이 만든 결정적 결과</p>
+                    <div class="market-target">
+                        <p>
+                            여섯 중 넷은 시간 압축이 없거나 반대 방향입니다. 가진 둘은 모두 인디이고, 둘 다
+                            그것으로 팝니다. 강한 인디 페이지는 셋 중 하나를 팝니다. 큰 판타지에 부담을
+                            덜어낸 것, 특정 경험의 조합, 기존 증거로 뒷받침된 접근성. 우리 자리는 첫 번째입니다.
+                        </p>
+                        <p>
+                            타겟은 전쟁 시뮬레이션의 깊이를 좋아하지만 수십 시간의 플레이타임을 정당화할 수
+                            없는 사람, 그리고 익숙한 장르 문법에 지친 숙련자입니다.
+                        </p>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <section class="war-model section" id="war-model" aria-labelledby="war-model-title">
+        <section class="section model" id="model" aria-labelledby="model-title">
             <div class="section-shell">
                 <div class="section-heading">
                     <div>
-                        <p class="section-index">The arc of one match</p>
-                        <h2 id="war-model-title">One match.<br>Four judgments that decide it.</h2>
+                        <p class="section-index">Business model</p>
+                        <h2 id="model-title">Free to play.<br>Paid to improve.</h2>
                     </div>
                     <p>
-                        위에서 둔 것이 <strong>한 턴</strong>이라면, 이것은 <strong>한 판</strong>입니다.
-                        여러 턴에 걸쳐 쌓인 판단이 어떻게 하나의 결말로 수렴하는지,
-                        지도 위에서 한 단계씩 짚어 보여줍니다.
+                        돈이 설계를 만지지 않도록 수익 구조는 아직 게임 스펙에 넣지 않았습니다.
+                        아래는 확정된 약속이 아니라 <strong>검토 중인 방향</strong>입니다.
                     </p>
                 </div>
 
-                <div class="operation-layout">
-                    <div class="operation-map-wrap">
-                        <div class="operation-map" data-operation-map data-active-state="read">
-                            <div class="map-coordinate" aria-hidden="true">OPERATION / WESTERN GATE</div>
-                            <svg class="strategy-map" viewBox="0 0 720 560" role="img" aria-labelledby="operation-map-title operation-map-desc">
-                                <title id="operation-map-title">작전 판단 단계 지도</title>
-                                <desc id="operation-map-desc">선택한 작전 단계에 따라 지형 정보, 병력 배치, 진격로, 전투 결과가 차례로 강조됩니다.</desc>
-                                <defs>
-                                    <pattern id="operation-contours" width="78" height="56" patternUnits="userSpaceOnUse">
-                                        <path d="M-10 38C10 6 52 4 88 31" fill="none" stroke="currentColor" stroke-width="1"/>
-                                        <path d="M-5 52C22 22 57 22 84 47" fill="none" stroke="currentColor" stroke-width="1"/>
-                                    </pattern>
-                                    <marker id="operation-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-                                        <path d="M0 0 10 5 0 10Z"/>
-                                    </marker>
-                                </defs>
-                                <rect class="map-contours" x="0" y="0" width="720" height="560" fill="url(#operation-contours)"/>
-                                <path class="region region--north" d="M79 98 242 55 333 92 326 199 223 237 99 192Z"/>
-                                <path class="region region--center" d="m326 199 134-94 154 42 36 135-91 82-144-25-91-68Z"/>
-                                <path class="region region--south" d="m122 300 202-29 91 68 144 25-31 122-171 43-170-57-98-92Z"/>
-                                <path class="river" d="M46 236c119-15 132 41 225 35 110-7 134-78 223-54 81 22 93 93 182 98"/>
-                                <path class="river river--minor" d="M295 60c-17 73 16 112 73 153 42 30 37 74 47 126"/>
-                                <path class="ridge" d="M93 201c67-8 103-48 142-102M122 300c69-23 94-3 151-28M528 486c-21-55-5-91 31-122"/>
-
-                                <g class="map-state-layer map-state-layer--read" data-map-state="read">
-                                    <circle class="intel-radius" cx="373" cy="231" r="92"/>
-                                    <circle class="terrain-key" cx="373" cy="231" r="25"/>
-                                    <path class="terrain-gate" d="M349 214 373 231l25-18"/>
-                                    <g class="map-label map-label--accent" transform="translate(398 211)">
-                                        <text>WESTERN GATE</text><text y="16">KEY TERRAIN</text>
-                                    </g>
-                                    <g class="map-label" transform="translate(112 143)">
-                                        <text>HIGH GROUND</text><text y="16">FORTIFIED</text>
-                                    </g>
-                                </g>
-
-                                <g class="map-state-layer map-state-layer--position" data-map-state="position">
-                                    <path class="position-line" d="M183 363c62-35 124-48 189-132"/>
-                                    <g class="force force--friendly" transform="translate(183 363)">
-                                        <rect x="-24" y="-13" width="48" height="26" rx="2"/><path d="M-15 0h30M0-8v16"/>
-                                    </g>
-                                    <g class="force force--reserve" transform="translate(278 410)">
-                                        <rect x="-20" y="-11" width="40" height="22" rx="2"/><path d="M-12 0h24"/>
-                                    </g>
-                                    <g class="force force--hostile" transform="translate(525 220)">
-                                        <rect x="-25" y="-13" width="50" height="26" rx="2"/><path d="m-14-7 28 14m0-14-28 14"/>
-                                    </g>
-                                    <g class="map-label" transform="translate(110 401)">
-                                        <text>FIELD ARMY</text><text y="16">MASKED BY RIDGE</text>
-                                    </g>
-                                </g>
-
-                                <g class="map-state-layer map-state-layer--commit" data-map-state="commit">
-                                    <path class="operation-route" d="M183 363C275 330 315 278 373 231c52-43 103-36 152-11" marker-end="url(#operation-arrow)"/>
-                                    <path class="feint-route" d="M278 410c61-9 99-5 137 17"/>
-                                    <g class="force force--friendly" transform="translate(183 363)">
-                                        <rect x="-24" y="-13" width="48" height="26" rx="2"/><path d="M-15 0h30M0-8v16"/>
-                                    </g>
-                                    <g class="force force--hostile" transform="translate(525 220)">
-                                        <rect x="-25" y="-13" width="50" height="26" rx="2"/><path d="m-14-7 28 14m0-14-28 14"/>
-                                    </g>
-                                    <g class="map-label map-label--accent" transform="translate(301 316)">
-                                        <text>MAIN EFFORT</text><text y="16">COMMIT ON TURN 14</text>
-                                    </g>
-                                </g>
-
-                                <g class="map-state-layer map-state-layer--consequence" data-map-state="consequence">
-                                    <path class="consequence-zone" d="M342 201c42-28 92-15 116 21 18 28 7 71-24 91-46 29-103 6-112-40-6-29 2-53 20-72Z"/>
-                                    <path class="operation-route operation-route--resolved" d="M183 363C275 330 315 278 373 231c52-43 103-36 152-11" marker-end="url(#operation-arrow)"/>
-                                    <g class="force force--hostile force--broken" transform="translate(525 220)">
-                                        <rect x="-25" y="-13" width="50" height="26" rx="2"/><path d="m-14-7 28 14m0-14-28 14"/>
-                                    </g>
-                                    <g class="map-label map-label--outcome" transform="translate(388 334)">
-                                        <text>ROUTE SEVERED</text><text y="16">FIELD ARMY ISOLATED</text>
-                                    </g>
-                                </g>
-                            </svg>
-                            <div class="operation-turn" aria-hidden="true">
-                                <span>Turn</span><strong data-turn-number>11</strong><i></i><span data-turn-phase>Situation read</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="operation-panel">
-                        <div class="operation-tabs" role="tablist" aria-label="작전 판단 단계">
-                            <button id="step-read" type="button" role="tab" aria-selected="true" aria-controls="operation-copy" tabindex="0" data-operation-step="read"><span>Field</span>Read</button>
-                            <button id="step-position" type="button" role="tab" aria-selected="false" aria-controls="operation-copy" tabindex="-1" data-operation-step="position"><span>Force</span>Position</button>
-                            <button id="step-commit" type="button" role="tab" aria-selected="false" aria-controls="operation-copy" tabindex="-1" data-operation-step="commit"><span>Window</span>Commit</button>
-                            <button id="step-consequence" type="button" role="tab" aria-selected="false" aria-controls="operation-copy" tabindex="-1" data-operation-step="consequence"><span>Result</span>Consequence</button>
-                        </div>
-
-                        <div class="operation-copy" id="operation-copy" role="tabpanel" aria-labelledby="step-read">
-                            <p class="operation-kicker" data-operation-kicker>Terrain judgment</p>
-                            <h3 data-operation-title>Read the ground.</h3>
-                            <p data-operation-body>강을 건너는 길은 넓지만, 병력이 전개될 수 있는 관문은 하나뿐입니다. 적의 숫자보다 먼저 싸움이 벌어질 조건을 읽습니다.</p>
-                            <dl class="operation-facts">
-                                <div><dt>Decision</dt><dd data-operation-decision>관문을 지킬 것인가, 적을 통과시킬 것인가</dd></div>
-                                <div><dt>Consequence</dt><dd data-operation-consequence>다음 턴의 배치 가능 지역이 달라집니다.</dd></div>
-                            </dl>
-                            <p class="operation-progress"><span data-operation-progress></span></p>
-                        </div>
-                        <p class="sr-only" id="operation-announcement" aria-live="polite"></p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="outcomes section" id="outcomes" aria-labelledby="outcomes-title">
-            <div class="section-shell">
-                <div class="section-heading section-heading--outcomes">
+                <dl class="proof-areas proof-areas--three">
                     <div>
-                        <p class="section-index">Emergent history</p>
-                        <h2 id="outcomes-title">No reenactments.<br>History-like consequences.</h2>
-                    </div>
-                    <p>
-                        게임이 역사적 승리를 이벤트로 지급하지 않습니다. 같은 지형과 병력도
-                        플레이어가 무엇을 준비하고 언제 결전을 선택했는지에 따라 전혀 다른 기록을 만듭니다.
-                    </p>
-                </div>
-
-                <div class="outcome-pair">
-                    <article class="outcome outcome--reversal">
-                        <div class="outcome-map" aria-hidden="true">
-                            <span class="outcome-line outcome-line--one"></span>
-                            <span class="outcome-line outcome-line--two"></span>
-                            <span class="outcome-position outcome-position--small"></span>
-                            <span class="outcome-position outcome-position--large"></span>
-                            <span class="outcome-gate"></span>
-                        </div>
-                        <div>
-                            <p>Prepared reversal</p>
-                            <h3>불리한 병력으로<br>결정적 지점을 만들다</h3>
-                            <span>좁은 관문 · 숨긴 예비대 · 늦춘 결전</span>
-                        </div>
-                    </article>
-                    <article class="outcome outcome--collapse">
-                        <div class="outcome-map" aria-hidden="true">
-                            <span class="collapse-ring"></span>
-                            <span class="collapse-route"></span>
-                            <span class="collapse-position collapse-position--one"></span>
-                            <span class="collapse-position collapse-position--two"></span>
-                        </div>
-                        <div>
-                            <p>Catastrophic commitment</p>
-                            <h3>잘못 고른 결전으로<br>수도로 가는 길을 내주다</h3>
-                            <span>노출된 평원 · 끊긴 퇴로 · 소멸한 야전군</span>
-                        </div>
-                    </article>
-                </div>
-            </div>
-        </section>
-
-        <section class="principles section" id="principles" aria-labelledby="principles-title">
-            <div class="section-shell principles-layout">
-                <div class="principles-intro">
-                    <p class="section-index">Product principles</p>
-                    <h2 id="principles-title">Complexity stays.<br>Busywork leaves.</h2>
-                    <p>
-                        단순한 게임을 만드는 것이 아니라, 복잡한 전쟁을 더 읽기 좋은 선택으로
-                        바꾸는 것이 목표입니다.
-                    </p>
-                </div>
-
-                <dl class="principle-list">
-                    <div>
-                        <dt>Map-first judgment</dt>
-                        <dd>명령창보다 먼저 지도에서 상황을 읽습니다.</dd>
+                        <dt>무료 코어</dt>
+                        <dd>봇을 상대로 얼마든지 플레이할 수 있습니다. 봇의 재미가 유저베이스를 키우는 동력입니다.</dd>
                     </div>
                     <div>
-                        <dt>Legible uncertainty</dt>
-                        <dd>정보 부족은 무작위 방해가 아니라 추론할 여지를 만듭니다.</dd>
+                        <dt>유료 향상</dt>
+                        <dd>봇 아키타입의 다양성, 높은 난이도, 그리고 더 잘하고 싶은 플레이어를 위한 코칭 피드백 구독.</dd>
                     </div>
                     <div>
-                        <dt>Persistent consequence</dt>
-                        <dd>병력, 길, 요새와 피로의 변화가 다음 판단까지 남습니다.</dd>
-                    </div>
-                    <div>
-                        <dt>Compressed arc</dt>
-                        <dd>성장과 전쟁과 결말이 한 판 안에서 끝나도록 설계합니다.</dd>
-                    </div>
-                    <div>
-                        <dt>Player-authored climax</dt>
-                        <dd>결전은 이벤트가 아니라 누적된 선택의 결과로 발생합니다.</dd>
-                    </div>
-                </dl>
-            </div>
-        </section>
-
-        <section class="proof section" id="proof" aria-labelledby="proof-title">
-            <div class="section-shell">
-                <div class="section-heading">
-                    <div>
-                        <p class="section-index">Built in the open</p>
-                        <h2 id="proof-title">The systems come first.<br>The surface follows.</h2>
-                    </div>
-                    <p>
-                        화려한 트레일러보다 먼저, 전쟁이 실제로 어떻게 결판나는지를 만듭니다.
-                        지형·피로·보급·정보·타이밍이 서로를 밀어내는 모델을 코드와 테스트로 검증하고,
-                        그 위에 게임을 올립니다.
-                    </p>
-                </div>
-
-                <dl class="proof-areas">
-                    <div>
-                        <dt>지형과 보급</dt>
-                        <dd>어디로 갈 수 있고, 가면 무엇을 잃는가. 이동·보급·피로가 하나의 장부로 묶입니다.</dd>
-                    </div>
-                    <div>
-                        <dt>전투 해상도</dt>
-                        <dd>전투는 주사위가 아니라 앞선 판단의 산술입니다. 같은 병력도 조건에 따라 다르게 끝납니다.</dd>
-                    </div>
-                    <div>
-                        <dt>정보와 안개</dt>
-                        <dd>모르는 것은 무작위 방해가 아니라 추론할 여지입니다. 무엇이 보이는지가 규칙으로 정해집니다.</dd>
-                    </div>
-                    <div>
-                        <dt>전쟁의 끝</dt>
-                        <dd>이기는 방법은 하나입니다. 상대의 수도가 무너지는 것. 그 외의 종결은 설계에서 뺐습니다.</dd>
+                        <dt>PvP</dt>
+                        <dd>매출축이 아니라 깊이축입니다. 별도의 제품 결정으로 다루고, 지금 범위 밖에 둡니다.</dd>
                     </div>
                 </dl>
 
-                <p class="proof-note">
-                    이 설계는 화면보다 먼저 문서로 봉인되고 테스트로 지켜집니다. 결정의 기록과
-                    검증 코드는 전부 공개돼 있으니, 우리가 무엇을 정했고 무엇을 아직 못 정했는지
-                    직접 확인하실 수 있습니다.
-                </p>
-                <p class="proof-link">
-                    <a class="button button--quiet" href="https://github.com/benjohnbill/Terrain_Game" rel="noopener">
-                        저장소에서 설계 기록 보기
-                    </a>
-                </p>
+                <div class="development-disclosure">
+                    <div>
+                        <p>Sealed rule</p>
+                        <strong>Strategic verdict, post-game only</strong>
+                    </div>
+                    <p>라이브 코치는 금지했습니다. 구독자가 무료 플레이어보다 판을 더 잘 보게 되면 pay-to-win이고, 그건 경쟁의 정합성을 죽입니다. 이 규칙은 문서에만 있지 않고 설계 결정 기록과 코드 인수 조건까지 내려가 있습니다.</p>
+                    <a class="button button--quiet" href="https://github.com/benjohnbill/Terrain_Game" rel="noopener">결정 기록 보기</a>
+                </div>
             </div>
         </section>
 
-        <section class="development section" id="development" aria-labelledby="development-title">
+        <section class="section development" id="close" aria-labelledby="close-title">
             <div class="section-shell">
                 <div class="section-heading">
                     <div>
                         <p class="section-index">Development, without theatre</p>
-                        <h2 id="development-title">What works today.<br>What does not, yet.</h2>
+                        <h2 id="close-title">What works today.<br>What does not, yet.</h2>
                     </div>
                     <p>
                         지금 작동하는 것과 앞으로 만들 것을 같은 말로 포장하지 않습니다.
@@ -513,28 +524,19 @@
                         <ul class="state-list">
                             <li>화면은 회색 상자 단계입니다</li>
                             <li>두 사람이 한 화면을 번갈아 씁니다</li>
-                            <li>혼자 둘 상대는 아직 없습니다</li>
                             <li>정찰로 적을 재는 일은 아직입니다</li>
+                            <li>한 판이 정말 30분대에 끝나는지는 아직 측정하지 않았습니다</li>
                         </ul>
                     </li>
                 </ol>
-
-                <div class="development-disclosure">
-                    <div>
-                        <p>Current state</p>
-                        <strong>In active development</strong>
-                    </div>
-                    <p>공개된 브라우저 빌드는 지금까지 배선된 시스템을 직접 확인할 수 있는 개발 버전입니다. 최종 콘텐츠와 아트는 이 위에 올라갑니다.</p>
-                    <a class="button button--quiet" href="play">Inspect the Current Build</a>
-                </div>
             </div>
         </section>
 
         <section class="closing" aria-labelledby="closing-title">
             <div class="section-shell closing-shell">
                 <p>Strategy Ground</p>
-                <h2 id="closing-title">The battle is visible.<br>The war is yours to shape.</h2>
-                <a class="button button--primary" href="#war-model">Return to the War Model</a>
+                <h2 id="closing-title">Open it yourself.</h2>
+                <a class="button button--primary" href="play">Play the current build</a>
             </div>
         </section>
     </main>
@@ -549,7 +551,7 @@
                 <p>Working title for an independent turn-based strategy game.</p>
             </div>
             <div class="footer-meta">
-                <span>AX Program Submission · 2026</span>
+                <span>Independent development · 2026</span>
                 <span>In development · Following the proof, not a date</span>
             </div>
         </div>

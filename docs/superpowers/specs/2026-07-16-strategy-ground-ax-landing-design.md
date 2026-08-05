@@ -2,6 +2,15 @@
 
 > **Status:** Approved implementation design  
 > **Date:** 2026-07-16  
+> **Partly superseded 2026-08-05 — amendment stamps owed.** § Visual system,
+> § Motion and behavior, and § Responsive behavior are **still in force** and the
+> 2026-08-05 presentation re-cut was built against them. § Experience and § Page
+> structure are not: the unaided-reviewer premise closed, and the page is now seven
+> sections in spoken-narrative order, without the four-step war-model interaction,
+> the principles-and-status block, or the `Now / Next / Vision` progression. The
+> `game.html` CTA lines (L40–41, L103) were already false before that. The per-claim
+> disposition is registered in `docs/SYNC-DEBT.md` § Open and is not performed here,
+> because this file is an accurate record of what was approved on its date.  
 > **Source:** Session grilling, product context memo, and approved map-first
 > product-story direction.
 

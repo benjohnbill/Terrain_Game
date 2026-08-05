@@ -2,6 +2,17 @@
 
 > **Status:** Working PRD for the AX landing submission  
 > **Date:** 2026-07-16  
+> **Audience premise expired 2026-08-05.** § 3's "AX program evaluators will
+> receive a URL and inspect it without a narrated presentation" was the premise
+> this whole document was scoped to, and that review has closed. The landing was
+> re-cut as the surface of a five-minute spoken presentation, so § 7's AX-landing
+> requirements, § 8's information architecture, and § 9's unaided-reviewer success
+> criteria describe a page that no longer exists. § 10's non-goal "Promising a
+> release date, **price**, Steam availability, or multiplayer launch" is the clause
+> the re-cut deliberately crossed: the page now states a business direction, marked
+> as under review rather than committed. See `docs/SYNC-DEBT.md` § Open.
+> **The body is not rewritten** — it is an accurate 2026-07-16 record, and § 1–§ 6
+> (summary, problem, target users, promise, core experience, principles) still hold.  
 > **Authority:** This document translates the current product direction for a
 > landing surface. Gameplay canon remains in `SPEC.md`, `DESIGN.md`,
 > `DOMAIN_MAP.md`, accepted ADRs, and sealed feature documents.
